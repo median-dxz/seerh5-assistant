@@ -1,14 +1,14 @@
-import { delay } from "../utils/common.js";
+import { delay } from '../utils/common.js';
 
 export const BattleOperator = {
     useSkill: async (skillId) => {
         FighterModelFactory.playerMode.subject.array[1].showFight();
         await delay(200);
-        if (!skillId) {
-            FighterModelFactory.playerMode.skillBtnViews[0].autoUse();
+        if (!skillId || skillId < 0) {
+            FighterModelFactory.playerMode.conPanelObserver.skillPanel.auto();
         } else {
             console.log(
-                "[BattleOperator]: " + FighterModelFactory.playerMode.info.petName,
+                '[BattleOperator]: ' + FighterModelFactory.playerMode.info.petName,
                 SkillXMLInfo.getName(skillId)
             );
             SocketConnection.send(CommandID.USE_SKILL, skillId);

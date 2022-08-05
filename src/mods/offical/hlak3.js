@@ -70,21 +70,21 @@ class hlak {
             defaultPet: 1656696029,
             diedLink: new BaseSkillModule.DiedSwitchLinked(['神寂·克罗诺斯', '蒂朵', '魔钰']),
             skillList: new BaseSkillModule.NameMatched(['鬼哭神泣灭', '幻梦芳逝', '哥特式幻想']),
-            lowerbloodPets: [1655484346],
+            lowerbloodPets: [],
         },
     };
 
     actModDict = [
-        '克朵六时',
+        '克朵六时', // uncheck
         '克朵六时',
         '潘朵魔钰',
         '潘朵魔钰',
         '克朵六时',
-        '克朵魔钰第五',
+        '克朵魔钰第五', //ok
         '朵潘魔钰', // uncheck
         '克朵六时',
-        '朵潘月照',
-        '潘朵魔钰',
+        '朵潘魔钰', // uncheck
+        '潘朵魔钰', // uncheck
     ];
     constructor() {}
 
@@ -119,6 +119,8 @@ class hlak {
     async runOnce() {
         const curModName = this.actModDict[this.activityInfo.curPos];
         const curMod = this.petsMod[curModName];
+        const curPos = this.activityInfo.curPos;
+        console.log('[Mod:红莲安卡第三关]:', curModName, curMod, curPos);
 
         if (curModName == '克朵六时') {
             await PetHelper.setPetLocation(1655445699, 7);
@@ -146,8 +148,6 @@ class hlak {
             Functions.LowerBlood(curMod.lowerbloodPets, Const.ITEMS.Potion.高级体力药剂, async () => {
                 PetHelper.setDefault(curMod.defaultPet);
                 await delay(200);
-
-                console.log('[Mod:红莲安卡第三关]:', curModName, curMod);
                 resolve();
             });
         });
@@ -167,6 +167,8 @@ class hlak {
             },
             async () => {
                 await this.moveStep();
+                await delay(200);
+                await this.updateActivityInfo();
                 console.log(
                     `[Mod:红莲安卡第三关]: 
                     当前位置: ${this.activityInfo.curPos}
