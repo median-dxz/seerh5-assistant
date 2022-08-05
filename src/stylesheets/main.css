@@ -1,0 +1,61 @@
+html,
+body {
+    background: #ffffff;
+    padding: 0;
+    border: 0;
+    margin: 0;
+    height: 100%;
+}
+
+.logo {
+    width: 100%;
+    height: 100%;
+    display: table;
+    text-align: center;
+    position: fixed;
+    color: #fff;
+}
+
+.bg-black {
+    background: #000;
+}
+
+.bg-white {
+    background: #fff;
+}
+
+.depth-top {
+    z-index: 999998;
+}
+
+.depth-middle {
+    z-index: 999997;
+}
+
+.center {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+@font-face {
+    font-family: HuaKangXinZongYi;
+    src: url("http://seerh5.61.com/resource/font/hkxzy.ttf");
+}
+
+@font-face {
+    font-family: MFShangHei;
+    src: url("http://seerh5.61.com/resource/font/MFShangHei_Noncommercial-Regular.otf");
+}
+
+@font-face {
+    font-family: REEJI;
+    src: url("http://seerh5.61.com/resource/font/REEJI_Honghuangli.TTF");
+}
+
+#sa-container {
+    position: absolute;
+    bottom: 8vh;
+    left: 4vw;
+    z-index: 9;
+    display: flex;
+}

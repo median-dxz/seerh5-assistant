@@ -1,0 +1,6 @@
+{
+    "editor.suggest.showWords": false,
+    "javascript.preferences.importModuleSpecifierEnding": "js",
+    "prettier.printWidth": 120,
+    "prettier.singleQuote": true
+}
