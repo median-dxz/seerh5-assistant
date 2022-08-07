@@ -1,6 +1,7 @@
 import * as saco from '../../proxy/core.js';
 
-let { Utils, Const } = saco;
+let { Utils, Const, PetHelper } = saco;
+let { delay } = saco;
 
 class sign {
     constructor() {}
@@ -48,6 +49,69 @@ class sign {
             t = (await Utils.GetMultiValue(Const.MULTIS.许愿.许愿签到天数))[0];
             Utils.SocketSendByQueue(45801, [1, t + 1]);
         }
+    }
+    async teamDispatch() {
+        const igonrePetNames = new Set([
+            '邪灵主宰·摩哥斯',
+            '蓝露',
+            '时空界皇',
+            '暴君史莱姆',
+            '芳馨·茉蕊儿',
+            '月照星魂',
+            '伊芙莉莎',
+            '乔特鲁德',
+            '寒吟·龙裳',
+            '混沌魔君索伦森',
+            '宛白',
+            '伊芙莉',
+            '乔特鲁',
+            '圣霆雷伊'
+        ]);
+
+        let reprogress = false;
+        for (let tid = 6; tid <= 17 && tid !== 2; tid++) {
+            if (tid == 17) tid = 1;
+            if (!reprogress) {
+                // 清空背包
+                for (let p of PetHelper.getPets(1)) {
+                    PetHelper.setPetLocation(p.catchTime, 0);
+                    await delay(600);
+                }
+            }
+
+            const t = await Utils.SocketSendByQueue(45810, [tid]);
+
+            const i = t.data;
+            const n = i.readUnsignedInt();
+            const a = i.readUnsignedInt();
+            const e = { petIds: [], cts: [], levels: [] };
+            for (let r = 0; a > r; r++) {
+                e.cts.push(i.readUnsignedInt());
+                e.petIds.push(i.readUnsignedInt());
+                e.levels.push(i.readUnsignedInt());
+            }
+
+            console.log(`[sign]: 正在处理派遣任务: ${tid}`);
+            reprogress = e.petIds.some((v) => igonrePetNames.has(PetXMLInfo.getName(v)));
+
+            let index = 0;
+            for (let pid of e.petIds) {
+                const petName = PetXMLInfo.getName(pid);
+                if (igonrePetNames.has(petName)) {
+                    PetHelper.setPetLocation(e.cts[index], 1);
+                    console.log(`[sign]: 取出非派遣精灵: ${petName}`);
+                    await delay(600);
+                }
+                index++;
+            }
+
+            if (reprogress) {
+                tid--;
+            } else {
+                Utils.SocketSendByQueue(45808, [tid, e.cts[0], e.cts[1], e.cts[2], e.cts[3], e.cts[4]]);
+            }
+        }
+        console.log(`[sign]: 派遣任务处理完成`);
     }
 }
 export default {

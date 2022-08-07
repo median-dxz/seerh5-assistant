@@ -54,7 +54,7 @@ export async function switchBag(pets) {
  * @description 利用谱尼封印自动压血
  */
 export async function LowerBlood(pets, healPotionId = 300013, cb) {
-    if (!pets) {
+    if (!pets || pets.length === 0) {
         return;
     }
 

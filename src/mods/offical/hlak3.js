@@ -50,21 +50,21 @@ class hlak {
         },
         朵潘月照: {
             defaultPet: 1656056275,
-            diedLink: new BaseSkillModule.DiedSwitchLinked(['蒂朵', '潘克多斯', '月照星魂']),
-            skillList: new BaseSkillModule.NameMatched(['幻梦芳逝', '鬼焰·焚身术', '月下华尔兹']),
-            lowerbloodPets: [1657943113],
+            diedLink: new BaseSkillModule.DiedSwitchLinked(['蒂朵', '潘克多斯', '月照星魂', '魔钰']),
+            skillList: new BaseSkillModule.NameMatched(['幻梦芳逝', '鬼焰·焚身术', '梦境残缺', '月下华尔兹']),
+            lowerbloodPets: [1657943113, 1657943113],
         },
         朵潘魔钰: {
             defaultPet: 1656056275,
-            diedLink: new BaseSkillModule.DiedSwitchLinked(['蒂朵', '潘克多斯', '魔钰']),
-            skillList: new BaseSkillModule.NameMatched(['幻梦芳逝', '鬼焰·焚身术', '梦境残缺']),
-            lowerbloodPets: [1655445699],
+            diedLink: new BaseSkillModule.DiedSwitchLinked(['蒂朵', '潘克多斯', '魔钰', '月照星魂']),
+            skillList: new BaseSkillModule.NameMatched(['幻梦芳逝', '鬼焰·焚身术', '梦境残缺', '月下华尔兹']),
+            lowerbloodPets: [1655445699, 1657943113],
         },
         潘朵魔钰: {
             defaultPet: 1656383521,
-            diedLink: new BaseSkillModule.DiedSwitchLinked(['潘克多斯', '蒂朵', '魔钰']),
-            skillList: new BaseSkillModule.NameMatched(['幻梦芳逝', '鬼焰·焚身术', '梦境残缺']),
-            lowerbloodPets: [1655445699],
+            diedLink: new BaseSkillModule.DiedSwitchLinked(['潘克多斯', '蒂朵', '魔钰', '月照星魂']),
+            skillList: new BaseSkillModule.NameMatched(['幻梦芳逝', '鬼焰·焚身术', '梦境残缺', '月下华尔兹']),
+            lowerbloodPets: [1655445699, 1657943113],
         },
         克朵魔钰第五: {
             defaultPet: 1656696029,
@@ -77,14 +77,14 @@ class hlak {
     actModDict = [
         '克朵六时', // uncheck
         '克朵六时',
-        '潘朵魔钰',
-        '潘朵魔钰',
+        '潘朵魔钰', // uncheck
+        '潘朵魔钰', // uncheck
         '克朵六时',
         '克朵魔钰第五', //ok
-        '朵潘魔钰', // uncheck
+        '朵潘月照', // uncheck
         '克朵六时',
-        '朵潘魔钰', // uncheck
-        '潘朵魔钰', // uncheck
+        '朵潘月照', // uncheck
+        '潘朵魔钰', // ok
     ];
     constructor() {}
 

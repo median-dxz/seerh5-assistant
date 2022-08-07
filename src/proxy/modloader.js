@@ -24,4 +24,4 @@ if (import.meta.webpackHot) {
     });
 }
 
-window.mods = RegisteredMods;
+window.SA.mods = RegisteredMods;
