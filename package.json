@@ -2,7 +2,8 @@
   "name": "seer-assisant",
   "private": true,
   "type": "module",
-  "version": "0.1.1",
+  "version": "0.1.4",
+  "license": "MPL-2.0",
   "scripts": {
     "start": "webpack-dev-server --mode development",
     "build": "webpack --mode production",
