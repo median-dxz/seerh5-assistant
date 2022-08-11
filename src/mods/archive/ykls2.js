@@ -4,7 +4,7 @@ const { BattleModule, Utils } = saco;
 
 const { BaseSkillModule, BattleInfoProvider, BattleModuleManager, BattleOperator } = BattleModule;
 
-class y2 {
+class ykls2 {
     constructor() {}
     values = {
         惩戒能量: 0,
@@ -44,5 +44,5 @@ class y2 {
 }
 
 export default {
-    mod: y2,
+    mod: ykls2,
 };

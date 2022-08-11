@@ -70,3 +70,17 @@ export function getTypeIdByName(name) {
     }
     return undefined;
 }
+
+export function getUserCurrency(type) {
+    if (type === 'soul_of_titan') {
+        return ItemManager.getNumByID(1400352);
+    }
+}
+
+export async function updateMark(ot) {
+    let lv = 5 - CountermarkController.getInfo(1659320111).level;
+    while (lv--) {
+        await SocketSendByQueue(CommandID.STRENGTHEN_COUNTERMARK, [ot]);
+        await SocketSendByQueue(CommandID.SAVE_COUNTERMARK_PROPERTY, [ot]);
+    }
+}

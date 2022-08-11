@@ -57,6 +57,7 @@ let sa_init = async () => {
 
     SocketEncryptImpl.prototype.log = function (n, ...e) {
         const logInfo = e.join(' ').replace(/Socket\[[.0-9].*?\]/, '');
+        this.openIDs && this.openIDs.flat();
         if (this._isShowLog) {
             this.openIDs
                 ? this.openIDs.indexOf(n) >= 0 && console.log(logInfo)
@@ -121,6 +122,9 @@ let sa_init = async () => {
             this.dispatchCmd(this._headInfo.cmdID, this._headInfo, r);
         }
     };
+
+    egret.lifecycle.onPause = () => {};
+    egret.lifecycle.onResume = () => {};
 };
 
 let sa_core_init = async () => {

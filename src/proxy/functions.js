@@ -55,6 +55,7 @@ export async function switchBag(pets) {
  */
 export async function LowerBlood(pets, healPotionId = 300013, cb) {
     if (!pets || pets.length === 0) {
+        cb && cb();
         return;
     }
 
@@ -84,7 +85,7 @@ export async function LowerBlood(pets, healPotionId = 300013, cb) {
             FightManager.fightNoMapBoss(6730);
         },
         async (battleStatus, skills, battlePets) => {
-            if (battleStatus.round > 0 && battleStatus.pet.hp < 200) {
+            if (battleStatus.round > 0 && battleStatus.pet.hp < 50) {
                 let nextPet = -1;
                 for (let v of battlePets) {
                     if (pets.includes(v.catchTime) && v.hp > 200 && v.catchTime != battleStatus.pet.ct) {
@@ -109,15 +110,23 @@ export async function LowerBlood(pets, healPotionId = 300013, cb) {
             }
         },
         async () => {
+            await delay(100);
+            let notLowerPets = [];
             for (let pet of pets) {
-                if (PetManager.getPetInfo(pet).hp < 200) {
+                if (PetManager.getPetInfo(pet).hp <= 50) {
                     UsePotionForPet(pet, healPotionId);
-                    await delay(50);
+                    await delay(100);
+                } else if (PetManager.getPetInfo(pet).hp > 200) {
+                    notLowerPets.push(pet);
                 }
                 UsePotionForPet(pet, consts.ITEMS.Potion.中级活力药剂 - 1);
-                await delay(50);
+                await delay(100);
             }
-            cb && cb();
+            if (notLowerPets.length > 0) {
+                LowerBlood(notLowerPets, undefined, cb);
+            } else {
+                cb && cb();
+            }
         }
     );
     BattleModuleManager.runOnce();

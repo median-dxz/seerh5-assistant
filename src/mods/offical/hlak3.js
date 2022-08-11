@@ -52,19 +52,19 @@ class hlak {
             defaultPet: 1656056275,
             diedLink: new BaseSkillModule.DiedSwitchLinked(['蒂朵', '潘克多斯', '月照星魂', '魔钰']),
             skillList: new BaseSkillModule.NameMatched(['幻梦芳逝', '鬼焰·焚身术', '梦境残缺', '月下华尔兹']),
-            lowerbloodPets: [1657943113, 1657943113],
+            lowerbloodPets: [1655445699, 1656383521, 1656056275, 1657943113],
         },
         朵潘魔钰: {
             defaultPet: 1656056275,
             diedLink: new BaseSkillModule.DiedSwitchLinked(['蒂朵', '潘克多斯', '魔钰', '月照星魂']),
             skillList: new BaseSkillModule.NameMatched(['幻梦芳逝', '鬼焰·焚身术', '梦境残缺', '月下华尔兹']),
-            lowerbloodPets: [1655445699, 1657943113],
+            lowerbloodPets: [1655445699, 1657943113, 1656383521, 1656056275],
         },
         潘朵魔钰: {
             defaultPet: 1656383521,
             diedLink: new BaseSkillModule.DiedSwitchLinked(['潘克多斯', '蒂朵', '魔钰', '月照星魂']),
             skillList: new BaseSkillModule.NameMatched(['幻梦芳逝', '鬼焰·焚身术', '梦境残缺', '月下华尔兹']),
-            lowerbloodPets: [1655445699, 1657943113],
+            lowerbloodPets: [1655445699, 1656383521, 1656056275, 1657943113],
         },
         克朵魔钰第五: {
             defaultPet: 1656696029,
@@ -77,14 +77,14 @@ class hlak {
     actModDict = [
         '克朵六时', // uncheck
         '克朵六时',
-        '潘朵魔钰', // uncheck
-        '潘朵魔钰', // uncheck
+        '朵潘魔钰',
+        '朵潘魔钰',
         '克朵六时',
-        '克朵魔钰第五', //ok
-        '朵潘月照', // uncheck
+        '克朵魔钰第五',
+        '朵潘月照',
         '克朵六时',
-        '朵潘月照', // uncheck
-        '潘朵魔钰', // ok
+        '朵潘月照',
+        '朵潘魔钰',
     ];
     constructor() {}
 
@@ -109,7 +109,9 @@ class hlak {
         );
 
         Functions.CureAllPet();
+        await this.updateActivityInfo();
         await this.moveStep();
+        await this.updateActivityInfo();
         await delay(1000);
         console.log('[Mod:红莲安卡第三关]: 模组初始化完成');
     }
@@ -143,11 +145,11 @@ class hlak {
         }
 
         Functions.CureAllPet();
-        await delay(600);
+        await delay(200);
         await new Promise((resolve, reject) => {
             Functions.LowerBlood(curMod.lowerbloodPets, Const.ITEMS.Potion.高级体力药剂, async () => {
                 PetHelper.setDefault(curMod.defaultPet);
-                await delay(200);
+                await delay(1000);
                 resolve();
             });
         });
