@@ -1,7 +1,9 @@
 import * as saco from '../../proxy/core.js';
+import data from '../common.config.js';
 
-let { Utils, BattleModule, delay, PetHelper, Functions, SAEventManager, Const } = saco;
-let { BaseSkillModule, BattleInfoProvider, BattleOperator, BattleModuleManager } = BattleModule;
+const { Utils, BattleModule, delay, PetHelper, Functions, SAEventManager, Const } = saco;
+const { BaseSkillModule, BattleInfoProvider, BattleOperator, BattleModuleManager } = BattleModule;
+const ct = data.petCts;
 
 class hlak {
     //设置关卡信息
@@ -43,41 +45,41 @@ class hlak {
 
     petsMod = {
         克朵六时: {
-            defaultPet: 1656696029,
+            defaultPet: ct['神寂·克罗诺斯'],
             diedLink: new BaseSkillModule.DiedSwitchLinked(['神寂·克罗诺斯', '蒂朵', '六界帝神', '时空界皇']),
             skillList: new BaseSkillModule.NameMatched(['鬼哭神泣灭', '幻梦芳逝', '诸界混一击', '剑挥四方']),
-            lowerbloodPets: [1655484346],
+            lowerbloodPets: [ct['神寂·克罗诺斯']],
         },
         朵潘月照: {
-            defaultPet: 1656056275,
+            defaultPet: ct.蒂朵,
             diedLink: new BaseSkillModule.DiedSwitchLinked(['蒂朵', '潘克多斯', '月照星魂', '魔钰']),
             skillList: new BaseSkillModule.NameMatched(['幻梦芳逝', '鬼焰·焚身术', '梦境残缺', '月下华尔兹']),
-            lowerbloodPets: [1655445699, 1656383521, 1656056275, 1657943113],
+            lowerbloodPets: [ct.魔钰, ct.潘克多斯, ct.蒂朵, ct.月照星魂],
         },
         朵潘魔钰: {
-            defaultPet: 1656056275,
+            defaultPet: ct.蒂朵,
             diedLink: new BaseSkillModule.DiedSwitchLinked(['蒂朵', '潘克多斯', '魔钰', '月照星魂']),
             skillList: new BaseSkillModule.NameMatched(['幻梦芳逝', '鬼焰·焚身术', '梦境残缺', '月下华尔兹']),
-            lowerbloodPets: [1655445699, 1657943113, 1656383521, 1656056275],
+            lowerbloodPets: [ct.魔钰, ct.月照星魂, ct.潘克多斯, ct.蒂朵],
         },
-        潘朵魔钰: {
-            defaultPet: 1656383521,
-            diedLink: new BaseSkillModule.DiedSwitchLinked(['潘克多斯', '蒂朵', '魔钰', '月照星魂']),
-            skillList: new BaseSkillModule.NameMatched(['幻梦芳逝', '鬼焰·焚身术', '梦境残缺', '月下华尔兹']),
-            lowerbloodPets: [1655445699, 1656383521, 1656056275, 1657943113],
+        鲁肃圣谱: {
+            defaultPet: ct.鲁肃,
+            diedLink: new BaseSkillModule.DiedSwitchLinked(['鲁肃', '圣灵谱尼']),
+            skillList: new BaseSkillModule.NameMatched(['踏浪听风吟', '神灵救世光']),
+            lowerbloodPets: [ct.鲁肃],
         },
         克朵魔钰第五: {
-            defaultPet: 1656696029,
+            defaultPet: ct['神寂·克罗诺斯'],
             diedLink: new BaseSkillModule.DiedSwitchLinked(['神寂·克罗诺斯', '蒂朵', '魔钰']),
             skillList: new BaseSkillModule.NameMatched(['鬼哭神泣灭', '幻梦芳逝', '哥特式幻想']),
-            lowerbloodPets: [],
+            lowerbloodPets: [ct['神寂·克罗诺斯']],
         },
     };
 
     actModDict = [
-        '克朵六时', // uncheck
         '克朵六时',
-        '朵潘魔钰',
+        '克朵六时',
+        '鲁肃圣谱',
         '朵潘魔钰',
         '克朵六时',
         '克朵魔钰第五',
@@ -91,19 +93,21 @@ class hlak {
     async init() {
         for (let pet of PetHelper.getPets(7)) {
             await PetHelper.setPetLocation(pet.catchTime, 0);
-            await delay(600);
+            
         }
-        await PetHelper.setPetLocation(1657863632, 7);
-        await delay(600);
+        await PetHelper.setPetLocation(ct.六界帝神, 7);
+        await PetHelper.setPetLocation(ct.圣灵谱尼, 7);
+        await PetHelper.setPetLocation(ct.鲁肃, 7);
+        
 
         await Functions.switchBag(
             Array.from({
-                0: { catchTime: 1655445699, name: '魔钰', id: 3567 },
-                1: { catchTime: 1655484346, name: '时空界皇', id: 3463 },
-                2: { catchTime: 1656056275, name: '蒂朵', id: 4377 },
-                3: { catchTime: 1656696029, name: '神寂·克罗诺斯', id: 2977 },
-                4: { catchTime: 1656383521, name: '潘克多斯', id: 4344 },
-                5: { catchTime: 1657943113, name: '月照星魂', id: 3866 },
+                0: { catchTime: ct.魔钰, name: '魔钰', id: 3567 },
+                1: { catchTime: ct.时空界皇, name: '时空界皇', id: 3463 },
+                2: { catchTime: ct.蒂朵, name: '蒂朵', id: 4377 },
+                3: { catchTime: ct['神寂·克罗诺斯'], name: '神寂·克罗诺斯', id: 2977 },
+                4: { catchTime: ct.潘克多斯, name: '潘克多斯', id: 4344 },
+                5: { catchTime: ct.月照星魂, name: '月照星魂', id: 3866 },
                 length: 6,
             })
         );
@@ -114,6 +118,7 @@ class hlak {
         await this.updateActivityInfo();
         await delay(1000);
         console.log('[Mod:红莲安卡第三关]: 模组初始化完成');
+        console.log('[Mod:红莲安卡第三关]: 请手动检查绿火与月照的特攻珠！');
     }
 
     async run() {}
@@ -125,23 +130,23 @@ class hlak {
         console.log('[Mod:红莲安卡第三关]:', curModName, curMod, curPos);
 
         if (curModName == '克朵六时') {
-            await PetHelper.setPetLocation(1655445699, 7);
-            await delay(600);
-            await PetHelper.setPetLocation(1657943113, 7);
-            await delay(600);
-            await PetHelper.setPetLocation(1657863632, 1);
-            await delay(600);
-            await PetHelper.setPetLocation(1655484346, 1);
-            await delay(600);
+            await PetHelper.setPetLocation(ct.魔钰, 7);
+            await PetHelper.setPetLocation(ct.月照星魂, 7);
+            await PetHelper.setPetLocation(ct.六界帝神, 1);
+            await PetHelper.setPetLocation(ct.时空界皇, 1);
+            
+        } else if (curModName == '鲁肃圣谱') {
+            await PetHelper.setPetLocation(ct.魔钰, 7);
+            await PetHelper.setPetLocation(ct.月照星魂, 7);
+            await PetHelper.setPetLocation(ct.圣灵谱尼, 1);
+            await PetHelper.setPetLocation(ct.鲁肃, 1);
+            
         } else {
-            await PetHelper.setPetLocation(1657863632, 7);
-            await delay(600);
-            await PetHelper.setPetLocation(1655484346, 7);
-            await delay(600);
-            await PetHelper.setPetLocation(1655445699, 1);
-            await delay(600);
-            await PetHelper.setPetLocation(1657943113, 1);
-            await delay(600);
+            await PetHelper.setPetLocation(ct.六界帝神, 7);
+            await PetHelper.setPetLocation(ct.时空界皇, 7);
+            await PetHelper.setPetLocation(ct.魔钰, 1);
+            await PetHelper.setPetLocation(ct.月照星魂, 1);
+            
         }
 
         Functions.CureAllPet();
@@ -179,6 +184,11 @@ class hlak {
                     今日剩余次数: ${this.activityInfo.dailyTimes}
                     `
                 );
+                if (curModName == '鲁肃圣谱') {
+                    await PetHelper.setPetLocation(ct.圣灵谱尼, 1);
+                    await PetHelper.setPetLocation(ct.鲁肃, 1);
+                    
+                }
             }
         );
         BattleModuleManager.runOnce();

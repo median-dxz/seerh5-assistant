@@ -1,23 +1,26 @@
-import { CalcElementRatio } from './sa-utils.js';
+import { CalcElementRatio, SocketReceivedPromise } from './sa-utils.js';
+import Const from '../const/_exports.js';
+
+const PosType = Const.PETPOS;
 
 /**
  * @description 获取精灵列表
- * @param {PetStorage2015PosiType} location
+ * @param {Number} location - Const.PETPOS
  */
 function getPets(location) {
     let r = [];
     let dict;
     switch (location) {
-        case PetStorage2015PosiType.BAG1:
+        case PosType.bag1:
             dict = PetManager._bagMap._content;
             break;
-        case PetStorage2015PosiType.BAG2:
+        case PosType.secondBag1:
             dict = PetManager._secondBagMap._content;
             break;
-        case PetStorage2015PosiType.STORAGE:
+        case PosType.storage:
             dict = PetStorage2015InfoManager.getInfoByPosi(0);
             break;
-        case PetStorage2015PosiType.ELITE:
+        case PosType.elite:
             dict = PetStorage2015InfoManager.getInfoByPosi(1);
             break;
     }
@@ -34,16 +37,15 @@ const isDefault = (ct) => PetManager.defaultTime == ct;
 const setDefault = (ct) => PetManager.setDefault(ct);
 
 const getPetLocation = async (ct) => {
-    const posType = PetStorage2015PosiType;
     return new Promise((resolve, reject) => {
         PetStorage2015InfoManager.getTotalInfo(() => {
             let r = PetStorage2015InfoManager.allInfo.find((v) => v.catchTime == ct);
             if (!r) {
                 resolve(
                     PetManager._bagMap.containsKey(ct)
-                        ? posType.BAG1
+                        ? PosType.bag1
                         : PetManager._secondBagMap.containsKey(ct)
-                        ? posType.BAG2
+                        ? PosType.secondBag1
                         : -1
                 );
             } else {
@@ -54,54 +56,70 @@ const getPetLocation = async (ct) => {
 };
 
 const setPetLocation = async (ct, newLocation) => {
-    const posType = PetStorage2015PosiType;
     let l = await getPetLocation(ct);
+    if (l == newLocation) return false;
     switch (newLocation) {
-        case posType.BAG2:
+        case PosType.secondBag1:
             if (PetManager.isSecondBagFull) return false;
-            if (l == posType.BAG1) {
-                await PetManager.bagToSecondBag(ct);
-            } else if (l == posType.STORAGE) {
-                await PetManager.storageToSecondBag(ct);
-            } else if (l == posType.ELITE) {
-                await PetManager.delLovePet(0, ct, 0);
-                await PetManager.storageToSecondBag(ct);
-            }
+            await SocketReceivedPromise(CommandID.PET_RELEASE, async () => {
+                if (l == PosType.bag1) {
+                    PetManager.bagToSecondBag(ct);
+                } else if (l == PosType.storage) {
+                    PetManager.storageToSecondBag(ct);
+                } else if (l == PosType.elite) {
+                    SocketReceivedPromise(CommandID.PET_RELEASE, () => {
+                        PetManager.delLovePet(0, ct, 0);
+                    });
+                    PetManager.storageToSecondBag(ct);
+                }
+            });
 
             break;
-        case posType.BAG1:
+        case PosType.bag1:
             if (PetManager.isBagFull) return false;
-            if (l == posType.BAG2) {
-                await PetManager.secondBagToBag(ct);
-            } else if (l == posType.STORAGE) {
-                await PetManager.storageToBag(ct);
-            } else if (l == posType.ELITE) {
-                await PetManager.loveToBag(ct);
-            }
+            await SocketReceivedPromise(CommandID.PET_RELEASE, async () => {
+                if (l == PosType.secondBag1) {
+                    PetManager.secondBagToBag(ct);
+                } else if (l == PosType.storage) {
+                    PetManager.storageToBag(ct);
+                } else if (l == PosType.elite) {
+                    PetManager.loveToBag(ct);
+                }
+            });
 
             break;
-        case posType.STORAGE:
-            if (l == posType.BAG1) {
-                await PetManager.bagToStorage(ct);
-            } else if (l == posType.BAG2) {
-                await PetManager.secondBagToStorage(ct);
-            } else if (l == posType.ELITE) {
-                await PetManager.delLovePet(0, ct, 0);
-            }
-
+        case PosType.storage:
+            await SocketReceivedPromise(CommandID.PET_RELEASE, async () => {
+                if (l == PosType.bag1) {
+                    PetManager.bagToStorage(ct);
+                } else if (l == PosType.secondBag1) {
+                    PetManager.secondBagToStorage(ct);
+                } else if (l == PosType.elite) {
+                    PetManager.delLovePet(0, ct, 0);
+                }
+            });
             break;
-        case posType.ELITE:
-            if (l == posType.BAG1) {
-                await PetManager.bagToStorage(ct);
-            } else if (l == posType.BAG2) {
-                await PetManager.secondBagToStorage(ct);
-            }
-            await PetManager.addLovePet(0, ct, 0);
+        case PosType.elite:
+            await SocketReceivedPromise(CommandID.PET_RELEASE, async () => {
+                if (l == PosType.bag1) {
+                    PetManager.bagToStorage(ct);
+                } else if (l == PosType.secondBag1) {
+                    PetManager.secondBagToStorage(ct);
+                }
+            });
+            await SocketReceivedPromise(CommandID.PET_RELEASE, async () => {
+                PetManager.addLovePet(0, ct, 0);
+            });
             break;
         default:
             break;
     }
-    return await PetStorage2015InfoManager.getTotalInfo(() => {});
+
+    return new Promise((resolve, reject) => {
+        PetStorage2015InfoManager.getTotalInfo(() => {
+            resolve(true);
+        });
+    });
 };
 
 /**

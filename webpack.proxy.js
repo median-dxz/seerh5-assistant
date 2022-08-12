@@ -23,7 +23,7 @@ let saProxyMiddleware = createProxyMiddleware({
                     res.end(data);
                     return;
                 } else if (req.url.indexOf('sentry.js') > 0) {
-                    res.end('var Sentry = null');
+                    res.end('var Sentry = {init: ()=>{}}');
                 } else {
                     res.writeHead(proxyRes.statusCode, proxyRes.headers);
                     res.end(body);

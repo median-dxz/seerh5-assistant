@@ -6,5 +6,9 @@
     {
         "modId": "sign",
         "path": "offical"
+    },
+    {
+        "modId": "xms",
+        "path": "offical"
     }
 ]

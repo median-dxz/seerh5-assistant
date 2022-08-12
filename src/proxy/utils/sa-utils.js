@@ -14,6 +14,21 @@ export async function SocketSendByQueue(cmd, data) {
     });
 }
 
+export async function SocketReceivedPromise(cmd, func) {
+    return new Promise((resolve, reject) => {
+        new Promise((resolve, reject) => {
+            function resolver() {
+                resolve(resolver);
+            }
+            SocketConnection.addCmdListener(cmd, resolver);
+        }).then((v) => {
+            SocketConnection.removeCmdListener(v);
+            resolve();
+        });
+        func && func();
+    });
+}
+
 /**
  * @description 获取特定键值
  * @param {...Number} value 要查询的值

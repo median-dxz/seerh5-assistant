@@ -31,19 +31,26 @@ export function CureAllPet() {
     PetManager.noAlarmCureAll();
 }
 
+/**
+ * @param {boolean} enable
+ */
+export function toggleAutoCure(enable) {
+    SocketSendByQueue(42019, [22439, Number(enable)]);
+}
+
 export async function switchBag(pets) {
-    const PosType = PetStorage2015PosiType;
+    const PosType = consts.PETPOS;
     // 清空现有背包
-    let olds = getPets(PosType.BAG1);
+    let olds = getPets(PosType.bag1);
     for (let v of olds) {
-        await setPetLocation(v.catchTime, PosType.STORAGE);
+        await setPetLocation(v.catchTime, PosType.storage);
         console.log(`[PetHelper]: 将 ${v.name} 放入仓库`);
-        await delay(600);
+        
     }
     for (let v of pets) {
-        await setPetLocation(v.catchTime, PosType.BAG1);
+        await setPetLocation(v.catchTime, PosType.bag1);
         console.log(`[PetHelper]: 将 ${v.name} 放入背包`);
-        await delay(600);
+        
     }
 }
 
@@ -54,25 +61,26 @@ export async function switchBag(pets) {
  * @description 利用谱尼封印自动压血
  */
 export async function LowerBlood(pets, healPotionId = 300013, cb) {
+    const PosType = consts.PETPOS;
     if (!pets || pets.length === 0) {
         cb && cb();
         return;
     }
 
     // 检测列表是否全在背包
-    const curPets = getPets(PetStorage2015PosiType.BAG1);
+    const curPets = getPets(PosType.bag1);
     let p = 0;
     for (let pet of pets) {
-        if ((await getPetLocation(pet)) != PetStorage2015PosiType.BAG1) {
+        if ((await getPetLocation(pet)) != PosType.bag1) {
             if (PetManager.isBagFull) {
                 while (pets.includes(curPets[p].catchTime)) {
                     p++;
                 }
                 console.log(`[SAHelper]: 压血 -> 将 ${curPets[p].name} 放入仓库`);
-                await setPetLocation(curPets[p++].catchTime, PetStorage2015PosiType.STORAGE);
+                await setPetLocation(curPets[p++].catchTime, PosType.storage);
                 await delay(800);
             }
-            await setPetLocation(pet, PetStorage2015PosiType.BAG1);
+            await setPetLocation(pet, PosType.bag1);
             await delay(800);
         }
     }

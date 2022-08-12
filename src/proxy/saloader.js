@@ -25,6 +25,7 @@ let sa_init = async () => {
         /=.*?onUseSkill=.*=/,
         />.*?>面板.*?还没有.*$/,
         /js文件>.*已经加载到内存中$/,
+        /head hit.*?index/,
     ];
 
     console.log = new Proxy(console.log, {
@@ -125,6 +126,7 @@ let sa_init = async () => {
 
     egret.lifecycle.onPause = () => {};
     egret.lifecycle.onResume = () => {};
+    OnlineManager.prototype.setSentryScope = () => {};
 };
 
 let sa_core_init = async () => {

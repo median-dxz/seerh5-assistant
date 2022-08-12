@@ -1,7 +1,7 @@
 import * as saco from '../../proxy/core.js';
+import data from '../common.config.js';
 
 let { Utils, Const, PetHelper } = saco;
-let { delay } = saco;
 
 class sign {
     constructor() {}
@@ -49,38 +49,26 @@ class sign {
             t = (await Utils.GetMultiValue(Const.MULTIS.许愿.许愿签到天数))[0];
             Utils.SocketSendByQueue(45801, [1, t + 1]);
         }
+
+        curTimes = (await Utils.GetMultiValue(11516))[0];
+        if (!curTimes) {
+            Utils.SocketSendByQueue(CommandID.VIP_BONUS_201409, [1]);
+        }
+        curTimes = (await Utils.GetMultiValue(14204))[0];
+        if (!curTimes) {
+            Utils.SocketSendByQueue(CommandID.SEER_VIP_DAILY_REWARD);
+        }
     }
     async teamDispatch() {
-        const igonrePetNames = new Set([
-            '邪灵主宰·摩哥斯',
-            '蓝露',
-            '时空界皇',
-            '暴君史莱姆',
-            '芳馨·茉蕊儿',
-            '月照星魂',
-            '伊芙莉莎',
-            '乔特鲁德',
-            '寒吟·龙裳',
-            '混沌魔君索伦森',
-            '宛白',
-            '伊芙莉',
-            '乔特鲁',
-            '圣霆雷伊',
-            '莫妮卡',
-            '圣光莫妮卡',
-            '冰之契约·阿克希亚',
-            '冥炎·撒格利加',
-            '阿徒',
-        ]);
+        const igonrePetNames = data.igonrePetNames;
 
         let reprogress = false;
-        for (let tid = 6; tid <= 17 && tid !== 2; tid++) {
-            if (tid == 17) tid = 1;
+        for (let tid = 16; tid >= 5 && tid !== 0; tid--) {
+            if (tid == 5) tid = 1;
             if (!reprogress) {
                 // 清空背包
                 for (let p of PetHelper.getPets(1)) {
                     PetHelper.setPetLocation(p.catchTime, 0);
-                    await delay(600);
                 }
             }
 
@@ -105,7 +93,6 @@ class sign {
                 if (igonrePetNames.has(petName)) {
                     PetHelper.setPetLocation(e.cts[index], 1);
                     console.log(`[sign]: 取出非派遣精灵: ${petName}`);
-                    await delay(600);
                 }
                 index++;
             }

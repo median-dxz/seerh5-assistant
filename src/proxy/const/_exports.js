@@ -1,8 +1,9 @@
-import { SA_CONST_CMDID } from "./cmdid.js";
-import { SA_CONST_EKINGID } from "./elvenkingid.js";
-import { SA_CONST_EVENTS } from "./event.js";
-import { SA_CONST_ITEMS } from "./item.js";
-import { SA_CONST_MULTIS } from "./multivalues.js";
+import { SA_CONST_CMDID } from './cmdid.js';
+import { SA_CONST_EKINGID } from './elvenkingid.js';
+import { SA_CONST_EVENTS } from './event.js';
+import { SA_CONST_ITEMS } from './item.js';
+import { SA_CONST_MULTIS } from './multivalues.js';
+import { SA_CONST_PETPOS } from './petpos.js';
 
 const consts = {
     CMDID: SA_CONST_CMDID,
@@ -10,6 +11,7 @@ const consts = {
     EVENTS: SA_CONST_EVENTS,
     MULTIS: SA_CONST_MULTIS,
     ITEMS: SA_CONST_ITEMS,
+    PETPOS: SA_CONST_PETPOS,
 };
 
 export default consts;
