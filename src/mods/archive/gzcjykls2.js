@@ -1,15 +1,17 @@
 import * as saco from '../../proxy/core.js';
+import data from '../common.config.js';
 
 const { BattleModule, Utils, Const, Functions, PetHelper } = saco;
 const { delay } = saco;
 const { BaseSkillModule, BattleModuleManager, BattleOperator, BattleInfoProvider } = BattleModule;
+const ct = data.petCts.月照星魂;
 
 class gy2 {
     battleMod = {
-        defaultPet: 0,
+        defaultPet: ct,
         diedLink: new BaseSkillModule.DiedSwitchLinked(['月照星魂']),
         skillList: new BaseSkillModule.NameMatched(['月下华尔兹']),
-        lowerbloodPets: [],
+        lowerbloodPets: [ct],
     };
     async init() {
         PetHelper.setDefault(this.battleMod.defaultPet);
@@ -28,9 +30,7 @@ class gy2 {
             BattleOperator.useSkill(this.battleMod.skillList.match(skills));
         });
         BattleModuleManager.signDeliver.addEventListener('bm_end', async () => {
-            if (PetManager.getPetInfo().skillArray[3].pp == 0 || PetManager.getPetInfo().hp == 0) {
-                this.supply();
-            }
+            this.supply();
             await delay(700);
             this.runOnce();
         });
@@ -46,11 +46,11 @@ class gy2 {
         console.log(`[光之惩戒2:] 当前能量${i & 255} ${(i >> 8) & 255}`);
     }
     supply() {
-        if (PetManager.getPetInfo(0).skillArray[3].pp == 0) {
-            Functions.UsePotionForPet(0, Const.ITEMS.Potion.中级活力药剂 - 1);
+        if (PetManager.getPetInfo(ct).skillArray[3].pp == 0) {
+            Functions.UsePotionForPet(ct, Const.ITEMS.Potion.中级活力药剂 - 1);
         }
-        if (PetManager.getPetInfo(0).hp == 0) {
-            Functions.UsePotionForPet(0, Const.ITEMS.Potion.高级体力药剂);
+        if (PetManager.getPetInfo(ct).hp == 0) {
+            Functions.UsePotionForPet(ct, Const.ITEMS.Potion.高级体力药剂);
         }
     }
 }

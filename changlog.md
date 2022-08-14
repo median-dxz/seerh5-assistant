@@ -7,18 +7,25 @@
 - [ ] BattleOperator的校验函数
 - [ ] 发包日志在代理服务器写入文件
 - [ ] 默认战斗模型->系统自动而不是直接退出
-- [ ] 飞镰点灯关模组
+
 
 即将到来:
 
-- [ ] 模组编写可传入通用配置对象，不用硬编码数据
+- [x] 模组编写可传入通用配置对象，不用硬编码数据
 - [ ] 战队派遣之前自动收取之前派遣
-- [ ] 刻印一键5级
+- [x] 刻印一键5级
 - [ ] 一键清除多余的泰坦刻印
-- [ ] 因子关试水：莫伊莱模组
+- [x] 因子关试水：莫伊莱模组
 - [ ] 通用战斗模块：弹伤
 - [ ] 添加更多的常用物品常量(能量珠)
-- [x] 将精灵位置常量封装进Const模块
+- [ ] 封装自动使用函数，而不是包含在operator的默认情况中
+- [x] 飞镰点灯关模组
+
+v0.1.5
+
+1. 较多的修复和优化，详见commit中的文件diff
+2. 红莲安卡模型：添加千裳强攻灰羽苍兽，以及在战斗模型匹配失败后交还控制权
+3. 添加了新的模组：x战队，英卡洛斯飞镰点灯，莫伊莱因子
 
 v0.1.4
 
@@ -27,7 +34,7 @@ v0.1.4
 3. loader适配8.12版本的sentry关闭
 4. `Functions`新增切换vip自动回血
 5. 重大优化：使用promise包装cmd监听回调，现在可以通过`SocketReceivedPromise`函数来包装某会发包的操作，该函数返回一个Promise，收包之后才resolve。
-6. 使用`SocketReceivedPromise`优化`setPetLocation`，现在可以直接`await setPetLocation`，不需要在手动delay了。同时也变相加快了该函数的执行效率。
+6. 使用`SocketReceivedPromise`优化`setPetLocation`，现在可以直接`await setPetLocation`，不需要再手动delay了。同时也变相加快了该函数的执行效率。
 7. 现在将私人数据常量导入common.config.js中，约定通过`import data from '../common.config.js'`来访问
 8. 精灵位置常量已封装进`Const`模块，约定通过`const PosType = Const.PETPOS`来访问
 

@@ -1,7 +1,7 @@
 const events = {
     Socket: {},
     Module: {
-        open: "sa_module_open",
+        show: "sa_module_show",
         loaded: "sa_module_loaded",
     },
     BattlePanel: {

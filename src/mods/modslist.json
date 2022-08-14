@@ -10,5 +10,13 @@
     {
         "modId": "xms",
         "path": "offical"
+    },
+    {
+        "modId": "myl",
+        "path": "offical"
+    },
+    {
+        "modId": "gzcj3",
+        "path": "offical"
     }
 ]

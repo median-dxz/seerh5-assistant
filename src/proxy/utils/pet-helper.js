@@ -57,7 +57,7 @@ const getPetLocation = async (ct) => {
 
 const setPetLocation = async (ct, newLocation) => {
     let l = await getPetLocation(ct);
-    if (l == newLocation) return false;
+    if (l == newLocation || l == -1) return false;
     switch (newLocation) {
         case PosType.secondBag1:
             if (PetManager.isSecondBagFull) return false;

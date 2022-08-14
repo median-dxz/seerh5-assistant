@@ -3,7 +3,6 @@ import { BattleInfoProvider, BattleModuleManager, BattleOperator } from './battl
 import { delay } from './utils/common.js';
 import { getPetLocation, getPets, setDefault, setPetLocation } from './utils/pet-helper.js';
 import { SocketSendByQueue } from './utils/sa-utils.js';
-import { SAEventManager } from './eventhandler.js';
 
 /**
  * @description 对精灵使用药水
@@ -34,23 +33,21 @@ export function CureAllPet() {
 /**
  * @param {boolean} enable
  */
-export function toggleAutoCure(enable) {
+export function ToggleAutoCure(enable) {
     SocketSendByQueue(42019, [22439, Number(enable)]);
 }
 
-export async function switchBag(pets) {
+export async function SwitchBag(pets) {
     const PosType = consts.PETPOS;
     // 清空现有背包
     let olds = getPets(PosType.bag1);
     for (let v of olds) {
         await setPetLocation(v.catchTime, PosType.storage);
         console.log(`[PetHelper]: 将 ${v.name} 放入仓库`);
-        
     }
     for (let v of pets) {
         await setPetLocation(v.catchTime, PosType.bag1);
         console.log(`[PetHelper]: 将 ${v.name} 放入背包`);
-        
     }
 }
 
@@ -78,10 +75,8 @@ export async function LowerBlood(pets, healPotionId = 300013, cb) {
                 }
                 console.log(`[SAHelper]: 压血 -> 将 ${curPets[p].name} 放入仓库`);
                 await setPetLocation(curPets[p++].catchTime, PosType.storage);
-                await delay(800);
             }
             await setPetLocation(pet, PosType.bag1);
-            await delay(800);
         }
     }
     console.log(`[SAHelper]: 压血 -> 背包处理完成`);

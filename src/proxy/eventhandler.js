@@ -3,25 +3,31 @@ import Consts from './const/_exports.js';
 
 const hooks = Consts.EVENTS;
 
-const GlabalEventManager = new EventTarget();
+const GlobalEventManager = new EventTarget();
 
 AwardItemDialog.prototype.startEvent = warpper(AwardItemDialog.prototype.startEvent, null, function () {
-    GlabalEventManager.dispatchEvent(new CustomEvent(hooks.AwardDialog.show, { detail: { dialog: this } }));
+    GlobalEventManager.dispatchEvent(new CustomEvent(hooks.AwardDialog.show, { detail: { dialog: this } }));
 });
 
 PetFightController.setup = warpper(PetFightController.setup, null, () => {
-    GlabalEventManager.dispatchEvent(new CustomEvent(hooks.BattlePanel.start, { detail: null }));
+    GlobalEventManager.dispatchEvent(new CustomEvent(hooks.BattlePanel.start, { detail: null }));
 });
 
 EventManager.addEventListener('new_round', () => {
-    GlabalEventManager.dispatchEvent(new CustomEvent(hooks.BattlePanel.roundEnd, { detail: null }));
+    GlobalEventManager.dispatchEvent(new CustomEvent(hooks.BattlePanel.roundEnd, { detail: null }));
 });
 
 PetUpdatePropController.prototype.show = warpper(PetUpdatePropController.prototype.show, null, () => {
-    GlabalEventManager.dispatchEvent(new CustomEvent(hooks.BattlePanel.completed, { detail: null }));
+    GlobalEventManager.dispatchEvent(new CustomEvent(hooks.BattlePanel.completed, { detail: null }));
 });
 
-GlabalEventManager.addEventListener(hooks.AwardDialog.show, async (e) => {
+ModuleManager._openModelCompete = warpper(ModuleManager._openModelCompete, null, function () {
+    GlobalEventManager.dispatchEvent(
+        new CustomEvent(hooks.Module.show, { detail: { moduleName: this.currModule.moduleName } })
+    );
+});
+
+GlobalEventManager.addEventListener(hooks.AwardDialog.show, async (e) => {
     await delay(500);
     LevelManager.stage.removeEventListener(
         egret.TouchEvent.TOUCH_TAP,
@@ -31,4 +37,4 @@ GlabalEventManager.addEventListener(hooks.AwardDialog.show, async (e) => {
     e.detail.dialog.destroy();
 });
 
-export { GlabalEventManager as SAEventManager };
+export { GlobalEventManager as SAEventManager };

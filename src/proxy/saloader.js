@@ -26,6 +26,7 @@ let sa_init = async () => {
         />.*?>面板.*?还没有.*$/,
         /js文件>.*已经加载到内存中$/,
         /head hit.*?index/,
+        /PetID:.*?offsetX:/
     ];
 
     console.log = new Proxy(console.log, {

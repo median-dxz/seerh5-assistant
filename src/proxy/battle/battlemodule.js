@@ -1,16 +1,16 @@
-import consts from "../const/_exports.js";
+import consts from '../const/_exports.js';
 
-import { delay } from "../utils/common.js";
+import { delay } from '../utils/common.js';
 
-import { SAEventManager } from "../eventhandler.js";
+import { SAEventManager } from '../eventhandler.js';
 
-import { BattleInfoProvider } from "./infoprovider.js";
-import { BattleOperator } from "./operator.js";
+import { BattleInfoProvider } from './infoprovider.js';
+import { BattleOperator } from './operator.js';
 
-import { BattleModule, SkillModule } from "./type.d.js";
+import { BattleModule, SkillModule } from './type.d.js';
 
 let hadnleBattleStart = () => {
-    console.log(`[BattleHandler]: 检测到对战开始, 当前模式: ${BattleModuleManager.isRun ? "对战接管" : "手动"}`);
+    console.log(`[BattleHandler]: 检测到对战开始, 当前模式: ${BattleModuleManager.isRun ? '对战接管' : '手动'}`);
     FighterModelFactory.enemyMode.setHpView(true);
     FighterModelFactory.enemyMode.setHpView = function (e) {
         this.propView.isShowFtHp = true;
@@ -30,14 +30,14 @@ let handleRoundEnd = () => {
 };
 
 let handleBattleEnd = async () => {
-    console.log("[BattleHandler]: 检测到对战结束");
+    console.log('[BattleHandler]: 检测到对战结束');
     await delay(500);
     if (FightManager.isWin) {
         ModuleManager.currModule.touchHandle && ModuleManager.currModule.touchHandle();
     } else {
         ModuleManager.currModule.onClose && ModuleManager.currModule.onClose();
     }
-    BattleModuleManager.signDeliver.dispatchEvent(new CustomEvent("bm_end"));
+    BattleModuleManager.signDeliver.dispatchEvent(new CustomEvent('bm_end'));
 };
 
 // todo : 不同模块的event deliver分开，思考全局事件注册的妥善处理方式
@@ -77,7 +77,7 @@ export const BattleModuleManager = {
             BattleModuleManager.isRun = true;
             curBattle.entry();
             BattleModuleManager.signDeliver.addEventListener(
-                "bm_end",
+                'bm_end',
                 () => {
                     curBattle.finished();
                     BattleModuleManager.isRun = false;
@@ -99,8 +99,30 @@ export const BattleModuleManager = {
     },
 };
 
-import * as BaseSkillModule from "./skillmodule/base.js";
-export { BaseSkillModule };
+/**
+ * @param {NameMatched} nms
+ * @param {DiedSwitchLinked} dsp
+ * @returns {SkillModule}
+ */
+function GenerateBaseBattleModule(nms, dsp) {
+    return async (info, skills, pets) => {
+        if (info.isDiedSwitch) {
+            const next = dsp.match(pets);
+            if (next != -1) {
+                BattleOperator.switchPet(next);
+            }
+            await delay(800);
+            skills = BattleInfoProvider.getCurSkills();
+        }
+        const sid = nms.match(skills);
+        if (sid != 0) {
+            BattleOperator.useSkill(sid);
+        }
+    };
+}
+
+import * as BaseSkillModule from './skillmodule/base.js';
+export { BaseSkillModule, GenerateBaseBattleModule };
 export { BattleInfoProvider, BattleOperator };
 // stop
 

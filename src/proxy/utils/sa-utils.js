@@ -92,10 +92,16 @@ export function getUserCurrency(type) {
     }
 }
 
-export async function updateMark(ot) {
-    let lv = 5 - CountermarkController.getInfo(1659320111).level;
+export async function updateMark(markInfo) {
+    let lv = 5 - CountermarkController.getInfo(markInfo.obtainTime).level;
     while (lv--) {
-        await SocketSendByQueue(CommandID.STRENGTHEN_COUNTERMARK, [ot]);
-        await SocketSendByQueue(CommandID.SAVE_COUNTERMARK_PROPERTY, [ot]);
+        await SocketSendByQueue(CommandID.STRENGTHEN_COUNTERMARK, [markInfo.obtainTime]);
+        await SocketSendByQueue(CommandID.SAVE_COUNTERMARK_PROPERTY, [markInfo.obtainTime]);
     }
+    await SocketReceivedPromise(CommandID.GET_COUNTERMARK_LIST2, () => {
+        CountermarkController.updateMnumberMark({ markID: markInfo.markID, catchTime: markInfo.obtainTime });
+    });
+    EventManager.dispatchEvent(
+        new CountermarkEvent(CountermarkEvent.UPGRADE_END, CountermarkController.getInfo(markInfo.obtainTime))
+    );
 }

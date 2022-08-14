@@ -61,14 +61,14 @@ class sign {
     }
     async teamDispatch() {
         const igonrePetNames = data.igonrePetNames;
-
+        const PosType = Const.PETPOS;
         let reprogress = false;
-        for (let tid = 16; tid >= 5 && tid !== 0; tid--) {
+        for (let tid = 16; tid > 0; tid--) {
             if (tid == 5) tid = 1;
             if (!reprogress) {
                 // 清空背包
-                for (let p of PetHelper.getPets(1)) {
-                    PetHelper.setPetLocation(p.catchTime, 0);
+                for (let p of PetHelper.getPets(PosType.bag1)) {
+                    await PetHelper.setPetLocation(p.catchTime, PosType.storage);
                 }
             }
 
@@ -91,19 +91,27 @@ class sign {
             for (let pid of e.petIds) {
                 const petName = PetXMLInfo.getName(pid);
                 if (igonrePetNames.has(petName)) {
-                    PetHelper.setPetLocation(e.cts[index], 1);
+                    await PetHelper.setPetLocation(e.cts[index], 1);
                     console.log(`[sign]: 取出非派遣精灵: ${petName}`);
                 }
                 index++;
             }
 
             if (reprogress) {
-                tid--;
+                tid++;
             } else {
                 Utils.SocketSendByQueue(45808, [tid, e.cts[0], e.cts[1], e.cts[2], e.cts[3], e.cts[4]]);
             }
         }
         console.log(`[sign]: 派遣任务处理完成`);
+    }
+    async markLvSetup() {
+        if (!ModuleManager.hasmodule('markCenter.MarkCenter')) {
+            await ModuleManager.showModule('markCenter');
+        }
+        markCenter.MarkLvlUp.prototype.lvlUpAll = function () {
+            Utils.updateMark(this.markInfo);
+        };
     }
 }
 export default {

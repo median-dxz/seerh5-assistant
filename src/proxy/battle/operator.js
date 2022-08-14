@@ -5,7 +5,8 @@ export const BattleOperator = {
         FighterModelFactory.playerMode.subject.array[1].showFight();
         await delay(200);
         if (!skillId || skillId < 0) {
-            FighterModelFactory.playerMode.conPanelObserver.skillPanel.auto();
+            console.log('[BattleOperator]: 非法的skillId');
+            // FighterModelFactory.playerMode.conPanelObserver.skillPanel.auto();
         } else {
             console.log(
                 '[BattleOperator]: ' + FighterModelFactory.playerMode.info.petName,
@@ -27,6 +28,9 @@ export const BattleOperator = {
     },
 
     switchPet: async (index) => {
+        if (!index || index < 0) {
+            console.log('[BattleOperator]: 非法的petIndex');
+        }
         FighterModelFactory.playerMode.subject.array[1].showPet();
         await delay(200);
         FighterModelFactory.playerMode.subject.array[1].petPanel._petsArray[index].autoUse();
