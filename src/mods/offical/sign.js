@@ -60,6 +60,8 @@ class sign {
         }
     }
     async teamDispatch() {
+        await SocketConnection.sendByQueue(45809, [0]);
+        
         const igonrePetNames = data.igonrePetNames;
         const PosType = Const.PETPOS;
         let reprogress = false;

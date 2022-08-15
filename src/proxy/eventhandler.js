@@ -21,9 +21,51 @@ PetUpdatePropController.prototype.show = warpper(PetUpdatePropController.prototy
     GlobalEventManager.dispatchEvent(new CustomEvent(hooks.BattlePanel.completed, { detail: null }));
 });
 
+ModuleManager.beginShow = warpper(
+    ModuleManager.beginShow,
+    function () {
+        if (!ModuleManager.appJs[arguments[0]]) {
+            GlobalEventManager.dispatchEvent(
+                new CustomEvent(hooks.Module.loaded, { detail: { moduleName: arguments[0] } })
+            );
+        }
+    },
+    null
+);
+
 ModuleManager._openModelCompete = warpper(ModuleManager._openModelCompete, null, function () {
     GlobalEventManager.dispatchEvent(
         new CustomEvent(hooks.Module.show, { detail: { moduleName: this.currModule.moduleName } })
+    );
+});
+
+GlobalEventManager.addEventListener(hooks.Module.loaded, async (e) => {
+    console.log(`[EventManager]: 检测到模块开启: ${e.detail.moduleName}`);
+});
+
+SocketConnection.addCmdListener(CommandID.NOTE_USE_SKILL, (d) => {
+    const data = Object.create(Object.getPrototypeOf(d.data), Object.getOwnPropertyDescriptors(d.data));
+    const info = new UseSkillInfo(data);
+    const fi = info.firstAttackInfo,
+        si = info.secondAttackInfo;
+    console.log(
+        `[EventManager]: 对局信息更新:
+            先手方:${fi.userID}
+            所在回合:${fi.round}
+            造成伤害:${fi.lostHP}
+            恢复hp:${fi.gainHP}
+            剩余hp:${fi.remainHP}
+            是否暴击:${fi.isCrit}
+            使用技能id:${fi.skillID}
+            ===========
+            后手方:${si.userID}
+            所在回合:${si.round}
+            造成伤害:${si.lostHP}
+            恢复hp:${si.gainHP}
+            剩余hp:${si.remainHP} 
+            是否暴击:${si.isCrit}
+            使用技能id:${si.skillID}
+    `
     );
 });
 

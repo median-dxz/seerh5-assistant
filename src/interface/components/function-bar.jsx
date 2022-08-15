@@ -15,6 +15,27 @@ export function FunctionBar(props) {
             >
                 <DataObject />
             </Button>
+            <Button
+                onClick={() => {
+                    FightManager.fightNoMapBoss(6730);
+                }}
+            >
+                <DataObject />
+            </Button>
+            <Button
+                onClick={() => {
+                    SA.mods.get('sign').run();
+                }}
+            >
+                <DataObject />
+            </Button>
+            <Button
+                onClick={() => {
+                    SA.mods.get("sign").teamDispatch();
+                }}
+            >
+                <DataObject />
+            </Button>
         </ButtonGroup>
     );
 }

@@ -59,21 +59,25 @@ export function CalcElementRatio(e1, e2) {
     return TypeXMLInfo.getRelationsPow(e1, e2);
 }
 
-let dictMatch = (dict, reg) => {
+let dictMatch = (dict, reg, keyName) => {
     let r = [];
     for (let key in dict) {
-        let name = dict[key].Name;
+        let name = dict[key][keyName];
         name && name.match(reg) && r.push(dict[key]);
     }
     return r;
 };
 
 export function matchItemName(nameReg) {
-    return dictMatch(ItemXMLInfo._itemDict, nameReg);
+    return dictMatch(ItemXMLInfo._itemDict, nameReg, 'Name');
 }
 
 export function matchSkillName(nameReg) {
-    return dictMatch(SkillXMLInfo.movesMap, nameReg);
+    return dictMatch(SkillXMLInfo.movesMap, nameReg, 'Name');
+}
+
+export function matchPetName(nameReg) {
+    return dictMatch(PetXMLInfo._dataMap, nameReg, 'DefName');
 }
 
 export function getTypeIdByName(name) {
@@ -105,3 +109,5 @@ export async function updateMark(markInfo) {
         new CountermarkEvent(CountermarkEvent.UPGRADE_END, CountermarkController.getInfo(markInfo.obtainTime))
     );
 }
+
+export { delay, warpper, runWithCheckTimes } from './common.js';

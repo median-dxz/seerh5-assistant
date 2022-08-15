@@ -4,7 +4,7 @@ export const BattleOperator = {
     useSkill: async (skillId) => {
         FighterModelFactory.playerMode.subject.array[1].showFight();
         await delay(200);
-        if (!skillId || skillId < 0) {
+        if (!skillId || skillId <= 0) {
             console.log('[BattleOperator]: 非法的skillId');
             // FighterModelFactory.playerMode.conPanelObserver.skillPanel.auto();
         } else {

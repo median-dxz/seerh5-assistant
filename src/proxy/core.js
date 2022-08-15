@@ -15,5 +15,3 @@ window.SA = {
 };
 
 export { Const, Utils, Functions, PetHelper, BattleModule, SAEventManager };
-
-export { delay, warpper, runWithCheckTimes } from './utils/common.js';

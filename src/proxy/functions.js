@@ -134,3 +134,30 @@ export async function LowerBlood(pets, healPotionId = 300013, cb) {
     );
     BattleModuleManager.runOnce();
 }
+
+export async function delCounterMark() {
+    const umarks = CountermarkController.getAllUniversalMark().reduce((pre, v) => {
+        const name = v.markName;
+        if (v.catchTime == 0 && v.isBindMon == false && v.level < 5) {
+            if (!pre.has(name)) {
+                pre.set(v.markName, [v]);
+            } else {
+                pre.get(name).push(v);
+            }
+        }
+        return pre;
+    }, new Map());
+
+    let obj = Object.create(null);
+    for (let [k, v] of umarks) {
+        if (v.length > 5) {
+            for (let i in v) {
+                if (i >= 14) {
+                    const mark = v[i];
+                    const result = await SocketSendByQueue(CommandID.COUNTERMARK_RESOLVE, [mark.obtainTime]);
+                    await delay(100);
+                }
+            }
+        }
+    }
+}
