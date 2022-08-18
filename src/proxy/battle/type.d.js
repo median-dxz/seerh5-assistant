@@ -1,5 +1,5 @@
-import Pet from "../entities/pet.js";
-import Skill from "../entities/skill.js";
+import Pet from '../entities/pet.js';
+import Skill from '../entities/skill.js';
 
 /**
  * 战斗中的行动模型，接受当前战斗的数据，并自行执行战斗操作
@@ -22,6 +22,6 @@ import Skill from "../entities/skill.js";
  * @typedef RoundInfo
  * @type {Object}
  * @property {Object|undefined} pet
- * @property {Number|undefined}   round
- * @property {boolean|undefined}  isDiedSwitch
+ * @property {Number|undefined} round
+ * @property {boolean|undefined} isDiedSwitch
  */

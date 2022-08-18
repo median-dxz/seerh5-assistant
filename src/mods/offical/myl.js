@@ -2,7 +2,8 @@ import * as saco from '../../proxy/core.js';
 import data from '../common.config.js';
 
 const ct = data.petCts;
-const { BattleModule, Functions, Utils, PetHelper, delay } = saco;
+const { BattleModule, Functions, Utils, PetHelper} = saco;
+const { delay } = Utils;
 const { BaseSkillModule } = BattleModule;
 
 const Bags = [
@@ -27,7 +28,7 @@ const Bags = [
         { catchTime: ct.时空界皇, name: '时空界皇', id: 4377 },
     ],
 ];
-const defaultPet = [ct.芳馨·茉蕊儿, ct.幻影蝶, ct.鲁肃, ct.神寂·克罗诺斯];
+const defaultPet = [ct.芳馨·茉蕊儿, ct.幻影蝶, ct.潘克多斯, ct.神寂·克罗诺斯];
 const DSPs = [];
 const NMSs = [];
 

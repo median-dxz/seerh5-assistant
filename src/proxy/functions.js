@@ -57,7 +57,7 @@ export async function SwitchBag(pets) {
  * @param {Function} cb 回调函数
  * @description 利用谱尼封印自动压血
  */
-export async function LowerBlood(pets, healPotionId = 300013, cb) {
+export async function LowerBlood(pets, healPotionId = consts.ITEMS.Potion.中级体力药剂, cb) {
     const PosType = consts.PETPOS;
     if (!pets || pets.length === 0) {
         cb && cb();

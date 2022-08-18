@@ -26,16 +26,16 @@ let sa_init = async () => {
         />.*?>面板.*?还没有.*$/,
         /js文件>.*已经加载到内存中$/,
         /head hit.*?index/,
-        /PetID:.*?offsetX:/
+        /PetID:.*?offsetX:/,
     ];
 
     console.log = new Proxy(console.log, {
         apply: function (target, _this, args) {
             if (args.every((v) => typeof v === 'string')) {
                 args = args.filter((v) => !filterLogText.some((reg) => v.match(reg)));
-                target(...args);
+                args.length > 0 && Reflect.apply(target, this, args);
             } else {
-                target(...args);
+                Reflect.apply(target, this, args);
             }
         },
     });
@@ -44,9 +44,9 @@ let sa_init = async () => {
         apply: function (target, _this, args) {
             if (args.every((v) => typeof v === 'string')) {
                 args = args.filter((v) => !filterWarnText.some((reg) => v.match(reg)));
-                target(...args);
+                args.length > 0 && Reflect.apply(target, this, args);
             } else {
-                target(...args);
+                Reflect.apply(target, this, args);
             }
         },
     });

@@ -100,19 +100,21 @@ export const BattleModuleManager = {
 };
 
 /**
- * @param {NameMatched} nms
- * @param {DiedSwitchLinked} dsp
+ * @param {BaseSkillModule.NameMatched} nms
+ * @param {BaseSkillModule.DiedSwitchLinked} dsp
  * @returns {SkillModule}
  */
 function GenerateBaseBattleModule(nms, dsp) {
     return async (info, skills, pets) => {
         if (info.isDiedSwitch) {
-            const next = dsp.match(pets);
+            const next = dsp.match(pets, info.pet.ct);
             if (next != -1) {
                 BattleOperator.switchPet(next);
+                await delay(800);
+                skills = BattleInfoProvider.getCurSkills();
+            } else {
+                skills = [];
             }
-            await delay(800);
-            skills = BattleInfoProvider.getCurSkills();
         }
         const sid = nms.match(skills);
         if (sid != 0) {

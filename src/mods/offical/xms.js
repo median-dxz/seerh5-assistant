@@ -1,7 +1,8 @@
 import * as saco from '../../proxy/core.js';
 import data from '../common.config.js';
 
-const { BattleModule, Const, Functions, PetHelper, Utils, delay } = saco;
+const { BattleModule, Const, Functions, PetHelper, Utils } = saco;
+const { delay } = Utils;
 const { BaseSkillModule, BattleInfoProvider, BattleModuleManager, BattleOperator } = BattleModule;
 const ct = data.petCts;
 
@@ -48,7 +49,7 @@ class xms {
             },
             BattleModule.GenerateBaseBattleModule(NMS, DSP),
             () => {
-                this.c2s_Get_DailyReward();
+                this.dm.c2s_Get_DailyReward();
             }
         );
         BattleModuleManager.runOnce();

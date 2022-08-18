@@ -1,8 +1,9 @@
 import * as saco from '../../proxy/core.js';
 import data from '../common.config.js';
 
-let { BattleModule, Utils, PetHelper, Functions, delay } = saco;
-let { BaseSkillModule, BattleInfoProvider, BattleModuleManager, BattleOperator } = BattleModule;
+const { BattleModule, Utils, PetHelper, Functions } = saco;
+const { delay } = Utils;
+const { BaseSkillModule, BattleInfoProvider, BattleModuleManager, BattleOperator } = BattleModule;
 
 const AttrConst = {
     daily_gzcjykls_times: 15950,

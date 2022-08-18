@@ -1,7 +1,8 @@
 import * as saco from '../../proxy/core.js';
 import data from '../common.config.js';
 
-const { Utils, BattleModule, delay, PetHelper, Functions, SAEventManager, Const } = saco;
+const { Utils, BattleModule, PetHelper, Functions, SAEventManager, Const } = saco;
+const { delay } = Utils;
 const { BaseSkillModule, BattleInfoProvider, BattleOperator, BattleModuleManager } = BattleModule;
 const ct = data.petCts;
 const PosType = Const.PETPOS;
@@ -57,12 +58,6 @@ class hlak {
             skillList: new BaseSkillModule.NameMatched(['幻梦芳逝', '鬼焰·焚身术', '梦境残缺', '月下华尔兹']),
             lowerbloodPets: [ct.魔钰, ct.潘克多斯, ct.蒂朵, ct.月照星魂],
         },
-        潘朵魔钰: {
-            defaultPet: ct.蒂朵,
-            diedLink: new BaseSkillModule.DiedSwitchLinked(['蒂朵', '潘克多斯', '月照星魂', '魔钰']),
-            skillList: new BaseSkillModule.NameMatched(['幻梦芳逝', '鬼焰·焚身术', '梦境残缺', '月下华尔兹']),
-            lowerbloodPets: [ct.魔钰, ct.月照星魂, ct.潘克多斯, ct.蒂朵],
-        },
         鲁肃圣谱: {
             defaultPet: ct.鲁肃,
             diedLink: new BaseSkillModule.DiedSwitchLinked(['鲁肃', '圣灵谱尼']),
@@ -93,7 +88,7 @@ class hlak {
         '朵潘月照',
         '克朵六时',
         '朵潘月照',
-        '潘朵魔钰',
+        '朵潘魔钰',
     ];
     constructor() {}
 
@@ -101,16 +96,14 @@ class hlak {
         for (let pet of PetHelper.getPets(PosType.secondBag1)) {
             await PetHelper.setPetLocation(pet.catchTime, PosType.storage);
         }
-        await PetHelper.setPetLocation(ct.六界帝神, PosType.secondBag1);
-        await PetHelper.setPetLocation(ct.圣灵谱尼, PosType.secondBag1);
-        await PetHelper.setPetLocation(ct.千裳, PosType.secondBag1);
+        await PetHelper.setPetLocation(ct.神寂·克罗诺斯, PosType.secondBag1);
         await PetHelper.setPetLocation(ct.鲁肃, PosType.secondBag1);
 
         await Functions.SwitchBag([
             { catchTime: ct.魔钰, name: '魔钰', id: 3567 },
             { catchTime: ct.时空界皇, name: '时空界皇', id: 3463 },
             { catchTime: ct.蒂朵, name: '蒂朵', id: 4377 },
-            { catchTime: ct['神寂·克罗诺斯'], name: '神寂·克罗诺斯', id: 2977 },
+            { catchTime: ct.六界帝神, name: '六界帝神', id: 2977 },
             { catchTime: ct.潘克多斯, name: '潘克多斯', id: 4344 },
             { catchTime: ct.月照星魂, name: '月照星魂', id: 3866 },
         ]);
@@ -140,6 +133,8 @@ class hlak {
         } else {
             await PetHelper.setPetLocation(ct.六界帝神, PosType.secondBag1);
             await PetHelper.setPetLocation(ct.时空界皇, PosType.secondBag1);
+            await PetHelper.setPetLocation(ct.魔钰, PosType.secondBag1);
+            await PetHelper.setPetLocation(ct.月照星魂, PosType.secondBag1);
             if (curModName == '鲁肃圣谱') {
                 await PetHelper.setPetLocation(ct.圣灵谱尼, PosType.bag1);
                 await PetHelper.setPetLocation(ct.鲁肃, PosType.bag1);
@@ -169,9 +164,13 @@ class hlak {
             async (info, skills, pets) => {
                 if (info.isDiedSwitch) {
                     let next = curMod.diedLink.match(pets, info.pet.ct);
-                    if (next != -1) BattleOperator.switchPet(next);
-                    await delay(800);
-                    skills = BattleInfoProvider.getCurSkills();
+                    if (next != -1) {
+                        BattleOperator.switchPet(next);
+                        await delay(800);
+                        skills = BattleInfoProvider.getCurSkills();
+                    } else {
+                        skills = [];
+                    }
                 }
                 const skillId = curMod.skillList.match(skills);
                 if (skillId > 0) BattleOperator.useSkill(skillId);
@@ -189,9 +188,9 @@ class hlak {
                     `
                 );
                 if (curModName.includes('鲁肃')) {
-                    await PetHelper.setPetLocation(ct.圣灵谱尼, PosType.secondBag1);
-                    await PetHelper.setPetLocation(ct.千裳, PosType.secondBag1);
-                    await PetHelper.setPetLocation(ct.鲁肃, PosType.secondBag1);
+                    await PetHelper.setPetLocation(ct.鲁肃, PosType.storage);
+                    await PetHelper.setPetLocation(ct.圣灵谱尼, PosType.storage);
+                    await PetHelper.setPetLocation(ct.千裳, PosType.storage);
                 }
             }
         );

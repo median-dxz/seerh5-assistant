@@ -2,7 +2,7 @@ import * as saco from '../../proxy/core.js';
 import data from '../common.config.js';
 
 const { BattleModule, Utils, Const, Functions, PetHelper } = saco;
-const { delay } = saco;
+const { delay } = Utils;
 const { BaseSkillModule, BattleModuleManager, BattleOperator, BattleInfoProvider } = BattleModule;
 const ct = data.petCts.月照星魂;
 
