@@ -1,7 +1,7 @@
 import * as saco from '../../proxy/core.js';
 import data from '../common.config.js';
 
-const { SAEventManager, Const } = saco;
+const { SAEventManager, Const, Utils } = saco;
 const { EVENTS: SAEvents } = Const;
 
 const changeCloth = new Map();
@@ -96,6 +96,23 @@ class LocalCloth {
             }
         };
         SAEventManager.addEventListener(SAEvents.Module.loaded, petDetailInfoModuleLoaded);
+
+        const petBagModuleLoaded = (e) => {
+            if (e.detail.moduleName == 'petBag') {
+                SAEventManager.addEventListener(
+                    SAEvents.Module.show,
+                    () => {
+                        const protoFunc = petBag.PetBag.prototype.onEndDrag;
+                        petBag.PetBag.prototype.onEndDrag = Utils.warpper(protoFunc, null, function () {
+                            console.log(this.hitHead.petInfo);
+                        });
+                    },
+                    { once: true }
+                );
+                SAEventManager.removeEventListener(SAEvents.Module.loaded, petBagModuleLoaded);
+            }
+        };
+        SAEventManager.addEventListener(SAEvents.Module.loaded, petBagModuleLoaded);
     }
     init() {}
 }

@@ -34,7 +34,7 @@ function getPets(location) {
 
 const isDefault = (ct) => PetManager.defaultTime == ct;
 
-const setDefault = (ct) => PetManager.setDefault(ct);
+const setDefault = PetManager.setDefault.bind(PetManager);
 
 const getPetLocation = async (ct) => {
     return new Promise((resolve, reject) => {
@@ -55,6 +55,13 @@ const getPetLocation = async (ct) => {
     });
 };
 
+const popPetsFromBag = async (ct) => {
+    const locat = await getPetLocation(ct);
+    if (locat != PosType.elite && locat != PosType.storage) {
+        await setPetLocation(ct, PosType.storage);
+    }
+};
+
 const setPetLocation = async (ct, newLocation) => {
     let l = await getPetLocation(ct);
     if (l == newLocation || l == -1) return false;
@@ -64,16 +71,10 @@ const setPetLocation = async (ct, newLocation) => {
             await SocketReceivedPromise(CommandID.PET_RELEASE, async () => {
                 if (l == PosType.bag1) {
                     PetManager.bagToSecondBag(ct);
-                } else if (l == PosType.storage) {
-                    PetManager.storageToSecondBag(ct);
-                } else if (l == PosType.elite) {
-                    SocketReceivedPromise(CommandID.PET_RELEASE, () => {
-                        PetManager.delLovePet(0, ct, 0);
-                    });
+                } else if (l == PosType.storage || l == PosType.elite) {
                     PetManager.storageToSecondBag(ct);
                 }
             });
-
             break;
         case PosType.bag1:
             if (PetManager.isBagFull) return false;
@@ -100,16 +101,21 @@ const setPetLocation = async (ct, newLocation) => {
             });
             break;
         case PosType.elite:
-            await SocketReceivedPromise(CommandID.PET_RELEASE, async () => {
-                if (l == PosType.bag1) {
-                    PetManager.bagToStorage(ct);
-                } else if (l == PosType.secondBag1) {
-                    PetManager.secondBagToStorage(ct);
-                }
-            });
-            await SocketReceivedPromise(CommandID.PET_RELEASE, async () => {
-                PetManager.addLovePet(0, ct, 0);
-            });
+            if ((await getPetLocation(ct)) != PosType.storage) {
+                await SocketReceivedPromise(CommandID.PET_RELEASE, async () => {
+                    if (l == PosType.bag1) {
+                        PetManager.bagToStorage(ct);
+                    } else if (l == PosType.secondBag1) {
+                        PetManager.secondBagToStorage(ct);
+                    }
+                });
+            }
+            if ((await getPetLocation(ct)) == PosType.storage) {
+                await SocketReceivedPromise(CommandID.PET_RELEASE, async () => {
+                    PetManager.addLovePet(0, ct, 0);
+                    PetStorage2015InfoManager.changePetPosi(ct, PosType.elite);
+                });
+            }
             break;
         default:
             break;

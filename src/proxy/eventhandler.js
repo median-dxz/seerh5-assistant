@@ -21,6 +21,25 @@ PetUpdatePropController.prototype.show = warpper(PetUpdatePropController.prototy
     GlobalEventManager.dispatchEvent(new CustomEvent(hooks.BattlePanel.completed, { detail: null }));
 });
 
+const ModuleLoadedListener = {
+    list: new Map(),
+    loadingModules: new Set(),
+    subscribe(moduleName, cb) {
+        if (!this.list.has(moduleName)) {
+            this.list.set(moduleName, []);
+        }
+        this.list.get(moduleName).push(cb);
+    },
+    notice(moduleName) {
+        if (this.list.has(moduleName)) {
+            for (let cb of this.list.get(moduleName)) {
+                cb();
+            }
+            this.list.delete(moduleName);
+        }
+    },
+};
+
 ModuleManager.beginShow = warpper(
     ModuleManager.beginShow,
     function () {
@@ -28,6 +47,7 @@ ModuleManager.beginShow = warpper(
             GlobalEventManager.dispatchEvent(
                 new CustomEvent(hooks.Module.loaded, { detail: { moduleName: arguments[0] } })
             );
+            ModuleLoadedListener.loadingModules.add(arguments[0]);
         }
     },
     null
@@ -37,6 +57,11 @@ ModuleManager._openModelCompete = warpper(ModuleManager._openModelCompete, null,
     GlobalEventManager.dispatchEvent(
         new CustomEvent(hooks.Module.show, { detail: { moduleName: this.currModule.moduleName } })
     );
+    const name = this.currModule.moduleName;
+    if (ModuleLoadedListener.loadingModules.has(name)) {
+        ModuleLoadedListener.notice(name);
+        ModuleLoadedListener.loadingModules.delete(name);
+    }
 });
 
 GlobalEventManager.addEventListener(hooks.Module.loaded, async (e) => {
@@ -79,4 +104,4 @@ GlobalEventManager.addEventListener(hooks.AwardDialog.show, async (e) => {
     e.detail.dialog.destroy();
 });
 
-export { GlobalEventManager as SAEventManager };
+export { GlobalEventManager as SAEventManager, ModuleLoadedListener as SAModuleListener };

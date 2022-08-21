@@ -58,6 +58,12 @@ class hlak {
             skillList: new BaseSkillModule.NameMatched(['幻梦芳逝', '鬼焰·焚身术', '梦境残缺', '月下华尔兹']),
             lowerbloodPets: [ct.魔钰, ct.潘克多斯, ct.蒂朵, ct.月照星魂],
         },
+        朵潘魔钰: {
+            defaultPet: ct.蒂朵,
+            diedLink: new BaseSkillModule.DiedSwitchLinked(['蒂朵', '潘克多斯', '魔钰', '月照星魂']),
+            skillList: new BaseSkillModule.NameMatched(['幻梦芳逝', '鬼焰·焚身术', '梦境残缺', '月下华尔兹']),
+            lowerbloodPets: [ct.魔钰, ct.潘克多斯, ct.蒂朵, ct.月照星魂],
+        },
         鲁肃圣谱: {
             defaultPet: ct.鲁肃,
             diedLink: new BaseSkillModule.DiedSwitchLinked(['鲁肃', '圣灵谱尼']),
@@ -188,9 +194,9 @@ class hlak {
                     `
                 );
                 if (curModName.includes('鲁肃')) {
-                    await PetHelper.setPetLocation(ct.鲁肃, PosType.storage);
-                    await PetHelper.setPetLocation(ct.圣灵谱尼, PosType.storage);
-                    await PetHelper.setPetLocation(ct.千裳, PosType.storage);
+                    await PetHelper.popPetsFromBag(ct.鲁肃);
+                    await PetHelper.popPetsFromBag(ct.圣灵谱尼);
+                    await PetHelper.popPetsFromBag(ct.千裳);
                 }
             }
         );
