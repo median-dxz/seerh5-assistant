@@ -1,20 +1,12 @@
-import consts from '../const/_exports.js';
-
-import { delay } from '../utils/common.js';
-
-import { SAEventManager } from '../eventhandler.js';
+import { CMDID, EVENTS } from '../const/_exports.js';
 
 import { BattleInfoProvider } from './infoprovider.js';
 import { BattleOperator } from './operator.js';
 
-import { BattleModule, SkillModule } from './type.d.js';
+const { delay, SAEventManager } = window;
 
 let hadnleBattleStart = () => {
-    console.log(`[BattleHandler]: 检测到对战开始, 当前模式: ${BattleModuleManager.isRun ? '对战接管' : '手动'}`);
-    FighterModelFactory.enemyMode.setHpView(true);
-    FighterModelFactory.enemyMode.setHpView = function (e) {
-        this.propView.isShowFtHp = true;
-    };
+    console.log(`[BattleModuleManager]: 检测到对战开始, 当前模式: ${BattleModuleManager.isRun ? '对战接管' : '手动'}`);
     handleRoundEnd();
 };
 
@@ -29,21 +21,16 @@ let handleRoundEnd = () => {
         );
 };
 
-let handleBattleEnd = async () => {
-    console.log('[BattleHandler]: 检测到对战结束');
-    await delay(500);
-    if (FightManager.isWin) {
-        ModuleManager.currModule.touchHandle && ModuleManager.currModule.touchHandle();
-    } else {
-        ModuleManager.currModule.onClose && ModuleManager.currModule.onClose();
+let handleBattleEnd = async (e) => {
+    if (e instanceof CustomEvent) {
+        console.log(`[BattleModuleManager]: 检测到对战结束 对战胜利: ${e.detail.isWin}`);
+        BattleModuleManager.signDeliver.dispatchEvent(new CustomEvent('bm_end'));
     }
-    BattleModuleManager.signDeliver.dispatchEvent(new CustomEvent('bm_end'));
 };
 
-// todo : 不同模块的event deliver分开，思考全局事件注册的妥善处理方式
-SAEventManager.addEventListener(consts.EVENTS.BattlePanel.start, hadnleBattleStart);
-SAEventManager.addEventListener(consts.EVENTS.BattlePanel.roundEnd, handleRoundEnd);
-SAEventManager.addEventListener(consts.EVENTS.BattlePanel.completed, handleBattleEnd);
+SAEventManager.addEventListener(EVENTS.BattlePanel.start, hadnleBattleStart);
+SAEventManager.addEventListener(EVENTS.BattlePanel.roundEnd, handleRoundEnd);
+SAEventManager.addEventListener(EVENTS.BattlePanel.completed, handleBattleEnd);
 
 let battleQueue = [];
 
@@ -126,6 +113,3 @@ function GenerateBaseBattleModule(nms, dsp) {
 import * as BaseSkillModule from './skillmodule/base.js';
 export { BaseSkillModule, GenerateBaseBattleModule };
 export { BattleInfoProvider, BattleOperator };
-// stop
-
-// run

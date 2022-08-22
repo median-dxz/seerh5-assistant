@@ -1,4 +1,4 @@
-import { delay } from '../utils/common.js';
+import { delay } from '../../utils.js';
 
 export const BattleOperator = {
     useSkill: async (skillId) => {

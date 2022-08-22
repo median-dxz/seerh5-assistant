@@ -69,7 +69,7 @@ class sign {
             if (tid == 5) tid = 1;
             if (!reprogress) {
                 // 清空背包
-                for (let p of PetHelper.getPets(PosType.bag1)) {
+                for (let p of await PetHelper.getPets(PosType.bag1)) {
                     await PetHelper.setPetLocation(p.catchTime, PosType.storage);
                 }
             }

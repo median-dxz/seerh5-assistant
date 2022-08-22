@@ -1,62 +1,12 @@
-/**
- * @description 将数据包加到待发送队列
- * @param {Number} cmd 命令id
- * @param {Array} data 数据数组
- */
-export async function SocketSendByQueue(cmd, data) {
-    return new Promise((resolve, reject) => {
-        SocketConnection.sendByQueue(
-            cmd,
-            data,
-            (v) => resolve(v),
-            (err) => reject(err)
-        );
-    });
-}
-
-export async function SocketReceivedPromise(cmd, func) {
-    return new Promise((resolve, reject) => {
-        new Promise((resolve, reject) => {
-            function resolver() {
-                resolve(resolver);
-            }
-            SocketConnection.addCmdListener(cmd, resolver);
-        }).then((v) => {
-            SocketConnection.removeCmdListener(v);
-            resolve();
-        });
-        func && func();
-    });
-}
+import { SocketReceivedPromise, SocketSendByQueue } from './sa-socket.js';
 
 /**
  * @description 获取特定键值
- * @param {...Number} value 要查询的值
+ * @param {...number} value 要查询的值
  */
 export async function GetMultiValue(...value) {
-    if (value === null) return;
+    if (!value) return;
     return KTool.getMultiValueAsync(value);
-}
-
-/**
- * @description 计算克制倍率
- * @param {Number} e1 属性1id
- * @param {Number} e2 属性2id
- */
-export function CalcElementRatio(e1, e2) {
-    let mapping = (x) => {
-        let obj = SkillXMLInfo.typeMap[x];
-        if (obj.hasOwnProperty('is_dou')) {
-            obj = obj.att.split(' ');
-            obj = [SkillXMLInfo.typeMap[obj[0]].en, SkillXMLInfo.typeMap[obj[1]].en];
-        } else {
-            obj = [obj.en];
-        }
-        return obj;
-    };
-    e1 = mapping(e1);
-    e2 = mapping(e2);
-    return TypeXMLInfo.getRelationsPow(e1, e2);
 }
 
 let dictMatch = (dict, reg, keyName) => {
@@ -81,12 +31,11 @@ export function matchPetName(nameReg) {
 }
 
 export function getTypeIdByName(name) {
-    const dict = SkillXMLInfo.typeMap;
-    for (let key in dict) {
-        if (dict[key].cn.match(name)) {
-            return dict[key];
+    Object.values(SkillXMLInfo.typeMap).forEach((v) => {
+        if (v.cn.match(name)) {
+            return v.id;
         }
-    }
+    });
     return undefined;
 }
 
@@ -99,10 +48,10 @@ export function getUserCurrency(type) {
 export async function updateMark(markInfo) {
     let lv = 5 - CountermarkController.getInfo(markInfo.obtainTime).level;
     while (lv--) {
-        await SocketSendByQueue(CommandID.STRENGTHEN_COUNTERMARK, [markInfo.obtainTime]);
-        await SocketSendByQueue(CommandID.SAVE_COUNTERMARK_PROPERTY, [markInfo.obtainTime]);
+        await Socket.SocketSendByQueue(CommandID.STRENGTHEN_COUNTERMARK, [markInfo.obtainTime]);
+        await Socket.SocketSendByQueue(CommandID.SAVE_COUNTERMARK_PROPERTY, [markInfo.obtainTime]);
     }
-    await SocketReceivedPromise(CommandID.GET_COUNTERMARK_LIST2, () => {
+    await Socket.SocketReceivedPromise(CommandID.GET_COUNTERMARK_LIST2, () => {
         CountermarkController.updateMnumberMark({ markID: markInfo.markID, catchTime: markInfo.obtainTime });
     });
     EventManager.dispatchEvent(
@@ -110,4 +59,8 @@ export async function updateMark(markInfo) {
     );
 }
 
-export { delay, warpper, runWithCheckTimes } from './common.js';
+export async function getStatusName(id) {
+    return PetStatusEffectConfig.getName(0, id);
+}
+
+export * from './sa-socket.js';

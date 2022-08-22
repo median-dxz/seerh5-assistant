@@ -1,8 +1,7 @@
 import * as saco from '../../proxy/core.js';
 import data from '../common.config.js';
 
-const { Utils, BattleModule, PetHelper, Functions, SAEventManager, Const } = saco;
-const { delay } = Utils;
+const { Utils, BattleModule, PetHelper, Functions, Const } = saco;
 const { BaseSkillModule, BattleInfoProvider, BattleOperator, BattleModuleManager } = BattleModule;
 const ct = data.petCts;
 const PosType = Const.PETPOS;
@@ -155,13 +154,14 @@ class hlak {
 
         Functions.CureAllPet();
         await delay(200);
-        await new Promise((resolve, reject) => {
+
+        await /** @type {Promise<void>} */(new Promise((resolve, reject) => {
             Functions.LowerBlood(curMod.lowerbloodPets, Const.ITEMS.Potion.高级体力药剂, async () => {
                 PetHelper.setDefault(curMod.defaultPet);
                 await delay(1000);
                 resolve();
             });
-        });
+        }));
 
         BattleModuleManager.queuedModule(
             async () => {

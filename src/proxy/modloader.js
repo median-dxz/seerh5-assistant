@@ -17,7 +17,7 @@ async function register(id, path) {
 }
 
 if (import.meta.webpackHot) {
-    import.meta.webpackHot.accept(function () {
+    import.meta.webpackHot.accept(() => {
         for (let mod of ModList) {
             register(mod.modId, mod.path);
         }

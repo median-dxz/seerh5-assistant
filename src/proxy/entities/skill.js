@@ -1,8 +1,8 @@
-import Entity from "./entity.js";
+import Entity from './entity.js';
 
 export default class Skill extends Entity {
-    type = "skill";
-    element;
+    __type = 'skill';
+    elementId;
     category;
     power;
     priority;
@@ -11,41 +11,48 @@ export default class Skill extends Entity {
     maxPP;
     effects;
     mustHit;
-    constructor(e) {
+    constructor(skillLike) {
         super();
-        let skillObj = SkillXMLInfo.getSkillObj(e);
-        if (skillObj != null) {
+        if (typeof skillLike == 'object' && skillLike) {
             [
                 this.id,
                 this.name,
-                this.element,
+                this.elementId,
                 this.category,
                 this.power,
                 this.priority,
                 this.accuracy,
+                this.pp,
                 this.maxPP,
                 this.effects,
                 this.mustHit,
             ] = [
-                skillObj.ID,
-                skillObj.Name,
-                skillObj.Type,
-                skillObj.Category,
-                skillObj.Power ? skillObj.Power : 0,
-                skillObj.Priority ? skillObj.Priority : undefined,
-                skillObj.Accuracy,
-                skillObj.MaxPP,
-                [skillObj.SideEffect, skillObj.SideEffectArg],
-                skillObj.MustHit ? true : false,
+                skillLike.ID,
+                skillLike.Name,
+                skillLike.Type,
+                skillLike.Category,
+                skillLike.Power ? skillLike.Power : 0,
+                skillLike.Priority ? skillLike.Priority : undefined,
+                skillLike.Accuracy,
+                skillLike.pp,
+                skillLike.MaxPP,
+                [skillLike.SideEffect, skillLike.SideEffectArg],
+                skillLike.MustHit ? true : false,
             ];
-        } else {
-            this.name = "暂不支持解析技能石";
+            const argSplit = (arg) => {
+                if (arg !== undefined && typeof arg == 'string') {
+                    return arg.split(' ').map((v) => parseInt(v));
+                } else {
+                    return [];
+                }
+            };
+            this.effects = [argSplit(this.effects[0]), argSplit(this.effects[1])];
         }
     }
 
     get describe() {
         let set = new Set(this.effects[0].map((v) => 1000000 + v));
-        let des = "";
+        let des = '';
         let p = 0;
         for (let effect of SkillXMLInfo.SKILL_OBJ.SideEffects.SideEffect) {
             if (set.has(effect.ID)) {
@@ -63,6 +70,18 @@ export default class Skill extends Entity {
         return des;
     }
 
-    getElName = () => SkillXMLInfo.getTypeCN(this.id);
-    getCategoryName = () => SkillXMLInfo.getCategoryName(this.category);
+    get element() {
+        return SkillXMLInfo.typeMap[SkillXMLInfo.getTypeID(this.id)];
+    }
+
+    get categoryName() {
+        return SkillXMLInfo.getCategoryName(this.id);
+    }
 }
+
+export const SkillFactory = {
+    formatById: (id) => {
+        const obj = SkillXMLInfo.getSkillObj(id);
+        return new Skill(obj);
+    },
+};

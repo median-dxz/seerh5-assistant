@@ -1,7 +1,7 @@
 import * as saco from '../../proxy/core.js';
 import data from '../common.config.js';
 
-const { SAEventManager, Const, Utils } = saco;
+const { Const, Utils } = saco;
 const { EVENTS: SAEvents } = Const;
 
 const changeCloth = new Map();
@@ -9,6 +9,7 @@ const origalCloth = new Map();
 
 class LocalCloth {
     constructor() {
+       const SAEventManager = window.SAEventManager;
         Object.defineProperty(FighterUserInfos.prototype, 'allPetID', {
             get: function () {
                 if (this.myInfo && this.otherInfo)
@@ -75,7 +76,7 @@ class LocalCloth {
                     SAEvents.Module.show,
                     () => {
                         const protoFunc = petDetailedInfo.PetInfoSkinView.prototype.updateSkin;
-                        petDetailedInfo.PetInfoSkinView.prototype.updateSkin = SA.Utils.warpper(
+                        petDetailedInfo.PetInfoSkinView.prototype.updateSkin = warpper(
                             protoFunc,
                             null,
                             function () {
@@ -103,7 +104,7 @@ class LocalCloth {
                     SAEvents.Module.show,
                     () => {
                         const protoFunc = petBag.PetBag.prototype.onEndDrag;
-                        petBag.PetBag.prototype.onEndDrag = Utils.warpper(protoFunc, null, function () {
+                        petBag.PetBag.prototype.onEndDrag = warpper(protoFunc, null, function () {
                             console.log(this.hitHead.petInfo);
                         });
                     },
