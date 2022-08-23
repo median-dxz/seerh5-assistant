@@ -1,3 +1,4 @@
+// @ts-nocheck
 import path from 'path';
 
 import { fileURLToPath } from 'url';
@@ -60,7 +61,7 @@ const appConfig = {
     target: 'web',
     // dependencies: ['core'],
     entry: {
-        index: './src/index.js',
+        index: './src/index.tsx',
     },
     experiments: {
         outputModule: true,
@@ -68,22 +69,16 @@ const appConfig = {
     module: {
         rules: [
             {
-                test: /\.(js|jsx)$/i,
-                exclude: /(node_modules)/,
+                test: /\.(t|j)sx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/,
                 include: path.resolve(__dirname, 'src'),
-                loader: 'babel-loader',
-                options: {
-                    cacheDirectory: true,
-                    presets: [
-                        [
-                            '@babel/preset-react',
-                            {
-                                runtime: 'automatic',
-                            },
-                        ],
-                    ],
-                    plugins: [],
-                },
+            },
+            {
+                test: /\.js$/,
+                loader: 'source-map-loader',
+                exclude: /node_modules/,
+                include: path.resolve(__dirname, 'src'),
             },
             {
                 test: /\.css$/,
@@ -111,15 +106,15 @@ const appConfig = {
         chunkFilename: '[id][contenthash:8].js',
         publicPath: '/',
         module: true,
-        clean: true
+        clean: true,
     },
     resolve: {
         alias: {
             '@mui/styled-engine': '@mui/styled-engine-sc',
         },
-        extensions: ['.js', '.jsx'],
+        extensions: ['.js', '.jsx', '.tsx', '.ts'],
     },
-    devtool: 'eval-source-map',
+    devtool: 'source-map',
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
         new HtmlWebpackPlugin({
@@ -137,6 +132,7 @@ const appConfig = {
         },
         hot: 'only',
         port: 1234,
+        
         setupMiddlewares: (middlewares, devServer) => {
             if (!devServer) {
                 throw new Error('webpack-dev-server is not defined');
@@ -153,8 +149,6 @@ export default (env, argv) => {
         delete exports.devtool;
     } else if (argv.mode === 'development') {
         exports.plugins.push(new ReactRefreshWebpackPlugin({ overlay: false }));
-        exports.module.rules[0].options.plugins.push('react-refresh/babel');
-        exports.module.rules[0].options.presets[0].development = true;
     }
     return appConfig;
 };

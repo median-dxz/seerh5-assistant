@@ -1,4 +1,3 @@
-// @ts-nocheck
 export {};
 
 SocketEncryptImpl.prototype.log = function (n, ...e) {

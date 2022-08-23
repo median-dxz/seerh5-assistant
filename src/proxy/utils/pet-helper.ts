@@ -1,4 +1,4 @@
-import { SocketReceivedPromise } from './sa-utils.js';
+import { SocketReceivedPromise, SocketSendByQueue } from './sa-utils.js';
 import { CMDID, PETPOS as PosType } from '../const/_exports.js';
 import Pet, { PetFactory } from '../entities/pet.js';
 
@@ -19,6 +19,7 @@ export const updateStroageInfo = () => {
 /**
  * @description 获取精灵列表
  * @param {number} location - Const.PETPOS
+ * @return {Promise<Pet[]>}
  */
 export async function getPets(location) {
     await updateStroageInfo();
@@ -134,17 +135,31 @@ export const popPetFromBag = async (ct) => {
     }
 };
 
+export function curePet(ct) {
+    SocketSendByQueue(CMDID.PET_ONE_CURE, ct);
+}
+
+export function cureAllPet() {
+    PetManager.noAlarmCureAll();
+}
+
+/**
+ * @param {boolean} enable
+ */
+export function ToggleAutoCure(enable) {
+    SocketSendByQueue(42019, [22439, Number(enable)]);
+}
+
 /**
  * @description 计算克制倍率
  * @param {Number} e1 属性1id
  * @param {Number} e2 属性2id
  */
-export function CalcElementRatio(e1, e2) {
-    let mapping = (x) => {
+export function calcElementRatio(e1, e2) {
+    const mapping = (x) => {
         let obj = SkillXMLInfo.typeMap[x];
-        if (obj.hasOwnProperty('is_dou')) {
-            obj = obj.att.split(' ');
-            obj = [SkillXMLInfo.typeMap[obj[0]].en, SkillXMLInfo.typeMap[obj[1]].en];
+        if (Object.hasOwn(obj, 'is_dou')) {
+            obj = obj.att.split(' ').map((v) => SkillXMLInfo.typeMap[v].en);
         } else {
             obj = [obj.en];
         }
@@ -153,31 +168,4 @@ export function CalcElementRatio(e1, e2) {
     e1 = mapping(e1);
     e2 = mapping(e2);
     return TypeXMLInfo.getRelationsPow(e1, e2);
-}
-
-/**
- * @description 计算可用的高倍克制精灵(默认大于等于1.5)
- * @param {Number} e 属性id
- * @param {Number} [radio=1.5] 倍率
- */
-export function calcAllEffecientPet(e, radio = 1.5) {
-    return updateStroageInfo().then(() => {
-        let pets = [
-            ...PetStorage2015InfoManager.allInfo,
-            ...PetManager._bagMap.getValues(),
-            ...PetManager._secondBagMap.getValues(),
-        ];
-
-        let r = pets.filter((v) => CalcElementRatio(PetXMLInfo.getType(v.id), e) >= radio);
-        return r.map((v) => {
-            let eid = PetXMLInfo.getType(v.id);
-            return {
-                name: v.name,
-                elementId: eid,
-                element: SkillXMLInfo.typeMap[eid].cn,
-                id: v.id,
-                ratio: CalcElementRatio(eid, e),
-            };
-        });
-    });
 }

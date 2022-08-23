@@ -1,3 +1,4 @@
+import Pet from '/src/proxy/entities/pet.js';
 import * as saco from '../../proxy/core.js';
 import data from '../common.config.js';
 
@@ -9,7 +10,7 @@ const origalCloth = new Map();
 
 class LocalCloth {
     constructor() {
-       const SAEventManager = window.SAEventManager;
+        const SAEventManager = window.SAEventManager;
         Object.defineProperty(FighterUserInfos.prototype, 'allPetID', {
             get: function () {
                 if (this.myInfo && this.otherInfo)
@@ -76,20 +77,15 @@ class LocalCloth {
                     SAEvents.Module.show,
                     () => {
                         const protoFunc = petDetailedInfo.PetInfoSkinView.prototype.updateSkin;
-                        petDetailedInfo.PetInfoSkinView.prototype.updateSkin = warpper(
-                            protoFunc,
-                            null,
-                            function () {
-                                const t = this._arry.getItemAt(this._selectSkinIndex);
-                                this.txt_line2.text =
-                                    `                    精灵ID: ${t.monId}\n` +
-                                    `                    皮肤ID: ${t.id}\n` +
-                                    `                    皮肤绑定ID: ${PetSkinXMLInfo.getSkinPetId(t.id, t.monId)}`;
-                                this.img_yzb.visible =
-                                    (this._petInfo.skinId == 0 && !t.id) || this._petInfo.skinId == t.id;
-                                this.img_zhuangbei.visible = !this.img_yzb.visible;
-                            }
-                        );
+                        petDetailedInfo.PetInfoSkinView.prototype.updateSkin = warpper(protoFunc, null, function () {
+                            const t = this._arry.getItemAt(this._selectSkinIndex);
+                            this.txt_line2.text =
+                                `                    精灵ID: ${t.monId}\n` +
+                                `                    皮肤ID: ${t.id}\n` +
+                                `                    皮肤绑定ID: ${PetSkinXMLInfo.getSkinPetId(t.id, t.monId)}`;
+                            this.img_yzb.visible = (this._petInfo.skinId == 0 && !t.id) || this._petInfo.skinId == t.id;
+                            this.img_zhuangbei.visible = !this.img_yzb.visible;
+                        });
                     },
                     { once: true }
                 );
@@ -105,7 +101,7 @@ class LocalCloth {
                     () => {
                         const protoFunc = petBag.PetBag.prototype.onEndDrag;
                         petBag.PetBag.prototype.onEndDrag = warpper(protoFunc, null, function () {
-                            console.log(this.hitHead.petInfo);
+                            console.log(new Pet(this.hitHead.petInfo));
                         });
                     },
                     { once: true }

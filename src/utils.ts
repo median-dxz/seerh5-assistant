@@ -1,8 +1,4 @@
-/**
- * @param {number} time
- * @returns {Promise<void>}
- */
-async function delay(time) {
+async function delay(time: number): Promise<void> {
     return new Promise((resolver) => {
         const monitor = setTimeout(() => {
             clearTimeout(monitor);
@@ -11,12 +7,8 @@ async function delay(time) {
     });
 }
 
-/**
- * @param {Function} func
- * @param {Function} beforeDecorator
- * @param {Function} afterDecorator
- */
-function warpper(func, beforeDecorator, afterDecorator) {
+
+function warpper(func: () => any, beforeDecorator?: () => any, afterDecorator?: () => any): () => any {
     return async function () {
         beforeDecorator && (await beforeDecorator.apply(this, arguments));
         const r = await func.apply(this, arguments);

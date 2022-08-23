@@ -69,11 +69,11 @@ class hlak {
             skillList: new BaseSkillModule.NameMatched(['踏浪听风吟', '神灵救世光']),
             lowerbloodPets: [ct.鲁肃],
         },
-        鲁肃千裳: {
-            defaultPet: ct.鲁肃,
-            diedLink: new BaseSkillModule.DiedSwitchLinked(['鲁肃', '千裳']),
-            skillList: new BaseSkillModule.NameMatched(['踏浪听风吟', '浮梦千裳诀']),
-            lowerbloodPets: [ct.鲁肃],
+        蒂朵千裳: {
+            defaultPet: ct.蒂朵,
+            diedLink: new BaseSkillModule.DiedSwitchLinked(['蒂朵', '千裳']),
+            skillList: new BaseSkillModule.NameMatched(['浮梦千裳诀', '幻梦芳逝']),
+            lowerbloodPets: [ct.蒂朵],
         },
         克朵魔钰第五: {
             defaultPet: ct['神寂·克罗诺斯'],
@@ -84,7 +84,7 @@ class hlak {
     };
 
     actModDict = [
-        '鲁肃千裳',
+        '蒂朵千裳',
         '克朵六时',
         '鲁肃圣谱',
         '朵潘月照',
@@ -98,7 +98,7 @@ class hlak {
     constructor() {}
 
     async init() {
-        for (let pet of PetHelper.getPets(PosType.secondBag1)) {
+        for (let pet of await PetHelper.getPets(PosType.secondBag1)) {
             await PetHelper.setPetLocation(pet.catchTime, PosType.storage);
         }
         await PetHelper.setPetLocation(ct.神寂·克罗诺斯, PosType.secondBag1);
@@ -113,7 +113,7 @@ class hlak {
             { catchTime: ct.月照星魂, name: '月照星魂', id: 3866 },
         ]);
 
-        Functions.CureAllPet();
+        PetHelper.cureAllPet();
         await this.updateActivityInfo();
         await this.moveStep();
         await this.updateActivityInfo();
@@ -143,33 +143,37 @@ class hlak {
             if (curModName == '鲁肃圣谱') {
                 await PetHelper.setPetLocation(ct.圣灵谱尼, PosType.bag1);
                 await PetHelper.setPetLocation(ct.鲁肃, PosType.bag1);
-            } else if (curModName == '鲁肃千裳') {
+            } else if (curModName == '蒂朵千裳') {
                 await PetHelper.setPetLocation(ct.千裳, PosType.bag1);
-                await PetHelper.setPetLocation(ct.鲁肃, PosType.bag1);
+                await PetHelper.setPetLocation(ct.蒂朵, PosType.bag1);
             } else {
                 await PetHelper.setPetLocation(ct.魔钰, PosType.bag1);
                 await PetHelper.setPetLocation(ct.月照星魂, PosType.bag1);
             }
         }
 
-        Functions.CureAllPet();
+        PetHelper.cureAllPet();
         await delay(200);
 
-        await /** @type {Promise<void>} */(new Promise((resolve, reject) => {
-            Functions.LowerBlood(curMod.lowerbloodPets, Const.ITEMS.Potion.高级体力药剂, async () => {
-                PetHelper.setDefault(curMod.defaultPet);
-                await delay(1000);
-                resolve();
-            });
-        }));
+        await /** @type {Promise<void>} */ (
+            new Promise((resolve, reject) => {
+                Functions.LowerBlood(curMod.lowerbloodPets, Const.ITEMS.Potion.高级体力药剂, async () => {
+                    PetHelper.setDefault(curMod.defaultPet);
+                    await delay(1000);
+                    resolve();
+                });
+            })
+        );
 
         BattleModuleManager.queuedModule(
             async () => {
-                this.startFight();
+                if (curModName != '蒂朵千裳') {
+                    // this.startFight();
+                }
             },
             async (info, skills, pets) => {
                 if (info.isDiedSwitch) {
-                    let next = curMod.diedLink.match(pets, info.pet.ct);
+                    let next = curMod.diedLink.match(pets, info.self.petCatchtime);
                     if (next != -1) {
                         BattleOperator.switchPet(next);
                         await delay(800);
@@ -194,9 +198,9 @@ class hlak {
                     `
                 );
                 if (curModName.includes('鲁肃')) {
-                    await PetHelper.popPetsFromBag(ct.鲁肃);
-                    await PetHelper.popPetsFromBag(ct.圣灵谱尼);
-                    await PetHelper.popPetsFromBag(ct.千裳);
+                    await PetHelper.popPetFromBag(ct.鲁肃);
+                    await PetHelper.popPetFromBag(ct.圣灵谱尼);
+                    await PetHelper.popPetFromBag(ct.千裳);
                 }
             }
         );

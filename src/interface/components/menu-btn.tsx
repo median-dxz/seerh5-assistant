@@ -1,6 +1,6 @@
+import * as React from 'react';
 import { MenuOpen } from '@mui/icons-material';
 import { Fab } from '@mui/material';
-import React from 'react';
 
 export function MainMenu(props) {
     return (

@@ -1,14 +1,10 @@
-interface ImportMeta {
-    webpackHot: any;
-}
-
 interface Window {
     SA: any;
     SAEventManager: EventTarget;
-    delay(msec: number): Promise<void>;
-    warpper(func: Function, beforeDecorator?: Function, afterDecorator?: Function): () => any;
 }
 
+declare var delay: (msec: number) => Promise<void>;
+declare var warpper: (fn: () => any, before: () => any, after: () => any) => () => any;
 declare var AwardItemDialog: any;
 declare var PetUpdatePropController: any;
 declare var EventManager: any;
@@ -38,15 +34,15 @@ declare var FightManager: any;
 declare var FightUserInfo: any;
 declare var LoginService: any;
 declare var LevelManager: any;
+declare var CountermarkController: any;
 
-
-namespace SA {
-    module "Const"
-    module "Utils"
-    module "PetHelper"
-    module "Functions"
-    module "BattleModule"
-    module "PetFactor"
+declare namespace SA {
+    //     module "Const"
+    //     module "Utils"
+    //     module "PetHelper"
+    //     module "Functions"
+    //     module "BattleModule"
+    //     module "PetFactor"
 }
 
 declare var CommandID: any;
@@ -60,6 +56,7 @@ interface SocketConnection {
 declare var SocketConnection: SocketConnection;
 
 interface PetManager {
+    noAlarmCureAll(): unknown;
     updateBagInfo(callback: () => void): unknown;
     addLovePet(arg0: number, ct: any, arg2: number): unknown;
     delLovePet(arg0: number, ct: any, arg2: number): unknown;
@@ -76,7 +73,7 @@ interface PetManager {
     defaultTime: number,
     _bagMap: any,
     _secondBagMap: any,
-    getPetInfo: (catchTime: number) => object,
+    getPetInfo: (catchTime: number) => PetLike,
     setDefault: (catchTime: number) => void
 }
 
@@ -86,7 +83,7 @@ interface PetLike {
     [x: string]: any;
     name: string,
     catchTime: number,
-    id: number
+    id?: number
 }
 
 interface PetStorageInfoManager {
@@ -109,10 +106,20 @@ interface SkillXMLInfo {
 
 declare var SkillXMLInfo: SkillXMLInfo;
 
+declare var TypeXMLInfo: any;
+//  = {
+//     getRelationsPow: (e1: number, e2: number) => number
+// }
 
-declare var PetXMLInfo = {
-    getType: (id: number) => number,
-}
+declare var PetXMLInfo: any;
+//  = {
+//     getType: (id: number) => number,
+// }
+
+declare var ItemXMLInfo: any;
+// = {
+//     getName: (id: number) => string,
+// }
 
 type BaseUseSkillInfo = {
     new(data: any): any;

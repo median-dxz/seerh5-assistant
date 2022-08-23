@@ -31,7 +31,7 @@ AwardManager.showDialog = warpper(AwardManager.showDialog, undefined, function (
 });
 
 PetFightController.setup = warpper(PetFightController.setup, undefined, function () {
-    EmitEvnet(hooks.BattlePanel.start);
+    EmitEvnet(hooks.BattlePanel.panelReady);
     FighterModelFactory.enemyMode.setHpView(true);
     FighterModelFactory.enemyMode.setHpView = function () {
         this.propView.isShowFtHp = true;

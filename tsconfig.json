@@ -1,19 +1,26 @@
 {
     "compilerOptions": {
-        "module": "ESNext",
+        "module": "ES2022",
         "moduleResolution": "Node",
-        "target": "ES2021",
+        "target": "ES2022",
         "jsx": "react",
         "strictNullChecks": true,
         "strictFunctionTypes": true,
+        "resolveJsonModule": true,
+        "rootDir": "src",
+        "outDir": "./dist/",
+        "sourceMap": true,
+        "baseUrl": ".",
         "allowJs": true,
-        "checkJs": true,
-        "resolveJsonModule": true
+        "checkJs": true
     },
     "exclude": [
         "node_modules",
         "**/node_modules/*",
         "dist",
         "loader",
+    ],
+    "include": [
+        "./src/",
     ],
 }

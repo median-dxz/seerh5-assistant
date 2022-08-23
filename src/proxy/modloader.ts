@@ -1,4 +1,4 @@
-import ModList from '../mods/modslist.json';
+import * as ModList from '../mods/modslist.json';
 
 let RegisteredMods = new Map();
 
@@ -21,6 +21,7 @@ if (import.meta.webpackHot) {
         for (let mod of ModList) {
             register(mod.modId, mod.path);
         }
+        window.SA.mods = RegisteredMods;
     });
 }
 

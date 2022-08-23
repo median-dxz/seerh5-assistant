@@ -48,10 +48,10 @@ export function getUserCurrency(type) {
 export async function updateMark(markInfo) {
     let lv = 5 - CountermarkController.getInfo(markInfo.obtainTime).level;
     while (lv--) {
-        await Socket.SocketSendByQueue(CommandID.STRENGTHEN_COUNTERMARK, [markInfo.obtainTime]);
-        await Socket.SocketSendByQueue(CommandID.SAVE_COUNTERMARK_PROPERTY, [markInfo.obtainTime]);
+        await SocketSendByQueue(CommandID.STRENGTHEN_COUNTERMARK, [markInfo.obtainTime]);
+        await SocketSendByQueue(CommandID.SAVE_COUNTERMARK_PROPERTY, [markInfo.obtainTime]);
     }
-    await Socket.SocketReceivedPromise(CommandID.GET_COUNTERMARK_LIST2, () => {
+    await SocketReceivedPromise(CommandID.GET_COUNTERMARK_LIST2, () => {
         CountermarkController.updateMnumberMark({ markID: markInfo.markID, catchTime: markInfo.obtainTime });
     });
     EventManager.dispatchEvent(
@@ -64,3 +64,5 @@ export async function getStatusName(id) {
 }
 
 export * from './sa-socket.js';
+export * from './item-helper.js';
+export * from './module-helper.js';

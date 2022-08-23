@@ -1,8 +1,9 @@
+import * as React from 'react';
 import { createTheme } from '@mui/material';
 import { Container, ThemeProvider } from '@mui/system';
 import { useState } from 'react';
-import { FunctionBar } from './components/function-bar.jsx';
-import { MainMenu } from './components/menu-btn.jsx';
+import { FunctionBar } from './components/function-bar';
+import { MainMenu } from './components/menu-btn';
 
 export function SaMain() {
     const toolBarTheme = createTheme({

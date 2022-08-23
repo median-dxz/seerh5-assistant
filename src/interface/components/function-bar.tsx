@@ -1,15 +1,18 @@
 import { DataObject } from '@mui/icons-material';
 import { Button, ButtonGroup } from '@mui/material';
-import React, { useState } from 'react';
+import * as React from 'react';
+
+const { useState } = React;
 
 export function FunctionBar(props) {
     let [autoCure, setAutoCure] = useState(false);
+    const SA = window.SA;
     return (
         <ButtonGroup sx={{ height: '36px', marginLeft: '12px', display: props.show ? 'block' : 'none' }}>
             <Button
                 onClick={() => {
                     setAutoCure(!autoCure);
-                    SA.Functions.ToggleAutoCure(autoCure);
+                    SA.PetHelper.ToggleAutoCure(autoCure);
                     BubblerManager.getInstance().showText(autoCure ? '自动治疗开启' : '自动治疗关闭');
                 }}
             >
@@ -31,7 +34,7 @@ export function FunctionBar(props) {
             </Button>
             <Button
                 onClick={() => {
-                    SA.mods.get("sign").teamDispatch();
+                    SA.mods.get('sign').teamDispatch();
                 }}
             >
                 <DataObject />

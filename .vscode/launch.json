@@ -1,18 +1,21 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-      {
-        "type": "chrome",
-        "request": "launch",
-        "name": "Launch Chrome against localhost",
-        "url": "http://localhost:1234",
-        "webRoot": "${workspaceFolder}",
-        "sourceMapPathOverrides": {
-          "/__parcel_source_root/*": "${webRoot}/*"
-        }
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "trace": true,
+      "name": "Chrome Debug",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:1234/",
+      "webRoot": "${workspaceRoot}/src",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///./*": "${workspaceFolder}/src"
       }
-    ]
-  }
+      // "userDataDir": "${workspaceRoot}/.vscode/chrome",
+    }
+  ]
+}

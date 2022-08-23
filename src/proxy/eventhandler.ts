@@ -40,6 +40,14 @@ GlobalEventManager.addEventListener(hooks.Module.loaded, (e) => {
     }
 });
 
+GlobalEventManager.addEventListener(hooks.Award.receive, (e) => {
+    if (e instanceof CustomEvent) {
+        console.log(`[EventManager]: 获得物品:`);
+        let logStr = e.detail.items.map((v) => ItemXMLInfo.getName(v.id) + ' ' + v.count);
+        console.log(logStr.join('\n'));
+    }
+});
+
 GlobalEventManager.addEventListener(hooks.BattlePanel.onRoundData, (e) => {
     if (e instanceof CustomEvent) {
         const [fi, si] = [new RoundPetInfo(e.detail.info[0]), new RoundPetInfo(e.detail.info[1])];
@@ -58,6 +66,10 @@ GlobalEventManager.addEventListener(hooks.BattlePanel.onRoundData, (e) => {
         `
         );
     }
+});
+
+GlobalEventManager.addEventListener(hooks.BattlePanel.panelReady, () => {
+    BattleInfoProvider.cachedRoundInfo = null;
 });
 
 export { ModuleLoadedListener as SAModuleListener };

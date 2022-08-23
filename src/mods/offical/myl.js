@@ -3,7 +3,6 @@ import data from '../common.config.js';
 
 const ct = data.petCts;
 const { BattleModule, Functions, Utils, PetHelper} = saco;
-const { delay } = Utils;
 const { BaseSkillModule } = BattleModule;
 
 const Bags = [
@@ -70,7 +69,7 @@ class myl {
         if (this.activityInfo.dailyTimes <= 3) {
             const i = this.activityInfo.curBattle;
             await Functions.SwitchBag(Bags[i]);
-            Functions.CureAllPet();
+            PetHelper.cureAllPet();
             await new Promise((res, rej) => {
                 if (i == 2) {
                     Functions.LowerBlood([ct.魔钰], undefined, () => {

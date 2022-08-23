@@ -1,4 +1,5 @@
-import { delay } from '../../utils.js';
+import { SocketSendByQueue } from '../utils/sa-socket.js';
+const { delay } = window;
 
 export const BattleOperator = {
     useSkill: async (skillId) => {
@@ -12,11 +13,11 @@ export const BattleOperator = {
                 '[BattleOperator]: ' + FighterModelFactory.playerMode.info.petName,
                 SkillXMLInfo.getName(skillId)
             );
-            SocketConnection.send(CommandID.USE_SKILL, skillId);
+            SocketSendByQueue(CommandID.USE_SKILL, [skillId]);
         }
     },
     escape: () => {
-        SocketConnection.send(CommandID.ESCAPE_FIGHT);
+        SocketSendByQueue(CommandID.ESCAPE_FIGHT, []);
     },
 
     useItem: async (itemID) => {

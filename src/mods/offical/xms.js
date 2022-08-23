@@ -2,7 +2,6 @@ import * as saco from '../../proxy/core.js';
 import data from '../common.config.js';
 
 const { BattleModule, Const, Functions, PetHelper, Utils } = saco;
-const { delay } = Utils;
 const { BaseSkillModule, BattleInfoProvider, BattleModuleManager, BattleOperator } = BattleModule;
 const ct = data.petCts;
 
@@ -28,7 +27,7 @@ class xms {
             { catchTime: ct.六界帝神, name: '六界帝神' },
         ]);
 
-        Functions.CureAllPet();
+        PetHelper.cureAllPet();
         PetHelper.setDefault(ct.蒂朵);
 
         await delay(500);

@@ -1,3 +1,28 @@
+var logFilter = new Proxy(console.log, {
+    apply: function (target, _this, args) {
+        if (args.every((v) => typeof v == 'string')) {
+            args = args.filter((v) => !filterLogText.some((reg) => v.match(reg)));
+            args.length > 0 && Reflect.apply(target, _this, args);
+        } else {
+            Reflect.apply(target, _this, args);
+        }
+    },
+});
+
+var warnFilter = new Proxy(console.warn, {
+    apply: function (target, _this, args) {
+        if (args.every((v) => typeof v == 'string')) {
+            args = args.filter((v) => !filterWarnText.some((reg) => v.match(reg)));
+            args.length > 0 && Reflect.apply(target, _this, args);
+        } else {
+            Reflect.apply(target, _this, args);
+        }
+    },
+});
+
+var filterLogText = [];
+var filterWarnText = [];
+
 var __reflect =
     (this && this.__reflect) ||
     function (e, t, n) {
@@ -18,7 +43,7 @@ var AssetAdapter = (function () {
         e
     );
 })();
-__reflect(AssetAdapter.prototype, "AssetAdapter", ["eui.IAssetAdapter"]);
+__reflect(AssetAdapter.prototype, 'AssetAdapter', ['eui.IAssetAdapter']);
 var Driver = (function () {
     function Driver() {}
     return (
@@ -28,67 +53,69 @@ var Driver = (function () {
         (Driver.doAction = function () {
             if (0 == Driver.configs.length) return void Driver.callback.call(Driver.thisObj);
             var config = (Driver.currConfig = Driver.configs.shift());
-            if ("js" == config.type)
+            if ('js' == config.type)
                 if (IS_RELEASE)
-                    2 == GameInfo.platform && "common" == config.name && (config.url = config.url_ios),
+                    2 == GameInfo.platform && 'common' == config.name && (config.url = config.url_ios),
                         RES.getResByUrl(
                             config.url,
                             function (data, url) {
-                                var script = document.createElement("script");
-                                script.type = "text/javascript";
+                                var script = document.createElement('script');
+                                script.type = 'text/javascript';
                                 // loader modify begin
-                                while (data.startsWith("eval")) {
+                                while (data.startsWith('eval')) {
                                     data = eval(data.match(/eval([^)].*)/)[1]);
                                 }
-                                script.text = "//@ sourceURL=" + location.href + url + "\n" + data;
+                                data = data.replaceAll(/console\.log/g, 'logFilter');
+                                data = data.replaceAll(/console\.warn/g, 'warnFilter');
+                                script.text = '//@ sourceURL=' + location.href + url + '\n' + data;
 
                                 document.head.appendChild(script).parentNode.removeChild(script);
-                                config.action && config.action.length > 0 && eval(config.action + "()"),
+                                config.action && config.action.length > 0 && eval(config.action + '()'),
                                     Driver.doAction();
                                 // loader modify end
                             },
                             this,
-                            "text"
+                            'text'
                         );
                 else {
-                    var s = document.createElement("script");
-                    (s.type = "text/javascript"), (s.async = !1);
+                    var s = document.createElement('script');
+                    (s.type = 'text/javascript'), (s.async = !1);
                     var loaded = function () {
                         s.parentNode.removeChild(s),
-                            s.removeEventListener("load", loaded, !1),
-                            config.action && config.action.length > 0 && eval(config.action + "()"),
+                            s.removeEventListener('load', loaded, !1),
+                            config.action && config.action.length > 0 && eval(config.action + '()'),
                             Driver.doAction();
                     };
-                    s.addEventListener("load", loaded, !1);
+                    s.addEventListener('load', loaded, !1);
                     var url = RES.getVersionController().getVirtualUrl(config.url);
                     (s.src = url), document.body.appendChild(s);
                 }
             else
-                "res" == config.type
+                'res' == config.type
                     ? RES.loadConfig(config.url, config.param).then(function () {
                           RES.loadGroup(config.name).then(
                               function () {
                                   Driver.doAction();
                               },
                               function () {
-                                  console.error("加载失败");
+                                  console.error('加载失败');
                               }
                           );
                       })
-                    : "json" == config.type &&
+                    : 'json' == config.type &&
                       RES.getResByUrl(
                           config.url,
                           function (e, t) {
                               (SeerCache.config[config.name] = e), Driver.doAction();
                           },
                           this,
-                          "json"
+                          'json'
                       );
         }),
         Driver
     );
 })();
-__reflect(Driver.prototype, "Driver");
+__reflect(Driver.prototype, 'Driver');
 var __extends =
     (this && this.__extends) ||
     function (e, t) {
@@ -111,7 +138,7 @@ var __awaiter =
             }
             function a(e) {
                 try {
-                    l(i["throw"](e));
+                    l(i['throw'](e));
                 } catch (t) {
                     o(t);
                 }
@@ -135,12 +162,12 @@ var __generator =
             };
         }
         function i(n) {
-            if (r) throw new TypeError("Generator is already executing.");
+            if (r) throw new TypeError('Generator is already executing.');
             for (; l; )
                 try {
                     if (
                         ((r = 1),
-                        o && (s = o[2 & n[0] ? "return" : n[0] ? "throw" : "next"]) && !(s = s.call(o, n[1])).done)
+                        o && (s = o[2 & n[0] ? 'return' : n[0] ? 'throw' : 'next']) && !(s = s.call(o, n[1])).done)
                     )
                         return s;
                     switch (((o = 0), s && (n = [0, s.value]), n[0])) {
@@ -200,7 +227,7 @@ var __generator =
             };
         return (
             (a = { next: n(0), throw: n(1), return: n(2) }),
-            "function" == typeof Symbol &&
+            'function' == typeof Symbol &&
                 (a[Symbol.iterator] = function () {
                     return this;
                 }),
@@ -217,29 +244,29 @@ var Main = (function (e) {
         (t.prototype.createChildren = function () {
             e.prototype.createChildren.call(this),
                 egret.lifecycle.addLifecycleListener(function (e) {}),
-                "true" == egret.getOption("isApp") && (GameInfo.isApp = !0),
+                'true' == egret.getOption('isApp') && (GameInfo.isApp = !0),
                 this.setInputUp(),
                 (window.SeerCache = window.SeerCache || { config: {} });
             var t = new AssetAdapter();
-            egret.registerImplementation("eui.IAssetAdapter", t),
-                egret.registerImplementation("eui.IThemeAdapter", new ThemeAdapter()),
-                (egret.ImageLoader.crossOrigin = "anonymous"),
+            egret.registerImplementation('eui.IAssetAdapter', t),
+                egret.registerImplementation('eui.IThemeAdapter', new ThemeAdapter()),
+                (egret.ImageLoader.crossOrigin = 'anonymous'),
                 (RES.VersionController = SeerVersionController);
             var n = this,
-                i = GameInfo.wwwRoot + "version/version.json?t" + Math.random();
+                i = GameInfo.wwwRoot + 'version/version.json?t' + Math.random();
             this.loadVersionFile(i).then(function (e) {
-                e && (SeerVersionController.remoteVersion = JSON.parse("" + e)),
+                e && (SeerVersionController.remoteVersion = JSON.parse('' + e)),
                     GameInfo.isApp
-                        ? n.loadVersionFile("./version/version_local.json").then(function (e) {
-                              e && (SeerVersionController.localVersion = JSON.parse("" + e)),
+                        ? n.loadVersionFile('./version/version_local.json').then(function (e) {
+                              e && (SeerVersionController.localVersion = JSON.parse('' + e)),
                                   n
                                       .runGame()
                                       .then(function () {})
-                                      ["catch"](function (e) {
+                                      ['catch'](function (e) {
                                           console.warn(e);
                                       });
                           })
-                        : n.runGame()["catch"](function (e) {
+                        : n.runGame()['catch'](function (e) {
                               console.warn(e);
                           });
             });
@@ -286,7 +313,7 @@ var Main = (function (e) {
                         case 0:
                             return [4, this.loadResource()];
                         case 1:
-                            return t.sent(), [4, RES.getResAsync("driver_json")];
+                            return t.sent(), [4, RES.getResAsync('driver_json')];
                         case 2:
                             return (e = t.sent()), Driver.init(e, this.driverComplete, this), [2];
                     }
@@ -294,17 +321,17 @@ var Main = (function (e) {
             });
         }),
         (t.prototype.driverComplete = function () {
-            console.log("[GameLoader]: game core has been loaded.");
+            console.log('[GameLoader]: game core has been loaded.');
             window.LevelManager.setup(this);
             window.MainManager.stage = this;
-            egret.getOption("newLogin")
+            egret.getOption('newLogin')
                 ? window.ModuleManager.showModuleByID(140).then(function () {
                       window.hideWebload && window.hideWebload();
                       // dispatch event begin
-                      window.dispatchEvent(new CustomEvent("seerh5_assisant_load"));
+                      window.dispatchEvent(new CustomEvent('seerh5_assisant_load'));
                   })
-                : (window.ModuleManager.showModule("login", ["login"]).then(() => {
-                      window.dispatchEvent(new CustomEvent("seerh5_assisant_load"));
+                : (window.ModuleManager.showModule('login', ['login']).then(() => {
+                      window.dispatchEvent(new CustomEvent('seerh5_assisant_load'));
                       // dispatch event end
                   }),
                   window.hideWebload && window.hideWebload());
@@ -318,12 +345,12 @@ var Main = (function (e) {
                         case 0:
                             return (
                                 t.trys.push([0, 4, , 5]),
-                                [4, RES.loadConfig("resource/assets/ui/entry.json", "resource/assets/ui/")]
+                                [4, RES.loadConfig('resource/assets/ui/entry.json', 'resource/assets/ui/')]
                             );
                         case 1:
                             return t.sent(), [4, this.loadTheme()];
                         case 2:
-                            return t.sent(), [4, RES.loadGroup("entry")];
+                            return t.sent(), [4, RES.loadGroup('entry')];
                         case 3:
                             return t.sent(), [3, 5];
                         case 4:
@@ -339,9 +366,9 @@ var Main = (function (e) {
                 return __generator(this, function (e) {
                     switch (e.label) {
                         case 0:
-                            return [4, RES.loadConfig("resource/assets/ui/common.json", "resource/assets/ui/")];
+                            return [4, RES.loadConfig('resource/assets/ui/common.json', 'resource/assets/ui/')];
                         case 1:
-                            return e.sent(), [4, RES.loadGroup("common")];
+                            return e.sent(), [4, RES.loadGroup('common')];
                         case 2:
                             return e.sent(), [2];
                     }
@@ -351,7 +378,7 @@ var Main = (function (e) {
         (t.prototype.loadTheme = function () {
             var e = this;
             return new Promise(function (t, n) {
-                var i = new eui.Theme("resource/default.thm.json", e.stage);
+                var i = new eui.Theme('resource/default.thm.json', e.stage);
                 i.addEventListener(
                     eui.UIEvent.COMPLETE,
                     function () {
@@ -367,20 +394,20 @@ var Main = (function (e) {
                 n = 0;
             GameInfo.isApp &&
                 1 == GameInfo.platform &&
-                (window.addEventListener("native.keyboardshow", function (i) {
-                    var r = document.getElementById("bg");
-                    r || ((r = document.createElement("div")), (r.id = "bg"), document.body.appendChild(r)),
-                        (r.style.height = e + i.keyboardHeight + "px"),
+                (window.addEventListener('native.keyboardshow', function (i) {
+                    var r = document.getElementById('bg');
+                    r || ((r = document.createElement('div')), (r.id = 'bg'), document.body.appendChild(r)),
+                        (r.style.height = e + i.keyboardHeight + 'px'),
                         0 == n &&
                             window.setTimeout(function () {
                                 e - t - i.keyboardHeight < 15 &&
                                     ((n = i.keyboardHeight - (e - t) + 30), window.scrollTo(0, n));
                             }, 100);
                 }),
-                window.addEventListener("native.keyboardhide", function (e) {
+                window.addEventListener('native.keyboardhide', function (e) {
                     window.scrollTo(0, 0);
-                    var t = document.getElementById("bg");
-                    t && (t.height = "0px"), (n = 0);
+                    var t = document.getElementById('bg');
+                    t && (t.height = '0px'), (n = 0);
                 }),
                 (egret.web.HTML5StageText.prototype._onClickHandler = function (e) {
                     this._isNeedShow &&
@@ -388,10 +415,10 @@ var Main = (function (e) {
                         (this._isNeedShow = !1),
                         (t = e.clientY),
                         this.executeShow(),
-                        this.dispatchEvent(new egret.Event("focus")));
+                        this.dispatchEvent(new egret.Event('focus')));
                 }),
                 (egret.web.HTML5StageText.prototype._onDisconnect = function () {
-                    (this.inputElement = null), this.dispatchEvent(new egret.Event("blur")), (n = 0);
+                    (this.inputElement = null), this.dispatchEvent(new egret.Event('blur')), (n = 0);
                 }));
         }),
         (t.prototype._overrideHandler = function () {
@@ -402,7 +429,7 @@ var Main = (function (e) {
                 this._overInputHandler();
         }),
         (t.prototype._overrideConsoleFun = function () {
-            egret.getOption("log") || window.log;
+            egret.getOption('log') || window.log;
             console.table || (console.table = function () {});
         }),
         (t.prototype._overInputHandler = function () {
@@ -422,15 +449,15 @@ var Main = (function (e) {
                         },
                         a = function () {
                             i &&
-                                (i.removeEventListener("compositionstart", o),
-                                i.removeEventListener("compositionend", s),
-                                i.removeEventListener("blur", a),
+                                (i.removeEventListener('compositionstart', o),
+                                i.removeEventListener('compositionend', s),
+                                i.removeEventListener('blur', a),
                                 (i = null),
                                 (r.inputLock = !1));
                         };
-                    i.addEventListener("compositionstart", o),
-                        i.addEventListener("compositionend", s),
-                        i.addEventListener("blur", a);
+                    i.addEventListener('compositionstart', o),
+                        i.addEventListener('compositionend', s),
+                        i.addEventListener('blur', a);
                 }
             };
         }),
@@ -439,21 +466,21 @@ var Main = (function (e) {
                 (egret.web.HTMLInput.prototype.clearInputElement = function () {
                     var e = this;
                     if (e._inputElement) {
-                        (e._inputElement.value = ""),
+                        (e._inputElement.value = ''),
                             (e._inputElement.onblur = null),
-                            (e._inputElement.style.width = "1px"),
-                            (e._inputElement.style.height = "12px"),
-                            (e._inputElement.style.left = "0px"),
-                            (e._inputElement.style.top = "0px"),
+                            (e._inputElement.style.width = '1px'),
+                            (e._inputElement.style.height = '12px'),
+                            (e._inputElement.style.left = '0px'),
+                            (e._inputElement.style.top = '0px'),
                             (e._inputElement.style.opacity = 0);
                         var t = void 0;
                         (t = e._simpleElement == e._inputElement ? e._multiElement : e._simpleElement),
-                            (t.style.display = "block"),
-                            (e._inputDIV.style.left = "0px"),
-                            (e._inputDIV.style.top = "-100px"),
-                            (e._inputDIV.style.height = "0px"),
-                            (e._inputDIV.style.width = "0px"),
-                            "password" == e._inputElement.type &&
+                            (t.style.display = 'block'),
+                            (e._inputDIV.style.left = '0px'),
+                            (e._inputDIV.style.top = '-100px'),
+                            (e._inputDIV.style.height = '0px'),
+                            (e._inputDIV.style.width = '0px'),
+                            'password' == e._inputElement.type &&
                                 (e._inputDIV.removeChild(e._inputElement),
                                 (e._inputElement = null),
                                 e.initInputElement(!1));
@@ -506,7 +533,7 @@ var Main = (function (e) {
                                   this,
                                   600
                               ))
-                            : (window.Sentry && window.Sentry.captureMessage("资源加载失败:" + this._url), i.call(this))
+                            : (window.Sentry && window.Sentry.captureMessage('资源加载失败:' + this._url), i.call(this))
                         : egret.setTimeout(
                               function () {
                                   t.abort(), t.open(t._url, t._method), t.send();
@@ -525,7 +552,7 @@ var Main = (function (e) {
                 r = t.prototype.onImageComplete,
                 o = RES.getResByUrl;
             (RES.getResByUrl = function (e, t, n, i) {
-                void 0 === i && (i = "");
+                void 0 === i && (i = '');
                 var r = function (e, i) {
                     t && t.call(n, e, i);
                 };
@@ -541,7 +568,7 @@ var Main = (function (e) {
                     var i = this,
                         r = t.target,
                         o = r.src;
-                    if ((console.error("error ===============>" + o), navigator.onLine))
+                    if ((console.error('error ===============>' + o), navigator.onLine))
                         this.retryTimes < e
                             ? (this.retryTimes++,
                               (r.onerror = null),
@@ -575,7 +602,7 @@ var Main = (function (e) {
         t
     );
 })(eui.UILayer);
-__reflect(Main.prototype, "Main");
+__reflect(Main.prototype, 'Main');
 var LoadingUI = (function (e) {
     function t() {
         var t = e.call(this) || this;
@@ -588,15 +615,15 @@ var LoadingUI = (function (e) {
                 this.addChild(this.textField),
                 (this.textField.width = 480),
                 (this.textField.height = 100),
-                (this.textField.textAlign = "center");
+                (this.textField.textAlign = 'center');
         }),
         (t.prototype.onProgress = function (e, t) {
-            this.textField.text = "Loading..." + e + "/" + t;
+            this.textField.text = 'Loading...' + e + '/' + t;
         }),
         t
     );
 })(egret.Sprite);
-__reflect(LoadingUI.prototype, "LoadingUI", ["RES.PromiseTaskReporter"]);
+__reflect(LoadingUI.prototype, 'LoadingUI', ['RES.PromiseTaskReporter']);
 var SeerVersionController = (function () {
     function e() {}
     return (
@@ -608,14 +635,14 @@ var SeerVersionController = (function () {
                 (e.fileWriter = t),
                     (t.onwriteend = function () {}),
                     (t.onerror = function (e) {
-                        console.warn("Failed file read: " + e.toString());
+                        console.warn('Failed file read: ' + e.toString());
                     });
             });
         }),
         (e.writeCacheList = function () {
             if (e.fileWriter) {
                 e.fileWriter.seek(0);
-                var t = new Blob([JSON.stringify(e.urlCache)], { type: "text/plain" });
+                var t = new Blob([JSON.stringify(e.urlCache)], { type: 'text/plain' });
                 e.fileWriter.write(t);
             }
         }),
@@ -624,36 +651,36 @@ var SeerVersionController = (function () {
         }),
         (e.getVersionUrl = function (t) {
             if (!t || -1 != t.search(/^\/|^\w+:\/\//)) return t;
-            var n = egret.getOption("channel");
-            if ("preview" == n) return GameInfo.wwwRoot + t + "?t=" + Date.now();
-            var i = t.split("/"),
+            var n = egret.getOption('channel');
+            if ('preview' == n) return GameInfo.wwwRoot + t + '?t=' + Date.now();
+            var i = t.split('/'),
                 r = i[i.length - 1],
-                o = "",
+                o = '',
                 s = e.localVersion.files,
                 a = e.remoteVersion.files,
                 l = e.getUrlVerName(i, a);
             if (GameInfo.isApp) {
                 o = e.getUrlVerName(i, s);
-                var u = r.split("."),
+                var u = r.split('.'),
                     c = u[u.length - 1],
-                    h = r.replace("." + c, ""),
-                    p = egret.getOption("version");
-                if ("10000" != p && o.length > 0) {
+                    h = r.replace('.' + c, ''),
+                    p = egret.getOption('version');
+                if ('10000' != p && o.length > 0) {
                     if (0 == l.length)
-                        return (t = cordova.file.applicationDirectory + "www/" + t.replace(r, h + "_" + o + "." + c));
-                    if (h + "_" + o + "." + c == l)
-                        return (t = cordova.file.applicationDirectory + "www/" + t.replace(r, h + "_" + o + "." + c));
+                        return (t = cordova.file.applicationDirectory + 'www/' + t.replace(r, h + '_' + o + '.' + c));
+                    if (h + '_' + o + '.' + c == l)
+                        return (t = cordova.file.applicationDirectory + 'www/' + t.replace(r, h + '_' + o + '.' + c));
                     l.length > 0 && (t = t.replace(r, l));
                 }
             }
             if ((l.length > 0 && (t = t.replace(r, l)), (t = GameInfo.wwwRoot + t), !IS_RELEASE)) {
-                var d = egret.getOption("ver");
-                d && (t = t + "?ver=" + d);
+                var d = egret.getOption('ver');
+                d && (t = t + '?ver=' + d);
             }
             return t;
         }),
         (e.getUrlVerName = function (e, t) {
-            for (var n = t, i = e, r = n, o = i.length, s = "", a = 0; r && o > a; a++) r = r[i[a]];
+            for (var n = t, i = e, r = n, o = i.length, s = '', a = 0; r && o > a; a++) r = r[i[a]];
             return r && (s = r), s;
         }),
         (e.downCacheFile = function () {
@@ -677,17 +704,17 @@ var SeerVersionController = (function () {
         (e.prototype.getLocalData = function (e) {
             return null;
         }),
-        (e.root = ""),
+        (e.root = ''),
         (e.remoteVersion = { files: {} }),
         (e.localVersion = { files: {} }),
-        (e.cacheFileUri = "cache_key.json"),
+        (e.cacheFileUri = 'cache_key.json'),
         (e.urlCache = {}),
         (e.needCacheList = []),
         (e.caching = !1),
         e
     );
 })();
-__reflect(SeerVersionController.prototype, "SeerVersionController", ["RES.IVersionController"]);
+__reflect(SeerVersionController.prototype, 'SeerVersionController', ['RES.IVersionController']);
 var ThemeAdapter = (function () {
     function e() {}
     return (
@@ -699,13 +726,13 @@ var ThemeAdapter = (function () {
                 t.resItem.url == e && (RES.removeEventListener(RES.ResourceEvent.ITEM_LOAD_ERROR, o, null), n.call(i));
             }
             var s = this;
-            if ("undefined" != typeof generateEUI)
+            if ('undefined' != typeof generateEUI)
                 egret.callLater(function () {
                     t.call(i, generateEUI);
                 }, this);
-            else if ("undefined" != typeof generateEUI2)
+            else if ('undefined' != typeof generateEUI2)
                 RES.getResByUrl(
-                    "resource/gameEui.json",
+                    'resource/gameEui.json',
                     function (e, n) {
                         window.JSONParseClass.setData(e),
                             egret.callLater(function () {
@@ -715,11 +742,11 @@ var ThemeAdapter = (function () {
                     this,
                     RES.ResourceItem.TYPE_JSON
                 );
-            else if ("undefined" != typeof generateJSON)
-                if (e.indexOf(".exml") > -1) {
-                    var a = e.split("/");
+            else if ('undefined' != typeof generateJSON)
+                if (e.indexOf('.exml') > -1) {
+                    var a = e.split('/');
                     a.pop();
-                    var l = a.join("/") + "_EUI.json";
+                    var l = a.join('/') + '_EUI.json';
                     generateJSON.paths[e]
                         ? egret.callLater(function () {
                               t.call(i, generateJSON.paths[e]);
@@ -746,38 +773,38 @@ var ThemeAdapter = (function () {
         e
     );
 })();
-__reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (window.skins = window.skins || {});
+__reflect(ThemeAdapter.prototype, 'ThemeAdapter', ['eui.IThemeAdapter']), (window.skins = window.skins || {});
 
 (window.generateEUI = window.generateEUI || {}),
     (generateEUI.paths = generateEUI.paths || {}),
     (generateEUI.styles = void 0),
     (generateEUI.skins = {
-        "eui.Button": "resource/eui_skins/ButtonSkin.exml",
-        "eui.CheckBox": "resource/eui_skins/CheckBoxSkin.exml",
-        "eui.HScrollBar": "resource/eui_skins/HScrollBarSkin.exml",
-        "eui.HSlider": "resource/eui_skins/HSliderSkin.exml",
-        "eui.Panel": "resource/eui_skins/PanelSkin.exml",
-        "eui.TextInput": "resource/eui_skins/TextInputSkin.exml",
-        "eui.ProgressBar": "resource/eui_skins/ProgressBarSkin.exml",
-        "eui.RadioButton": "resource/eui_skins/RadioButtonSkin.exml",
-        "eui.Scroller": "resource/eui_skins/ScrollerSkin.exml",
-        "eui.ToggleSwitch": "resource/eui_skins/ToggleSwitchSkin.exml",
-        "eui.VScrollBar": "resource/eui_skins/VScrollBarSkin.exml",
-        "eui.VSlider": "resource/eui_skins/VSliderSkin.exml",
-        "eui.ItemRenderer": "resource/eui_skins/ItemRendererSkin.exml",
+        'eui.Button': 'resource/eui_skins/ButtonSkin.exml',
+        'eui.CheckBox': 'resource/eui_skins/CheckBoxSkin.exml',
+        'eui.HScrollBar': 'resource/eui_skins/HScrollBarSkin.exml',
+        'eui.HSlider': 'resource/eui_skins/HSliderSkin.exml',
+        'eui.Panel': 'resource/eui_skins/PanelSkin.exml',
+        'eui.TextInput': 'resource/eui_skins/TextInputSkin.exml',
+        'eui.ProgressBar': 'resource/eui_skins/ProgressBarSkin.exml',
+        'eui.RadioButton': 'resource/eui_skins/RadioButtonSkin.exml',
+        'eui.Scroller': 'resource/eui_skins/ScrollerSkin.exml',
+        'eui.ToggleSwitch': 'resource/eui_skins/ToggleSwitchSkin.exml',
+        'eui.VScrollBar': 'resource/eui_skins/VScrollBarSkin.exml',
+        'eui.VSlider': 'resource/eui_skins/VSliderSkin.exml',
+        'eui.ItemRenderer': 'resource/eui_skins/ItemRendererSkin.exml',
     }),
-    (generateEUI.paths["resource/eui_skins/ButtonSkin.exml"] = window.skins.ButtonSkin =
+    (generateEUI.paths['resource/eui_skins/ButtonSkin.exml'] = window.skins.ButtonSkin =
         (function (e) {
             function t() {
                 e.call(this),
-                    (this.skinParts = ["labelDisplay", "iconDisplay"]),
+                    (this.skinParts = ['labelDisplay', 'iconDisplay']),
                     (this.minHeight = 50),
                     (this.minWidth = 100),
                     (this.elementsContent = [this._Image1_i(), this.labelDisplay_i(), this.iconDisplay_i()]),
                     (this.states = [
-                        new eui.State("up", []),
-                        new eui.State("down", [new eui.SetProperty("_Image1", "source", "button_down_png")]),
-                        new eui.State("disabled", [new eui.SetProperty("_Image1", "alpha", 0.5)]),
+                        new eui.State('up', []),
+                        new eui.State('down', [new eui.SetProperty('_Image1', 'source', 'button_down_png')]),
+                        new eui.State('disabled', [new eui.SetProperty('_Image1', 'alpha', 0.5)]),
                     ]);
             }
             __extends(t, e);
@@ -789,7 +816,7 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                         (this._Image1 = e),
                         (e.percentHeight = 100),
                         (e.scale9Grid = new egret.Rectangle(1, 3, 8, 8)),
-                        (e.source = "button_up_png"),
+                        (e.source = 'button_up_png'),
                         (e.percentWidth = 100),
                         e
                     );
@@ -802,10 +829,10 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                         (e.left = 8),
                         (e.right = 8),
                         (e.size = 20),
-                        (e.textAlign = "center"),
+                        (e.textAlign = 'center'),
                         (e.textColor = 16777215),
                         (e.top = 8),
-                        (e.verticalAlign = "middle"),
+                        (e.verticalAlign = 'middle'),
                         e
                     );
                 }),
@@ -816,24 +843,24 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                 t
             );
         })(eui.Skin)),
-    (generateEUI.paths["resource/eui_skins/CheckBoxSkin.exml"] = window.skins.CheckBoxSkin =
+    (generateEUI.paths['resource/eui_skins/CheckBoxSkin.exml'] = window.skins.CheckBoxSkin =
         (function (e) {
             function t() {
                 e.call(this),
-                    (this.skinParts = ["labelDisplay"]),
+                    (this.skinParts = ['labelDisplay']),
                     (this.elementsContent = [this._Group1_i()]),
                     (this.states = [
-                        new eui.State("up", []),
-                        new eui.State("down", [new eui.SetProperty("_Image1", "alpha", 0.7)]),
-                        new eui.State("disabled", [new eui.SetProperty("_Image1", "alpha", 0.5)]),
-                        new eui.State("upAndSelected", [
-                            new eui.SetProperty("_Image1", "source", "checkbox_select_up_png"),
+                        new eui.State('up', []),
+                        new eui.State('down', [new eui.SetProperty('_Image1', 'alpha', 0.7)]),
+                        new eui.State('disabled', [new eui.SetProperty('_Image1', 'alpha', 0.5)]),
+                        new eui.State('upAndSelected', [
+                            new eui.SetProperty('_Image1', 'source', 'checkbox_select_up_png'),
                         ]),
-                        new eui.State("downAndSelected", [
-                            new eui.SetProperty("_Image1", "source", "checkbox_select_down_png"),
+                        new eui.State('downAndSelected', [
+                            new eui.SetProperty('_Image1', 'source', 'checkbox_select_down_png'),
                         ]),
-                        new eui.State("disabledAndSelected", [
-                            new eui.SetProperty("_Image1", "source", "checkbox_select_disabled_png"),
+                        new eui.State('disabledAndSelected', [
+                            new eui.SetProperty('_Image1', 'source', 'checkbox_select_disabled_png'),
                         ]),
                     ]);
             }
@@ -852,15 +879,15 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                 }),
                 (n._HorizontalLayout1_i = function () {
                     var e = new eui.HorizontalLayout();
-                    return (e.verticalAlign = "middle"), e;
+                    return (e.verticalAlign = 'middle'), e;
                 }),
                 (n._Image1_i = function () {
                     var e = new eui.Image();
                     return (
                         (this._Image1 = e),
                         (e.alpha = 1),
-                        (e.fillMode = "scale"),
-                        (e.source = "checkbox_unselect_png"),
+                        (e.fillMode = 'scale'),
+                        (e.source = 'checkbox_unselect_png'),
                         e
                     );
                 }),
@@ -868,22 +895,22 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                     var e = new eui.Label();
                     return (
                         (this.labelDisplay = e),
-                        (e.fontFamily = "Tahoma"),
+                        (e.fontFamily = 'Tahoma'),
                         (e.size = 20),
-                        (e.textAlign = "center"),
+                        (e.textAlign = 'center'),
                         (e.textColor = 7368816),
-                        (e.verticalAlign = "middle"),
+                        (e.verticalAlign = 'middle'),
                         e
                     );
                 }),
                 t
             );
         })(eui.Skin)),
-    (generateEUI.paths["resource/eui_skins/HScrollBarSkin.exml"] = window.skins.HScrollBarSkin =
+    (generateEUI.paths['resource/eui_skins/HScrollBarSkin.exml'] = window.skins.HScrollBarSkin =
         (function (e) {
             function t() {
                 e.call(this),
-                    (this.skinParts = ["thumb"]),
+                    (this.skinParts = ['thumb']),
                     (this.minHeight = 8),
                     (this.minWidth = 20),
                     (this.elementsContent = [this.thumb_i()]);
@@ -897,7 +924,7 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                         (this.thumb = e),
                         (e.height = 8),
                         (e.scale9Grid = new egret.Rectangle(3, 3, 2, 2)),
-                        (e.source = "roundthumb_png"),
+                        (e.source = 'roundthumb_png'),
                         (e.verticalCenter = 0),
                         (e.width = 30),
                         e
@@ -906,11 +933,11 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                 t
             );
         })(eui.Skin)),
-    (generateEUI.paths["resource/eui_skins/HSliderSkin.exml"] = window.skins.HSliderSkin =
+    (generateEUI.paths['resource/eui_skins/HSliderSkin.exml'] = window.skins.HSliderSkin =
         (function (e) {
             function t() {
                 e.call(this),
-                    (this.skinParts = ["track", "thumb"]),
+                    (this.skinParts = ['track', 'thumb']),
                     (this.minHeight = 8),
                     (this.minWidth = 20),
                     (this.elementsContent = [this.track_i(), this.thumb_i()]);
@@ -924,7 +951,7 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                         (this.track = e),
                         (e.height = 6),
                         (e.scale9Grid = new egret.Rectangle(1, 1, 4, 4)),
-                        (e.source = "track_sb_png"),
+                        (e.source = 'track_sb_png'),
                         (e.verticalCenter = 0),
                         (e.percentWidth = 100),
                         e
@@ -932,25 +959,25 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                 }),
                 (n.thumb_i = function () {
                     var e = new eui.Image();
-                    return (this.thumb = e), (e.source = "thumb_png"), (e.verticalCenter = 0), e;
+                    return (this.thumb = e), (e.source = 'thumb_png'), (e.verticalCenter = 0), e;
                 }),
                 t
             );
         })(eui.Skin)),
-    (generateEUI.paths["resource/eui_skins/ItemRendererSkin.exml"] = window.skins.ItemRendererSkin =
+    (generateEUI.paths['resource/eui_skins/ItemRendererSkin.exml'] = window.skins.ItemRendererSkin =
         (function (e) {
             function t() {
                 e.call(this),
-                    (this.skinParts = ["labelDisplay"]),
+                    (this.skinParts = ['labelDisplay']),
                     (this.minHeight = 50),
                     (this.minWidth = 100),
                     (this.elementsContent = [this._Image1_i(), this.labelDisplay_i()]),
                     (this.states = [
-                        new eui.State("up", []),
-                        new eui.State("down", [new eui.SetProperty("_Image1", "source", "button_down_png")]),
-                        new eui.State("disabled", [new eui.SetProperty("_Image1", "alpha", 0.5)]),
+                        new eui.State('up', []),
+                        new eui.State('down', [new eui.SetProperty('_Image1', 'source', 'button_down_png')]),
+                        new eui.State('disabled', [new eui.SetProperty('_Image1', 'alpha', 0.5)]),
                     ]),
-                    eui.Binding.$bindProperties(this, ["hostComponent.data"], [0], this.labelDisplay, "text");
+                    eui.Binding.$bindProperties(this, ['hostComponent.data'], [0], this.labelDisplay, 'text');
             }
             __extends(t, e);
             var n = t.prototype;
@@ -961,7 +988,7 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                         (this._Image1 = e),
                         (e.percentHeight = 100),
                         (e.scale9Grid = new egret.Rectangle(1, 3, 8, 8)),
-                        (e.source = "button_up_png"),
+                        (e.source = 'button_up_png'),
                         (e.percentWidth = 100),
                         e
                     );
@@ -971,25 +998,25 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                     return (
                         (this.labelDisplay = e),
                         (e.bottom = 8),
-                        (e.fontFamily = "Tahoma"),
+                        (e.fontFamily = 'Tahoma'),
                         (e.left = 8),
                         (e.right = 8),
                         (e.size = 20),
-                        (e.textAlign = "center"),
+                        (e.textAlign = 'center'),
                         (e.textColor = 16777215),
                         (e.top = 8),
-                        (e.verticalAlign = "middle"),
+                        (e.verticalAlign = 'middle'),
                         e
                     );
                 }),
                 t
             );
         })(eui.Skin)),
-    (generateEUI.paths["resource/eui_skins/PanelSkin.exml"] = window.skins.PanelSkin =
+    (generateEUI.paths['resource/eui_skins/PanelSkin.exml'] = window.skins.PanelSkin =
         (function (e) {
             function t() {
                 e.call(this),
-                    (this.skinParts = ["titleDisplay", "moveArea", "closeButton"]),
+                    (this.skinParts = ['titleDisplay', 'moveArea', 'closeButton']),
                     (this.minHeight = 230),
                     (this.minWidth = 450),
                     (this.elementsContent = [this._Image1_i(), this.moveArea_i(), this.closeButton_i()]);
@@ -1004,7 +1031,7 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                         (e.left = 0),
                         (e.right = 0),
                         (e.scale9Grid = new egret.Rectangle(2, 2, 12, 12)),
-                        (e.source = "border_png"),
+                        (e.source = 'border_png'),
                         (e.top = 0),
                         e
                     );
@@ -1023,13 +1050,13 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                 }),
                 (n._Image2_i = function () {
                     var e = new eui.Image();
-                    return (e.bottom = 0), (e.left = 0), (e.right = 0), (e.source = "header_png"), (e.top = 0), e;
+                    return (e.bottom = 0), (e.left = 0), (e.right = 0), (e.source = 'header_png'), (e.top = 0), e;
                 }),
                 (n.titleDisplay_i = function () {
                     var e = new eui.Label();
                     return (
                         (this.titleDisplay = e),
-                        (e.fontFamily = "Tahoma"),
+                        (e.fontFamily = 'Tahoma'),
                         (e.left = 15),
                         (e.right = 5),
                         (e.size = 20),
@@ -1041,16 +1068,16 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                 }),
                 (n.closeButton_i = function () {
                     var e = new eui.Button();
-                    return (this.closeButton = e), (e.bottom = 5), (e.horizontalCenter = 0), (e.label = "close"), e;
+                    return (this.closeButton = e), (e.bottom = 5), (e.horizontalCenter = 0), (e.label = 'close'), e;
                 }),
                 t
             );
         })(eui.Skin)),
-    (generateEUI.paths["resource/eui_skins/ProgressBarSkin.exml"] = window.skins.ProgressBarSkin =
+    (generateEUI.paths['resource/eui_skins/ProgressBarSkin.exml'] = window.skins.ProgressBarSkin =
         (function (e) {
             function t() {
                 e.call(this),
-                    (this.skinParts = ["thumb", "labelDisplay"]),
+                    (this.skinParts = ['thumb', 'labelDisplay']),
                     (this.minHeight = 18),
                     (this.minWidth = 30),
                     (this.elementsContent = [this._Image1_i(), this.thumb_i(), this.labelDisplay_i()]);
@@ -1063,7 +1090,7 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                     return (
                         (e.percentHeight = 100),
                         (e.scale9Grid = new egret.Rectangle(1, 1, 4, 4)),
-                        (e.source = "track_pb_png"),
+                        (e.source = 'track_pb_png'),
                         (e.verticalCenter = 0),
                         (e.percentWidth = 100),
                         e
@@ -1074,7 +1101,7 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                     return (
                         (this.thumb = e),
                         (e.percentHeight = 100),
-                        (e.source = "thumb_pb_png"),
+                        (e.source = 'thumb_pb_png'),
                         (e.percentWidth = 100),
                         e
                     );
@@ -1083,12 +1110,12 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                     var e = new eui.Label();
                     return (
                         (this.labelDisplay = e),
-                        (e.fontFamily = "Tahoma"),
+                        (e.fontFamily = 'Tahoma'),
                         (e.horizontalCenter = 0),
                         (e.size = 15),
-                        (e.textAlign = "center"),
+                        (e.textAlign = 'center'),
                         (e.textColor = 7368816),
-                        (e.verticalAlign = "middle"),
+                        (e.verticalAlign = 'middle'),
                         (e.verticalCenter = 0),
                         e
                     );
@@ -1096,24 +1123,24 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                 t
             );
         })(eui.Skin)),
-    (generateEUI.paths["resource/eui_skins/RadioButtonSkin.exml"] = window.skins.RadioButtonSkin =
+    (generateEUI.paths['resource/eui_skins/RadioButtonSkin.exml'] = window.skins.RadioButtonSkin =
         (function (e) {
             function t() {
                 e.call(this),
-                    (this.skinParts = ["labelDisplay"]),
+                    (this.skinParts = ['labelDisplay']),
                     (this.elementsContent = [this._Group1_i()]),
                     (this.states = [
-                        new eui.State("up", []),
-                        new eui.State("down", [new eui.SetProperty("_Image1", "alpha", 0.7)]),
-                        new eui.State("disabled", [new eui.SetProperty("_Image1", "alpha", 0.5)]),
-                        new eui.State("upAndSelected", [
-                            new eui.SetProperty("_Image1", "source", "radiobutton_select_up_png"),
+                        new eui.State('up', []),
+                        new eui.State('down', [new eui.SetProperty('_Image1', 'alpha', 0.7)]),
+                        new eui.State('disabled', [new eui.SetProperty('_Image1', 'alpha', 0.5)]),
+                        new eui.State('upAndSelected', [
+                            new eui.SetProperty('_Image1', 'source', 'radiobutton_select_up_png'),
                         ]),
-                        new eui.State("downAndSelected", [
-                            new eui.SetProperty("_Image1", "source", "radiobutton_select_down_png"),
+                        new eui.State('downAndSelected', [
+                            new eui.SetProperty('_Image1', 'source', 'radiobutton_select_down_png'),
                         ]),
-                        new eui.State("disabledAndSelected", [
-                            new eui.SetProperty("_Image1", "source", "radiobutton_select_disabled_png"),
+                        new eui.State('disabledAndSelected', [
+                            new eui.SetProperty('_Image1', 'source', 'radiobutton_select_disabled_png'),
                         ]),
                     ]);
             }
@@ -1132,15 +1159,15 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                 }),
                 (n._HorizontalLayout1_i = function () {
                     var e = new eui.HorizontalLayout();
-                    return (e.verticalAlign = "middle"), e;
+                    return (e.verticalAlign = 'middle'), e;
                 }),
                 (n._Image1_i = function () {
                     var e = new eui.Image();
                     return (
                         (this._Image1 = e),
                         (e.alpha = 1),
-                        (e.fillMode = "scale"),
-                        (e.source = "radiobutton_unselect_png"),
+                        (e.fillMode = 'scale'),
+                        (e.source = 'radiobutton_unselect_png'),
                         e
                     );
                 }),
@@ -1148,18 +1175,18 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                     var e = new eui.Label();
                     return (
                         (this.labelDisplay = e),
-                        (e.fontFamily = "Tahoma"),
+                        (e.fontFamily = 'Tahoma'),
                         (e.size = 20),
-                        (e.textAlign = "center"),
+                        (e.textAlign = 'center'),
                         (e.textColor = 7368816),
-                        (e.verticalAlign = "middle"),
+                        (e.verticalAlign = 'middle'),
                         e
                     );
                 }),
                 t
             );
         })(eui.Skin)),
-    (generateEUI.paths["resource/eui_skins/ScrollerSkin.exml"] = window.skins.ScrollerSkin =
+    (generateEUI.paths['resource/eui_skins/ScrollerSkin.exml'] = window.skins.ScrollerSkin =
         (function (e) {
             function t() {
                 e.call(this), (this.skinParts = []), (this.minHeight = 20), (this.minWidth = 20);
@@ -1168,20 +1195,20 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
             t.prototype;
             return t;
         })(eui.Skin)),
-    (generateEUI.paths["resource/eui_skins/TextInputSkin.exml"] = window.skins.TextInputSkin =
+    (generateEUI.paths['resource/eui_skins/TextInputSkin.exml'] = window.skins.TextInputSkin =
         (function (e) {
             function t() {
                 e.call(this),
-                    (this.skinParts = ["textDisplay", "promptDisplay"]),
+                    (this.skinParts = ['textDisplay', 'promptDisplay']),
                     (this.minHeight = 40),
                     (this.minWidth = 300),
                     (this.elementsContent = [this._Image1_i(), this._Rect1_i(), this.textDisplay_i()]),
                     this.promptDisplay_i(),
                     (this.states = [
-                        new eui.State("normal", []),
-                        new eui.State("disabled", [new eui.SetProperty("textDisplay", "textColor", 16711680)]),
-                        new eui.State("normalWithPrompt", [new eui.AddItems("promptDisplay", "", 1, "")]),
-                        new eui.State("disabledWithPrompt", [new eui.AddItems("promptDisplay", "", 1, "")]),
+                        new eui.State('normal', []),
+                        new eui.State('disabled', [new eui.SetProperty('textDisplay', 'textColor', 16711680)]),
+                        new eui.State('normalWithPrompt', [new eui.AddItems('promptDisplay', '', 1, '')]),
+                        new eui.State('disabledWithPrompt', [new eui.AddItems('promptDisplay', '', 1, '')]),
                     ]);
             }
             __extends(t, e);
@@ -1192,7 +1219,7 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                     return (
                         (e.percentHeight = 100),
                         (e.scale9Grid = new egret.Rectangle(1, 3, 8, 8)),
-                        (e.source = "button_up_png"),
+                        (e.source = 'button_up_png'),
                         (e.percentWidth = 100),
                         e
                     );
@@ -1206,11 +1233,11 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                     return (
                         (this.textDisplay = e),
                         (e.height = 24),
-                        (e.left = "10"),
-                        (e.right = "10"),
+                        (e.left = '10'),
+                        (e.right = '10'),
                         (e.size = 20),
                         (e.textColor = 0),
-                        (e.verticalCenter = "0"),
+                        (e.verticalCenter = '0'),
                         (e.percentWidth = 100),
                         e
                     );
@@ -1233,19 +1260,19 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                 t
             );
         })(eui.Skin)),
-    (generateEUI.paths["resource/eui_skins/ToggleSwitchSkin.exml"] = window.skins.ToggleSwitchSkin =
+    (generateEUI.paths['resource/eui_skins/ToggleSwitchSkin.exml'] = window.skins.ToggleSwitchSkin =
         (function (e) {
             function t() {
                 e.call(this),
                     (this.skinParts = []),
                     (this.elementsContent = [this._Image1_i(), this._Image2_i()]),
                     (this.states = [
-                        new eui.State("up", [new eui.SetProperty("_Image1", "source", "off_png")]),
-                        new eui.State("down", [new eui.SetProperty("_Image1", "source", "off_png")]),
-                        new eui.State("disabled", [new eui.SetProperty("_Image1", "source", "off_png")]),
-                        new eui.State("upAndSelected", [new eui.SetProperty("_Image2", "horizontalCenter", 18)]),
-                        new eui.State("downAndSelected", [new eui.SetProperty("_Image2", "horizontalCenter", 18)]),
-                        new eui.State("disabledAndSelected", [new eui.SetProperty("_Image2", "horizontalCenter", 18)]),
+                        new eui.State('up', [new eui.SetProperty('_Image1', 'source', 'off_png')]),
+                        new eui.State('down', [new eui.SetProperty('_Image1', 'source', 'off_png')]),
+                        new eui.State('disabled', [new eui.SetProperty('_Image1', 'source', 'off_png')]),
+                        new eui.State('upAndSelected', [new eui.SetProperty('_Image2', 'horizontalCenter', 18)]),
+                        new eui.State('downAndSelected', [new eui.SetProperty('_Image2', 'horizontalCenter', 18)]),
+                        new eui.State('disabledAndSelected', [new eui.SetProperty('_Image2', 'horizontalCenter', 18)]),
                     ]);
             }
             __extends(t, e);
@@ -1253,14 +1280,14 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
             return (
                 (n._Image1_i = function () {
                     var e = new eui.Image();
-                    return (this._Image1 = e), (e.source = "on_png"), e;
+                    return (this._Image1 = e), (e.source = 'on_png'), e;
                 }),
                 (n._Image2_i = function () {
                     var e = new eui.Image();
                     return (
                         (this._Image2 = e),
                         (e.horizontalCenter = -18),
-                        (e.source = "handle_png"),
+                        (e.source = 'handle_png'),
                         (e.verticalCenter = 0),
                         e
                     );
@@ -1268,11 +1295,11 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                 t
             );
         })(eui.Skin)),
-    (generateEUI.paths["resource/eui_skins/VScrollBarSkin.exml"] = window.skins.VScrollBarSkin =
+    (generateEUI.paths['resource/eui_skins/VScrollBarSkin.exml'] = window.skins.VScrollBarSkin =
         (function (e) {
             function t() {
                 e.call(this),
-                    (this.skinParts = ["thumb"]),
+                    (this.skinParts = ['thumb']),
                     (this.minHeight = 20),
                     (this.minWidth = 8),
                     (this.elementsContent = [this.thumb_i()]);
@@ -1287,7 +1314,7 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                         (e.height = 30),
                         (e.horizontalCenter = 0),
                         (e.scale9Grid = new egret.Rectangle(3, 3, 2, 2)),
-                        (e.source = "roundthumb_png"),
+                        (e.source = 'roundthumb_png'),
                         (e.width = 8),
                         e
                     );
@@ -1295,11 +1322,11 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                 t
             );
         })(eui.Skin)),
-    (generateEUI.paths["resource/eui_skins/VSliderSkin.exml"] = window.skins.VSliderSkin =
+    (generateEUI.paths['resource/eui_skins/VSliderSkin.exml'] = window.skins.VSliderSkin =
         (function (e) {
             function t() {
                 e.call(this),
-                    (this.skinParts = ["track", "thumb"]),
+                    (this.skinParts = ['track', 'thumb']),
                     (this.minHeight = 30),
                     (this.minWidth = 25),
                     (this.elementsContent = [this.track_i(), this.thumb_i()]);
@@ -1314,14 +1341,14 @@ __reflect(ThemeAdapter.prototype, "ThemeAdapter", ["eui.IThemeAdapter"]), (windo
                         (e.percentHeight = 100),
                         (e.horizontalCenter = 0),
                         (e.scale9Grid = new egret.Rectangle(1, 1, 4, 4)),
-                        (e.source = "track_png"),
+                        (e.source = 'track_png'),
                         (e.width = 7),
                         e
                     );
                 }),
                 (n.thumb_i = function () {
                     var e = new eui.Image();
-                    return (this.thumb = e), (e.horizontalCenter = 0), (e.source = "thumb_png"), e;
+                    return (this.thumb = e), (e.horizontalCenter = 0), (e.source = 'thumb_png'), e;
                 }),
                 t
             );

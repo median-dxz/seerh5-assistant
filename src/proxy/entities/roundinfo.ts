@@ -15,6 +15,7 @@ export default class RoundPetInfo extends Entity {
     };
 
     damage;
+    isFirstMove;
     isCrit;
     priority;
     effectName;
@@ -45,7 +46,7 @@ export default class RoundPetInfo extends Entity {
                 roundInfoLike.petcatchtime,
                 roundInfoLike.gainHP,
                 roundInfoLike.lostHP,
-                roundInfoLike.maxHp,
+                Math.max(roundInfoLike.maxHp, roundInfoLike.maxHpSelf),
                 roundInfoLike.remainHP,
                 roundInfoLike.isCrit,
                 roundInfoLike.priority,

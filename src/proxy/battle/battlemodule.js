@@ -1,4 +1,5 @@
 import { CMDID, EVENTS } from '../const/_exports.js';
+import Skill from '../entities/skill.js';
 
 import { BattleInfoProvider } from './infoprovider.js';
 import { BattleOperator } from './operator.js';
@@ -7,10 +8,10 @@ const { delay, SAEventManager } = window;
 
 let hadnleBattleStart = () => {
     console.log(`[BattleModuleManager]: 检测到对战开始, 当前模式: ${BattleModuleManager.isRun ? '对战接管' : '手动'}`);
-    handleRoundEnd();
+    handleBattleModule();
 };
 
-let handleRoundEnd = () => {
+let handleBattleModule = () => {
     FighterModelFactory.playerMode &&
         BattleModuleManager.isRun &&
         curBattle.skillModule &&
@@ -28,8 +29,8 @@ let handleBattleEnd = async (e) => {
     }
 };
 
-SAEventManager.addEventListener(EVENTS.BattlePanel.start, hadnleBattleStart);
-SAEventManager.addEventListener(EVENTS.BattlePanel.roundEnd, handleRoundEnd);
+SAEventManager.addEventListener(EVENTS.BattlePanel.panelReady, hadnleBattleStart);
+SAEventManager.addEventListener(EVENTS.BattlePanel.roundEnd, handleBattleModule);
 SAEventManager.addEventListener(EVENTS.BattlePanel.completed, handleBattleEnd);
 
 let battleQueue = [];
@@ -94,7 +95,7 @@ export const BattleModuleManager = {
 function GenerateBaseBattleModule(nms, dsp) {
     return async (info, skills, pets) => {
         if (info.isDiedSwitch) {
-            const next = dsp.match(pets, info.pet.ct);
+            const next = dsp.match(pets, info.self.petCatchtime);
             if (next != -1) {
                 BattleOperator.switchPet(next);
                 await delay(800);
@@ -113,3 +114,20 @@ function GenerateBaseBattleModule(nms, dsp) {
 import * as BaseSkillModule from './skillmodule/base.js';
 export { BaseSkillModule, GenerateBaseBattleModule };
 export { BattleInfoProvider, BattleOperator };
+
+/**
+ * 战斗中的行动模型，接受当前战斗的数据，并自行执行战斗操作
+ * @typedef {(
+ * battleStatus: import("./infoprovider.js").RoundInfo,
+ * skills: Skill[],
+ * pets: PetLike[]
+ * )=> void} SkillModule
+ */
+
+/** 自动战斗模型，包含战斗前，自动战斗，战斗结束三个模块
+ * @typedef BattleModule
+ * @type {Object}
+ * @property {Function}  BattleModule.entry
+ * @property {SkillModule}  BattleModule.skillModule
+ * @property {Function}  BattleModule.finished
+ */
