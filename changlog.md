@@ -19,6 +19,13 @@
 - [ ] 添加更多的常用常量
 - [ ] 封装自动使用函数，而不是包含在operator的默认情况中
 
+v0.1.10
+1. 继续迁移工作，大部分代码已经迁移到typescript
+2. 修复一个由于对象浅拷贝导致的对局信息获取错误
+3. `SAEventManager`已更名为`SAEventTarget`
+4. `BattleModule`模块大型翻修，已添加完善的声明与定义
+5. `BattleModule.BattleModuleManager`模块下`BattleModule`现在不是分别传入`entry`,`skillModule`,`finish`，而是一个包含这三个属性的对象
+
 v0.1.9
 
 1. 继续迁移工作, 项目已配置typescript环境

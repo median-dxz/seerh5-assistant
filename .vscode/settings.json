@@ -2,5 +2,13 @@
     "editor.suggest.showWords": false,
     "prettier.printWidth": 120,
     "prettier.singleQuote": true,
-    "files.autoSave": "onFocusChange"
+    "files.autoSave": "onFocusChange",
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "javascript.preferences.importModuleSpecifierEnding": "js",
+    "typescript.preferences.importModuleSpecifierEnding": "index",
+    "typescript.inlayHints.parameterNames.enabled": "literals",
+    "typescript.referencesCodeLens.enabled": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    }
 }

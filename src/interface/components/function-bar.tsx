@@ -7,6 +7,7 @@ const { useState } = React;
 export function FunctionBar(props) {
     let [autoCure, setAutoCure] = useState(false);
     const SA = window.SA;
+    const mods = window.SaMods;
     return (
         <ButtonGroup sx={{ height: '36px', marginLeft: '12px', display: props.show ? 'block' : 'none' }}>
             <Button
@@ -27,14 +28,14 @@ export function FunctionBar(props) {
             </Button>
             <Button
                 onClick={() => {
-                    SA.mods.get('sign').run();
+                    mods.get('sign').run();
                 }}
             >
                 <DataObject />
             </Button>
             <Button
                 onClick={() => {
-                    SA.mods.get('sign').teamDispatch();
+                    mods.get('sign').teamDispatch();
                 }}
             >
                 <DataObject />

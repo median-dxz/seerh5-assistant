@@ -6,13 +6,16 @@
         "jsx": "react",
         "strictNullChecks": true,
         "strictFunctionTypes": true,
-        "resolveJsonModule": true,
+        "noImplicitAny": true,
+        "allowSyntheticDefaultImports": true,
         "rootDir": "src",
         "outDir": "./dist/",
+        "declaration": true,
         "sourceMap": true,
         "baseUrl": ".",
+        "resolveJsonModule": true,
         "allowJs": true,
-        "checkJs": true
+        "checkJs": true,
     },
     "exclude": [
         "node_modules",
