@@ -5,7 +5,8 @@ const elvenKingId = {
     龙妈乔特鲁德: 6,
     草王茉蕊儿: 15,
     海瑟薇: 12,
-    邪灵王摩哥斯: 14,
+    邪灵王摩哥斯: 14
 };
 
 export { elvenKingId as SA_CONST_EKINGID };
+

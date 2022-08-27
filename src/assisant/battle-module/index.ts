@@ -1,10 +1,12 @@
-import { EVENTS } from '../const/_exports';
+import { EVENTS } from '../const';
 
-import Pet from '../entities/pet';
 import Skill from '../entities/skill';
 
 import { BattleInfoProvider, PetSwitchInfos, RoundInfo } from './infoprovider';
 import { BattleOperator } from './operator';
+
+import { defaultStyle, SaModuleLogger } from '../../logger';
+const log = SaModuleLogger('BattleModuleManager', defaultStyle.core);
 
 const { delay, SAEventTarget } = window;
 
@@ -17,7 +19,7 @@ interface BattleModule {
 }
 
 let hadnleBattleStart = () => {
-    console.log(`[BattleModuleManager]: 检测到对战开始, 当前模式: ${BattleModuleManager.isRun ? '对战接管' : '手动'}`);
+    log(`检测到对战开始, 当前模式: ${BattleModuleManager.isRun ? '对战接管' : '手动'}`);
     handleBattleModule();
 };
 
@@ -34,7 +36,7 @@ let handleBattleModule = () => {
 
 let handleBattleEnd = (e: Event) => {
     if (e instanceof CustomEvent) {
-        console.log(`[BattleModuleManager]: 检测到对战结束 对战胜利: ${e.detail.isWin}`);
+        log(`检测到对战结束 对战胜利: ${e.detail.isWin}`);
         BattleModuleManager.signDeliver.dispatchEvent(new CustomEvent('bm_end'));
     }
 };
@@ -47,7 +49,7 @@ let battleQueue: BattleModule[] = [];
 
 let curBattle: Partial<BattleModule>;
 
-export const BattleModuleManager = {
+const BattleModuleManager = {
     isRun: false,
     signDeliver: new EventTarget(),
 
@@ -87,7 +89,7 @@ function GenerateBaseBattleModule(
     return async (info: RoundInfo, skills: Skill[], pets: PetSwitchInfos) => {
         if (info.isDiedSwitch) {
             const next = dsp.match(pets, info.self!.catchtime);
-            if (next != -1) {
+            if (next !== -1) {
                 BattleOperator.switchPet(next);
                 await delay(800);
                 skills = BattleInfoProvider.getCurSkills()!;
@@ -96,12 +98,12 @@ function GenerateBaseBattleModule(
             }
         }
         const sid = nms.match(skills);
-        if (sid != 0) {
-            BattleOperator.useSkill(sid);
-        }
+        sid && BattleOperator.useSkill(sid);
     };
 }
 
 import * as BaseSkillModule from './skillmodule/base';
+
 export { BaseSkillModule, GenerateBaseBattleModule };
-export { BattleInfoProvider, BattleOperator };
+export { BattleInfoProvider as InfoProvider, BattleOperator as Operator, BattleModuleManager as ModuleManager };
+

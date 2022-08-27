@@ -11,7 +11,7 @@ export interface RoundInfo {
 }
 
 interface BattleInfoProvider {
-    cachedRoundInfo: [RoundPetInfo, RoundInfo] | null;
+    cachedRoundInfo: [RoundPetInfo, RoundPetInfo] | null;
     getCurRoundInfo(): RoundInfo | null;
     getCurSkills(): Skill[] | null;
     getPets(): PetSwitchInfos | null;
@@ -30,7 +30,7 @@ export const BattleInfoProvider: BattleInfoProvider = {
         };
         if (this.cachedRoundInfo) {
             this.cachedRoundInfo[0].isFirstMove = !(this.cachedRoundInfo[1].isFirstMove = false);
-            if (this.cachedRoundInfo[0].userId != FightUserInfo.fighterInfos!.myInfo.id) {
+            if (this.cachedRoundInfo[0].userId !== FightUserInfo.fighterInfos!.myInfo.id) {
                 this.cachedRoundInfo = [this.cachedRoundInfo[1], this.cachedRoundInfo[0]];
             }
             result = { ...result, self: this.cachedRoundInfo[0], other: this.cachedRoundInfo[1] };

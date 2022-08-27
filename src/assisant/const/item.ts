@@ -7,5 +7,6 @@ const items = {
         中级活力药剂: 300017,
         高级活力药剂: 300018,
     },
-};
+} as const;
 export { items as SA_CONST_ITEMS };
+

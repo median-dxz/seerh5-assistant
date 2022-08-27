@@ -1,20 +1,25 @@
 import * as saco from '../../assisant/core';
 import Pet from '../../assisant/entities/pet';
 
+import { defaultStyle, SaModuleLogger } from '../../logger';
+const log = SaModuleLogger('LocalCloth', defaultStyle.mod);
+
 const { Const, Utils } = saco;
 const { EVENTS: SAEvents } = Const;
+const { warpper, SAEventTarget } = window;
 
 const changeCloth = new Map();
 const origalCloth = new Map();
 
 class LocalCloth {
     constructor() {
-        const SAEventTarget = window.SAEventTarget;
         Object.defineProperty(FighterUserInfos.prototype, 'allPetID', {
             get: function () {
                 if (this.myInfo && this.otherInfo)
                     this._allPetID = this.myInfo.petIDArr.concat(this.otherInfo.petIDArr);
-                this._allPetID = this._allPetID.map((v) => (changeCloth.has(v) ? changeCloth.get(v).petSkinId : v));
+                this._allPetID = this._allPetID.map((v: any) =>
+                    changeCloth.has(v) ? changeCloth.get(v).petSkinId : v
+                );
                 return this._allPetID;
             },
             enumerable: !0,
@@ -32,7 +37,7 @@ class LocalCloth {
         });
         Object.defineProperty(PetInfo.prototype, 'skinId', {
             get: function () {
-                return changeCloth.has(this.id) ? changeCloth.get(this.id).skinId : this._skinId;
+                return changeCloth.has(this.id) ? changeCloth.get(this.id).skinId : this._skinId ?? 0;
             },
             set: function (t) {
                 this._skinId = t;
@@ -40,19 +45,18 @@ class LocalCloth {
             enumerable: !0,
             configurable: !0,
         });
-        PetManager.equipSkin = async function (e, n, r) {
-            let _skinId = n;
+        PetManager.equipSkin = async function (e: number, n: number, r?: () => any) {
+            let _skinId = n ?? 0;
             let petInfo = PetManager.getPetInfo(e);
-            void 0 === r && (r = null);
-            console.log(n, petInfo.skinId);
+            log('new skin id:', _skinId, 'previous skin id:', petInfo.skinId);
             if (
-                (PetSkinController.instance.haveSkin(n) || n === undefined) &&
-                (!origalCloth.has(petInfo.id) || origalCloth.get(petInfo.id) !== n)
+                (_skinId === 0 || PetSkinController.instance.haveSkin(_skinId)) &&
+                (!origalCloth.has(petInfo.id) || origalCloth.get(petInfo.id) !== _skinId)
             ) {
                 changeCloth.delete(petInfo.id);
-                origalCloth.set(petInfo.id, n);
-                await new Promise((resolve, reject) => {
-                    SocketConnection.sendByQueue(47310, [e, n], function (o) {
+                origalCloth.set(petInfo.id, _skinId);
+                await new Promise<void>((resolve, reject) => {
+                    Utils.SendByQueue(47310, [e, n]).then((v) => {
                         resolve();
                     });
                 });
@@ -61,20 +65,22 @@ class LocalCloth {
                     origalCloth.set(petInfo.id, petInfo.skinId);
                 }
                 changeCloth.set(petInfo.id, {
-                    skinId: n,
-                    petSkinId: PetSkinXMLInfo.getSkinPetId(n, petInfo.id),
+                    skinId: _skinId,
+                    petSkinId: PetSkinXMLInfo.getSkinPetId(_skinId, petInfo.id),
                 });
             }
             petInfo = PetManager.getPetInfo(e);
             petInfo.skinId = _skinId;
             PetManager.dispatchEvent(new PetEvent(PetEvent.EQUIP_SKIN, e, _skinId));
-            null != r && r();
+            r && r();
         };
-        const petDetailInfoModuleLoaded = (e) => {
-            if (e.detail.moduleName == 'petDetailedInfo') {
+        const petDetailInfoModuleLoaded = (e: Event) => {
+            let petDetailedInfo: any;
+            if ((e as CustomEvent).detail.moduleName === 'petDetailedInfo') {
                 SAEventTarget.addEventListener(
                     SAEvents.Module.show,
                     () => {
+                        petDetailedInfo = window['petDetailedInfo' as any];
                         const protoFunc = petDetailedInfo.PetInfoSkinView.prototype.updateSkin;
                         petDetailedInfo.PetInfoSkinView.prototype.updateSkin = warpper(protoFunc, null, function () {
                             const t = this._arry.getItemAt(this._selectSkinIndex);
@@ -82,9 +88,24 @@ class LocalCloth {
                                 `                    精灵ID: ${t.monId}\n` +
                                 `                    皮肤ID: ${t.id}\n` +
                                 `                    皮肤绑定ID: ${PetSkinXMLInfo.getSkinPetId(t.id, t.monId)}`;
-                            this.img_yzb.visible = (this._petInfo.skinId == 0 && !t.id) || this._petInfo.skinId == t.id;
+                            this.img_yzb.visible =
+                                (this._petInfo.skinId === 0 && !t.id) || this._petInfo.skinId === t.id;
                             this.img_zhuangbei.visible = !this.img_yzb.visible;
                         });
+                        petDetailedInfo.ItemSkin.prototype.dataChanged = function () {
+                            var e = this;
+                            if (!this.data) return void (this.visible = !1);
+                            (this.visible = !0), (this.lab_name.text = this.data.name);
+                            var t = this.data.type;
+                            this.img_ys.source = 'common_pet_skin_icon_' + t + '_png';
+                            this.icon_skin.visible = this._petShow.visible = !1;
+                            e.icon_skin.source = ClientConfig.getPetHalfIcon(
+                                this.data.monId == this.data.skinPetId || this.data.skinPetId >= 14e5
+                                    ? this.data.skinPetId
+                                    : 14e5 + this.data.id
+                            );
+                            e.icon_skin.visible = true;
+                        };
                     },
                     { once: true }
                 );
@@ -93,14 +114,16 @@ class LocalCloth {
         };
         SAEventTarget.addEventListener(SAEvents.Module.loaded, petDetailInfoModuleLoaded);
 
-        const petBagModuleLoaded = (e) => {
-            if (e.detail.moduleName == 'petBag') {
+        const petBagModuleLoaded = (e: Event) => {
+            if ((e as CustomEvent).detail.moduleName === 'petBag') {
+                let petBag: any;
                 SAEventTarget.addEventListener(
                     SAEvents.Module.show,
                     () => {
+                        petBag = window['petBag' as any];
                         const protoFunc = petBag.PetBag.prototype.onEndDrag;
                         petBag.PetBag.prototype.onEndDrag = warpper(protoFunc, null, function () {
-                            console.log(new Pet(this.hitHead.petInfo));
+                            log(new Pet(this.hitHead.petInfo));
                         });
                     },
                     { once: true }
@@ -110,7 +133,7 @@ class LocalCloth {
         };
         SAEventTarget.addEventListener(SAEvents.Module.loaded, petBagModuleLoaded);
     }
-    init() { }
+    init() {}
 }
 
 export default {

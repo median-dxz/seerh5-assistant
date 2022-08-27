@@ -10,8 +10,8 @@ declare type PetSkillInfoBase = {
 
 declare type PetInfoBase = {
     catchTime: number;
-    name: string;
-    id: number;
+    name?: string;
+    id?: number;
 };
 
 //common
@@ -23,6 +23,8 @@ declare namespace ModuleManager {
     function beginShow(moduleName: string): void;
     function _openModelCompete(): void;
     function loadScript(scriptName: string): Promise<void>;
+    function hasmodule(moduleName: string): boolean;
+    function showModule(moduleName: string): Promise<void>;
     var appJs: {
         [module: string]: boolean;
     };
@@ -48,6 +50,7 @@ declare namespace FighterModelFactory {
 
     var playerMode: FighterModel | undefined;
     var enemyMode: FighterModel | undefined;
+    var propView: any;
 }
 
 declare namespace SocketConnection {
@@ -65,6 +68,7 @@ type StringMapable = {
 
 declare var ItemXMLInfo: {
     _itemDict: StringMapable;
+    getName(id: number): string;
 };
 
 declare namespace SkillXMLInfo {
@@ -86,6 +90,7 @@ declare namespace SkillXMLInfo {
 declare var PetXMLInfo: {
     _dataMap: StringMapable;
     getType(id: number): number;
+    getName(id: number): string;
 };
 
 declare namespace ItemManager {
@@ -106,28 +111,31 @@ declare namespace CountermarkController {
     function getAllUniversalMark(): CountermarkGroup[];
 }
 
-declare namespace PetManager {
-    function getPetInfo(catchTime: number): PetInfo;
-    function getLovePetList(): void;
-    function updateBagInfo(callback: CallBack): void;
-    function secondBagToBag(ct: number): void;
-    function storageToBag(ct: number): void;
-    function bagToSecondBag(ct: number): void;
-    function storageToSecondBag(ct: number): void;
-    function loveToBag(ct: number): void;
-    function delLovePet(arg0: number, ct: number, arg2: number): void;
-    function bagToStorage(ct: number): void;
-    function secondBagToStorage(ct: number): void;
-    function addLovePet(arg0: number, ct: number, arg2: number): void;
-    function noAlarmCureAll(): void;
-    function getLovePetList(): void;
-    function setDefault(ct: number): void;
-    var isBagFull: boolean;
-    var isSecondBagFull: boolean;
-    var _bagMap: StringMapable;
-    var _secondBagMap: StringMapable;
-    var defaultTime: number;
+interface PetManager {
+    getPetInfo(catchTime: number): PetInfo;
+    getLovePetList(): void;
+    updateBagInfo(callback: CallBack): void;
+    secondBagToBag(ct: number): void;
+    storageToBag(ct: number): void;
+    bagToSecondBag(ct: number): void;
+    storageToSecondBag(ct: number): void;
+    loveToBag(ct: number): void;
+    delLovePet(arg0: number, ct: number, arg2: number): void;
+    bagToStorage(ct: number): void;
+    secondBagToStorage(ct: number): void;
+    addLovePet(arg0: number, ct: number, arg2: number): void;
+    noAlarmCureAll(): void;
+    getLovePetList(): void;
+    setDefault(ct: number): void;
+    equipSkin(e: number, n: number, r: () => any): Promise<void>;
+    dispatchEvent(e: PetEvent): void;
+    isBagFull: boolean;
+    isSecondBagFull: boolean;
+    _bagMap: StringMapable;
+    _secondBagMap: StringMapable;
+    defaultTime: number;
 }
+declare var PetManager: PetManager;
 
 declare namespace PetStorage2015InfoManager {
     function getTotalInfo(callback: CallBack): void;
@@ -166,6 +174,7 @@ declare interface UseSkillInfo {
     status: number[];
     sideEffects: number[];
 }
+declare var UseSkillInfo: UseSkillInfo;
 
 // init/helper
 declare var Alarm: any;
@@ -180,7 +189,7 @@ declare var CountermarkEvent: any;
 declare var PetStatusEffectConfig: any;
 
 // entitis
-declare type PetInfo = {
+declare interface PetInfo {
     hideSKill: PetSkillInfoBase;
     skillArray: PetSkillInfoBase[];
     id: number;
@@ -189,7 +198,9 @@ declare type PetInfo = {
     maxHp: number;
     hp: number;
     dv: number;
-};
+    skinId: number;
+    new (data: any): PetInfo;
+}
 
 declare var FightUserInfo: {
     fighterInfos?: {
@@ -218,3 +229,19 @@ declare var EffectInfoManager: any;
 
 // pet-helper
 declare var TypeXMLInfo: any;
+
+// mods
+declare var SystemTimerManager: any;
+declare var MainManager: any;
+declare var markCenter: any;
+declare var FighterUserInfos: any;
+declare var FightPetInfo: any;
+declare var PetInfo: PetInfo;
+declare var PetSkinController: any;
+declare var PetSkinXMLInfo: any;
+declare var ClientConfig: any;
+declare interface PetEvent {
+    new (e: string, oi: number, ni: number): PetEvent;
+    [EventType: string]: string;
+}
+declare var PetEvent: PetEvent;

@@ -6,7 +6,7 @@ export async function GetMultiValue(...value: number[]) {
 
 let DictMatcher = (dict: StringMapable, reg: RegExp, keyName: string) => {
     return Object.keys(dict)
-        .map(key => key == keyName && dict[keyName].match(reg))
+        .map(key => key === keyName && dict[keyName].match(reg))
         .filter(Boolean)
 };
 
@@ -28,7 +28,7 @@ export function getTypeIdByName(name: any) {
 }
 
 export function getUserCurrency(type: string) {
-    if (type == 'soul_of_titan') {
+    if (type === 'soul_of_titan') {
         return ItemManager.getNumByID(1400352);
     }
 }

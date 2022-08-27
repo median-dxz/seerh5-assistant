@@ -8,9 +8,9 @@ class NameMatched {
     }
     match(skills: Skill[]) {
         let r = this.skillNames.find((name) => {
-            return skills.some((v) => v.name == name && v.pp > 0);
+            return skills.some((v) => v.name === name && v.pp > 0);
         });
-        return r && skills.find((v) => v.name == r)!.id;
+        return r && skills.find((v) => v.name === r)!.id;
     }
 }
 
@@ -22,7 +22,7 @@ class DiedSwitchLinked {
     match(pets: PetSwitchInfos, dyingCt: number) {
         let swName = '';
         for (let pet of pets) {
-            if (pet.catchTime == dyingCt) {
+            if (pet.catchTime === dyingCt) {
                 swName = pet.name;
                 break;
             }
@@ -30,8 +30,8 @@ class DiedSwitchLinked {
         if (!this.petNames.includes(swName)) return -1;
         swName = this.petNames[this.petNames.indexOf(swName) + 1];
         for (let pet of pets) {
-            if (pet.name == swName) {
-                if (pet.hp == 0) {
+            if (pet.name === swName) {
+                if (pet.hp === 0) {
                     return -1;
                 } else {
                     return pet.index;

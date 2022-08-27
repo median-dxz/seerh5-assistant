@@ -1,35 +1,36 @@
+export { SendByQueue as SocketSendByQueue };
+export { ReceivedPromise as SocketReceivedPromise };
+
 /**
  * @description 将数据包加到待发送队列
  */
-async function SendByQueue(cmd: number, data: Array<number>) {
+export async function SendByQueue(cmd: number, data: Array<number> | number = []) {
+    let _data = typeof data === 'number' ? [data] : data;
     return new Promise((resolve, reject) => {
         SocketConnection.sendByQueue(
             cmd,
-            data,
+            _data,
             (v: unknown) => resolve(v),
             (err: unknown) => reject(err)
         );
     });
 }
-export { SendByQueue as SocketSendByQueue };
 
 /**
  * @description 将数据包加到待发送队列
  */
-async function ReceivedPromise(cmd: number, fn: () => void) {
+export async function ReceivedPromise(cmd: number, fn: () => void) {
     if (!fn) return;
     return new Promise<void>((resolve, reject) => {
-        new Promise((resolve, reject) => {
+        new Promise((resolve: (value: () => void) => void, reject) => {
             function resolver() {
                 resolve(resolver);
             }
             SocketConnection.addCmdListener(cmd, resolver);
         }).then((v) => {
-            SocketConnection.removeCmdListener(v);
+            SocketConnection.removeCmdListener(cmd, v);
             resolve();
         });
         fn();
-    })
-
+    });
 }
-export { ReceivedPromise as SocketReceivedPromise } 

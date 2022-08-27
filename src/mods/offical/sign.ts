@@ -1,17 +1,21 @@
 import * as saco from '../../assisant/core';
 import data from '../common.config.js';
 
-let { Utils, Const, PetHelper } = saco;
+import { defaultStyle, SaModuleLogger } from '../../logger';
+const log = SaModuleLogger('Sign', defaultStyle.mod);
+
+const { Utils, Const, PetHelper, Functions } = saco;
+const { CMDID } = Const;
 
 class sign {
     constructor() {}
     async run() {
         let curTimes = (await Utils.GetMultiValue(Const.MULTIS.日常.刻印抽奖次数))[0];
-        if (curTimes == 0) {
+        if (curTimes === 0) {
             //CMD MARKDRAW: 46301
             Utils.SocketSendByQueue(46301, [1, 0]);
         } else {
-            console.log('[AS]: 今日已抽奖');
+            log('今日已抽奖');
         }
 
         curTimes = (await Utils.GetMultiValue(Const.MULTIS.许愿.登录时长))[0];
@@ -42,7 +46,7 @@ class sign {
         curTimes = (await Utils.GetMultiValue(Const.MULTIS.战队.资源生产次数))[0];
         t = Math.max(0, 5 - curTimes);
         while (t--) {
-            Utils.SocketSendByQueue(CommandID.RES_PRODUCTORBUY, [2, 0]);
+            Utils.SocketSendByQueue(CMDID.RES_PRODUCTORBUY, [2, 0]);
         }
         curTimes = (await Utils.GetMultiValue(Const.MULTIS.许愿.许愿签到))[0];
         if (!curTimes) {
@@ -52,21 +56,21 @@ class sign {
 
         curTimes = (await Utils.GetMultiValue(11516))[0];
         if (!curTimes) {
-            Utils.SocketSendByQueue(CommandID.VIP_BONUS_201409, [1]);
+            Utils.SocketSendByQueue(CMDID.VIP_BONUS_201409, 1);
         }
         curTimes = (await Utils.GetMultiValue(14204))[0];
         if (!curTimes) {
-            Utils.SocketSendByQueue(CommandID.SEER_VIP_DAILY_REWARD);
+            Utils.SocketSendByQueue(CMDID.SEER_VIP_DAILY_REWARD);
         }
     }
     async teamDispatch() {
-        await SocketConnection.sendByQueue(45809, [0]);
-        
+        await Utils.SocketSendByQueue(45809, 0);
+
         const igonrePetNames = data.igonrePetNames;
         const PosType = Const.PETPOS;
         let reprogress = false;
         for (let tid = 16; tid > 0; tid--) {
-            if (tid == 5) tid = 1;
+            if (tid === 5) tid = 1;
             if (!reprogress) {
                 // 清空背包
                 for (let p of await PetHelper.getPets(PosType.bag1)) {
@@ -74,19 +78,27 @@ class sign {
                 }
             }
 
-            const t = await Utils.SocketSendByQueue(45810, [tid]);
+            const t = await Utils.SocketSendByQueue(45810, tid);
 
-            const i = t.data;
+            const i = (t as any).data;
             const n = i.readUnsignedInt();
-            const a = i.readUnsignedInt();
-            const e = { petIds: [], cts: [], levels: [] };
+            const a: number = i.readUnsignedInt();
+            let e: {
+                petIds: number[];
+                cts: number[];
+                levels: number[];
+            } = {
+                petIds: [],
+                cts: [],
+                levels: [],
+            };
             for (let r = 0; a > r; r++) {
                 e.cts.push(i.readUnsignedInt());
                 e.petIds.push(i.readUnsignedInt());
                 e.levels.push(i.readUnsignedInt());
             }
 
-            console.log(`[sign]: 正在处理派遣任务: ${tid}`);
+            log(`正在处理派遣任务: ${tid}`);
             reprogress = e.petIds.some((v) => igonrePetNames.has(PetXMLInfo.getName(v)));
 
             let index = 0;
@@ -94,7 +106,7 @@ class sign {
                 const petName = PetXMLInfo.getName(pid);
                 if (igonrePetNames.has(petName)) {
                     await PetHelper.setPetLocation(e.cts[index], 1);
-                    console.log(`[sign]: 取出非派遣精灵: ${petName}`);
+                    log(`取出非派遣精灵: ${petName}`);
                 }
                 index++;
             }
@@ -105,14 +117,14 @@ class sign {
                 Utils.SocketSendByQueue(45808, [tid, e.cts[0], e.cts[1], e.cts[2], e.cts[3], e.cts[4]]);
             }
         }
-        console.log(`[sign]: 派遣任务处理完成`);
+        log(` 派遣任务处理完成`);
     }
     async markLvSetup() {
         if (!ModuleManager.hasmodule('markCenter.MarkCenter')) {
             await ModuleManager.showModule('markCenter');
         }
         markCenter.MarkLvlUp.prototype.lvlUpAll = function () {
-            Utils.upMarkToTopLv(this.markInfo);
+            Functions.upMarkToTopLv(this.markInfo);
         };
     }
 }

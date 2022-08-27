@@ -1,4 +1,4 @@
-import { CMDID } from "../const/_exports";
+import { CMDID } from "../const";
 import { SocketSendByQueue } from "./sa-socket";
 
 /**

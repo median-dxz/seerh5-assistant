@@ -15,15 +15,16 @@
         "baseUrl": ".",
         "resolveJsonModule": true,
         "allowJs": true,
-        "checkJs": true,
+        "allowUmdGlobalAccess": true
     },
     "exclude": [
         "node_modules",
         "**/node_modules/*",
         "dist",
         "loader",
+        "archive"
     ],
     "include": [
-        "./src/",
+        "./src/"
     ],
 }

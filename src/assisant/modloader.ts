@@ -1,4 +1,6 @@
+import { defaultStyle, SaModuleLogger } from '../logger';
 import ModList from '../mods/modslist.json';
+const log = SaModuleLogger('ModLoader', defaultStyle.mod);
 
 let RegisteredMods = new Map();
 
@@ -11,9 +13,9 @@ async function register(id: string, path: string) {
         /* webpackChunkName: "modpack" */
         `../mods/${path}/${id}`
     ).then((ModClass) => {
-        console.log(`[ModLoader]: 加载模组: ${id}`);
+        log(`加载模组: ${id}`);
         RegisteredMods.set(id, new ModClass.default.mod());
     });
 }
 
-window.SaMods = RegisteredMods;
+window.SAMods = RegisteredMods;

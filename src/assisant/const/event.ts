@@ -14,5 +14,6 @@ const events = {
         show: 'sa_award_show',
         receive: 'sa_award_receive',
     },
-};
+} as const;
 export { events as SA_CONST_EVENTS };
+

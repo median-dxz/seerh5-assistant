@@ -8,7 +8,8 @@ declare global {
         warpper: typeof warpper;
         filterLogText: RegExp[];
         filterWarnText: RegExp[];
-        SaMods: any;
+        SAMods: any;
+        SACoreReady: boolean;
     }
     type Fn = (...args: any) => void;
     type CallBack = Fn;

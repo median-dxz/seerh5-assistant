@@ -43,9 +43,9 @@ export default class Skill extends Entity {
                 Boolean(skillLike.MustHit),
             ];
             const argSplit = (arg: SkillEffectArgs) => {
-                if (typeof arg == 'string') {
+                if (typeof arg === 'string') {
                     return arg.split(' ').map((v) => parseInt(v));
-                } else if (typeof arg == 'number') {
+                } else if (typeof arg === 'number') {
                     return [arg];
                 } else {
                     return [];

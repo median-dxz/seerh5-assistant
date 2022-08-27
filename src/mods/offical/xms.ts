@@ -1,25 +1,35 @@
 import * as saco from '../../assisant/core';
 import data from '../common.config.js';
 
-const { BattleModule, Const, Functions, PetHelper, Utils } = saco;
-const { BaseSkillModule, BattleInfoProvider, BattleModuleManager, BattleOperator } = BattleModule;
+import { defaultStyle, SaModuleLogger } from '../../logger';
+const log = SaModuleLogger('X战队密室', defaultStyle.mod);
+
+const { BattleModule, Functions, PetHelper } = saco;
+const { BaseSkillModule, ModuleManager: BattleModuleManager } = BattleModule;
+const { delay } = window;
 const ct = data.petCts;
 
 const NMS = new BaseSkillModule.NameMatched(['幻梦芳逝', '剑挥四方', '破寂同灾']);
 const DSP = new BaseSkillModule.DiedSwitchLinked(['蒂朵', '六界帝神', '深渊狱神·哈迪斯']);
 
 class xms {
+    DataManager: any;
     constructor() {}
     activityInfo = {
         isFinished: false,
     };
     async update() {
-        this.activityInfo.isFinished = this.dm.GetDailyRewardFlag();
+        this.activityInfo.isFinished =
+            this.DataManager.GetDailyRewardFlag() ||
+            (this.DataManager.GetFbOpenFlag() === false && this.DataManager.GetDailyFBOpenCnt() === 3);
     }
     async init() {
+        let pveXTeamRoom: any;
         if (!ModuleManager.hasmodule('pveXTeamRoom.PveXTeamRoom')) {
             await ModuleManager.showModule('pveXTeamRoom');
         }
+
+        pveXTeamRoom = window['pveXTeamRoom' as any];
 
         await Functions.SwitchBag([
             { catchTime: ct.蒂朵, name: '蒂朵' },
@@ -31,30 +41,28 @@ class xms {
         PetHelper.setDefault(ct.蒂朵);
 
         await delay(500);
-        this.dm = pveXTeamRoom.DataManger.getInstance();
+
+        this.DataManager = pveXTeamRoom.DataManger.getInstance();
         await this.update();
         if (!this.activityInfo.isFinished) {
-            if (!this.dm.GetFbOpenFlag()) {
-                this.dm.c2s_Start_Fb();
+            if (!this.DataManager.GetFbOpenFlag()) {
+                this.DataManager.c2s_Start_Fb();
             }
         } else {
-            console.log('[x战队密室]: 今日已结束!');
+            log('今日已结束!');
         }
     }
     run() {
-        BattleModuleManager.queuedModule(
-            () => {
-                this.dm.c2s_go_battle(7);
+        BattleModuleManager.queuedModule({
+            entry() {
+                this.DataManager.c2s_go_battle(7);
             },
-            BattleModule.GenerateBaseBattleModule(NMS, DSP),
-            () => {
-                this.dm.c2s_Get_DailyReward();
-            }
-        );
+            skillModule: BattleModule.GenerateBaseBattleModule(NMS, DSP),
+            finished() {
+                this.DataManager.c2s_Get_DailyReward();
+            },
+        });
         BattleModuleManager.runOnce();
-    }
-    test(){
-        BattleModuleManager.setCommonModule(BattleModule.GenerateBaseBattleModule(NMS, DSP));
     }
 }
 export default {

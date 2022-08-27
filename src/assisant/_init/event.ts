@@ -1,5 +1,4 @@
-export { };
-import { CMDID, EVENTS as hooks } from '../const/_exports';
+import { CMDID, EVENTS as hooks } from '../const';
 const { delay, warpper, SAEventTarget: GlobalEventManager } = window;
 
 const EmitEvnet = (type: string, detail = {}) => {
@@ -59,3 +58,5 @@ SocketConnection.addCmdListener(CMDID.NOTE_USE_SKILL, (dataPackage) => {
     const info = new UseSkillInfo(data);
     EmitEvnet(hooks.BattlePanel.onRoundData, { info: [info.firstAttackInfo, info.secondAttackInfo] });
 });
+
+export { };

@@ -1,6 +1,6 @@
-import { CMDID, PETPOS as PosType } from '../const/_exports';
+import { CMDID, PETPOS as PosType } from '../const';
 import Pet, { PetFactory } from '../entities/pet';
-import { SocketReceivedPromise, SocketSendByQueue } from './sa-utils';
+import { SocketReceivedPromise, SocketSendByQueue } from '../utils';
 
 type PosType = AttrConsts<typeof PosType>;
 
@@ -38,19 +38,19 @@ export async function getPets(location: PosType): Promise<Pet[]> {
             break;
     }
 
-    if (location == PosType.bag1 || location == PosType.secondBag1) {
+    if (location === PosType.bag1 || location === PosType.secondBag1) {
         return dict!.map((v: PetInfo) => new Pet(v));
     } else {
         return dict!.map((v: PetInfo) => PetFactory.formatByCatchtime(v.catchTime));
     }
 }
 
-export const isDefault = (ct: number) => PetManager.defaultTime == ct;
+export const isDefault = (ct: number) => PetManager.defaultTime === ct;
 export const setDefault = PetManager.setDefault.bind(PetManager);
 
 export const getPetLocation = (ct: number) => {
     return updateStroageInfo().then(() => {
-        const r = PetStorage2015InfoManager.allInfo.find((v) => v.catchTime == ct);
+        const r = PetStorage2015InfoManager.allInfo.find((v) => v.catchTime === ct);
         if (!r) {
             if (PetManager._bagMap.containsKey(ct)) {
                 return PosType.bag1;
@@ -68,14 +68,14 @@ export const getPetLocation = (ct: number) => {
 export const setPetLocation = async (ct: number, newLocation: PosType) => {
     if (!ct) return false;
     let l = await getPetLocation(ct);
-    if (l == newLocation || l == -1) return false;
+    if (l === newLocation || l === -1) return false;
     switch (newLocation) {
         case PosType.secondBag1:
             if (PetManager.isSecondBagFull) return false;
             await SocketReceivedPromise(CMDID.PET_RELEASE, () => {
-                if (l == PosType.bag1) {
+                if (l === PosType.bag1) {
                     PetManager.bagToSecondBag(ct);
-                } else if (l == PosType.storage || l == PosType.elite) {
+                } else if (l === PosType.storage || l === PosType.elite) {
                     PetManager.storageToSecondBag(ct);
                 }
             });
@@ -83,39 +83,39 @@ export const setPetLocation = async (ct: number, newLocation: PosType) => {
         case PosType.bag1:
             if (PetManager.isBagFull) return false;
             await SocketReceivedPromise(CMDID.PET_RELEASE, () => {
-                if (l == PosType.secondBag1) {
+                if (l === PosType.secondBag1) {
                     PetManager.secondBagToBag(ct);
-                } else if (l == PosType.storage) {
+                } else if (l === PosType.storage) {
                     PetManager.storageToBag(ct);
-                } else if (l == PosType.elite) {
+                } else if (l === PosType.elite) {
                     PetManager.loveToBag(ct);
                 }
             });
             break;
         case PosType.storage:
-            if (l == PosType.elite) {
+            if (l === PosType.elite) {
                 await SocketReceivedPromise(CMDID.DEL_LOVE_PET, () => PetManager.delLovePet(0, ct, 0));
                 break;
             }
             await SocketReceivedPromise(CMDID.PET_RELEASE, () => {
-                if (l == PosType.bag1) {
+                if (l === PosType.bag1) {
                     PetManager.bagToStorage(ct);
-                } else if (l == PosType.secondBag1) {
+                } else if (l === PosType.secondBag1) {
                     PetManager.secondBagToStorage(ct);
                 }
             });
             break;
         case PosType.elite:
-            if (l != PosType.storage) {
+            if (l !== PosType.storage) {
                 await SocketReceivedPromise(CMDID.PET_RELEASE, () => {
-                    if (l == PosType.bag1) {
+                    if (l === PosType.bag1) {
                         PetManager.bagToStorage(ct);
-                    } else if (l == PosType.secondBag1) {
+                    } else if (l === PosType.secondBag1) {
                         PetManager.secondBagToStorage(ct);
                     }
                 });
             }
-            if ((await getPetLocation(ct)) == PosType.storage) {
+            if ((await getPetLocation(ct)) === PosType.storage) {
                 await SocketReceivedPromise(CMDID.ADD_LOVE_PET, () => PetManager.addLovePet(0, ct, 0));
                 PetStorage2015InfoManager.changePetPosi(ct, PosType.elite);
             }
@@ -129,13 +129,13 @@ export const setPetLocation = async (ct: number, newLocation: PosType) => {
 
 export const popPetFromBag = async (ct: number) => {
     const locat = await getPetLocation(ct);
-    if (locat != PosType.elite && locat != PosType.storage) {
+    if (locat !== PosType.elite && locat !== PosType.storage) {
         await setPetLocation(ct, PosType.storage);
     }
 };
 
 export function cureOnePet(ct: number) {
-    SocketSendByQueue(CMDID.PET_ONE_CURE, [ct]);
+    SocketSendByQueue(CMDID.PET_ONE_CURE, ct);
 }
 
 export function cureAllPet() {

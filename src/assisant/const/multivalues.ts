@@ -11,6 +11,7 @@ const values = {
     战队: {
         资源生产次数: 12470,
     },
-};
+} as const;
 
 export { values as SA_CONST_MULTIS };
+

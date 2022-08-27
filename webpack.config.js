@@ -1,16 +1,21 @@
 // @ts-nocheck
 import path from 'path';
 
+import CopyPlugin from 'copy-webpack-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import webpack from 'webpack';
+
+import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
+import ReactRefreshTypeScript from 'react-refresh-typescript';
+
+import { saProxyMiddleware } from './webpack.proxy.js';
+
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export { __dirname };
-import { saProxyMiddleware } from './webpack.proxy.js';
-import CopyPlugin from 'copy-webpack-plugin';
-import webpack from 'webpack';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
 const libConfig = {
     name: 'core',
@@ -70,8 +75,11 @@ const appConfig = {
         rules: [
             {
                 test: /\.(t|j)sx?$/,
-                use: 'ts-loader',
-                exclude: /node_modules/,
+                use: {
+                    loader: 'ts-loader',
+                    options: {},
+                },
+                exclude: [/node_modules/, /archive/],
                 include: path.resolve(__dirname, 'src'),
             },
             {
@@ -88,17 +96,17 @@ const appConfig = {
     },
     optimization: {
         splitChunks: {
-            chunks: 'all',
+            chunks: 'async',
+            hidePathInfo: true,
             cacheGroups: {
                 vendor: {
                     test: /[\\/]node_modules[\\/]/,
-                    name: 'react-mui',
+                    name: 'vendor',
                     chunks: 'all',
                 },
             },
         },
         runtimeChunk: 'single',
-        moduleIds: 'deterministic',
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
@@ -116,7 +124,6 @@ const appConfig = {
     },
     devtool: 'source-map',
     plugins: [
-        new webpack.HotModuleReplacementPlugin(),
         new HtmlWebpackPlugin({
             title: 'seer-proxy | 赛尔号h5登陆器 by median',
             scriptLoading: 'module',
@@ -128,11 +135,10 @@ const appConfig = {
         static: './dist',
         client: {
             overlay: false,
-            // progress: true,
+            logging: 'info',
         },
         hot: 'only',
         port: 1234,
-        
         setupMiddlewares: (middlewares, devServer) => {
             if (!devServer) {
                 throw new Error('webpack-dev-server is not defined');
@@ -145,10 +151,30 @@ const appConfig = {
 
 export default (env, argv) => {
     let exports = appConfig;
-    if (argv.mode === 'production') {
+    const development = argv.mode === 'development';
+
+    exports.optimization = {
+        chunkIds: development ? 'named' : 'deterministic',
+        moduleIds: development ? 'named' : 'deterministic',
+    };
+
+    if (!development) {
         delete exports.devtool;
-    } else if (argv.mode === 'development') {
-        exports.plugins.push(new ReactRefreshWebpackPlugin({ overlay: false }));
+    } else {
+        exports.plugins.push(
+            new webpack.HotModuleReplacementPlugin(),
+            new ForkTsCheckerWebpackPlugin(),
+            new ReactRefreshWebpackPlugin({
+                overlay: false,
+                include: [path.resolve(__dirname, 'src', 'interface'), /\.[jt]sx/],
+            })
+        );
+        exports.module.rules[0].use.options = {
+            getCustomTransformers: () => ({
+                before: [ReactRefreshTypeScript()],
+            }),
+            transpileOnly: true,
+        };
     }
     return appConfig;
 };

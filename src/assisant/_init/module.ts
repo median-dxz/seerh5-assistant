@@ -17,8 +17,8 @@ window.filterWarnText = [
     /PetID:.*?offsetX:/,
     /head.petInfo:/,
     /battleResultPanel/,
+    /GuideManager.isCompleted/,
 ];
-
 
 ModuleManager.loadScript = function (scriptName) {
     return new Promise((resolve) => {

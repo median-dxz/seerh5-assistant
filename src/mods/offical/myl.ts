@@ -1,9 +1,12 @@
 import * as saco from '../../assisant/core';
 import data from '../common.config.js';
 
+import { defaultStyle, SaModuleLogger } from '../../logger';
+const log = SaModuleLogger('莫伊莱因子', defaultStyle.mod);
+
 const ct = data.petCts;
-const { BattleModule, Functions, Utils, PetHelper} = saco;
-const { BaseSkillModule } = BattleModule;
+const { Functions, Utils, PetHelper } = saco;
+const { delay } = window;
 
 const Bags = [
     [
@@ -43,7 +46,7 @@ class myl {
     };
     async updateActivityInfo() {
         const [a, b] = await Utils.GetMultiValue(107767, 12713);
-        let c = await Utils.SocketSendByQueue(42399, [1, 1723493]);
+        let c: any = await Utils.SocketSendByQueue(42399, [1, 1723493]);
         c = c.data;
         c.readUnsignedInt();
         c.readUnsignedInt();
@@ -52,10 +55,10 @@ class myl {
             gears: c,
             curBattle: (a >> 16) & 7,
             difficulty: (a >> 8) & 7,
-            isInChallenging: a & 7,
+            isInChallenging: Boolean(a & 7),
             dailyTimes: b,
         };
-        console.log(`[莫伊莱因子]: 更新信息
+        log(`更新信息
             命运齿轮数: ${this.activityInfo.gears}
             当前战斗位置: ${this.activityInfo.curBattle}
             当前难度: ${this.activityInfo.difficulty}
@@ -70,7 +73,7 @@ class myl {
             const i = this.activityInfo.curBattle;
             await Functions.SwitchBag(Bags[i]);
             PetHelper.cureAllPet();
-            await new Promise((res, rej) => {
+            await new Promise<void>((res, rej) => {
                 if (i == 2) {
                     Functions.LowerBlood([ct.魔钰], undefined, () => {
                         PetHelper.setDefault(defaultPet[i]);
@@ -89,12 +92,12 @@ class myl {
                 }
             });
 
-            Utils.SocketSendByQueue(41284, [1, 2]).then((v) => {
+            Utils.SocketSendByQueue(41284, [1, 2]).then((v: any) => {
                 const code = v.data.readUnsignedInt();
                 if (code == 0) {
                     Utils.SocketSendByQueue(41282, [1, 2]);
                 } else {
-                    console.log(`[莫伊莱]: 当前阵容不能对战!请检查是否有不合法的精灵`);
+                    log(`当前阵容不能对战!请检查是否有不合法的精灵`);
                 }
             });
         }

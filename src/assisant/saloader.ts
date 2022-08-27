@@ -1,4 +1,4 @@
-const sa_init = async () => {
+const sa_wait_login = async () => {
     LoginService.loginCompleted = function () {
         RES.removeEventListener(RES.ResourceEvent.GROUP_PROGRESS, this.onResourceProgress, this);
         EventManager.dispatchEventWith('LoginCompeted');
@@ -9,15 +9,16 @@ const sa_init = async () => {
     egret.lifecycle.onPause = () => {};
     egret.lifecycle.onResume = () => {};
     OnlineManager.prototype.setSentryScope = () => {};
-    await import('./init/module');
+    await import('./_init/module');
 };
 
-let sa_core_init = async () => {
-    await Promise.all([import('./init/socket'), import('./init/helper')]);
-    await import('./init/event');
+const sa_core_init = async () => {
+    await Promise.all([import('./_init/socket'), import('./_init/helper')]);
+    await import('./_init/event');
     await import(/* webpackChunkName: "core" */ './core').then((core) => {
         window.SA = core;
         window.dispatchEvent(new CustomEvent('core_ready'));
+        window.SACoreReady = true;
     });
     await import('./modloader');
 };
@@ -28,5 +29,15 @@ import(/* webpackChunkName: "utils" */ '../utils').then((utils) => {
     window.SAEventTarget = new EventTarget();
 });
 
-window.addEventListener('seerh5_assisant_load', sa_init, { once: true });
+window.addEventListener('seerh5_assisant_load', sa_wait_login, { once: true });
 window.addEventListener('seerh5_login_completed', sa_core_init, { once: true });
+
+import '../logger';
+
+if (window.SACoreReady) {
+    sa_core_init();
+}
+
+if (import.meta.webpackHot) {
+    import.meta.webpackHot.accept();
+}

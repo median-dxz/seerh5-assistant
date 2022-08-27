@@ -20,7 +20,6 @@ export default class Pet extends Entity {
                 petLike.dv,
                 (() => {
                     let skills = [...petLike.skillArray];
-                    debugger;
                     petLike.hideSKill && skills.push(petLike.hideSKill);
                     return skills.map((v) => SkillFactory.formatById(v.id));
                 })(),

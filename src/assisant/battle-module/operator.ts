@@ -1,5 +1,8 @@
+import { defaultStyle, SaModuleLogger } from '../../logger';
+import { delay } from '../../utils';
 import { SocketSendByQueue } from '../utils/sa-socket';
-const { delay } = window;
+const log = SaModuleLogger('BattleOperator', defaultStyle.core);
+
 export const BattleOperator = {
     useSkill: async (skillId: number) => {
         if (!FighterModelFactory.playerMode) {
@@ -8,18 +11,18 @@ export const BattleOperator = {
         FighterModelFactory.playerMode.subject.array[1].showFight();
         await delay(200);
         if (!skillId || skillId <= 0) {
-            console.log('[BattleOperator]: 非法的skillId');
+            log('非法的skillId');
             // FighterModelFactory.playerMode.conPanelObserver.skillPanel.auto();
         } else {
-            console.log(
-                '[BattleOperator]: ' + FighterModelFactory.playerMode.info.petName,
+            log(
+                FighterModelFactory.playerMode.info.petName,
                 SkillXMLInfo.getName(skillId)
             );
-            SocketSendByQueue(CommandID.USE_SKILL, [skillId]);
+            SocketSendByQueue(CommandID.USE_SKILL, skillId);
         }
     },
     escape: () => {
-        SocketSendByQueue(CommandID.ESCAPE_FIGHT, []);
+        SocketSendByQueue(CommandID.ESCAPE_FIGHT);
     },
 
     useItem: async (itemID: number) => {
@@ -38,7 +41,7 @@ export const BattleOperator = {
             return;
         }
         if (!index || index < 0) {
-            console.log('[BattleOperator]: 非法的petIndex');
+            log('非法的petIndex');
             return;
         }
         FighterModelFactory.playerMode.subject.array[1].showPet();

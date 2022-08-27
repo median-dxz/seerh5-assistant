@@ -4,10 +4,13 @@ import * as React from 'react';
 
 const { useState } = React;
 
-export function FunctionBar(props) {
+interface FunctionBarProps {
+    show: boolean;
+}
+export function FunctionBar(props: FunctionBarProps) {
     let [autoCure, setAutoCure] = useState(false);
     const SA = window.SA;
-    const mods = window.SaMods;
+    const mods = window.SAMods;
     return (
         <ButtonGroup sx={{ height: '36px', marginLeft: '12px', display: props.show ? 'block' : 'none' }}>
             <Button
