@@ -56,7 +56,7 @@ class LocalCloth {
                 changeCloth.delete(petInfo.id);
                 origalCloth.set(petInfo.id, _skinId);
                 await new Promise<void>((resolve, reject) => {
-                    Utils.SendByQueue(47310, [e, n]).then((v) => {
+                    Utils.SocketSendByQueue(47310, [e, n]).then((v) => {
                         resolve();
                     });
                 });

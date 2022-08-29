@@ -10,24 +10,24 @@ const { delay } = window;
 
 const Bags = [
     [
-        { catchTime: ct.暴君史莱姆, name: '暴君史莱姆', id: 3522 },
-        { catchTime: ct.芳馨·茉蕊儿, name: '芳馨·茉蕊儿', id: 3613 },
+        { catchTime: ct.暴君史莱姆, name: '暴君史莱姆' },
+        { catchTime: ct.芳馨·茉蕊儿, name: '芳馨·茉蕊儿' },
     ],
     [
-        { catchTime: ct.幻影蝶, name: '幻影蝶', id: 2724 },
-        { catchTime: ct.冰之契约·阿克希亚, name: '冰之契约·阿克希亚', id: 3699 },
-        { catchTime: ct.邪灵主宰·摩哥斯, name: '邪灵主宰·摩哥斯', id: 3561 },
+        { catchTime: ct.幻影蝶, name: '幻影蝶' },
+        { catchTime: ct.冰之契约·阿克希亚, name: '冰之契约·阿克希亚' },
+        { catchTime: ct.邪灵主宰·摩哥斯, name: '邪灵主宰·摩哥斯' },
     ],
     [
-        { catchTime: ct.魔钰, name: '魔钰', id: 3567 },
-        { catchTime: ct.鲁肃, name: '鲁肃', id: 3540 },
-        { catchTime: ct.潘克多斯, name: '潘克多斯', id: 3540 },
+        { catchTime: ct.魔钰, name: '魔钰' },
+        { catchTime: ct.鲁肃, name: '鲁肃' },
+        { catchTime: ct.潘克多斯, name: '潘克多斯' },
     ],
     [
-        { catchTime: ct.神寂·克罗诺斯, name: '神寂·克罗诺斯', id: 4377 },
-        { catchTime: ct.蒂朵, name: '蒂朵', id: 4377 },
-        { catchTime: ct.六界帝神, name: '六界帝神', id: 4377 },
-        { catchTime: ct.时空界皇, name: '时空界皇', id: 4377 },
+        { catchTime: ct.神寂·克罗诺斯, name: '神寂·克罗诺斯' },
+        { catchTime: ct.蒂朵, name: '蒂朵' },
+        { catchTime: ct.六界帝神, name: '六界帝神' },
+        { catchTime: ct.时空界皇, name: '时空界皇' },
     ],
 ];
 const defaultPet = [ct.芳馨·茉蕊儿, ct.幻影蝶, ct.潘克多斯, ct.神寂·克罗诺斯];
@@ -46,13 +46,9 @@ class myl {
     };
     async updateActivityInfo() {
         const [a, b] = await Utils.GetMultiValue(107767, 12713);
-        let c: any = await Utils.SocketSendByQueue(42399, [1, 1723493]);
-        c = c.data;
-        c.readUnsignedInt();
-        c.readUnsignedInt();
-        c = c.readUnsignedInt();
+        let c = new DataView(await Utils.SocketSendByQueue(42399, [1, 1723493]));
         this.activityInfo = {
-            gears: c,
+            gears: c.getUint32(8),
             curBattle: (a >> 16) & 7,
             difficulty: (a >> 8) & 7,
             isInChallenging: Boolean(a & 7),
@@ -92,8 +88,8 @@ class myl {
                 }
             });
 
-            Utils.SocketSendByQueue(41284, [1, 2]).then((v: any) => {
-                const code = v.data.readUnsignedInt();
+            Utils.SocketSendByQueue(41284, [1, 2]).then((v) => {
+                const code = new DataView(v).getUint32(0);
                 if (code == 0) {
                     Utils.SocketSendByQueue(41282, [1, 2]);
                 } else {

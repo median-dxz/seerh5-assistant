@@ -46,7 +46,7 @@ export async function getPets(location: PosType): Promise<Pet[]> {
 }
 
 export const isDefault = (ct: number) => PetManager.defaultTime === ct;
-export const setDefault = PetManager.setDefault.bind(PetManager);
+export const setDefault: (ct: number) => void = PetManager.setDefault.bind(PetManager);
 
 export const getPetLocation = (ct: number) => {
     return updateStroageInfo().then(() => {

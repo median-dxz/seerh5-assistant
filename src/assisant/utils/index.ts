@@ -1,13 +1,10 @@
-export async function GetMultiValue(...value: number[]) {
-    if (!value) return;
+export async function GetMultiValue(...value: number[]): Promise<number[]> {
+    if (!value) return [];
     return KTool.getMultiValueAsync(value);
 }
 
-
 let DictMatcher = (dict: StringMapable, reg: RegExp, keyName: string) => {
-    return Object.keys(dict)
-        .map(key => key === keyName && dict[keyName].match(reg))
-        .filter(Boolean)
+    return Object.values(dict).filter((value) => Object.hasOwn(value, keyName) && value[keyName].match(reg));
 };
 
 export function matchItemName(nameReg: RegExp) {
@@ -23,8 +20,7 @@ export function matchPetName(nameReg: RegExp) {
 }
 
 export function getTypeIdByName(name: any) {
-    return Object.values(SkillXMLInfo.typeMap)
-        .find((v) => v.cn.match(name))?.id;
+    return Object.values(SkillXMLInfo.typeMap).find((v) => v.cn.match(name))?.id;
 }
 
 export function getUserCurrency(type: string) {
@@ -39,5 +35,5 @@ export async function getStatusName(id: any) {
 
 export * from './item-helper';
 export * from './module-helper';
-export * from './sa-socket';
+export * from './socket';
 

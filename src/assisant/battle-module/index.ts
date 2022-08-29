@@ -10,7 +10,7 @@ const log = SaModuleLogger('BattleModuleManager', defaultStyle.core);
 
 const { delay, SAEventTarget } = window;
 
-type SkillModule = (battleStatus: RoundInfo, skills: Skill[], pets: PetSwitchInfos) => PromiseAble<void>;
+type SkillModule = (battleStatus: RoundInfo, skills: Skill[], pets: PetSwitchInfos) => PromiseLike<void>;
 
 interface BattleModule {
     entry: () => void;
@@ -56,6 +56,7 @@ const BattleModuleManager = {
     queuedModule: (battleModule: BattleModule) => {
         battleQueue.push(battleModule);
     },
+    
     runOnce: () => {
         if (battleQueue.length > 0) {
             curBattle = battleQueue.shift()!;

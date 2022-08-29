@@ -93,9 +93,12 @@ declare var PetXMLInfo: {
     getName(id: number): string;
 };
 
-declare namespace ItemManager {
-    function getNumByID(id: number): any;
+declare interface ItemManager {
+    getNumByID(id: number): any;
+    updateItems(e: number[] | number | undefined, n: CallBack): void;
 }
+
+declare var ItemManager: ItemManager;
 
 declare interface MarkInfo {
     obtainTime: number;
@@ -144,6 +147,13 @@ declare namespace PetStorage2015InfoManager {
     var allInfo: any[];
 }
 
+declare interface FightManager {
+    isWin: boolean;
+    fightNoMapBoss: any;
+}
+
+declare var FightManager: FightManager;
+
 // saloader
 declare var egret: any;
 declare var RES: any;
@@ -157,7 +167,6 @@ declare var AwardManager: any;
 declare var LevelManager: any;
 declare var PetFightController: any;
 declare var PetUpdatePropController: any;
-declare var FightManager: any;
 declare interface UseSkillInfo {
     new (data: any): any;
     round: number;
@@ -229,6 +238,9 @@ declare var EffectInfoManager: any;
 
 // pet-helper
 declare var TypeXMLInfo: any;
+
+// battle-module
+declare var TimerManager: any;
 
 // mods
 declare var SystemTimerManager: any;

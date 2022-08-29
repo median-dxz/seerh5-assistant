@@ -42,4 +42,10 @@ export default {
         '龙焉',
         '圣甲·盖亚',
     ]),
+    commonBattleModule: {
+        克朵六时: {
+            diedSwitchLink: ['神寂·克罗诺斯', '蒂朵', '六界帝神', '时空界皇'],
+            skillMatch: ['鬼哭神泣灭', '幻梦芳逝', '诸界混一击', '剑挥四方'],
+        },
+    },
 };

@@ -64,8 +64,11 @@ class sign {
         }
     }
     async teamDispatch() {
-        await Utils.SocketSendByQueue(45809, 0);
-
+        try {
+            await Utils.SocketSendByQueue(45809, 0);
+        } catch (err) {
+            void log('无法收取派遣');
+        }
         const igonrePetNames = data.igonrePetNames;
         const PosType = Const.PETPOS;
         let reprogress = false;
@@ -77,12 +80,12 @@ class sign {
                     await PetHelper.setPetLocation(p.catchTime, PosType.storage);
                 }
             }
+            const data = await Utils.SocketSendByQueue(45810, tid)
+                .then((v) => new DataView(v))
+                .catch((err) => undefined);
+            if (!data) continue;
 
-            const t = await Utils.SocketSendByQueue(45810, tid);
-
-            const i = (t as any).data;
-            const n = i.readUnsignedInt();
-            const a: number = i.readUnsignedInt();
+            const a = data.getUint32(4);
             let e: {
                 petIds: number[];
                 cts: number[];
@@ -92,10 +95,10 @@ class sign {
                 cts: [],
                 levels: [],
             };
-            for (let r = 0; a > r; r++) {
-                e.cts.push(i.readUnsignedInt());
-                e.petIds.push(i.readUnsignedInt());
-                e.levels.push(i.readUnsignedInt());
+            for (let r = 0; r < a; r++) {
+                e.cts.push(data.getUint32(8 + r * 12));
+                e.petIds.push(data.getUint32(12 + r * 12));
+                e.levels.push(data.getUint32(16 + r * 12));
             }
 
             log(`正在处理派遣任务: ${tid}`);
@@ -114,10 +117,11 @@ class sign {
             if (reprogress) {
                 tid++;
             } else {
+                console.table(e.petIds.map((v) => PetXMLInfo.getName(v)));
                 Utils.SocketSendByQueue(45808, [tid, e.cts[0], e.cts[1], e.cts[2], e.cts[3], e.cts[4]]);
             }
+            log(`派遣任务处理完成`);
         }
-        log(` 派遣任务处理完成`);
     }
     async markLvSetup() {
         if (!ModuleManager.hasmodule('markCenter.MarkCenter')) {
@@ -126,6 +130,20 @@ class sign {
         markCenter.MarkLvlUp.prototype.lvlUpAll = function () {
             Functions.upMarkToTopLv(this.markInfo);
         };
+    }
+    async exchangeItem(itemId: number) {
+        // t.ins = i._info.cfg,
+        // t.caller = i,
+        // t.callBack = function(t, n) {
+        //     SocketConnection.sendByQueue(42395, [109, i._info.cfg.id, n, 0], function(t) {
+        //         EventManager.dispatchEventWith(e.PanelConst.EVENT_UPDATE_PET_DATA)
+        //     })
+        // }
+        //                 i.cfg = config.Exchange_clt.getItem(this.allItems[t]),
+        // i.isCanGet = ItemManager.getNumByID(i.cfg.coinid) >= i.cfg.price;
+        // var n = this._forveridArr.indexOf(i.cfg.UserInfoId);
+        // i.userInfo = this._curDataForver[n],
+        // ModuleManager.showModuleByID(1, t)
     }
 }
 export default {

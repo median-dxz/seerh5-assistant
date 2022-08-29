@@ -3,7 +3,7 @@ import { CMDID, ITEMS, PETPOS as PetPosType } from '../const';
 import Pet from '../entities/pet';
 import Skill from '../entities/skill';
 import * as PetHelper from '../pet-helper';
-import { BuyPotion, SocketReceivedPromise, SocketSendByQueue } from '../utils';
+import { BuyPetItem, SocketReceivedPromise, SocketSendByQueue } from '../utils';
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 import { delay } from '../../utils';
@@ -67,13 +67,14 @@ export async function calcAllEffecientPet(e: number, radio: number = 1.5) {
     });
 }
 
+type PotionId = AttrConsts<typeof ITEMS.Potion>;
 /**
- * @param {!number[]} cts 要压血的精灵列表
- * @param {number} [healPotionId=ITEMS.Potion.中级体力药剂] - 血药id, 默认中级体力药
- * @param {() => any} [cb] 回调函数
+ * @param {} cts 要压血的精灵列表
+ * @param {} healPotionId 血药id, 默认中级体力药
+ * @param {} cb 回调函数
  * @description 利用谱尼封印自动压血
  */
-export async function LowerBlood(cts: number[], healPotionId: number = ITEMS.Potion.中级体力药剂, cb: () => any) {
+export async function LowerBlood(cts: number[], healPotionId: PotionId = ITEMS.Potion.中级体力药剂, cb: () => any) {
     if (!cts || cts.length === 0) {
         cb && cb();
         return;
@@ -96,15 +97,32 @@ export async function LowerBlood(cts: number[], healPotionId: number = ITEMS.Pot
     log(`压血 -> 背包处理完成`);
 
     const hpChecker = () => cts.filter((ct) => PetManager.getPetInfo(ct).hp >= 200);
-
+    const finish = async () => {
+        await delay(100);
+        for (let ct of cts) {
+            if (PetManager.getPetInfo(ct).hp <= 50) {
+                UsePotionForPet(ct, healPotionId);
+                await delay(100);
+            }
+            UsePotionForPet(ct, ITEMS.Potion.中级活力药剂);
+            await delay(100);
+        }
+        let notLowerPets = hpChecker();
+        if (notLowerPets.length > 0) {
+            LowerBlood(notLowerPets, undefined, cb);
+        } else {
+            cb && cb();
+        }
+    };
     cts = hpChecker();
+    await delay(200);
     if (cts.length === 0) {
-        cb && cb();
+        finish();
         return;
     }
 
-    BuyPotion(ITEMS.Potion.中级活力药剂, cts.length);
-    BuyPotion(healPotionId, cts.length);
+    BuyPetItem(ITEMS.Potion.中级活力药剂, cts.length);
+    BuyPetItem(healPotionId, cts.length);
     PetHelper.setDefault(cts[0]);
     await delay(500);
 
@@ -137,23 +155,7 @@ export async function LowerBlood(cts: number[], healPotionId: number = ITEMS.Pot
                 Operator.useSkill(skills.find((v) => v.category !== 4)!.id);
             }
         },
-        async finished() {
-            await delay(100);
-            for (let ct of cts) {
-                if (PetManager.getPetInfo(ct).hp <= 50) {
-                    UsePotionForPet(ct, healPotionId);
-                    await delay(100);
-                }
-                UsePotionForPet(ct, ITEMS.Potion.中级活力药剂);
-                await delay(100);
-            }
-            let notLowerPets = hpChecker();
-            if (notLowerPets.length > 0) {
-                LowerBlood(notLowerPets, undefined, cb);
-            } else {
-                cb && cb();
-            }
-        },
+        finished: finish,
     });
     ModuleManager.runOnce();
 }

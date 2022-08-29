@@ -18,5 +18,13 @@
     {
         "modId": "petfactor",
         "path": "offical"
+    },
+    {
+        "modId": "hlak4",
+        "path": "offical"
+    },
+    {
+        "modId": "stms4",
+        "path": "offical"
     }
 ]

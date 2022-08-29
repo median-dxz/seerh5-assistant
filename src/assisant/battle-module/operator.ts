@@ -1,9 +1,10 @@
 import { defaultStyle, SaModuleLogger } from '../../logger';
 import { delay } from '../../utils';
-import { SocketSendByQueue } from '../utils/sa-socket';
+import { SocketSendByQueue } from '../utils/socket';
 const log = SaModuleLogger('BattleOperator', defaultStyle.core);
 
 export const BattleOperator = {
+    auto: TimerManager.countDownOverHandler.bind(TimerManager),
     useSkill: async (skillId: number) => {
         if (!FighterModelFactory.playerMode) {
             return;
@@ -12,12 +13,8 @@ export const BattleOperator = {
         await delay(200);
         if (!skillId || skillId <= 0) {
             log('非法的skillId');
-            // FighterModelFactory.playerMode.conPanelObserver.skillPanel.auto();
         } else {
-            log(
-                FighterModelFactory.playerMode.info.petName,
-                SkillXMLInfo.getName(skillId)
-            );
+            log(FighterModelFactory.playerMode.info.petName, SkillXMLInfo.getName(skillId));
             SocketSendByQueue(CommandID.USE_SKILL, skillId);
         }
     },

@@ -29,7 +29,7 @@ class xms {
             await ModuleManager.showModule('pveXTeamRoom');
         }
 
-        pveXTeamRoom = window['pveXTeamRoom' as any];
+        pveXTeamRoom = window['pveXTeamRoom'];
 
         await Functions.SwitchBag([
             { catchTime: ct.蒂朵, name: '蒂朵' },
@@ -43,6 +43,7 @@ class xms {
         await delay(500);
 
         this.DataManager = pveXTeamRoom.DataManger.getInstance();
+        debugger;
         await this.update();
         if (!this.activityInfo.isFinished) {
             if (!this.DataManager.GetFbOpenFlag()) {
@@ -54,11 +55,11 @@ class xms {
     }
     run() {
         BattleModuleManager.queuedModule({
-            entry() {
+            entry: () => {
                 this.DataManager.c2s_go_battle(7);
             },
             skillModule: BattleModule.GenerateBaseBattleModule(NMS, DSP),
-            finished() {
+            finished: () => {
                 this.DataManager.c2s_Get_DailyReward();
             },
         });

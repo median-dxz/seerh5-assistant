@@ -10,10 +10,11 @@ declare global {
         filterWarnText: RegExp[];
         SAMods: any;
         SACoreReady: boolean;
+
+        [module: string]: any;
     }
     type Fn = (...args: any) => void;
     type CallBack = Fn;
-    type PromiseAble<T> = T | Promise<T>;
     type NullOrUndefindedable<T> = T | undefined | null;
     type AttrConsts<T> = T[keyof T];
 }

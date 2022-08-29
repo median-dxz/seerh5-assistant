@@ -21,7 +21,7 @@
         "node_modules",
         "**/node_modules/*",
         "dist",
-        "loader",
+        "entry",
         "archive"
     ],
     "include": [
