@@ -1,5 +1,5 @@
+import data from '@data';
 import * as saco from '../../assisant/core';
-import data from '../common.config.js';
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 const log = SaModuleLogger('X战队密室', defaultStyle.mod);
@@ -43,7 +43,6 @@ class xms {
         await delay(500);
 
         this.DataManager = pveXTeamRoom.DataManger.getInstance();
-        debugger;
         await this.update();
         if (!this.activityInfo.isFinished) {
             if (!this.DataManager.GetFbOpenFlag()) {

@@ -2,7 +2,9 @@ import { readFileSync, writeFileSync } from 'fs';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import path from 'path';
 import { gunzipSync } from 'zlib';
-import { __dirname } from './webpack.config.js';
+
+import url from 'url';
+const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 let saProxyMiddleware = createProxyMiddleware({
     target: 'http://seerh5.61.com/',
@@ -35,5 +37,19 @@ let saProxyMiddleware = createProxyMiddleware({
     },
 });
 
-export { saProxyMiddleware };
+let saApiMiddleware = {
+    name: 'sa-api',
+    path: '/api',
+    /**
+     * @type {import('webpack-dev-server').ExpressRequestHandler}
+     */
+    middleware: (req, res) => {
+        // console.log(req.url);
+        // console.log(req.query);
+        // console.log(new URL(req.url, `http://${req.headers.host}`));
+        // res.json({});
+    },
+};
+
+export { saProxyMiddleware, saApiMiddleware };
 

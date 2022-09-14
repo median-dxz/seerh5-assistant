@@ -1,6 +1,6 @@
 import * as saco from '../../assisant/core';
 import { defaultStyle, SaModuleLogger } from '../../logger';
-import * as data from '../common.config.js';
+import * as data from '@data';
 
 const { BattleModule, Utils, Functions, Const, PetHelper } = saco;
 const { delay } = window;

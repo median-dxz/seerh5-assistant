@@ -2,3 +2,4 @@ node_modules
 dist
 archive
 /entry/offical.js
+**/data/index.js

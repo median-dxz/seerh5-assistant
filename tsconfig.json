@@ -15,13 +15,19 @@
         "baseUrl": ".",
         "resolveJsonModule": true,
         "allowJs": true,
-        "allowUmdGlobalAccess": true
+        "allowUmdGlobalAccess": true,
+        "paths": {
+            "@data": [
+                "src/data/index.js"
+            ],
+        }
     },
     "exclude": [
         "node_modules",
         "**/node_modules/*",
         "dist",
         "entry",
+        "data",
         "archive"
     ],
     "include": [

@@ -1,6 +1,6 @@
 // 42023 1 1000156
 import * as saco from '../../assisant/core';
-import data from '../common.config.js';
+import data from '@data';
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 const log = SaModuleLogger('Mod:圣瞳缪斯第四关', defaultStyle.mod);

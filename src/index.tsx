@@ -6,7 +6,15 @@ import './stylesheets/main.css';
 
 const container = document.getElementById('sa-container')!;
 const root = ReactDOM.createRoot(container);
-root.render(<SaMain />);
 
-import './assisant/saloader';
+import('./assisant/saloader').catch((e) => {
+    console.error('[GameLoader]: Seerh5 Assisant Load Failed!');
+});
 
+if (window.SACoreReady) {
+    root.render(<SaMain />);
+} else {
+    window.addEventListener('seerh5_assisant_ready', () => {
+        root.render(<SaMain />);
+    });
+}

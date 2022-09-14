@@ -47,7 +47,7 @@ SAEventTarget.addEventListener(EVENTS.BattlePanel.completed, handleBattleEnd);
 
 let battleQueue: BattleModule[] = [];
 
-let curBattle: Partial<BattleModule>;
+let curBattle: Partial<BattleModule> = {};
 
 const BattleModuleManager = {
     isRun: false,
@@ -56,7 +56,7 @@ const BattleModuleManager = {
     queuedModule: (battleModule: BattleModule) => {
         battleQueue.push(battleModule);
     },
-    
+
     runOnce: () => {
         if (battleQueue.length > 0) {
             curBattle = battleQueue.shift()!;
@@ -92,7 +92,7 @@ function GenerateBaseBattleModule(
             const next = dsp.match(pets, info.self!.catchtime);
             if (next !== -1) {
                 BattleOperator.switchPet(next);
-                await delay(800);
+                await delay(1000);
                 skills = BattleInfoProvider.getCurSkills()!;
             } else {
                 skills = [];
@@ -107,4 +107,3 @@ import * as BaseSkillModule from './skillmodule/base';
 
 export { BaseSkillModule, GenerateBaseBattleModule };
 export { BattleInfoProvider as InfoProvider, BattleOperator as Operator, BattleModuleManager as ModuleManager };
-

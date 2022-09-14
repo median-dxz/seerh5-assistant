@@ -1,5 +1,5 @@
+import data from '@data';
 import * as saco from '../../assisant/core';
-import data from '../common.config.js';
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 const log = SaModuleLogger('Sign', defaultStyle.mod);
@@ -144,6 +144,30 @@ class sign {
         // var n = this._forveridArr.indexOf(i.cfg.UserInfoId);
         // i.userInfo = this._curDataForver[n],
         // ModuleManager.showModuleByID(1, t)
+    }
+
+    calc(items: number[]) {
+        function dfs(dep: number) {
+            if (items.length == 1) {
+                return items[0] == 8;
+            }
+            for (let pos = 0; pos < items.length - 1; pos++) {
+                let num1 = items[pos],
+                    num2 = items[pos + 1];
+                items.splice(pos, 2, Math.abs(num1 - num2));
+                log('test' + pos + ': ' + num1 + ' ' + num2 + ' ' + items[pos], items);
+                let ref = items[pos];
+                let res = dfs(dep + 1);
+                if (res) {
+                    log(`pos${pos} : ${num1} - ${num2} -> ${ref}`);
+                    return true;
+                }
+                items.splice(pos, 1, num1, num2);
+                log('test failed' + pos + ': ', items);
+            }
+            return false;
+        }
+        log(dfs(1));
     }
 }
 export default {

@@ -1,5 +1,5 @@
 import * as saco from '../../assisant/core';
-import data from '../common.config.js';
+import data from '@data';
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 const log = SaModuleLogger('莫伊莱因子', defaultStyle.mod);

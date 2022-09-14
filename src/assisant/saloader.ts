@@ -21,7 +21,7 @@ const sa_core_init = async () => {
     await import('./_init/event');
     await import(/* webpackChunkName: "core" */ './core').then((core) => {
         window.SA = core;
-        window.dispatchEvent(new CustomEvent('core_ready'));
+        window.dispatchEvent(new CustomEvent('seerh5_assisant_ready'));
         window.SACoreReady = true;
     });
     await import('./modloader');

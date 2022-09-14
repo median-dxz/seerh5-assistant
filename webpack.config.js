@@ -9,7 +9,7 @@ import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import ReactRefreshTypeScript from 'react-refresh-typescript';
 
-import { saProxyMiddleware } from './webpack.proxy.js';
+import { saApiMiddleware, saProxyMiddleware } from './webpack.proxy.js';
 
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
@@ -119,6 +119,7 @@ const appConfig = {
     resolve: {
         alias: {
             '@mui/styled-engine': '@mui/styled-engine-sc',
+            '@data': '/src/data/index.js',
         },
         extensions: ['.js', '.jsx', '.tsx', '.ts'],
     },
@@ -144,6 +145,7 @@ const appConfig = {
                 throw new Error('webpack-dev-server is not defined');
             }
             middlewares.push(saProxyMiddleware);
+            middlewares.push(saApiMiddleware);
             return middlewares;
         },
     },

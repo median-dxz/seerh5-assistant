@@ -114,9 +114,9 @@ export async function LowerBlood(cts: number[], healPotionId: PotionId = ITEMS.P
             cb && cb();
         }
     };
-    cts = hpChecker();
+
     await delay(200);
-    if (cts.length === 0) {
+    if (hpChecker().length === 0) {
         finish();
         return;
     }

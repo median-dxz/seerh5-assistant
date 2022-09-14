@@ -58,11 +58,13 @@ GlobalEventManager.addEventListener(hooks.BattlePanel.onRoundData, (e) => {
             `对局信息更新:
                 先手方:${fi.userId}
                 hp: ${fi.hp.remain} / ${fi.hp.max}
+                造成伤害: ${fi.damage}
                 是否暴击:${fi.isCrit}
                 使用技能: ${SkillXMLInfo.getName(fi.skillId)}
                 ===========
                 后手方:${si.userId}
                 hp: ${si.hp.remain} / ${si.hp.max}
+                造成伤害: ${si.damage}
                 是否暴击:${si.isCrit}
                 使用技能: ${SkillXMLInfo.getName(si.skillId)}
         `
@@ -75,3 +77,4 @@ GlobalEventManager.addEventListener(hooks.BattlePanel.panelReady, () => {
 });
 
 export { ModuleLoadedListener as ModuleListener };
+

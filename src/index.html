@@ -17,12 +17,18 @@
                 <img src="http://seerh5.61.com/resource/web/image/logo.svg" alt="" width="50%" />
             </span>
         </div>
-        <script>
-            window.wwwroot = "/seerh5.61.com/";
-            var s = document.createElement("script");
-            s.async = false;
-            s.src = "/seerh5.61.com/app.js?t=" + Date.now();
-            document.body.appendChild(s);
+        <script defer>
+            window.wwwroot = '/seerh5.61.com/';
+            fetch('/seerh5.61.com/app.js?t=' + Date.now())
+                .then((response) => response.text())
+                .then((appJs) => {
+                    let script = document.createElement('script');
+                    while (appJs.startsWith('eval')) {
+                        appJs = eval(appJs.match(/eval([^)].*)/)[1]);
+                    }
+                    script.innerHTML = appJs.replace(/loadSingleScript.*baidu.*\r\n/, '');
+                    document.body.appendChild(script);
+                });
         </script>
         <div id="sa-container"></div>
     </body>
