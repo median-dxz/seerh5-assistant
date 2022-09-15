@@ -1,10 +1,11 @@
+import data from '@data';
 import * as saco from '../../assisant/core';
+import { ReflectObjBase } from '../../assisant/modloader';
 import { defaultStyle, SaModuleLogger } from '../../logger';
-import * as data from '@data';
 
 const { BattleModule, Utils, Functions, Const, PetHelper } = saco;
 const { delay } = window;
-const { petCts: ct, commonBattleModule: bm } = data.default;
+const { petCts: ct, commonBattleModule: bm } = data;
 const log = SaModuleLogger('Mod: 红莲安卡第四关', defaultStyle.mod);
 
 const PetBags = [
@@ -23,7 +24,7 @@ interface ActivityInfo {
     当前位置: number;
     今日剩余次数: number;
 }
-export class hlak4 {
+export class hlak4 extends ReflectObjBase implements ModClass {
     _activityInfo = {} as ActivityInfo;
 
     _startFight() {
@@ -32,7 +33,9 @@ export class hlak4 {
     _getAward() {
         return Utils.SocketSendByQueue(45787, [86, 4, 51, 5]);
     }
-    constructor() {}
+    constructor() {
+        super();
+    }
     async init() {
         this.update();
         await Functions.SwitchBag(PetBags);
@@ -82,6 +85,10 @@ export class hlak4 {
         console.table(this._activityInfo);
         return this._activityInfo;
     }
+
+    meta = {
+        description: '红莲安卡第四关',
+    };
 }
 
 export default {

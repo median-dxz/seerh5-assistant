@@ -1,5 +1,6 @@
 import data from '@data';
 import * as saco from '../../assisant/core';
+import { ReflectObjBase } from '../../assisant/modloader';
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 const log = SaModuleLogger('Sign', defaultStyle.mod);
@@ -7,8 +8,10 @@ const log = SaModuleLogger('Sign', defaultStyle.mod);
 const { Utils, Const, PetHelper, Functions } = saco;
 const { CMDID } = Const;
 
-class sign {
-    constructor() {}
+class sign extends ReflectObjBase implements ModClass {
+    meta = { description: '日任常用功能' };
+    init() {}
+    constructor() {super();}
     async run() {
         let curTimes = (await Utils.GetMultiValue(Const.MULTIS.日常.刻印抽奖次数))[0];
         if (curTimes === 0) {

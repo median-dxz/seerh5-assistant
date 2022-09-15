@@ -31,14 +31,14 @@ export function FunctionBar(props: FunctionBarProps) {
             </Button>
             <Button
                 onClick={() => {
-                    mods.get('sign').run();
+                    mods.get('sign')!.run!();
                 }}
             >
                 <DataObject />
             </Button>
             <Button
                 onClick={() => {
-                    mods.get('sign').teamDispatch();
+                    mods.get('sign')!.reflect('teamDispatch');
                 }}
             >
                 <DataObject />

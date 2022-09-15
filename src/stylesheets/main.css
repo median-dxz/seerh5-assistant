@@ -53,7 +53,7 @@ body {
 }
 
 #sa-container {
-    position: absolute;
+    position: fixed;
     bottom: 8vh;
     left: 4vw;
     z-index: 9;

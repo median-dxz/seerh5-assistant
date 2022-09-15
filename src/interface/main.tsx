@@ -1,6 +1,7 @@
 import { createTheme } from '@mui/material';
 import { Container, ThemeProvider } from '@mui/system';
-import React, { useState, useEffect, KeyboardEventHandler } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
+import { CommandBox } from './components/command-box';
 import { FunctionBar } from './components/function-bar';
 import { MainMenu } from './components/menu-btn';
 
@@ -19,7 +20,7 @@ export function SaMain() {
             e.preventDefault();
         }
     };
-    
+
     useEffect(() => {
         const canvas: HTMLCanvasElement = document.querySelector('#egret_player_container canvas')!;
         canvas.setAttribute('tabindex', '-1');
@@ -31,13 +32,16 @@ export function SaMain() {
 
     const [isFunctionBarShown, toggleFunctionBar] = useState(false);
     return (
-        <div id="sa-main" onKeyDown={shortCutHandler}>
-            <Container sx={{ margin: 2, display: 'flex', opacity: '0.75', alignItems: 'center' }}>
-                <MainMenu menuClickHandler={() => toggleFunctionBar(!isFunctionBarShown)} />
-                <ThemeProvider theme={toolBarTheme}>
-                    <FunctionBar show={isFunctionBarShown} />
-                </ThemeProvider>
-            </Container>
-        </div>
+        <Fragment>
+            <div id="sa-main" onKeyDown={shortCutHandler}>
+                <Container sx={{ margin: 2, display: 'flex', opacity: '0.75', alignItems: 'center' }}>
+                    <MainMenu menuClickHandler={() => toggleFunctionBar(!isFunctionBarShown)} />
+                    <ThemeProvider theme={toolBarTheme}>
+                        <FunctionBar show={isFunctionBarShown} />
+                    </ThemeProvider>
+                </Container>
+            </div>
+            <CommandBox></CommandBox>
+        </Fragment>
     );
 }

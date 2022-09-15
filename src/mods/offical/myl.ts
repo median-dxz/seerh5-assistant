@@ -1,5 +1,6 @@
-import * as saco from '../../assisant/core';
 import data from '@data';
+import * as saco from '../../assisant/core';
+import { ReflectObjBase } from '../../assisant/modloader';
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 const log = SaModuleLogger('莫伊莱因子', defaultStyle.mod);
@@ -34,8 +35,11 @@ const defaultPet = [ct.芳馨·茉蕊儿, ct.幻影蝶, ct.潘克多斯, ct.神�
 const DSPs = [];
 const NMSs = [];
 
-class myl {
-    constructor() {}
+class myl extends ReflectObjBase implements ModClass {
+    meta = { description: '莫伊莱因子' };
+    constructor() {
+        super();
+    }
     init() {}
     activityInfo = {
         curBattle: 0,

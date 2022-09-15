@@ -123,6 +123,9 @@ const appConfig = {
         },
         extensions: ['.js', '.jsx', '.tsx', '.ts'],
     },
+    externals: {
+        gsap: 'root gsap', // global access from ergert
+    },
     devtool: 'source-map',
     plugins: [
         new HtmlWebpackPlugin({

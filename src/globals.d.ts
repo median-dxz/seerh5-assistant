@@ -8,7 +8,7 @@ declare global {
         warpper: typeof warpper;
         filterLogText: RegExp[];
         filterWarnText: RegExp[];
-        SAMods: any;
+        SAMods: Map<string, import('./assisant/modloader').Mod>;
         SACoreReady: boolean;
 
         [module: string]: any;
@@ -17,4 +17,14 @@ declare global {
     type CallBack = Fn;
     type NullOrUndefindedable<T> = T | undefined | null;
     type AttrConsts<T> = T[keyof T];
+
+    interface ModClass {
+        init: Fn;
+        run?: Fn;
+        runOnce?: Fn;
+        update?: Fn;
+        meta: {
+            description: string;
+        };
+    }
 }

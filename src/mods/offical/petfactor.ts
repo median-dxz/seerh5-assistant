@@ -1,16 +1,20 @@
 import * as saco from '../../assisant/core';
+import { ReflectObjBase } from '../../assisant/modloader';
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 const log = SaModuleLogger('精灵因子', defaultStyle.mod);
 
 let { ModuleListener } = saco;
 
-class PetFactorInfo {
+class PetFactorInfo extends ReflectObjBase implements ModClass {
     constructor() {
+        super();
         ModuleListener.subscribe('pvePetYinzi', () => {
             log('开始注入');
         });
     }
+    init() {}
+    meta = { description: '精灵因子' };
 }
 
 export default {

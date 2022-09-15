@@ -1,5 +1,6 @@
 import data from '@data';
 import * as saco from '../../assisant/core';
+import { ReflectObjBase } from '../../assisant/modloader';
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 const log = SaModuleLogger('X战队密室', defaultStyle.mod);
@@ -12,9 +13,12 @@ const ct = data.petCts;
 const NMS = new BaseSkillModule.NameMatched(['幻梦芳逝', '剑挥四方', '破寂同灾']);
 const DSP = new BaseSkillModule.DiedSwitchLinked(['蒂朵', '六界帝神', '深渊狱神·哈迪斯']);
 
-class xms {
+class xms extends ReflectObjBase implements ModClass {
+    meta = { description: 'X战队密室' };
     DataManager: any;
-    constructor() {}
+    constructor() {
+        super();
+    }
     activityInfo = {
         isFinished: false,
     };

@@ -1,5 +1,6 @@
 import * as saco from '../../assisant/core';
 import Pet from '../../assisant/entities/pet';
+import { ReflectObjBase } from '../../assisant/modloader';
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 const log = SaModuleLogger('LocalCloth', defaultStyle.mod);
@@ -11,8 +12,9 @@ const { warpper, SAEventTarget } = window;
 const changeCloth = new Map();
 const origalCloth = new Map();
 
-class LocalCloth {
+class LocalCloth extends ReflectObjBase implements ModClass {
     constructor() {
+        super();
         Object.defineProperty(FighterUserInfos.prototype, 'allPetID', {
             get: function () {
                 if (this.myInfo && this.otherInfo)
@@ -133,6 +135,8 @@ class LocalCloth {
         };
         SAEventTarget.addEventListener(SAEvents.Module.loaded, petBagModuleLoaded);
     }
+
+    meta = { description: '本地全皮肤解锁' };
     init() {}
 }
 
