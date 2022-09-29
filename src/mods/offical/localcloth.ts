@@ -1,6 +1,6 @@
-import * as saco from '../../assisant/core';
-import Pet from '../../assisant/entities/pet';
-import { ReflectObjBase } from '../../assisant/modloader';
+import * as saco from '../../assistant/core';
+import Pet from '../../assistant/entities/pet';
+import { ReflectObjBase } from '../../assistant/modloader';
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 const log = SaModuleLogger('LocalCloth', defaultStyle.mod);

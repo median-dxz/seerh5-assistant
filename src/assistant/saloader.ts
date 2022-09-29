@@ -21,7 +21,7 @@ const sa_core_init = async () => {
     await import('./_init/event');
     await import(/* webpackChunkName: "core" */ './core').then((core) => {
         window.SA = core;
-        window.dispatchEvent(new CustomEvent('seerh5_assisant_ready'));
+        window.dispatchEvent(new CustomEvent('seerh5_assistant_ready'));
         window.SACoreReady = true;
     });
     await import('./modloader');
@@ -36,7 +36,7 @@ import(/* webpackChunkName: "utils" */ '../utils').then((utils) => {
 if (window.SACoreReady) {
     sa_core_init();
 } else {
-    window.addEventListener('seerh5_assisant_load', sa_wait_login, { once: true });
+    window.addEventListener('seerh5_assistant_load', sa_wait_login, { once: true });
     window.addEventListener('seerh5_login_completed', sa_core_init, { once: true });
 }
 

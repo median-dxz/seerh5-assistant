@@ -1,6 +1,6 @@
 import data from '@data';
-import * as saco from '../../assisant/core';
-import { ReflectObjBase } from '../../assisant/modloader';
+import * as saco from '../../assistant/core';
+import { ReflectObjBase } from '../../assistant/modloader';
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 const log = SaModuleLogger('Sign', defaultStyle.mod);
@@ -152,7 +152,7 @@ class sign extends ReflectObjBase implements ModClass {
     calc(items: number[]) {
         function dfs(dep: number) {
             if (items.length == 1) {
-                return items[0] == 8;
+                return items[0] == 3;
             }
             for (let pos = 0; pos < items.length - 1; pos++) {
                 let num1 = items[pos],

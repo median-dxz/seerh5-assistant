@@ -328,10 +328,10 @@ var Main = (function (e) {
                 ? window.ModuleManager.showModuleByID(140).then(function () {
                       window.hideWebload && window.hideWebload();
                       // dispatch event begin
-                      window.dispatchEvent(new CustomEvent('seerh5_assisant_load'));
+                      window.dispatchEvent(new CustomEvent('seerh5_assistant_load'));
                   })
                 : (window.ModuleManager.showModule('login', ['login']).then(() => {
-                      window.dispatchEvent(new CustomEvent('seerh5_assisant_load'));
+                      window.dispatchEvent(new CustomEvent('seerh5_assistant_load'));
                       // dispatch event end
                   }),
                   window.hideWebload && window.hideWebload());

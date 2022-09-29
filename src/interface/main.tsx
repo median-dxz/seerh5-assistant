@@ -1,4 +1,5 @@
 import { createTheme } from '@mui/material';
+import CssBaseline from '@mui/material/CssBaseline';
 import { Container, ThemeProvider } from '@mui/system';
 import React, { Fragment, useEffect, useState } from 'react';
 import { CommandBox } from './components/command-box';
@@ -33,6 +34,7 @@ export function SaMain() {
     const [isFunctionBarShown, toggleFunctionBar] = useState(false);
     return (
         <Fragment>
+            <CssBaseline />
             <div id="sa-main" onKeyDown={shortCutHandler}>
                 <Container sx={{ margin: 2, display: 'flex', opacity: '0.75', alignItems: 'center' }}>
                     <MainMenu menuClickHandler={() => toggleFunctionBar(!isFunctionBarShown)} />
@@ -41,7 +43,7 @@ export function SaMain() {
                     </ThemeProvider>
                 </Container>
             </div>
-            <CommandBox></CommandBox>
+            <CommandBox />
         </Fragment>
     );
 }

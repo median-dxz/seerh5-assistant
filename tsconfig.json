@@ -20,6 +20,9 @@
             "@data": [
                 "src/data/index.js"
             ],
+            "@sa-core/*": [
+                "src/assistant/*"
+            ],
         }
     },
     "exclude": [

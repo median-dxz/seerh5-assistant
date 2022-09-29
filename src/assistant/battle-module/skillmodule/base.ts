@@ -1,4 +1,4 @@
-import Skill from 'src/assisant/entities/skill';
+import Skill from 'src/assistant/entities/skill';
 import { PetSwitchInfos } from '../infoprovider';
 
 class NameMatched {

@@ -1,6 +1,6 @@
 import { Autocomplete, CircularProgress, TextField } from '@mui/material';
 import { Box, Container } from '@mui/system';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import './command-box.css';
 
 export function CommandBox() {
@@ -46,7 +46,7 @@ export function CommandBox() {
             <Container>
                 <Autocomplete
                     id="asynchronous-demo"
-                    sx={{ width: 300 }}
+                    sx={{ width: '100%' }}
                     open={open}
                     onOpen={() => {
                         setOpen(true);

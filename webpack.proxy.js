@@ -23,7 +23,7 @@ let saProxyMiddleware = createProxyMiddleware({
                 if (req.url.indexOf('resource/app/entry/entry.js') > 0) {
                     body = gunzipSync(body);
                     writeFileSync(path.join(__dirname, 'entry', 'offical.js'), body.toString());
-                    let data = readFileSync(path.join(__dirname, 'entry', 'assisant.js'));
+                    let data = readFileSync(path.join(__dirname, 'entry', 'assistant.js'));
                     res.end(data);
                     return;
                 } else if (req.url.indexOf('sentry.js') > 0) {

@@ -1,4 +1,4 @@
-import * as SA from './assisant/core';
+import * as SA from './assistant/core';
 import { delay, warpper } from './utils';
 declare global {
     interface Window {
@@ -8,7 +8,7 @@ declare global {
         warpper: typeof warpper;
         filterLogText: RegExp[];
         filterWarnText: RegExp[];
-        SAMods: Map<string, import('./assisant/modloader').Mod>;
+        SAMods: Map<string, import('./assistant/modloader').Mod>;
         SACoreReady: boolean;
 
         [module: string]: any;

@@ -120,6 +120,7 @@ const appConfig = {
         alias: {
             '@mui/styled-engine': '@mui/styled-engine-sc',
             '@data': '/src/data/index.js',
+            '@sa-core': '/src/assistant',
         },
         extensions: ['.js', '.jsx', '.tsx', '.ts'],
     },

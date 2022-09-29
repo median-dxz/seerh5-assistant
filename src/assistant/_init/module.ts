@@ -4,8 +4,8 @@ window.filterLogText = [
     /(M|m)usic/,
     /sound length.*?[0-9]*$/,
     /module width.*?[0-9]*$/,
+    /=*?this._percent=*/,
     /infos=*?>/,
-    /^petbag constructor$/,
     /加载cjs 动画preview.*$/,
 ];
 
