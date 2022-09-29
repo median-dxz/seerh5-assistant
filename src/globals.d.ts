@@ -1,11 +1,11 @@
 import * as SA from './assistant/core';
-import { delay, warpper } from './utils';
+import { delay, wrapper } from './utils';
 declare global {
     interface Window {
         SA: typeof SA;
         SAEventTarget: EventTarget;
         delay: typeof delay;
-        warpper: typeof warpper;
+        wrapper: typeof wrapper;
         filterLogText: RegExp[];
         filterWarnText: RegExp[];
         SAMods: Map<string, import('./assistant/modloader').Mod>;

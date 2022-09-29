@@ -5,17 +5,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "trace": true,
-      "name": "Chrome Debug",
       "type": "chrome",
       "request": "launch",
-      "url": "http://localhost:1234/",
-      "webRoot": "${workspaceRoot}/src",
-      "sourceMaps": true,
-      "sourceMapPathOverrides": {
-        "webpack:///./*": "${workspaceFolder}/src"
-      }
-      // "userDataDir": "${workspaceRoot}/.vscode/chrome",
+      "name": "Launch Chrome against localhost",
+      "url": "http://localhost:1234",
+      "webRoot": "${workspaceFolder}/src"
     }
   ]
 }

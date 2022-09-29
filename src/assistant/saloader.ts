@@ -29,7 +29,7 @@ const sa_core_init = async () => {
 
 import(/* webpackChunkName: "utils" */ '../utils').then((utils) => {
     window.delay = utils.delay;
-    window.warpper = utils.warpper;
+    window.wrapper = utils.wrapper;
     window.SAEventTarget = new EventTarget();
 });
 

@@ -81,7 +81,7 @@ v0.1.8
 1. 项目进行整体大重构，下面是重点摘要
 2. `saloader`现在会加载init目录下的初始化文件，这些文件都具有全局副作用
 3. `event`模块整体重做，对原函数的hook全部移动到init下的`event.js`内完成，现在的思路是`SAEventManager`只负责接收hook挂载的时候传出的值
-4. `common`模块移动到根目录下，命名为`utils.js`，在全局作用域挂载`warpper`和`delay`
+4. `common`模块移动到根目录下，命名为`utils.js`，在全局作用域挂载`wrapper`和`delay`
 5. 新增`globals.d.ts`用于vsc全局变量提示
 6. `const`下`CMDID`现在值是从`CommandID`中读取的
 7. `entities`模块大更改，更加统一，通用。其他模块将使用新的对象进行数据交互
@@ -143,7 +143,7 @@ v0.1.3
 
 v0.1.2
 
-1. 重构过滤无用调试信息的方式，不再使用warpper包装输出调试信息的函数，而是使用Proxy来代理console.log和warn。注意：通过这种方式必须通过trace才能得到调用链，因此待办：在模组内部使用封装后的Logger函数而不是代理后的console，npm应该有相关的库。
+1. 重构过滤无用调试信息的方式，不再使用wrapper包装输出调试信息的函数，而是使用Proxy来代理console.log和warn。注意：通过这种方式必须通过trace才能得到调用链，因此待办：在模组内部使用封装后的Logger函数而不是代理后的console，npm应该有相关的库。
 2. 优化确认信息显示，现在会以气泡方式显示而不是完全在控制台输出
 3. 以原生接口开启发包调试输出
 4. 优化socket信息显示

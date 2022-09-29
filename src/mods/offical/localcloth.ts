@@ -7,7 +7,7 @@ const log = SaModuleLogger('LocalCloth', defaultStyle.mod);
 
 const { Const, Utils } = saco;
 const { EVENTS: SAEvents } = Const;
-const { warpper, SAEventTarget } = window;
+const { wrapper, SAEventTarget } = window;
 
 const changeCloth = new Map();
 const origalCloth = new Map();
@@ -84,7 +84,7 @@ class LocalCloth extends ReflectObjBase implements ModClass {
                     () => {
                         petDetailedInfo = window['petDetailedInfo' as any];
                         const protoFunc = petDetailedInfo.PetInfoSkinView.prototype.updateSkin;
-                        petDetailedInfo.PetInfoSkinView.prototype.updateSkin = warpper(protoFunc, null, function () {
+                        petDetailedInfo.PetInfoSkinView.prototype.updateSkin = wrapper(protoFunc, null, function () {
                             const t = this._arry.getItemAt(this._selectSkinIndex);
                             this.txt_line2.text =
                                 `                    精灵ID: ${t.monId}\n` +
@@ -124,7 +124,7 @@ class LocalCloth extends ReflectObjBase implements ModClass {
                     () => {
                         petBag = window['petBag' as any];
                         const protoFunc = petBag.PetBag.prototype.onEndDrag;
-                        petBag.PetBag.prototype.onEndDrag = warpper(protoFunc, null, function () {
+                        petBag.PetBag.prototype.onEndDrag = wrapper(protoFunc, null, function () {
                             log(new Pet(this.hitHead.petInfo));
                         });
                     },

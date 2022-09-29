@@ -9,7 +9,7 @@ async function delay(time: number): Promise<void> {
 
 type FnAsynify<T extends (...args: any[]) => unknown> = () => Promise<ReturnType<T>>;
 
-function warpper<Fn extends (...args: any[]) => unknown>(func: Fn, beforeDecorator?: Fn, afterDecorator?: Fn): FnAsynify<Fn> {
+function wrapper<Fn extends (...args: any[]) => unknown>(func: Fn, beforeDecorator?: Fn, afterDecorator?: Fn): FnAsynify<Fn> {
     return async function () {
         beforeDecorator && (await beforeDecorator.apply(this, arguments));
         const r: ReturnType<Fn> = await func.apply(this, arguments);
@@ -18,5 +18,5 @@ function warpper<Fn extends (...args: any[]) => unknown>(func: Fn, beforeDecorat
     };
 }
 
-export { warpper, delay };
+export { wrapper as wrapper, delay };
 
