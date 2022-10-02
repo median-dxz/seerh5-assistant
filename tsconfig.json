@@ -23,6 +23,9 @@
             "@sa-core/*": [
                 "src/assistant/*"
             ],
+            "@mui/styled-engine": [
+                "./node_modules/@mui/styled-engine-sc"
+            ],
         }
     },
     "exclude": [
