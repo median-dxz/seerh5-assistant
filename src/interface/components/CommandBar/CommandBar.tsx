@@ -23,11 +23,9 @@ const CommandInputRef = React.forwardRef<HTMLDivElement>((props, ref) => (
 ));
 
 export function CommandBar(props: Props) {
-    return props.show ? (
-        <Grow in={props.show}>
+    return (
+        <Grow in={props.show} unmountOnExit>
             <CommandInputRef />
         </Grow>
-    ) : (
-        <Fragment />
     );
 }
