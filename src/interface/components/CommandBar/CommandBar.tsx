@@ -1,5 +1,5 @@
 import { Box, Grow, styled } from '@mui/material';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { CommandInput } from './CommandInput';
 
 const CommandBarBox = styled(Box)`
@@ -23,9 +23,11 @@ const CommandInputRef = React.forwardRef<HTMLDivElement>((props, ref) => (
 ));
 
 export function CommandBar(props: Props) {
-    return (
+    return props.show ? (
         <Grow in={props.show}>
             <CommandInputRef />
         </Grow>
+    ) : (
+        <Fragment />
     );
 }

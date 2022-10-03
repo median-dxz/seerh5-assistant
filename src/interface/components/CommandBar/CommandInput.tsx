@@ -1,6 +1,7 @@
-import { Autocomplete as AutocompleteRaw, AutocompleteProps, CircularProgress } from '@mui/material';
+import { Autocomplete as AutocompleteRaw, AutocompleteProps } from '@mui/material';
 import { styled } from '@mui/system';
 import React, { useEffect, useState } from 'react';
+import { useBubbleHint } from '../../utils/useBubbleHint';
 import { mainColor, StyledTextField } from './StyledTextField';
 
 const Autocomplete: typeof AutocompleteRaw = styled(
@@ -27,6 +28,7 @@ export function CommandInput() {
     const [options, setOptions] = useState<readonly string[]>([]);
     const [modName, setModName] = useState<null | string>(null);
     const [inputValue, setInputValue] = useState('');
+    const [value, setValue] = useState<null | string>('');
 
     useEffect(() => {
         let o = [];
@@ -35,15 +37,27 @@ export function CommandInput() {
             for (const key of Mods.get(modName)!.getKeys()) {
                 o.push(key);
             }
-        } else {
+            o.push('return');
+        } else if (window.SAMods) {
             for (const key of window.SAMods.keys()) {
                 o.push(key);
             }
         }
 
         setOptions([...o]);
-        setInputValue('');
     }, [modName, open]);
+
+    const handleEnterMod = (newModName: string) => {
+        setModName(newModName);
+        setValue(null);
+        setInputValue('');
+    };
+
+    const handleLeaveMod = () => {
+        setModName(null);
+        setValue(null);
+        setInputValue('');
+    };
 
     return (
         <Autocomplete
@@ -51,19 +65,34 @@ export function CommandInput() {
             sx={{
                 width: '100%',
             }}
-            autoComplete
             autoHighlight
+            selectOnFocus
             clearOnBlur
             clearOnEscape
+            disablePortal
+            onKeyDown={(event) => {
+                if (event.key === 'Backspace') {
+                    if (inputValue === '') {
+                        handleLeaveMod();
+                    }
+                }
+            }}
             inputValue={inputValue}
             onInputChange={(event, newInputValue) => {
                 setInputValue(newInputValue);
             }}
+            value={value}
             onChange={(event, newValue: string | null) => {
                 if (modName && newValue) {
                     window.SAMods.get(modName)!.reflect(newValue);
+                    useBubbleHint(`[Info]: 应用命令: ${modName}: ${newValue}`);
+                    if (newValue === 'return') {
+                        handleLeaveMod();
+                    } else {
+                        setValue(null);
+                    }
                 } else {
-                    setModName(newValue);
+                    handleEnterMod(newValue!);
                 }
             }}
             open={open}
@@ -73,13 +102,14 @@ export function CommandInput() {
             onClose={() => {
                 setOpen(false);
             }}
-            isOptionEqualToValue={(option, value) => option === value}
-            getOptionLabel={(option) => option}
             options={options}
+            isOptionEqualToValue={(option, value) => {
+                return value === option || value === '' || value === null;
+            }}
             renderInput={(params) => (
                 <StyledTextField
                     {...params}
-                    label={modName ?? '选择以应用模组...'}
+                    label={modName ? `应用 ${modName}:` : '选择以应用模组...'}
                     InputProps={{
                         ...params.InputProps,
                         endAdornment: <React.Fragment>{params.InputProps.endAdornment}</React.Fragment>,
