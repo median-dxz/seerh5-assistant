@@ -1,5 +1,6 @@
 export default {
     petCts: {},
-    igonrePetNames: new Set([]),
+    ignorePetNames: new Set([]),
     commonBattleModule: {},
+    petBags:[],
 };
