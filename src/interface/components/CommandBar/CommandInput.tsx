@@ -17,6 +17,8 @@ const Autocomplete: typeof AutocompleteRaw = styled(
         box-shadow: 0 0 16px rgba(10 55 118 / 50%);
         border-radius: 0;
         color: var(--main-color-full);
+        font-family: HuaKangXinZongYi;
+        font-weight: 200;
         & .MuiAutocomplete-noOptions {
             color: var(--main-color-full);
         }
@@ -28,7 +30,7 @@ export function CommandInput() {
     const [options, setOptions] = useState<readonly string[]>([]);
     const [modName, setModName] = useState<null | string>(null);
     const [inputValue, setInputValue] = useState('');
-    const [value, setValue] = useState<null | string>('');
+    const [value, setValue] = useState<null | string>(null);
 
     useEffect(() => {
         let o = [];

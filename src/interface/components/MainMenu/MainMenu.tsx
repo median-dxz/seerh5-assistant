@@ -2,6 +2,7 @@ import { AssignmentInd, Medication, MenuOpen, ScheduleSend, SmartToy } from '@mu
 import { SpeedDial, SpeedDialAction } from '@mui/material';
 import { styled } from '@mui/system';
 import React, { useState } from 'react';
+import { SvgButton } from './HexagonalButton';
 
 const actions = [
     { icon: <Medication />, name: '自动治疗' },
@@ -10,13 +11,11 @@ const actions = [
     { icon: <ScheduleSend />, name: '一键战队派遣' },
 ];
 
-const MainButton: typeof SpeedDial = styled(SpeedDial)``;
-
 export function MainMenu() {
     let [autoCure, setAutoCure] = useState(false);
-    const { SA, SAMods: mods } = window;
     const handleClicks = [
         () => {
+            const { SA } = window;
             setAutoCure(!autoCure);
             SA.PetHelper.ToggleAutoCure(autoCure);
             BubblerManager.getInstance().showText(autoCure ? '自动治疗开启' : '自动治疗关闭');
@@ -25,23 +24,30 @@ export function MainMenu() {
             FightManager.fightNoMapBoss(6730);
         },
         () => {
+            const { SAMods: mods } = window;
             mods.get('sign')!.run!();
         },
         () => {
+            const { SAMods: mods } = window;
             mods.get('sign')!.reflect('teamDispatch');
         },
     ];
 
     return (
-        <SpeedDial ariaLabel="Seerh5 Assistant Main Menu Button" icon={<MenuOpen />}>
-            {actions.map((action, index) => (
-                <SpeedDialAction
-                    key={action.name}
-                    icon={action.icon}
-                    tooltipTitle={action.name}
-                    onClick={handleClicks[index]}
-                />
-            ))}
-        </SpeedDial>
+        <>
+            <SvgButton onClick={() => {}}>
+                <MenuOpen />
+            </SvgButton>
+            <SpeedDial ariaLabel="Seerh5 Assistant Main Menu Button" icon={<MenuOpen />}>
+                {actions.map((action, index) => (
+                    <SpeedDialAction
+                        key={action.name}
+                        icon={action.icon}
+                        tooltipTitle={action.name}
+                        onClick={handleClicks[index]}
+                    />
+                ))}
+            </SpeedDial>
+        </>
     );
 }
