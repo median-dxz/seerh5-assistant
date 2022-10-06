@@ -1,11 +1,12 @@
 import { TextField } from '@mui/material';
 import { styled } from '@mui/system';
+import { mainColor } from '@sa-ui/style';
 
-export const mainColor = `211 244 254`;
 export const StyledTextField: typeof TextField = styled(TextField)`
     padding: 4px;
-    --main-color: rgba(${mainColor} / 75%);
-    --main-color-full: rgb(${mainColor});
+    --color-front-75: rgba(${mainColor.front} / 75%);
+    --color-front-100: rgba(${mainColor.front} / 100%);
+    --color-back-50: rgba(${mainColor.back} / 50%);
     &::after {
         content: ' ';
         position: absolute;
@@ -13,8 +14,8 @@ export const StyledTextField: typeof TextField = styled(TextField)`
         left: 0;
         width: 1em;
         height: 1em;
-        border-top: 1px solid var(--main-color-full);
-        border-left: 1px solid var(--main-color-full);
+        border-top: 1px solid var(--color-front-100);
+        border-left: 1px solid var(--color-front-100);
     }
 
     &::before {
@@ -24,33 +25,33 @@ export const StyledTextField: typeof TextField = styled(TextField)`
         right: 0;
         width: 1em;
         height: 1em;
-        border-bottom: 1px solid var(--main-color-full);
-        border-right: 1px solid var(--main-color-full);
+        border-bottom: 1px solid var(--color-front-100);
+        border-right: 1px solid var(--color-front-100);
     }
 
     & .MuiFormLabel-root {
         top: initial;
         left: initial;
-        color: var(--main-color-full);
+        color: var(--color-front-100);
         font-family: MFShangHei;
     }
 
     & .MuiAutocomplete-endAdornment {
         & .MuiAutocomplete-clearIndicator,
         & .MuiAutocomplete-popupIndicator {
-            color: var(--main-color-full);
+            color: var(--color-front-100);
         }
     }
 
     & .MuiAutocomplete-inputRoot {
-        box-shadow: 0 0 16px var(--main-color);
+        box-shadow: 0 0 16px var(--color-front-75);
         background-color: rgba(10 55 118 / 50%);
         backdrop-filter: blur(7px);
         border-radius: 0;
         border: none;
 
         & .MuiAutocomplete-input {
-            color: var(--main-color-full);
+            color: var(--color-front-100);
         }
 
         &.Mui-focused {
@@ -58,20 +59,20 @@ export const StyledTextField: typeof TextField = styled(TextField)`
         }
 
         & fieldset {
-            border-color: var(--main-color);
+            border-color: var(--color-front-75);
             transition: border-color 0.3s;
         }
 
         &:hover fieldset {
-            border: 1px solid var(--main-color-full);
+            border: 1px solid var(--color-front-100);
         }
 
         &.Mui-focused fieldset {
-            border: 1px solid var(--main-color);
+            border: 1px solid var(--color-front-75);
         }
 
         &.Mui-focused:hover fieldset {
-            border: 1px solid var(--main-color-full);
+            border: 1px solid var(--color-front-100);
         }
     }
 `;

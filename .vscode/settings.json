@@ -10,8 +10,8 @@
     "editor.codeActionsOnSave": {
         "source.organizeImports": true
     },
-    "typescript.suggest.paths": false,
-    "javascript.suggest.paths": false,
+    // "typescript.suggest.paths": false,
+    // "javascript.suggest.paths": false,
     "cSpell.words": [
         "seerh5"
     ]

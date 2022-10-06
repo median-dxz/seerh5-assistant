@@ -1,44 +1,33 @@
 import ButtonUnstyled, { ButtonUnstyledProps } from '@mui/base/ButtonUnstyled';
 import { styled } from '@mui/system';
 import * as React from 'react';
+import { ForwardedRef, forwardRef, PropsWithChildren } from 'react';
 
-const points = `0 -84,
-  ${42 * Math.sqrt(3)} -42,
-  ${42 * Math.sqrt(3)} 42,
-  0 84,
-  -${42 * Math.sqrt(3)} 42,
-  -${42 * Math.sqrt(3)} -42`;
-
-const ButtonRoot = React.forwardRef(function ButtonRoot(
-    props: React.PropsWithChildren<{}>,
-    ref: React.ForwardedRef<any>
+const ButtonRoot = forwardRef(function ButtonRoot(
+    props: PropsWithChildren<{}> & { baseSize: number },
+    ref: ForwardedRef<any>
 ) {
-    const { children, ...other } = props;
+    const { children, baseSize, ...other } = props;
+    const viewBoxSize = baseSize * 2 + 20;
+    const points = (size: number) => `0 ${-size},
+    ${(size / 2) * Math.sqrt(3)} ${-size / 2},
+    ${(size / 2) * Math.sqrt(3)} ${size / 2},
+    0 ${size},
+    -${(size / 2) * Math.sqrt(3)} ${size / 2},
+    -${(size / 2) * Math.sqrt(3)} ${-size / 2}`;
 
     return (
-        <svg width="148" height="148" viewBox="0 0 182 182" {...other} ref={ref}>
-            <g transform="translate(91,91)">
-                <polygon points={points} className="bg" />
-                <polygon
-                    points={`0 -90,
-          ${46 * Math.sqrt(3)} -45,
-          ${46 * Math.sqrt(3)} 45,
-          0 90,
-          -${45 * Math.sqrt(3)} 45,
-          -${45 * Math.sqrt(3)} -45`}
-                    id="dash"
-                    fill="none"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                />
-                {/* <rect
-          x="-84"
-          y="-84"
-          width="168"
-          height="168"
-          className="dash-rotate"
-        /> */}
-                <foreignObject x="-91" y="-91" width="182" height="182">
+        <svg
+            width={viewBoxSize}
+            height={viewBoxSize}
+            viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
+            {...other}
+            ref={ref}
+        >
+            <g transform={`translate(${viewBoxSize / 2}, ${viewBoxSize / 2})`}>
+                <polygon points={points(baseSize)} className="bg" />
+                <polygon points={points(baseSize * 1.15)} id="dash" fill="none" strokeWidth="2" strokeLinecap="round" />
+                <foreignObject x={-viewBoxSize / 2} y={-viewBoxSize / 2} width={viewBoxSize} height={viewBoxSize}>
                     <div className="content">{children}</div>
                 </foreignObject>
             </g>
@@ -76,40 +65,48 @@ const CustomButtonRoot = styled(ButtonRoot)`
         stroke-width: 2px;
         stroke-linecap: round;
         fill: rgba(10 54 115 / 75%);
-        filter: drop-shadow(0 0 12px rgba(211 244 254 / 75%));
+        filter: drop-shadow(0 0 8px rgba(211 244 254 / 66%));
         transition: all 0.5s;
     }
     & #dash {
-        stroke-dasharray: 44% 6%;
-        stroke-dashoffset: 0%;
+        stroke: #43d9fa;
+        stroke-dasharray: calc(50% / 1.15 * 0.8) calc(50% / 1.15 * 0.2) calc(50% / 1.075 * 0.8) calc(50% / 1.075 * 0.2);
         animation: 4s linear infinite line-rotate;
-        filter: drop-shadow(0 0 6px rgba(21 24 24 / 100%));
+        filter: drop-shadow(0 0 4px rgba(21 24 24 / 100%));
     }
     & * {
         color: rgba(211 244 254);
     }
     @keyframes line-rotate {
         0% {
-            stroke-dashoffset: 30%;
+            stroke-dashoffset: 0%;
             stroke: #ffffff8f;
         }
 
-        50% {
-            stroke-dashoffset: 80%;
-            stroke: #ffffff;
+        25% {
+            stroke-dashoffset: 25%;
+            stroke: #43d9fa;
+        }
+
+        75% {
+            stroke-dashoffset: 65%;
+            stroke: #eef3bf;
         }
 
         100% {
-            stroke-dashoffset: 130%;
+            stroke-dashoffset: calc(50% / 1.15 + 50% / 1.075);
             stroke: #ffffff8f;
         }
     }
     &:hover .bg {
-        filter: drop-shadow(0 0 16px rgba(20 24 24 / 100%));
+        filter: drop-shadow(0 0 8px rgba(20 24 24 / 66%));
         stroke: rgba(211 244 254 / 100%);
     }
 `;
 
-export const SvgButton = React.forwardRef(function SvgButton(props: ButtonUnstyledProps, ref: React.ForwardedRef<any>) {
+export const MainButton = forwardRef(function MainButton(
+    props: ButtonUnstyledProps & { baseSize: number },
+    ref: ForwardedRef<any>
+) {
     return <ButtonUnstyled {...props} component={CustomButtonRoot} ref={ref} />;
 });

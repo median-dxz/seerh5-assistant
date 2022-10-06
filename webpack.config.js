@@ -121,6 +121,7 @@ const appConfig = {
             '@mui/styled-engine': '@mui/styled-engine-sc',
             '@data': '/src/data/index.js',
             '@sa-core': '/src/assistant',
+            '@sa-ui': '/src/interface',
         },
         extensions: ['.js', '.jsx', '.tsx', '.ts'],
     },

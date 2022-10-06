@@ -1,26 +1,29 @@
 import { Autocomplete as AutocompleteRaw, AutocompleteProps } from '@mui/material';
 import { styled } from '@mui/system';
+import { mainColor } from '@sa-ui/style';
+import { useBubbleHint } from '@sa-ui/utils/useBubbleHint';
 import React, { useEffect, useState } from 'react';
-import { useBubbleHint } from '../../utils/useBubbleHint';
-import { mainColor, StyledTextField } from './StyledTextField';
+import { StyledTextField } from './StyledTextField';
 
 const Autocomplete: typeof AutocompleteRaw = styled(
     ({ className, ...props }: AutocompleteProps<unknown, false, false, false>) => (
         <AutocompleteRaw {...props} classes={{ popper: className }} />
     )
 )`
-    --main-color: rgba(${mainColor} / 75%);
-    --main-color-full: rgb(${mainColor});
+    --color-front-75: rgba(${mainColor.front} / 75%);
+    --color-front-100: rgba(${mainColor.front} / 100%);
+    --color-back-50: rgba(${mainColor.back} / 50%);
+
     & .MuiAutocomplete-paper {
         backdrop-filter: blur(12px);
-        background-color: rgba(10 55 118 / 50%);
-        box-shadow: 0 0 16px rgba(10 55 118 / 50%);
+        background-color: var(--color-back-50);
+        box-shadow: 0 0 16px var(--color-back-50);
         border-radius: 0;
-        color: var(--main-color-full);
+        color: var(--color-front-100);
         font-family: HuaKangXinZongYi;
         font-weight: 200;
         & .MuiAutocomplete-noOptions {
-            color: var(--main-color-full);
+            color: var(--color-front-100);
         }
     }
 `;

@@ -1,8 +1,9 @@
 import { AssignmentInd, Medication, MenuOpen, ScheduleSend, SmartToy } from '@mui/icons-material';
-import { SpeedDial, SpeedDialAction } from '@mui/material';
+import { SpeedDial as SpeedDialRaw, SpeedDialAction } from '@mui/material';
 import { styled } from '@mui/system';
+import { mainColor } from '@sa-ui/style';
 import React, { useState } from 'react';
-import { SvgButton } from './HexagonalButton';
+import { MainButton } from './HexagonalButton';
 
 const actions = [
     { icon: <Medication />, name: '自动治疗' },
@@ -10,6 +11,20 @@ const actions = [
     { icon: <AssignmentInd />, name: '一键签到' },
     { icon: <ScheduleSend />, name: '一键战队派遣' },
 ];
+
+const SpeedDial: typeof SpeedDialRaw = styled(SpeedDialRaw)`
+    & .MuiSpeedDial-fab {
+        color: rgba(${mainColor.back} / 100%);
+        background-color: rgba(${mainColor.front} / 100%);
+        box-shadow: 0 0 12px rgba(${mainColor.front} / 24%);
+        transition: box-shadow background-color color 0.3s;
+    }
+    & .MuiSpeedDial-fab:hover {
+        color: rgba(${mainColor.front} / 100%);
+        background-color: rgba(${mainColor.back} / 100%);
+        box-shadow: 0 0 12px rgba(${mainColor.back} / 24%);
+    }
+`;
 
 export function MainMenu() {
     let [autoCure, setAutoCure] = useState(false);
@@ -35,9 +50,9 @@ export function MainMenu() {
 
     return (
         <>
-            <SvgButton onClick={() => {}}>
+            <MainButton onClick={() => {}} baseSize={36}>
                 <MenuOpen />
-            </SvgButton>
+            </MainButton>
             <SpeedDial ariaLabel="Seerh5 Assistant Main Menu Button" icon={<MenuOpen />}>
                 {actions.map((action, index) => (
                     <SpeedDialAction
