@@ -98,9 +98,16 @@ const CustomButtonRoot = styled(ButtonRoot)`
             stroke: #ffffff8f;
         }
     }
+
     &:hover .bg {
         filter: drop-shadow(0 0 8px rgba(20 24 24 / 66%));
         stroke: rgba(211 244 254 / 100%);
+    }
+
+    &:active .bg,
+    &:active #dash {
+        transform: scale(0.94);
+        transition: transform 0.3s;
     }
 `;
 

@@ -4,6 +4,7 @@ import { Container, ThemeProvider } from '@mui/system';
 import React, { Fragment, useEffect, useState } from 'react';
 import { CommandBar } from './components/CommandBar';
 import { MainMenu } from './components/MainMenu';
+import { MainPanel } from './components/MainPanel/MainPanel';
 
 // createTheme({
 //     palette: {
@@ -17,14 +18,29 @@ const mainTheme = createTheme({
     typography: {
         fontSize: 16,
     },
+    components: {
+        MuiTooltip: {
+            styleOverrides: {
+                tooltip: {
+                    backgroundColor: 'rgba(33 150 243 / 45%)',
+                    backdropFilter: 'blur(6px)',
+                },
+            },
+        },
+    },
 });
 
 export function SaMain() {
-    const [isCommandBarShown, toggleCommandBar] = useState(false);
+    const [isCommandBarOpen, toggleCommandBar] = useState(false);
+    const [isMainPanelOpen, toggleMainPanel] = useState(false);
 
     const shortCutHandler = function (e: KeyboardEvent | React.KeyboardEvent) {
         if (e.key === 'p' && e.ctrlKey) {
             toggleCommandBar((preState) => !preState);
+            e.preventDefault();
+        }
+        if (e.key === 's' && e.ctrlKey) {
+            toggleMainPanel((preState) => !preState);
             e.preventDefault();
         }
     };
@@ -41,11 +57,12 @@ export function SaMain() {
             <CssBaseline />
             <ThemeProvider theme={mainTheme}>
                 <div id="sa-main">
-                    <Container sx={{ margin: 2, display: 'flex', opacity: '0.75', alignItems: 'center' }}>
+                    <Container sx={{ m: 2, display: 'flex', alignItems: 'center' }}>
                         <MainMenu />
                     </Container>
                 </div>
-                <CommandBar show={isCommandBarShown} />
+                <CommandBar show={isCommandBarOpen} />
+                <MainPanel show={isMainPanelOpen} />
             </ThemeProvider>
         </Fragment>
     );
