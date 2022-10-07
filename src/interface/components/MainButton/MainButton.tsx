@@ -1,5 +1,5 @@
 import { ButtonUnstyledProps } from '@mui/base';
-import { MenuOpen } from '@mui/icons-material';
+import { ElectricBolt } from '@mui/icons-material';
 import { styled } from '@mui/system';
 import React from 'react';
 import { HexagonalButton } from './HexagonalButton';
@@ -14,7 +14,7 @@ const LocatedButton: typeof HexagonalButton = styled(HexagonalButton)`
 export function MainButton(props: ButtonUnstyledProps) {
     return (
         <LocatedButton {...props} baseSize={36}>
-            <MenuOpen />
+            <ElectricBolt />
         </LocatedButton>
     );
 }

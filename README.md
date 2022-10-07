@@ -63,7 +63,7 @@ export class hlak4 extends ReflectObjBase implements ModClass {
 
 ```typescript
 export class hlak4 extends ReflectObjBase implements ModClass {
-	 async update() {
+    async update() {
         const data = await Utils.GetMultiValue(107809, 107810, 107805, 12743);
         this._activityInfo = Object.assign(this._activityInfo, {
             红莲能量: data[0],
@@ -135,7 +135,7 @@ type SkillModule = (battleStatus: RoundInfo, skills: Skill[], pets: PetSwitchInf
 
 如上所示，是一个函数签名。该函数接受当前回合的相关信息（包含双方精灵），当前我方精灵的所有技能以及当前我方背包的所有精灵信息。可以在里面调用`BattleOperator`进行出招，切精灵等操作。
 
-对于死切顺序固定，每只精灵固定出招（点名84）的模型，可以使用上面提到的`BaseSkillModule`进行生成部分逻辑，而后使用`BattleModule.GenerateBaseBattleModule`得到完整的战斗模型。
+对于死切顺序固定，每只精灵固定出招（点名84）的模型，可以使用上面提到的`BaseSkillModule`直接生成部分逻辑，而后使用`BattleModule.GenerateBaseBattleModule`得到完整的战斗模型。
 
 # 版本号说明
 

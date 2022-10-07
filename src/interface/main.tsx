@@ -1,35 +1,11 @@
-import { createTheme } from '@mui/material';
-import CssBaseline from '@mui/material/CssBaseline';
+import { CssBaseline } from '@mui/material';
 import { Container, ThemeProvider } from '@mui/system';
 import React, { Fragment, useEffect, useState } from 'react';
 import { CommandBar } from './components/CommandBar';
 import { MainButton } from './components/MainButton';
 import { MainMenu } from './components/MainMenu';
 import { MainPanel } from './components/MainPanel';
-
-// createTheme({
-//     palette: {
-//         primary: {
-//             main: '#E7EBF0',
-//         },
-//     },
-// });
-
-const mainTheme = createTheme({
-    typography: {
-        fontSize: 16,
-    },
-    components: {
-        MuiTooltip: {
-            styleOverrides: {
-                tooltip: {
-                    backgroundColor: 'rgba(33 150 243 / 45%)',
-                    backdropFilter: 'blur(6px)',
-                },
-            },
-        },
-    },
-});
+import { mainTheme } from './style';
 
 export function SaMain() {
     const [isCommandBarOpen, toggleCommandBar] = useState(false);

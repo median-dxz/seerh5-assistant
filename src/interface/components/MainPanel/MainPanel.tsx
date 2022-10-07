@@ -1,8 +1,5 @@
-import { Grow } from '@mui/material';
-import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
-import Typography from '@mui/material/Typography';
+import { Box, Grow, Tab, Tabs, Typography, useTheme } from '@mui/material';
+import { mainColor } from '@sa-ui/style';
 import * as React from 'react';
 
 interface TabPanelProps {
@@ -53,31 +50,38 @@ export function MainPanel(props: Props) {
         <Grow in={props.show} unmountOnExit>
             <Box
                 sx={{
-                    flexGrow: 1,
-                    display: 'absolute',
-                    bgcolor: '#fff',
-                    position: 'fixed',
+                    position: 'absolute',
+                    display: 'flex',
                     top: '12vh',
                     left: 'calc((100vw - 60vw) / 2)',
                     width: '60vw',
+                    height: '75vh',
                     zIndex: 1,
+                    color: `rgba(${mainColor.front} / 100%)`,
+                    border: `2px solid rgba(${mainColor.front} / 75%)`,
+                    boxShadow: `0 0 16px rgba(${mainColor.front} / 50%),
+                    0 0 16px rgba(${mainColor.back} / 50%) inset`,
                 }}
             >
                 <Tabs
                     orientation="vertical"
-                    variant="scrollable"
                     value={value}
                     onChange={handleChange}
-                    aria-label="Vertical tabs example"
-                    sx={{ borderRight: 1, borderColor: 'divider' }}
+                    variant="fullWidth"
+                    aria-label="SA Main Panel Tabs"
+                    sx={{
+                        bgcolor: `rgba(${mainColor.back} / 30%)`,
+                        backdropFilter: `blur(6px)`,
+                        borderRight: 1,
+                        borderColor: 'rgba(255 255 255 / 12%)',
+                        paddingBlockStart: '10%',
+                    }}
                 >
-                    <Tab label="Item One" {...a11yProps(0)} />
-                    <Tab label="Item Two" {...a11yProps(1)} />
-                    <Tab label="Item Three" {...a11yProps(2)} />
-                    <Tab label="Item Four" {...a11yProps(3)} />
-                    <Tab label="Item Five" {...a11yProps(4)} />
-                    <Tab label="Item Six" {...a11yProps(5)} />
-                    <Tab label="Item Seven" {...a11yProps(6)} />
+                    <Tab label="快捷命令组" {...a11yProps(0)} />
+                    <Tab label="常用数据速览" {...a11yProps(1)} />
+                    <Tab label="一键日常" {...a11yProps(2)} />
+                    <Tab label="精灵背包" {...a11yProps(3)} />
+                    <Tab label="自动战斗管理器" {...a11yProps(4)} />
                 </Tabs>
                 <TabPanel value={value} index={0}>
                     Item One
@@ -93,12 +97,6 @@ export function MainPanel(props: Props) {
                 </TabPanel>
                 <TabPanel value={value} index={4}>
                     Item Five
-                </TabPanel>
-                <TabPanel value={value} index={5}>
-                    Item Six
-                </TabPanel>
-                <TabPanel value={value} index={6}>
-                    Item Seven
                 </TabPanel>
             </Box>
         </Grow>
