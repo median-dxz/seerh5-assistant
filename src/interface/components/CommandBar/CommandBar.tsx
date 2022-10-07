@@ -1,25 +1,26 @@
-import { Box, Grow, styled } from '@mui/material';
-import React, { Fragment } from 'react';
+import { Box, Grow } from '@mui/material';
+import React from 'react';
 import { CommandInput } from './CommandInput';
-
-const CommandBarBox = styled(Box)`
-    position: fixed;
-    width: 40vw;
-    min-width: 240px;
-    left: 30vw;
-    top: 10vh;
-` as typeof Box;
 
 interface Props {
     show: boolean;
 }
 
 const CommandInputRef = React.forwardRef<HTMLDivElement>((props, ref) => (
-    <CommandBarBox>
+    <Box
+        sx={{
+            position: 'absolute',
+            width: '40vw',
+            minWidth: '240px',
+            left: '30vw',
+            top: '10vh',
+            zIndex: 4,
+        }}
+    >
         <div ref={ref} {...props}>
             <CommandInput />
         </div>
-    </CommandBarBox>
+    </Box>
 ));
 
 export function CommandBar(props: Props) {

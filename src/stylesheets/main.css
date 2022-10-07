@@ -44,11 +44,3 @@ body {
     src: url('http://seerh5.61.com/resource/font/REEJI_Honghuangli.TTF');
 }
 
-#sa-container {
-    position: fixed;
-    bottom: 8vh;
-    left: 4vw;
-    z-index: 9;
-    display: flex;
-}
-

@@ -111,9 +111,9 @@ const CustomButtonRoot = styled(ButtonRoot)`
     }
 `;
 
-export const MainButton = forwardRef(function MainButton(
+export const HexagonalButton = forwardRef(function (
     props: ButtonUnstyledProps & { baseSize: number },
     ref: ForwardedRef<any>
 ) {
-    return <ButtonUnstyled {...props} component={CustomButtonRoot} ref={ref} />;
+    return <ButtonUnstyled {...props} component={CustomButtonRoot} ref={ref}/>;
 });

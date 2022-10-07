@@ -3,8 +3,9 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { Container, ThemeProvider } from '@mui/system';
 import React, { Fragment, useEffect, useState } from 'react';
 import { CommandBar } from './components/CommandBar';
+import { MainButton } from './components/MainButton';
 import { MainMenu } from './components/MainMenu';
-import { MainPanel } from './components/MainPanel/MainPanel';
+import { MainPanel } from './components/MainPanel';
 
 // createTheme({
 //     palette: {
@@ -39,10 +40,6 @@ export function SaMain() {
             toggleCommandBar((preState) => !preState);
             e.preventDefault();
         }
-        if (e.key === 's' && e.ctrlKey) {
-            toggleMainPanel((preState) => !preState);
-            e.preventDefault();
-        }
     };
 
     useEffect(() => {
@@ -56,13 +53,16 @@ export function SaMain() {
         <Fragment>
             <CssBaseline />
             <ThemeProvider theme={mainTheme}>
-                <div id="sa-main">
-                    <Container sx={{ m: 2, display: 'flex', alignItems: 'center' }}>
-                        <MainMenu />
-                    </Container>
-                </div>
-                <CommandBar show={isCommandBarOpen} />
-                <MainPanel show={isMainPanelOpen} />
+                <Container id="sa-main">
+                    <MainMenu />
+                    <MainButton
+                        onClick={() => {
+                            toggleMainPanel((preState) => !preState);
+                        }}
+                    />
+                    <CommandBar show={isCommandBarOpen} />
+                    <MainPanel show={isMainPanelOpen} />
+                </Container>
             </ThemeProvider>
         </Fragment>
     );

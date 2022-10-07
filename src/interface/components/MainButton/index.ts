@@ -1,0 +1,2 @@
+export { MainButton } from './MainButton';
+

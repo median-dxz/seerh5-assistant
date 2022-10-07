@@ -51,7 +51,18 @@ export function MainPanel(props: Props) {
 
     return (
         <Grow in={props.show} unmountOnExit>
-            <Box sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: 224 }}>
+            <Box
+                sx={{
+                    flexGrow: 1,
+                    display: 'absolute',
+                    bgcolor: '#fff',
+                    position: 'fixed',
+                    top: '12vh',
+                    left: 'calc((100vw - 60vw) / 2)',
+                    width: '60vw',
+                    zIndex: 1,
+                }}
+            >
                 <Tabs
                     orientation="vertical"
                     variant="scrollable"
