@@ -1,6 +1,7 @@
 import { Box, Grow, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import { mainColor } from '@sa-ui/style';
 import * as React from 'react';
+import { PanelDailyRoutine } from '../PanelDailyRoutine/PanelDailyRoutine';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -58,6 +59,7 @@ export function MainPanel(props: Props) {
                     height: '75vh',
                     zIndex: 1,
                     color: `rgba(${mainColor.front} / 100%)`,
+                    bgcolor: `rgba(${mainColor.back} / 30%)`,
                     border: `2px solid rgba(${mainColor.front} / 75%)`,
                     boxShadow: `0 0 16px rgba(${mainColor.front} / 50%),
                     0 0 16px rgba(${mainColor.back} / 50%) inset`,
@@ -70,8 +72,8 @@ export function MainPanel(props: Props) {
                     variant="fullWidth"
                     aria-label="SA Main Panel Tabs"
                     sx={{
-                        bgcolor: `rgba(${mainColor.back} / 30%)`,
-                        backdropFilter: `blur(6px)`,
+                        bgcolor: `rgba(${mainColor.back} / 12%)`,
+                        // backdropFilter: `blur(0px)`,
                         borderRight: 1,
                         borderColor: 'rgba(255 255 255 / 12%)',
                         paddingBlockStart: '10%',
@@ -82,6 +84,7 @@ export function MainPanel(props: Props) {
                     <Tab label="一键日常" {...a11yProps(2)} />
                     <Tab label="精灵背包" {...a11yProps(3)} />
                     <Tab label="自动战斗管理器" {...a11yProps(4)} />
+                    <Tab label="抓包调试" {...a11yProps(5)} />
                 </Tabs>
                 <TabPanel value={value} index={0}>
                     Item One
@@ -90,13 +93,16 @@ export function MainPanel(props: Props) {
                     Item Two
                 </TabPanel>
                 <TabPanel value={value} index={2}>
-                    Item Three
+                    <PanelDailyRoutine />
                 </TabPanel>
                 <TabPanel value={value} index={3}>
                     Item Four
                 </TabPanel>
                 <TabPanel value={value} index={4}>
                     Item Five
+                </TabPanel>
+                <TabPanel value={value} index={5}>
+                    Item Six
                 </TabPanel>
             </Box>
         </Grow>

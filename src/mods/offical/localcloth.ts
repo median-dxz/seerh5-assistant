@@ -10,7 +10,7 @@ const { EVENTS: SAEvents } = Const;
 const { wrapper, SAEventTarget } = window;
 
 const changeCloth = new Map();
-const origalCloth = new Map();
+const originalCloth = new Map();
 
 class LocalCloth extends ReflectObjBase implements ModClass {
     constructor() {
@@ -53,18 +53,18 @@ class LocalCloth extends ReflectObjBase implements ModClass {
             log('new skin id:', _skinId, 'previous skin id:', petInfo.skinId);
             if (
                 (_skinId === 0 || PetSkinController.instance.haveSkin(_skinId)) &&
-                (!origalCloth.has(petInfo.id) || origalCloth.get(petInfo.id) !== _skinId)
+                (!originalCloth.has(petInfo.id) || originalCloth.get(petInfo.id) !== _skinId)
             ) {
                 changeCloth.delete(petInfo.id);
-                origalCloth.set(petInfo.id, _skinId);
+                originalCloth.set(petInfo.id, _skinId);
                 await new Promise<void>((resolve, reject) => {
                     Utils.SocketSendByQueue(47310, [e, n]).then((v) => {
                         resolve();
                     });
                 });
             } else {
-                if (!origalCloth.has(petInfo.id)) {
-                    origalCloth.set(petInfo.id, petInfo.skinId);
+                if (!originalCloth.has(petInfo.id)) {
+                    originalCloth.set(petInfo.id, petInfo.skinId);
                 }
                 changeCloth.set(petInfo.id, {
                     skinId: _skinId,
@@ -76,45 +76,6 @@ class LocalCloth extends ReflectObjBase implements ModClass {
             PetManager.dispatchEvent(new PetEvent(PetEvent.EQUIP_SKIN, e, _skinId));
             r && r();
         };
-        const petDetailInfoModuleLoaded = (e: Event) => {
-            let petDetailedInfo: any;
-            if ((e as CustomEvent).detail.moduleName === 'petDetailedInfo') {
-                SAEventTarget.addEventListener(
-                    SAEvents.Module.show,
-                    () => {
-                        petDetailedInfo = window['petDetailedInfo' as any];
-                        const protoFunc = petDetailedInfo.PetInfoSkinView.prototype.updateSkin;
-                        petDetailedInfo.PetInfoSkinView.prototype.updateSkin = wrapper(protoFunc, null, function () {
-                            const t = this._arry.getItemAt(this._selectSkinIndex);
-                            this.txt_line2.text =
-                                `                    精灵ID: ${t.monId}\n` +
-                                `                    皮肤ID: ${t.id}\n` +
-                                `                    皮肤绑定ID: ${PetSkinXMLInfo.getSkinPetId(t.id, t.monId)}`;
-                            this.img_yzb.visible =
-                                (this._petInfo.skinId === 0 && !t.id) || this._petInfo.skinId === t.id;
-                            this.img_zhuangbei.visible = !this.img_yzb.visible;
-                        });
-                        petDetailedInfo.ItemSkin.prototype.dataChanged = function () {
-                            var e = this;
-                            if (!this.data) return void (this.visible = !1);
-                            (this.visible = !0), (this.lab_name.text = this.data.name);
-                            var t = this.data.type;
-                            this.img_ys.source = 'common_pet_skin_icon_' + t + '_png';
-                            this.icon_skin.visible = this._petShow.visible = !1;
-                            e.icon_skin.source = ClientConfig.getPetHalfIcon(
-                                this.data.monId == this.data.skinPetId || this.data.skinPetId >= 14e5
-                                    ? this.data.skinPetId
-                                    : 14e5 + this.data.id
-                            );
-                            e.icon_skin.visible = true;
-                        };
-                    },
-                    { once: true }
-                );
-                SAEventTarget.removeEventListener(SAEvents.Module.loaded, petDetailInfoModuleLoaded);
-            }
-        };
-        SAEventTarget.addEventListener(SAEvents.Module.loaded, petDetailInfoModuleLoaded);
 
         const petBagModuleLoaded = (e: Event) => {
             if ((e as CustomEvent).detail.moduleName === 'petBag') {
@@ -123,9 +84,45 @@ class LocalCloth extends ReflectObjBase implements ModClass {
                     SAEvents.Module.show,
                     () => {
                         petBag = window['petBag' as any];
-                        const protoFunc = petBag.PetBag.prototype.onEndDrag;
+                        let protoFunc = petBag.PetBag.prototype.onEndDrag;
                         petBag.PetBag.prototype.onEndDrag = wrapper(protoFunc, null, function () {
                             log(new Pet(this.hitHead.petInfo));
+                        });
+
+                        protoFunc = petBag.SkinView.prototype.onChooseSkin;
+                        petBag.SkinView.prototype.onChooseSkin = wrapper(protoFunc, null, function () {
+                            const t = this.arrayCollection.getItemAt(this.selectSkinIndex);
+                            let skinId = 0;
+                            if (t) {
+                                if (t.id) {
+                                    EventManager.dispatchEventWith('petBag.SkinViewChangeSkin', !1, t.skinPetId);
+                                }
+                                skinId = t.id ?? 0;
+                                this.btnPutOn.visible = skinId !== this.petInfo.skinId;
+                                this.imgHasPutOn.visible = skinId === this.petInfo.skinId;
+                            }
+
+                            const n = PetXMLInfo.getName(t.monId),
+                                r = PetSkinXMLInfo.getTypeCn(t.type),
+                                a = t.name,
+                                o = 0 === t.type;
+                            o
+                                ? ((this.txt1.text = '默认形象'),
+                                  (this.txt2.text = ''),
+                                  (this.txt3.text = '原型精灵:' + n))
+                                : ((this.txt1.text = r + '皮肤：' + a),
+                                  (this.txt2.text = '原型精灵:' + n),
+                                  void 0 === t.type
+                                      ? (this.txt3.text = '精灵经典形象')
+                                      : t.shopId
+                                      ? (this.txt3.text = '购买获得')
+                                      : t.go || t.goType
+                                      ? (this.txt3.text = '兑换获得')
+                                      : (this.txt3.text = '通过限时活动获得'));
+                            // this.txt_line2.text =
+                            //     `精灵ID: ${t.monId}\n` +
+                            //     `皮肤ID: ${t.id}\n` +
+                            //     `皮肤绑定ID: ${PetSkinXMLInfo.getSkinPetId(t.id, t.monId)}`;
                         });
                     },
                     { once: true }
