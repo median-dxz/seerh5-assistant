@@ -1,6 +1,6 @@
 import * as BattleModule from './battle-module';
 import * as Const from './const';
-import * as Functions from './funtions';
+import * as Functions from './functions';
 import * as PetFactor from './pet-factor';
 import * as PetHelper from './pet-helper';
 import * as Utils from './utils';

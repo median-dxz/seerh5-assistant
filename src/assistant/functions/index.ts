@@ -47,8 +47,8 @@ export async function SwitchBag(pets: (Pet | PetInfoBase)[]) {
 /**
  * @description 计算可用的高倍克制精灵(默认大于等于1.5)
  */
-export async function calcAllEffecientPet(e: number, radio: number = 1.5) {
-    await PetHelper.updateStroageInfo();
+export async function calcAllEfficientPet(e: number, radio: number = 1.5) {
+    await PetHelper.updateStorageInfo();
     let pets = [
         ...PetStorage2015InfoManager.allInfo,
         ...PetManager._bagMap.getValues(),

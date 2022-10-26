@@ -7,7 +7,7 @@ type PosType = AttrConsts<typeof PosType>;
 /**
  * @description 更新仓库精灵列表
  */
-export const updateStroageInfo = async () => {
+export const updateStorageInfo = async () => {
     await new Promise((resolve, reject) => {
         PetManager.getLovePetList();
         PetManager.updateBagInfo(() => resolve(undefined));
@@ -21,7 +21,7 @@ export const updateStroageInfo = async () => {
  * @description 获取精灵列表
  */
 export async function getPets(location: PosType): Promise<Pet[]> {
-    await updateStroageInfo();
+    await updateStorageInfo();
     let dict: any[];
     switch (location) {
         case PosType.bag1:
@@ -49,7 +49,7 @@ export const isDefault = (ct: number) => PetManager.defaultTime === ct;
 export const setDefault: (ct: number) => void = PetManager.setDefault.bind(PetManager);
 
 export const getPetLocation = (ct: number) => {
-    return updateStroageInfo().then(() => {
+    return updateStorageInfo().then(() => {
         const r = PetStorage2015InfoManager.allInfo.find((v) => v.catchTime === ct);
         if (!r) {
             if (PetManager._bagMap.containsKey(ct)) {
@@ -124,7 +124,7 @@ export const setPetLocation = async (ct: number, newLocation: PosType) => {
             break;
     }
 
-    return updateStroageInfo().then((v) => true);
+    return updateStorageInfo().then((v) => true);
 };
 
 export const popPetFromBag = async (ct: number) => {
