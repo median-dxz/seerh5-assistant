@@ -85,12 +85,12 @@ class LocalCloth extends ReflectObjBase implements ModClass {
                     () => {
                         petBag = window['petBag' as any];
                         let protoFunc = petBag.PetBag.prototype.onEndDrag;
-                        petBag.PetBag.prototype.onEndDrag = wrapper(protoFunc, null, function () {
+                        petBag.PetBag.prototype.onEndDrag = wrapper(protoFunc, null, function (this: any) {
                             log(new Pet(this.hitHead.petInfo));
                         });
 
                         protoFunc = petBag.SkinView.prototype.onChooseSkin;
-                        petBag.SkinView.prototype.onChooseSkin = wrapper(protoFunc, null, function () {
+                        petBag.SkinView.prototype.onChooseSkin = wrapper(protoFunc, null, function (this: any) {
                             const t = this.arrayCollection.getItemAt(this.selectSkinIndex);
                             let skinId = 0;
                             if (t) {

@@ -7,10 +7,14 @@ async function delay(time: number): Promise<void> {
     });
 }
 
-type FnAsynify<T extends (...args: any[]) => unknown> = () => Promise<ReturnType<T>>;
+type FnAsyncify<T extends (...args: any[]) => unknown> = () => Promise<ReturnType<T>>;
 
-function wrapper<Fn extends (...args: any[]) => unknown>(func: Fn, beforeDecorator?: Fn, afterDecorator?: Fn): FnAsynify<Fn> {
-    return async function () {
+function wrapper<Fn extends (...args: any[]) => unknown>(
+    func: Fn,
+    beforeDecorator?: Fn,
+    afterDecorator?: Fn
+): FnAsyncify<Fn> {
+    return async function (this: any) {
         beforeDecorator && (await beforeDecorator.apply(this, arguments));
         const r: ReturnType<Fn> = await func.apply(this, arguments);
         afterDecorator && (await afterDecorator.apply(this, arguments));
@@ -19,4 +23,3 @@ function wrapper<Fn extends (...args: any[]) => unknown>(func: Fn, beforeDecorat
 }
 
 export { wrapper as wrapper, delay };
-
