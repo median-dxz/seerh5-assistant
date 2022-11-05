@@ -69,6 +69,7 @@ type StringMapable = {
 declare var ItemXMLInfo: {
     _itemDict: StringMapable;
     getName(id: number): string;
+    getItemObj(id: number): ItemInfo;
 };
 
 declare namespace SkillXMLInfo {
@@ -232,6 +233,25 @@ declare type PetSkillInfo = {
     SideEffect: string;
     SideEffectArg: string;
     MustHit: number;
+};
+
+declare type ItemInfo = {
+    ID: number;
+    Name: string;
+    Bean?: number;
+    DailyKey?: number;
+    DailyOutMax?: number;
+    Hide?: number;
+    LifeTime?: number;
+    Price?: number;
+    Sort?: number;
+    Tradability: number;
+    VipTradability: number;
+    wd: number;
+    Max?: number;
+    UseMax?: number;
+    purpose?: number;
+    NewSeIdx?: number;
 };
 
 declare var EffectInfoManager: any;

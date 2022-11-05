@@ -115,6 +115,7 @@ export function CommandInput() {
                 <StyledTextField
                     {...params}
                     label={modName ? `应用 ${modName}:` : '选择以应用模组...'}
+                    autoFocus
                     InputProps={{
                         ...params.InputProps,
                         endAdornment: <React.Fragment>{params.InputProps.endAdornment}</React.Fragment>,

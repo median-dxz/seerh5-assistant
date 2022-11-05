@@ -22,4 +22,5 @@ function wrapper<Fn extends (...args: any[]) => unknown>(
     };
 }
 
-export { wrapper as wrapper, delay };
+export { wrapper, delay };
+

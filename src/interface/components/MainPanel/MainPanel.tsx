@@ -1,6 +1,7 @@
 import { Box, Grow, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import { mainColor } from '@sa-ui/style';
 import * as React from 'react';
+import { PanelCommonValue } from '../PanelCommonValue/PanelCommonValue';
 import { PanelDailyRoutine } from '../PanelDailyRoutine/PanelDailyRoutine';
 
 interface TabPanelProps {
@@ -90,7 +91,7 @@ export function MainPanel(props: Props) {
                     Item One
                 </TabPanel>
                 <TabPanel value={value} index={1}>
-                    Item Two
+                    <PanelCommonValue />
                 </TabPanel>
                 <TabPanel value={value} index={2}>
                     <PanelDailyRoutine />

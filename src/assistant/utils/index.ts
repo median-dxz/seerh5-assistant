@@ -23,12 +23,6 @@ export function getTypeIdByName(name: any) {
     return Object.values(SkillXMLInfo.typeMap).find((v) => v.cn.match(name))?.id;
 }
 
-export function getUserCurrency(type: string) {
-    if (type === 'soul_of_titan') {
-        return ItemManager.getNumByID(1400352);
-    }
-}
-
 export async function getStatusName(id: any) {
     return PetStatusEffectConfig.getName(0, id);
 }

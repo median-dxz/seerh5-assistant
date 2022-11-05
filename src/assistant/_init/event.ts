@@ -16,12 +16,16 @@ ModuleManager._openModelCompete = wrapper(ModuleManager._openModelCompete, undef
     EmitEvent(hooks.Module.show, { moduleName });
 });
 
-AwardItemDialog.prototype.startEvent = wrapper(AwardItemDialog.prototype.startEvent, undefined, async function (this: any) {
-    EmitEvent(hooks.Award.show);
-    await delay(500);
-    LevelManager.stage.removeEventListener(egret.TouchEvent.TOUCH_TAP, this.startRemoveDialog, this);
-    this.destroy();
-});
+AwardItemDialog.prototype.startEvent = wrapper(
+    AwardItemDialog.prototype.startEvent,
+    undefined,
+    async function (this: any) {
+        EmitEvent(hooks.Award.show);
+        await delay(500);
+        LevelManager.stage.removeEventListener(egret.TouchEvent.TOUCH_TAP, this.startRemoveDialog, this);
+        this.destroy();
+    }
+);
 
 AwardManager.showDialog = wrapper(AwardManager.showDialog, undefined, function (dialog: any, items: any) {
     EmitEvent(hooks.Award.receive, { items });
