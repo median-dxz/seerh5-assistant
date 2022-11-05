@@ -1,3 +1,4 @@
+// @ts-nocheck
 import * as saco from '../../assistant/core';
 import Pet from '../../assistant/entities/pet';
 import { ReflectObjBase } from '../../assistant/modloader';
@@ -15,21 +16,46 @@ const originalCloth = new Map();
 class LocalCloth extends ReflectObjBase implements ModClass {
     constructor() {
         super();
-        Object.defineProperty(FighterUserInfos.prototype, 'allPetID', {
+        Object.defineProperty(FighterUserInfo.prototype, 'petInfoArr', {
             get: function () {
-                if (this.myInfo && this.otherInfo)
-                    this._allPetID = this.myInfo.petIDArr.concat(this.otherInfo.petIDArr);
-                this._allPetID = this._allPetID.map((v: any) =>
-                    changeCloth.has(v) ? changeCloth.get(v).petSkinId : v
-                );
-                return this._allPetID;
+                return this._petInfoArr;
+            },
+            set: function (t) {
+                const skinId = (r: any) => (this.id == MainManager.actorID ? r.skinId : r._skinId ?? 0);
+                (this._petInfoArr = t),
+                    (this._petIDArr = []),
+                    (this._petCatchArr = []),
+                    (this._petSkillIDArr = []),
+                    (this._aliveNum = 0);
+                for (var e = 0, n = this._petInfoArr; e < n.length; e++) {
+                    var r = n[e],
+                        o = PetFightSkinSkillReplaceXMLInfo.getSkills(this.id == skinId(r), r.id),
+                        i = r.id;
+                    (i = PetIdTransform.getPetId(i, r.catchTime, !0)),
+                        0 != skinId(r) && (i = PetSkinXMLInfo.getSkinPetId(skinId(r), r.id)),
+                        this._petIDArr.push(i),
+                        this._petCatchArr.push(r.catchTime);
+                    for (var s = 0, _ = r.skillArray; s < _.length; s++) {
+                        var a = _[s];
+                        a instanceof PetSkillInfo
+                            ? this.add2List(this._petSkillIDArr, a.id, o)
+                            : this.add2List(this._petSkillIDArr, a, o);
+                    }
+                    var c = SkillXMLInfo.getHideSkillId(r.id);
+                    16689 == c && (c = 16839),
+                        this.add2List(this._petSkillIDArr, c, o),
+                        r.hideSKill && this.add2List(this._petSkillIDArr, r.hideSKill.id, o),
+                        r.hp > 0 && this._aliveNum++;
+                }
             },
             enumerable: !0,
             configurable: !0,
         });
         Object.defineProperty(FightPetInfo.prototype, 'skinId', {
             get: function () {
-                return changeCloth.has(this._petID) ? changeCloth.get(this._petID).skinId : this._skinId;
+                return changeCloth.has(this._petID) && this.userID == MainManager.actorID
+                    ? changeCloth.get(this._petID).skinId
+                    : this._skinId;
             },
             set: function (t) {
                 this._skinId = t;
