@@ -11,8 +11,6 @@ export function BuyPetItem(potionId: number, amount: number) {
 export async function UpdateItemValues(...itemIds: number[]) {
     if (itemIds.length == 0) return;
     return new Promise<void>((resolve, reject) => {
-        ItemManager.updateItems(itemIds, () => {
-            resolve();
-        });
+        ItemManager.updateItems(itemIds, resolve);
     });
 }

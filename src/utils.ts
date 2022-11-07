@@ -7,16 +7,18 @@ async function delay(time: number): Promise<void> {
     });
 }
 
-type FnAsyncify<T extends (...args: any[]) => unknown> = () => Promise<ReturnType<T>>;
+type AnyFunction = (...args: any) => any;
+type BindThisFunction<F extends AnyFunction> = (this: ThisParameterType<F>, ...args: any) => ReturnType<F>;
+type AsyncFunction<F extends AnyFunction> = (...args: unknown[]) => Promise<ReturnType<F>>;
 
-function wrapper<Fn extends (...args: any[]) => unknown>(
-    func: Fn,
-    beforeDecorator?: Fn,
-    afterDecorator?: Fn
-): FnAsyncify<Fn> {
-    return async function (this: any) {
+function wrapper<E, F extends AnyFunction = (this: E, ...args: unknown[]) => unknown>(
+    func: F,
+    beforeDecorator?: BindThisFunction<F>,
+    afterDecorator?: BindThisFunction<F>
+): AsyncFunction<F> {
+    return async function (this: ThisParameterType<F>) {
         beforeDecorator && (await beforeDecorator.apply(this, arguments));
-        const r: ReturnType<Fn> = await func.apply(this, arguments);
+        const r = await func.apply(this, arguments);
         afterDecorator && (await afterDecorator.apply(this, arguments));
         return r;
     };

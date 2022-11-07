@@ -8,21 +8,20 @@ declare global {
         wrapper: typeof wrapper;
         filterLogText: RegExp[];
         filterWarnText: RegExp[];
-        SAMods: Map<string, import('./assistant/modloader').Mod>;
+        SAMods: Map<string, import('./assistant/mod-loader').Mod>;
         SACoreReady: boolean;
 
         [module: string]: any;
     }
-    type Fn = (...args: any) => void;
-    type CallBack = Fn;
-    type NullOrUndefindedable<T> = T | undefined | null;
-    type AttrConsts<T> = T[keyof T];
+    
+    type CallBack = Function;
+    type AttrConst<T> = T[keyof T];
 
     interface ModClass {
-        init: Fn;
-        run?: Fn;
-        runOnce?: Fn;
-        update?: Fn;
+        init: VoidFunction;
+        run?: VoidFunction;
+        runOnce?: VoidFunction;
+        update?: VoidFunction;
         meta: {
             description: string;
         };

@@ -13,7 +13,7 @@ export default class Skill extends Entity {
     maxPP: number;
     effects: SkillEffects;
     mustHit: boolean;
-    constructor(skillLike: PetSkillInfo) {
+    constructor(skillLike: SAType.MoveObj) {
         super();
         let tempEffects: [SkillEffectArgs, SkillEffectArgs];
         if (skillLike) {
@@ -37,7 +37,7 @@ export default class Skill extends Entity {
                 skillLike.Power ?? 0,
                 skillLike.Priority ?? 0,
                 skillLike.Accuracy,
-                skillLike.pp,
+                skillLike.pp!,
                 skillLike.MaxPP,
                 [skillLike.SideEffect, skillLike.SideEffectArg],
                 Boolean(skillLike.MustHit),

@@ -1,6 +1,6 @@
 import data from '@data';
 import * as saco from '@sa-core/core';
-import { ReflectObjBase } from '@sa-core/modloader';
+import { ReflectObjBase } from '@sa-core/mod-loader';
 import { defaultStyle, SaModuleLogger } from '../../logger';
 
 const { BattleModule, Utils, Functions, Const, PetHelper } = saco;

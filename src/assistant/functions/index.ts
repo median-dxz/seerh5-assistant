@@ -11,7 +11,7 @@ const log = SaModuleLogger('SAFunctions', defaultStyle.mod);
 /**
  * @description 刻印直升5级
  */
-export async function upMarkToTopLv(markInfo: MarkInfo) {
+export async function upMarkToTopLv(markInfo: CountermarkInfo) {
     let lv = 5 - CountermarkController.getInfo(markInfo.obtainTime).level!;
     while (lv--) {
         await SocketSendByQueue(CMDID.STRENGTHEN_COUNTERMARK, markInfo.obtainTime);
@@ -32,9 +32,9 @@ export function UsePotionForPet(catchTime: number, potionId: number) {
     SocketSendByQueue(CMDID.USE_PET_ITEM_OUT_OF_FIGHT, [catchTime, potionId]);
 }
 
-export async function SwitchBag(pets: (Pet | PetInfoBase)[]) {
+export async function SwitchBag(pets: Array<SAType.PetLike | Pet>) {
     // 清空现有背包
-    for (let v of await PetHelper.getPets(PetPosType.bag1)) {
+    for (let v of await PetHelper.getBagPets(PetPosType.bag1)) {
         await PetHelper.setPetLocation(v.catchTime, PetPosType.storage);
         log(`SwitchBag -> 将 ${v.name} 放入仓库`);
     }
@@ -67,7 +67,7 @@ export async function calcAllEfficientPet(e: number, radio: number = 1.5) {
     });
 }
 
-type PotionId = AttrConsts<typeof ITEMS.Potion>;
+type PotionId = AttrConst<typeof ITEMS.Potion>;
 /**
  * @param {} cts 要压血的精灵列表
  * @param {} healPotionId 血药id, 默认中级体力药
@@ -81,7 +81,7 @@ export async function LowerBlood(cts: number[], healPotionId: PotionId = ITEMS.P
     }
 
     // 检测列表是否全在背包
-    let curPets = await PetHelper.getPets(PetPosType.bag1);
+    let curPets = await PetHelper.getBagPets(PetPosType.bag1);
 
     for (let ct of cts) {
         if ((await PetHelper.getPetLocation(ct)) !== PetPosType.bag1) {
@@ -89,7 +89,7 @@ export async function LowerBlood(cts: number[], healPotionId: PotionId = ITEMS.P
                 let replacePet = curPets.find((p) => ct !== p.catchTime)!;
                 log(`压血 -> 将 ${replacePet.name} 放入仓库`);
                 await PetHelper.setPetLocation(replacePet.catchTime, PetPosType.storage);
-                curPets = await PetHelper.getPets(PetPosType.bag1);
+                curPets = await PetHelper.getBagPets(PetPosType.bag1);
             }
             await PetHelper.setPetLocation(ct, PetPosType.bag1);
         }
@@ -161,25 +161,22 @@ export async function LowerBlood(cts: number[], healPotionId: PotionId = ITEMS.P
 }
 
 export async function delCounterMark() {
-    const umarks: CountermarkController.CountermarkGroup = CountermarkController.getAllUniversalMark().reduce(
-        (pre: CountermarkController.CountermarkGroup, v: any) => {
-            const name: string = v.markName;
-            if (v.catchTime === 0 && v.isBindMon === false && v.level < 5) {
-                if (pre.has(name)) {
-                    pre.get(name)!.push(v);
-                } else {
-                    pre.set(v.markName, [v]);
-                }
+    const universalMarks = CountermarkController.getAllUniversalMark().reduce((pre, v) => {
+        const name = v.markName;
+        if (v.catchTime === 0 && v.isBindMon === false && v.level < 5) {
+            if (pre.has(name)) {
+                pre.get(name)!.push(v);
+            } else {
+                pre.set(v.markName, [v]);
             }
-            return pre;
-        },
-        new Map()
-    );
+        }
+        return pre;
+    }, new Map<string, CountermarkInfo[]>());
 
-    for (let [k, v] of umarks) {
+    for (let [k, v] of universalMarks) {
         if (v.length > 5) {
             for (let i in v) {
-                if ((i as unknown as number) >= 14) {
+                if (parseInt(i) >= 14) {
                     const mark = v[i];
                     await SocketSendByQueue(CMDID.COUNTERMARK_RESOLVE, mark.obtainTime);
                     await delay(100);

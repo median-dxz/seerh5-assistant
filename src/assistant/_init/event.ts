@@ -11,15 +11,19 @@ ModuleManager.beginShow = wrapper(ModuleManager.beginShow, function (moduleName:
     }
 });
 
-ModuleManager._openModelCompete = wrapper(ModuleManager._openModelCompete, undefined, function (this: any) {
-    const moduleName = this.currModule.moduleName;
-    EmitEvent(hooks.Module.show, { moduleName });
-});
+ModuleManager._openModelCompete = wrapper<typeof ModuleManager>(
+    ModuleManager._openModelCompete,
+    undefined,
+    function () {
+        const moduleName = this.currModule.moduleName;
+        EmitEvent(hooks.Module.show, { moduleName });
+    }
+);
 
-AwardItemDialog.prototype.startEvent = wrapper(
+AwardItemDialog.prototype.startEvent = wrapper<typeof AwardItemDialog>(
     AwardItemDialog.prototype.startEvent,
     undefined,
-    async function (this: any) {
+    async function () {
         EmitEvent(hooks.Award.show);
         await delay(500);
         LevelManager.stage.removeEventListener(egret.TouchEvent.TOUCH_TAP, this.startRemoveDialog, this);
@@ -34,7 +38,7 @@ AwardManager.showDialog = wrapper(AwardManager.showDialog, undefined, function (
 PetFightController.setup = wrapper(PetFightController.setup, undefined, function () {
     EmitEvent(hooks.BattlePanel.panelReady);
     FighterModelFactory.enemyMode!.setHpView(true);
-    FighterModelFactory.enemyMode!.setHpView = function (this: typeof FighterModelFactory) {
+    FighterModelFactory.enemyMode!.setHpView = function () {
         this.propView!.isShowFtHp = true;
     };
 });
@@ -46,15 +50,15 @@ EventManager.addEventListener('new_round', () => {
 PetUpdatePropController.prototype.show = wrapper(PetUpdatePropController.prototype.show, undefined, async function () {
     EmitEvent(hooks.BattlePanel.completed, { isWin: FightManager.isWin });
     await delay(500);
-    const curMod = ModuleManager.currModule;
+    const currentModule = ModuleManager.currModule;
     if (FightManager.isWin) {
-        curMod.touchHandle && curMod.touchHandle();
+        currentModule.touchHandle && currentModule.touchHandle();
     } else {
-        curMod.onClose && curMod.onClose();
+        currentModule.onClose && currentModule.onClose();
     }
 });
 
-SocketConnection.addCmdListener(CMDID.NOTE_USE_SKILL, (dataPackage) => {
+SocketConnection.addCmdListener(CMDID.NOTE_USE_SKILL, (dataPackage: DataPackage) => {
     const data = Object.create(
         Object.getPrototypeOf(dataPackage.data),
         Object.getOwnPropertyDescriptors(dataPackage.data)

@@ -24,7 +24,7 @@ const sa_core_init = async () => {
         window.dispatchEvent(new CustomEvent('seerh5_assistant_ready'));
         window.SACoreReady = true;
     });
-    await import('./modloader');
+    await import('./mod-loader');
 };
 
 import(/* webpackChunkName: "utils" */ '../utils').then((utils) => {

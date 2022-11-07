@@ -1,6 +1,6 @@
 import data from '@data';
 import * as saco from '../../assistant/core';
-import { ReflectObjBase } from '../../assistant/modloader';
+import { ReflectObjBase } from '../../assistant/mod-loader';
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 const log = SaModuleLogger('Sign', defaultStyle.mod);
@@ -79,7 +79,7 @@ class sign extends ReflectObjBase implements ModClass {
             if (tid === 5) tid = 1;
             if (!reprogress) {
                 // 清空背包
-                for (let p of await PetHelper.getPets(PosType.bag1)) {
+                for (let p of await PetHelper.getBagPets(PosType.bag1)) {
                     await PetHelper.setPetLocation(p.catchTime, PosType.storage);
                 }
             }

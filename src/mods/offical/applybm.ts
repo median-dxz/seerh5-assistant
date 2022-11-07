@@ -1,4 +1,4 @@
-import { ReflectObjBase } from '@sa-core/modloader';
+import { ReflectObjBase } from '@sa-core/mod-loader';
 
 class applyBm extends ReflectObjBase implements ModClass {
     constructor() {super();}

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import * as saco from '../../assistant/core';
 import Pet from '../../assistant/entities/pet';
-import { ReflectObjBase } from '../../assistant/modloader';
+import { ReflectObjBase } from '../../assistant/mod-loader';
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 const log = SaModuleLogger('LocalCloth', defaultStyle.mod);

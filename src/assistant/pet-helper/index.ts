@@ -2,27 +2,33 @@ import { CMDID, PETPOS as PosType } from '../const';
 import Pet, { PetFactory } from '../entities/pet';
 import { SocketReceivedPromise, SocketSendByQueue } from '../utils';
 
-type PosType = AttrConsts<typeof PosType>;
+type PosType = AttrConst<typeof PosType>;
 
 /**
  * @description 更新仓库精灵列表
  */
 export const updateStorageInfo = async () => {
-    await new Promise((resolve, reject) => {
+    return new Promise<undefined>((resolve, reject) => {
         PetManager.getLovePetList();
-        PetManager.updateBagInfo(() => resolve(undefined));
-    });
-    return await new Promise((resolve, reject) => {
-        PetStorage2015InfoManager.getTotalInfo(() => resolve(undefined));
-    });
+        PetManager.updateBagInfo((data: any) => {
+            console.log(data);
+            resolve(undefined);
+        });
+    }).then(
+        () =>
+            new Promise<undefined>((resolve, reject) => {
+                PetStorage2015InfoManager.getTotalInfo(() => resolve(undefined));
+            })
+    );
 };
 
+type BagPetsPos = typeof PosType.bag1 | typeof PosType.secondBag1;
 /**
- * @description 获取精灵列表
+ * @description 获取背包精灵列表
  */
-export async function getPets(location: PosType): Promise<Pet[]> {
+export const getBagPets = async (location: BagPetsPos) => {
     await updateStorageInfo();
-    let dict: any[];
+    let dict: Array<PetInfo>;
     switch (location) {
         case PosType.bag1:
             dict = PetManager._bagMap.getValues();
@@ -30,20 +36,34 @@ export async function getPets(location: PosType): Promise<Pet[]> {
         case PosType.secondBag1:
             dict = PetManager._secondBagMap.getValues();
             break;
+        default:
+            dict = [];
+    }
+
+    return dict.map((v) => new Pet(v));
+};
+
+type StoragePetsPos = typeof PosType.storage | typeof PosType.elite;
+/**
+ * @description 获取仓库精灵列表
+ * @return 获取精灵信息的异步函数
+ */
+export const getStoragePets = async (location: StoragePetsPos) => {
+    await updateStorageInfo();
+    let dict: Array<PetStorage2015PetInfo>;
+    switch (location) {
         case PosType.storage:
             dict = PetStorage2015InfoManager.getInfoByType(0, 0);
             break;
         case PosType.elite:
             dict = PetStorage2015InfoManager.getInfoByType(1, 0);
             break;
+        default:
+            dict = [];
     }
 
-    if (location === PosType.bag1 || location === PosType.secondBag1) {
-        return dict!.map((v: PetInfo) => new Pet(v));
-    } else {
-        return dict!.map((v: PetInfo) => PetFactory.formatByCatchtime(v.catchTime));
-    }
-}
+    return dict.map((v) => () => PetFactory.formatByCatchtimeAsync(v.catchTime));
+};
 
 export const isDefault = (ct: number) => PetManager.defaultTime === ct;
 export const setDefault: (ct: number) => void = PetManager.setDefault.bind(PetManager);
