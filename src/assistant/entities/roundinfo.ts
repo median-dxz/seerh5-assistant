@@ -22,9 +22,9 @@ export default class RoundPetInfo extends Entity {
 
     status: number[];
     sideEffects: number[];
-    constructor(roundInfoLike: UseSkillInfo) {
+    constructor(roundInfo: AttackValue) {
         super();
-        if (roundInfoLike) {
+        if (roundInfo) {
             [
                 this.round,
                 this.userId,
@@ -40,19 +40,19 @@ export default class RoundPetInfo extends Entity {
                 this.status,
                 this.sideEffects,
             ] = [
-                roundInfoLike.round,
-                roundInfoLike.userID,
-                roundInfoLike.skillID,
-                roundInfoLike.petcatchtime,
-                roundInfoLike.gainHP,
-                roundInfoLike.lostHP,
-                roundInfoLike.maxHp,
-                roundInfoLike.remainHP,
-                Boolean(roundInfoLike.isCrit),
-                roundInfoLike.priority,
-                roundInfoLike.effectName,
-                roundInfoLike.status,
-                roundInfoLike.sideEffects,
+                roundInfo.round,
+                roundInfo.userID,
+                roundInfo.skillID,
+                roundInfo.petcatchtime,
+                roundInfo.gainHP,
+                roundInfo.lostHP,
+                roundInfo.maxHp,
+                roundInfo.remainHP,
+                Boolean(roundInfo.isCrit),
+                roundInfo.priority,
+                roundInfo.effectName,
+                roundInfo.status,
+                roundInfo.sideEffects,
             ];
         }
     }

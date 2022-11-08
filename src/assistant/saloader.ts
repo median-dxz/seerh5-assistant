@@ -19,7 +19,7 @@ const sa_wait_login = async () => {
 const sa_core_init = async () => {
     await Promise.all([import('./_init/socket'), import('./_init/helper')]);
     await import('./_init/event');
-    await import(/* webpackChunkName: "core" */ './core').then((core) => {
+    await import(/* webpackChunkName: "core" */ '.').then((core) => {
         window.SA = core;
         window.dispatchEvent(new CustomEvent('seerh5_assistant_ready'));
         window.SACoreReady = true;

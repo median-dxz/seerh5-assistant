@@ -1,12 +1,10 @@
-// @ts-nocheck
-import * as saco from '../../assistant/core';
+import { Const, Utils } from '../../assistant';
 import Pet from '../../assistant/entities/pet';
 import { ReflectObjBase } from '../../assistant/mod-loader';
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 const log = SaModuleLogger('LocalCloth', defaultStyle.mod);
 
-const { Const, Utils } = saco;
 const { EVENTS: SAEvents } = Const;
 const { wrapper, SAEventTarget } = window;
 
@@ -73,9 +71,9 @@ class LocalCloth extends ReflectObjBase implements ModClass {
             enumerable: !0,
             configurable: !0,
         });
-        PetManager.equipSkin = async function (e: number, n: number, r?: () => any) {
-            let _skinId = n ?? 0;
-            let petInfo = PetManager.getPetInfo(e);
+        PetManager.equipSkin = async function (catchTime, skinId, callback) {
+            let _skinId = skinId ?? 0;
+            let petInfo = PetManager.getPetInfo(catchTime);
             log('new skin id:', _skinId, 'previous skin id:', petInfo.skinId);
             if (
                 (_skinId === 0 || PetSkinController.instance.haveSkin(_skinId)) &&
@@ -84,7 +82,7 @@ class LocalCloth extends ReflectObjBase implements ModClass {
                 changeCloth.delete(petInfo.id);
                 originalCloth.set(petInfo.id, _skinId);
                 await new Promise<void>((resolve, reject) => {
-                    Utils.SocketSendByQueue(47310, [e, n]).then((v) => {
+                    Utils.SocketSendByQueue(47310, [catchTime, skinId]).then((v) => {
                         resolve();
                     });
                 });
@@ -97,10 +95,10 @@ class LocalCloth extends ReflectObjBase implements ModClass {
                     petSkinId: PetSkinXMLInfo.getSkinPetId(_skinId, petInfo.id),
                 });
             }
-            petInfo = PetManager.getPetInfo(e);
+            petInfo = PetManager.getPetInfo(catchTime);
             petInfo.skinId = _skinId;
-            PetManager.dispatchEvent(new PetEvent(PetEvent.EQUIP_SKIN, e, _skinId));
-            r && r();
+            PetManager.dispatchEvent(new PetEvent(PetEvent.EQUIP_SKIN, catchTime, _skinId));
+            callback && callback();
         };
 
         const petBagModuleLoaded = (e: Event) => {
@@ -110,13 +108,17 @@ class LocalCloth extends ReflectObjBase implements ModClass {
                     SAEvents.Module.show,
                     () => {
                         petBag = window['petBag' as any];
-                        let protoFunc = petBag.PetBag.prototype.onEndDrag;
-                        petBag.PetBag.prototype.onEndDrag = wrapper(protoFunc, null, function (this: any) {
-                            log(new Pet(this.hitHead.petInfo));
-                        });
+                        let protoFunc = petBag.MainPanelPetItem.prototype.setSelected;
+                        petBag.MainPanelPetItem.prototype.setSelected = wrapper(
+                            protoFunc,
+                            undefined,
+                            function (this: any, e?: boolean) {
+                                e && log(new Pet(this.petInfo));
+                            }
+                        );
 
                         protoFunc = petBag.SkinView.prototype.onChooseSkin;
-                        petBag.SkinView.prototype.onChooseSkin = wrapper(protoFunc, null, function (this: any) {
+                        petBag.SkinView.prototype.onChooseSkin = wrapper(protoFunc, undefined, function (this: any) {
                             const t = this.arrayCollection.getItemAt(this.selectSkinIndex);
                             let skinId = 0;
                             if (t) {

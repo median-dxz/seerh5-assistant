@@ -58,13 +58,14 @@ PetUpdatePropController.prototype.show = wrapper(PetUpdatePropController.prototy
     }
 });
 
-SocketConnection.addCmdListener(CMDID.NOTE_USE_SKILL, (dataPackage: DataPackage) => {
-    const data = Object.create(
-        Object.getPrototypeOf(dataPackage.data),
-        Object.getOwnPropertyDescriptors(dataPackage.data)
+SocketConnection.addCmdListener(CMDID.NOTE_USE_SKILL, (dataPack: egret.ByteArray) => {
+    const data: egret.ByteArray = Object.create(
+        Object.getPrototypeOf(dataPack.data),
+        Object.getOwnPropertyDescriptors(dataPack.data)
     );
     const info = new UseSkillInfo(data);
     EmitEvent(hooks.BattlePanel.onRoundData, { info: [info.firstAttackInfo, info.secondAttackInfo] });
 });
 
-export {};
+export { };
+

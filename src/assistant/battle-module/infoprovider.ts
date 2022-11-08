@@ -49,7 +49,7 @@ export const BattleInfoProvider: BattleInfoProvider = {
 
     getPets() {
         if (!FightUserInfo.fighterInfos) return null;
-        const infos = FightUserInfo.fighterInfos.myInfo._petCatchArr;
+        const infos = FightUserInfo.fighterInfos.myInfo.petCatchArr;
         return infos.map((v, i) => {
             return Object.assign(PetFactory.formatByCatchtime(v), { index: i });
         });

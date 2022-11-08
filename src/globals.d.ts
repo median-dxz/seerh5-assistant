@@ -1,4 +1,4 @@
-import * as SA from './assistant/core';
+import * as SA from './assistant';
 import { delay, wrapper } from './utils';
 declare global {
     interface Window {

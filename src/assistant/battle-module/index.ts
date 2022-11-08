@@ -18,7 +18,7 @@ interface BattleModule {
     finished: () => void;
 }
 
-let hadnleBattleStart = () => {
+let handleBattleStart = () => {
     log(`检测到对战开始, 当前模式: ${BattleModuleManager.isRun ? '对战接管' : '手动'}`);
     handleBattleModule();
 };
@@ -41,7 +41,7 @@ let handleBattleEnd = (e: Event) => {
     }
 };
 
-SAEventTarget.addEventListener(EVENTS.BattlePanel.panelReady, hadnleBattleStart);
+SAEventTarget.addEventListener(EVENTS.BattlePanel.panelReady, handleBattleStart);
 SAEventTarget.addEventListener(EVENTS.BattlePanel.roundEnd, handleBattleModule);
 SAEventTarget.addEventListener(EVENTS.BattlePanel.completed, handleBattleEnd);
 
@@ -107,3 +107,4 @@ import * as BaseSkillModule from './skillmodule/base';
 
 export { BaseSkillModule, GenerateBaseBattleModule };
 export { BattleInfoProvider as InfoProvider, BattleOperator as Operator, BattleModuleManager as ModuleManager };
+

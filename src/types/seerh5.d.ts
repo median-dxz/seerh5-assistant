@@ -56,22 +56,16 @@ declare var EventManager: EgretEventTarget;
 
 //common
 
-declare namespace PetStorage2015InfoManager {
-    function getTotalInfo(callback: CallBack): void;
-    function getInfoByType(arg1: number, arg2: number): PetStorage2015PetInfo[];
-    function changePetPosi(ct: number, location: number): void;
-    var allInfo: PetStorage2015PetInfo[];
+declare namespace egret {
+    const TouchEvent: any;
+    const lifecycle: any;
+    class ByteArray {
+        data: DataView;
+    }
 }
-
-declare interface FightManager {
-    isWin: boolean;
-    fightNoMapBoss: any;
-}
-
-declare var FightManager: FightManager;
 
 // saloader
-declare var egret: any;
+
 declare var RES: any;
 declare var hideSerialID: Function | undefined;
 declare var LoginService: any;
@@ -83,23 +77,6 @@ declare var AwardManager: any;
 declare var LevelManager: any;
 declare var PetFightController: any;
 declare var PetUpdatePropController: any;
-declare interface UseSkillInfo {
-    new (data: any): any;
-    round: number;
-    userID: number;
-    skillID: number;
-    petcatchtime: number;
-    gainHP: number;
-    lostHP: number;
-    maxHp: number;
-    remainHP: number;
-    isCrit: number;
-    priority: number;
-    effectName: string;
-    status: number[];
-    sideEffects: number[];
-}
-declare var UseSkillInfo: UseSkillInfo;
 
 // init/helper
 declare var Alarm: any;
@@ -113,16 +90,7 @@ declare var KTool: any;
 declare var CountermarkEvent: any;
 declare var PetStatusEffectConfig: any;
 
-// entitis
-
-declare var FightUserInfo: {
-    fighterInfos?: {
-        myInfo: {
-            _petCatchArr: number[];
-            id: number;
-        };
-    };
-};
+// entities
 
 declare type ItemInfo = {
     ID: number;
@@ -155,7 +123,6 @@ declare var TimerManager: any;
 declare var SystemTimerManager: any;
 declare var MainManager: any;
 declare var markCenter: any;
-declare var FighterUserInfos: any;
 declare var FightPetInfo: any;
 declare var PetSkinController: any;
 declare var PetSkinXMLInfo: any;
@@ -165,4 +132,5 @@ declare interface PetEvent {
     [EventType: string]: string;
 }
 declare var PetEvent: PetEvent;
-declare type DataPackage = any;
+declare var PetFightSkinSkillReplaceXMLInfo: any;
+declare var PetIdTransform: any;

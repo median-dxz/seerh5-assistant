@@ -1,4 +1,4 @@
-import * as saco from '../../assistant/core';
+import * as saco from '../../assistant';
 import { ReflectObjBase } from '../../assistant/mod-loader';
 
 import { defaultStyle, SaModuleLogger } from '../../logger';

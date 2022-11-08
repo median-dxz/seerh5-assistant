@@ -32,7 +32,7 @@ export function UsePotionForPet(catchTime: number, potionId: number) {
     SocketSendByQueue(CMDID.USE_PET_ITEM_OUT_OF_FIGHT, [catchTime, potionId]);
 }
 
-export async function SwitchBag(pets: Array<SAType.PetLike | Pet>) {
+export async function SwitchBag(pets: Pick<SAType.PetLike, 'catchTime' | 'name'>[]) {
     // 清空现有背包
     for (let v of await PetHelper.getBagPets(PetPosType.bag1)) {
         await PetHelper.setPetLocation(v.catchTime, PetPosType.storage);

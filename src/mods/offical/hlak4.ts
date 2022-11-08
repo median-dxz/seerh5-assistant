@@ -1,5 +1,5 @@
 import data from '@data';
-import * as saco from '@sa-core/core';
+import * as saco from '@sa-core/index';
 import { ReflectObjBase } from '@sa-core/mod-loader';
 import { defaultStyle, SaModuleLogger } from '../../logger';
 

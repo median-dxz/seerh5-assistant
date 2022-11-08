@@ -8,16 +8,13 @@ type PosType = AttrConst<typeof PosType>;
  * @description 更新仓库精灵列表
  */
 export const updateStorageInfo = async () => {
-    return new Promise<undefined>((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
         PetManager.getLovePetList();
-        PetManager.updateBagInfo((data: any) => {
-            console.log(data);
-            resolve(undefined);
-        });
+        PetManager.updateBagInfo(resolve);
     }).then(
         () =>
-            new Promise<undefined>((resolve, reject) => {
-                PetStorage2015InfoManager.getTotalInfo(() => resolve(undefined));
+            new Promise<void>((resolve, reject) => {
+                PetStorage2015InfoManager.getTotalInfo(resolve);
             })
     );
 };

@@ -23,6 +23,7 @@ declare class PetInfo {
     get hp(): number;
     get maxHp(): number;
     get skinId(): number;
+    set skinId(id: number);
 }
 
 declare class PetSkillInfo {
@@ -44,6 +45,39 @@ declare class PetStorage2015PetInfo {
     get name(): string;
 }
 
+declare class FighterUserInfos {
+    get myInfo(): FighterUserInfo;
+}
+
+declare class FighterUserInfo {
+    get id(): number;
+    get petCatchArr(): number[];
+}
+
+declare class AttackValue {
+    get round(): number;
+    get userID(): number;
+    get skillID(): number;
+    get petcatchtime(): number;
+    get gainHP(): number;
+    get lostHP(): number;
+    get maxHp(): number;
+    get remainHP(): number;
+    get isCrit(): number;
+    get priority(): number;
+    get effectName(): string;
+    get status(): number[];
+    get sideEffects(): number[];
+}
+
+declare class UseSkillInfo {
+    constructor(data: egret.ByteArray);
+    private _firstAttackInfo: AttackValue;
+    private _secondAttackInfo: AttackValue;
+    get firstAttackInfo(): AttackValue;
+    get secondAttackInfo(): AttackValue;
+}
+
 declare const CommandID: {
     [commandID: string]: number;
 };
@@ -58,6 +92,16 @@ declare namespace ModuleManager {
         [module: string]: boolean;
     };
     const currModule: BaseModule;
+}
+
+declare namespace FightManager {
+    const isWin: boolean | undefined;
+    function fightNoMapBoss(id: number, r?: boolean, o?: boolean, callback?: CallBack): void;
+    function fightNoMapBoss(arg0: '', id: number, r?: boolean, o?: boolean, callback?: CallBack): void;
+}
+
+declare namespace FightUserInfo {
+    const fighterInfos: FighterUserInfos | null;
 }
 
 declare namespace ItemManager {
@@ -82,13 +126,20 @@ declare namespace PetManager {
     function noAlarmCureAll(): void;
     function getLovePetList(): void;
     function setDefault(catchTime: number): void;
-    function equipSkin(catchTime: number, skinId: number, callback: CallBack): Promise<void>;
+    function equipSkin(catchTime: number, skinId: number, callback: CallBack): PromiseLike<void>;
     function dispatchEvent(e: PetEvent): void;
     const isBagFull: boolean;
     const isSecondBagFull: boolean;
     const _bagMap: SAType.HashMap<PetInfo>;
     const _secondBagMap: SAType.HashMap<PetInfo>;
     const defaultTime: number;
+}
+
+declare namespace PetStorage2015InfoManager {
+    function getTotalInfo(callback: CallBack): void;
+    function getInfoByType(arg1: number, arg2: number): PetStorage2015PetInfo[];
+    function changePetPosi(catchTime: number, location: number): void;
+    const allInfo: PetStorage2015PetInfo[];
 }
 
 declare namespace CountermarkController {
@@ -119,6 +170,7 @@ declare namespace SkillXMLInfo {
     function getName(id: number): string;
     function getTypeID(id: number): number;
     function getCategoryName(id: number): string;
+    function getHideSkillId(petId: number): number;
     function getSkillObj(id: number): SAType.MoveObj;
 }
 
