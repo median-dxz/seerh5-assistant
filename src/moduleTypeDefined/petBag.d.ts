@@ -1,3 +1,1 @@
-declare namespace petBag {
-    function BaseView(): any;
-}
+declare namespace petBag {}
