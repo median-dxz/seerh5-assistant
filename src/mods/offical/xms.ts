@@ -1,6 +1,6 @@
 import data from '@data';
 import * as saco from '../../assistant';
-import { ReflectObjBase } from '../../assistant/mod-loader';
+import { ReflectObjBase } from '../../assistant/mod-type';
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 const log = SaModuleLogger('X战队密室', defaultStyle.mod);
@@ -33,7 +33,7 @@ class xms extends ReflectObjBase implements ModClass {
             await ModuleManager.showModule('pveXTeamRoom');
         }
 
-        pveXTeamRoom = window['pveXTeamRoom'];
+        pveXTeamRoom = window['pveXTeamRoom' as any];
 
         await Functions.SwitchBag([
             { catchTime: ct.蒂朵, name: '蒂朵' },

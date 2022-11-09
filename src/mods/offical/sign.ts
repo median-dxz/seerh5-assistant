@@ -1,6 +1,6 @@
 import data from '@data';
 import * as saco from '../../assistant';
-import { ReflectObjBase } from '../../assistant/mod-loader';
+import { ReflectObjBase } from "../../assistant/mod-type";
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 const log = SaModuleLogger('Sign', defaultStyle.mod);
@@ -133,20 +133,6 @@ class sign extends ReflectObjBase implements ModClass {
         markCenter.MarkLvlUp.prototype.lvlUpAll = function () {
             Functions.upMarkToTopLv(this.markInfo);
         };
-    }
-    async exchangeItem(itemId: number) {
-        // t.ins = i._info.cfg,
-        // t.caller = i,
-        // t.callBack = function(t, n) {
-        //     SocketConnection.sendByQueue(42395, [109, i._info.cfg.id, n, 0], function(t) {
-        //         EventManager.dispatchEventWith(e.PanelConst.EVENT_UPDATE_PET_DATA)
-        //     })
-        // }
-        //                 i.cfg = config.Exchange_clt.getItem(this.allItems[t]),
-        // i.isCanGet = ItemManager.getNumByID(i.cfg.coinid) >= i.cfg.price;
-        // var n = this._forveridArr.indexOf(i.cfg.UserInfoId);
-        // i.userInfo = this._curDataForver[n],
-        // ModuleManager.showModuleByID(1, t)
     }
 
     calc(items: number[]) {

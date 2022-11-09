@@ -13,7 +13,7 @@ const onCoreReady = () => {
     root.render(<SaMain />);
 };
 
-import('./assistant/saloader').catch((e) => {
+import('./sa_loader').catch((e) => {
     console.error('[GameLoader]: Seerh5 assistant Load Failed!');
 });
 

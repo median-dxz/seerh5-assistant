@@ -1,3 +1,8 @@
+declare namespace PetFightController {
+    const roundTimes: number;
+    function setup(): void;
+}
+
 declare namespace FighterModelFactory {
     var playerMode: BaseFighterModel | undefined;
     var enemyMode: BaseFighterModel | undefined;
@@ -6,7 +11,7 @@ declare namespace FighterModelFactory {
 declare class BaseFighterModel {
     setHpView: (this: BaseFighterModel, show: boolean) => void;
     skillBtnViews: Array<SkillBtnView>;
-    subject: SAType.IObserverList<ToolBtnPanelObserver>;
+    subject: SAType.ObserverList<ToolBtnPanelObserver>;
     info: {
         petName: string;
     };

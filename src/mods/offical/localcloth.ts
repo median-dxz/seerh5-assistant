@@ -1,6 +1,6 @@
 import { Const, Utils } from '../../assistant';
 import Pet from '../../assistant/entities/pet';
-import { ReflectObjBase } from '../../assistant/mod-loader';
+import { ReflectObjBase } from "../../assistant/mod-type";
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 const log = SaModuleLogger('LocalCloth', defaultStyle.mod);

@@ -2,7 +2,7 @@ import Entity from './entity';
 import Skill, { SkillFactory } from './skill';
 
 export default class Pet extends Entity {
-    __type = 'pet';
+    static __type = 'pet';
     skills: Skill[];
     maxHp: number;
     hp: number;

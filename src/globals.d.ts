@@ -8,12 +8,10 @@ declare global {
         wrapper: typeof wrapper;
         filterLogText: RegExp[];
         filterWarnText: RegExp[];
-        SAMods: Map<string, import('./assistant/mod-loader').Mod>;
+        SAMods: Map<string, import('./assistant/mod-type').Mod>;
         SACoreReady: boolean;
-
-        [module: string]: any;
     }
-    
+
     type CallBack = Function;
     type AttrConst<T> = T[keyof T];
 

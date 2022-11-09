@@ -13,21 +13,21 @@ const sa_wait_login = async () => {
     egret.lifecycle.onPause = () => {};
     egret.lifecycle.onResume = () => {};
     OnlineManager.prototype.setSentryScope = () => {};
-    await import('./_init/module');
+    await import('./assistant/_init/module');
 };
 
 const sa_core_init = async () => {
-    await Promise.all([import('./_init/socket'), import('./_init/helper')]);
-    await import('./_init/event');
-    await import(/* webpackChunkName: "core" */ '.').then((core) => {
+    await Promise.all([import('./assistant/_init/socket'), import('./assistant/_init/helper')]);
+    await import('./assistant/_init/event');
+    await import(/* webpackChunkName: "core" */ './assistant').then((core) => {
         window.SA = core;
         window.dispatchEvent(new CustomEvent('seerh5_assistant_ready'));
         window.SACoreReady = true;
     });
-    await import('./mod-loader');
+    await import('./mod_loader');
 };
 
-import(/* webpackChunkName: "utils" */ '../utils').then((utils) => {
+import(/* webpackChunkName: "utils" */ './utils').then((utils) => {
     window.delay = utils.delay;
     window.wrapper = utils.wrapper;
     window.SAEventTarget = new EventTarget();

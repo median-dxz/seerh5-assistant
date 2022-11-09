@@ -41,20 +41,38 @@ declare namespace SAType {
         SideEffectArg?: string;
     }
 
+    interface ItemObj extends BaseObj {
+        Name: string;
+        Bean?: number;
+        DailyKey?: number;
+        DailyOutMax?: number;
+        Hide?: number;
+        LifeTime?: number;
+        Price?: number;
+        Sort?: number;
+        Tradability: number;
+        VipTradability: number;
+        wd: number;
+        Max?: number;
+        UseMax?: number;
+        purpose?: number;
+        NewSeIdx?: number;
+    }
+
     interface SideEffectObj extends BaseObj {}
 
-    interface IObserverList<T> {
+    interface ObserverList<T> {
         array: Array<T>;
     }
 }
+
+//common
 
 interface EgretEventTarget extends EventTarget {
     dispatchEventWith: Function;
 }
 
 declare var EventManager: EgretEventTarget;
-
-//common
 
 declare namespace egret {
     const TouchEvent: any;
@@ -75,12 +93,10 @@ declare var OnlineManager: any;
 declare var AwardItemDialog: any;
 declare var AwardManager: any;
 declare var LevelManager: any;
-declare var PetFightController: any;
 declare var PetUpdatePropController: any;
 
 // init/helper
 declare var Alarm: any;
-declare var BubblerManager: any;
 
 // init/socket
 declare var SocketEncryptImpl: any;
@@ -91,26 +107,6 @@ declare var CountermarkEvent: any;
 declare var PetStatusEffectConfig: any;
 
 // entities
-
-declare type ItemInfo = {
-    ID: number;
-    Name: string;
-    Bean?: number;
-    DailyKey?: number;
-    DailyOutMax?: number;
-    Hide?: number;
-    LifeTime?: number;
-    Price?: number;
-    Sort?: number;
-    Tradability: number;
-    VipTradability: number;
-    wd: number;
-    Max?: number;
-    UseMax?: number;
-    purpose?: number;
-    NewSeIdx?: number;
-};
-
 declare var EffectInfoManager: any;
 
 // pet-helper

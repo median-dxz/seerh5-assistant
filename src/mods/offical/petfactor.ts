@@ -1,5 +1,5 @@
 import * as saco from '../../assistant';
-import { ReflectObjBase } from '../../assistant/mod-loader';
+import { ReflectObjBase } from "../../assistant/mod-type";
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 const log = SaModuleLogger('精灵因子', defaultStyle.mod);

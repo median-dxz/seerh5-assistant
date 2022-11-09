@@ -1,11 +1,11 @@
-export { };
+export {};
 SocketEncryptImpl.prototype.log = function (cmdid: number, ...msg: string[]) {
     const logInfo = msg.join(' ').replace(/Socket\[[.0-9].*?\]/, '');
     this.openIDs && this.openIDs.flat();
     if (this._isShowLog) {
         this.openIDs
-            ? this.openIDs.indexOf(cmdid) >= 0 && console.log(logInfo)
-            : this.closeIDs.indexOf(cmdid) < 0 && console.log(logInfo);
+            ? this.openIDs.includes(cmdid) >= 0 && console.log(logInfo)
+            : !this.closeIDs.includes(cmdid) && console.log(logInfo);
     }
 };
 

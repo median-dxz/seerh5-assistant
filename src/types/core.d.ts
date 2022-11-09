@@ -82,6 +82,11 @@ declare const CommandID: {
     [commandID: string]: number;
 };
 
+declare class BubblerManager {
+    static getInstance(): BubblerManager;
+    showText(text: string): void;
+}
+
 declare namespace ModuleManager {
     function beginShow(moduleName: string): void;
     function _openModelCompete(): void;
@@ -105,7 +110,7 @@ declare namespace FightUserInfo {
 }
 
 declare namespace ItemManager {
-    function getNumByID(id: number): any;
+    function getNumByID(id: number): number;
     function updateItems(e: number[] | undefined, n: CallBack): void;
 }
 
