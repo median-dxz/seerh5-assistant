@@ -1,8 +1,8 @@
-import * as SA from './assistant';
+import * as SACore from './assistant';
 import { delay, wrapper } from './utils';
 declare global {
+    var SA: typeof SACore;
     interface Window {
-        SA: typeof SA;
         SAEventTarget: EventTarget;
         delay: typeof delay;
         wrapper: typeof wrapper;

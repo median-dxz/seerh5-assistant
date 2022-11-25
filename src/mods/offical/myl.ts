@@ -1,6 +1,6 @@
 import data from '@data';
-import * as saco from '../../assistant';
-import { ReflectObjBase } from "../../assistant/mod-type";
+import * as saco from '@sa-core/index';
+import { ReflectObjBase } from '../../assistant/mod-type';
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 const log = SaModuleLogger('莫伊莱因子', defaultStyle.mod);

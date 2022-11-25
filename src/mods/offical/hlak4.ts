@@ -52,7 +52,7 @@ export class hlak4 extends ReflectObjBase implements ModClass {
                     entry() {
                         self._startFight();
                     },
-                    skillModule: BattleModule.GenerateBaseBattleModule(NMS, DSP),
+                    skillModule: BattleModule.GenerateBaseBattleModule(NMS,DSP),
                     async finished() {
                         self.update();
                         PetHelper.cureAllPet();

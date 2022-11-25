@@ -10,6 +10,7 @@ import { delay } from '../../utils';
 const log = SaModuleLogger('SAFunctions', defaultStyle.mod);
 /**
  * @description 刻印直升5级
+ * @deprecated
  */
 export async function upMarkToTopLv(markInfo: CountermarkInfo) {
     let lv = 5 - CountermarkController.getInfo(markInfo.obtainTime).level!;

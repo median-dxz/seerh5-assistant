@@ -103,11 +103,9 @@ class LocalCloth extends ReflectObjBase implements ModClass {
 
         const petBagModuleLoaded = (e: Event) => {
             if ((e as CustomEvent).detail.moduleName === 'petBag') {
-                let petBag: any;
                 SAEventTarget.addEventListener(
                     SAEvents.Module.show,
                     () => {
-                        petBag = window['petBag' as any];
                         let protoFunc = petBag.MainPanelPetItem.prototype.setSelected;
                         petBag.MainPanelPetItem.prototype.setSelected = wrapper(
                             protoFunc,

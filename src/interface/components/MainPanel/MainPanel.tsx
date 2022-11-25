@@ -1,4 +1,4 @@
-import { Box, Grow, Tab, Tabs, Typography, useTheme } from '@mui/material';
+import { Box, Grow, Tab, Tabs } from '@mui/material';
 import { mainColor } from '@sa-ui/style';
 import * as React from 'react';
 import { PanelCommonValue } from '../PanelCommonValue/PanelCommonValue';
@@ -14,19 +14,16 @@ function TabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props;
 
     return (
-        <div
+        <Box
+            sx={{ p: 3 }}
             role="tabpanel"
             hidden={value !== index}
             id={`vertical-tabpanel-${index}`}
             aria-labelledby={`vertical-tab-${index}`}
             {...other}
         >
-            {value === index && (
-                <Box sx={{ p: 3 }}>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
-        </div>
+            {value === index && children}
+        </Box>
     );
 }
 
@@ -60,8 +57,9 @@ export function MainPanel(props: Props) {
                     height: '75vh',
                     zIndex: 1,
                     color: `rgba(${mainColor.front} / 100%)`,
-                    bgcolor: `rgba(${mainColor.back} / 30%)`,
+                    bgcolor: `rgba(${mainColor.back} / 15%)`,
                     border: `2px solid rgba(${mainColor.front} / 75%)`,
+                    backdropFilter: `blur(8px)`,
                     boxShadow: `0 0 16px rgba(${mainColor.front} / 50%),
                     0 0 16px rgba(${mainColor.back} / 50%) inset`,
                 }}
@@ -74,8 +72,8 @@ export function MainPanel(props: Props) {
                     aria-label="SA Main Panel Tabs"
                     sx={{
                         bgcolor: `rgba(${mainColor.back} / 12%)`,
-                        // backdropFilter: `blur(0px)`,
                         borderRight: 1,
+                        // backdropFilter: `blur(8px)`,
                         borderColor: 'rgba(255 255 255 / 12%)',
                         paddingBlockStart: '10%',
                     }}
@@ -88,7 +86,6 @@ export function MainPanel(props: Props) {
                     <Tab label="抓包调试" {...a11yProps(5)} />
                 </Tabs>
                 <TabPanel value={value} index={0}>
-                    Item One
                 </TabPanel>
                 <TabPanel value={value} index={1}>
                     <PanelCommonValue />

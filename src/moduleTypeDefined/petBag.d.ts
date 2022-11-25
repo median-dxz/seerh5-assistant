@@ -1,1 +1,4 @@
-declare namespace petBag {}
+declare namespace petBag {
+    var MainPanelPetItem: any;
+    var SkinView: any;
+}

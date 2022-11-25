@@ -1,17 +1,19 @@
 import data from '@data';
-import * as saco from '../../assistant';
-import { ReflectObjBase } from "../../assistant/mod-type";
+import * as saco from '@sa-core/index';
+import { ReflectObjBase } from '../../assistant/mod-type';
 
 import { defaultStyle, SaModuleLogger } from '../../logger';
 const log = SaModuleLogger('Sign', defaultStyle.mod);
 
-const { Utils, Const, PetHelper, Functions } = saco;
+const { Utils, Const, PetHelper } = saco;
 const { CMDID } = Const;
 
 class sign extends ReflectObjBase implements ModClass {
     meta = { description: '日任常用功能' };
     init() {}
-    constructor() {super();}
+    constructor() {
+        super();
+    }
     async run() {
         let curTimes = (await Utils.GetMultiValue(Const.MULTIS.日常.刻印抽奖次数))[0];
         if (curTimes === 0) {
@@ -126,15 +128,10 @@ class sign extends ReflectObjBase implements ModClass {
             log(`派遣任务处理完成`);
         }
     }
-    async markLvSetup() {
-        if (!ModuleManager.hasmodule('markCenter.MarkCenter')) {
-            await ModuleManager.showModule('markCenter');
-        }
-        markCenter.MarkLvlUp.prototype.lvlUpAll = function () {
-            Functions.upMarkToTopLv(this.markInfo);
-        };
-    }
 
+    /**
+     * @deprecated
+     */
     calc(items: number[]) {
         function dfs(dep: number) {
             if (items.length == 1) {

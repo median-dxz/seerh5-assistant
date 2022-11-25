@@ -20,10 +20,9 @@ const actions = [
 
 export function MainMenu() {
     let [autoCure, setAutoCure] = useState(false);
-    let [open, setOpen] = useState(true);
+    let [open, setOpen] = useState(false);
     const handleClicks = [
         () => {
-            const { SA } = window;
             setAutoCure(!autoCure);
             SA.PetHelper.ToggleAutoCure(autoCure);
             BubblerManager.getInstance().showText(autoCure ? '自动治疗开启' : '自动治疗关闭');
@@ -57,7 +56,7 @@ export function MainMenu() {
                 setOpen(true);
             }}
             onClose={(event, reason) => {
-                if (reason !== 'mouseLeave' && reason !== 'blur') {
+                if (reason !== 'blur') {
                     setOpen(false);
                 }
             }}
