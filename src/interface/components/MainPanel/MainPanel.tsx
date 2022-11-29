@@ -1,4 +1,4 @@
-import { Box, Grow, Tab, Tabs } from '@mui/material';
+import { Box, Grow, SxProps, Tab, Tabs } from '@mui/material';
 import { mainColor } from '@sa-ui/style';
 import * as React from 'react';
 import { PanelCommonValue } from '../PanelCommonValue/PanelCommonValue';
@@ -10,12 +10,27 @@ interface TabPanelProps {
     value: number;
 }
 
-function TabPanel(props: TabPanelProps) {
-    const { children, value, index, ...other } = props;
+function TabPanel(props: TabPanelProps & { sx?: SxProps }) {
+    const { sx, children, value, index, ...other } = props;
 
     return (
         <Box
-            sx={{ p: 3 }}
+            sx={{
+                p: 1,
+                width: '100%',
+                overflow: 'auto',
+                marginRight: '-1px',
+                '&::-webkit-scrollbar': {
+                    width: 8,
+                },
+                '&::-webkit-scrollbar-track': {
+                    backgroundColor: `rgba(${mainColor.front} / 16%)`,
+                },
+                '&::-webkit-scrollbar-thumb': {
+                    backgroundColor: `rgba(${mainColor.front} / 90%)`,
+                },
+                ...sx,
+            }}
             role="tabpanel"
             hidden={value !== index}
             id={`vertical-tabpanel-${index}`}
@@ -71,6 +86,7 @@ export function MainPanel(props: Props) {
                     variant="fullWidth"
                     aria-label="SA Main Panel Tabs"
                     sx={{
+                        minWidth: '155px',
                         bgcolor: `rgba(${mainColor.back} / 12%)`,
                         borderRight: 1,
                         // backdropFilter: `blur(8px)`,
@@ -85,8 +101,7 @@ export function MainPanel(props: Props) {
                     <Tab label="自动战斗管理器" {...a11yProps(4)} />
                     <Tab label="抓包调试" {...a11yProps(5)} />
                 </Tabs>
-                <TabPanel value={value} index={0}>
-                </TabPanel>
+                <TabPanel value={value} index={0}></TabPanel>
                 <TabPanel value={value} index={1}>
                     <PanelCommonValue />
                 </TabPanel>

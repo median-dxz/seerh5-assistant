@@ -112,6 +112,7 @@ declare namespace FightUserInfo {
 declare namespace ItemManager {
     function getNumByID(id: number): number;
     function updateItems(e: number[] | undefined, n: CallBack): void;
+    function getPetItemIDs(): number[];
 }
 
 declare namespace PetManager {

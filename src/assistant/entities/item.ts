@@ -2,11 +2,16 @@ import Entity from './entity';
 
 export default class Item extends Entity {
     static __type = 'Item';
-    amount() {
+    limit?: number;
+
+    get icon() {
+        return null;
+    }
+    get amount() {
         return ItemManager.getNumByID(this.id);
     }
     constructor(itemLike: SAType.ItemObj) {
         super();
-        [this.id, this.name] = [itemLike.ID, itemLike.Name];
+        [this.id, this.name, this.limit] = [itemLike.ID, itemLike.Name, itemLike.Max];
     }
 }
