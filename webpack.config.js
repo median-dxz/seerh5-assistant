@@ -131,7 +131,7 @@ const appConfig = {
     devtool: 'source-map',
     plugins: [
         new HtmlWebpackPlugin({
-            title: 'seer-proxy | 赛尔号h5登陆器 by median',
+            title: 'seer-assisant | 赛尔号h5登陆器 by median',
             scriptLoading: 'module',
             filename: 'index.html',
             template: './src/index.html',

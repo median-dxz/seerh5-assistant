@@ -9,9 +9,6 @@ const sa_wait_login = async () => {
         hideSerialID && hideSerialID();
         window.dispatchEvent(new CustomEvent('seerh5_login_completed'));
     };
-
-    egret.lifecycle.onPause = () => {};
-    egret.lifecycle.onResume = () => {};
     OnlineManager.prototype.setSentryScope = () => {};
     await import('./assistant/_init/module');
 };
