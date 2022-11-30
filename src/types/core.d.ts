@@ -2,6 +2,23 @@ declare class BaseModule {
     touchHandle: SAType.EventHandler<EgretEventTarget>;
     onClose: CallBack;
     moduleName: string;
+    panelMap: {
+        [panelName: string]: BasicPanel;
+    };
+    service: BasicModuleService;
+}
+
+declare class BasicModuleService {
+    openPanel: (t: string, e?: CallBack) => void;
+}
+
+declare class BasicPanel {
+    onChangeMinor(): void;
+    menu: baseMenuComponent;
+}
+
+declare class baseMenuComponent {
+    selectedValue: string;
 }
 
 declare class CountermarkInfo {
@@ -93,6 +110,7 @@ declare namespace ModuleManager {
     function loadScript(scriptName: string): Promise<void>;
     function hasmodule(moduleName: string): boolean;
     function showModule(moduleName: string): Promise<void>;
+    function showModuleByID(moduleId: number): Promise<void>;
     const appJs: {
         [module: string]: boolean;
     };
@@ -112,6 +130,7 @@ declare namespace FightUserInfo {
 declare namespace ItemManager {
     function getNumByID(id: number): number;
     function updateItems(e: number[] | undefined, n: CallBack): void;
+    /** @description 获取精灵背包内物品 */
     function getPetItemIDs(): number[];
 }
 

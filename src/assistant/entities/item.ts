@@ -3,10 +3,7 @@ import Entity from './entity';
 export default class Item extends Entity {
     static __type = 'Item';
     limit?: number;
-
-    get icon() {
-        return null;
-    }
+    
     get amount() {
         return ItemManager.getNumByID(this.id);
     }

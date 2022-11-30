@@ -72,7 +72,7 @@ export function MainPanel(props: Props) {
                     height: '75vh',
                     zIndex: 1,
                     color: `rgba(${mainColor.front} / 100%)`,
-                    bgcolor: `rgba(${mainColor.back} / 15%)`,
+                    bgcolor: `rgba(${mainColor.back} / 35%)`,
                     border: `2px solid rgba(${mainColor.front} / 75%)`,
                     backdropFilter: `blur(8px)`,
                     boxShadow: `0 0 16px rgba(${mainColor.front} / 50%),
