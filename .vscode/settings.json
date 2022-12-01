@@ -13,11 +13,17 @@
     // "typescript.suggest.paths": false,
     // "javascript.suggest.paths": false,
     "cSpell.words": [
+        "Asynce",
         "catchtime",
         "CMDID",
+        "hasmodule",
         "Mnumber",
+        "Mult",
+        "petcatchtime",
         "PETPOS",
+        "Posi",
         "secondbag",
-        "seerh5"
+        "seerh5",
+        "Tradability"
     ]
 }

@@ -1,5 +1,5 @@
 declare namespace SAType {
-    type EventHandler<E extends EgretEventTarget> = (event?: E) => void;
+    type EventHandler<E extends egret.EventDispatcher> = (event?: E) => void;
 
     type Dict<T extends object> = {
         [property: number | string]: T;
@@ -66,25 +66,14 @@ declare namespace SAType {
     }
 }
 
+declare namespace RES {
+    function getResByUrl(url: string): Promise<unknown>;
+}
+
 //common
+declare var EventManager: egret.EventDispatcher;
 
-interface EgretEventTarget extends EventTarget {
-    dispatchEventWith: Function;
-}
-
-declare var EventManager: EgretEventTarget;
-
-declare namespace egret {
-    const TouchEvent: any;
-    const lifecycle: any;
-    class ByteArray {
-        data: DataView;
-    }
-}
-
-// saloader
-
-declare var RES: any;
+// sa-loader
 declare var hideSerialID: Function | undefined;
 declare var LoginService: any;
 declare var OnlineManager: any;
@@ -123,10 +112,15 @@ declare var FightPetInfo: any;
 declare var PetSkinController: any;
 declare var PetSkinXMLInfo: any;
 declare var ClientConfig: any;
-declare interface PetEvent {
-    new (e: string, oi: number, ni: number): PetEvent;
-    [EventType: string]: string;
-}
-declare var PetEvent: PetEvent;
+
 declare var PetFightSkinSkillReplaceXMLInfo: any;
 declare var PetIdTransform: any;
+
+declare class SocketEvent extends egret.Event {}
+declare class PetEvent extends egret.Event {}
+
+declare namespace baseMenuComponent {
+    class BaseMenuComponent {
+        selectedValue: any;
+    }
+}

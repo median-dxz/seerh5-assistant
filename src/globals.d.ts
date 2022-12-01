@@ -1,5 +1,6 @@
 import * as SACore from './assistant';
 import { delay, wrapper } from './utils';
+
 declare global {
     var SA: typeof SACore;
     interface Window {

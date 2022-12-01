@@ -15,8 +15,12 @@ ModuleManager._openModelCompete = wrapper<typeof ModuleManager>(
     ModuleManager._openModelCompete,
     undefined,
     function () {
-        const moduleName = this.currModule.moduleName;
-        EmitEvent(hooks.Module.show, { moduleName });
+        if (this.currModule instanceof BasicMultPanelModule) {
+            const moduleName = this.currModule.moduleName;
+            EmitEvent(hooks.Module.show, { moduleName });
+        } else {
+            EmitEvent(hooks.Module.show, { moduleName: 'unknown' });
+        }
     }
 );
 
@@ -43,9 +47,13 @@ PetFightController.setup = wrapper(PetFightController.setup, undefined, function
     };
 });
 
-EventManager.addEventListener('new_round', () => {
-    EmitEvent(hooks.BattlePanel.roundEnd);
-});
+EventManager.addEventListener(
+    'new_round',
+    () => {
+        EmitEvent(hooks.BattlePanel.roundEnd);
+    },
+    null
+);
 
 PetUpdatePropController.prototype.show = wrapper(PetUpdatePropController.prototype.show, undefined, async function () {
     EmitEvent(hooks.BattlePanel.completed, { isWin: FightManager.isWin });
@@ -58,14 +66,13 @@ PetUpdatePropController.prototype.show = wrapper(PetUpdatePropController.prototy
     }
 });
 
-SocketConnection.addCmdListener(CMDID.NOTE_USE_SKILL, (dataPack: egret.ByteArray) => {
+SocketConnection.addCmdListener(CMDID.NOTE_USE_SKILL, (e: SocketEvent) => {
     const data: egret.ByteArray = Object.create(
-        Object.getPrototypeOf(dataPack.data),
-        Object.getOwnPropertyDescriptors(dataPack.data)
+        Object.getPrototypeOf(e.data),
+        Object.getOwnPropertyDescriptors(e.data)
     );
     const info = new UseSkillInfo(data);
     EmitEvent(hooks.BattlePanel.onRoundData, { info: [info.firstAttackInfo, info.secondAttackInfo] });
 });
 
-export { };
-
+export {};

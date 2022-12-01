@@ -12,34 +12,45 @@ export const idList = [
     1722506, //先锋旗帜
 ];
 
+declare namespace pveEnterPanel {
+    class PveEnterPanel extends BasicMultPanelModule {}
+    class PveResourceCollection extends BasicPanel {
+        menu: baseMenuComponent.BaseMenuComponent;
+        onChangeMinor: VoidFunction;
+    }
+}
+
 export const openModuleList: { [id: number]: any } = {
     1707511: async () => {
         const delay = window.delay;
         await ModuleManager.showModuleByID(18);
-        const curModule = ModuleManager.currModule;
-        curModule.service.openPanel('pveEnterPanel.PveResourceCollection');
+        const curModule = ModuleManager.currModule as pveEnterPanel.PveEnterPanel;
+        const panelName = 'pveEnterPanel.PveResourceCollection';
+        curModule.service.openPanel(panelName);
         await delay(1500);
-        const curPanel = curModule.panelMap['pveEnterPanel.PveResourceCollection'];
+        const curPanel = curModule.panelMap[panelName] as pveEnterPanel.PveResourceCollection;
         curPanel.menu.selectedValue = 'ITEM';
         curPanel.onChangeMinor();
     }, //功勋点数
     1721558: async () => {
         const delay = window.delay;
         await ModuleManager.showModuleByID(18);
-        const curModule = ModuleManager.currModule;
-        curModule.service.openPanel('pveEnterPanel.PveResourceCollection');
+        const curModule = ModuleManager.currModule as pveEnterPanel.PveEnterPanel;
+        const panelName = 'pveEnterPanel.PveResourceCollection';
+        curModule.service.openPanel(panelName);
         await delay(1500);
-        const curPanel = curModule.panelMap['pveEnterPanel.PveResourceCollection'];
+        const curPanel = curModule.panelMap[panelName] as pveEnterPanel.PveResourceCollection;
         curPanel.menu.selectedValue = 'ITEM';
         curPanel.onChangeMinor();
     }, //界神印记
     1721761: async () => {
         const delay = window.delay;
         await ModuleManager.showModuleByID(18);
-        const curModule = ModuleManager.currModule;
-        curModule.service.openPanel('pveEnterPanel.PveResourceCollection');
+        const curModule = ModuleManager.currModule as pveEnterPanel.PveEnterPanel;
+        const panelName = 'pveEnterPanel.PveResourceCollection';
+        curModule.service.openPanel(panelName);
         await delay(1500);
-        const curPanel = curModule.panelMap['pveEnterPanel.PveResourceCollection'];
+        const curPanel = curModule.panelMap[panelName] as pveEnterPanel.PveResourceCollection;
         curPanel.menu.selectedValue = 'MARK';
         curPanel.onChangeMinor();
     }, //王者精魄

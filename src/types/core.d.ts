@@ -1,24 +1,18 @@
-declare class BaseModule {
-    touchHandle: SAType.EventHandler<EgretEventTarget>;
-    onClose: CallBack;
+declare class BaseModule extends eui.Component {
+    onClose: VoidFunction;
+}
+
+declare class BasicPanel extends eui.Component {}
+
+declare class BasicModuleService extends egret.EventDispatcher {
+    openPanel(panelName: string, ...params: any[]): void;
+}
+
+declare class BasicMultPanelModule extends BaseModule {
     moduleName: string;
-    panelMap: {
-        [panelName: string]: BasicPanel;
-    };
+    panelMap: { [panel: string]: BasicPanel };
     service: BasicModuleService;
-}
-
-declare class BasicModuleService {
-    openPanel: (t: string, e?: CallBack) => void;
-}
-
-declare class BasicPanel {
-    onChangeMinor(): void;
-    menu: baseMenuComponent;
-}
-
-declare class baseMenuComponent {
-    selectedValue: string;
+    currentPanel: BasicPanel;
 }
 
 declare class CountermarkInfo {

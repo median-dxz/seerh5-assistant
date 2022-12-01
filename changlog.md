@@ -23,15 +23,17 @@
 - [ ] 点空白处关闭主面板`
 - [ ] 战斗模块管理器
 - [ ] tsc不要检查node_modules
-- [ ] 引入egret的TypeDefined
 
-即将到来:
+
+RoadMap: `11.28-12.4` 
+
 - [ ] 一键日常模块
   - [ ] 经验与学习力
-- [x] 常用数据查看模块
+
 
 v0.2.6
 1. 常用数据查看模块
+2. 引入egret的TypeDefined
 
 v0.2.5
 1. 后台挂机功能，通过在lifecycle处于pause期间定时发送system_time_check包实现

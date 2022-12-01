@@ -9,13 +9,13 @@ declare namespace FighterModelFactory {
 }
 
 declare class BaseFighterModel {
-    setHpView: (this: BaseFighterModel, show: boolean) => void;
+    setHpView: (show: boolean) => void;
     skillBtnViews: Array<SkillBtnView>;
     subject: SAType.ObserverList<ToolBtnPanelObserver>;
     info: {
         petName: string;
     };
-    propView: PropView;
+    propView: PropView; //TODO
 }
 
 declare class ToolBtnPanelObserver {
@@ -27,24 +27,29 @@ declare class ToolBtnPanelObserver {
 }
 
 declare class PropView {
+    //TODO
     get isShowFtHp(): boolean;
     set isShowFtHp(showFtHp: boolean);
     dispatchNoBlood: boolean;
 }
 
 declare class SkillBtnView {
+    //TODO
     get skillID(): number;
     get pp(): number;
 }
 
 declare class PetBtnView {
+    //TODO
     autoUse(): void;
 }
 
 declare class FightItemPanel {
+    //TODO
     onUseItem(itemID: number): void;
 }
 
 declare class PetSelectPanel {
+    //TODO
     _petsArray: Array<PetBtnView>;
 }
