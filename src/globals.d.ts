@@ -1,5 +1,5 @@
 import * as SACore from './assistant';
-import { delay, wrapper } from './utils';
+import { delay, wrapper } from './assistant/utils';
 
 declare global {
     var SA: typeof SACore;
@@ -13,7 +13,9 @@ declare global {
         SACoreReady: boolean;
     }
 
-    type CallBack = Function;
+    type AnyFunction = (...args: any) => any;
+    type BindThisFunction<F extends AnyFunction> = (this: ThisParameterType<F>, ...args: any) => ReturnType<F>;
+    type CallBack<T = any> = (this: T, ...args: any) => any | AnyFunction;
     type AttrConst<T> = T[keyof T];
 
     interface ModClass {

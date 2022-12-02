@@ -1,7 +1,7 @@
 import data from '@data';
 import * as saco from '@sa-core/index';
 import { ReflectObjBase } from "@sa-core/mod-type";
-import { defaultStyle, SaModuleLogger } from '../../logger';
+import { defaultStyle, SaModuleLogger } from '../../assistant/logger';
 
 const { BattleModule, Utils, Functions, Const, PetHelper } = saco;
 const { delay } = window;

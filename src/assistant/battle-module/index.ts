@@ -5,10 +5,12 @@ import Skill from '../entities/skill';
 import { BattleInfoProvider, PetSwitchInfos, RoundInfo } from './infoprovider';
 import { BattleOperator } from './operator';
 
-import { defaultStyle, SaModuleLogger } from '../../logger';
+import { delay } from '../common';
+
+import { defaultStyle, SaModuleLogger } from '../logger';
 const log = SaModuleLogger('BattleModuleManager', defaultStyle.core);
 
-const { delay, SAEventTarget } = window;
+const { SAEventTarget } = window;
 
 type SkillModule = (battleStatus: RoundInfo, skills: Skill[], pets: PetSwitchInfos) => PromiseLike<void>;
 
@@ -107,4 +109,3 @@ import * as BaseSkillModule from './skillmodule/base';
 
 export { BaseSkillModule, GenerateBaseBattleModule };
 export { BattleInfoProvider as InfoProvider, BattleOperator as Operator, BattleModuleManager as ModuleManager };
-

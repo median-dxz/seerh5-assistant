@@ -2,7 +2,7 @@ import data from '@data';
 import * as saco from '@sa-core/index';
 import { ReflectObjBase } from '../../assistant/mod-type';
 
-import { defaultStyle, SaModuleLogger } from '../../logger';
+import { defaultStyle, SaModuleLogger } from '../../assistant/logger';
 const log = SaModuleLogger('莫伊莱因子', defaultStyle.mod);
 
 const ct = data.petCts;

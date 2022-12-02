@@ -1,8 +1,8 @@
 import data from '@data';
 import * as saco from '@sa-core/index';
-import { ReflectObjBase } from '../../assistant/mod-type';
+import { ReflectObjBase } from '@sa-core/mod-type';
 
-import { defaultStyle, SaModuleLogger } from '../../logger';
+import { defaultStyle, SaModuleLogger } from '@sa-core/logger';
 const log = SaModuleLogger('Sign', defaultStyle.mod);
 
 const { Utils, Const, PetHelper } = saco;

@@ -2,7 +2,7 @@ import data from '@data';
 import * as saco from '../../assistant';
 import { ReflectObjBase } from '../../assistant/mod-type';
 
-import { defaultStyle, SaModuleLogger } from '../../logger';
+import { defaultStyle, SaModuleLogger } from '../../assistant/logger';
 const log = SaModuleLogger('X战队密室', defaultStyle.mod);
 
 const { BattleModule, Functions, PetHelper } = saco;

@@ -1,5 +1,5 @@
+import { defaultStyle, SaModuleLogger } from './assistant/logger';
 import { Mod } from './assistant/mod-type';
-import { defaultStyle, SaModuleLogger } from './logger';
 import ModList from './mods/modslist.json';
 const log = SaModuleLogger('ModLoader', defaultStyle.mod);
 

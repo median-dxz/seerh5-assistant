@@ -1,30 +1,27 @@
 import { CMDID, EVENTS as hooks } from '../const';
-const { delay, wrapper, SAEventTarget: GlobalEventManager } = window;
+import { wrapper, delay } from '../common';
+const { SAEventTarget: GlobalEventManager } = window;
 
 const EmitEvent = (type: string, detail = {}) => {
     GlobalEventManager.dispatchEvent(new CustomEvent(type, { detail }));
 };
 
-ModuleManager.beginShow = wrapper(ModuleManager.beginShow, function (moduleName: string) {
+ModuleManager.beginShow = wrapper(ModuleManager.beginShow, (moduleName: string) => {
     if (!ModuleManager.appJs[moduleName]) {
         EmitEvent(hooks.Module.loaded, { moduleName });
     }
 });
 
-ModuleManager._openModelCompete = wrapper<typeof ModuleManager>(
-    ModuleManager._openModelCompete,
-    undefined,
-    function () {
-        if (this.currModule instanceof BasicMultPanelModule) {
-            const moduleName = this.currModule.moduleName;
-            EmitEvent(hooks.Module.show, { moduleName });
-        } else {
-            EmitEvent(hooks.Module.show, { moduleName: 'unknown' });
-        }
+ModuleManager._openModelCompete = wrapper<ModuleManager>(ModuleManager._openModelCompete, undefined, function () {
+    if (ModuleManager.currModule instanceof BasicMultPanelModule) {
+        const moduleName = ModuleManager.currModule.moduleName;
+        EmitEvent(hooks.Module.show, { moduleName });
+    } else {
+        EmitEvent(hooks.Module.show, { moduleName: 'unknown' });
     }
-);
+});
 
-AwardItemDialog.prototype.startEvent = wrapper<typeof AwardItemDialog>(
+AwardItemDialog.prototype.startEvent = wrapper<AwardItemDialog>(
     AwardItemDialog.prototype.startEvent,
     undefined,
     async function () {

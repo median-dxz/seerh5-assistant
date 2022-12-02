@@ -1,21 +1,19 @@
-declare namespace PetFightController {
-    const roundTimes: number;
-    function setup(): void;
+declare class PetFightController {
+    static roundTimes: number;
+    static setup(): void;
 }
 
-declare namespace FighterModelFactory {
-    var playerMode: BaseFighterModel | undefined;
-    var enemyMode: BaseFighterModel | undefined;
+declare class FighterModelFactory {
+    static playerMode?: BaseFighterModel;
+    static enemyMode?: BaseFighterModel;
 }
 
 declare class BaseFighterModel {
     setHpView: (show: boolean) => void;
     skillBtnViews: Array<SkillBtnView>;
     subject: SAType.ObserverList<ToolBtnPanelObserver>;
-    info: {
-        petName: string;
-    };
-    propView: PropView; //TODO
+    get info(): FightPetInfo;
+    get propView(): BaseFighterPropView;
 }
 
 declare class ToolBtnPanelObserver {
@@ -26,30 +24,32 @@ declare class ToolBtnPanelObserver {
     showItem(index: number): void;
 }
 
-declare class PropView {
-    //TODO
+declare class BaseControlPanel extends egret.EventDispatcher {}
+
+declare class PetSelectPanel extends BaseControlPanel {
+    _petsArray: Array<PetBtnView>;
+}
+
+declare class FightItemPanel extends BaseControlPanel {
+    onUseItem(itemID: number): void;
+}
+
+declare class BaseFighterPropView {
     get isShowFtHp(): boolean;
     set isShowFtHp(showFtHp: boolean);
     dispatchNoBlood: boolean;
 }
 
-declare class SkillBtnView {
-    //TODO
+declare class SkillBtnView extends egret.EventDispatcher {
+    autoUse(): void;
     get skillID(): number;
     get pp(): number;
 }
 
-declare class PetBtnView {
-    //TODO
+declare class PetBtnView extends egret.EventDispatcher {
     autoUse(): void;
 }
 
-declare class FightItemPanel {
-    //TODO
-    onUseItem(itemID: number): void;
-}
-
-declare class PetSelectPanel {
-    //TODO
-    _petsArray: Array<PetBtnView>;
+declare class TimerManager {
+    static countDownOverHandler(): void;
 }

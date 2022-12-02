@@ -122,6 +122,7 @@ const appConfig = {
             '@data': '/src/data/index.js',
             '@sa-core': '/src/assistant',
             '@sa-ui': '/src/interface',
+            '@src': '/src',
         },
         extensions: ['.js', '.jsx', '.tsx', '.ts'],
     },

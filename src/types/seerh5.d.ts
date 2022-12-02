@@ -67,7 +67,7 @@ declare namespace SAType {
 }
 
 declare namespace RES {
-    function getResByUrl(url: string): Promise<unknown>;
+    function getResByUrl(url: string): Promise<egret.Texture>;
 }
 
 //common
@@ -79,16 +79,12 @@ declare var LoginService: any;
 declare var OnlineManager: any;
 
 // init/event
-declare var AwardItemDialog: any;
 declare var AwardManager: any;
 declare var LevelManager: any;
 declare var PetUpdatePropController: any;
 
 // init/helper
 declare var Alarm: any;
-
-// init/socket
-declare var SocketEncryptImpl: any;
 
 // utils/sa-utils
 declare var KTool: any;
@@ -101,14 +97,10 @@ declare var EffectInfoManager: any;
 // pet-helper
 declare var TypeXMLInfo: any;
 
-// battle-module
-declare var TimerManager: any;
-
 // mods
 declare var SystemTimerManager: any;
 declare var MainManager: any;
 declare var markCenter: any;
-declare var FightPetInfo: any;
 declare var PetSkinController: any;
 declare var PetSkinXMLInfo: any;
 declare var ClientConfig: any;
@@ -117,7 +109,10 @@ declare var PetFightSkinSkillReplaceXMLInfo: any;
 declare var PetIdTransform: any;
 
 declare class SocketEvent extends egret.Event {}
-declare class PetEvent extends egret.Event {}
+declare class PetEvent extends egret.Event {
+    static readonly EQUIP_SKIN: string;
+    constructor(type: string, catchTime: number, obj: any);
+}
 
 declare namespace baseMenuComponent {
     class BaseMenuComponent {

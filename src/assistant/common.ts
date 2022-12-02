@@ -7,8 +7,6 @@ async function delay(time: number): Promise<void> {
     });
 }
 
-type AnyFunction = (...args: any) => any;
-type BindThisFunction<F extends AnyFunction> = (this: ThisParameterType<F>, ...args: any) => ReturnType<F>;
 type AsyncFunction<F extends AnyFunction> = (...args: unknown[]) => Promise<ReturnType<F>>;
 
 function wrapper<E, F extends AnyFunction = (this: E, ...args: unknown[]) => unknown>(

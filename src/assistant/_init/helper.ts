@@ -1,4 +1,4 @@
-import { defaultStyle, SaModuleLogger } from '../../logger';
+import { defaultStyle, SaModuleLogger } from '../logger';
 const log = SaModuleLogger('SAHelper', defaultStyle.core);
 
 Alarm.show = function (text: string, callback: () => void) {

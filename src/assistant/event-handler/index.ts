@@ -1,7 +1,7 @@
-import { defaultStyle, SaModuleLogger } from '../../logger';
 import { InfoProvider } from '../battle-module';
 import { EVENTS as hooks } from '../const';
 import RoundPetInfo from '../entities/roundinfo';
+import { defaultStyle, SaModuleLogger } from '../logger';
 
 const GlobalEventManager = window.SAEventTarget;
 const log = SaModuleLogger('SAEventHandler', defaultStyle.core);

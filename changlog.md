@@ -34,6 +34,8 @@ RoadMap: `11.28-12.4`
 v0.2.6
 1. 常用数据查看模块
 2. 引入egret的TypeDefined
+3. 更新定义文件
+4. 优化项目组织结构
 
 v0.2.5
 1. 后台挂机功能，通过在lifecycle处于pause期间定时发送system_time_check包实现

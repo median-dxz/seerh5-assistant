@@ -24,7 +24,7 @@ const sa_core_init = async () => {
     await import('./mod_loader');
 };
 
-import(/* webpackChunkName: "utils" */ './utils').then((utils) => {
+import(/* webpackChunkName: "utils" */ './assistant/common').then((utils) => {
     window.delay = utils.delay;
     window.wrapper = utils.wrapper;
     window.SAEventTarget = new EventTarget();

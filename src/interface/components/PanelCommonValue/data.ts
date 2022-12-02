@@ -16,7 +16,7 @@ declare namespace pveEnterPanel {
     class PveEnterPanel extends BasicMultPanelModule {}
     class PveResourceCollection extends BasicPanel {
         menu: baseMenuComponent.BaseMenuComponent;
-        onChangeMinor: VoidFunction;
+        onChangeMinor(): void;
     }
 }
 

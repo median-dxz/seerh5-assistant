@@ -1,12 +1,11 @@
 import { InfoProvider, ModuleManager, Operator } from '../battle-module';
 import { CMDID, ITEMS, PETPOS as PetPosType } from '../const';
-import Pet from '../entities/pet';
 import Skill from '../entities/skill';
 import * as PetHelper from '../pet-helper';
 import { BuyPetItem, SocketReceivedPromise, SocketSendByQueue } from '../utils';
 
-import { defaultStyle, SaModuleLogger } from '../../logger';
-import { delay } from '../../utils';
+import { delay } from '../common';
+import { defaultStyle, SaModuleLogger } from '../logger';
 const log = SaModuleLogger('SAFunctions', defaultStyle.mod);
 /**
  * @description 刻印直升5级
