@@ -7,14 +7,12 @@ async function delay(time: number): Promise<void> {
     });
 }
 
-type AsyncFunction<F extends AnyFunction> = (...args: unknown[]) => Promise<ReturnType<F>>;
-
-function wrapper<E, F extends AnyFunction = (this: E, ...args: unknown[]) => unknown>(
+function wrapper<F extends AnyFunction>(
     func: F,
-    beforeDecorator?: BindThisFunction<F>,
-    afterDecorator?: BindThisFunction<F>
-): AsyncFunction<F> {
-    return async function (this: ThisParameterType<F>) {
+    beforeDecorator?: (...args: Parameters<F>) => any,
+    afterDecorator?: (...args: Parameters<F>) => any
+) {
+    return async function (this: any, ...args: Parameters<F>): Promise<Awaited<ReturnType<F>>> {
         beforeDecorator && (await beforeDecorator.apply(this, arguments));
         const r = await func.apply(this, arguments);
         afterDecorator && (await afterDecorator.apply(this, arguments));
@@ -23,4 +21,3 @@ function wrapper<E, F extends AnyFunction = (this: E, ...args: unknown[]) => unk
 }
 
 export { wrapper, delay };
-

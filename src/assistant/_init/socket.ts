@@ -1,3 +1,5 @@
+import { wrapper, delay } from '../common';
+
 SocketEncryptImpl.prototype.log = function (cmd: number, ...msg: string[]) {
     const logInfo = msg.join(' ').replace(/Socket\[[.0-9].*?\]/, '');
     this.openIDs && this.openIDs.flat();

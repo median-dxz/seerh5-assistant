@@ -1,6 +1,6 @@
 import { Const, Utils } from '../../assistant';
 import Pet from '../../assistant/entities/pet';
-import { ReflectObjBase } from "../../assistant/mod-type";
+import { ReflectObjBase } from '../../assistant/mod-type';
 
 import { defaultStyle, SaModuleLogger } from '../../assistant/logger';
 const log = SaModuleLogger('LocalCloth', defaultStyle.mod);
@@ -108,7 +108,7 @@ class LocalCloth extends ReflectObjBase implements ModClass {
                     () => {
                         let protoFunc = petBag.MainPanelPetItem.prototype.setSelected;
                         petBag.MainPanelPetItem.prototype.setSelected = wrapper(
-                            protoFunc,
+                            protoFunc as AnyFunction,
                             undefined,
                             function (this: any, e?: boolean) {
                                 e && log(new Pet(this.petInfo));

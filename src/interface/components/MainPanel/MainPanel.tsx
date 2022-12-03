@@ -1,8 +1,9 @@
-import { Box, Grow, SxProps, Tab, Tabs } from '@mui/material';
+import { Box, Fade, SxProps, Tab, Tabs } from '@mui/material';
 import { mainColor } from '@sa-ui/style';
 import * as React from 'react';
-import { PanelCommonValue } from '../PanelCommonValue/PanelCommonValue';
-import { PanelDailyRoutine } from '../PanelDailyRoutine/PanelDailyRoutine';
+import { PanelCommonValue } from '../PanelCommonValue';
+import { PanelDailyRoutine } from '../PanelDailyRoutine';
+import { PanelPackageCapture } from '../Panel';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -61,7 +62,7 @@ export function MainPanel(props: Props) {
     };
 
     return (
-        <Grow in={props.show} unmountOnExit>
+        <Fade in={props.show}>
             <Box
                 sx={{
                     position: 'absolute',
@@ -83,7 +84,6 @@ export function MainPanel(props: Props) {
                     orientation="vertical"
                     value={value}
                     onChange={handleChange}
-                    variant="fullWidth"
                     aria-label="SA Main Panel Tabs"
                     sx={{
                         minWidth: '155px',
@@ -115,9 +115,9 @@ export function MainPanel(props: Props) {
                     Item Five
                 </TabPanel>
                 <TabPanel value={value} index={5}>
-                    Item Six
+                    <PanelPackageCapture />
                 </TabPanel>
             </Box>
-        </Grow>
+        </Fade>
     );
 }

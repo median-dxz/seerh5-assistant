@@ -1,5 +1,5 @@
-import * as SACore from './assistant';
-import { delay, wrapper } from './assistant/utils';
+import { delay, wrapper } from '@sa-core/common';
+import * as SACore from '@sa-core/index';
 
 declare global {
     var SA: typeof SACore;
@@ -9,12 +9,12 @@ declare global {
         wrapper: typeof wrapper;
         filterLogText: RegExp[];
         filterWarnText: RegExp[];
-        SAMods: Map<string, import('./assistant/mod-type').Mod>;
+        SAMods: Map<string, import('@sa-core/mod-type').Mod>;
         SACoreReady: boolean;
     }
 
     type AnyFunction = (...args: any) => any;
-    type BindThisFunction<F extends AnyFunction> = (this: ThisParameterType<F>, ...args: any) => ReturnType<F>;
+    type BindThisFunction<E, F extends AnyFunction> = (this: E, ...args: Parameters<F>) => any;
     type CallBack<T = any> = (this: T, ...args: any) => any | AnyFunction;
     type AttrConst<T> = T[keyof T];
 

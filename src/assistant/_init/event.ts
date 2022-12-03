@@ -1,5 +1,5 @@
+import { delay, wrapper } from '../common';
 import { CMDID, EVENTS as hooks } from '../const';
-import { wrapper, delay } from '../common';
 const { SAEventTarget: GlobalEventManager } = window;
 
 const EmitEvent = (type: string, detail = {}) => {
@@ -12,7 +12,7 @@ ModuleManager.beginShow = wrapper(ModuleManager.beginShow, (moduleName: string) 
     }
 });
 
-ModuleManager._openModelCompete = wrapper<ModuleManager>(ModuleManager._openModelCompete, undefined, function () {
+ModuleManager._openModelCompete = wrapper(ModuleManager._openModelCompete, undefined, function (this: ModuleManager) {
     if (ModuleManager.currModule instanceof BasicMultPanelModule) {
         const moduleName = ModuleManager.currModule.moduleName;
         EmitEvent(hooks.Module.show, { moduleName });
@@ -21,10 +21,10 @@ ModuleManager._openModelCompete = wrapper<ModuleManager>(ModuleManager._openMode
     }
 });
 
-AwardItemDialog.prototype.startEvent = wrapper<AwardItemDialog>(
+AwardItemDialog.prototype.startEvent = wrapper(
     AwardItemDialog.prototype.startEvent,
     undefined,
-    async function () {
+    async function (this: AwardItemDialog) {
         EmitEvent(hooks.Award.show);
         await delay(500);
         LevelManager.stage.removeEventListener(egret.TouchEvent.TOUCH_TAP, this.startRemoveDialog, this);
@@ -72,4 +72,5 @@ SocketConnection.addCmdListener(CMDID.NOTE_USE_SKILL, (e: SocketEvent) => {
     EmitEvent(hooks.BattlePanel.onRoundData, { info: [info.firstAttackInfo, info.secondAttackInfo] });
 });
 
-export {};
+export { };
+
