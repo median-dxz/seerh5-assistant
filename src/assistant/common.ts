@@ -12,12 +12,14 @@ function wrapper<F extends AnyFunction>(
     beforeDecorator?: (...args: Parameters<F>) => any,
     afterDecorator?: (...args: Parameters<F>) => any
 ) {
-    return async function (this: any, ...args: Parameters<F>): Promise<Awaited<ReturnType<F>>> {
+    const wrappedFunc = async function (this: any, ...args: Parameters<F>): Promise<Awaited<ReturnType<F>>> {
         beforeDecorator && (await beforeDecorator.apply(this, arguments));
         const r = await func.apply(this, arguments);
         afterDecorator && (await afterDecorator.apply(this, arguments));
         return r;
     };
+    (wrappedFunc as any).rawFunction = func;
+    return wrappedFunc;
 }
 
 export { wrapper, delay };

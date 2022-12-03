@@ -3,7 +3,7 @@ import { mainColor } from '@sa-ui/style';
 import * as React from 'react';
 import { PanelCommonValue } from '../PanelCommonValue';
 import { PanelDailyRoutine } from '../PanelDailyRoutine';
-import { PanelPackageCapture } from '../Panel';
+import { PanelPackageCapture } from '../PanelPackageCapture';
 
 interface TabPanelProps {
     children?: React.ReactNode;
