@@ -74,6 +74,13 @@ GlobalEventManager.addEventListener(hooks.BattlePanel.onRoundData, (e) => {
 
 GlobalEventManager.addEventListener(hooks.BattlePanel.panelReady, () => {
     InfoProvider.cachedRoundInfo = null;
+    log(`检测到对战开始`);
+});
+
+GlobalEventManager.addEventListener(hooks.BattlePanel.completed, (e: Event) => {
+    if (e instanceof CustomEvent) {
+        log(`检测到对战结束 对战胜利: ${e.detail.isWin}`);
+    }
 });
 
 export { ModuleLoadedListener as ModuleListener };

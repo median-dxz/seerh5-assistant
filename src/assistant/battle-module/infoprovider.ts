@@ -2,7 +2,7 @@ import Pet, { PetFactory } from '../entities/pet';
 import RoundPetInfo from '../entities/roundinfo';
 import Skill, { SkillFactory } from '../entities/skill';
 
-export type PetSwitchInfos = (Pet & { index: number })[];
+export type PetSwitchInfo = Pet & { index: number };
 export interface RoundInfo {
     self?: RoundPetInfo;
     other?: RoundPetInfo;
@@ -14,8 +14,9 @@ interface BattleInfoProvider {
     cachedRoundInfo: [RoundPetInfo, RoundPetInfo] | null;
     getCurRoundInfo(): RoundInfo | null;
     getCurSkills(): Skill[] | null;
-    getPets(): PetSwitchInfos | null;
+    getPets(): Array<PetSwitchInfo> | null;
 }
+
 export const BattleInfoProvider: BattleInfoProvider = {
     cachedRoundInfo: null,
     getCurRoundInfo() {

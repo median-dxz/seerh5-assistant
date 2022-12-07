@@ -1,7 +1,7 @@
 import Entity from './entity';
 
 export default class Item extends Entity {
-    static __type = 'Item';
+    __type = 'Item';
     limit?: number;
     
     get amount() {

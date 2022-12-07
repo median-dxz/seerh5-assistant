@@ -106,15 +106,16 @@ class LocalCloth extends ReflectObjBase implements ModClass {
                 SAEventTarget.addEventListener(
                     SAEvents.Module.show,
                     () => {
-                        let protoFunc = petBag.MainPanelPetItem.prototype.setSelected;
-                        petBag.MainPanelPetItem.prototype.setSelected = wrapper(
-                            protoFunc as AnyFunction,
-                            undefined,
-                            function (this: any, e?: boolean) {
-                                e && log(new Pet(this.petInfo));
-                            }
+                        EventManager.addEventListener(
+                            'petBag.MainPanelTouchPetItemBegin',
+                            (e: egret.TouchEvent) => {
+                                const { petInfo } = e.data as { petInfo: PetInfo };
+                                petInfo && log(new Pet(petInfo));
+                            },
+                            null
                         );
-
+                        
+                        let protoFunc;
                         protoFunc = petBag.SkinView.prototype.onChooseSkin;
                         petBag.SkinView.prototype.onChooseSkin = wrapper(protoFunc, undefined, function (this: any) {
                             const t = this.arrayCollection.getItemAt(this.selectSkinIndex);

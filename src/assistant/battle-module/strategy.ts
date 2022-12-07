@@ -1,5 +1,5 @@
-import Skill from 'src/assistant/entities/skill';
-import { PetSwitchInfos } from '../infoprovider';
+import Skill from '../entities/skill';
+import { PetSwitchInfo } from './infoprovider';
 
 class NameMatched {
     skillNames: string[] = [];
@@ -19,7 +19,10 @@ class DiedSwitchLinked {
     constructor(names: string[]) {
         this.petNames = names;
     }
-    match(pets: PetSwitchInfos, dyingCt: number) {
+    /**
+     * @returns 匹配失败返回 -1
+     */
+    match(pets: PetSwitchInfo[], dyingCt: number) {
         let swName = '';
         for (let pet of pets) {
             if (pet.catchTime === dyingCt) {
@@ -43,3 +46,12 @@ class DiedSwitchLinked {
 }
 
 export { DiedSwitchLinked, NameMatched };
+
+// const nms = new NameMatched(['鬼哭神泣灭', '幻梦芳逝', '剑挥四方']);
+// const dsp = new DiedSwitchLinked(['神寂·克罗诺斯', '蒂朵', '六界帝神']);
+
+// const ReboundDamageModule = (executor) => {
+//     return () => {};
+// };
+
+// export default ReboundDamageModule;

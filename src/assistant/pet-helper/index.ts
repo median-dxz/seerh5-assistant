@@ -1,3 +1,4 @@
+import { Utils } from '@sa-core/index';
 import { CMDID, PETPOS as PosType } from '../const';
 import Pet, { PetFactory } from '../entities/pet';
 import { SocketReceivedPromise, SocketSendByQueue } from '../utils';
@@ -65,21 +66,20 @@ export const getStoragePets = async (location: StoragePetsPos) => {
 export const isDefault = (ct: number) => PetManager.defaultTime === ct;
 export const setDefault: (ct: number) => void = PetManager.setDefault.bind(PetManager);
 
-export const getPetLocation = (ct: number) => {
-    return updateStorageInfo().then(() => {
-        const r = PetStorage2015InfoManager.allInfo.find((v) => v.catchTime === ct);
-        if (!r) {
-            if (PetManager._bagMap.containsKey(ct)) {
-                return PosType.bag1;
-            } else if (PetManager._secondBagMap.containsKey(ct)) {
-                return PosType.secondBag1;
-            } else {
-                return -1;
-            }
+export const getPetLocation = async (ct: number) => {
+    await updateStorageInfo();
+    const r = PetStorage2015InfoManager.allInfo.find((v) => v.catchTime === ct);
+    if (!r) {
+        if (PetManager._bagMap.containsKey(ct)) {
+            return PosType.bag1;
+        } else if (PetManager._secondBagMap.containsKey(ct)) {
+            return PosType.secondBag1;
         } else {
-            return r.posi;
+            return -1;
         }
-    });
+    } else {
+        return r.posi;
+    }
 };
 
 export const setPetLocation = async (ct: number, newLocation: PosType) => {
@@ -145,8 +145,8 @@ export const setPetLocation = async (ct: number, newLocation: PosType) => {
 };
 
 export const popPetFromBag = async (ct: number) => {
-    const locat = await getPetLocation(ct);
-    if (locat !== PosType.elite && locat !== PosType.storage) {
+    const local = await getPetLocation(ct);
+    if (local !== PosType.elite && local !== PosType.storage) {
         await setPetLocation(ct, PosType.storage);
     }
 };
@@ -159,8 +159,13 @@ export function cureAllPet() {
     PetManager.noAlarmCureAll();
 }
 
-export function ToggleAutoCure(enable: boolean) {
+export function toggleAutoCure(enable: boolean) {
     SocketSendByQueue(42019, [22439, Number(enable)]);
+}
+
+export async function getAutoCureState(): Promise<boolean> {
+    const r = await Utils.GetBitSet(22439);
+    return r[0];
 }
 
 /**

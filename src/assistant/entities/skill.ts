@@ -3,7 +3,7 @@ import Entity from './entity';
 type SkillEffects = [number[], number[]];
 type SkillEffectArgs = string | number | undefined;
 export default class Skill extends Entity {
-    static __type = 'skill';
+    __type = 'skill';
     elementId: number;
     category: number;
     power: number;

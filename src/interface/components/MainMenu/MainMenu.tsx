@@ -1,8 +1,10 @@
 import { AssignmentInd, Medication, MenuOpen, ScheduleSend, SmartToy } from '@mui/icons-material';
 import { SpeedDialAction } from '@mui/material';
 import { SxProps } from '@mui/system';
+
+import React, { useEffect, useState } from 'react';
+
 import { mainColor } from '@sa-ui/style';
-import React, { useState } from 'react';
 import { StyledSpeedDial } from './StyledSpeedDial';
 
 const iconSx: SxProps = {
@@ -19,13 +21,22 @@ const actions = [
 ];
 
 export function MainMenu() {
+    const { PetHelper } = SA;
+
     let [autoCure, setAutoCure] = useState(false);
     let [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        PetHelper.getAutoCureState().then(setAutoCure);
+    }, []);
+
+    actions[0].name = `自动治疗:${autoCure ? '开' : '关'}`;
+
     const handleClicks = [
         () => {
-            setAutoCure(!autoCure);
-            SA.PetHelper.ToggleAutoCure(autoCure);
-            BubblerManager.getInstance().showText(autoCure ? '自动治疗开启' : '自动治疗关闭');
+            autoCure = !autoCure;
+            setAutoCure(autoCure);
+            PetHelper.toggleAutoCure(autoCure);
         },
         () => {
             FightManager.fightNoMapBoss(6730);
@@ -63,7 +74,7 @@ export function MainMenu() {
         >
             {actions.map((action, index) => (
                 <SpeedDialAction
-                    key={action.name}
+                    key={index}
                     icon={action.icon}
                     tooltipTitle={action.name}
                     onClick={() => {

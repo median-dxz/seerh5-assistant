@@ -13,7 +13,7 @@
 - [ ] 重新梳理Functions与mods的定位
 - [ ] 使用UIUtils工具获取鼠标点击处的UI对象
 - [ ] 通用的模块加载器和获取器的封装，以便在ts环境下可以方便的获取模块全局实例，以及对模块的特定监听与加载/卸载操作等
-- [ ] 合并计数物品获得
+- [ ] 合并计数物品获得(解决start receive问题)
 - [ ] ~~因子关自由切换当前关卡~~
 - [ ] 异步命令事件总线，通知命令执行情况，全局提示框取代bubble
 - [ ] 精灵背包配置
@@ -22,21 +22,47 @@
 - [ ] 战斗模块管理器
 - [ ] tsc不要检查node_modules
 - [ ] 抓包区排序，选择删除，序号，以及调试发包
-
 - [ ] 快捷命令组模块
   - [ ] 模块CloseAll
+- [ ] 战斗模组模块重构Stage2(将结合日任功能的编写)
+
+会用到的模型：
+艾欧有女，克罗蒂朵六界压血时空，蝶六接时空，王哈/圣谱拖回合，自动第五
+
 
 RoadMap: `12.5-12.11` 
 
-- [ ] 一键日常模块
-  - [ ] 经验与学习力
+- [x] 战斗模组模块重构Stage1
+  - [x] 更泛用的战斗逻辑
+- [x] 获取自动治疗状态
+- [ ] 适配新背包的精灵状态更新(LocalCloth)
+  - [ ] usePetPotion的配套更新回调 // 参考cureAll
+  - [ ] setPetPosition的的配套更新回调 // initBagView
+  - [x] 限定只有点击时才输出精灵调试信息
+- [ ] 新的模块加载管理器，可以监听模块的首次加载，后续重加载，并方便的获取panel等对象
+
+
+v0.2.9 **break changes**
+1. `SkillModule`更名为`MoveModule`，更好的反映这个函数是作用于一轮内的操作，而不只是出招逻辑
+2. `BaseSkillModule`模块现在为`Strategy`模块
+3. 相关类型现在在`AutoBattle`命名空间下
+4. 重构整个`BattleModuleManager`:
+   1. 将无关的输出显示逻辑移入`EventHandler`
+   2. 将进入战斗与战斗逻辑两个部分解耦，战斗逻辑可以在无进入战斗的情况下单独设定。战斗逻辑调度部分为`BattleModuleManager.strategy`
+   3. 不再使用队列，战斗状态管理权的将交给模组编写者，Manager仅提供一次性的`runOnce`作为方便函数，封装了一个在战斗结束时resolve的promise
+5. `Functions` & `PetHelper`下函数命名已统一为*camelCase*
+6. 优化`Functions`模块下`lowerBlood`代码逻辑，修正背包切换的bug，适配新的`BattleManager`
+7. 修复初始化部分的`Event`模块因为将`SAEventTarget`捕获为模块内变量导致hmr更新时不能更新相关事件回调的bug
+8. `Utils`添加GetBitSet功能，该函数用以取一系列布尔值，类似GetMultiValue,只不过后者的取值范围为为正整数
+9. `PetHelper`下现在可以获取自动治疗状态
+10. `LocalCloth`: 现在只有点击精灵头像时会输出调试信息了
 
 v0.2.8
 1. 将抓包逻辑迁移到ui组件中（部分功能未实现）
 
 v0.2.7
 1. 全局面板现在会在关闭后隐藏而不是卸载
-2. 抓包面板
+2. 抓包功能支持
 3. 更新socket部分定义
 4. 更新wrapper函数签名,this参数类型现在由调用者手动指定而不是依赖typescript推导
 
@@ -52,7 +78,7 @@ v0.2.5
 v0.2.4
 1. 更新定义文件
 2. 将模块外部逻辑，即两个`loader`放入`src/`下
-3. `entity`下`__type`现在为`static`
+3. ~~`entity`下`__type`现在为static~~更正: `__type`按设计为实例属性
 
 v0.2.3.5
 1. 更新部分定义文件
@@ -208,7 +234,7 @@ v0.1.3
 
 v0.1.2
 
-1. 重构过滤无用调试信息的方式，不再使用wrapper包装输出调试信息的函数，而是使用Proxy来代理console.log和warn。注意：通过这种方式必须通过trace才能得到调用链，因此待办：在模组内部使用封装后的Logger函数而不是代理后的console，npm应该有相关的库。
+1. 重构过滤无用调试信息的方式，不再使用wrapper包装输出调试信息的函数，而是使用Proxy来代理console.log和warn。注意：通过这种方式必须通过trace才能得到调用链，因此待办：在模组内部使用封装后的Logger函数而不是代理后的console。
 2. 优化确认信息显示，现在会以气泡方式显示而不是完全在控制台输出
 3. 以原生接口开启发包调试输出
 4. 优化socket信息显示

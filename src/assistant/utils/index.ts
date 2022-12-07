@@ -3,6 +3,11 @@ export async function GetMultiValue(...value: number[]): Promise<number[]> {
     return KTool.getMultiValueAsync(value);
 }
 
+export async function GetBitSet(...value: number[]): Promise<boolean[]> {
+    if (!value) return [];
+    return KTool.getBitSetAsync(value).then((r) => r.map(Boolean));
+}
+
 let DictMatcher = <T extends SAType.BaseObj>(dict: SAType.Dict<T>, reg: RegExp, keyName: string) => {
     return Object.values(dict).filter(
         (value) => Object.hasOwn(value, keyName) && (value[keyName] as string).match(reg)

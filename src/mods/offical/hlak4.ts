@@ -1,6 +1,6 @@
 import data from '@data';
 import * as saco from '@sa-core/index';
-import { ReflectObjBase } from "@sa-core/mod-type";
+import { ReflectObjBase } from '@sa-core/mod-type';
 import { defaultStyle, SaModuleLogger } from '../../assistant/logger';
 
 const { BattleModule, Utils, Functions, Const, PetHelper } = saco;
@@ -14,9 +14,6 @@ const PetBags = [
     { catchTime: ct.六界帝神, name: '六界帝神' },
     { catchTime: ct.时空界皇, name: '时空界皇' },
 ];
-
-const DSP = new BattleModule.BaseSkillModule.DiedSwitchLinked(bm.克朵六时.diedSwitchLink);
-const NMS = new BattleModule.BaseSkillModule.NameMatched(bm.克朵六时.skillMatch);
 
 interface ActivityInfo {
     红莲能量: number;
@@ -38,33 +35,26 @@ export class hlak4 extends ReflectObjBase implements ModClass {
     }
     async init() {
         this.update();
-        await Functions.SwitchBag(PetBags);
+        await Functions.switchBag(PetBags);
         PetHelper.setDefault(ct.神寂·克罗诺斯);
         PetHelper.cureAllPet();
         await delay(200);
         log('初始化完成');
     }
     async runOnce() {
-        await new Promise<void>((resolve, reject) => {
-            Functions.LowerBlood([ct.神寂·克罗诺斯, ct.时空界皇], Const.ITEMS.Potion.中级体力药剂, () => {
-                const self = this;
-                const battleModule = {
-                    entry() {
-                        self._startFight();
-                    },
-                    skillModule: BattleModule.GenerateBaseBattleModule(NMS,DSP),
-                    async finished() {
-                        self.update();
-                        PetHelper.cureAllPet();
-                        await delay(200);
-                        resolve();
-                    },
-                };
-                BattleModule.ModuleManager.queuedModule(battleModule);
-                BattleModule.ModuleManager.runOnce();
-            });
+        await Functions.lowerBlood([ct.神寂·克罗诺斯, ct.时空界皇], Const.ITEMS.Potion.中级体力药剂);
+
+        BattleModule.Manager.strategy.custom = undefined;
+        BattleModule.Manager.strategy.dsl = [bm.克朵六时.diedSwitchLink];
+        BattleModule.Manager.strategy.snm = [bm.克朵六时.skillMatch];
+        
+        return BattleModule.Manager.runOnce(this._startFight).then(async () => {
+            this.update();
+            PetHelper.cureAllPet();
+            await delay(200);
         });
     }
+
     async run() {
         let i = this._activityInfo.今日剩余次数;
         while (i--) {

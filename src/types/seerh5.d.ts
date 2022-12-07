@@ -87,7 +87,6 @@ declare var PetUpdatePropController: any;
 declare var Alarm: any;
 
 // utils/sa-utils
-declare var KTool: any;
 declare var CountermarkEvent: any;
 declare var PetStatusEffectConfig: any;
 

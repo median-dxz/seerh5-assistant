@@ -13,5 +13,5 @@ const values = {
     },
 } as const;
 
-export { values as SA_CONST_MULTIS };
+export { values as SA_CONST_MULTI };
 

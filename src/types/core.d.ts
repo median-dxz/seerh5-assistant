@@ -112,6 +112,12 @@ declare class BubblerManager {
     showText(text: string): void;
 }
 
+type BitValue = 0 | 1;
+declare class KTool {
+    static getMultiValueAsync(value: number[]): PromiseLike<number[]>;
+    static getBitSetAsync(value: number[]): PromiseLike<BitValue[]>;
+}
+
 declare class ModuleManager {
     static beginShow(moduleName: string): void;
     static _openModelCompete(): void;

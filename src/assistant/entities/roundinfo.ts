@@ -1,7 +1,7 @@
 import Entity from './entity';
 
 export default class RoundPetInfo extends Entity {
-    static __type = 'round_info';
+    __type = 'round_info';
     round: number;
 
     userId: number;

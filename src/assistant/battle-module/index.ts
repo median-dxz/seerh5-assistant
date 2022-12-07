@@ -2,7 +2,7 @@ import { EVENTS } from '../const';
 
 import Skill from '../entities/skill';
 
-import { BattleInfoProvider, PetSwitchInfos, RoundInfo } from './infoprovider';
+import { BattleInfoProvider, PetSwitchInfo, RoundInfo } from './infoprovider';
 import { BattleOperator } from './operator';
 
 import { delay } from '../common';
@@ -12,100 +12,133 @@ const log = SaModuleLogger('BattleModuleManager', defaultStyle.core);
 
 const { SAEventTarget } = window;
 
-type SkillModule = (battleStatus: RoundInfo, skills: Skill[], pets: PetSwitchInfos) => PromiseLike<void>;
-
-interface BattleModule {
-    entry: () => void;
-    skillModule: SkillModule;
-    finished: () => void;
-}
-
-let handleBattleStart = () => {
-    log(`检测到对战开始, 当前模式: ${BattleModuleManager.isRun ? '对战接管' : '手动'}`);
-    handleBattleModule();
+const handleBattleModule = () => {
+    if (FighterModelFactory.playerMode == null || BattleModuleManager.running === false) return;
+    BattleModuleManager.strategy.resolve();
 };
 
-let handleBattleModule = () => {
-    FighterModelFactory.playerMode &&
-        BattleModuleManager.isRun &&
-        curBattle.skillModule &&
-        curBattle.skillModule(
-            BattleInfoProvider.getCurRoundInfo()!,
-            BattleInfoProvider.getCurSkills()!,
-            BattleInfoProvider.getPets()!
-        );
-};
-
-let handleBattleEnd = (e: Event) => {
+const handleBattleEnd = (e: Event) => {
     if (e instanceof CustomEvent) {
-        log(`检测到对战结束 对战胜利: ${e.detail.isWin}`);
-        BattleModuleManager.signDeliver.dispatchEvent(new CustomEvent('bm_end'));
+        const { isWin } = e.detail as { isWin: boolean };
+        if (BattleModuleManager.lockingTrigger) {
+            BattleModuleManager.running = false;
+            BattleModuleManager.lockingTrigger(isWin);
+            BattleModuleManager.lockingTrigger = undefined;
+        }
     }
 };
 
-SAEventTarget.addEventListener(EVENTS.BattlePanel.panelReady, handleBattleStart);
-SAEventTarget.addEventListener(EVENTS.BattlePanel.roundEnd, handleBattleModule);
-SAEventTarget.addEventListener(EVENTS.BattlePanel.completed, handleBattleEnd);
+namespace AutoBattle {
+    export type Trigger = () => void;
 
-let battleQueue: BattleModule[] = [];
+    export type MoveModule = (battleStatus: RoundInfo, skills: Skill[], pets: PetSwitchInfo[]) => PromiseLike<void>;
 
-let curBattle: Partial<BattleModule> = {};
+    export interface Strategy {
+        dsl: Array<string[]>;
+        snm: Array<string[]>;
+        custom?: MoveModule;
+        default: {
+            switchNoBlood: MoveModule;
+            useSkill: MoveModule;
+        };
+        resolve(): void;
+    }
+}
 
-const BattleModuleManager = {
-    isRun: false,
-    signDeliver: new EventTarget(),
+const BattleModuleManager: {
+    running: boolean;
+    strategy: AutoBattle.Strategy;
+    lockingTrigger?: (value: boolean | PromiseLike<boolean>) => void;
+    runOnce(trigger: AutoBattle.Trigger): Promise<boolean>;
+} = {
+    running: false,
 
-    queuedModule: (battleModule: BattleModule) => {
-        battleQueue.push(battleModule);
+    strategy: {
+        dsl: [],
+        snm: [],
+        custom: undefined,
+
+        default: {
+            switchNoBlood: async () => {
+                BattleOperator.auto();
+            },
+            useSkill: async () => {
+                BattleOperator.auto();
+            },
+        },
+
+        async resolve() {
+            const info = BattleInfoProvider.getCurRoundInfo()!;
+            let skills = BattleInfoProvider.getCurSkills()!;
+            const pets = BattleInfoProvider.getPets()!;
+
+            if (this.custom != undefined) {
+                this.custom(info, skills, pets);
+                log('执行自定义行动策略');
+                return;
+            }
+
+            let success = false;
+
+            if (info.isDiedSwitch) {
+                for (let petNames of this.dsl) {
+                    const matcher = new BaseStrategy.DiedSwitchLinked(petNames);
+                    const r = matcher.match(pets, info.self!.catchtime);
+                    if (r !== -1) {
+                        BattleOperator.switchPet(r);
+                        success = true;
+                        log(`精灵索引 ${r} 匹配成功: 死切链: [${petNames.join('|')}]`);
+                        break;
+                    }
+                }
+
+                if (!success) {
+                    this.default.switchNoBlood(info, skills, pets);
+                    log('执行默认死切策略');
+                }
+
+                await delay(300);
+                skills = BattleInfoProvider.getCurSkills()!;
+            }
+
+            success = false;
+            for (let skillNames of this.snm) {
+                const matcher = new BaseStrategy.NameMatched(skillNames);
+                const r = matcher.match(skills);
+                if (r) {
+                    BattleOperator.useSkill(r);
+                    success = true;
+                    log(`技能 ${r} 匹配成功: 技能组: [${skillNames.join('|')}]`);
+                    break;
+                }
+            }
+
+            if (!success) {
+                this.default.useSkill(info, skills, pets);
+                log('执行默认技能使用策略');
+            }
+        },
     },
 
-    runOnce: () => {
-        if (battleQueue.length > 0) {
-            curBattle = battleQueue.shift()!;
-            BattleModuleManager.isRun = true;
-            curBattle.entry?.();
-            BattleModuleManager.signDeliver.addEventListener(
-                'bm_end',
-                () => {
-                    curBattle.finished?.();
-                    BattleModuleManager.isRun = false;
-                },
-                { once: true }
-            );
+    lockingTrigger: undefined,
+    runOnce(trigger: AutoBattle.Trigger) {
+        if (this.lockingTrigger == undefined) {
+            this.running = true;
+            trigger();
+            return new Promise((resolve) => {
+                this.lockingTrigger = resolve;
+            });
+        } else {
+            return Promise.reject('已经有一场正在等待回调的战斗！');
         }
-    },
-
-    setCommonModule(skillModule: SkillModule) {
-        curBattle.skillModule = skillModule;
-        this.isRun = true;
-    },
-    clearCurModule() {
-        delete curBattle.skillModule;
-        this.isRun = false;
     },
 };
 
-function GenerateBaseBattleModule(
-    nms: BaseSkillModule.NameMatched,
-    dsp: BaseSkillModule.DiedSwitchLinked
-): SkillModule {
-    return async (info: RoundInfo, skills: Skill[], pets: PetSwitchInfos) => {
-        if (info.isDiedSwitch) {
-            const next = dsp.match(pets, info.self!.catchtime);
-            if (next !== -1) {
-                BattleOperator.switchPet(next);
-                await delay(1000);
-                skills = BattleInfoProvider.getCurSkills()!;
-            } else {
-                skills = [];
-            }
-        }
-        const sid = nms.match(skills);
-        sid && BattleOperator.useSkill(sid);
-    };
-}
+SAEventTarget.addEventListener(EVENTS.BattlePanel.panelReady, handleBattleModule);
+SAEventTarget.addEventListener(EVENTS.BattlePanel.roundEnd, handleBattleModule);
+SAEventTarget.addEventListener(EVENTS.BattlePanel.completed, handleBattleEnd);
 
-import * as BaseSkillModule from './skillmodule/base';
+import * as BaseStrategy from './strategy';
 
-export { BaseSkillModule, GenerateBaseBattleModule };
-export { BattleInfoProvider as InfoProvider, BattleOperator as Operator, BattleModuleManager as ModuleManager };
+export { BaseStrategy as BaseStrategy, AutoBattle };
+export { BattleInfoProvider as InfoProvider, BattleOperator as Operator, BattleModuleManager as Manager };
