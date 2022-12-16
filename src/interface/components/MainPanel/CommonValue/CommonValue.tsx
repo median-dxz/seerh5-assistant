@@ -15,7 +15,7 @@ const unitConvert = (count: number): string => {
 
 let icons: any = null;
 
-export function PanelCommonValue() {
+export function CommonValue() {
     const rows = idList.map((key) => ItemXMLInfo.getItemObj(key)).map((obj) => new Item(obj));
     let [imgEl, setImgEl] = useState(icons ?? []);
     let [initIcon, completeInitIcon] = useState(false);

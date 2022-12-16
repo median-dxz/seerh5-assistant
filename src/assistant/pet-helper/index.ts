@@ -1,5 +1,5 @@
 import { Utils } from '@sa-core/index';
-import { CMDID, PETPOS as PosType } from '../const';
+import { CMDID, PET_POS as PosType } from '../const';
 import Pet, { PetFactory } from '../entities/pet';
 import { SocketReceivedPromise, SocketSendByQueue } from '../utils';
 

@@ -1,1 +1,0 @@
-export { PanelDailyRoutine } from './PanelDailyRoutine';

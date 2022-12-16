@@ -1,7 +1,7 @@
 import * as BattleModule from '../battle-module';
-import { CMDID, ITEMS, PETPOS } from '../const';
+import { CMDID, ITEMS, MULTI, PET_POS } from '../const';
 import * as PetHelper from '../pet-helper';
-import { BuyPetItem, SocketSendByQueue } from '../utils';
+import { BuyPetItem, GetMultiValue, SocketSendByQueue } from '../utils';
 
 import { delay } from '../common';
 import { defaultStyle, SaModuleLogger } from '../logger';
@@ -20,17 +20,17 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = ITEMS.P
     }
 
     // 检测列表是否全在背包
-    let curPets = await PetHelper.getBagPets(PETPOS.bag1);
+    let curPets = await PetHelper.getBagPets(PET_POS.bag1);
 
     for (let ct of cts) {
-        if ((await PetHelper.getPetLocation(ct)) !== PETPOS.bag1) {
+        if ((await PetHelper.getPetLocation(ct)) !== PET_POS.bag1) {
             if (PetManager.isBagFull) {
                 let replacePet = curPets.find((p) => !cts.includes(p.catchTime))!;
                 log(`压血 -> 将 ${replacePet.name} 放入仓库`);
-                await PetHelper.setPetLocation(replacePet.catchTime, PETPOS.storage);
-                curPets = await PetHelper.getBagPets(PETPOS.bag1);
+                await PetHelper.setPetLocation(replacePet.catchTime, PET_POS.storage);
+                curPets = await PetHelper.getBagPets(PET_POS.bag1);
             }
-            await PetHelper.setPetLocation(ct, PETPOS.bag1);
+            await PetHelper.setPetLocation(ct, PET_POS.bag1);
         }
     }
     log(`压血 -> 背包处理完成`);
@@ -99,12 +99,12 @@ export function usePotionForPet(catchTime: number, potionId: number) {
 
 export async function switchBag(pets: Pick<SAType.PetLike, 'catchTime' | 'name'>[]) {
     // 清空现有背包
-    for (let v of await PetHelper.getBagPets(PETPOS.bag1)) {
-        await PetHelper.setPetLocation(v.catchTime, PETPOS.storage);
+    for (let v of await PetHelper.getBagPets(PET_POS.bag1)) {
+        await PetHelper.setPetLocation(v.catchTime, PET_POS.storage);
         log(`SwitchBag -> 将 ${v.name} 放入仓库`);
     }
     for (let v of pets) {
-        await PetHelper.setPetLocation(v.catchTime, PETPOS.bag1);
+        await PetHelper.setPetLocation(v.catchTime, PET_POS.bag1);
         log(`SwitchBag -> 将 ${v.name} 放入背包`);
     }
 }
@@ -156,4 +156,14 @@ export async function delCounterMark() {
             }
         }
     }
+}
+
+export async function updateBattleFireInfo() {
+    return GetMultiValue(MULTI.战斗火焰.类型, MULTI.战斗火焰.到期时间戳).then((r) => {
+        return {
+            type: r[0],
+            valid: r[1] > 0 && SystemTimerManager.time < r[1],
+            timeLeft: r[1] - SystemTimerManager.time,
+        };
+    });
 }

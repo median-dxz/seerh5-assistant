@@ -44,10 +44,11 @@ export const BattleOperator = {
             return;
         }
         const controlPanelObserver = FighterModelFactory.playerMode.subject.array[1];
-        controlPanelObserver.showPet();
-        await delay(300);
+        if (controlPanelObserver.petPanel == undefined) {
+            controlPanelObserver.showPet();
+            await delay(300);
+        }
         controlPanelObserver.petPanel._petsArray[index].autoUse();
         await delay(300);
-        controlPanelObserver.showFight();
     },
 };

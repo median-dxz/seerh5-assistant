@@ -70,6 +70,17 @@ declare namespace RES {
     function getResByUrl(url: string): Promise<egret.Texture>;
 }
 
+declare interface AppDoStyle {
+    '0': 'DESTROY';
+    '1': 'HIDEN';
+    '2': 'NULL';
+    DESTROY: 0;
+    HIDEN: 1;
+    NULL: 2;
+}
+
+declare const AppDoStyle: AppDoStyle;
+
 //common
 declare var EventManager: egret.EventDispatcher;
 
@@ -98,7 +109,6 @@ declare var TypeXMLInfo: any;
 
 // mods
 declare var SystemTimerManager: any;
-declare var MainManager: any;
 declare var markCenter: any;
 declare var PetSkinController: any;
 declare var PetSkinXMLInfo: any;

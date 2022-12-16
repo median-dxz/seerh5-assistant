@@ -17,6 +17,7 @@ declare class BaseFighterModel {
 }
 
 declare class ToolBtnPanelObserver {
+    skillPanel: SkillPanel;
     showPet(): void;
     petPanel: PetSelectPanel;
     showFight(): void;
@@ -25,6 +26,10 @@ declare class ToolBtnPanelObserver {
 }
 
 declare class BaseControlPanel extends egret.EventDispatcher {}
+
+declare class SkillPanel extends BaseControlPanel {
+    auto(): void;
+}
 
 declare class PetSelectPanel extends BaseControlPanel {
     _petsArray: Array<PetBtnView>;

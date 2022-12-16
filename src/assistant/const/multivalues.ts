@@ -11,6 +11,10 @@ const values = {
     战队: {
         资源生产次数: 12470,
     },
+    战斗火焰: {
+        类型: 2913,
+        到期时间戳: 2914,
+    },
 } as const;
 
 export { values as SA_CONST_MULTI };

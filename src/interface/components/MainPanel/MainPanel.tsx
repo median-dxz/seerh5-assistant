@@ -1,9 +1,11 @@
 import { Box, Fade, SxProps, Tab, Tabs } from '@mui/material';
 import { mainColor } from '@sa-ui/style';
 import * as React from 'react';
-import { PanelCommonValue } from '../PanelCommonValue';
-import { PanelDailyRoutine } from '../PanelDailyRoutine';
-import { PanelPackageCapture } from '../PanelPackageCapture';
+import { BattleManager } from './BattleManager';
+import { CommonValue } from './CommonValue';
+import { DailyRoutine } from './DailyRoutine';
+import { PackageCapture } from './PackageCapture';
+import { PetBag } from './PetBag';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -79,6 +81,9 @@ export function MainPanel(props: Props) {
                     boxShadow: `0 0 16px rgba(${mainColor.front} / 50%),
                     0 0 16px rgba(${mainColor.back} / 50%) inset`,
                 }}
+                onClick={(e) => {
+                    e.nativeEvent.stopPropagation();
+                }}
             >
                 <Tabs
                     orientation="vertical"
@@ -103,19 +108,19 @@ export function MainPanel(props: Props) {
                 </Tabs>
                 <TabPanel value={value} index={0}></TabPanel>
                 <TabPanel value={value} index={1}>
-                    <PanelCommonValue />
+                    <CommonValue />
                 </TabPanel>
                 <TabPanel value={value} index={2}>
-                    <PanelDailyRoutine />
+                    <DailyRoutine />
                 </TabPanel>
                 <TabPanel value={value} index={3}>
-                    Item Four
+                    <PetBag />
                 </TabPanel>
                 <TabPanel value={value} index={4}>
-                    Item Five
+                    <BattleManager />
                 </TabPanel>
                 <TabPanel value={value} index={5}>
-                    <PanelPackageCapture />
+                    <PackageCapture />
                 </TabPanel>
             </Box>
         </Fade>

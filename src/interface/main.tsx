@@ -18,10 +18,22 @@ export function SaMain() {
         }
     };
 
+    const clickHandler = function (e: MouseEvent | React.MouseEvent) {
+        if (
+            e.button === 0 &&
+            document.querySelector('.MuiDialog-root[role=presentation]') == null &&
+            document.querySelector('.MuiPopover-root[role=presentation]') == null
+        ) {
+            toggleMainPanel(false);
+        }
+    };
+
     useEffect(() => {
         document.body.addEventListener('keydown', shortCutHandler);
+        document.body.addEventListener('click', clickHandler);
         return () => {
             document.body.removeEventListener('keydown', shortCutHandler);
+            document.body.addEventListener('click', clickHandler);
         };
     }, []);
 
@@ -32,8 +44,9 @@ export function SaMain() {
                 <Container id="sa-main">
                     <MainMenu />
                     <MainButton
-                        onClick={() => {
+                        onClick={(e) => {
                             toggleMainPanel((preState) => !preState);
+                            e.nativeEvent.stopPropagation();
                         }}
                     />
                     <CommandBar show={isCommandBarOpen} />

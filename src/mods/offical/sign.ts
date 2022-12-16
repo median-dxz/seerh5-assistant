@@ -51,7 +51,7 @@ class sign extends ReflectObjBase implements ModClass {
         curTimes = (await Utils.GetMultiValue(Const.MULTI.战队.资源生产次数))[0];
         t = Math.max(0, 5 - curTimes);
         while (t--) {
-            Utils.SocketSendByQueue(CMDID.RES_PRODUCTORBUY, [2, 0]);
+            Utils.SocketSendByQueue(CMDID.RES_PRODUCT_BUY, [2, 0]);
         }
         curTimes = (await Utils.GetMultiValue(Const.MULTI.许愿.许愿签到))[0];
         if (!curTimes) {
@@ -75,7 +75,7 @@ class sign extends ReflectObjBase implements ModClass {
             void log('无法收取派遣');
         }
         const igonrePetNames = data.igonrePetNames;
-        const PosType = Const.PETPOS;
+        const PosType = Const.PET_POS;
         let reprogress = false;
         for (let tid = 16; tid > 0; tid--) {
             if (tid === 5) tid = 1;

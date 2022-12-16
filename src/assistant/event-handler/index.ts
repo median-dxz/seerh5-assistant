@@ -27,7 +27,7 @@ const ModuleLoadedListener = {
 
 GlobalEventManager.addEventListener(hooks.Module.loaded, async (e) => {
     if (e instanceof CustomEvent) {
-        log(`检测到模块加载: ${e.detail.moduleName}`);
+        log(`检测到新模块加载: ${e.detail.moduleName}`);
         ModuleLoadedListener.loadingModules.add(e.detail.moduleName);
     }
 });
@@ -83,5 +83,5 @@ GlobalEventManager.addEventListener(hooks.BattlePanel.completed, (e: Event) => {
     }
 });
 
-export { ModuleLoadedListener as ModuleListener };
+export { ModuleLoadedListener };
 

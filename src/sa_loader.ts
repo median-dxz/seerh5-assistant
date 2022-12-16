@@ -3,12 +3,7 @@ import chalk from 'chalk';
 chalk.level = 3;
 
 const sa_wait_login = async () => {
-    LoginService.loginCompleted = function () {
-        RES.removeEventListener(RES.ResourceEvent.GROUP_PROGRESS, this.onResourceProgress, this);
-        EventManager.dispatchEventWith('LoginCompeted');
-        hideSerialID && hideSerialID();
-        window.dispatchEvent(new CustomEvent('seerh5_login_completed'));
-    };
+    EventManager.addEventListener('LoginCompeted', sa_core_init, { once: true });
     OnlineManager.prototype.setSentryScope = () => {};
     await import('./assistant/_init/module');
 };
@@ -34,7 +29,6 @@ if (window.SACoreReady) {
     sa_core_init();
 } else {
     window.addEventListener('seerh5_assistant_load', sa_wait_login, { once: true });
-    window.addEventListener('seerh5_login_completed', sa_core_init, { once: true });
 }
 
 if (import.meta.webpackHot) {

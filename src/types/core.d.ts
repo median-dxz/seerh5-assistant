@@ -25,6 +25,11 @@ declare class BasicMultPanelModule extends BaseModule {
     currentPanel: BasicPanel;
 }
 
+declare class AchieveTitleInfo {
+    constructor(data: egret.ByteArray);
+    get titleArr(): number[];
+}
+
 declare class CountermarkInfo {
     get markName(): string;
     get isBindMon(): boolean;
@@ -118,12 +123,28 @@ declare class KTool {
     static getBitSetAsync(value: number[]): PromiseLike<BitValue[]>;
 }
 
+declare class MainManager {
+    static actorID: number;
+    static actorInfo: {
+        clothIDs: number[];
+        curTitle: number;
+        readonly logintimeThisTime: number;
+    };
+}
+
 declare class ModuleManager {
     static beginShow(moduleName: string): void;
     static _openModelCompete(): void;
     static loadScript(scriptName: string): Promise<void>;
     static hasmodule(moduleName: string): boolean;
-    static showModule(moduleName: string): Promise<void>;
+    static showModule(
+        moduleName: string,
+        n?: string[],
+        r?: any,
+        o?: any,
+        i?: any,
+        style?: AppDoStyle[keyof AppDoStyle]
+    ): Promise<void>;
     static showModuleByID(moduleId: number): Promise<void>;
     static appJs: {
         [module: string]: boolean;
@@ -146,6 +167,7 @@ declare class ItemManager {
     static updateItems(e: number[] | undefined, n: CallBack): void;
     /** @description 获取精灵背包内物品 */
     static getPetItemIDs(): number[];
+    static GetMySuitIds(): number[];
 }
 
 declare class PetManager {
@@ -187,10 +209,23 @@ declare class CountermarkController {
     static getAllUniversalMark(): Array<CountermarkInfo>;
 }
 
+declare class AchieveXMLInfo {
+    static isAbilityTitle(id: number): boolean;
+    static getTitle(id: number): string;
+    static getTitleDesc(id: number): string;
+    static getTitleEffDesc(id: number): string;
+}
+
 declare class ItemXMLInfo {
     static _itemDict: SAType.Dict<SAType.ItemObj>;
     static getName(id: number): string;
     static getItemObj(id: number): SAType.ItemObj;
+}
+
+declare class ItemSeXMLInfo {
+    static getAllAbilitySuit(): string[];
+    static getIsEffSuit(id: number): boolean;
+    static getSuitEff(id: number): string;
 }
 
 declare class SkillXMLInfo {
@@ -211,6 +246,12 @@ declare class SkillXMLInfo {
     static getCategoryName(id: number): string;
     static getHideSkillId(petId: number): number;
     static getSkillObj(id: number): SAType.MoveObj;
+}
+
+declare class SuitXMLInfo {
+    static getName(id: number): string;
+    static getIsElite(id: number): boolean;
+    static getSuitID(clothIds: number[]): number;
 }
 
 declare class PetXMLInfo {

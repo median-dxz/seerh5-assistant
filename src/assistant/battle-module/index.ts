@@ -34,8 +34,12 @@ namespace AutoBattle {
     export type MoveModule = (battleStatus: RoundInfo, skills: Skill[], pets: PetSwitchInfo[]) => PromiseLike<void>;
 
     export interface Strategy {
-        dsl: Array<string[]>;
-        snm: Array<string[]>;
+        _dsl: Array<string[]>;
+        _snm: Array<string[]>;
+        get dsl(): Array<string[]>;
+        set dsl(n: Array<string[]>);
+        get snm(): Array<string[]>;
+        set snm(n: Array<string[]>);
         custom?: MoveModule;
         default: {
             switchNoBlood: MoveModule;
@@ -46,16 +50,41 @@ namespace AutoBattle {
 }
 
 const BattleModuleManager: {
-    running: boolean;
+    _running: boolean;
+    get running(): boolean;
+    set running(state: boolean);
     strategy: AutoBattle.Strategy;
     lockingTrigger?: (value: boolean | PromiseLike<boolean>) => void;
     runOnce(trigger: AutoBattle.Trigger): Promise<boolean>;
 } = {
-    running: false,
+    _running: false,
+
+    get running() {
+        return this._running;
+    },
+
+    set running(state: boolean) {
+        this._running = state;
+        SAEventTarget.dispatchEvent(new CustomEvent('sa_battle_manager_state_changed'));
+    },
 
     strategy: {
-        dsl: [],
-        snm: [],
+        _dsl: [],
+        _snm: [],
+        get dsl() {
+            return this._dsl;
+        },
+        get snm() {
+            return this._snm;
+        },
+        set dsl(n) {
+            this._dsl = n;
+            SAEventTarget.dispatchEvent(new CustomEvent('sa_battle_manager_state_changed'));
+        },
+        set snm(n) {
+            this._snm = n;
+            SAEventTarget.dispatchEvent(new CustomEvent('sa_battle_manager_state_changed'));
+        },
         custom: undefined,
 
         default: {
@@ -63,7 +92,12 @@ const BattleModuleManager: {
                 BattleOperator.auto();
             },
             useSkill: async () => {
+                // if (!FighterModelFactory.playerMode) {
                 BattleOperator.auto();
+                //     return;
+                // }
+                // const {skillPanel} = FighterModelFactory.playerMode.subject.array[1];
+                // skillPanel.auto();
             },
         },
 
@@ -97,7 +131,7 @@ const BattleModuleManager: {
                     log('执行默认死切策略');
                 }
 
-                await delay(300);
+                await delay(600);
                 skills = BattleInfoProvider.getCurSkills()!;
             }
 

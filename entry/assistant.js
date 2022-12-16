@@ -28,103 +28,17 @@ var __reflect =
     function (e, t, n) {
         (e.__class__ = t), n ? n.push(t) : (n = [t]), (e.__types__ = e.__types__ ? n.concat(e.__types__) : n);
     };
-var AssetAdapter = (function () {
-    function e() {}
-    return (
-        (e.prototype.getAsset = function (e, t, n) {
-            function i(i) {
-                t.call(n, i, e);
-            }
-            if (RES.hasRes(e)) {
-                var r = RES.getRes(e);
-                r ? i(r) : RES.getResAsync(e, i, this);
-            } else RES.getResByUrl(e, i, this, RES.ResourceItem.TYPE_IMAGE);
-        }),
-        e
-    );
-})();
-__reflect(AssetAdapter.prototype, 'AssetAdapter', ['eui.IAssetAdapter']);
-var Driver = (function () {
-    function Driver() {}
-    return (
-        (Driver.init = function (e, t, n) {
-            e && e.length > 0 && ((Driver.configs = e), (Driver.callback = t), (Driver.thisObj = n), Driver.doAction());
-        }),
-        (Driver.doAction = function () {
-            if (0 == Driver.configs.length) return void Driver.callback.call(Driver.thisObj);
-            var config = (Driver.currConfig = Driver.configs.shift());
-            if ('js' == config.type)
-                if (IS_RELEASE)
-                    2 == GameInfo.platform && 'common' == config.name && (config.url = config.url_ios),
-                        RES.getResByUrl(
-                            config.url,
-                            function (data, url) {
-                                var script = document.createElement('script');
-                                script.type = 'text/javascript';
-                                // loader modify begin
-                                while (data.startsWith('eval')) {
-                                    data = eval(data.match(/eval([^)].*)/)[1]);
-                                }
-                                data = data.replaceAll(/console\.log/g, 'logFilter');
-                                data = data.replaceAll(/console\.warn/g, 'warnFilter');
-                                script.text = '//@ sourceURL=' + location.href + url + '\n' + data;
 
-                                document.head.appendChild(script).parentNode.removeChild(script);
-                                config.action && config.action.length > 0 && eval(config.action + '()'),
-                                    Driver.doAction();
-                                // loader modify end
-                            },
-                            this,
-                            'text'
-                        );
-                else {
-                    var s = document.createElement('script');
-                    (s.type = 'text/javascript'), (s.async = !1);
-                    var loaded = function () {
-                        s.parentNode.removeChild(s),
-                            s.removeEventListener('load', loaded, !1),
-                            config.action && config.action.length > 0 && eval(config.action + '()'),
-                            Driver.doAction();
-                    };
-                    s.addEventListener('load', loaded, !1);
-                    var url = RES.getVersionController().getVirtualUrl(config.url);
-                    (s.src = url), document.body.appendChild(s);
-                }
-            else
-                'res' == config.type
-                    ? RES.loadConfig(config.url, config.param).then(function () {
-                          RES.loadGroup(config.name).then(
-                              function () {
-                                  Driver.doAction();
-                              },
-                              function () {
-                                  console.error('加载失败');
-                              }
-                          );
-                      })
-                    : 'json' == config.type &&
-                      RES.getResByUrl(
-                          config.url,
-                          function (e, t) {
-                              (SeerCache.config[config.name] = e), Driver.doAction();
-                          },
-                          this,
-                          'json'
-                      );
-        }),
-        Driver
-    );
-})();
-__reflect(Driver.prototype, 'Driver');
 var __extends =
     (this && this.__extends) ||
     function (e, t) {
         function n() {
             this.constructor = e;
         }
-        for (var i in t) t.hasOwnProperty(i) && (e[i] = t[i]);
+        for (var i in t) Object.hasOwn(t, i) && (e[i] = t[i]);
         (n.prototype = t.prototype), (e.prototype = new n());
     };
+
 var __awaiter =
     (this && this.__awaiter) ||
     function (e, t, n, i) {
@@ -153,6 +67,7 @@ var __awaiter =
             l((i = i.apply(e, t || [])).next());
         });
     };
+
 var __generator =
     (this && this.__generator) ||
     function (e, t) {
@@ -234,6 +149,95 @@ var __generator =
             a
         );
     };
+
+var AssetAdapter = (function () {
+    function e() {}
+    return (
+        (e.prototype.getAsset = function (e, t, n) {
+            function i(i) {
+                t.call(n, i, e);
+            }
+            if (RES.hasRes(e)) {
+                var r = RES.getRes(e);
+                r ? i(r) : RES.getResAsync(e, i, this);
+            } else RES.getResByUrl(e, i, this, RES.ResourceItem.TYPE_IMAGE);
+        }),
+        e
+    );
+})();
+__reflect(AssetAdapter.prototype, 'AssetAdapter', ['eui.IAssetAdapter']);
+
+var Driver = (function () {
+    function Driver() {}
+    return (
+        (Driver.init = function (e, t, n) {
+            e && e.length > 0 && ((Driver.configs = e), (Driver.callback = t), (Driver.thisObj = n), Driver.doAction());
+        }),
+        (Driver.doAction = function () {
+            if (0 == Driver.configs.length) return void Driver.callback.call(Driver.thisObj);
+            var config = (Driver.currConfig = Driver.configs.shift());
+            if ('js' == config.type)
+                if (IS_RELEASE)
+                    RES.getResByUrl(
+                        config.url,
+                        function (data, url) {
+                            var script = document.createElement('script');
+                            script.type = 'text/javascript';
+                            // loader modify begin
+                            while (data.startsWith('eval')) {
+                                data = eval(data.match(/eval([^)].*)/)[1]);
+                            }
+                            data = data.replaceAll(/console\.log/g, 'logFilter');
+                            data = data.replaceAll(/console\.warn/g, 'warnFilter');
+                            script.text = '//@ sourceURL=' + location.href + url + '\n' + data;
+
+                            document.head.appendChild(script).parentNode.removeChild(script);
+                            config.action && config.action.length > 0 && eval(config.action + '()'), Driver.doAction();
+                            // loader modify end
+                        },
+                        this,
+                        'text'
+                    );
+                else {
+                    var s = document.createElement('script');
+                    (s.type = 'text/javascript'), (s.async = !1);
+                    var loaded = function () {
+                        s.parentNode.removeChild(s),
+                            s.removeEventListener('load', loaded, !1),
+                            config.action && config.action.length > 0 && eval(config.action + '()'),
+                            Driver.doAction();
+                    };
+                    s.addEventListener('load', loaded, !1);
+                    var url = RES.getVersionController().getVirtualUrl(config.url);
+                    (s.src = url), document.body.appendChild(s);
+                }
+            else
+                'res' == config.type
+                    ? RES.loadConfig(config.url, config.param).then(function () {
+                          RES.loadGroup(config.name).then(
+                              function () {
+                                  Driver.doAction();
+                              },
+                              function () {
+                                  console.error('加载失败');
+                              }
+                          );
+                      })
+                    : 'json' == config.type &&
+                      RES.getResByUrl(
+                          config.url,
+                          function (e, t) {
+                              (SeerCache.config[config.name] = e), Driver.doAction();
+                          },
+                          this,
+                          'json'
+                      );
+        }),
+        Driver
+    );
+})();
+__reflect(Driver.prototype, 'Driver');
+
 var Main = (function (e) {
     function t() {
         var t = e.call(this) || this;
@@ -255,14 +259,16 @@ var Main = (function (e) {
             var n = this,
                 i = GameInfo.wwwRoot + 'version/version.json?t' + Math.random();
             this.loadVersionFile(i).then(function (e) {
-                e && (SeerVersionController.remoteVersion = JSON.parse('' + e)),
+                e &&
+                    ((SeerVersionController.remoteVersion = JSON.parse('' + e)),
+                    (GameInfo.currAssetVersion = SeerVersionController.remoteVersion.version)),
                     GameInfo.isApp
                         ? n.loadVersionFile('./version/version_local.json').then(function (e) {
                               e && (SeerVersionController.localVersion = JSON.parse('' + e)),
                                   n
                                       .runGame()
                                       .then(function () {})
-                                      ['catch'](function (e) {
+                                      .catch(function (e) {
                                           console.warn(e);
                                       });
                           })
@@ -285,11 +291,11 @@ var Main = (function (e) {
                                         o = function (e) {
                                             switch (e.type) {
                                                 case egret.Event.COMPLETE:
-                                                    var i = e.currentTarget;
-                                                    GameInfo.isApp, t(i.response);
+                                                    var n = e.currentTarget;
+                                                    GameInfo.isApp, t(n.response);
                                                     break;
                                                 case egret.IOErrorEvent.IO_ERROR:
-                                                    GameInfo.isApp, n();
+                                                    GameInfo.isApp;
                                             }
                                         },
                                         s = function (e) {};
@@ -321,20 +327,22 @@ var Main = (function (e) {
             });
         }),
         (t.prototype.driverComplete = function () {
-            console.log('[GameLoader]: game core has been loaded.');
             window.LevelManager.setup(this);
             window.MainManager.stage = this;
-            egret.getOption('newLogin')
-                ? window.ModuleManager.showModuleByID(140).then(function () {
-                      window.hideWebload && window.hideWebload();
-                      // dispatch event begin
-                      window.dispatchEvent(new CustomEvent('seerh5_assistant_load'));
-                  })
-                : (window.ModuleManager.showModule('login', ['login']).then(() => {
-                      window.dispatchEvent(new CustomEvent('seerh5_assistant_load'));
-                      // dispatch event end
-                  }),
-                  window.hideWebload && window.hideWebload());
+            Promise.resolve()
+                .then(() => {
+                    if (egret.getOption('newLogin')) {
+                        return window.ModuleManager.showModuleByID(140);
+                    } else {
+                        return window.ModuleManager.showModule('login', ['login']);
+                    }
+                })
+                .then(() => {
+                    // dispatch event begin
+                    window.dispatchEvent(new CustomEvent('seerh5_assistant_load'));
+                    // dispatch event end
+                    window.hideWebload && window.hideWebload();
+                });
         }),
         (t.prototype.onselectSeverOver = function () {}),
         (t.prototype.loadResource = function () {
@@ -344,7 +352,7 @@ var Main = (function (e) {
                     switch (t.label) {
                         case 0:
                             return (
-                                t.trys.push([0, 4, , 5]),
+                                t.trys.push([0, 4, undefined, 5]),
                                 [4, RES.loadConfig('resource/assets/ui/entry.json', 'resource/assets/ui/')]
                             );
                         case 1:
@@ -551,13 +559,14 @@ var Main = (function (e) {
                 i = t.prototype.onBlobLoaded,
                 r = t.prototype.onImageComplete,
                 o = RES.getResByUrl;
-            (RES.getResByUrl = function (e, t, n, i) {
-                void 0 === i && (i = '');
-                var r = function (e, i) {
-                    t && t.call(n, e, i);
-                };
-                return o(e, r, this, i);
-            }),
+            if (
+                ((RES.getResByUrl = function (e, t, n, i) {
+                    void 0 === i && (i = '');
+                    var r = function (e, i) {
+                        t && t.call(n, e, i);
+                    };
+                    return o(e, r, this, i);
+                }),
                 (t.prototype.onBlobLoaded = function (e) {
                     i.call(this, e);
                 }),
@@ -592,7 +601,22 @@ var Main = (function (e) {
                                 2e3
                             );
                     }
-                });
+                }),
+                GameInfo.isApp && 2 == GameInfo.platform)
+            ) {
+                t.prototype.load;
+                t.prototype.load = function (e) {
+                    var t = this.request;
+                    t ||
+                        ((t = this.request = new egret.HttpRequest()),
+                        t.addEventListener(egret.Event.COMPLETE, this.onBlobLoaded, this),
+                        t.addEventListener(egret.IOErrorEvent.IO_ERROR, this.onBlobError, this),
+                        (t.responseType = 'blob')),
+                        (this.currentURL = e),
+                        t.open(e),
+                        t.send();
+                };
+            }
         }),
         (t.prototype.overrideTextInputScroll = function () {
             egret.Capabilities.isMobile ||
@@ -603,6 +627,7 @@ var Main = (function (e) {
     );
 })(eui.UILayer);
 __reflect(Main.prototype, 'Main');
+
 var LoadingUI = (function (e) {
     function t() {
         var t = e.call(this) || this;
@@ -624,11 +649,38 @@ var LoadingUI = (function (e) {
     );
 })(egret.Sprite);
 __reflect(LoadingUI.prototype, 'LoadingUI', ['RES.PromiseTaskReporter']);
+
 var SeerVersionController = (function () {
     function e() {}
     return (
         (e.prototype.init = function () {
-            return Promise.resolve();
+            return (
+                GameInfo.isApp &&
+                    FileSystemUtil.requestFileSystem()
+                        .then(function (t) {
+                            (FileSystemUtil.fs = t),
+                                t.root.getFile(
+                                    e.cacheFileUri,
+                                    { create: !0, exclusive: !1 },
+                                    function (t) {
+                                        t.file(
+                                            function (t) {
+                                                var n = new FileReader();
+                                                (n.onloadend = function () {
+                                                    n.result && (e.urlCache = JSON.parse('' + n.result));
+                                                }),
+                                                    n.readAsText(t);
+                                            },
+                                            function () {}
+                                        ),
+                                            e.createWriter(t);
+                                    },
+                                    function () {}
+                                );
+                        })
+                        .then(function () {}),
+                Promise.resolve()
+            );
         }),
         (e.createWriter = function (t) {
             t.createWriter(function (t) {
@@ -651,31 +703,30 @@ var SeerVersionController = (function () {
         }),
         (e.getVersionUrl = function (t) {
             if (!t || -1 != t.search(/^\/|^\w+:\/\//)) return t;
-            var n = egret.getOption('channel');
-            if ('preview' == n) return GameInfo.wwwRoot + t + '?t=' + Date.now();
-            var i = t.split('/'),
-                r = i[i.length - 1],
-                o = '',
-                s = e.localVersion.files,
-                a = e.remoteVersion.files,
-                l = e.getUrlVerName(i, a);
+            if (GameInfo.isApp && 'test' == GameInfo.channel) return GameInfo.wwwRoot + t + '?t=' + Date.now();
+            var n = t.split('/'),
+                i = n[n.length - 1],
+                r = '',
+                o = e.localVersion.files,
+                s = e.remoteVersion.files,
+                a = e.getUrlVerName(n, s);
             if (GameInfo.isApp) {
-                o = e.getUrlVerName(i, s);
-                var u = r.split('.'),
-                    c = u[u.length - 1],
-                    h = r.replace('.' + c, ''),
-                    p = egret.getOption('version');
-                if ('10000' != p && o.length > 0) {
-                    if (0 == l.length)
-                        return (t = cordova.file.applicationDirectory + 'www/' + t.replace(r, h + '_' + o + '.' + c));
-                    if (h + '_' + o + '.' + c == l)
-                        return (t = cordova.file.applicationDirectory + 'www/' + t.replace(r, h + '_' + o + '.' + c));
-                    l.length > 0 && (t = t.replace(r, l));
+                r = e.getUrlVerName(n, o);
+                var l = i.split('.'),
+                    u = l[l.length - 1],
+                    c = i.replace('.' + u, ''),
+                    h = egret.getOption('version');
+                if ('10000' != h && r.length > 0) {
+                    if (0 == a.length)
+                        return (t = cordova.file.applicationDirectory + 'www/' + t.replace(i, c + '_' + r + '.' + u));
+                    if (c + '_' + r + '.' + u == a)
+                        return (t = cordova.file.applicationDirectory + 'www/' + t.replace(i, c + '_' + r + '.' + u));
+                    a.length > 0 && (t = t.replace(i, a));
                 }
             }
-            if ((l.length > 0 && (t = t.replace(r, l)), (t = GameInfo.wwwRoot + t), !IS_RELEASE)) {
-                var d = egret.getOption('ver');
-                d && (t = t + '?ver=' + d);
+            if ((a.length > 0 && (t = t.replace(i, a)), (t = GameInfo.wwwRoot + t), !IS_RELEASE)) {
+                var p = egret.getOption('ver');
+                p && (t = t + '?ver=' + p);
             }
             return t;
         }),
@@ -715,6 +766,7 @@ var SeerVersionController = (function () {
     );
 })();
 __reflect(SeerVersionController.prototype, 'SeerVersionController', ['RES.IVersionController']);
+
 var ThemeAdapter = (function () {
     function e() {}
     return (

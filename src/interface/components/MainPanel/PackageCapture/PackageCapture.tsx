@@ -1,4 +1,4 @@
-import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow, Toolbar } from '@mui/material';
+import {  Button, Table, TableBody, TableCell, TableHead, TableRow, Toolbar } from '@mui/material';
 import { wrapper } from '@sa-core/common';
 import * as React from 'react';
 
@@ -73,7 +73,7 @@ const cmdFilter: number[] = [
 //     }
 // }
 
-export function PanelPackageCapture() {
+export function PackageCapture() {
     const [status, setStatus] = React.useState<Status>('pending');
     const [capture, setCapture] = React.useState<CapturedPackage[]>([]);
 
@@ -113,7 +113,7 @@ export function PanelPackageCapture() {
     }, [status, capture]);
 
     return (
-        <Box>
+        <>
             <Toolbar>
                 <Button
                     onClick={() => {
@@ -196,6 +196,6 @@ export function PanelPackageCapture() {
                     ))}
                 </TableBody>
             </Table>
-        </Box>
+        </>
     );
 }

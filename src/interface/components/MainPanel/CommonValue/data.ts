@@ -2,6 +2,7 @@ export const idList = [
     1, //赛尔豆
     300065, //特性重组剂Ω
     300066, //通用刻印激活水晶
+    1400154, //友谊之星
     1400352, //泰坦之灵
     1707511, //功勋点数
     1721558, //界神印记
@@ -22,6 +23,9 @@ declare namespace pveEnterPanel {
 }
 
 export const openModuleList: { [id: number]: any } = {
+    1400154: async () => {
+        ModuleManager.showModule('battleFirePanel', ['battleFirePanel'], null, null, AppDoStyle.NULL);
+    },
     1707511: async () => {
         const delay = window.delay;
         await ModuleManager.showModuleByID(18);

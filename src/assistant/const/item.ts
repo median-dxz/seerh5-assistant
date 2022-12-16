@@ -30,6 +30,7 @@ const items = {
     精灵还原药剂Ω: 300075,
     全面提升药剂: 300697,
     '全面提升药剂-龙': 300810,
+    友谊之星: 1400154,
 } as const;
 export { items as SA_CONST_ITEMS };
 

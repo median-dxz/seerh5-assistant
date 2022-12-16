@@ -1,0 +1,1 @@
+export { BattleManager } from './BattleManager';

@@ -1,5 +1,5 @@
 import React from "react";
 
-export function PanelDailyRoutine() {
+export function DailyRoutine() {
     return <></>;
 }
