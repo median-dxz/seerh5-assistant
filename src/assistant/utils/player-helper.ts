@@ -48,9 +48,11 @@ export function UserSuit(): number {
 export async function ChangeSuit(suit: number): Promise<boolean> {
     if (UserSuit() !== suit) {
         try {
-            await SocketSendByQueue(CMDID.SET_TITLE, [suit]);
-            MainManager.actorInfo.curTitle = suit;
-            return true;
+            return new Promise((resolve) => {
+                MainManager.actorInfo.requestChangeClotherBySuit(suit, () => {
+                    resolve(true);
+                });
+            });
         } catch (err) {
             return false;
         }

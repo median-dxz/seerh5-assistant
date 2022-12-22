@@ -15,6 +15,7 @@ type PotionId = AttrConst<typeof ITEMS.Potion>;
  */
 export async function lowerBlood(cts: number[], healPotionId: PotionId = ITEMS.Potion.中级体力药剂): Promise<void> {
     cts = cts.slice(0, 6);
+    cts = cts.filter(PetManager.getPetInfo.bind(PetManager));
     if (!cts || cts.length === 0) {
         return;
     }

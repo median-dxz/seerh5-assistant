@@ -13,7 +13,7 @@ import {
     TableCell,
     TableHead,
     TableRow,
-    TextField,
+    TextField
 } from '@mui/material';
 import { mainColor } from '@sa-ui/style';
 import React from 'react';
@@ -129,6 +129,13 @@ export function BattleManager() {
                 }}
             >
                 清除自定义逻辑
+            </Button>
+            <Button
+                onClick={() => {
+                    BattleModule.Manager.lockingTrigger = undefined;
+                }}
+            >
+                清除locker
             </Button>
             <Divider />
             <h3>出招表</h3>

@@ -1,6 +1,7 @@
 declare class PetFightController {
     static roundTimes: number;
     static setup(): void;
+    static mvContainer: egret.DisplayObjectContainer;
 }
 
 declare class FighterModelFactory {

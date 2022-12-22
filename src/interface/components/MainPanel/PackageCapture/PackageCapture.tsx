@@ -1,4 +1,4 @@
-import {  Button, Table, TableBody, TableCell, TableHead, TableRow, Toolbar } from '@mui/material';
+import { Button, Table, TableBody, TableCell, TableHead, TableRow, Toolbar } from '@mui/material';
 import { wrapper } from '@sa-core/common';
 import * as React from 'react';
 
@@ -50,6 +50,7 @@ const cmdFilter: number[] = [
     1002, // SYSTEM_TIME
     2001, // ENTER_MAP
     2002, // LEAVE_MAP
+    2004, // MAP_OGRE_LIST
     2441, // LOAD_PERCENT
     9019, // NONO_FOLLOW_OR_HOOM
     9274, //PET_GET_LEVEL_UP_EXP
@@ -99,7 +100,7 @@ export function PackageCapture() {
             if (status !== 'capturing' || cmdFilter.includes(cmd)) return;
             capturedPkgFactory(capture, setCapture, {
                 cmd,
-                data: data.map((v) => (typeof v === 'object' ? v.dataView : v)),
+                data: data.flat().map((v) => (v instanceof egret.ByteArray ? v.dataView : v)),
                 type: 'Send',
             });
         });

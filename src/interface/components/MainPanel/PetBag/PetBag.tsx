@@ -1,5 +1,6 @@
 import {
     Button,
+    Checkbox,
     Divider,
     Menu,
     MenuItem,
@@ -10,8 +11,9 @@ import {
     TableRow,
     Typography,
 } from '@mui/material';
-import { mainColor } from '@sa-ui/style';
+import { delay } from '@sa-core/common';
 import Pet from '@sa-core/entities/pet';
+import { mainColor } from '@sa-ui/style';
 import React from 'react';
 
 const numberFormat = Intl.NumberFormat(undefined, {
@@ -35,7 +37,11 @@ export function PetBag() {
     const [menuOpen, setMenuOpen] = React.useState(false);
     const menuOption = React.useRef<MenuOption | null>(null);
     const [pets, setPets] = React.useState<Pet[]>([]);
+    const [petsSelected, setPetsSelected] = React.useState<boolean[]>([]);
     const [petsCombination, setPetsCombination] = React.useState<string[]>([]);
+
+    const [userTitle, setUserTitle] = React.useState(Utils.UserTitle());
+    const [userSuit, setUserSuit] = React.useState(Utils.UserSuit());
 
     const updateBattleFire = async () => {
         const info = await Functions.updateBattleFireInfo();
@@ -46,7 +52,10 @@ export function PetBag() {
 
     React.useEffect(() => {
         updateBattleFire();
-        PetHelper.getBagPets(Const.PET_POS.bag1).then(setPets);
+        PetHelper.getBagPets(Const.PET_POS.bag1).then((r) => {
+            setPets(r);
+            setPetsSelected(Array(r.length).fill(false));
+        });
     }, []);
 
     React.useEffect(() => {
@@ -114,7 +123,7 @@ export function PetBag() {
                         const suitId = Utils.UserAbilitySuits();
                         const suitName = suitId.map<string>(SuitXMLInfo.getName.bind(SuitXMLInfo));
                         menuOption.current = {
-                            type: 'title',
+                            type: 'suit',
                             id: suitId,
                             options: suitName,
                         };
@@ -122,9 +131,9 @@ export function PetBag() {
                         setMenuOpen(true);
                     }}
                 >
-                    {SuitXMLInfo.getName(Utils.UserSuit())}
+                    {SuitXMLInfo.getName(userSuit)}
                 </Button>
-                效果: {ItemSeXMLInfo.getSuitEff(Utils.UserSuit())}
+                效果: {ItemSeXMLInfo.getSuitEff(userSuit)}
             </Typography>
 
             <Typography display="flex" alignItems="baseline">
@@ -142,9 +151,9 @@ export function PetBag() {
                         setMenuOpen(true);
                     }}
                 >
-                    {AchieveXMLInfo.getTitle(Utils.UserTitle())}
+                    {AchieveXMLInfo.getTitle(userTitle)}
                 </Button>
-                效果: {AchieveXMLInfo.getTitleEffDesc(Utils.UserTitle())}
+                效果: {AchieveXMLInfo.getTitleEffDesc(userTitle)}
             </Typography>
             <Menu
                 id="suit-select-menu"
@@ -164,17 +173,18 @@ export function PetBag() {
                     },
                 }}
             >
-                {menuOption.current!.options.map((option, index) => (
+                {menuOption.current?.options.map((option, index) => (
                     <MenuItem
                         key={option}
                         onClick={(e) => {
                             const info = menuOption.current!;
                             if (info.type === 'suit') {
                                 Utils.ChangeSuit(info.id[index]);
+                                setUserSuit(info.id[index]);
                             } else if (info.type === 'title') {
                                 Utils.ChangeTitle(info.id[index]);
+                                setUserTitle(info.id[index]);
                             } else if (info.type === 'pets') {
-                               
                             }
                             setAnchorEl(null);
                             setMenuOpen(false);
@@ -187,14 +197,38 @@ export function PetBag() {
 
             <Divider />
             <h3>精灵背包</h3>
-            <Button>压血</Button>
-            <Button>治疗</Button>
+            <Button
+                onClick={() => {
+                    const lowerBloodPets = pets.filter((pet, index) => petsSelected[index]).map((r) => r.catchTime);
+                    Functions.lowerBlood(lowerBloodPets);
+                }}
+            >
+                压血
+            </Button>
+            <Button
+                onClick={() => {
+                    const curePets = pets.filter((pet, index) => petsSelected[index]).map((r) => r.catchTime);
+                    for (let curePet of curePets) {
+                        PetHelper.cureOnePet(curePet);
+                    }
+                }}
+            >
+                治疗
+            </Button>
+            <Button
+                onClick={() => {
+                    console.log(pets.map((pet) => ({ name: pet.name, catchTime: pet.catchTime })));
+                }}
+            >
+                dump
+            </Button>
             <Button>更换方案</Button>
             <Button>保存方案</Button>
 
             <Table size="small">
                 <TableHead>
                     <TableRow>
+                        <TableCell align="center"></TableCell>
                         <TableCell align="center">id</TableCell>
                         <TableCell align="center"></TableCell>
                         <TableCell align="center">名称</TableCell>
@@ -205,6 +239,16 @@ export function PetBag() {
                 <TableBody>
                     {pets.map((row, index) => (
                         <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                            <TableCell align="center">
+                                <Checkbox
+                                    color="primary"
+                                    checked={petsSelected[index]}
+                                    onChange={(event) => {
+                                        petsSelected.splice(index, 1, event.target.checked);
+                                        setPetsSelected([...petsSelected]);
+                                    }}
+                                />
+                            </TableCell>
                             <TableCell component="th" scope="row" align="center">
                                 {row.id}
                             </TableCell>
@@ -214,7 +258,27 @@ export function PetBag() {
                                 {row.hp} / {row.maxHp}
                             </TableCell>
                             <TableCell align="center">
-                                <Button>打开道具使用页面</Button>
+                                <Button
+                                    onClick={async () => {
+                                        await ModuleManager.showModule('petBag');
+                                        const petBagModule = ModuleManager.currModule as petBag.PetBag;
+                                        const petBagPanel = petBagModule.currentPanel as petBag.MainPanel;
+                                        await delay(300);
+                                        petBagPanel.onSelectPet({ data: PetManager.getPetInfo(row.catchTime) });
+                                        await delay(300);
+                                        petBagPanel.showDevelopBaseView();
+                                        petBagPanel.showDevelopView(9);
+                                    }}
+                                >
+                                    道具
+                                </Button>
+                                <Button
+                                    onClick={() => {
+                                        PetHelper.cureOnePet(row.catchTime);
+                                    }}
+                                >
+                                    治疗
+                                </Button>
                             </TableCell>
                         </TableRow>
                     ))}

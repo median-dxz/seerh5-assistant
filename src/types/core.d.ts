@@ -129,6 +129,7 @@ declare class MainManager {
         clothIDs: number[];
         curTitle: number;
         readonly logintimeThisTime: number;
+        requestChangeClotherBySuit(suitId: number, callback: CallBack): void;
     };
 }
 
@@ -154,6 +155,7 @@ declare class ModuleManager {
 
 declare class FightManager {
     static isWin: boolean | undefined;
+    static fightAnimateMode: number;
     static fightNoMapBoss(id: number, r?: boolean, o?: boolean, callback?: CallBack): void;
     static fightNoMapBoss(arg0: '', id: number, r?: boolean, o?: boolean, callback?: CallBack): void;
 }
@@ -243,6 +245,7 @@ declare class SkillXMLInfo {
     };
     static getName(id: number): string;
     static getTypeID(id: number): number;
+    static getCategory(id: number): number;
     static getCategoryName(id: number): string;
     static getHideSkillId(petId: number): number;
     static getSkillObj(id: number): SAType.MoveObj;

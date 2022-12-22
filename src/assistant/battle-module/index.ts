@@ -116,7 +116,7 @@ const BattleModuleManager: {
 
             if (info.isDiedSwitch) {
                 for (let petNames of this.dsl) {
-                    const matcher = new BaseStrategy.DiedSwitchLinked(petNames);
+                    const matcher = new BaseStrategy.DiedSwitchLink(petNames);
                     const r = matcher.match(pets, info.self!.catchtime);
                     if (r !== -1) {
                         BattleOperator.switchPet(r);
@@ -136,8 +136,9 @@ const BattleModuleManager: {
             }
 
             success = false;
+
             for (let skillNames of this.snm) {
-                const matcher = new BaseStrategy.NameMatched(skillNames);
+                const matcher = new BaseStrategy.SkillNameMatch(skillNames);
                 const r = matcher.match(skills);
                 if (r) {
                     BattleOperator.useSkill(r);
@@ -158,7 +159,11 @@ const BattleModuleManager: {
     runOnce(trigger: AutoBattle.Trigger) {
         if (this.lockingTrigger == undefined) {
             this.running = true;
-            trigger();
+            try {
+                trigger();
+            } catch (err) {
+                return Promise.reject(err);
+            }
             return new Promise((resolve) => {
                 this.lockingTrigger = resolve;
             });
@@ -168,6 +173,29 @@ const BattleModuleManager: {
     },
 };
 
+const generateStrategy =
+    (_snm: string[], _dsl: string[]): AutoBattle.MoveModule =>
+    async (round, skills, pets) => {
+        const snm = new BaseStrategy.SkillNameMatch(_snm);
+        const dsl = new BaseStrategy.DiedSwitchLink(_dsl);
+        if (round.isDiedSwitch) {
+            const r = dsl.match(pets, round.self!.catchtime);
+            if (r !== -1) {
+                BattleOperator.switchPet(r);
+            } else {
+                BattleOperator.auto();
+            }
+            await delay(600);
+            skills = BattleInfoProvider.getCurSkills()!;
+        }
+        const r = snm.match(skills);
+        if (r) {
+            BattleOperator.useSkill(r);
+        } else {
+            BattleOperator.auto();
+        }
+    };
+
 SAEventTarget.addEventListener(EVENTS.BattlePanel.panelReady, handleBattleModule);
 SAEventTarget.addEventListener(EVENTS.BattlePanel.roundEnd, handleBattleModule);
 SAEventTarget.addEventListener(EVENTS.BattlePanel.completed, handleBattleEnd);
@@ -176,3 +204,5 @@ import * as BaseStrategy from './strategy';
 
 export { BaseStrategy as BaseStrategy, AutoBattle };
 export { BattleInfoProvider as InfoProvider, BattleOperator as Operator, BattleModuleManager as Manager };
+export { generateStrategy };
+

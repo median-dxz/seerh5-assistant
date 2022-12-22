@@ -85,8 +85,6 @@ declare const AppDoStyle: AppDoStyle;
 declare var EventManager: egret.EventDispatcher;
 
 // sa-loader
-declare var hideSerialID: Function | undefined;
-declare var LoginService: any;
 declare var OnlineManager: any;
 
 // init/event
