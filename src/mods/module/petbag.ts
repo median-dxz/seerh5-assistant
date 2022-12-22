@@ -1,8 +1,8 @@
-import { Const, Utils } from '../../assistant';
-import Pet from '../../assistant/entities/pet';
-import { ReflectObjBase } from '../../assistant/mod-type';
+import Pet from '@sa-core/entities/pet';
+import { Const, Utils } from '@sa-core/index';
+import { ReflectObjBase } from '@sa-core/mod-type';
 
-import { defaultStyle, SaModuleLogger } from '../../assistant/logger';
+import { defaultStyle, SaModuleLogger } from '@sa-core/logger';
 const log = SaModuleLogger('LocalCloth', defaultStyle.mod);
 
 const { EVENTS: SAEvents } = Const;
@@ -114,7 +114,7 @@ class LocalCloth extends ReflectObjBase implements ModClass {
                             },
                             null
                         );
-                        
+
                         let protoFunc;
                         protoFunc = petBag.SkinView.prototype.onChooseSkin;
                         petBag.SkinView.prototype.onChooseSkin = wrapper(protoFunc, undefined, function (this: any) {
@@ -151,6 +151,15 @@ class LocalCloth extends ReflectObjBase implements ModClass {
                             //     `皮肤ID: ${t.id}\n` +
                             //     `皮肤绑定ID: ${PetSkinXMLInfo.getSkinPetId(t.id, t.monId)}`;
                         });
+                        // SocketConnection.addCmdListener(SA.Const.CMDID.PET_RELEASE, () => {
+                        //     (ModuleManager.currModule as any).currentPanel.initBagView();
+                        // });
+                        // SocketConnection.addCmdListener(SA.Const.CMDID.PET_ONE_CURE, () => {
+                        //     (ModuleManager.currModule as any).currentPanel.initBagView();
+                        // });
+                        // SocketConnection.addCmdListener(SA.Const.CMDID.PET_CURE, () => {
+                        //     (ModuleManager.currModule as any).currentPanel.initBagView();
+                        // });
                     },
                     { once: true }
                 );

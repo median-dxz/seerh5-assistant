@@ -1,6 +1,7 @@
 import { defaultStyle, SaModuleLogger } from '../logger';
 const log = SaModuleLogger('SAHelper', defaultStyle.core);
 
+// take over the alarm dialog
 Alarm.show = function (text: string, callback: () => void) {
     log(`接管确认信息: ${text}`);
     BubblerManager.getInstance().showText(text);
@@ -22,6 +23,55 @@ egret.lifecycle.onPause = () => {
 egret.lifecycle.onResume = () => {
     clearInterval(timer);
     timer = undefined;
+};
+
+// cancel alert before use item for pet
+ItemUseManager.prototype.useItem = function (t, e) {
+    if (!t) return void BubblerManager.getInstance().showText('使用物品前，请先选择一个精灵');
+    e = ~~e;
+    if (!(0 >= e)) {
+        const r = ItemXMLInfo.getName(e);
+        this.$usePetItem({ petInfo: t, itemId: ~~e, itemName: r }, e);
+    }
+};
+
+// parallel the skill animation in static animation mode
+DBSkillAnimator.prototype.play = function (_, callback, thisObj) {
+    const { skillMC } = DBSkillAnimator;
+    PetFightController.mvContainer.addChild(skillMC);
+    const o = SkillXMLInfo.getCategory(~~this.skillId);
+    switch (o) {
+        case 1:
+            skillMC.animation.play('wugong', -1);
+            skillMC.scaleX > 0 ? (skillMC.x = skillMC.x + 580) : (skillMC.x = skillMC.x - 560);
+            break;
+        case 2:
+            skillMC.animation.play('tegong', -1);
+            break;
+        default:
+            skillMC.animation.play('shuxing', -1), (skillMC.y = skillMC.y + 70);
+            break;
+    }
+    if (FightManager.fightAnimateMode === 1) {
+        callback.call(thisObj);
+    } else {
+        const cb = () => {
+            callback.call(thisObj);
+            skillMC.removeEventListener(dragonBones.EventObject.COMPLETE, cb, this);
+        };
+        skillMC.addEventListener(dragonBones.EventObject.COMPLETE, cb, this);
+    }
+};
+
+CardPetAnimator.prototype.playAnimate = function (t, e, i, thisObj) {
+    thisObj = thisObj ?? this;
+    if (e)
+        if (FightManager.fightAnimateMode === 1) e.call(thisObj);
+        else egret.setTimeout(e.bind(thisObj), this, 1e3);
+    if (this)
+        if (FightManager.fightAnimateMode === 1) i.call(thisObj);
+        else egret.setTimeout(i.bind(thisObj), this, 2e3);
+    this.animate && this.animate.parent && this.animate.parent.addChild(this.animate);
 };
 
 export { };

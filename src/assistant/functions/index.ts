@@ -28,7 +28,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = ITEMS.P
             if (PetManager.isBagFull) {
                 let replacePet = curPets.find((p) => !cts.includes(p.catchTime))!;
                 log(`压血 -> 将 ${replacePet.name} 放入仓库`);
-                await PetHelper.setPetLocation(replacePet.catchTime, PET_POS.storage);
+                await PetHelper.popPetFromBag(replacePet.catchTime);
                 curPets = await PetHelper.getBagPets(PET_POS.bag1);
             }
             await PetHelper.setPetLocation(ct, PET_POS.bag1);
@@ -101,7 +101,7 @@ export function usePotionForPet(catchTime: number, potionId: number) {
 export async function switchBag(pets: Pick<SAType.PetLike, 'catchTime' | 'name'>[]) {
     // 清空现有背包
     for (let v of await PetHelper.getBagPets(PET_POS.bag1)) {
-        await PetHelper.setPetLocation(v.catchTime, PET_POS.storage);
+        await PetHelper.popPetFromBag(v.catchTime);
         log(`SwitchBag -> 将 ${v.name} 放入仓库`);
     }
     for (let v of pets) {

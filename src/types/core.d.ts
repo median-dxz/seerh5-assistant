@@ -25,9 +25,24 @@ declare class BasicMultPanelModule extends BaseModule {
     currentPanel: BasicPanel;
 }
 
+declare class SkillMC extends egret.DisplayObjectContainer {
+    animation: any;
+}
+
 declare class AchieveTitleInfo {
     constructor(data: egret.ByteArray);
     get titleArr(): number[];
+}
+
+declare class DBSkillAnimator {
+    static skillMC: SkillMC;
+    skillId: number;
+    play(_: any, callback: CallBack, thisObj: any): void;
+}
+
+declare class CardPetAnimator {
+    animate: any;
+    playAnimate(t: any, e: CallBack, i: CallBack, thisObj: any): void;
 }
 
 declare class CountermarkInfo {
@@ -170,6 +185,11 @@ declare class ItemManager {
     /** @description 获取精灵背包内物品 */
     static getPetItemIDs(): number[];
     static GetMySuitIds(): number[];
+}
+
+declare class ItemUseManager {
+    useItem(t: SAType.PetObj, e: number): void;
+    $usePetItem(obj: { petInfo: SAType.PetObj; itemId: number; itemName: string }, e: number): void;
 }
 
 declare class PetManager {
