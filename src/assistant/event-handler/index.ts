@@ -6,39 +6,107 @@ import { defaultStyle, SaModuleLogger } from '../logger';
 const GlobalEventManager = window.SAEventTarget;
 const log = SaModuleLogger('SAEventHandler', defaultStyle.core);
 
-const ModuleLoadedListener = {
-    list: new Map(),
-    loadingModules: new Set(),
-    subscribe(moduleName: string, callback: CallBack) {
-        if (!this.list.has(moduleName)) {
-            this.list.set(moduleName, []);
+export interface ModuleSubscriber<T extends BasicMultPanelModule> {
+    load?(): void;
+    show?(ctx: T): void;
+    destroy?(ctx: T): void;
+}
+
+type ModuleState = 'load' | 'show' | 'destroy';
+
+class ModuleSubject<T extends BasicMultPanelModule> {
+    state: ModuleState;
+    module?: T;
+    subscribers: Set<ModuleSubscriber<T>> = new Set();
+    constructor() {
+        this.state = 'destroy';
+    }
+    notify(hook: ModuleState) {
+        const moduleObj = this.module;
+
+        if (hook === 'load') {
+            this.subscribers.forEach((subscriber) => subscriber.load?.());
+        } else if (moduleObj) {
+            this.subscribers.forEach((subscriber) => subscriber[hook]?.(moduleObj));
         }
-        this.list.get(moduleName).push(callback);
+    }
+    attach(subscriber: ModuleSubscriber<T>) {
+        if (!this.subscribers.has(subscriber)) {
+            this.subscribers.add(subscriber);
+        }
+    }
+    detach(subscriber: ModuleSubscriber<T>) {
+        if (this.subscribers.has(subscriber)) {
+            this.subscribers.delete(subscriber);
+        }
+    }
+}
+
+const SeerModuleStatePublisher = {
+    subjects: new Map<string, ModuleSubject<BasicMultPanelModule>>(),
+    attach<T extends BasicMultPanelModule>(subscriber: ModuleSubscriber<T>, moduleName: string) {
+        const exist = this.subjects.has(moduleName);
+        if (!exist) {
+            this.subjects.set(moduleName, new ModuleSubject<T>());
+        }
+        const subject = this.subjects.get(moduleName)!;
+        subject.attach(subscriber);
     },
-    notice(moduleName: string) {
-        if (this.list.has(moduleName)) {
-            for (let cb of this.list.get(moduleName)) {
-                cb();
-            }
-            this.list.delete(moduleName);
+
+    detach<T extends BasicMultPanelModule>(subscriber: ModuleSubscriber<T>, moduleName: string) {
+        if (this.subjects.has(moduleName)) {
+            const subject = this.subjects.get(moduleName)!;
+            subject.detach(subscriber);
+        }
+    },
+
+    notifyAll<T extends BasicMultPanelModule>(name: string, hook: ModuleState) {
+        if (!this.subjects.has(name)) {
+            this.subjects.set(name, new ModuleSubject<T>());
+        }
+        const subject = this.subjects.get(name)!;
+        subject.state = hook;
+
+        if (hook === 'show') {
+            subject.module = SeerModuleHelper.currentModule<T>();
+        }
+
+        subject.notify(hook);
+
+        if (hook === 'destroy') {
+            subject.module = undefined;
         }
     },
 };
 
-GlobalEventManager.addEventListener(hooks.Module.loaded, async (e) => {
+const SeerModuleHelper = {
+    currentModule<T extends BasicMultPanelModule>() {
+        return ModuleManager.currModule as T;
+    },
+    isConcreteModule<T extends BasicMultPanelModule>(name: string, module: BasicMultPanelModule): module is T {
+        return module.name === name;
+    },
+};
+
+GlobalEventManager.addEventListener(hooks.Module.loadScript, (e) => {
     if (e instanceof CustomEvent) {
-        log(`检测到新模块加载: ${e.detail.moduleName}`);
-        ModuleLoadedListener.loadingModules.add(e.detail.moduleName);
+        log(`检测到新模块加载: ${e.detail}`);
+        const name = e.detail;
+        SeerModuleStatePublisher.notifyAll(name, 'load');
     }
 });
 
-GlobalEventManager.addEventListener(hooks.Module.loaded, (e) => {
+GlobalEventManager.addEventListener(hooks.Module.construct, (e) => {
     if (e instanceof CustomEvent) {
-        const name = e.detail.moduleName;
-        if (ModuleLoadedListener.loadingModules.has(name)) {
-            ModuleLoadedListener.notice(name);
-            ModuleLoadedListener.loadingModules.delete(name);
-        }
+        const name = e.detail;
+        SeerModuleStatePublisher.notifyAll(name, 'show');
+    }
+});
+
+GlobalEventManager.addEventListener(hooks.Module.destroy, (e) => {
+    if (e instanceof CustomEvent) {
+        const name = e.detail;
+        SeerModuleStatePublisher.notifyAll(name, 'destroy');
     }
 });
 
@@ -83,5 +151,5 @@ GlobalEventManager.addEventListener(hooks.BattlePanel.completed, (e: Event) => {
     }
 });
 
-export { ModuleLoadedListener };
+export { SeerModuleStatePublisher, SeerModuleHelper };
 

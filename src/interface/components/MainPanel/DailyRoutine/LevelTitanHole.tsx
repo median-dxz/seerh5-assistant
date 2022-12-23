@@ -5,7 +5,7 @@ import {
     DialogContentText,
     DialogTitle,
     LinearProgress,
-    Typography
+    Typography,
 } from '@mui/material';
 import { delay } from '@sa-core/common';
 import { BattleModule, Functions, PetHelper, Utils } from '@sa-core/index';
@@ -48,14 +48,7 @@ export function LevelTitanHole(props: Props) {
     const [running, setRunning] = React.useState(false);
     const [hint, setHint] = React.useState<JSX.Element | string>('');
     const [step, setStep] = React.useState(0);
-    const levelData = React.useRef<levelData>({
-        stimulation: false,
-        levelOpen: false,
-        levelOpenCount: 0,
-        step: 0,
-        step2Count: 0,
-        step3Count: 0,
-    });
+    const levelData = React.useRef<levelData>({} as levelData);
 
     const effect = async () => {
         switch (step) {
@@ -80,7 +73,7 @@ export function LevelTitanHole(props: Props) {
                         setStep(levelData.current.step);
                     }
                 } else {
-                    setStep(5);
+                    setStep(6);
                 }
 
                 break;
@@ -168,7 +161,7 @@ export function LevelTitanHole(props: Props) {
                         break;
                     }
 
-                    await delay(50);
+                    await delay((Math.random() * 100) + 200);
                     await updateLevelData(levelData.current);
                 }
             case 4:
@@ -199,7 +192,7 @@ export function LevelTitanHole(props: Props) {
                 } catch (err) {
                     setStep(-1);
                 }
-                setStep(6);
+                setStep(0);
                 break;
             case -1:
                 setHint('领取奖励出错');

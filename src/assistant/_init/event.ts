@@ -6,20 +6,26 @@ const EmitEvent = (type: string, detail = {}) => {
     GlobalEventManager.dispatchEvent(new CustomEvent(type, { detail }));
 };
 
-ModuleManager.beginShow = wrapper(ModuleManager.beginShow, (moduleName: string) => {
-    if (!ModuleManager.appJs[moduleName]) {
-        EmitEvent(hook.Module.loaded, { moduleName });
-    }
+// (moduleName) => {
+//     if (ModuleManager.appJs[moduleName] === false) {
+//         EmitEvent(hook.Module.loadScript, moduleName);
+//     }
+// },
+
+ModuleManager.beginShow = wrapper(ModuleManager.beginShow, undefined, (moduleName) => {
+    EmitEvent(hook.Module.construct, moduleName);
 });
 
-ModuleManager._openModelCompete = wrapper(ModuleManager._openModelCompete, undefined, function (this: ModuleManager) {
-    if (ModuleManager.currModule instanceof BasicMultPanelModule) {
-        const moduleName = ModuleManager.currModule.moduleName;
-        EmitEvent(hook.Module.show, { moduleName });
-    } else {
-        EmitEvent(hook.Module.show, { moduleName: 'unknown' });
+ModuleManager.removeModuleInstance = function (module) {
+    const key = Object.keys(this._modules).find((key) => this._modules[key] === module);
+    if (key) {
+        // console.log(module);
+        EmitEvent(hook.Module.destroy, module.moduleName);
+        const config = module.getModuleConfig();
+        this._addModuleToFreeRes(module.moduleName, module.resList, module.resEffectList, config);
+        delete this._modules[key];
     }
-});
+};
 
 AwardItemDialog.prototype.startEvent = wrapper(
     AwardItemDialog.prototype.startEvent,
@@ -72,4 +78,5 @@ SocketConnection.addCmdListener(CMDID.NOTE_USE_SKILL, (e: SocketEvent) => {
     EmitEvent(hook.BattlePanel.onRoundData, { info: [info.firstAttackInfo, info.secondAttackInfo] });
 });
 
-export {};
+export { };
+

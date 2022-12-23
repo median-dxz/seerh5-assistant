@@ -40,14 +40,7 @@ export function LevelXTeamRoom(props: Props) {
     const [running, setRunning] = React.useState(false);
     const [hint, setHint] = React.useState<string | JSX.Element>('');
     const [step, setStep] = React.useState(0);
-    const levelData = React.useRef<levelData>({
-        dailyChallengeCount: 0,
-        dailyMinRound: 0,
-        dailyRewardReceived: false,
-        open: false,
-        weeklyRewardReceived: false,
-        weeklyCompletedCount: 0,
-    });
+    const levelData = React.useRef<levelData>({} as levelData);
 
     const effect = async () => {
         switch (step) {
@@ -57,7 +50,7 @@ export function LevelXTeamRoom(props: Props) {
                 await updateLevelData(levelData.current);
                 if (!levelData.current.dailyRewardReceived) {
                     if (
-                        (levelData.current.dailyMinRound > 0 &&
+                        (levelData.current.dailyMinRound === 0 &&
                             levelData.current.dailyChallengeCount < maxDailyChallengeTimes) ||
                         levelData.current.open
                     ) {
@@ -103,7 +96,7 @@ export function LevelXTeamRoom(props: Props) {
                 }
 
                 await delay(500);
-                setStep(0);
+                setStep(3);
                 break;
             case 3: //try get weekly reward
                 setHint('正在查询每周奖励领取状态');

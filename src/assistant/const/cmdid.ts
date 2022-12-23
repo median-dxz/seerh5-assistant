@@ -14,6 +14,7 @@ const cmdId = {
     NOTE_USE_SKILL: CommandID.NOTE_USE_SKILL,
 
     PET_CURE: CommandID.PET_CURE,
+    PET_DEFAULT: CommandID.PET_DEFAULT,
     PET_ONE_CURE: CommandID.PET_ONE_CURE,
     PET_RELEASE: CommandID.PET_RELEASE,
 

@@ -44,12 +44,7 @@ export function LevelExpTraining(props: Props) {
     const [running, setRunning] = React.useState(false);
     const [hint, setHint] = React.useState<JSX.Element | string>('');
     const [step, setStep] = React.useState(0);
-    const levelData = React.useRef<levelData>({
-        stimulation: false,
-        rewardReceived: false,
-        challengeCount: 0,
-        layerCount: 0,
-    });
+    const levelData = React.useRef<levelData>({} as levelData);
 
     const effect = async () => {
         switch (step) {

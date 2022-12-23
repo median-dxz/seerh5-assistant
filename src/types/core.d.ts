@@ -22,7 +22,10 @@ declare class BasicMultPanelModule extends BaseModule {
     moduleName: string;
     panelMap: { [panel: string]: BasicPanel };
     service: BasicModuleService;
-    currentPanel: BasicPanel;
+    currentPanel?: BasicPanel;
+    getModuleConfig(): unknown;
+    resList: unknown[];
+    resEffectList: unknown[];
 }
 
 declare class SkillMC extends egret.DisplayObjectContainer {
@@ -151,6 +154,7 @@ declare class MainManager {
 declare class ModuleManager {
     static beginShow(moduleName: string): void;
     static _openModelCompete(): void;
+    static _addModuleToFreeRes(moduleName: string, resList: unknown[], resEffectList: unknown[], config: unknown): void;
     static loadScript(scriptName: string): Promise<void>;
     static hasmodule(moduleName: string): boolean;
     static showModule(
@@ -162,8 +166,12 @@ declare class ModuleManager {
         style?: AppDoStyle[keyof AppDoStyle]
     ): Promise<void>;
     static showModuleByID(moduleId: number): Promise<void>;
+    static removeModuleInstance(module: BasicMultPanelModule): void;
     static appJs: {
         [module: string]: boolean;
+    };
+    static _modules: {
+        [module: string]: BasicMultPanelModule;
     };
     static currModule: BaseModule;
 }

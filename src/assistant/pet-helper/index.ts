@@ -6,7 +6,7 @@ import { SocketReceivedPromise, SocketSendByQueue } from '../utils';
 type PosType = AttrConst<typeof PosType>;
 
 /**
- * @description 更新仓库精灵列表
+ * @description 更新精灵数据
  */
 export const updateStorageInfo = async () => {
     return new Promise<void>((resolve, reject) => {

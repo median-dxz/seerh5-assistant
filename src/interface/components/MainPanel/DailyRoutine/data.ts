@@ -85,8 +85,15 @@ const data: LevelPetsData = {
                 name: '蒂朵',
                 catchTime: 1656056275,
             },
+            {
+                name: '圣灵谱尼',
+                catchTime: 1656092908,
+            },
         ],
-        strategy: generateStrategy(['王·龙子盛威决', '竭血残蝶', '时空牵绊'], ['幻影蝶', '蒂朵']),
+        strategy: generateStrategy(
+            ['王·龙子盛威决', '竭血残蝶', '时空牵绊', '神灵救世光'],
+            ['幻影蝶', '圣灵谱尼', '蒂朵']
+        ),
     },
     LevelTitanHole: {
         pets: [
