@@ -1,4 +1,5 @@
-import { Button, Dialog, LinearProgress, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { Button, Dialog, DialogActions, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { BattleModule } from '@sa-core/index';
 import { mainColor } from '@sa-ui/style';
 import React from 'react';
 import { LevelCourageTower } from './LevelCourageTower';
@@ -12,44 +13,44 @@ interface Level {
     module: JSX.Element;
 }
 
-const rows: Array<Level> = [
-    {
-        name: '经验训练场',
-        module: <></>,
-    },
-    {
-        name: '学习力训练场',
-        module: <></>,
-    },
-    {
-        name: '勇者之塔',
-        module: <></>,
-    },
-    {
-        name: '泰坦矿洞',
-        module: <></>,
-    },
-    // { name: '精灵王试炼'
-    {
-        name: 'x战队密室',
-        module: <></>,
-    },
-    // { name: '作战实验室'
-    // { name: '六界神王殿'
-];
-
 export function DailyRoutine() {
     const [config, setConfig] = React.useState<Array<any>>([]);
     const [open, setOpen] = React.useState(false);
+    const [running, setRunning] = React.useState(false);
     const [taskModule, setTaskModule] = React.useState(<></>);
-    const commonCloseHandler = (running: boolean) => {
+    const closeHandler = () => {
         if (running) {
-            SA.BattleModule.Manager.strategy.custom = undefined;
-            SA.BattleModule.Manager.lockingTrigger = undefined;
+            BattleModule.Manager.strategy.custom = undefined;
+            BattleModule.Manager.lockingTrigger = undefined;
         }
         setOpen(false);
     };
-    // React.useEffect(() => {}, []);
+    const rows: Array<Level> = [
+        {
+            name: '经验训练场',
+            module: <LevelExpTraining setRunning={setRunning} running={running} />,
+        },
+        {
+            name: '学习力训练场',
+            module: <LevelStudyTraining setRunning={setRunning} running={running} />,
+        },
+        {
+            name: '勇者之塔',
+            module: <LevelCourageTower setRunning={setRunning} running={running} />,
+        },
+        {
+            name: '泰坦矿洞',
+            module: <LevelTitanHole setRunning={setRunning} running={running} />,
+        },
+        // { name: '精灵王试炼'
+        {
+            name: 'x战队密室',
+            module: <LevelXTeamRoom setRunning={setRunning} running={running} />,
+        },
+        // { name: '作战实验室'
+        // { name: '六界神王殿'
+    ];
+
     return (
         <>
             <Table aria-label="daily routine table">
@@ -67,47 +68,19 @@ export function DailyRoutine() {
                             <TableCell component="th" scope="row" align="center">
                                 {row.name}
                             </TableCell>
-                            <TableCell align="center">
-                                {config[index]?.completed} / {config[index]?.total}
-                                <LinearProgress
-                                    color="inherit"
-                                    variant="determinate"
-                                    value={((config[index]?.completed ?? 0) / (config[index]?.total ?? 1)) * 100}
-                                />
-                            </TableCell>
                             <TableCell align="center"></TableCell>
                             <TableCell align="center">
-                                <Button onClick={async () => {}}>启动</Button>
-                                <Button onClick={() => {}} disabled={false}>
-                                    扫荡
-                                </Button>
+                                <Button disabled={false}>扫荡</Button>
                                 <Button
                                     onClick={() => {
-                                        switch (row.name) {
-                                            case 'x战队密室':
-                                                setTaskModule(<LevelXTeamRoom closeHandler={commonCloseHandler} />);
-                                                break;
-                                            case '经验训练场':
-                                                setTaskModule(<LevelExpTraining closeHandler={commonCloseHandler} />);
-                                                break;
-                                            case '学习力训练场':
-                                                setTaskModule(<LevelStudyTraining closeHandler={commonCloseHandler} />);
-                                                break;
-                                            case '勇者之塔':
-                                                setTaskModule(<LevelCourageTower closeHandler={commonCloseHandler} />);
-                                                break;
-                                            case '泰坦矿洞':
-                                                setTaskModule(<LevelTitanHole closeHandler={commonCloseHandler} />);
-                                                break;
-                                            default:
-                                                break;
-                                        }
+                                        setTaskModule(row.module);
                                         setOpen(true);
                                     }}
                                 >
                                     启动
                                 </Button>
                             </TableCell>
+                            <TableCell align="center"></TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -123,6 +96,10 @@ export function DailyRoutine() {
                 }}
             >
                 {taskModule}
+                <DialogActions>
+                    {/* {actions} */}
+                    <Button onClick={closeHandler}>{running ? '终止' : '退出'}</Button>
+                </DialogActions>
             </Dialog>
         </>
     );

@@ -1,14 +1,10 @@
-import { Button, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { delay } from '@sa-core/common';
 import { BattleModule, Functions, PetHelper, Utils } from '@sa-core/index';
 import React from 'react';
+import { LevelBase, LevelExtendsProps } from './base';
 import dataProvider from './data';
 
-interface Props {
-    closeHandler: (running: boolean) => void;
-}
-
-interface levelData {
+interface LevelData {
     open: boolean;
     dailyChallengeCount: number;
     dailyMinRound: number;
@@ -21,7 +17,8 @@ const RoutineModuleName = 'X战队密室';
 const customData = dataProvider['LevelXTeamRoom'];
 const maxDailyChallengeTimes = 3;
 
-const updateLevelData = async (data: levelData) => {
+const updateLevelData = async () => {
+    const data = {} as LevelData;
     const bits = await Utils.GetBitSet(1000585, 2000036);
     const values = await Utils.GetMultiValue(1197, 12769, 12774, 20133);
 
@@ -36,18 +33,18 @@ const updateLevelData = async (data: levelData) => {
     return data;
 };
 
-export function LevelXTeamRoom(props: Props) {
-    const [running, setRunning] = React.useState(false);
+export function LevelXTeamRoom(props: LevelExtendsProps) {
+    const { running, setRunning } = props;
     const [hint, setHint] = React.useState<string | JSX.Element>('');
     const [step, setStep] = React.useState(0);
-    const levelData = React.useRef<levelData>({} as levelData);
+    const levelData = React.useRef({} as LevelData);
 
     const effect = async () => {
         switch (step) {
             case 0: //init
                 setRunning(true);
                 setHint('正在查询关卡状态');
-                await updateLevelData(levelData.current);
+                levelData.current = await updateLevelData();
                 if (!levelData.current.dailyRewardReceived) {
                     if (
                         (levelData.current.dailyMinRound === 0 &&
@@ -116,21 +113,5 @@ export function LevelXTeamRoom(props: Props) {
     React.useEffect(() => {
         effect();
     }, [step]);
-    return (
-        <>
-            <DialogTitle>{RoutineModuleName}</DialogTitle>
-            <DialogContent>
-                <DialogContentText component={'span'}>{hint}</DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                <Button
-                    onClick={() => {
-                        props.closeHandler(running);
-                    }}
-                >
-                    {running ? '终止' : '退出'}
-                </Button>
-            </DialogActions>
-        </>
-    );
+    return <LevelBase title={RoutineModuleName} hint={hint}></LevelBase>;
 }

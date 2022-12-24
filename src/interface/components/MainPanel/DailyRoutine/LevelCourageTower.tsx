@@ -1,22 +1,11 @@
-import {
-    Button,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    LinearProgress,
-    Typography
-} from '@mui/material';
+import { Typography } from '@mui/material';
 import { delay } from '@sa-core/common';
 import { BattleModule, Functions, PetHelper, Utils } from '@sa-core/index';
 import React from 'react';
+import { LevelBase, LevelExtendsProps, PercentLinearProgress } from './base';
 import dataProvider from './data';
 
-interface Props {
-    closeHandler: (running: boolean) => void;
-}
-
-interface levelData {
+interface LevelData {
     stimulation: boolean;
     rewardReceived: boolean;
     challengeCount: number;
@@ -28,7 +17,8 @@ const RoutineModuleName = '勇者之塔';
 const customData = dataProvider['LevelCourageTower'];
 const maxDailyChallengeTimes = 5;
 
-const updateLevelData = async (data: levelData) => {
+const updateLevelData = async () => {
+    const data = {} as LevelData;
     const bits = await Utils.GetBitSet(636, 1000577);
     const values = await Utils.GetMultiValue(18709, 18710);
 
@@ -42,18 +32,18 @@ const updateLevelData = async (data: levelData) => {
     return data;
 };
 
-export function LevelCourageTower(props: Props) {
-    const [running, setRunning] = React.useState(false);
+export function LevelCourageTower(props: LevelExtendsProps) {
+    const { setRunning } = props;
     const [hint, setHint] = React.useState<JSX.Element | string>('');
     const [step, setStep] = React.useState(0);
-    const levelData = React.useRef<levelData>({} as levelData);
+    const levelData = React.useRef({} as LevelData);
 
     const effect = async () => {
         switch (step) {
             case 0: //init
                 setRunning(true);
                 setHint('正在查询关卡状态');
-                await updateLevelData(levelData.current);
+                levelData.current = await updateLevelData();
                 console.log(levelData.current);
                 if (!levelData.current.rewardReceived) {
                     if (levelData.current.challengeCount < maxDailyChallengeTimes) {
@@ -86,27 +76,21 @@ export function LevelCourageTower(props: Props) {
                         setHint(
                             <>
                                 <Typography component={'div'}>正在进行对战...</Typography>
-                                <Typography component={'div'}>
-                                    {`当前次数: ${levelData.current.challengeCount} / 5`}
-                                    <LinearProgress
-                                        color="inherit"
-                                        variant="determinate"
-                                        value={(levelData.current.challengeCount / 5) * 100}
-                                    />
-                                </Typography>
-                                <Typography component={'div'}>
-                                    {`当前进度: ${levelData.current.layerCount} / 5`}
-                                    <LinearProgress
-                                        color="inherit"
-                                        variant="determinate"
-                                        value={(levelData.current.layerCount / 5) * 100}
-                                    />
-                                </Typography>
+                                <PercentLinearProgress
+                                    prompt={'当前次数'}
+                                    progress={levelData.current.challengeCount}
+                                    total={5}
+                                />
+                                <PercentLinearProgress
+                                    prompt={'当前进度'}
+                                    progress={levelData.current.layerCount}
+                                    total={5}
+                                />
                             </>
                         );
                         Utils.SocketSendByQueue(42396, [101, 30, levelData.current.layerCount + 1]);
                     });
-                    await updateLevelData(levelData.current);
+                    levelData.current = await updateLevelData();
                 }
                 BattleModule.Manager.strategy.custom = undefined;
                 setStep(0);
@@ -136,21 +120,5 @@ export function LevelCourageTower(props: Props) {
     React.useEffect(() => {
         effect();
     }, [step]);
-    return (
-        <>
-            <DialogTitle>{RoutineModuleName}</DialogTitle>
-            <DialogContent>
-                <DialogContentText component={'span'}>{hint}</DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                <Button
-                    onClick={() => {
-                        props.closeHandler(running);
-                    }}
-                >
-                    {running ? '终止' : '退出'}
-                </Button>
-            </DialogActions>
-        </>
-    );
+    return <LevelBase title={RoutineModuleName} hint={hint}></LevelBase>;
 }

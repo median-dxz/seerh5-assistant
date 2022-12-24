@@ -1,22 +1,11 @@
-import {
-    Button,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    LinearProgress,
-    Typography,
-} from '@mui/material';
+import { Typography } from '@mui/material';
 import { delay } from '@sa-core/common';
 import { BattleModule, Functions, PetHelper, Utils } from '@sa-core/index';
 import React from 'react';
+import { LevelBase, LevelExtendsProps, PercentLinearProgress } from './base';
 import dataProvider from './data';
 
-interface Props {
-    closeHandler: (running: boolean) => void;
-}
-
-interface levelData {
+interface LevelData {
     stimulation: boolean;
     levelOpen: boolean;
     levelOpenCount: number;
@@ -29,7 +18,8 @@ const RoutineModuleName = '泰坦矿洞';
 const customData = dataProvider['LevelTitanHole'];
 const maxDailyChallengeTimes = 2;
 
-const updateLevelData = async (data: levelData) => {
+const updateLevelData = async () => {
+    const data = {} as LevelData;
     const bits = await Utils.GetBitSet(640);
     const values = await Utils.GetMultiValue(18724, 18725, 18726, 18727);
 
@@ -44,18 +34,18 @@ const updateLevelData = async (data: levelData) => {
     return data;
 };
 
-export function LevelTitanHole(props: Props) {
-    const [running, setRunning] = React.useState(false);
+export function LevelTitanHole(props: LevelExtendsProps) {
+    const { running, setRunning } = props;
     const [hint, setHint] = React.useState<JSX.Element | string>('');
     const [step, setStep] = React.useState(0);
-    const levelData = React.useRef<levelData>({} as levelData);
+    const levelData = React.useRef({} as LevelData);
 
     const effect = async () => {
         switch (step) {
             case 0: //init
                 setRunning(true);
                 setHint('正在查询关卡状态');
-                await updateLevelData(levelData.current);
+                levelData.current = await updateLevelData();
                 console.log(levelData.current);
 
                 if (levelData.current.levelOpenCount < maxDailyChallengeTimes || levelData.current.levelOpen) {
@@ -81,18 +71,15 @@ export function LevelTitanHole(props: Props) {
                 await delay(500);
                 await BattleModule.Manager.runOnce(() => {
                     setHint(
-                        <Typography>
-                            {'正在进行泰坦矿洞第一关'}
-                            <LinearProgress
-                                color="inherit"
-                                variant="determinate"
-                                value={(levelData.current.step + 1 / 4) * 100}
-                            />
-                        </Typography>
+                        <PercentLinearProgress
+                            prompt={'正在进行泰坦矿洞'}
+                            progress={levelData.current.step + 1}
+                            total={4}
+                        />
                     );
                     Utils.SocketSendByQueue(42396, [104, 3, 1]);
                 });
-                await updateLevelData(levelData.current);
+                levelData.current = await updateLevelData();
             case 2:
                 PetHelper.setDefault(customData.pets.find((pet) => pet.name === '艾欧丽娅')!.catchTime);
                 await delay(500);
@@ -100,28 +87,22 @@ export function LevelTitanHole(props: Props) {
                     await BattleModule.Manager.runOnce(() => {
                         setHint(
                             <>
-                                <Typography component={'div'}>
-                                    {'正在进行泰坦矿洞第二关'}
-                                    <LinearProgress
-                                        color="inherit"
-                                        variant="determinate"
-                                        value={(levelData.current.step / 4) * 100}
-                                    />
-                                </Typography>
-                                <Typography component={'div'}>
-                                    {`击败爆破先锋: ${levelData.current.step2Count} / 16 `}
-                                    <LinearProgress
-                                        color="inherit"
-                                        variant="determinate"
-                                        value={(levelData.current.step2Count / 16) * 100}
-                                    />
-                                </Typography>
+                                <PercentLinearProgress
+                                    prompt={'正在进行泰坦矿洞'}
+                                    progress={levelData.current.step + 1}
+                                    total={4}
+                                />
+                                <PercentLinearProgress
+                                    prompt={'击败爆破先锋'}
+                                    progress={levelData.current.step2Count}
+                                    total={16}
+                                />
                             </>
                         );
                         Utils.SocketSendByQueue(42396, [104, 3, 2]);
                     });
 
-                    await updateLevelData(levelData.current);
+                    levelData.current = await updateLevelData();
                 }
             case 3:
                 while (levelData.current.step3Count < 48) {
@@ -132,22 +113,16 @@ export function LevelTitanHole(props: Props) {
                     }
                     setHint(
                         <>
-                            <Typography component={'div'}>
-                                {'正在进行泰坦矿洞第三关'}
-                                <LinearProgress
-                                    color="inherit"
-                                    variant="determinate"
-                                    value={(levelData.current.step / 4) * 100}
-                                />
-                            </Typography>
-                            <Typography component={'div'}>
-                                {`开采矿石: ${levelData.current.step3Count} / 48 `}
-                                <LinearProgress
-                                    color="inherit"
-                                    variant="determinate"
-                                    value={(levelData.current.step3Count / 48) * 100}
-                                />
-                            </Typography>
+                            <PercentLinearProgress
+                                prompt={'正在进行泰坦矿洞'}
+                                progress={levelData.current.step + 1}
+                                total={4}
+                            />
+                            <PercentLinearProgress
+                                prompt={'开采矿石'}
+                                progress={levelData.current.step3Count}
+                                total={48}
+                            />
                         </>
                     );
                     console.log('dig', row, col, row * 11 + col);
@@ -161,26 +136,23 @@ export function LevelTitanHole(props: Props) {
                         break;
                     }
 
-                    await delay((Math.random() * 100) + 200);
-                    await updateLevelData(levelData.current);
+                    await delay(Math.random() * 100 + 200);
+                    levelData.current = await updateLevelData();
                 }
             case 4:
                 PetHelper.setDefault(customData.pets.find((pet) => pet.name === '幻影蝶')!.catchTime);
                 await delay(500);
                 await BattleModule.Manager.runOnce(() => {
                     setHint(
-                        <Typography>
-                            {'正在进行泰坦矿洞第四关'}
-                            <LinearProgress
-                                color="inherit"
-                                variant="determinate"
-                                value={(levelData.current.step + 1 / 4) * 100}
-                            />
-                        </Typography>
+                        <PercentLinearProgress
+                            prompt={'正在进行泰坦矿洞'}
+                            progress={levelData.current.step + 1}
+                            total={4}
+                        />
                     );
                     Utils.SocketSendByQueue(42396, [104, 3, 4]);
                 });
-                await updateLevelData(levelData.current);
+                levelData.current = await updateLevelData();
                 BattleModule.Manager.strategy.custom = undefined;
                 setStep(5);
                 break;
@@ -212,23 +184,10 @@ export function LevelTitanHole(props: Props) {
         effect();
     }, [step]);
     return (
-        <>
-            <DialogTitle>{RoutineModuleName}</DialogTitle>
-            <DialogContent>
-                <Typography>
-                    {`今日进入关卡次数: ${levelData.current.levelOpenCount} / ${maxDailyChallengeTimes}`}
-                </Typography>
-                <DialogContentText component={'span'}>{hint}</DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                <Button
-                    onClick={() => {
-                        props.closeHandler(running);
-                    }}
-                >
-                    {running ? '终止' : '退出'}
-                </Button>
-            </DialogActions>
-        </>
+        <LevelBase title={RoutineModuleName} hint={hint}>
+            <Typography>
+                {`今日进入关卡次数: ${levelData.current.levelOpenCount} / ${maxDailyChallengeTimes}`}
+            </Typography>
+        </LevelBase>
     );
 }
