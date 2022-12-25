@@ -22,3 +22,7 @@ if (window.SACoreReady) {
 } else {
     window.addEventListener('seerh5_assistant_ready', onCoreReady);
 }
+
+if (import.meta.webpackHot) {
+    import.meta.webpackHot.accept();
+}

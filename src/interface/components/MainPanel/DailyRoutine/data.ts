@@ -1,5 +1,5 @@
-import type { AutoBattle } from '@sa-core/battle-module';
-import { generateStrategy } from '@sa-core/battle-module';
+import { AutoBattle, BaseStrategy, generateStrategy, InfoProvider, Operator } from '@sa-core/battle-module';
+import { delay } from '@sa-core/common';
 
 interface LevelPetsData {
     [levelName: string]: {
@@ -90,10 +90,31 @@ const data: LevelPetsData = {
                 catchTime: 1656092908,
             },
         ],
-        strategy: generateStrategy(
-            ['王·龙子盛威决', '竭血残蝶', '时空牵绊', '神灵救世光'],
-            ['幻影蝶', '圣灵谱尼', '蒂朵']
-        ),
+        strategy: async (round, skills, pets) => {
+            const snm = new BaseStrategy.SkillNameMatch(['王·龙子盛威决', '竭血残蝶', '时空牵绊']);
+            const dsl = new BaseStrategy.DiedSwitchLink(['幻影蝶', '圣灵谱尼', '蒂朵']);
+            if (round.isDiedSwitch) {
+                const r = dsl.match(pets, round.self!.catchtime);
+                if (r !== -1) {
+                    Operator.switchPet(r);
+                } else {
+                    Operator.auto();
+                }
+                await delay(600);
+                skills = InfoProvider.getCurSkills()!;
+            }
+            const r = snm.match(skills);
+            if (r) {
+                Operator.useSkill(r);
+            } else {
+                const r = skills.find((skill) => skill.name === ['光荣之梦', '神灵救世光'][round.round % 2]);
+                if (r) {
+                    Operator.useSkill(r.id);
+                } else {
+                    Operator.auto();
+                }
+            }
+        },
     },
     LevelTitanHole: {
         pets: [
