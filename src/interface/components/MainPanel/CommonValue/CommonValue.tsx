@@ -1,8 +1,9 @@
-import { Button, LinearProgress, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import { Button, TableCell, Typography } from '@mui/material';
 import * as React from 'react';
 import { useLayoutEffect, useState } from 'react';
 
 import Item from '@sa-core/entities/item';
+import { PanelTableBase, PanelTableBodyRow, PercentLinearProgress } from '../base';
 import { idList, openModuleList } from './data';
 
 const unitConvert = (count: number): string => {
@@ -13,7 +14,8 @@ const unitConvert = (count: number): string => {
     }
 };
 
-let icons: any = null;
+const tableHeads = ['物品ID', '图标', '名称', '数量', '兑换页面'];
+let icons: string[] | null = null;
 
 export function CommonValue() {
     const rows = idList.map((key) => ItemXMLInfo.getItemObj(key)).map((obj) => new Item(obj));
@@ -23,9 +25,10 @@ export function CommonValue() {
     useLayoutEffect(() => {
         if (initIcon === false && icons == null) {
             let promises = rows.map((row) =>
-                RES.getResByUrl(ClientConfig.getItemIcon(row.id)).then((r: any) => r.bitmapData.source)
+                RES.getResByUrl(ClientConfig.getItemIcon(row.id)).then((r: any) => r.bitmapData.source.src)
             );
             Promise.all(promises).then((r) => {
+                console.log(r);
                 setImgEl(r);
                 icons = r;
                 completeInitIcon(true);
@@ -34,48 +37,36 @@ export function CommonValue() {
     });
 
     return (
-        <Table aria-label="common value table">
-            <TableHead>
-                <TableRow>
-                    <TableCell align="center">物品ID</TableCell>
-                    <TableCell align="center">图标</TableCell>
-                    <TableCell align="center">名称</TableCell>
-                    <TableCell align="center">数量</TableCell>
-                    <TableCell align="center">兑换页面</TableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {rows.map((row, index) => (
-                    <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                        <TableCell component="th" scope="row" align="center">
-                            {row.id}
-                        </TableCell>
-                        <TableCell align="center">
-                            <img src={imgEl[index]?.src} width={48} />
-                        </TableCell>
-                        <TableCell align="center">{row.name}</TableCell>
-                        <TableCell align="center">
-                            {row.limit ? (
-                                <Typography>
-                                    {unitConvert(row.amount)}/{unitConvert(row.limit)}
-                                    <LinearProgress
-                                        color="inherit"
-                                        variant="determinate"
-                                        value={(row.amount / row.limit) * 100}
-                                    />
-                                </Typography>
-                            ) : (
-                                <Typography>{unitConvert(row.amount)}</Typography>
-                            )}
-                        </TableCell>
-                        <TableCell align="center">
-                            {openModuleList[row.id] ? (
-                                <Button onClick={openModuleList[row.id]}>兑换</Button>
-                            ) : undefined}
-                        </TableCell>
-                    </TableRow>
-                ))}
-            </TableBody>
-        </Table>
+        <PanelTableBase
+            heads={tableHeads.map((v, i) => (
+                <TableCell key={i}>{v}</TableCell>
+            ))}
+        >
+            {rows.map((row, index) => (
+                <PanelTableBodyRow key={row.id}>
+                    <TableCell component="th" scope="row">
+                        {row.id}
+                    </TableCell>
+                    <TableCell>
+                        <img src={imgEl[index]} width={48} />
+                    </TableCell>
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>
+                        {row.limit ? (
+                            <PercentLinearProgress
+                                progress={row.amount}
+                                total={row.limit}
+                                cover={`${unitConvert(row.amount)}/${unitConvert(row.limit)}`}
+                            />
+                        ) : (
+                            <Typography>{unitConvert(row.amount)}</Typography>
+                        )}
+                    </TableCell>
+                    <TableCell>
+                        {openModuleList[row.id] ? <Button onClick={openModuleList[row.id]}>兑换</Button> : undefined}
+                    </TableCell>
+                </PanelTableBodyRow>
+            ))}
+        </PanelTableBase>
     );
 }

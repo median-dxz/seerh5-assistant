@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { mainColor } from '@sa-ui/style';
 import React from 'react';
+import { PanelTableBase, PanelTableBodyRow } from '../base';
 
 interface TextEditDialogProps {
     open: boolean;
@@ -78,6 +79,27 @@ function TextEditDialog(props: TextEditDialogProps) {
     );
 }
 
+const setTopItem = (arr: any[], index: number) => {
+    const i = arr.splice(index, 1)[0];
+    arr = [i, ...arr];
+};
+
+const delItem = (arr: any[], index: number) => {
+    arr.splice(index, 1);
+    arr = [...arr];
+};
+
+const setItemValue = (arr: any[], index: number, value: any) => {
+    arr[index] = value;
+    arr = [...arr];
+};
+
+const addItem = (arr: any[], value: any) => {
+    arr = [...arr, value];
+};
+
+const tableHeads = ['优先级', '技能组', '操作'];
+
 export function BattleManager() {
     const { BattleModule } = SA;
     const [auto, setAuto] = React.useState(BattleModule.Manager.running);
@@ -101,8 +123,8 @@ export function BattleManager() {
         const StateChanged = 'sa_battle_manager_state_changed';
         const onStateChanged = () => {
             setAuto(BattleModule.Manager.running);
-            setSNM([...BattleModule.Manager.strategy.snm]);
-            setDSL([...BattleModule.Manager.strategy.dsl]);
+            setSNM(BattleModule.Manager.strategy.snm);
+            setDSL(BattleModule.Manager.strategy.dsl);
         };
         SAEventTarget.addEventListener(StateChanged, onStateChanged);
         return () => {
@@ -143,10 +165,8 @@ export function BattleManager() {
                 onClick={() => {
                     showDialog({
                         onClose: (value) => {
-                            let skillNameMatch = BattleModule.Manager.strategy.snm;
                             if (value) {
-                                skillNameMatch.splice(0, 0, value.split(','));
-                                BattleModule.Manager.strategy.snm = skillNameMatch;
+                                addItem(BattleModule.Manager.strategy.snm, value.split(','));
                             }
                             showDialog(closeDialog);
                         },
@@ -157,72 +177,63 @@ export function BattleManager() {
             >
                 添加
             </Button>
-            <Table size="small">
-                <TableHead>
-                    <TableRow>
-                        <TableCell align="center">优先级</TableCell>
-                        <TableCell align="center">技能组</TableCell>
-                        <TableCell align="center">操作</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {skillNameMatch.map((row, index) => (
-                        <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                            <TableCell component="th" scope="row" align="center">
-                                {index + 1}
-                            </TableCell>
-                            <TableCell align="center">{row.join(',')}</TableCell>
-                            <TableCell align="center">
-                                <Button
-                                    onClick={() => {
-                                        let skillNameMatch = BattleModule.Manager.strategy.snm;
-                                        const i = skillNameMatch.splice(index, 1);
-                                        skillNameMatch.splice(0, 0, i[0]);
-                                        BattleModule.Manager.strategy.snm = skillNameMatch;
-                                    }}
-                                >
-                                    置顶
-                                </Button>
-                                <Button
-                                    onClick={() => {
-                                        let skillNameMatch = BattleModule.Manager.strategy.snm;
-                                        skillNameMatch.splice(index, 1);
-                                        BattleModule.Manager.strategy.snm = skillNameMatch;
-                                    }}
-                                >
-                                    删除
-                                </Button>
-                                <Button
-                                    onClick={() => {
-                                        showDialog({
-                                            onClose: (value) => {
-                                                let skillNameMatch = BattleModule.Manager.strategy.snm;
-                                                skillNameMatch[index] = value.split(',');
-                                                BattleModule.Manager.strategy.snm = skillNameMatch;
-                                                showDialog(closeDialog);
-                                            },
-                                            open: true,
-                                            value: row.join(','),
-                                        });
-                                    }}
-                                >
-                                    编辑
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+            <PanelTableBase
+                heads={tableHeads.map((r, i) => (
+                    <TableCell key={i} align="center">
+                        {r}
+                    </TableCell>
+                ))}
+            >
+                {skillNameMatch.map((row, index) => (
+                    <PanelTableBodyRow key={index}>
+                        <TableCell component="th" scope="row" align="center">
+                            {index + 1}
+                        </TableCell>
+                        <TableCell align="center">{row.join(',')}</TableCell>
+                        <TableCell align="center">
+                            <Button
+                                onClick={() => {
+                                    setTopItem(BattleModule.Manager.strategy.snm, index);
+                                }}
+                            >
+                                置顶
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    delItem(BattleModule.Manager.strategy.snm, index);
+                                }}
+                            >
+                                删除
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    showDialog({
+                                        onClose: (value) => {
+                                            if (value) {
+                                                setItemValue(BattleModule.Manager.strategy.snm, index, value.split(','));
+                                            }
+                                            showDialog(closeDialog);
+                                        },
+                                        open: true,
+                                        value: row.join(','),
+                                    });
+                                }}
+                            >
+                                编辑
+                            </Button>
+                        </TableCell>
+                    </PanelTableBodyRow>
+                ))}
+            </PanelTableBase>
+
             <Divider />
             <h3>死切链</h3>
             <Button
                 onClick={() => {
                     showDialog({
                         onClose: (value) => {
-                            let diedSwitchLink = BattleModule.Manager.strategy.dsl;
                             if (value) {
-                                diedSwitchLink.splice(0, 0, value.split(','));
-                                BattleModule.Manager.strategy.dsl = diedSwitchLink;
+                                addItem(BattleModule.Manager.strategy.dsl, value.split(','));
                             }
                             showDialog(closeDialog);
                         },
@@ -243,7 +254,7 @@ export function BattleManager() {
                 </TableHead>
                 <TableBody>
                     {diedSwitchLink.map((row, index) => (
-                        <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                        <PanelTableBodyRow key={index}>
                             <TableCell component="th" scope="row" align="center">
                                 {index + 1}
                             </TableCell>
@@ -251,19 +262,14 @@ export function BattleManager() {
                             <TableCell align="center">
                                 <Button
                                     onClick={() => {
-                                        let diedSwitchLink = BattleModule.Manager.strategy.dsl;
-                                        const i = diedSwitchLink.splice(index, 1);
-                                        diedSwitchLink.splice(0, 0, i[0]);
-                                        BattleModule.Manager.strategy.dsl = diedSwitchLink;
+                                        setTopItem(BattleModule.Manager.strategy.dsl, index);
                                     }}
                                 >
                                     置顶
                                 </Button>
                                 <Button
                                     onClick={() => {
-                                        let diedSwitchLink = BattleModule.Manager.strategy.dsl;
-                                        diedSwitchLink.splice(index, 1);
-                                        BattleModule.Manager.strategy.dsl = diedSwitchLink;
+                                        delItem(BattleModule.Manager.strategy.dsl, index);
                                     }}
                                 >
                                     删除
@@ -272,9 +278,13 @@ export function BattleManager() {
                                     onClick={() => {
                                         showDialog({
                                             onClose: (value) => {
-                                                let diedSwitchLink = BattleModule.Manager.strategy.dsl;
-                                                diedSwitchLink[index] = value.split(',');
-                                                BattleModule.Manager.strategy.dsl = diedSwitchLink;
+                                                if (value) {
+                                                    setItemValue(
+                                                        BattleModule.Manager.strategy.dsl,
+                                                        index,
+                                                        value.split(',')
+                                                    );
+                                                }
                                                 showDialog(closeDialog);
                                             },
                                             open: true,
@@ -285,7 +295,7 @@ export function BattleManager() {
                                     编辑
                                 </Button>
                             </TableCell>
-                        </TableRow>
+                        </PanelTableBodyRow>
                     ))}
                 </TableBody>
             </Table>

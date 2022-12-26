@@ -4,8 +4,9 @@ import {
 import { delay } from '@sa-core/common';
 import { BattleModule, Functions, PetHelper, Utils } from '@sa-core/index';
 import React from 'react';
-import { LevelBase, LevelExtendsProps, PercentLinearProgress } from './base';
+import { PercentLinearProgress } from "../base";
 import dataProvider from './data';
+import { LevelBase, LevelExtendsProps } from './LevelBase';
 
 interface LevelData {
     stimulation: boolean;

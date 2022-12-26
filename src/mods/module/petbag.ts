@@ -6,9 +6,27 @@ import { delay, wrapper } from '@sa-core/common';
 import { defaultStyle, SaModuleLogger } from '@sa-core/logger';
 const log = SaModuleLogger('LocalCloth', defaultStyle.mod);
 
-const changeCloth = new Map();
-const originalCloth = new Map();
+interface SkinInfo {
+    skinId: number;
+    petSkinId: number;
+}
+
+let item;
+let clothArray: [Array<[number, SkinInfo]> | null, Array<[number, number]> | null] = [null, null];
+
+item = window.localStorage.getItem('LocalSkin');
+if (item) {
+    clothArray = JSON.parse(item);
+}
+
+const changeCloth = new Map<number, SkinInfo>(clothArray[0]);
+const originalCloth = new Map<number, number>(clothArray[1]);
 let refresh: null | CallBack = null;
+
+function saveToStorage() {
+    clothArray = [Array.from(changeCloth.entries()), Array.from(originalCloth.entries())];
+    window.localStorage.setItem('LocalSkin', JSON.stringify(clothArray));
+}
 
 class LocalCloth extends ReflectObjBase implements ModClass {
     subscriber: EventHandler.ModuleSubscriber<petBag.PetBag> = {
@@ -149,7 +167,7 @@ class LocalCloth extends ReflectObjBase implements ModClass {
         Object.defineProperty(FightPetInfo.prototype, 'skinId', {
             get: function () {
                 return changeCloth.has(this._petID) && this.userID == MainManager.actorID
-                    ? changeCloth.get(this._petID).skinId
+                    ? changeCloth.get(this._petID)!.skinId
                     : this._skinId;
             },
             set: function (t) {
@@ -160,7 +178,7 @@ class LocalCloth extends ReflectObjBase implements ModClass {
         });
         Object.defineProperty(PetInfo.prototype, 'skinId', {
             get: function () {
-                return changeCloth.has(this.id) ? changeCloth.get(this.id).skinId : this._skinId ?? 0;
+                return changeCloth.has(this.id) ? changeCloth.get(this.id)!.skinId : this._skinId ?? 0;
             },
             set: function (t) {
                 this._skinId = t;
@@ -178,6 +196,7 @@ class LocalCloth extends ReflectObjBase implements ModClass {
             ) {
                 changeCloth.delete(petInfo.id);
                 originalCloth.set(petInfo.id, _skinId);
+                saveToStorage();
                 await Utils.SocketSendByQueue(47310, [catchTime, skinId]);
             } else {
                 if (!originalCloth.has(petInfo.id)) {
@@ -187,6 +206,7 @@ class LocalCloth extends ReflectObjBase implements ModClass {
                     skinId: _skinId,
                     petSkinId: PetSkinXMLInfo.getSkinPetId(_skinId, petInfo.id),
                 });
+                saveToStorage();
             }
             petInfo = PetManager.getPetInfo(catchTime);
             petInfo.skinId = _skinId;

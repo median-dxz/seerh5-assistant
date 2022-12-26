@@ -1,8 +1,8 @@
 import { delay } from '@sa-core/common';
 import { BattleModule, Functions, PetHelper, Utils } from '@sa-core/index';
 import React from 'react';
-import { LevelBase, LevelExtendsProps } from './base';
 import dataProvider from './data';
+import { LevelBase, LevelExtendsProps } from './LevelBase';
 
 interface LevelData {
     open: boolean;

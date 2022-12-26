@@ -5,7 +5,7 @@ import { defaultStyle, SaModuleLogger } from '../../assistant/logger';
 
 const { BattleModule, Utils, Functions, Const, PetHelper } = saco;
 const { delay } = window;
-const { petCts: ct, commonBattleModule: bm } = data;
+const { petCts: ct } = data;
 const log = SaModuleLogger('Mod: 红莲安卡第四关', defaultStyle.mod);
 
 const PetBags = [
@@ -45,8 +45,8 @@ export class hlak4 extends ReflectObjBase implements ModClass {
         await Functions.lowerBlood([ct.神寂·克罗诺斯, ct.时空界皇], Const.ITEMS.Potion.中级体力药剂);
 
         BattleModule.Manager.strategy.custom = undefined;
-        BattleModule.Manager.strategy.dsl = [bm.克朵六时.diedSwitchLink];
-        BattleModule.Manager.strategy.snm = [bm.克朵六时.skillMatch];
+        BattleModule.Manager.strategy.dsl = [];
+        BattleModule.Manager.strategy.snm = [];
         
         return BattleModule.Manager.runOnce(this._startFight).then(async () => {
             this.update();

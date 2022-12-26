@@ -1,4 +1,4 @@
-import { DialogContent, DialogContentText, DialogTitle, LinearProgress, Typography } from '@mui/material';
+import { DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import React from 'react';
 
 export type LevelExtendsProps<P = unknown> = P & {
@@ -23,17 +23,4 @@ export function LevelBase(props: React.PropsWithChildren<LevelBaseProps>) {
     );
 }
 
-interface PercentLinearProgressProps {
-    prompt?: string;
-    progress: number;
-    total: number;
-}
 
-export function PercentLinearProgress(props: PercentLinearProgressProps) {
-    return (
-        <Typography component={'div'}>
-            {`${props.prompt}${props.prompt && ':'} ${props.progress} / ${props.total}`}
-            <LinearProgress color="inherit" variant="determinate" value={(props.progress / props.total) * 100} />
-        </Typography>
-    );
-}
