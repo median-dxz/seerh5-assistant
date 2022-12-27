@@ -72,17 +72,31 @@ const BattleModuleManager: {
         _dsl: [],
         _snm: [],
         get dsl() {
+            if (this._dsl.length === 0 && window) {
+                let item = window.localStorage.getItem('BattleStrategyDSL');
+                if (item) {
+                    this._dsl = JSON.parse(item);
+                }
+            }
             return this._dsl;
         },
         get snm() {
+            if (this._dsl.length === 0 && window) {
+                let item = window.localStorage.getItem('BattleStrategySNM');
+                if (item) {
+                    this._snm = JSON.parse(item);
+                }
+            }
             return this._snm;
         },
         set dsl(n) {
             this._dsl = n;
+            window.localStorage.setItem('BattleStrategyDSL', JSON.stringify(this._dsl));
             SAEventTarget.dispatchEvent(new CustomEvent('sa_battle_manager_state_changed'));
         },
         set snm(n) {
             this._snm = n;
+            window.localStorage.setItem('BattleStrategySNM', JSON.stringify(this._snm));
             SAEventTarget.dispatchEvent(new CustomEvent('sa_battle_manager_state_changed'));
         },
         custom: undefined,

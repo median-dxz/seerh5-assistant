@@ -2,7 +2,7 @@ import { Typography } from '@mui/material';
 import { delay } from '@sa-core/common';
 import { BattleModule, Functions, PetHelper, Utils } from '@sa-core/index';
 import React from 'react';
-import { PercentLinearProgress } from "../base";
+import { PercentLinearProgress } from '../base';
 import dataProvider from './data';
 import { LevelBase, LevelExtendsProps } from './LevelBase';
 
@@ -74,7 +74,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                     setHint(
                         <PercentLinearProgress
                             prompt={'正在进行泰坦矿洞'}
-                            progress={levelData.current.step + 1}
+                            progress={levelData.current.step}
                             total={4}
                         />
                     );
@@ -90,7 +90,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                             <>
                                 <PercentLinearProgress
                                     prompt={'正在进行泰坦矿洞'}
-                                    progress={levelData.current.step + 1}
+                                    progress={levelData.current.step}
                                     total={4}
                                 />
                                 <PercentLinearProgress
@@ -116,7 +116,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                         <>
                             <PercentLinearProgress
                                 prompt={'正在进行泰坦矿洞'}
-                                progress={levelData.current.step + 1}
+                                progress={levelData.current.step}
                                 total={4}
                             />
                             <PercentLinearProgress
@@ -147,7 +147,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                     setHint(
                         <PercentLinearProgress
                             prompt={'正在进行泰坦矿洞'}
-                            progress={levelData.current.step + 1}
+                            progress={levelData.current.step}
                             total={4}
                         />
                     );

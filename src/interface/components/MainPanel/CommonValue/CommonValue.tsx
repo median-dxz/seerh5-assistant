@@ -28,7 +28,7 @@ export function CommonValue() {
                 RES.getResByUrl(ClientConfig.getItemIcon(row.id)).then((r: any) => r.bitmapData.source.src)
             );
             Promise.all(promises).then((r) => {
-                console.log(r);
+                // console.log(r);
                 setImgEl(r);
                 icons = r;
                 completeInitIcon(true);

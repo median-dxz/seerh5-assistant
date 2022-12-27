@@ -13,7 +13,7 @@ import {
     TableCell,
     TableHead,
     TableRow,
-    TextField
+    TextField,
 } from '@mui/material';
 import { mainColor } from '@sa-ui/style';
 import React from 'react';
@@ -82,20 +82,24 @@ function TextEditDialog(props: TextEditDialogProps) {
 const setTopItem = (arr: any[], index: number) => {
     const i = arr.splice(index, 1)[0];
     arr = [i, ...arr];
+    return arr;
 };
 
 const delItem = (arr: any[], index: number) => {
     arr.splice(index, 1);
     arr = [...arr];
+    return arr;
 };
 
-const setItemValue = (arr: any[], index: number, value: any) => {
+const setItemValue = <T extends {}>(arr: T[], index: number, value: T) => {
     arr[index] = value;
     arr = [...arr];
+    return arr;
 };
 
-const addItem = (arr: any[], value: any) => {
+const addItem = <T extends {}>(arr: T[], value: T) => {
     arr = [...arr, value];
+    return arr;
 };
 
 const tableHeads = ['优先级', '技能组', '操作'];
@@ -166,7 +170,10 @@ export function BattleManager() {
                     showDialog({
                         onClose: (value) => {
                             if (value) {
-                                addItem(BattleModule.Manager.strategy.snm, value.split(','));
+                                BattleModule.Manager.strategy.snm = addItem(
+                                    BattleModule.Manager.strategy.snm,
+                                    value.split(',')
+                                );
                             }
                             showDialog(closeDialog);
                         },
@@ -193,14 +200,20 @@ export function BattleManager() {
                         <TableCell align="center">
                             <Button
                                 onClick={() => {
-                                    setTopItem(BattleModule.Manager.strategy.snm, index);
+                                    BattleModule.Manager.strategy.snm = setTopItem(
+                                        BattleModule.Manager.strategy.snm,
+                                        index
+                                    );
                                 }}
                             >
                                 置顶
                             </Button>
                             <Button
                                 onClick={() => {
-                                    delItem(BattleModule.Manager.strategy.snm, index);
+                                    BattleModule.Manager.strategy.snm = delItem(
+                                        BattleModule.Manager.strategy.snm,
+                                        index
+                                    );
                                 }}
                             >
                                 删除
@@ -210,7 +223,11 @@ export function BattleManager() {
                                     showDialog({
                                         onClose: (value) => {
                                             if (value) {
-                                                setItemValue(BattleModule.Manager.strategy.snm, index, value.split(','));
+                                                BattleModule.Manager.strategy.snm = setItemValue(
+                                                    BattleModule.Manager.strategy.snm,
+                                                    index,
+                                                    value.split(',')
+                                                );
                                             }
                                             showDialog(closeDialog);
                                         },
@@ -233,7 +250,10 @@ export function BattleManager() {
                     showDialog({
                         onClose: (value) => {
                             if (value) {
-                                addItem(BattleModule.Manager.strategy.dsl, value.split(','));
+                                BattleModule.Manager.strategy.dsl = addItem(
+                                    BattleModule.Manager.strategy.dsl,
+                                    value.split(',')
+                                );
                             }
                             showDialog(closeDialog);
                         },
@@ -262,14 +282,20 @@ export function BattleManager() {
                             <TableCell align="center">
                                 <Button
                                     onClick={() => {
-                                        setTopItem(BattleModule.Manager.strategy.dsl, index);
+                                        BattleModule.Manager.strategy.dsl = setTopItem(
+                                            BattleModule.Manager.strategy.dsl,
+                                            index
+                                        );
                                     }}
                                 >
                                     置顶
                                 </Button>
                                 <Button
                                     onClick={() => {
-                                        delItem(BattleModule.Manager.strategy.dsl, index);
+                                        BattleModule.Manager.strategy.dsl = delItem(
+                                            BattleModule.Manager.strategy.dsl,
+                                            index
+                                        );
                                     }}
                                 >
                                     删除
@@ -279,7 +305,7 @@ export function BattleManager() {
                                         showDialog({
                                             onClose: (value) => {
                                                 if (value) {
-                                                    setItemValue(
+                                                    BattleModule.Manager.strategy.dsl = setItemValue(
                                                         BattleModule.Manager.strategy.dsl,
                                                         index,
                                                         value.split(',')
