@@ -1,4 +1,4 @@
-import * as BattleModule from '../battle-module';
+import * as BattleModule from '../battle';
 import { CMDID, ITEMS, MULTI, PET_POS } from '../const';
 import * as PetHelper from '../pet-helper';
 import { BuyPetItem, GetMultiValue, SocketSendByQueue } from '../utils';

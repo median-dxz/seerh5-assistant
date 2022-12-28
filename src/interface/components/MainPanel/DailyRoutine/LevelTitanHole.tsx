@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import { delay } from '@sa-core/common';
-import { BattleModule, Functions, PetHelper, Utils } from '@sa-core/index';
+import { Battle, Functions, PetHelper, Utils } from '@sa-core/index';
 import React from 'react';
 import { PercentLinearProgress } from '../base';
 import dataProvider from './data';
@@ -55,7 +55,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                     PetHelper.cureAllPet();
                     PetHelper.setDefault(customData.pets[0].catchTime);
                     setHint('准备背包完成');
-                    BattleModule.Manager.strategy.custom = customData.strategy;
+                    Battle.Manager.strategy.custom = customData.strategy;
 
                     if (!levelData.current.levelOpen) {
                         await Utils.SocketSendByQueue(42395, [104, 1, 3, 0]);
@@ -70,7 +70,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 break;
             case 1:
                 await delay(500);
-                await BattleModule.Manager.runOnce(() => {
+                await Battle.Manager.runOnce(() => {
                     setHint(
                         <PercentLinearProgress
                             prompt={'正在进行泰坦矿洞'}
@@ -81,11 +81,12 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                     Utils.SocketSendByQueue(42396, [104, 3, 1]);
                 });
                 levelData.current = await updateLevelData();
+                setStep(0);
             case 2:
                 PetHelper.setDefault(customData.pets.find((pet) => pet.name === '艾欧丽娅')!.catchTime);
                 await delay(500);
                 while (levelData.current.step2Count < 16) {
-                    await BattleModule.Manager.runOnce(() => {
+                    await Battle.Manager.runOnce(() => {
                         setHint(
                             <>
                                 <PercentLinearProgress
@@ -143,7 +144,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
             case 4:
                 PetHelper.setDefault(customData.pets.find((pet) => pet.name === '幻影蝶')!.catchTime);
                 await delay(500);
-                await BattleModule.Manager.runOnce(() => {
+                await Battle.Manager.runOnce(() => {
                     setHint(
                         <PercentLinearProgress
                             prompt={'正在进行泰坦矿洞'}
@@ -154,7 +155,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                     Utils.SocketSendByQueue(42396, [104, 3, 4]);
                 });
                 levelData.current = await updateLevelData();
-                BattleModule.Manager.strategy.custom = undefined;
+                Battle.Manager.strategy.custom = undefined;
                 setStep(5);
                 break;
             case 5:

@@ -1,4 +1,4 @@
-import { InfoProvider } from '../battle-module';
+import { InfoProvider } from '../battle';
 import { EVENTS as hooks } from '../const';
 import RoundPetInfo from '../entities/roundinfo';
 import { defaultStyle, SaModuleLogger } from '../logger';

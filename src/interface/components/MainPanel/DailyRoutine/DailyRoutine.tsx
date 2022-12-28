@@ -8,9 +8,9 @@ import {
     TableCell,
     TableHead,
     TableRow,
-    Typography,
+    Typography
 } from '@mui/material';
-import { BattleModule, Utils } from '@sa-core/index';
+import { Battle, Utils } from '@sa-core/index';
 import { mainColor } from '@sa-ui/style';
 import React from 'react';
 import { LevelCourageTower } from './LevelCourageTower';
@@ -33,8 +33,8 @@ export function DailyRoutine() {
     const [taskCompleted, setTaskCompleted] = React.useState<Array<boolean>>([]);
     const closeHandler = () => {
         if (running) {
-            BattleModule.Manager.strategy.custom = undefined;
-            BattleModule.Manager.lockingTrigger = undefined;
+            Battle.Manager.strategy.custom = undefined;
+            Battle.Manager.lockingTrigger = undefined;
         }
         setOpen(false);
     };
@@ -67,7 +67,8 @@ export function DailyRoutine() {
                 await Utils.SocketSendByQueue(42395, [104, 6, 3, 0]);
             },
             async getState() {
-                return (await Utils.GetMultiValue(18724))[0] === 2;
+                const [count, step] = await Utils.GetMultiValue(18724, 18725);
+                return count === 2 && step === 0;
             },
         },
         // { name: '精灵王试炼'
@@ -75,7 +76,7 @@ export function DailyRoutine() {
             name: 'x战队密室',
             module: <LevelXTeamRoom setRunning={setRunning} running={running} />,
             async getState() {
-                return (await Utils.GetBitSet(1000585))[0];
+                return (await Utils.GetBitSet(1000585, 2000036)).some(Boolean);
             },
         },
         // { name: '作战实验室'

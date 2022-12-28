@@ -1,5 +1,5 @@
 import { delay } from '@sa-core/common';
-import { BattleModule, Functions, PetHelper, Utils } from '@sa-core/index';
+import { Battle, Functions, PetHelper, Utils } from '@sa-core/index';
 import React from 'react';
 import dataProvider from './data';
 import { LevelBase, LevelExtendsProps } from './LevelBase';
@@ -45,22 +45,22 @@ export function LevelXTeamRoom(props: LevelExtendsProps) {
                 setRunning(true);
                 setHint('正在查询关卡状态');
                 levelData.current = await updateLevelData();
-                if (!levelData.current.dailyRewardReceived) {
-                    if (
-                        (levelData.current.dailyMinRound === 0 &&
-                            levelData.current.dailyChallengeCount < maxDailyChallengeTimes) ||
-                        levelData.current.open
-                    ) {
-                        setStep(1);
+                if (!levelData.current.weeklyRewardReceived) {
+                    if (!levelData.current.dailyRewardReceived) {
+                        if (
+                            (levelData.current.dailyMinRound === 0 &&
+                                levelData.current.dailyChallengeCount < maxDailyChallengeTimes) ||
+                            levelData.current.open
+                        ) {
+                            setStep(1);
+                        } else {
+                            setStep(2);
+                        }
                     } else {
-                        setStep(2);
+                        setStep(3);
                     }
                 } else {
-                    if (!levelData.current.weeklyRewardReceived) {
-                        setStep(3);
-                    } else {
-                        setStep(4);
-                    }
+                    setStep(4);
                 }
                 break;
             case 1: //daily challenge
@@ -71,18 +71,18 @@ export function LevelXTeamRoom(props: LevelExtendsProps) {
                 setHint('准备背包完成');
                 await delay(500);
 
-                BattleModule.Manager.strategy.custom = customData.strategy;
+                Battle.Manager.strategy.custom = customData.strategy;
 
                 setHint('正在开启关卡');
                 await Utils.SocketSendByQueue(42395, [105, 1, 1, 0]);
                 await delay(500);
 
-                await BattleModule.Manager.runOnce(() => {
+                await Battle.Manager.runOnce(() => {
                     setHint(`正在进行对战...`);
                     Utils.SocketSendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [105, 7, 0]);
                 });
 
-                BattleModule.Manager.strategy.custom = undefined;
+                Battle.Manager.strategy.custom = undefined;
                 setStep(0);
 
                 break;

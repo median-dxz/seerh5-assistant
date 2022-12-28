@@ -1,4 +1,4 @@
-import { AutoBattle, BaseStrategy, generateStrategy, InfoProvider, Operator } from '@sa-core/battle-module';
+import { AutoBattle, BaseStrategy, generateStrategy, InfoProvider, Operator } from '@sa-core/battle';
 import { delay } from '@sa-core/common';
 
 interface LevelPetsData {

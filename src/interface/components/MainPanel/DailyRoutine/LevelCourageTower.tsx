@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import { delay } from '@sa-core/common';
-import { BattleModule, Functions, PetHelper, Utils } from '@sa-core/index';
+import { Battle, Functions, PetHelper, Utils } from '@sa-core/index';
 import React from 'react';
 import { PercentLinearProgress } from "../base";
 import dataProvider from './data';
@@ -71,9 +71,9 @@ export function LevelCourageTower(props: LevelExtendsProps) {
                     await delay(500);
                 }
 
-                BattleModule.Manager.strategy.custom = customData.strategy;
+                Battle.Manager.strategy.custom = customData.strategy;
                 while (levelData.current.challengeCount < maxDailyChallengeTimes) {
-                    await BattleModule.Manager.runOnce(() => {
+                    await Battle.Manager.runOnce(() => {
                         setHint(
                             <>
                                 <Typography component={'div'}>正在进行对战...</Typography>
@@ -93,7 +93,7 @@ export function LevelCourageTower(props: LevelExtendsProps) {
                     });
                     levelData.current = await updateLevelData();
                 }
-                BattleModule.Manager.strategy.custom = undefined;
+                Battle.Manager.strategy.custom = undefined;
                 setStep(0);
 
                 break;

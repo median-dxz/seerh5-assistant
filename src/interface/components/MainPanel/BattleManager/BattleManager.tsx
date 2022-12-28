@@ -13,8 +13,9 @@ import {
     TableCell,
     TableHead,
     TableRow,
-    TextField,
+    TextField
 } from '@mui/material';
+import { Battle } from '@sa-core/index';
 import { mainColor } from '@sa-ui/style';
 import React from 'react';
 import { PanelTableBase, PanelTableBodyRow } from '../base';
@@ -105,10 +106,9 @@ const addItem = <T extends {}>(arr: T[], value: T) => {
 const tableHeads = ['优先级', '技能组', '操作'];
 
 export function BattleManager() {
-    const { BattleModule } = SA;
-    const [auto, setAuto] = React.useState(BattleModule.Manager.running);
-    const [skillNameMatch, setSNM] = React.useState(BattleModule.Manager.strategy.snm);
-    const [diedSwitchLink, setDSL] = React.useState(BattleModule.Manager.strategy.dsl);
+    const [auto, setAuto] = React.useState(Battle.Manager.running);
+    const [skillNameMatch, setSNM] = React.useState(Battle.Manager.strategy.snm);
+    const [diedSwitchLink, setDSL] = React.useState(Battle.Manager.strategy.dsl);
 
     const closeDialog = {
         onClose: () => {},
@@ -126,9 +126,9 @@ export function BattleManager() {
         const { SAEventTarget } = window;
         const StateChanged = 'sa_battle_manager_state_changed';
         const onStateChanged = () => {
-            setAuto(BattleModule.Manager.running);
-            setSNM(BattleModule.Manager.strategy.snm);
-            setDSL(BattleModule.Manager.strategy.dsl);
+            setAuto(Battle.Manager.running);
+            setSNM(Battle.Manager.strategy.snm);
+            setDSL(Battle.Manager.strategy.dsl);
         };
         SAEventTarget.addEventListener(StateChanged, onStateChanged);
         return () => {
@@ -143,7 +143,7 @@ export function BattleManager() {
                     <Switch
                         checked={auto}
                         onChange={(e, newValue) => {
-                            BattleModule.Manager.running = newValue;
+                            Battle.Manager.running = newValue;
                         }}
                     />
                 }
@@ -151,14 +151,14 @@ export function BattleManager() {
             />
             <Button
                 onClick={() => {
-                    BattleModule.Manager.strategy.custom = undefined;
+                    Battle.Manager.strategy.custom = undefined;
                 }}
             >
                 清除自定义逻辑
             </Button>
             <Button
                 onClick={() => {
-                    BattleModule.Manager.lockingTrigger = undefined;
+                    Battle.Manager.lockingTrigger = undefined;
                 }}
             >
                 清除locker
@@ -170,8 +170,8 @@ export function BattleManager() {
                     showDialog({
                         onClose: (value) => {
                             if (value) {
-                                BattleModule.Manager.strategy.snm = addItem(
-                                    BattleModule.Manager.strategy.snm,
+                                Battle.Manager.strategy.snm = addItem(
+                                    Battle.Manager.strategy.snm,
                                     value.split(',')
                                 );
                             }
@@ -200,8 +200,8 @@ export function BattleManager() {
                         <TableCell align="center">
                             <Button
                                 onClick={() => {
-                                    BattleModule.Manager.strategy.snm = setTopItem(
-                                        BattleModule.Manager.strategy.snm,
+                                    Battle.Manager.strategy.snm = setTopItem(
+                                        Battle.Manager.strategy.snm,
                                         index
                                     );
                                 }}
@@ -210,8 +210,8 @@ export function BattleManager() {
                             </Button>
                             <Button
                                 onClick={() => {
-                                    BattleModule.Manager.strategy.snm = delItem(
-                                        BattleModule.Manager.strategy.snm,
+                                    Battle.Manager.strategy.snm = delItem(
+                                        Battle.Manager.strategy.snm,
                                         index
                                     );
                                 }}
@@ -223,8 +223,8 @@ export function BattleManager() {
                                     showDialog({
                                         onClose: (value) => {
                                             if (value) {
-                                                BattleModule.Manager.strategy.snm = setItemValue(
-                                                    BattleModule.Manager.strategy.snm,
+                                                Battle.Manager.strategy.snm = setItemValue(
+                                                    Battle.Manager.strategy.snm,
                                                     index,
                                                     value.split(',')
                                                 );
@@ -250,8 +250,8 @@ export function BattleManager() {
                     showDialog({
                         onClose: (value) => {
                             if (value) {
-                                BattleModule.Manager.strategy.dsl = addItem(
-                                    BattleModule.Manager.strategy.dsl,
+                                Battle.Manager.strategy.dsl = addItem(
+                                    Battle.Manager.strategy.dsl,
                                     value.split(',')
                                 );
                             }
@@ -282,8 +282,8 @@ export function BattleManager() {
                             <TableCell align="center">
                                 <Button
                                     onClick={() => {
-                                        BattleModule.Manager.strategy.dsl = setTopItem(
-                                            BattleModule.Manager.strategy.dsl,
+                                        Battle.Manager.strategy.dsl = setTopItem(
+                                            Battle.Manager.strategy.dsl,
                                             index
                                         );
                                     }}
@@ -292,8 +292,8 @@ export function BattleManager() {
                                 </Button>
                                 <Button
                                     onClick={() => {
-                                        BattleModule.Manager.strategy.dsl = delItem(
-                                            BattleModule.Manager.strategy.dsl,
+                                        Battle.Manager.strategy.dsl = delItem(
+                                            Battle.Manager.strategy.dsl,
                                             index
                                         );
                                     }}
@@ -305,8 +305,8 @@ export function BattleManager() {
                                         showDialog({
                                             onClose: (value) => {
                                                 if (value) {
-                                                    BattleModule.Manager.strategy.dsl = setItemValue(
-                                                        BattleModule.Manager.strategy.dsl,
+                                                    Battle.Manager.strategy.dsl = setItemValue(
+                                                        Battle.Manager.strategy.dsl,
                                                         index,
                                                         value.split(',')
                                                     );
