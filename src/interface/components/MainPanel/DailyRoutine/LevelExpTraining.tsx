@@ -1,10 +1,8 @@
-import {
-    Typography
-} from '@mui/material';
+import { Typography } from '@mui/material';
 import { delay } from '@sa-core/common';
 import { Battle, Functions, PetHelper, Utils } from '@sa-core/index';
 import React from 'react';
-import { PercentLinearProgress } from "../base";
+import { PercentLinearProgress } from '../base';
 import dataProvider from './data';
 import { LevelBase, LevelExtendsProps } from './LevelBase';
 
@@ -59,9 +57,9 @@ export function LevelExpTraining(props: LevelExtendsProps) {
                 break;
             case 1: //daily challenge
                 setHint('正在准备背包');
-                await Functions.switchBag(customData.pets);
+                await Functions.switchBag(customData.cts);
                 PetHelper.cureAllPet();
-                PetHelper.setDefault(customData.pets[0].catchTime);
+                PetHelper.setDefault(customData.cts[0]);
                 setHint('准备背包完成');
                 await delay(500);
 
@@ -108,7 +106,7 @@ export function LevelExpTraining(props: LevelExtendsProps) {
                 setRunning(false);
                 break;
             default:
-                setHint('学习力训练场日任完成');
+                setHint(RoutineModuleName + '日任完成');
                 setRunning(false);
                 break;
         }

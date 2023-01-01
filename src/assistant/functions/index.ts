@@ -98,15 +98,16 @@ export function usePotionForPet(catchTime: number, potionId: number) {
     return SocketSendByQueue(CMDID.USE_PET_ITEM_OUT_OF_FIGHT, [catchTime, potionId]);
 }
 
-export async function switchBag(pets: Pick<SAType.PetLike, 'catchTime' | 'name'>[]) {
+export async function switchBag(cts: number[]) {
+    if (!cts || cts.length === 0) return;
     // 清空现有背包
     for (let v of await PetHelper.getBagPets(PET_POS.bag1)) {
         await PetHelper.popPetFromBag(v.catchTime);
         log(`SwitchBag -> 将 ${v.name} 放入仓库`);
     }
-    for (let v of pets) {
-        await PetHelper.setPetLocation(v.catchTime, PET_POS.bag1);
-        log(`SwitchBag -> 将 ${v.name} 放入背包`);
+    for (let v of cts) {
+        await PetHelper.setPetLocation(v, PET_POS.bag1);
+        log(`SwitchBag -> 将 ${PetManager.getPetInfo(v).name} 放入背包`);
     }
 }
 

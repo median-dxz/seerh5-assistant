@@ -8,12 +8,7 @@ const { delay } = window;
 const { petCts: ct } = data;
 const log = SaModuleLogger('Mod: 红莲安卡第四关', defaultStyle.mod);
 
-const PetBags = [
-    { catchTime: ct.神寂·克罗诺斯, name: '神寂·克罗诺斯' },
-    { catchTime: ct.蒂朵, name: '蒂朵' },
-    { catchTime: ct.六界帝神, name: '六界帝神' },
-    { catchTime: ct.时空界皇, name: '时空界皇' },
-];
+const PetBags = [ct.神寂·克罗诺斯, ct.蒂朵, ct.六界帝神, ct.时空界皇];
 
 interface ActivityInfo {
     红莲能量: number;
@@ -47,7 +42,7 @@ export class hlak4 extends ReflectObjBase implements ModClass {
         BattleModule.Manager.strategy.custom = undefined;
         BattleModule.Manager.strategy.dsl = [];
         BattleModule.Manager.strategy.snm = [];
-        
+
         return BattleModule.Manager.runOnce(this._startFight).then(async () => {
             this.update();
             PetHelper.cureAllPet();

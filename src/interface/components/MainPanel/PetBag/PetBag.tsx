@@ -21,7 +21,7 @@ const numberFormat = Intl.NumberFormat(undefined, {
 });
 
 interface MenuOption {
-    type: 'suit' | 'title' | 'pets';
+    type: 'suit' | 'title' | 'savePets' | 'setPets';
     id: number[];
     options: string[];
 }
@@ -38,7 +38,15 @@ export function PetBag() {
     const menuOption = React.useRef<MenuOption | null>(null);
     const [pets, setPets] = React.useState<Pet[]>([]);
     const [petsSelected, setPetsSelected] = React.useState<boolean[]>([]);
-    const [petsCombination, setPetsCombination] = React.useState<string[]>([]);
+    const [petPatterns, setPetPattern] = React.useState(() => {
+        let item: any[] | null | string = window.localStorage.getItem('PetPattern');
+        if (!item) {
+            item = Array(6);
+        } else {
+            item = JSON.parse(item);
+        }
+        return item as Array<number[]>;
+    });
 
     const [userTitle, setUserTitle] = React.useState(Utils.UserTitle());
     const [userSuit, setUserSuit] = React.useState(Utils.UserSuit());
@@ -176,7 +184,7 @@ export function PetBag() {
                 {menuOption.current?.options.map((option, index) => (
                     <MenuItem
                         key={option}
-                        onClick={(e) => {
+                        onClick={async (e) => {
                             const info = menuOption.current!;
                             if (info.type === 'suit') {
                                 Utils.ChangeSuit(info.id[index]);
@@ -184,7 +192,16 @@ export function PetBag() {
                             } else if (info.type === 'title') {
                                 Utils.ChangeTitle(info.id[index]);
                                 setUserTitle(info.id[index]);
-                            } else if (info.type === 'pets') {
+                            } else if (info.type === 'setPets') {
+                                Functions.switchBag(petPatterns[index]);
+                            } else if (info.type === 'savePets') {
+                                const newPets = await PetHelper.getBagPets(1);
+                                setPetPattern((petPatterns) => {
+                                    const newValue = [...petPatterns];
+                                    newValue[index] = newPets.map((pet) => pet.catchTime);
+                                    window.localStorage.setItem('PetPatterns', JSON.stringify(newValue));
+                                    return newValue;
+                                });
                             }
                             setAnchorEl(null);
                             setMenuOpen(false);
@@ -222,8 +239,42 @@ export function PetBag() {
             >
                 dump
             </Button>
-            <Button>更换方案</Button>
-            <Button>保存方案</Button>
+            <Button
+                onClick={(e) => {
+                    setAnchorEl(e.currentTarget);
+                    const patternName = Array(petPatterns.length)
+                        .fill('')
+                        .map((v, index) => `方案${index}`);
+                    menuOption.current = {
+                        type: 'setPets',
+                        id: Array(petPatterns.length)
+                            .fill(0)
+                            .map((v, index) => index),
+                        options: patternName,
+                    };
+                    setMenuOpen(true);
+                }}
+            >
+                更换方案
+            </Button>
+            <Button
+                onClick={(e) => {
+                    setAnchorEl(e.currentTarget);
+                    const patternName = Array(petPatterns.length)
+                        .fill('')
+                        .map((v, index) => `方案${index}`);
+                    menuOption.current = {
+                        type: 'savePets',
+                        id: Array(petPatterns.length)
+                            .fill(0)
+                            .map((v, index) => index),
+                        options: patternName,
+                    };
+                    setMenuOpen(true);
+                }}
+            >
+                保存方案
+            </Button>
 
             <Table size="small">
                 <TableHead>

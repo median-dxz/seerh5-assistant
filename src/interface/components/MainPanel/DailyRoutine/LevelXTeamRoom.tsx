@@ -65,9 +65,9 @@ export function LevelXTeamRoom(props: LevelExtendsProps) {
                 break;
             case 1: //daily challenge
                 setHint('正在准备背包');
-                await Functions.switchBag(customData.pets);
+                await Functions.switchBag(customData.cts);
                 PetHelper.cureAllPet();
-                PetHelper.setDefault(customData.pets[0].catchTime);
+                PetHelper.setDefault(customData.cts[0]);
                 setHint('准备背包完成');
                 await delay(500);
 
@@ -105,7 +105,7 @@ export function LevelXTeamRoom(props: LevelExtendsProps) {
                 setStep(4);
                 break;
             default:
-                setHint('x战队密室日任完成');
+                setHint(RoutineModuleName + '日任完成');
                 setRunning(false);
                 break;
         }

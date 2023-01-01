@@ -1,6 +1,7 @@
 import { Typography } from '@mui/material';
 import { delay } from '@sa-core/common';
-import { Battle, Functions, PetHelper, Utils } from '@sa-core/index';
+import Pet from '@sa-core/entities/pet';
+import { Battle, Const, Functions, PetHelper, Utils } from '@sa-core/index';
 import React from 'react';
 import { PercentLinearProgress } from '../base';
 import dataProvider from './data';
@@ -42,6 +43,8 @@ export function LevelTitanHole(props: LevelExtendsProps) {
     const levelData = React.useRef({} as LevelData);
 
     const effect = async () => {
+        let pets: Pet[];
+        let pet: undefined | Pet;
         switch (step) {
             case 0: //init
                 setRunning(true);
@@ -51,9 +54,9 @@ export function LevelTitanHole(props: LevelExtendsProps) {
 
                 if (levelData.current.levelOpenCount < maxDailyChallengeTimes || levelData.current.levelOpen) {
                     setHint('正在准备背包');
-                    await Functions.switchBag(customData.pets);
+                    await Functions.switchBag(customData.cts);
                     PetHelper.cureAllPet();
-                    PetHelper.setDefault(customData.pets[0].catchTime);
+                    PetHelper.setDefault(customData.cts[0]);
                     setHint('准备背包完成');
                     Battle.Manager.strategy.custom = customData.strategy;
 
@@ -83,7 +86,13 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 levelData.current = await updateLevelData();
                 setStep(0);
             case 2:
-                PetHelper.setDefault(customData.pets.find((pet) => pet.name === '艾欧丽娅')!.catchTime);
+                pets = await PetHelper.getBagPets(Const.PET_POS.bag1);
+                pet = pets.find((pet) => pet.name === '艾欧丽娅');
+                if (!pet) {
+                    setStep(-3);
+                    break;
+                }
+                PetHelper.setDefault(pet.catchTime);
                 await delay(500);
                 while (levelData.current.step2Count < 16) {
                     await Battle.Manager.runOnce(() => {
@@ -142,7 +151,13 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                     levelData.current = await updateLevelData();
                 }
             case 4:
-                PetHelper.setDefault(customData.pets.find((pet) => pet.name === '幻影蝶')!.catchTime);
+                pets = await PetHelper.getBagPets(Const.PET_POS.bag1);
+                pet = pets.find((pet) => pet.name === '幻影蝶');
+                if (!pet) {
+                    setStep(-3);
+                    break;
+                }
+                PetHelper.setDefault(pet.catchTime);
                 await delay(500);
                 await Battle.Manager.runOnce(() => {
                     setHint(
@@ -176,8 +191,12 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 setHint('自动开采矿石出错, 请手动开采');
                 setRunning(false);
                 break;
+            case -3:
+                setHint('设置背包出错');
+                setRunning(false);
+                break;
             default:
-                setHint('泰坦矿洞日任完成');
+                setHint(RoutineModuleName + '日任完成');
                 setRunning(false);
                 break;
         }

@@ -25,7 +25,11 @@ export function CommonValue() {
     useLayoutEffect(() => {
         if (initIcon === false && icons == null) {
             let promises = rows.map((row) =>
-                RES.getResByUrl(ClientConfig.getItemIcon(row.id)).then((r: any) => r.bitmapData.source.src)
+                RES.getResByUrl(ClientConfig.getItemIcon(row.id)).then(async (r: any) => {
+                    const e = await r.bitmapData.source;
+                    console.log(e, e.src);
+                    return e.src;
+                })
             );
             Promise.all(promises).then((r) => {
                 // console.log(r);
