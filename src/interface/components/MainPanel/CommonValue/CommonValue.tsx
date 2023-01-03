@@ -25,11 +25,18 @@ export function CommonValue() {
     useLayoutEffect(() => {
         if (initIcon === false && icons == null) {
             let promises = rows.map((row) =>
-                RES.getResByUrl(ClientConfig.getItemIcon(row.id)).then(async (r: any) => {
-                    const e = await r.bitmapData.source;
-                    console.log(e, e.src);
-                    return e.src;
-                })
+                RES.getResByUrl(ClientConfig.getItemIcon(row.id))
+                    .then((r) => r.bitmapData.source)
+                    .then((r) => {
+                        if (r) {
+                            return r.src;
+                        } else {
+                            return window.SAResourceMap.get(ClientConfig.getItemIcon(row.id));
+                        }
+                    })
+                    .catch((reason) => {
+                        console.error(reason);
+                    })
             );
             Promise.all(promises).then((r) => {
                 // console.log(r);
@@ -52,7 +59,7 @@ export function CommonValue() {
                         {row.id}
                     </TableCell>
                     <TableCell>
-                        <img src={imgEl[index]} width={48} />
+                        <img crossOrigin="anonymous" src={imgEl[index]} width={48} />
                     </TableCell>
                     <TableCell>{row.name}</TableCell>
                     <TableCell>

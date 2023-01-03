@@ -72,7 +72,6 @@ class LocalCloth extends ReflectObjBase implements ModClass {
                 SocketConnection.removeCmdListener(Const.CMDID.PET_RELEASE, refresh);
                 SocketConnection.removeCmdListener(Const.CMDID.PET_ONE_CURE, refresh);
                 SocketConnection.removeCmdListener(Const.CMDID.PET_CURE, refresh);
-                SocketConnection.removeCmdListener(Const.CMDID.USE_PET_ITEM_OUT_OF_FIGHT, refresh);
             }
         },
         async show(ctx) {
@@ -122,7 +121,6 @@ class LocalCloth extends ReflectObjBase implements ModClass {
                 SocketConnection.addCmdListener(Const.CMDID.PET_RELEASE, refresh);
                 SocketConnection.addCmdListener(Const.CMDID.PET_ONE_CURE, refresh);
                 SocketConnection.addCmdListener(Const.CMDID.PET_CURE, refresh);
-                SocketConnection.addCmdListener(Const.CMDID.USE_PET_ITEM_OUT_OF_FIGHT, refresh);
             }
         },
     };

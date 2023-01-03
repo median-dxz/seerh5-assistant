@@ -74,7 +74,7 @@ class sign extends ReflectObjBase implements ModClass {
         } catch (err) {
             void log('无法收取派遣');
         }
-        const igonrePetNames = data.igonrePetNames;
+        const ignorePetNames = data.ignorePetNames;
         const PosType = Const.PET_POS;
         let reprogress = false;
         for (let tid = 16; tid > 0; tid--) {
@@ -107,12 +107,12 @@ class sign extends ReflectObjBase implements ModClass {
             }
 
             log(`正在处理派遣任务: ${tid}`);
-            reprogress = e.petIds.some((v) => igonrePetNames.has(PetXMLInfo.getName(v)));
+            reprogress = e.petIds.some((v) => ignorePetNames.has(PetXMLInfo.getName(v)));
 
             let index = 0;
             for (let pid of e.petIds) {
                 const petName = PetXMLInfo.getName(pid);
-                if (igonrePetNames.has(petName)) {
+                if (ignorePetNames.has(petName)) {
                     await PetHelper.setPetLocation(e.cts[index], 1);
                     log(`取出非派遣精灵: ${petName}`);
                 }
@@ -129,31 +129,13 @@ class sign extends ReflectObjBase implements ModClass {
         }
     }
 
-    /**
-     * @deprecated
-     */
-    calc(items: number[]) {
-        function dfs(dep: number) {
-            if (items.length == 1) {
-                return items[0] == 3;
-            }
-            for (let pos = 0; pos < items.length - 1; pos++) {
-                let num1 = items[pos],
-                    num2 = items[pos + 1];
-                items.splice(pos, 2, Math.abs(num1 - num2));
-                log('test' + pos + ': ' + num1 + ' ' + num2 + ' ' + items[pos], items);
-                let ref = items[pos];
-                let res = dfs(dep + 1);
-                if (res) {
-                    log(`pos${pos} : ${num1} - ${num2} -> ${ref}`);
-                    return true;
-                }
-                items.splice(pos, 1, num1, num2);
-                log('test failed' + pos + ': ', items);
-            }
-            return false;
+    craftDreamGem(id: AttrConst<typeof Const.ITEMS.DreamGem>, left: number) {
+        const total = ItemManager.getNumByID(id);
+        const { 低阶梦幻宝石, 中阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石, 高阶梦幻宝石 } = Const.ITEMS.DreamGem;
+        const level = [低阶梦幻宝石, 中阶梦幻宝石, 高阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石];
+        for (let i = 1; i <= Math.trunc((total - left) / 4); i++) {
+            Utils.SocketSendByQueue(9332, [level.indexOf(id), 4]);
         }
-        log(dfs(1));
     }
 }
 export default {

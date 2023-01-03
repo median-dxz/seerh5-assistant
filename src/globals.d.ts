@@ -11,6 +11,7 @@ declare global {
         filterWarnText: RegExp[];
         SAMods: Map<string, import('@sa-core/mod-type').Mod>;
         SACoreReady: boolean;
+        SAResourceMap: Map<string, string>;
     }
 
     type AnyFunction = (...args: any) => any;
@@ -28,4 +29,3 @@ declare global {
         };
     }
 }
-

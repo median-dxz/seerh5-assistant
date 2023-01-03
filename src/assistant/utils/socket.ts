@@ -19,10 +19,10 @@ async function SendByQueue(cmd: number, data: Array<number> | number = []) {
 /**
  * @description 返回服务器响应cmd后才resolve的promise
  */
-async function ReceivedPromise(cmd: number, fn: () => void) {
+async function ReceivedPromise(cmd: number, fn: VoidFunction) {
     if (!fn) return;
     return new Promise<void>((resolve, reject) => {
-        new Promise((resolve: (value: () => void) => void, reject) => {
+        new Promise((resolve: (value: VoidFunction) => void, reject) => {
             function resolver() {
                 resolve(resolver);
             }

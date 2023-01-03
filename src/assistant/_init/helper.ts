@@ -1,3 +1,4 @@
+import { wrapper } from '@sa-core/common';
 import { defaultStyle, SaModuleLogger } from '../logger';
 const log = SaModuleLogger('SAHelper', defaultStyle.core);
 
@@ -27,11 +28,21 @@ egret.lifecycle.onResume = () => {
 
 // cancel alert before use item for pet
 ItemUseManager.prototype.useItem = function (t, e) {
-    if (!t) return void BubblerManager.getInstance().showText('使用物品前，请先选择一个精灵');
+    if (!t) return void BubblerManager.getInstance().showText('使用物品前，请先选择一只精灵');
     e = ~~e;
-    if (!(0 >= e)) {
+    e = Number(e);
+
+    const use = () => {
         const r = ItemXMLInfo.getName(e);
         this.$usePetItem({ petInfo: t, itemId: ~~e, itemName: r }, e);
+    };
+
+    if (e >= 0) {
+        if (e === 300066) {
+            Alert.show(`你确定要给 ${t.name} 使用通用刻印激活水晶吗`, use);
+        } else {
+            use();
+        }
     }
 };
 
@@ -74,5 +85,12 @@ CardPetAnimator.prototype.playAnimate = function (t, e, i, thisObj) {
     this.animate && this.animate.parent && this.animate.parent.addChild(this.animate);
 };
 
-export { };
+// resource url cache map
 
+window.SAResourceMap = new Map<string, string>();
+
+RES.getResByUrl = wrapper(RES.getResByUrl as (url: string) => Promise<egret.Texture>, undefined, (result, url) => {
+    if (result.$bitmapData && result.$bitmapData.format === 'image' && result.$bitmapData.source) {
+        window.SAResourceMap.set(url, result.$bitmapData.source.src);
+    }
+});

@@ -94,6 +94,7 @@ declare var PetUpdatePropController: any;
 
 // init/helper
 declare var Alarm: any;
+declare var Alert: any;
 
 // utils/sa-utils
 declare var CountermarkEvent: any;

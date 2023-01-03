@@ -12,7 +12,7 @@ const EmitEvent = (type: string, detail = {}) => {
 //     }
 // },
 
-ModuleManager.beginShow = wrapper(ModuleManager.beginShow, undefined, (moduleName) => {
+ModuleManager.beginShow = wrapper(ModuleManager.beginShow, undefined, (r, moduleName) => {
     EmitEvent(hook.Module.construct, moduleName);
 });
 
@@ -38,7 +38,7 @@ AwardItemDialog.prototype.startEvent = wrapper(
     }
 );
 
-AwardManager.showDialog = wrapper(AwardManager.showDialog, undefined, function (dialog: any, items: any) {
+AwardManager.showDialog = wrapper(AwardManager.showDialog, undefined, function (r, dialog: any, items: any) {
     EmitEvent(hook.Award.receive, { items });
 });
 
@@ -78,5 +78,4 @@ SocketConnection.addCmdListener(CMDID.NOTE_USE_SKILL, (e: SocketEvent) => {
     EmitEvent(hook.BattlePanel.onRoundData, { info: [info.firstAttackInfo, info.secondAttackInfo] });
 });
 
-export { };
-
+export {};

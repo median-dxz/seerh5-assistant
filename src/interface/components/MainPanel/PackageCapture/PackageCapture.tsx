@@ -25,7 +25,9 @@ const wrapperFactory = <T extends 'addCmdListener' | 'removeCmdListener' | 'disp
     const thisObj = SocketConnection.mainSocket;
     if (decorator) {
         let func = thisObj[funcName];
-        (thisObj[funcName] as any) = wrapper(func.bind(thisObj), undefined, decorator);
+        (thisObj[funcName] as any) = wrapper(func.bind(thisObj), undefined, (r, ...args) =>
+            decorator.call(null, ...args)
+        );
     } else {
         thisObj[funcName] = (thisObj[funcName] as any).rawFunction;
     }

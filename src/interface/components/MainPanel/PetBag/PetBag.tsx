@@ -303,7 +303,9 @@ export function PetBag() {
                             <TableCell component="th" scope="row" align="center">
                                 {row.id}
                             </TableCell>
-                            <TableCell align="center">这里显示头像</TableCell>
+                            <TableCell align="center">
+                                <img crossOrigin="anonymous" src={ClientConfig.getPetHeadPath(row.id)} width={48}></img>
+                            </TableCell>
                             <TableCell align="center">{row.name}</TableCell>
                             <TableCell align="center">
                                 {row.hp} / {row.maxHp}

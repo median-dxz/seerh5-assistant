@@ -188,6 +188,14 @@ declare class FightUserInfo {
 }
 
 declare class ItemManager {
+    static getSkillStoneInfos(): Array<{
+        itemLevel: number;
+        itemNum: number;
+        itemID: number;
+        type: number;
+    }>;
+
+    static getSkillStone(): void;
     static getNumByID(id: number): number;
     static updateItems(e: number[] | undefined, n: CallBack): void;
     /** @description 获取精灵背包内物品 */
@@ -250,6 +258,7 @@ declare class ItemXMLInfo {
     static _itemDict: SAType.Dict<SAType.ItemObj>;
     static getName(id: number): string;
     static getItemObj(id: number): SAType.ItemObj;
+    static getSkillStoneRank(id: number): number;
 }
 
 declare class ItemSeXMLInfo {

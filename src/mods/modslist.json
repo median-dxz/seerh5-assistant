@@ -10,5 +10,9 @@
     {
         "modId": "applybm",
         "path": "offical"
+    },
+    {
+        "modId": "CraftSkillStone",
+        "path": "offical"
     }
 ]
