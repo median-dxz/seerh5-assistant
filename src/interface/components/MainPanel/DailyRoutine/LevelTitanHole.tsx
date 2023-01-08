@@ -59,7 +59,6 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                     PetHelper.setDefault(customData.cts[0]);
                     setHint('准备背包完成');
                     Battle.Manager.strategy.custom = customData.strategy;
-
                     if (!levelData.current.levelOpen) {
                         await Utils.SocketSendByQueue(42395, [104, 1, 3, 0]);
                         setStep(1);
@@ -69,7 +68,6 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 } else {
                     setStep(6);
                 }
-
                 break;
             case 1:
                 await delay(500);
@@ -85,6 +83,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 });
                 levelData.current = await updateLevelData();
                 setStep(0);
+                break;
             case 2:
                 pets = await PetHelper.getBagPets(Const.PET_POS.bag1);
                 pet = pets.find((pet) => pet.name === '艾欧丽娅');

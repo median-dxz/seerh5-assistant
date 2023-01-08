@@ -212,7 +212,7 @@ const generateStrategy =
 
 SAEventTarget.addEventListener(EVENTS.BattlePanel.panelReady, handleBattleModule);
 SAEventTarget.addEventListener(EVENTS.BattlePanel.roundEnd, handleBattleModule);
-SAEventTarget.addEventListener(EVENTS.BattlePanel.completed, handleBattleEnd);
+SAEventTarget.addEventListener(EVENTS.BattlePanel.battleEnd, handleBattleEnd);
 
 import * as BaseStrategy from './strategy';
 

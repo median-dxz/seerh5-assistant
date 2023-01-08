@@ -12,8 +12,22 @@ const EmitEvent = (type: string, detail = {}) => {
 //     }
 // },
 
+// EventManager.dispatchEvent(new egret.Event(ModuleEvent.OPEN_MODULE,!1,!1,n))
+
 ModuleManager.beginShow = wrapper(ModuleManager.beginShow, undefined, (r, moduleName) => {
     EmitEvent(hook.Module.construct, moduleName);
+    const moduleClass: String = (ModuleManager.currModule as any).__class__;
+    switch (moduleName) {
+        case 'battleResultPanel':
+            if (
+                moduleClass === 'battleResultPanel.BattleResultPanel' ||
+                moduleClass === 'battleResultPanel.BattleFailPanel'
+            ) {
+                EmitEvent(hook.BattlePanel.endPropShown);
+            }
+        default:
+            break;
+    }
 });
 
 ModuleManager.removeModuleInstance = function (module) {
@@ -44,30 +58,24 @@ AwardManager.showDialog = wrapper(AwardManager.showDialog, undefined, function (
 
 PetFightController.setup = wrapper(PetFightController.setup, undefined, function () {
     EmitEvent(hook.BattlePanel.panelReady);
-    FighterModelFactory.enemyMode!.setHpView(true);
-    FighterModelFactory.enemyMode!.setHpView = function () {
+    const { enemyMode, playerMode } = FighterModelFactory;
+    if (!enemyMode || !playerMode) return;
+    enemyMode.setHpView(true);
+    enemyMode.setHpView = function () {
         this.propView!.isShowFtHp = true;
     };
+    playerMode.nextRound = wrapper(playerMode.nextRound.bind(playerMode), undefined, () => {
+        EmitEvent(hook.BattlePanel.roundEnd);
+    });
 });
 
 EventManager.addEventListener(
-    'new_round',
+    PetFightEvent.ALARM_CLICK,
     () => {
-        EmitEvent(hook.BattlePanel.roundEnd);
+        EmitEvent(hook.BattlePanel.battleEnd);
     },
     null
 );
-
-PetUpdatePropController.prototype.show = wrapper(PetUpdatePropController.prototype.show, undefined, async function () {
-    EmitEvent(hook.BattlePanel.completed, { isWin: FightManager.isWin });
-    await delay(500);
-    const currentModule = ModuleManager.currModule;
-    if (FightManager.isWin) {
-        currentModule.touchHandle && currentModule.touchHandle();
-    } else {
-        currentModule.onClose && currentModule.onClose();
-    }
-});
 
 SocketConnection.addCmdListener(CMDID.NOTE_USE_SKILL, (e: SocketEvent) => {
     const data: egret.ByteArray = Object.create(

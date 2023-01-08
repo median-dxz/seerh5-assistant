@@ -9,7 +9,8 @@ const events = {
         panelReady: 'sa_battle_start',
         roundEnd: 'sa_battle_roundEnd',
         onRoundData: 'sa_battle_roundData',
-        completed: 'sa_battle_completed',
+        endPropShown: 'sa_battle_resultPanel_show',
+        battleEnd: 'sa_battle_end',
     },
     Award: {
         show: 'sa_award_show',

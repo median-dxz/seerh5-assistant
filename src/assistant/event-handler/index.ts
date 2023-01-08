@@ -145,11 +145,16 @@ GlobalEventManager.addEventListener(hooks.BattlePanel.panelReady, () => {
     log(`检测到对战开始`);
 });
 
-GlobalEventManager.addEventListener(hooks.BattlePanel.completed, (e: Event) => {
-    if (e instanceof CustomEvent) {
-        log(`检测到对战结束 对战胜利: ${e.detail.isWin}`);
-    }
+GlobalEventManager.addEventListener(hooks.BattlePanel.battleEnd, () => {
+    const win = FightManager.isWin;
+    log(`检测到对战结束 对战胜利: ${win}`);
+});
+
+GlobalEventManager.addEventListener(hooks.BattlePanel.endPropShown, () => {
+    const currModule = ModuleManager.currModule;
+    currModule.onClose();
+    EventManager.dispatchEvent(new PetFightEvent(PetFightEvent.ALARM_CLICK, CountExpPanelManager.overData));
+    AwardManager.resume();
 });
 
 export { SeerModuleStatePublisher, SeerModuleHelper };
-

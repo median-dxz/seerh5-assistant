@@ -90,7 +90,6 @@ declare var OnlineManager: any;
 // init/event
 declare var AwardManager: any;
 declare var LevelManager: any;
-declare var PetUpdatePropController: any;
 
 // init/helper
 declare var Alarm: any;
@@ -102,6 +101,7 @@ declare var PetStatusEffectConfig: any;
 
 // entities
 declare var EffectInfoManager: any;
+declare var CountExpPanelManager: any;
 
 // pet-helper
 declare var TypeXMLInfo: any;
@@ -120,6 +120,10 @@ declare class SocketEvent extends egret.Event {}
 declare class PetEvent extends egret.Event {
     static readonly EQUIP_SKIN: string;
     constructor(type: string, catchTime: number, obj: any);
+}
+declare class PetFightEvent extends egret.Event {
+    static readonly ALARM_CLICK: 'fight_alarmClick';
+    constructor(type: string, obj: any);
 }
 
 declare namespace baseMenuComponent {

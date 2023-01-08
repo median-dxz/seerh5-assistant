@@ -5,11 +5,15 @@ declare class PetFightController {
 }
 
 declare class FighterModelFactory {
-    static playerMode?: BaseFighterModel;
+    static playerMode?: PlayerModel;
     static enemyMode?: BaseFighterModel;
 }
 
-declare class BaseFighterModel {
+declare class PlayerModel extends BaseFighterModel {
+    nextRound(): void;
+}
+
+declare class BaseFighterModel extends egret.EventDispatcher {
     setHpView: (show: boolean) => void;
     skillBtnViews: Array<SkillBtnView>;
     subject: SAType.ObserverList<ToolBtnPanelObserver>;
