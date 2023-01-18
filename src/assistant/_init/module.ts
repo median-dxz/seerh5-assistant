@@ -45,5 +45,6 @@ ModuleManager.loadScript = function (scriptName) {
     });
 };
 
-export { };
+UIUtils = null;
 
+export {};

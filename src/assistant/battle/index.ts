@@ -56,6 +56,7 @@ const BattleModuleManager: {
     strategy: AutoBattle.Strategy;
     lockingTrigger?: (value: boolean | PromiseLike<boolean>) => void;
     runOnce(trigger: AutoBattle.Trigger): Promise<boolean>;
+    clear(): void;
 } = {
     _running: false,
 
@@ -184,6 +185,11 @@ const BattleModuleManager: {
         } else {
             return Promise.reject('已经有一场正在等待回调的战斗！');
         }
+    },
+    clear() {
+        this.lockingTrigger = undefined;
+        this.strategy.custom = undefined;
+        this.running = false;
     },
 };
 

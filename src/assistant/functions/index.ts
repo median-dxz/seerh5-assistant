@@ -84,7 +84,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = ITEMS.P
         cts.forEach(usePotion);
         let leftCts = hpChecker();
         if (leftCts.length > 0) {
-            return lowerBlood(leftCts, healPotionId);
+            return delay(300).then(() => lowerBlood(leftCts, healPotionId));
         } else {
             Manager.strategy.custom = undefined;
         }
@@ -102,8 +102,10 @@ export async function switchBag(cts: number[]) {
     if (!cts || cts.length === 0) return;
     // 清空现有背包
     for (let v of await PetHelper.getBagPets(PET_POS.bag1)) {
-        await PetHelper.popPetFromBag(v.catchTime);
-        log(`SwitchBag -> 将 ${v.name} 放入仓库`);
+        if (!cts.includes(v.catchTime)) {
+            await PetHelper.popPetFromBag(v.catchTime);
+            log(`SwitchBag -> 将 ${v.name} 放入仓库`);
+        }
     }
     for (let v of cts) {
         await PetHelper.setPetLocation(v, PET_POS.bag1);
@@ -168,4 +170,38 @@ export async function updateBattleFireInfo() {
             timeLeft: r[1] - SystemTimerManager.time,
         };
     });
+}
+
+/**
+ * @description 获取EgretObject,以stage作为root寻找所有符合断言的obj,不会查找stage本身
+ */
+export function findObject<T extends { new (): T }>(
+    instanceClass: T,
+    predicate: (obj: egret.DisplayObject) => boolean
+) {
+    const root = LevelManager.stage;
+
+    function find(parent: egret.DisplayObject) {
+        if (parent.$children == null) {
+            return [];
+        }
+        let result: T[] = [];
+        for (let child of parent.$children) {
+            if (child instanceof instanceClass && predicate(child) === true) {
+                result.push(child);
+            }
+            result = result.concat(find(child));
+        }
+        return result;
+    }
+
+    return find(root);
+}
+
+export function getClickTarget() {
+    const listener = (e: egret.TouchEvent) => {
+        log(e.target);
+        LevelManager.stage.removeEventListener(egret.TouchEvent.TOUCH_BEGIN, listener, null);
+    };
+    LevelManager.stage.addEventListener(egret.TouchEvent.TOUCH_BEGIN, listener, null);
 }

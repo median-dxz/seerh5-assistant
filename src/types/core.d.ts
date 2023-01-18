@@ -165,7 +165,7 @@ declare class ModuleManager {
         i?: any,
         style?: AppDoStyle[keyof AppDoStyle]
     ): Promise<void>;
-    static showModuleByID(moduleId: number): Promise<void>;
+    static showModuleByID(moduleId: number, params?: any): Promise<void>;
     static removeModuleInstance(module: BasicMultPanelModule): void;
     static appJs: {
         [module: string]: boolean;
@@ -187,6 +187,10 @@ declare class FightUserInfo {
     static fighterInfos: FighterUserInfos | null;
 }
 
+declare class LevelManager {
+    static get stage(): egret.Stage;
+}
+
 declare class ItemManager {
     static getSkillStoneInfos(): Array<{
         itemLevel: number;
@@ -197,7 +201,8 @@ declare class ItemManager {
 
     static getSkillStone(): void;
     static getNumByID(id: number): number;
-    static updateItems(e: number[] | undefined, n: CallBack): void;
+    static updateItems(idList: number[] | undefined, n: CallBack): void;
+    static updateItemNum(idList: number[], enable: boolean[]): void;
     /** @description 获取精灵背包内物品 */
     static getPetItemIDs(): number[];
     static GetMySuitIds(): number[];

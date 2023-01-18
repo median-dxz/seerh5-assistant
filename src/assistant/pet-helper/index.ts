@@ -1,7 +1,6 @@
-import { Utils } from '@sa-core/index';
 import { CMDID, PET_POS as PosType } from '../const';
 import Pet, { PetFactory } from '../entities/pet';
-import { SocketReceivedPromise, SocketSendByQueue } from '../utils';
+import { GetBitSet, SocketReceivedPromise, SocketSendByQueue } from '../utils';
 
 type PosType = AttrConst<typeof PosType>;
 
@@ -164,7 +163,7 @@ export function toggleAutoCure(enable: boolean) {
 }
 
 export async function getAutoCureState(): Promise<boolean> {
-    const r = await Utils.GetBitSet(22439);
+    const r = await GetBitSet(22439);
     return r[0];
 }
 

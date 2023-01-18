@@ -89,11 +89,13 @@ declare var OnlineManager: any;
 
 // init/event
 declare var AwardManager: any;
-declare var LevelManager: any;
 
 // init/helper
 declare var Alarm: any;
 declare var Alert: any;
+
+// init/module
+declare var UIUtils: null;
 
 // utils/sa-utils
 declare var CountermarkEvent: any;
@@ -112,6 +114,7 @@ declare var markCenter: any;
 declare var PetSkinController: any;
 declare var PetSkinXMLInfo: any;
 declare var ClientConfig: any;
+declare var config: any;
 
 declare var PetFightSkinSkillReplaceXMLInfo: any;
 declare var PetIdTransform: any;
