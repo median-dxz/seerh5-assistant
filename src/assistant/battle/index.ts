@@ -22,7 +22,12 @@ const handleBattleEnd = (e: Event) => {
         const { isWin } = e.detail as { isWin: boolean };
         if (BattleModuleManager.lockingTrigger) {
             BattleModuleManager.running = false;
-            BattleModuleManager.lockingTrigger(isWin);
+            const { lockingTrigger } = BattleModuleManager;
+            if (BattleModuleManager.delayTimeout) {
+                BattleModuleManager.delayTimeout.then(() => {
+                    lockingTrigger(isWin);
+                });
+            }
             BattleModuleManager.lockingTrigger = undefined;
         }
     }
@@ -55,6 +60,7 @@ const BattleModuleManager: {
     set running(state: boolean);
     strategy: AutoBattle.Strategy;
     lockingTrigger?: (value: boolean | PromiseLike<boolean>) => void;
+    delayTimeout?: Promise<void>;
     runOnce(trigger: AutoBattle.Trigger): Promise<boolean>;
     clear(): void;
 } = {
@@ -181,6 +187,7 @@ const BattleModuleManager: {
             }
             return new Promise((resolve) => {
                 this.lockingTrigger = resolve;
+                this.delayTimeout = delay(6000);
             });
         } else {
             return Promise.reject('已经有一场正在等待回调的战斗！');
@@ -188,6 +195,7 @@ const BattleModuleManager: {
     },
     clear() {
         this.lockingTrigger = undefined;
+        this.delayTimeout = undefined;
         this.strategy.custom = undefined;
         this.running = false;
     },

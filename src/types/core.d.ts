@@ -62,6 +62,7 @@ declare class PetInfo {
     name: string;
     catchTime: number;
     dv: number;
+    nature: number;
     hideSKill: PetSkillInfo;
     skillArray: Array<PetSkillInfo>;
     get hp(): number;

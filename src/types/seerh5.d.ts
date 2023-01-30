@@ -93,6 +93,7 @@ declare var AwardManager: any;
 // init/helper
 declare var Alarm: any;
 declare var Alert: any;
+declare var BatteryController: any;
 
 // init/module
 declare var UIUtils: null;
@@ -118,6 +119,7 @@ declare var config: any;
 
 declare var PetFightSkinSkillReplaceXMLInfo: any;
 declare var PetIdTransform: any;
+declare var NatureXMLInfo: any;
 
 declare class SocketEvent extends egret.Event {}
 declare class PetEvent extends egret.Event {

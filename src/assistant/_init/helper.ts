@@ -17,8 +17,7 @@ egret.lifecycle.onPause = () => {
     timer = setInterval(() => {
         if (!SocketConnection.mainSocket.connected) return;
         SystemTimerManager.queryTime();
-        SystemTimerManager._tickFun.forEach((f: Function) => f());
-    }, 3000);
+    }, 5000);
 };
 
 egret.lifecycle.onResume = () => {

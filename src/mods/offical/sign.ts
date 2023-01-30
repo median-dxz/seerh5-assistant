@@ -2,10 +2,11 @@ import data from '@data';
 import * as saco from '@sa-core/index';
 import { ReflectObjBase } from '@sa-core/mod-type';
 
+import { delay } from '@sa-core/common';
 import { defaultStyle, SaModuleLogger } from '@sa-core/logger';
 const log = SaModuleLogger('Sign', defaultStyle.mod);
 
-const { Utils, Const, PetHelper } = saco;
+const { Utils, Const, PetHelper, Functions } = saco;
 const { CMDID } = Const;
 
 class sign extends ReflectObjBase implements ModClass {
@@ -135,6 +136,27 @@ class sign extends ReflectObjBase implements ModClass {
         const level = [低阶梦幻宝石, 中阶梦幻宝石, 高阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石];
         for (let i = 1; i <= Math.trunc((total - left) / 4); i++) {
             Utils.SocketSendByQueue(9332, [level.indexOf(id), 4]);
+        }
+    }
+
+    async resetNature(ct: number, nature: number) {
+        for (; ; await delay(200)) {
+            await Functions.usePotionForPet(ct, 300070);
+            const info = await PetManager.UpdateBagPetInfoAsynce(ct);
+
+            log(`刷性格: 当前性格: ${NatureXMLInfo.getName(info.nature)}`);
+            if (info.nature === nature) {
+                break;
+            }
+            await Utils.SocketReceivedPromise(CommandID.MULTI_ITEM_LIST, () => {
+                ItemManager.updateItemNum([300070], [true]);
+            });
+            await delay(200);
+            const num = ItemManager.getNumByID(300070);
+            log(`刷性格: 剩余胶囊数: ${num}`);
+            if (num < 20) {
+                break;
+            }
         }
     }
 }

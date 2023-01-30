@@ -10,6 +10,7 @@ import { mainTheme } from './style';
 export function SaMain() {
     const [isCommandBarOpen, toggleCommandBar] = useState(false);
     const [isMainPanelOpen, toggleMainPanel] = useState(false);
+    const [lockMainPanel, toggleMainPanelLock] = useState(false);
 
     const shortCutHandler = function (e: KeyboardEvent | React.KeyboardEvent) {
         if (e.key === 'p' && e.ctrlKey) {
@@ -22,7 +23,8 @@ export function SaMain() {
         if (
             e.button === 0 &&
             document.querySelector('.MuiDialog-root[role=presentation]') == null &&
-            document.querySelector('.MuiPopover-root[role=presentation]') == null
+            document.querySelector('.MuiPopover-root[role=presentation]') == null &&
+            !lockMainPanel
         ) {
             toggleMainPanel(false);
         }
@@ -33,9 +35,9 @@ export function SaMain() {
         document.body.addEventListener('click', clickHandler);
         return () => {
             document.body.removeEventListener('keydown', shortCutHandler);
-            document.body.addEventListener('click', clickHandler);
+            document.body.removeEventListener('click', clickHandler);
         };
-    }, []);
+    }, [lockMainPanel]);
 
     return (
         <Fragment>
@@ -50,7 +52,7 @@ export function SaMain() {
                         }}
                     />
                     <CommandBar show={isCommandBarOpen} />
-                    <MainPanel show={isMainPanelOpen} />
+                    <MainPanel show={isMainPanelOpen} lock={lockMainPanel} setLock={toggleMainPanelLock} />
                 </Container>
             </ThemeProvider>
         </Fragment>

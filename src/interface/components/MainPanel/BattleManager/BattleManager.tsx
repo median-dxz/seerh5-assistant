@@ -151,17 +151,10 @@ export function BattleManager() {
             />
             <Button
                 onClick={() => {
-                    Battle.Manager.strategy.custom = undefined;
+                    Battle.Manager.clear();
                 }}
             >
-                清除自定义逻辑
-            </Button>
-            <Button
-                onClick={() => {
-                    Battle.Manager.lockingTrigger = undefined;
-                }}
-            >
-                清除locker
+                一键复位
             </Button>
             <Divider />
             <h3>出招表</h3>
@@ -170,10 +163,7 @@ export function BattleManager() {
                     showDialog({
                         onClose: (value) => {
                             if (value) {
-                                Battle.Manager.strategy.snm = addItem(
-                                    Battle.Manager.strategy.snm,
-                                    value.split(',')
-                                );
+                                Battle.Manager.strategy.snm = addItem(Battle.Manager.strategy.snm, value.split(','));
                             }
                             showDialog(closeDialog);
                         },
@@ -200,20 +190,14 @@ export function BattleManager() {
                         <TableCell align="center">
                             <Button
                                 onClick={() => {
-                                    Battle.Manager.strategy.snm = setTopItem(
-                                        Battle.Manager.strategy.snm,
-                                        index
-                                    );
+                                    Battle.Manager.strategy.snm = setTopItem(Battle.Manager.strategy.snm, index);
                                 }}
                             >
                                 置顶
                             </Button>
                             <Button
                                 onClick={() => {
-                                    Battle.Manager.strategy.snm = delItem(
-                                        Battle.Manager.strategy.snm,
-                                        index
-                                    );
+                                    Battle.Manager.strategy.snm = delItem(Battle.Manager.strategy.snm, index);
                                 }}
                             >
                                 删除
@@ -250,10 +234,7 @@ export function BattleManager() {
                     showDialog({
                         onClose: (value) => {
                             if (value) {
-                                Battle.Manager.strategy.dsl = addItem(
-                                    Battle.Manager.strategy.dsl,
-                                    value.split(',')
-                                );
+                                Battle.Manager.strategy.dsl = addItem(Battle.Manager.strategy.dsl, value.split(','));
                             }
                             showDialog(closeDialog);
                         },
@@ -282,20 +263,14 @@ export function BattleManager() {
                             <TableCell align="center">
                                 <Button
                                     onClick={() => {
-                                        Battle.Manager.strategy.dsl = setTopItem(
-                                            Battle.Manager.strategy.dsl,
-                                            index
-                                        );
+                                        Battle.Manager.strategy.dsl = setTopItem(Battle.Manager.strategy.dsl, index);
                                     }}
                                 >
                                     置顶
                                 </Button>
                                 <Button
                                     onClick={() => {
-                                        Battle.Manager.strategy.dsl = delItem(
-                                            Battle.Manager.strategy.dsl,
-                                            index
-                                        );
+                                        Battle.Manager.strategy.dsl = delItem(Battle.Manager.strategy.dsl, index);
                                     }}
                                 >
                                     删除

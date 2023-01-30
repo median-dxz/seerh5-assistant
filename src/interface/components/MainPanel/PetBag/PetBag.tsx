@@ -20,6 +20,8 @@ const numberFormat = Intl.NumberFormat(undefined, {
     minimumIntegerDigits: 2,
 });
 
+const StorageKey = 'PetPattern';
+
 interface MenuOption {
     type: 'suit' | 'title' | 'savePets' | 'setPets';
     id: number[];
@@ -39,7 +41,7 @@ export function PetBag() {
     const [pets, setPets] = React.useState<Pet[]>([]);
     const [petsSelected, setPetsSelected] = React.useState<boolean[]>([]);
     const [petPatterns, setPetPattern] = React.useState(() => {
-        let item: any[] | null | string = window.localStorage.getItem('PetPattern');
+        let item: any[] | null | string = window.localStorage.getItem(StorageKey);
         if (!item) {
             item = Array(6);
         } else {
@@ -199,7 +201,7 @@ export function PetBag() {
                                 setPetPattern((petPatterns) => {
                                     const newValue = [...petPatterns];
                                     newValue[index] = newPets.map((pet) => pet.catchTime);
-                                    window.localStorage.setItem('PetPatterns', JSON.stringify(newValue));
+                                    window.localStorage.setItem(StorageKey, JSON.stringify(newValue));
                                     return newValue;
                                 });
                             }
@@ -244,7 +246,20 @@ export function PetBag() {
                     setAnchorEl(e.currentTarget);
                     const patternName = Array(petPatterns.length)
                         .fill('')
-                        .map((v, index) => `方案${index}`);
+                        .map(
+                            (v, index) =>
+                                `方案${index}: ${(
+                                    petPatterns[index]?.map(Number).map((ct) => {
+                                        let name = PetManager.getPetInfo(ct)?.name;
+                                        if (!name) {
+                                            name = PetStorage2015InfoManager.allInfo.find(
+                                                (p) => p.catchTime === ct
+                                            )!.name;
+                                        }
+                                        return name;
+                                    }) ?? []
+                                ).join(',')}`
+                        );
                     menuOption.current = {
                         type: 'setPets',
                         id: Array(petPatterns.length)

@@ -1,4 +1,5 @@
-import { Box, Fade, SxProps, Tab, Tabs } from '@mui/material';
+import { Lock } from '@mui/icons-material';
+import { Box, Fade, Switch, SxProps, Tab, Tabs } from '@mui/material';
 import { mainColor } from '@sa-ui/style';
 import * as React from 'react';
 import { BattleManager } from './BattleManager';
@@ -54,6 +55,8 @@ function a11yProps(index: number) {
 
 interface Props {
     show: boolean;
+    lock: boolean;
+    setLock: (lock: boolean) => void;
 }
 
 export function MainPanel(props: Props) {
@@ -62,6 +65,22 @@ export function MainPanel(props: Props) {
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
+
+    function dispatchClickEvent(e: React.TouchEvent | React.MouseEvent) {
+        if (!props.lock) {
+            return;
+        }
+        const canvas: HTMLCanvasElement = document.querySelector('#egret_player_container canvas')!;
+        const eventProperty: any = {};
+        for (let k in e.nativeEvent) {
+            eventProperty[k] = e.nativeEvent[k as keyof typeof e.nativeEvent];
+        }
+        if (e.nativeEvent instanceof MouseEvent) {
+            canvas.dispatchEvent(new MouseEvent(e.type, eventProperty));
+        } else if (e.nativeEvent instanceof TouchEvent) {
+            canvas.dispatchEvent(new TouchEvent(e.type, eventProperty));
+        }
+    }
 
     return (
         <Fade in={props.show}>
@@ -84,12 +103,13 @@ export function MainPanel(props: Props) {
                 onClick={(e) => {
                     e.nativeEvent.stopPropagation();
                 }}
+                onTouchCancel={dispatchClickEvent}
+                onTouchStart={dispatchClickEvent}
+                onTouchEnd={dispatchClickEvent}
+                onMouseUp={dispatchClickEvent}
+                onMouseDown={dispatchClickEvent}
             >
-                <Tabs
-                    orientation="vertical"
-                    value={value}
-                    onChange={handleChange}
-                    aria-label="SA Main Panel Tabs"
+                <Box
                     sx={{
                         minWidth: '155px',
                         bgcolor: `rgba(${mainColor.back} / 12%)`,
@@ -99,13 +119,25 @@ export function MainPanel(props: Props) {
                         paddingBlockStart: '10%',
                     }}
                 >
-                    <Tab label="快捷命令组" {...a11yProps(0)} />
-                    <Tab label="常用数据速览" {...a11yProps(1)} />
-                    <Tab label="一键日常" {...a11yProps(2)} />
-                    <Tab label="精灵背包" {...a11yProps(3)} />
-                    <Tab label="自动战斗管理器" {...a11yProps(4)} />
-                    <Tab label="抓包调试" {...a11yProps(5)} />
-                </Tabs>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Lock />
+                        <Switch
+                            checked={props.lock}
+                            onChange={(e, newValue) => {
+                                props.setLock(newValue);
+                            }}
+                        />
+                    </Box>
+
+                    <Tabs orientation="vertical" value={value} onChange={handleChange} aria-label="SA Main Panel Tabs">
+                        <Tab label="快捷命令组" {...a11yProps(0)} />
+                        <Tab label="常用数据速览" {...a11yProps(1)} />
+                        <Tab label="一键日常" {...a11yProps(2)} />
+                        <Tab label="精灵背包" {...a11yProps(3)} />
+                        <Tab label="自动战斗管理器" {...a11yProps(4)} />
+                        <Tab label="抓包调试" {...a11yProps(5)} />
+                    </Tabs>
+                </Box>
                 <TabPanel value={value} index={0}></TabPanel>
                 <TabPanel value={value} index={1}>
                     <CommonValue />

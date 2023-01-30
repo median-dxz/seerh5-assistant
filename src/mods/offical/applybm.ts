@@ -84,6 +84,7 @@ namespace PetFactor {
             await delay(300);
             await beforeBattle();
             PetHelper.setDefault(cts[0]);
+            await delay(300);
             Battle.Manager.strategy.custom = strategy;
         }
         async update() {
@@ -100,8 +101,8 @@ namespace PetFactor {
             if (this.curDifficulty === LevelDifficulty.NotSelected && this.option.difficulty) {
                 this.curDifficulty = this.option.difficulty;
             }
-            this.isChallenge = this.curDifficulty !== 0;
             this.curPosition = values[2] >> 16;
+            this.isChallenge = this.curDifficulty !== 0 && this.curPosition !== 0;
             switch (this.curDifficulty) {
                 case LevelDifficulty.Ease:
                     this.bosses = this.configData.EasyBattle.Task;
@@ -128,26 +129,20 @@ const moveModules: { [name: string]: Battle.AutoBattle.MoveModule } = {
             Battle.Operator.auto();
         }
     },
-    克朵六时: async (round, skills, pets) => {
-        const snm = new Battle.BaseStrategy.SkillNameMatch(['诸界混一击', '剑挥四方', '幻梦芳逝']);
-        const dsl = new Battle.BaseStrategy.DiedSwitchLink(['神寂·克罗诺斯', '蒂朵', '六界帝神', '时空界皇']);
-        if (round.isDiedSwitch) {
-            const r = dsl.match(pets, round.self!.catchtime);
-            if (r !== -1) {
-                Battle.Operator.switchPet(r);
-            } else {
-                Battle.Operator.auto();
-            }
-            await delay(600);
-            skills = Battle.InfoProvider.getCurSkills()!;
-        }
-        const r = snm.match(skills);
-        if (r) {
-            Battle.Operator.useSkill(r);
-        } else {
-            Battle.Operator.auto();
-        }
-    },
+    潘朵必先: Battle.generateStrategy(
+        ['鬼焰·焚身术', '幻梦芳逝', '诸界混一击', '梦境残缺'],
+        ['潘克多斯', '蒂朵', '魔钰', '时空界皇']
+    ),
+    克朵六时: Battle.generateStrategy(
+        ['诸界混一击', '剑挥四方', '幻梦芳逝'],
+        ['神寂·克罗诺斯', '蒂朵', '六界帝神', '时空界皇']
+    ),
+    克朵补刀: Battle.generateStrategy(
+        ['诸界混一击', '剑挥四方', '幻梦芳逝', '破寂同灾'],
+        ['神寂·克罗诺斯', '蒂朵', '六界帝神', '时空界皇', '深渊狱神·哈迪斯']
+    ),
+    蝶六时: Battle.generateStrategy(['诸界混一击', '剑挥四方', '竭血残蝶'], ['幻影蝶', '六界帝神', '时空界皇']),
+    潘朵索: Battle.generateStrategy(['鬼焰·焚身术', '幻梦芳逝', '烈火净世击'], ['潘克多斯', '蒂朵', '混沌魔君索伦森']),
 };
 
 const perStrategy: {
@@ -160,48 +155,56 @@ const perStrategy: {
         cts: [1656696029, 1656056275, 1657863632, 1655484346],
         strategy: moveModules['克朵六时'],
     },
+    蝶六时: {
+        beforeBattle: async () => {},
+        cts: [1656055512, 1657863632, 1655484346],
+        strategy: moveModules['蝶六时'],
+    },
+    潘朵索: {
+        beforeBattle: async () => {
+            await Functions.lowerBlood([1656383521, 1656056275]);
+        },
+        cts: [1656383521, 1656056275, 1656847261],
+        strategy: moveModules['潘朵索'],
+    },
+    潘朵必先: {
+        beforeBattle: async () => {
+            await Functions.lowerBlood([1656383521, 1655445699, 1655484346]);
+        },
+        cts: [1656383521, 1656056275, 1655445699, 1655484346],
+        strategy: moveModules['潘朵必先'],
+    },
     圣谱单挑: { beforeBattle: async () => {}, cts: [1656092908], strategy: moveModules['圣谱单挑'] },
+    克朵补刀: {
+        beforeBattle: async () => {
+            await Functions.lowerBlood([1656383521, 1655445699, 1655484346, 1656945596]);
+        },
+        cts: [1656383521, 1656056275, 1655445699, 1655484346, 1656945596],
+        strategy: moveModules['克朵补刀'],
+    },
 };
 
 const options: PetFactor.Option[] = [
     // 德拉
     {
-        difficulty: PetFactor.LevelDifficulty.Ease,
-        sweep: false,
+        difficulty: PetFactor.LevelDifficulty.Hell,
+        sweep: true,
         id: 45,
-        strategy: [
-            perStrategy['克朵六时'],
-            perStrategy['克朵六时'],
-            perStrategy['圣谱单挑'],
-            perStrategy['克朵六时'],
-            perStrategy['克朵六时'],
-        ],
+        strategy: [],
     },
     // 杰洛特
     {
-        difficulty: PetFactor.LevelDifficulty.Ease,
-        sweep: false,
+        difficulty: PetFactor.LevelDifficulty.Hell,
+        sweep: true,
         id: 38,
-        strategy: [
-            perStrategy['克朵六时'],
-            perStrategy['克朵六时'],
-            perStrategy['圣谱单挑'],
-            perStrategy['克朵六时'],
-            perStrategy['克朵六时'],
-        ],
+        strategy: [],
     },
     // 东辉
     {
-        difficulty: PetFactor.LevelDifficulty.Ease,
-        sweep: false,
+        difficulty: PetFactor.LevelDifficulty.Hard,
+        sweep: true,
         id: 65,
-        strategy: [
-            perStrategy['克朵六时'],
-            perStrategy['克朵六时'],
-            perStrategy['圣谱单挑'],
-            perStrategy['克朵六时'],
-            perStrategy['克朵六时'],
-        ],
+        strategy: [],
     },
     // 眠神
     {
@@ -213,7 +216,7 @@ const options: PetFactor.Option[] = [
             perStrategy['克朵六时'],
             perStrategy['圣谱单挑'],
             perStrategy['克朵六时'],
-            perStrategy['克朵六时'],
+            perStrategy['潘朵必先'],
         ],
     },
     // 未名1
@@ -238,7 +241,7 @@ const options: PetFactor.Option[] = [
             perStrategy['克朵六时'],
             perStrategy['克朵六时'],
             perStrategy['圣谱单挑'],
-            perStrategy['克朵六时'],
+            perStrategy['克朵补刀'],
             perStrategy['克朵六时'],
         ],
     },
