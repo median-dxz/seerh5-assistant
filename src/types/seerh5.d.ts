@@ -109,6 +109,9 @@ declare var CountExpPanelManager: any;
 // pet-helper
 declare var TypeXMLInfo: any;
 
+// popViewManager
+declare class PopView extends eui.Component {}
+
 // mods
 declare var SystemTimerManager: any;
 declare var markCenter: any;

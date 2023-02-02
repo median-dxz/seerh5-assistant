@@ -14,6 +14,7 @@ import { Battle, Utils } from '@sa-core/index';
 import { mainColor } from '@sa-ui/style';
 import React from 'react';
 import { LevelCourageTower } from './LevelCourageTower';
+import { LevelElfKingsTrial } from './LevelElfKingsTrial';
 import { LevelExpTraining } from './LevelExpTraining';
 import { LevelStudyTraining } from './LevelStudyTraining';
 import { LevelTitanHole } from './LevelTitanHole';
@@ -71,7 +72,15 @@ export function DailyRoutine() {
                 return count === 2 && step === 0;
             },
         },
-        // { name: '精灵王试炼'
+        {
+            name: '精灵王试炼',
+            module: <LevelElfKingsTrial setRunning={setRunning} running={running} />,
+            async getState() {
+                const [count] = await Utils.GetMultiValue(18745);
+                const [rewardCanReceive] = await Utils.GetBitSet(2000037);
+                return count === 15 && !rewardCanReceive;
+            },
+        },
         {
             name: 'x战队密室',
             module: <LevelXTeamRoom setRunning={setRunning} running={running} />,

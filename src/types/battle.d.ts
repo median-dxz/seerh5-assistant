@@ -1,7 +1,23 @@
 declare class PetFightController {
     static roundTimes: number;
+    static GameSpeed: number;
+    static setFightSpeed(speed: number): void;
     static setup(): void;
     static mvContainer: egret.DisplayObjectContainer;
+}
+
+declare class FightOverController {
+    static destroy(): void;
+}
+
+declare class TimerManager {
+    static countDownOverHandler(): void;
+}
+
+declare class UseSkillController extends egret.EventDispatcher {
+    textTimer: egret.Timer | null;
+    closeTxt(): void;
+    onMovieOver(): void;
 }
 
 declare class FighterModelFactory {
@@ -58,8 +74,4 @@ declare class SkillBtnView extends egret.EventDispatcher {
 
 declare class PetBtnView extends egret.EventDispatcher {
     autoUse(): void;
-}
-
-declare class TimerManager {
-    static countDownOverHandler(): void;
 }

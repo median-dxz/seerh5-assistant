@@ -1,5 +1,5 @@
 import Pet, { PetFactory } from '../entities/pet';
-import RoundPetInfo from '../entities/roundinfo';
+import RoundPetInfo from '../entities/round-info';
 import Skill, { SkillFactory } from '../entities/skill';
 
 export type PetSwitchInfo = Pet & { index: number };

@@ -1,7 +1,9 @@
 import { InfoProvider } from '../battle';
 import { EVENTS as hooks } from '../const';
-import RoundPetInfo from '../entities/roundinfo';
+import RoundPetInfo from '../entities/round-info';
+import { findObject } from '../functions';
 import { defaultStyle, SaModuleLogger } from '../logger';
+import { SeerModuleHelper } from '../utils';
 
 const GlobalEventManager = window.SAEventTarget;
 const log = SaModuleLogger('SAEventHandler', defaultStyle.core);
@@ -79,15 +81,6 @@ const SeerModuleStatePublisher = {
     },
 };
 
-const SeerModuleHelper = {
-    currentModule<T extends BasicMultPanelModule>() {
-        return ModuleManager.currModule as T;
-    },
-    isConcreteModule<T extends BasicMultPanelModule>(name: string, module: BasicMultPanelModule): module is T {
-        return module.name === name;
-    },
-};
-
 GlobalEventManager.addEventListener(hooks.Module.loadScript, (e) => {
     if (e instanceof CustomEvent) {
         log(`检测到新模块加载: ${e.detail}`);
@@ -142,6 +135,9 @@ GlobalEventManager.addEventListener(hooks.BattlePanel.onRoundData, (e) => {
 
 GlobalEventManager.addEventListener(hooks.BattlePanel.panelReady, () => {
     InfoProvider.cachedRoundInfo = null;
+    if (FightManager.fightAnimateMode === 1) {
+        PetFightController.setFightSpeed(10);
+    }
     log(`检测到对战开始`);
 });
 
@@ -155,6 +151,17 @@ GlobalEventManager.addEventListener(hooks.BattlePanel.endPropShown, () => {
     currModule.onClose();
     EventManager.dispatchEvent(new PetFightEvent(PetFightEvent.ALARM_CLICK, CountExpPanelManager.overData));
     AwardManager.resume();
+    if (FightManager.fightAnimateMode === 1) {
+        PetFightController.setFightSpeed(1);
+    }
+    if (window.petNewSkillPanel) {
+        const newSkillPanel = findObject(petNewSkillPanel.PetNewSkillPanel, () => true).at(0);
+        if (newSkillPanel) {
+            newSkillPanel._view.hide();
+            newSkillPanel.onClose();
+        }
+    }
 });
 
-export { SeerModuleStatePublisher, SeerModuleHelper };
+export { SeerModuleStatePublisher };
+

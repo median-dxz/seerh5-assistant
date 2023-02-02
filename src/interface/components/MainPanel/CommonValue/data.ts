@@ -1,4 +1,4 @@
-import { SeerModuleHelper } from "@sa-core/event-handler";
+import { SeerModuleHelper } from "@sa-core/utils";
 
 export const idList = [
     1, //赛尔豆

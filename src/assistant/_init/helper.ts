@@ -49,8 +49,7 @@ ItemUseManager.prototype.useItem = function (t, e) {
 DBSkillAnimator.prototype.play = function (_, callback, thisObj) {
     const { skillMC } = DBSkillAnimator;
     PetFightController.mvContainer.addChild(skillMC);
-    const o = SkillXMLInfo.getCategory(~~this.skillId);
-    switch (o) {
+    switch (SkillXMLInfo.getCategory(~~this.skillId)) {
         case 1:
             skillMC.animation.play('wugong', -1);
             skillMC.scaleX > 0 ? (skillMC.x = skillMC.x + 580) : (skillMC.x = skillMC.x - 560);
@@ -83,6 +82,29 @@ CardPetAnimator.prototype.playAnimate = function (t, e, i, thisObj) {
         else egret.setTimeout(i.bind(thisObj), this, 2e3);
     this.animate && this.animate.parent && this.animate.parent.addChild(this.animate);
 };
+
+UseSkillController.prototype.closeTxt = function () {
+    if (this.textTimer) {
+        this.textTimer.removeEventListener(egret.TimerEvent.TIMER, this.closeTxt, this);
+        this.textTimer.stop();
+        this.textTimer = null;
+    }
+    if (FightManager.fightAnimateMode !== 1) {
+        this.dispatchEvent(new egret.Event('movieOver'));
+    }
+};
+
+UseSkillController.prototype.onMovieOver = wrapper(
+    UseSkillController.prototype.onMovieOver,
+    undefined,
+    function (this: UseSkillController) {
+        if (FightManager.fightAnimateMode === 1) {
+            setTimeout(() => {
+                this.dispatchEvent(new egret.Event('movieOver'));
+            }, 300);
+        }
+    }
+);
 
 // resource url cache map
 

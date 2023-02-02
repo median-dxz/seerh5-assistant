@@ -1,5 +1,5 @@
 import * as BattleModule from '../battle';
-import { CMDID, ITEMS, MULTI, PET_POS } from '../const';
+import { CMDID, ITEMS, PET_POS } from '../const';
 import * as PetHelper from '../pet-helper';
 import { BuyPetItem, GetMultiValue, SocketSendByQueue } from '../utils';
 
@@ -87,6 +87,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = ITEMS.P
             return delay(300).then(() => lowerBlood(leftCts, healPotionId));
         } else {
             Manager.strategy.custom = undefined;
+            return delay(300);
         }
     });
 }
@@ -162,8 +163,13 @@ export async function delCounterMark() {
     }
 }
 
+const BattleFireValue = {
+    类型: 2913,
+    到期时间戳: 2914,
+} as const;
+
 export async function updateBattleFireInfo() {
-    return GetMultiValue(MULTI.战斗火焰.类型, MULTI.战斗火焰.到期时间戳).then((r) => {
+    return GetMultiValue(BattleFireValue.类型, BattleFireValue.到期时间戳).then((r) => {
         return {
             type: r[0],
             valid: r[1] > 0 && SystemTimerManager.time < r[1],
@@ -175,7 +181,7 @@ export async function updateBattleFireInfo() {
 /**
  * @description 获取EgretObject,以stage作为root寻找所有符合断言的obj,不会查找stage本身
  */
-export function findObject<T extends { new (): T }>(
+export function findObject<T extends { new (...args: any[]): InstanceType<T> }>(
     instanceClass: T,
     predicate: (obj: egret.DisplayObject) => boolean
 ) {
@@ -185,7 +191,7 @@ export function findObject<T extends { new (): T }>(
         if (parent.$children == null) {
             return [];
         }
-        let result: T[] = [];
+        let result: InstanceType<T>[] = [];
         for (let child of parent.$children) {
             if (child instanceof instanceClass && predicate(child) === true) {
                 result.push(child);

@@ -131,7 +131,7 @@ const moveModules: { [name: string]: Battle.AutoBattle.MoveModule } = {
     },
     潘朵必先: Battle.generateStrategy(
         ['鬼焰·焚身术', '幻梦芳逝', '诸界混一击', '梦境残缺'],
-        ['潘克多斯', '蒂朵', '魔钰', '时空界皇']
+        ['潘克多斯', '蒂朵', '鲁肃', '魔钰', '时空界皇']
     ),
     克朵六时: Battle.generateStrategy(
         ['诸界混一击', '剑挥四方', '幻梦芳逝'],
@@ -169,9 +169,9 @@ const perStrategy: {
     },
     潘朵必先: {
         beforeBattle: async () => {
-            await Functions.lowerBlood([1656383521, 1655445699, 1655484346]);
+            await Functions.lowerBlood([1656383521, 1656056275, 1655917820, 1655445699, 1655484346]);
         },
-        cts: [1656383521, 1656056275, 1655445699, 1655484346],
+        cts: [1656383521, 1656056275, 1655917820, 1655445699, 1655484346],
         strategy: moveModules['潘朵必先'],
     },
     圣谱单挑: { beforeBattle: async () => {}, cts: [1656092908], strategy: moveModules['圣谱单挑'] },
@@ -185,13 +185,6 @@ const perStrategy: {
 };
 
 const options: PetFactor.Option[] = [
-    // 德拉
-    {
-        difficulty: PetFactor.LevelDifficulty.Hell,
-        sweep: true,
-        id: 45,
-        strategy: [],
-    },
     // 杰洛特
     {
         difficulty: PetFactor.LevelDifficulty.Hell,
@@ -217,19 +210,6 @@ const options: PetFactor.Option[] = [
             perStrategy['圣谱单挑'],
             perStrategy['克朵六时'],
             perStrategy['潘朵必先'],
-        ],
-    },
-    // 未名1
-    {
-        difficulty: PetFactor.LevelDifficulty.Ease,
-        sweep: false,
-        id: 15,
-        strategy: [
-            perStrategy['克朵六时'],
-            perStrategy['克朵六时'],
-            perStrategy['圣谱单挑'],
-            perStrategy['克朵六时'],
-            perStrategy['克朵六时'],
         ],
     },
     //未名2

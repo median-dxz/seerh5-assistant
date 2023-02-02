@@ -56,6 +56,10 @@ const data: LevelPetsData = {
             ['幻影蝶', '六界帝神', '深渊狱神·哈迪斯']
         ),
     },
+    LevelElfKingsTrial: {
+        cts: [1656055512, 1656945596, 1657863632],
+        strategy: generateStrategy(['竭血残蝶', '剑挥四方', '破寂同灾'], ['幻影蝶', '六界帝神', '深渊狱神·哈迪斯']),
+    },
 };
 
 export default data;

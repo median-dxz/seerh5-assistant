@@ -9,6 +9,21 @@ const log = SaModuleLogger('Sign', defaultStyle.mod);
 const { Utils, Const, PetHelper, Functions } = saco;
 const { CMDID } = Const;
 
+const MULTI = {
+    日常: {
+        刻印抽奖次数: 16577,
+    },
+    许愿: {
+        登录时长: 12462,
+        已许愿次数: 12231,
+        许愿签到天数: 20235,
+        许愿签到: 201345,
+    },
+    战队: {
+        资源生产次数: 12470,
+    },
+} as const;
+
 class sign extends ReflectObjBase implements ModClass {
     meta = { description: '日任常用功能' };
     init() {}
@@ -16,7 +31,7 @@ class sign extends ReflectObjBase implements ModClass {
         super();
     }
     async run() {
-        let curTimes = (await Utils.GetMultiValue(Const.MULTI.日常.刻印抽奖次数))[0];
+        let curTimes = (await Utils.GetMultiValue(MULTI.日常.刻印抽奖次数))[0];
         if (curTimes === 0) {
             //CMD MARKDRAW: 46301
             Utils.SocketSendByQueue(46301, [1, 0]);
@@ -24,7 +39,7 @@ class sign extends ReflectObjBase implements ModClass {
             log('今日已抽奖');
         }
 
-        curTimes = (await Utils.GetMultiValue(Const.MULTI.许愿.登录时长))[0];
+        curTimes = (await Utils.GetMultiValue(MULTI.许愿.登录时长))[0];
         curTimes =
             curTimes +
             Math.floor(SystemTimerManager.sysBJDate.getTime() / 1e3) -
@@ -44,19 +59,19 @@ class sign extends ReflectObjBase implements ModClass {
             : curTimes >= 5
             ? (t = 1)
             : (t = 0);
-        t -= (await Utils.GetMultiValue(Const.MULTI.许愿.已许愿次数))[0];
+        t -= (await Utils.GetMultiValue(MULTI.许愿.已许愿次数))[0];
         while (t--) {
             Utils.SocketSendByQueue(45801, [2, 1]);
         }
 
-        curTimes = (await Utils.GetMultiValue(Const.MULTI.战队.资源生产次数))[0];
+        curTimes = (await Utils.GetMultiValue(MULTI.战队.资源生产次数))[0];
         t = Math.max(0, 5 - curTimes);
         while (t--) {
             Utils.SocketSendByQueue(CMDID.RES_PRODUCT_BUY, [2, 0]);
         }
-        curTimes = (await Utils.GetMultiValue(Const.MULTI.许愿.许愿签到))[0];
+        curTimes = (await Utils.GetMultiValue(MULTI.许愿.许愿签到))[0];
         if (!curTimes) {
-            t = (await Utils.GetMultiValue(Const.MULTI.许愿.许愿签到天数))[0];
+            t = (await Utils.GetMultiValue(MULTI.许愿.许愿签到天数))[0];
             Utils.SocketSendByQueue(45801, [1, t + 1]);
         }
 
