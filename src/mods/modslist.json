@@ -14,5 +14,9 @@
     {
         "modId": "CraftSkillStone",
         "path": "offical"
+    },
+    {
+        "modId": "team",
+        "path": "module"
     }
 ]

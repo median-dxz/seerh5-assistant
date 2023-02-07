@@ -69,6 +69,7 @@ declare class PetInfo {
     get maxHp(): number;
     get skinId(): number;
     set skinId(id: number);
+    getTeamTechAdd(index: number): number[];
 }
 
 declare class PetSkillInfo {
@@ -147,6 +148,7 @@ declare class MainManager {
     static actorInfo: {
         clothIDs: number[];
         curTitle: number;
+        vipScore: number;
         readonly logintimeThisTime: number;
         requestChangeClotherBySuit(suitId: number, callback: CallBack): void;
     };
@@ -217,6 +219,7 @@ declare class ItemUseManager {
 declare class PetManager {
     static getPetInfo(catchTime: number): PetInfo;
     static UpdateBagPetInfoAsynce(catchtime: number): PromiseLike<PetInfo>;
+    static upDateBagPetInfo(catchtime: number, callback: (info: PetInfo) => any);
     static getLovePetList(): void;
     static updateBagInfo(callback: CallBack): void;
     static secondBagToBag(catchTime: number): void;

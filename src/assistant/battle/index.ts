@@ -36,7 +36,7 @@ const handleBattleEnd = (e: Event) => {
 namespace AutoBattle {
     export type Trigger = () => void;
 
-    export type MoveModule = (battleStatus: RoundInfo, skills: Skill[], pets: PetSwitchInfo[]) => PromiseLike<void>;
+    export type MoveModule = (battleState: RoundInfo, skills: Skill[], pets: PetSwitchInfo[]) => PromiseLike<void>;
 
     export interface Strategy {
         _dsl: Array<string[]>;

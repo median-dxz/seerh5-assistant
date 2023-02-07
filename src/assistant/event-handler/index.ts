@@ -8,7 +8,7 @@ import { SeerModuleHelper } from '../utils';
 const GlobalEventManager = window.SAEventTarget;
 const log = SaModuleLogger('SAEventHandler', defaultStyle.core);
 
-export interface ModuleSubscriber<T extends BasicMultPanelModule> {
+export interface ModuleSubscriber<T extends BaseModule> {
     load?(): void;
     show?(ctx: T): void;
     destroy?(ctx: T): void;
@@ -16,7 +16,7 @@ export interface ModuleSubscriber<T extends BasicMultPanelModule> {
 
 type ModuleState = 'load' | 'show' | 'destroy';
 
-class ModuleSubject<T extends BasicMultPanelModule> {
+class ModuleSubject<T extends BaseModule> {
     state: ModuleState;
     module?: T;
     subscribers: Set<ModuleSubscriber<T>> = new Set();
@@ -45,8 +45,8 @@ class ModuleSubject<T extends BasicMultPanelModule> {
 }
 
 const SeerModuleStatePublisher = {
-    subjects: new Map<string, ModuleSubject<BasicMultPanelModule>>(),
-    attach<T extends BasicMultPanelModule>(subscriber: ModuleSubscriber<T>, moduleName: string) {
+    subjects: new Map<string, ModuleSubject<BaseModule>>(),
+    attach<T extends BaseModule>(subscriber: ModuleSubscriber<T>, moduleName: string) {
         const exist = this.subjects.has(moduleName);
         if (!exist) {
             this.subjects.set(moduleName, new ModuleSubject<T>());
@@ -55,14 +55,14 @@ const SeerModuleStatePublisher = {
         subject.attach(subscriber);
     },
 
-    detach<T extends BasicMultPanelModule>(subscriber: ModuleSubscriber<T>, moduleName: string) {
+    detach<T extends BaseModule>(subscriber: ModuleSubscriber<T>, moduleName: string) {
         if (this.subjects.has(moduleName)) {
             const subject = this.subjects.get(moduleName)!;
             subject.detach(subscriber);
         }
     },
 
-    notifyAll<T extends BasicMultPanelModule>(name: string, hook: ModuleState) {
+    notifyAll<T extends BaseModule>(name: string, hook: ModuleState) {
         if (!this.subjects.has(name)) {
             this.subjects.set(name, new ModuleSubject<T>());
         }

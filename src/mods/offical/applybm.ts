@@ -185,32 +185,19 @@ const perStrategy: {
 };
 
 const options: PetFactor.Option[] = [
-    // 杰洛特
+    // 古温婆婆
     {
         difficulty: PetFactor.LevelDifficulty.Hell,
         sweep: true,
-        id: 38,
+        id: 74,
         strategy: [],
     },
-    // 东辉
+    // 东辉 
     {
         difficulty: PetFactor.LevelDifficulty.Hard,
         sweep: true,
         id: 65,
         strategy: [],
-    },
-    // 眠神
-    {
-        difficulty: PetFactor.LevelDifficulty.Ease,
-        sweep: false,
-        id: 73,
-        strategy: [
-            perStrategy['克朵六时'],
-            perStrategy['克朵六时'],
-            perStrategy['圣谱单挑'],
-            perStrategy['克朵六时'],
-            perStrategy['潘朵必先'],
-        ],
     },
     //未名2
     {

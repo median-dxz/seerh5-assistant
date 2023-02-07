@@ -24,6 +24,13 @@ const MULTI = {
     },
 } as const;
 
+const AWARD_LIST = {
+    vip点数: {
+        特性重组剂: 1,
+        体力上限药: 2,
+    },
+};
+
 class sign extends ReflectObjBase implements ModClass {
     meta = { description: '日任常用功能' };
     init() {}
@@ -75,10 +82,20 @@ class sign extends ReflectObjBase implements ModClass {
             Utils.SocketSendByQueue(45801, [1, t + 1]);
         }
 
+        // vip点数
         curTimes = (await Utils.GetMultiValue(11516))[0];
         if (!curTimes) {
             Utils.SocketSendByQueue(CMDID.VIP_BONUS_201409, 1);
         }
+
+        await delay(300);
+        curTimes = MainManager.actorInfo.vipScore;
+        if (curTimes >= 20) {
+            Utils.SocketSendByQueue(CommandID.VIP_SCORE_EXCHANGE, AWARD_LIST.vip点数.体力上限药).then(() => {
+                EventManager.dispatchEventWith('vipRewardBuyOrGetItem');
+            });
+        }
+
         curTimes = (await Utils.GetMultiValue(14204))[0];
         if (!curTimes) {
             Utils.SocketSendByQueue(CMDID.SEER_VIP_DAILY_REWARD);

@@ -58,10 +58,10 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = ITEMS.P
 
     const { Manager, Operator, InfoProvider } = BattleModule;
 
-    Manager.strategy.custom = async (battleStatus, skills, battlePets) => {
-        if (battleStatus.round > 0 && battleStatus.self?.hp.remain! < 50) {
+    Manager.strategy.custom = async (battleState, skills, battlePets) => {
+        if (battleState.round > 0 && battleState.self?.hp.remain! < 50) {
             let nextPet = battlePets.findIndex(
-                (v) => cts.includes(v.catchTime) && v.hp > 200 && v.catchTime !== battleStatus.self!.catchtime
+                (v) => cts.includes(v.catchTime) && v.hp > 200 && v.catchTime !== battleState.self!.catchtime
             );
 
             if (nextPet === -1) {
@@ -69,7 +69,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = ITEMS.P
                 return;
             }
             await Operator.switchPet(nextPet);
-            if (battleStatus.isDiedSwitch) {
+            if (battleState.isDiedSwitch) {
                 skills = InfoProvider.getCurSkills()!;
                 Operator.useSkill(skills.find((v) => v.category !== 4)!.id);
             }

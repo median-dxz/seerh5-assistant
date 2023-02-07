@@ -10,7 +10,7 @@ interface CapturedPackage {
     data?: Array<number | DataView> | DataView | Function;
 }
 
-type Status = 'pending' | 'capturing';
+type State = 'pending' | 'capturing';
 
 const timeFormat = Intl.DateTimeFormat('zh-cn', {
     hour: '2-digit',
@@ -77,29 +77,29 @@ const cmdFilter: number[] = [
 // }
 
 export function PackageCapture() {
-    const [status, setStatus] = React.useState<Status>('pending');
+    const [state, setState] = React.useState<State>('pending');
     const [capture, setCapture] = React.useState<CapturedPackage[]>([]);
 
     const [getLabel, _] = React.useState<typeof SocketEncryptImpl.getCmdLabel>(() => SocketEncryptImpl.getCmdLabel);
 
     React.useEffect(() => {
         wrapperFactory('addCmdListener', (cmd, callback) => {
-            if (status !== 'capturing' || cmdFilter.includes(cmd)) return;
+            if (state !== 'capturing' || cmdFilter.includes(cmd)) return;
             capturedPkgFactory(capture, setCapture, { cmd, type: 'AddListener', data: callback });
         });
 
         wrapperFactory('removeCmdListener', (cmd, callback) => {
-            if (status !== 'capturing' || cmdFilter.includes(cmd)) return;
+            if (state !== 'capturing' || cmdFilter.includes(cmd)) return;
             capturedPkgFactory(capture, setCapture, { cmd, type: 'RemoveListener', data: callback });
         });
 
         wrapperFactory('dispatchCmd', (cmd, head, buf) => {
-            if (status !== 'capturing' || cmdFilter.includes(cmd)) return;
+            if (state !== 'capturing' || cmdFilter.includes(cmd)) return;
             capturedPkgFactory(capture, setCapture, { cmd, data: buf?.dataView, type: 'Received' });
         });
 
         wrapperFactory('send', (cmd, data) => {
-            if (status !== 'capturing' || cmdFilter.includes(cmd)) return;
+            if (state !== 'capturing' || cmdFilter.includes(cmd)) return;
             capturedPkgFactory(capture, setCapture, {
                 cmd,
                 data: data.flat().map((v) => (v instanceof egret.ByteArray ? v.dataView : v)),
@@ -113,21 +113,21 @@ export function PackageCapture() {
             wrapperFactory('dispatchCmd');
             wrapperFactory('send');
         };
-    }, [status, capture]);
+    }, [state, capture]);
 
     return (
         <>
             <Toolbar>
                 <Button
                     onClick={() => {
-                        if (status === 'capturing') {
-                            setStatus('pending');
-                        } else if (status === 'pending') {
-                            setStatus('capturing');
+                        if (state === 'capturing') {
+                            setState('pending');
+                        } else if (state === 'pending') {
+                            setState('capturing');
                         }
                     }}
                 >
-                    {status === 'capturing' ? '停止' : status === 'pending' ? '监听' : ''}
+                    {state === 'capturing' ? '停止' : state === 'pending' ? '监听' : ''}
                 </Button>
                 <Button>清除</Button>
                 <Button
