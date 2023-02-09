@@ -127,6 +127,10 @@ const BattleModuleManager: {
             let skills = BattleInfoProvider.getCurSkills()!;
             const pets = BattleInfoProvider.getPets()!;
 
+            if (info.round <= 0) {
+                BattleModuleManager.delayTimeout = delay(6000);
+            }
+
             if (this.custom != undefined) {
                 this.custom(info, skills, pets);
                 log('执行自定义行动策略');
@@ -187,7 +191,6 @@ const BattleModuleManager: {
             }
             return new Promise((resolve) => {
                 this.lockingTrigger = resolve;
-                this.delayTimeout = delay(6000);
             });
         } else {
             return Promise.reject('已经有一场正在等待回调的战斗！');

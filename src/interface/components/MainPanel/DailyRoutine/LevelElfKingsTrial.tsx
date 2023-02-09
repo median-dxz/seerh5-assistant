@@ -38,7 +38,7 @@ const updateLevelData = async () => {
     data.elfId = ElfKingsId.草王茉蕊儿;
 
     data.stimulation = bits[0];
-    data.canRewardReceive = bits[1];
+    data.canRewardReceive = !bits[1];
 
     const levelStage = data.elfId <= 10 ? values[0] : values[1];
     const stageElfId = ((data.elfId - 1) % 9) * 3;
@@ -105,6 +105,7 @@ export function LevelElfKingsTrial(props: LevelExtendsProps) {
                 break;
             case 2: //try get daily reward
                 setHint('正在查询每周奖励领取状态');
+                debugger;
                 if (levelData.current.weeklyChallengeCount >= 100 && levelData.current.canRewardReceive) {
                     try {
                         await Utils.SocketSendByQueue(42395, [106, 3, 0, 0]);

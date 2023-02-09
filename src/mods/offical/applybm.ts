@@ -141,7 +141,27 @@ const moveModules: { [name: string]: Battle.AutoBattle.MoveModule } = {
         ['诸界混一击', '剑挥四方', '幻梦芳逝', '破寂同灾'],
         ['神寂·克罗诺斯', '蒂朵', '六界帝神', '时空界皇', '深渊狱神·哈迪斯']
     ),
-    蝶六时: Battle.generateStrategy(['诸界混一击', '剑挥四方', '竭血残蝶'], ['幻影蝶', '六界帝神', '时空界皇']),
+    琉彩: async (round, skills, pets) => {
+        const r = skills.find((skill) => skill.name === ['琴·万律归一', '朵·盛夏咏叹'][round.round % 2]);
+        if (round.isDiedSwitch) {
+            const dsl = new Battle.BaseStrategy.DiedSwitchLink(['鲁肃', '芳馨·茉蕊儿', '蒂朵']);
+            if (round.isDiedSwitch) {
+                const r = dsl.match(pets, round.self!.catchtime);
+                if (r !== -1) {
+                    Battle.Operator.switchPet(r);
+                } else {
+                    Battle.Operator.auto();
+                }
+            }
+            await delay(300);
+            skills = Battle.InfoProvider.getCurSkills()!;
+        }
+        if (r) {
+            Battle.Operator.useSkill(r.id);
+        } else {
+            Battle.Operator.auto();
+        }
+    },
     潘朵索: Battle.generateStrategy(['鬼焰·焚身术', '幻梦芳逝', '烈火净世击'], ['潘克多斯', '蒂朵', '混沌魔君索伦森']),
 };
 
@@ -155,18 +175,6 @@ const perStrategy: {
         cts: [1656696029, 1656056275, 1657863632, 1655484346],
         strategy: moveModules['克朵六时'],
     },
-    蝶六时: {
-        beforeBattle: async () => {},
-        cts: [1656055512, 1657863632, 1655484346],
-        strategy: moveModules['蝶六时'],
-    },
-    潘朵索: {
-        beforeBattle: async () => {
-            await Functions.lowerBlood([1656383521, 1656056275]);
-        },
-        cts: [1656383521, 1656056275, 1656847261],
-        strategy: moveModules['潘朵索'],
-    },
     潘朵必先: {
         beforeBattle: async () => {
             await Functions.lowerBlood([1656383521, 1656056275, 1655917820, 1655445699, 1655484346]);
@@ -175,24 +183,11 @@ const perStrategy: {
         strategy: moveModules['潘朵必先'],
     },
     圣谱单挑: { beforeBattle: async () => {}, cts: [1656092908], strategy: moveModules['圣谱单挑'] },
-    克朵补刀: {
-        beforeBattle: async () => {
-            await Functions.lowerBlood([1656383521, 1655445699, 1655484346, 1656945596]);
-        },
-        cts: [1656383521, 1656056275, 1655445699, 1655484346, 1656945596],
-        strategy: moveModules['克朵补刀'],
-    },
+    琉彩: { beforeBattle: async () => {}, cts: [1655917820, 1656056275, 1656386598], strategy: moveModules['琉彩'] },
 };
 
 const options: PetFactor.Option[] = [
-    // 古温婆婆
-    {
-        difficulty: PetFactor.LevelDifficulty.Hell,
-        sweep: true,
-        id: 74,
-        strategy: [],
-    },
-    // 东辉 
+    // 东辉
     {
         difficulty: PetFactor.LevelDifficulty.Hard,
         sweep: true,
@@ -205,11 +200,24 @@ const options: PetFactor.Option[] = [
         sweep: false,
         id: 54,
         strategy: [
-            perStrategy['克朵六时'],
-            perStrategy['克朵六时'],
             perStrategy['圣谱单挑'],
-            perStrategy['克朵补刀'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['潘朵必先'],
             perStrategy['克朵六时'],
+        ],
+    },
+    //琉彩2
+    {
+        difficulty: PetFactor.LevelDifficulty.Ease,
+        sweep: false,
+        id: 84,
+        strategy: [
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['琉彩'],
         ],
     },
 ];
