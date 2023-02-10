@@ -9,7 +9,7 @@ import {
     TableCell,
     TableHead,
     TableRow,
-    Typography,
+    Typography
 } from '@mui/material';
 import { delay } from '@sa-core/common';
 import Pet from '@sa-core/entities/pet';
@@ -119,10 +119,17 @@ export function PetBag() {
                     ? '使用中: 绿火'
                     : battleFire.type === Const.BATTLE_FIRE.金火
                     ? '使用中: 金火'
-                    : '其他火焰'}{' '}
+                    : '其他火焰'}
                 {battleFire.valid &&
                     `剩余时间: ${numberFormat.format(Math.trunc(timeLeft / 60))}:${numberFormat.format(timeLeft % 60)}`}
                 <Button onClick={updateBattleFire}>刷新</Button>
+                <Button
+                    onClick={() =>
+                        ModuleManager.showModule('battleFirePanel', ['battleFirePanel'], null, null, AppDoStyle.NULL)
+                    }
+                >
+                    兑换
+                </Button>
             </Typography>
             <Divider />
             <h3>套装 / 称号</h3>

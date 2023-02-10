@@ -26,7 +26,7 @@
                 "src/assistant/*"
             ],
             "@sa-ui/*": [
-                "src/interface/*"
+                "src/ui/*"
             ],
             "@src/*": [
                 "src/*"

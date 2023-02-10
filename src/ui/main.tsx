@@ -12,6 +12,8 @@ export function SaMain() {
     const [isMainPanelOpen, toggleMainPanel] = useState(false);
     const [lockMainPanel, toggleMainPanelLock] = useState(false);
 
+    const PanelStateContext = React.createContext({});
+
     const shortCutHandler = function (e: KeyboardEvent | React.KeyboardEvent) {
         if (e.key === 'p' && e.ctrlKey) {
             toggleCommandBar((preState) => !preState);
@@ -52,7 +54,16 @@ export function SaMain() {
                         }}
                     />
                     <CommandBar show={isCommandBarOpen} />
-                    <MainPanel show={isMainPanelOpen} lock={lockMainPanel} setLock={toggleMainPanelLock} />
+                    <PanelStateContext.Provider
+                        value={{
+                            open: isMainPanelOpen,
+                            setOpen: toggleMainPanel,
+                            lock: lockMainPanel,
+                            setLock: toggleMainPanelLock,
+                        }}
+                    >
+                        <MainPanel show={isMainPanelOpen} lock={lockMainPanel} setLock={toggleMainPanelLock} />
+                    </PanelStateContext.Provider>
                 </Container>
             </ThemeProvider>
         </Fragment>
