@@ -141,6 +141,7 @@ type BitValue = 0 | 1;
 declare class KTool {
     static getMultiValueAsync(value: number[]): PromiseLike<number[]>;
     static getBitSetAsync(value: number[]): PromiseLike<BitValue[]>;
+    static getPlayerInfoValueAsync(value: number[]): PromiseLike<number[]>;
 }
 
 declare class MainManager {

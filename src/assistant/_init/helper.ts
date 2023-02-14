@@ -106,6 +106,28 @@ UseSkillController.prototype.onMovieOver = wrapper(
     }
 );
 
+UseSkillController.prototype.closeTxt = function () {
+    if (this.textTimer) {
+        this.textTimer.removeEventListener(egret.TimerEvent.TIMER, this.closeTxt, this);
+        this.textTimer.stop();
+        this.textTimer = null;
+    }
+    if (FightManager.fightAnimateMode !== 1) {
+        this.dispatchEvent(new egret.Event('movieOver'));
+    }
+};
+
+const _RenewPPEffect = RenewPPEffect;
+(RenewPPEffect as any) = function (model: BaseFighterModel, itemId: number) {
+    const ins = new _RenewPPEffect(model, itemId);
+    if (FightManager.fightAnimateMode === 1) {
+        ins.timer?.removeEventListener(egret.TimerEvent.TIMER, ins.closeTxt, ins);
+        ins.timer?.stop();
+        ins.timer = null;
+        EventManager.dispatchEvent(new PetFightEvent(PetFightEvent.ON_USE_PET_ITEM));
+    }
+    return ins;
+};
 // resource url cache map
 
 window.SAResourceMap = new Map<string, string>();

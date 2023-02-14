@@ -5,6 +5,7 @@ import { CommandBar } from './components/CommandBar';
 import { MainButton } from './components/MainButton';
 import { MainMenu } from './components/MainMenu';
 import { MainPanel } from './components/MainPanel';
+import { PanelStateContext } from './context/PanelState';
 import { mainTheme } from './style';
 
 export function SaMain() {
@@ -12,7 +13,12 @@ export function SaMain() {
     const [isMainPanelOpen, toggleMainPanel] = useState(false);
     const [lockMainPanel, toggleMainPanelLock] = useState(false);
 
-    const PanelStateContext = React.createContext({});
+    const PanelState = {
+        open: isMainPanelOpen,
+        setOpen: toggleMainPanel,
+        lock: lockMainPanel,
+        setLock: toggleMainPanelLock,
+    };
 
     const shortCutHandler = function (e: KeyboardEvent | React.KeyboardEvent) {
         if (e.key === 'p' && e.ctrlKey) {
@@ -54,14 +60,7 @@ export function SaMain() {
                         }}
                     />
                     <CommandBar show={isCommandBarOpen} />
-                    <PanelStateContext.Provider
-                        value={{
-                            open: isMainPanelOpen,
-                            setOpen: toggleMainPanel,
-                            lock: lockMainPanel,
-                            setLock: toggleMainPanelLock,
-                        }}
-                    >
+                    <PanelStateContext.Provider value={PanelState}>
                         <MainPanel show={isMainPanelOpen} lock={lockMainPanel} setLock={toggleMainPanelLock} />
                     </PanelStateContext.Provider>
                 </Container>

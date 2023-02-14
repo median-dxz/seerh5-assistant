@@ -37,6 +37,12 @@ declare class BaseFighterModel extends egret.EventDispatcher {
     get propView(): BaseFighterPropView;
 }
 
+declare class RenewPPEffect {
+    constructor(model: BaseFighterModel, itemId: number);
+    timer: egret.Timer | null;
+    closeTxt(): void;
+}
+
 declare class ToolBtnPanelObserver {
     skillPanel: SkillPanel;
     showPet(): void;

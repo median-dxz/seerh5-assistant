@@ -1,11 +1,16 @@
-export async function GetMultiValue(...value: number[]): Promise<number[]> {
-    if (!value) return [];
-    return KTool.getMultiValueAsync(value);
+export async function GetMultiValue(...values: number[]): Promise<number[]> {
+    if (!values) return [];
+    return KTool.getMultiValueAsync(values);
 }
 
-export async function GetBitSet(...value: number[]): Promise<boolean[]> {
-    if (!value) return [];
-    return KTool.getBitSetAsync(value).then((r) => r.map(Boolean));
+export async function GetBitSet(...values: number[]): Promise<boolean[]> {
+    if (!values) return [];
+    return KTool.getBitSetAsync(values).then((r) => r.map(Boolean));
+}
+
+export async function GetPlayerInfo(...values: number[]): Promise<number[]> {
+    if (!values) return [];
+    return KTool.getPlayerInfoValueAsync(values);
 }
 
 let DictMatcher = <T extends SAType.BaseObj>(dict: SAType.Dict<T>, reg: RegExp, keyName: string) => {

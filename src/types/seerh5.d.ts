@@ -131,7 +131,8 @@ declare class PetEvent extends egret.Event {
 }
 declare class PetFightEvent extends egret.Event {
     static readonly ALARM_CLICK: 'fight_alarmClick';
-    constructor(type: string, obj: any);
+    static readonly ON_USE_PET_ITEM: 'onUsePetItem';
+    constructor(type: string, obj?: any);
 }
 
 declare namespace baseMenuComponent {

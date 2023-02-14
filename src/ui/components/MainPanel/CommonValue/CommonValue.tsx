@@ -3,6 +3,7 @@ import * as React from 'react';
 import { useLayoutEffect, useState } from 'react';
 
 import Item from '@sa-core/entities/item';
+import { PanelStateContext } from '@sa-ui/context/PanelState';
 import { PanelTableBase, PanelTableBodyRow, PercentLinearProgress } from '../base';
 import { idList, openModuleList } from './data';
 
@@ -48,36 +49,49 @@ export function CommonValue() {
     });
 
     return (
-        <PanelTableBase
-            heads={tableHeads.map((v, i) => (
-                <TableCell key={i}>{v}</TableCell>
-            ))}
-        >
-            {rows.map((row, index) => (
-                <PanelTableBodyRow key={row.id}>
-                    <TableCell component="th" scope="row">
-                        {row.id}
-                    </TableCell>
-                    <TableCell>
-                        <img crossOrigin="anonymous" src={imgEl[index]} width={48} />
-                    </TableCell>
-                    <TableCell>{row.name}</TableCell>
-                    <TableCell>
-                        {row.limit ? (
-                            <PercentLinearProgress
-                                progress={row.amount}
-                                total={row.limit}
-                                cover={`${unitConvert(row.amount)}/${unitConvert(row.limit)}`}
-                            />
-                        ) : (
-                            <Typography>{unitConvert(row.amount)}</Typography>
-                        )}
-                    </TableCell>
-                    <TableCell>
-                        {openModuleList[row.id] ? <Button onClick={openModuleList[row.id]}>兑换</Button> : undefined}
-                    </TableCell>
-                </PanelTableBodyRow>
-            ))}
-        </PanelTableBase>
+        <PanelStateContext.Consumer>
+            {(panelState) => (
+                <PanelTableBase
+                    heads={tableHeads.map((v, i) => (
+                        <TableCell key={i}>{v}</TableCell>
+                    ))}
+                >
+                    {rows.map((row, index) => (
+                        <PanelTableBodyRow key={row.id}>
+                            <TableCell component="th" scope="row">
+                                {row.id}
+                            </TableCell>
+                            <TableCell>
+                                <img crossOrigin="anonymous" src={imgEl[index]} width={48} />
+                            </TableCell>
+                            <TableCell>{row.name}</TableCell>
+                            <TableCell>
+                                {row.limit ? (
+                                    <PercentLinearProgress
+                                        progress={row.amount}
+                                        total={row.limit}
+                                        cover={`${unitConvert(row.amount)}/${unitConvert(row.limit)}`}
+                                    />
+                                ) : (
+                                    <Typography>{unitConvert(row.amount)}</Typography>
+                                )}
+                            </TableCell>
+                            <TableCell>
+                                {openModuleList[row.id] ? (
+                                    <Button
+                                        onClick={() => {
+                                            openModuleList[row.id]();
+                                            panelState.setOpen(false);
+                                        }}
+                                    >
+                                        兑换
+                                    </Button>
+                                ) : undefined}
+                            </TableCell>
+                        </PanelTableBodyRow>
+                    ))}
+                </PanelTableBase>
+            )}
+        </PanelStateContext.Consumer>
     );
 }

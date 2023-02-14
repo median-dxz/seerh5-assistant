@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { delay } from '@sa-core/common';
 import Pet from '@sa-core/entities/pet';
+import { PanelStateContext } from '@sa-ui/context/PanelState';
 import { mainColor } from '@sa-ui/style';
 import React from 'react';
 
@@ -26,6 +27,14 @@ interface MenuOption {
     type: 'suit' | 'title' | 'savePets' | 'setPets';
     id: number[];
     options: string[];
+}
+
+async function openPetBag() {
+    return ModuleManager.showModule('petBag');
+}
+
+async function exchangeBattleFire() {
+    return ModuleManager.showModule('battleFirePanel', ['battleFirePanel'], null, null, AppDoStyle.NULL);
 }
 
 export function PetBag() {
@@ -91,274 +100,288 @@ export function PetBag() {
     }, [battleFire]);
 
     return (
-        <>
-            <Button
-                onClick={() => {
-                    ModuleManager.showModule('petBag');
-                }}
-            >
-                打开背包界面
-            </Button>
-            <Button onClick={PetHelper.cureAllPet}>全体治疗</Button>
-            <Divider />
-            <h3>火焰信息</h3>
-            <Typography
-                color={
-                    !battleFire.valid
-                        ? 'inherit'
-                        : battleFire.type === Const.BATTLE_FIRE.绿火
-                        ? 'green'
-                        : battleFire.type === Const.BATTLE_FIRE.金火
-                        ? 'gold'
-                        : 'inherit'
-                }
-            >
-                {!battleFire.valid
-                    ? '无火焰'
-                    : battleFire.type === Const.BATTLE_FIRE.绿火
-                    ? '使用中: 绿火'
-                    : battleFire.type === Const.BATTLE_FIRE.金火
-                    ? '使用中: 金火'
-                    : '其他火焰'}
-                {battleFire.valid &&
-                    `剩余时间: ${numberFormat.format(Math.trunc(timeLeft / 60))}:${numberFormat.format(timeLeft % 60)}`}
-                <Button onClick={updateBattleFire}>刷新</Button>
-                <Button
-                    onClick={() =>
-                        ModuleManager.showModule('battleFirePanel', ['battleFirePanel'], null, null, AppDoStyle.NULL)
-                    }
-                >
-                    兑换
-                </Button>
-            </Typography>
-            <Divider />
-            <h3>套装 / 称号</h3>
-            <Typography display="flex" alignItems="baseline">
-                当前套装:
-                <Button
-                    onClick={(e) => {
-                        const suitId = Utils.UserAbilitySuits();
-                        const suitName = suitId.map<string>(SuitXMLInfo.getName.bind(SuitXMLInfo));
-                        menuOption.current = {
-                            type: 'suit',
-                            id: suitId,
-                            options: suitName,
-                        };
-                        setAnchorEl(e.currentTarget);
-                        setMenuOpen(true);
-                    }}
-                >
-                    {SuitXMLInfo.getName(userSuit)}
-                </Button>
-                效果: {ItemSeXMLInfo.getSuitEff(userSuit)}
-            </Typography>
+        <PanelStateContext.Consumer>
+            {(panelState) => (
+                <>
+                    <Button
+                        onClick={() => {
+                            openPetBag();
+                            panelState.setOpen(false);
+                        }}
+                    >
+                        打开背包界面
+                    </Button>
+                    <Button onClick={PetHelper.cureAllPet}>全体治疗</Button>
+                    <Divider />
+                    <h3>火焰信息</h3>
+                    <Typography
+                        color={
+                            !battleFire.valid
+                                ? 'inherit'
+                                : battleFire.type === Const.BATTLE_FIRE.绿火
+                                ? 'green'
+                                : battleFire.type === Const.BATTLE_FIRE.金火
+                                ? 'gold'
+                                : 'inherit'
+                        }
+                    >
+                        {!battleFire.valid
+                            ? '无火焰'
+                            : battleFire.type === Const.BATTLE_FIRE.绿火
+                            ? '使用中: 绿火'
+                            : battleFire.type === Const.BATTLE_FIRE.金火
+                            ? '使用中: 金火'
+                            : '其他火焰'}
+                        {battleFire.valid &&
+                            `剩余时间: ${numberFormat.format(Math.trunc(timeLeft / 60))}:${numberFormat.format(
+                                timeLeft % 60
+                            )}`}
+                        <Button onClick={updateBattleFire}>刷新</Button>
+                        <Button
+                            onClick={() => {
+                                exchangeBattleFire();
+                                panelState.setOpen(false);
+                            }}
+                        >
+                            兑换
+                        </Button>
+                    </Typography>
+                    <Divider />
+                    <h3>套装 / 称号</h3>
+                    <Typography display="flex" alignItems="baseline">
+                        当前套装:
+                        <Button
+                            onClick={(e) => {
+                                const suitId = Utils.UserAbilitySuits();
+                                const suitName = suitId.map<string>(SuitXMLInfo.getName.bind(SuitXMLInfo));
+                                menuOption.current = {
+                                    type: 'suit',
+                                    id: suitId,
+                                    options: suitName,
+                                };
+                                setAnchorEl(e.currentTarget);
+                                setMenuOpen(true);
+                            }}
+                        >
+                            {SuitXMLInfo.getName(userSuit)}
+                        </Button>
+                        效果: {ItemSeXMLInfo.getSuitEff(userSuit)}
+                    </Typography>
 
-            <Typography display="flex" alignItems="baseline">
-                当前称号:
-                <Button
-                    onClick={async (e) => {
-                        setAnchorEl(e.currentTarget);
-                        const titleId = await Utils.UserAbilityTitles();
-                        const titleName = titleId.map<string>(AchieveXMLInfo.getTitle.bind(AchieveXMLInfo));
-                        menuOption.current = {
-                            type: 'title',
-                            id: titleId,
-                            options: titleName,
-                        };
-                        setMenuOpen(true);
-                    }}
-                >
-                    {AchieveXMLInfo.getTitle(userTitle)}
-                </Button>
-                效果: {AchieveXMLInfo.getTitleEffDesc(userTitle)}
-            </Typography>
-            <Menu
-                id="suit-select-menu"
-                anchorEl={anchorEl}
-                open={menuOpen}
-                onClose={() => {
-                    setAnchorEl(null);
-                    setMenuOpen(false);
-                }}
-                MenuListProps={{
-                    role: 'listbox',
-                }}
-                sx={{
-                    '& .MuiPaper-root': {
-                        bgcolor: `rgba(${mainColor.front} / 18%)`,
-                        backdropFilter: 'blur(4px)',
-                    },
-                }}
-            >
-                {menuOption.current?.options.map((option, index) => (
-                    <MenuItem
-                        key={option}
-                        onClick={async (e) => {
-                            const info = menuOption.current!;
-                            if (info.type === 'suit') {
-                                Utils.ChangeSuit(info.id[index]);
-                                setUserSuit(info.id[index]);
-                            } else if (info.type === 'title') {
-                                Utils.ChangeTitle(info.id[index]);
-                                setUserTitle(info.id[index]);
-                            } else if (info.type === 'setPets') {
-                                Functions.switchBag(petPatterns[index]);
-                            } else if (info.type === 'savePets') {
-                                const newPets = await PetHelper.getBagPets(1);
-                                setPetPattern((petPatterns) => {
-                                    const newValue = [...petPatterns];
-                                    newValue[index] = newPets.map((pet) => pet.catchTime);
-                                    window.localStorage.setItem(StorageKey, JSON.stringify(newValue));
-                                    return newValue;
-                                });
-                            }
+                    <Typography display="flex" alignItems="baseline">
+                        当前称号:
+                        <Button
+                            onClick={async (e) => {
+                                setAnchorEl(e.currentTarget);
+                                const titleId = await Utils.UserAbilityTitles();
+                                const titleName = titleId.map<string>(AchieveXMLInfo.getTitle.bind(AchieveXMLInfo));
+                                menuOption.current = {
+                                    type: 'title',
+                                    id: titleId,
+                                    options: titleName,
+                                };
+                                setMenuOpen(true);
+                            }}
+                        >
+                            {AchieveXMLInfo.getTitle(userTitle)}
+                        </Button>
+                        效果: {AchieveXMLInfo.getTitleEffDesc(userTitle)}
+                    </Typography>
+                    <Menu
+                        id="suit-select-menu"
+                        anchorEl={anchorEl}
+                        open={menuOpen}
+                        onClose={() => {
                             setAnchorEl(null);
                             setMenuOpen(false);
                         }}
+                        MenuListProps={{
+                            role: 'listbox',
+                        }}
+                        sx={{
+                            '& .MuiPaper-root': {
+                                bgcolor: `rgba(${mainColor.front} / 18%)`,
+                                backdropFilter: 'blur(4px)',
+                            },
+                        }}
                     >
-                        {option}
-                    </MenuItem>
-                ))}
-            </Menu>
+                        {menuOption.current?.options.map((option, index) => (
+                            <MenuItem
+                                key={option}
+                                onClick={async (e) => {
+                                    const info = menuOption.current!;
+                                    if (info.type === 'suit') {
+                                        Utils.ChangeSuit(info.id[index]);
+                                        setUserSuit(info.id[index]);
+                                    } else if (info.type === 'title') {
+                                        Utils.ChangeTitle(info.id[index]);
+                                        setUserTitle(info.id[index]);
+                                    } else if (info.type === 'setPets') {
+                                        Functions.switchBag(petPatterns[index]);
+                                    } else if (info.type === 'savePets') {
+                                        const newPets = await PetHelper.getBagPets(1);
+                                        setPetPattern((petPatterns) => {
+                                            const newValue = [...petPatterns];
+                                            newValue[index] = newPets.map((pet) => pet.catchTime);
+                                            window.localStorage.setItem(StorageKey, JSON.stringify(newValue));
+                                            return newValue;
+                                        });
+                                    }
+                                    setAnchorEl(null);
+                                    setMenuOpen(false);
+                                }}
+                            >
+                                {option}
+                            </MenuItem>
+                        ))}
+                    </Menu>
 
-            <Divider />
-            <h3>精灵背包</h3>
-            <Button
-                onClick={() => {
-                    const lowerBloodPets = pets.filter((pet, index) => petsSelected[index]).map((r) => r.catchTime);
-                    Functions.lowerBlood(lowerBloodPets);
-                }}
-            >
-                压血
-            </Button>
-            <Button
-                onClick={() => {
-                    const curePets = pets.filter((pet, index) => petsSelected[index]).map((r) => r.catchTime);
-                    for (let curePet of curePets) {
-                        PetHelper.cureOnePet(curePet);
-                    }
-                }}
-            >
-                治疗
-            </Button>
-            <Button
-                onClick={() => {
-                    console.log(pets.map((pet) => ({ name: pet.name, catchTime: pet.catchTime })));
-                }}
-            >
-                dump
-            </Button>
-            <Button
-                onClick={(e) => {
-                    setAnchorEl(e.currentTarget);
-                    const patternName = Array(petPatterns.length)
-                        .fill('')
-                        .map(
-                            (v, index) =>
-                                `方案${index}: ${(
-                                    petPatterns[index]?.map(Number).map((ct) => {
-                                        let name = PetManager.getPetInfo(ct)?.name;
-                                        if (!name) {
-                                            name = PetStorage2015InfoManager.allInfo.find(
-                                                (p) => p.catchTime === ct
-                                            )!.name;
-                                        }
-                                        return name;
-                                    }) ?? []
-                                ).join(',')}`
-                        );
-                    menuOption.current = {
-                        type: 'setPets',
-                        id: Array(petPatterns.length)
-                            .fill(0)
-                            .map((v, index) => index),
-                        options: patternName,
-                    };
-                    setMenuOpen(true);
-                }}
-            >
-                更换方案
-            </Button>
-            <Button
-                onClick={(e) => {
-                    setAnchorEl(e.currentTarget);
-                    const patternName = Array(petPatterns.length)
-                        .fill('')
-                        .map((v, index) => `方案${index}`);
-                    menuOption.current = {
-                        type: 'savePets',
-                        id: Array(petPatterns.length)
-                            .fill(0)
-                            .map((v, index) => index),
-                        options: patternName,
-                    };
-                    setMenuOpen(true);
-                }}
-            >
-                保存方案
-            </Button>
+                    <Divider />
+                    <h3>精灵背包</h3>
+                    <Button
+                        onClick={() => {
+                            const lowerBloodPets = pets
+                                .filter((pet, index) => petsSelected[index])
+                                .map((r) => r.catchTime);
+                            Functions.lowerBlood(lowerBloodPets);
+                        }}
+                    >
+                        压血
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            const curePets = pets.filter((pet, index) => petsSelected[index]).map((r) => r.catchTime);
+                            for (let curePet of curePets) {
+                                PetHelper.cureOnePet(curePet);
+                            }
+                        }}
+                    >
+                        治疗
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            console.log(pets.map((pet) => ({ name: pet.name, catchTime: pet.catchTime })));
+                        }}
+                    >
+                        dump
+                    </Button>
+                    <Button
+                        onClick={(e) => {
+                            setAnchorEl(e.currentTarget);
+                            const patternName = Array(petPatterns.length)
+                                .fill('')
+                                .map(
+                                    (v, index) =>
+                                        `方案${index}: ${(
+                                            petPatterns[index]?.map(Number).map((ct) => {
+                                                let name = PetManager.getPetInfo(ct)?.name;
+                                                if (!name) {
+                                                    name = PetStorage2015InfoManager.allInfo.find(
+                                                        (p) => p.catchTime === ct
+                                                    )!.name;
+                                                }
+                                                return name;
+                                            }) ?? []
+                                        ).join(',')}`
+                                );
+                            menuOption.current = {
+                                type: 'setPets',
+                                id: Array(petPatterns.length)
+                                    .fill(0)
+                                    .map((v, index) => index),
+                                options: patternName,
+                            };
+                            setMenuOpen(true);
+                        }}
+                    >
+                        更换方案
+                    </Button>
+                    <Button
+                        onClick={(e) => {
+                            setAnchorEl(e.currentTarget);
+                            const patternName = Array(petPatterns.length)
+                                .fill('')
+                                .map((v, index) => `方案${index}`);
+                            menuOption.current = {
+                                type: 'savePets',
+                                id: Array(petPatterns.length)
+                                    .fill(0)
+                                    .map((v, index) => index),
+                                options: patternName,
+                            };
+                            setMenuOpen(true);
+                        }}
+                    >
+                        保存方案
+                    </Button>
 
-            <Table size="small">
-                <TableHead>
-                    <TableRow>
-                        <TableCell align="center"></TableCell>
-                        <TableCell align="center">id</TableCell>
-                        <TableCell align="center"></TableCell>
-                        <TableCell align="center">名称</TableCell>
-                        <TableCell align="center">血量</TableCell>
-                        <TableCell align="center">操作</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {pets.map((row, index) => (
-                        <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                            <TableCell align="center">
-                                <Checkbox
-                                    color="primary"
-                                    checked={petsSelected[index]}
-                                    onChange={(event) => {
-                                        petsSelected.splice(index, 1, event.target.checked);
-                                        setPetsSelected([...petsSelected]);
-                                    }}
-                                />
-                            </TableCell>
-                            <TableCell component="th" scope="row" align="center">
-                                {row.id}
-                            </TableCell>
-                            <TableCell align="center">
-                                <img crossOrigin="anonymous" src={ClientConfig.getPetHeadPath(row.id)} width={48}></img>
-                            </TableCell>
-                            <TableCell align="center">{row.name}</TableCell>
-                            <TableCell align="center">
-                                {row.hp} / {row.maxHp}
-                            </TableCell>
-                            <TableCell align="center">
-                                <Button
-                                    onClick={async () => {
-                                        await ModuleManager.showModule('petBag');
-                                        const petBagModule = ModuleManager.currModule as petBag.PetBag;
-                                        const petBagPanel = petBagModule.currentPanel as petBag.MainPanel;
-                                        await delay(300);
-                                        petBagPanel.onSelectPet({ data: PetManager.getPetInfo(row.catchTime) });
-                                        await delay(300);
-                                        petBagPanel.showDevelopBaseView();
-                                        petBagPanel.showDevelopView(9);
-                                    }}
-                                >
-                                    道具
-                                </Button>
-                                <Button
-                                    onClick={() => {
-                                        PetHelper.cureOnePet(row.catchTime);
-                                    }}
-                                >
-                                    治疗
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </>
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell align="center"></TableCell>
+                                <TableCell align="center">id</TableCell>
+                                <TableCell align="center"></TableCell>
+                                <TableCell align="center">名称</TableCell>
+                                <TableCell align="center">血量</TableCell>
+                                <TableCell align="center">操作</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {pets.map((row, index) => (
+                                <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                    <TableCell align="center">
+                                        <Checkbox
+                                            color="primary"
+                                            checked={petsSelected[index]}
+                                            onChange={(event) => {
+                                                petsSelected.splice(index, 1, event.target.checked);
+                                                setPetsSelected([...petsSelected]);
+                                            }}
+                                        />
+                                    </TableCell>
+                                    <TableCell component="th" scope="row" align="center">
+                                        {row.id}
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <img
+                                            crossOrigin="anonymous"
+                                            src={ClientConfig.getPetHeadPath(row.id)}
+                                            width={48}
+                                        ></img>
+                                    </TableCell>
+                                    <TableCell align="center">{row.name}</TableCell>
+                                    <TableCell align="center">
+                                        {row.hp} / {row.maxHp}
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Button
+                                            onClick={async () => {
+                                                await ModuleManager.showModule('petBag');
+                                                const petBagModule = ModuleManager.currModule as petBag.PetBag;
+                                                const petBagPanel = petBagModule.currentPanel as petBag.MainPanel;
+                                                await delay(300);
+                                                petBagPanel.onSelectPet({ data: PetManager.getPetInfo(row.catchTime) });
+                                                await delay(300);
+                                                petBagPanel.showDevelopBaseView();
+                                                petBagPanel.showDevelopView(9);
+                                            }}
+                                        >
+                                            道具
+                                        </Button>
+                                        <Button
+                                            onClick={() => {
+                                                PetHelper.cureOnePet(row.catchTime);
+                                            }}
+                                        >
+                                            治疗
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </>
+            )}
+        </PanelStateContext.Consumer>
     );
 }

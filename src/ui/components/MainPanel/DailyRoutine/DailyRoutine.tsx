@@ -78,7 +78,7 @@ export function DailyRoutine() {
             async getState() {
                 const [count] = await Utils.GetMultiValue(18745);
                 const [rewardCanReceive] = await Utils.GetBitSet(2000037);
-                return count === 15 && rewardCanReceive;
+                return count === 15 && !rewardCanReceive;
             },
         },
         {

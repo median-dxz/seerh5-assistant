@@ -20,15 +20,16 @@ const maxDailyChallengeTimes = 3;
 const updateLevelData = async () => {
     const data = {} as LevelData;
     const bits = await Utils.GetBitSet(1000585, 2000036);
-    const values = await Utils.GetMultiValue(1197, 12769, 12774, 20133);
+    const values = await Utils.GetMultiValue(12769, 12774, 20133);
+    const pInfos = await Utils.GetPlayerInfo(1197);
 
     data.dailyRewardReceived = bits[0];
     data.weeklyRewardReceived = bits[1];
 
-    data.open = Boolean(values[0]);
-    data.dailyChallengeCount = values[1];
-    data.dailyMinRound = values[2];
-    data.weeklyCompletedCount = values[3];
+    data.open = Boolean(pInfos[0]);
+    data.dailyChallengeCount = values[0];
+    data.dailyMinRound = values[1];
+    data.weeklyCompletedCount = values[2];
 
     return data;
 };
@@ -45,6 +46,7 @@ export function LevelXTeamRoom(props: LevelExtendsProps) {
                 setRunning(true);
                 setHint('正在查询关卡状态');
                 levelData.current = await updateLevelData();
+                console.log(levelData.current);
                 if (!levelData.current.weeklyRewardReceived) {
                     if (!levelData.current.dailyRewardReceived) {
                         if (

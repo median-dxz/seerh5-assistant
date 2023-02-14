@@ -194,19 +194,6 @@ const options: PetFactor.Option[] = [
         id: 65,
         strategy: [],
     },
-    //未名2
-    {
-        difficulty: PetFactor.LevelDifficulty.Ease,
-        sweep: false,
-        id: 54,
-        strategy: [
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['潘朵必先'],
-            perStrategy['克朵六时'],
-        ],
-    },
     //琉彩2
     {
         difficulty: PetFactor.LevelDifficulty.Ease,
