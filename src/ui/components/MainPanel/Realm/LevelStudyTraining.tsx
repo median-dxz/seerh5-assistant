@@ -10,30 +10,28 @@ interface LevelData {
     stimulation: boolean;
     rewardReceived: boolean;
     challengeCount: number;
-    curLayer: number;
     layerCount: number;
 }
 
-const RoutineModuleName = '勇者之塔';
-const customData = dataProvider['LevelCourageTower'];
-const maxDailyChallengeTimes = 5;
+const RealmName = '学习力训练场';
+const customData = dataProvider['LevelStudyTraining'];
+const maxDailyChallengeTimes = 6;
 
 const updateLevelData = async () => {
     const data = {} as LevelData;
-    const bits = await Utils.GetBitSet(636, 1000577);
-    const values = await Utils.GetMultiValue(18709, 18710);
+    const bits = await Utils.GetBitSet(637, 1000572);
+    const playerInfo = new DataView(await Utils.SocketSendByQueue(42397, [102]));
 
     data.stimulation = bits[0];
     data.rewardReceived = bits[1];
 
-    data.challengeCount = values[0];
-    data.curLayer = values[1] & 255;
-    data.layerCount = (values[1] >> 8) & 255;
+    data.challengeCount = playerInfo.getUint32(8);
+    data.layerCount = playerInfo.getUint32(56);
 
     return data;
 };
 
-export function LevelCourageTower(props: LevelExtendsProps) {
+export function LevelStudyTraining(props: LevelExtendsProps) {
     const { setRunning } = props;
     const [hint, setHint] = React.useState<JSX.Element | string>('');
     const [step, setStep] = React.useState(0);
@@ -45,7 +43,7 @@ export function LevelCourageTower(props: LevelExtendsProps) {
                 setRunning(true);
                 setHint('正在查询关卡状态');
                 levelData.current = await updateLevelData();
-                console.log(levelData.current);
+                // console.log(result);
                 if (!levelData.current.rewardReceived) {
                     if (levelData.current.challengeCount < maxDailyChallengeTimes) {
                         setStep(1);
@@ -55,7 +53,6 @@ export function LevelCourageTower(props: LevelExtendsProps) {
                 } else {
                     setStep(3);
                 }
-
                 break;
             case 1: //daily challenge
                 setHint('正在准备背包');
@@ -65,13 +62,8 @@ export function LevelCourageTower(props: LevelExtendsProps) {
                 setHint('准备背包完成');
                 await delay(500);
 
-                if (levelData.current.curLayer !== 30) {
-                    setHint('正在进入关卡');
-                    await SA.Utils.SocketSendByQueue(42395, [101, 3, 30, 0]);
-                    await delay(500);
-                }
-
                 Battle.Manager.strategy.custom = customData.strategy;
+
                 while (levelData.current.challengeCount < maxDailyChallengeTimes) {
                     await Battle.Manager.runOnce(() => {
                         setHint(
@@ -80,7 +72,7 @@ export function LevelCourageTower(props: LevelExtendsProps) {
                                 <PercentLinearProgress
                                     prompt={'当前次数'}
                                     progress={levelData.current.challengeCount}
-                                    total={5}
+                                    total={6}
                                 />
                                 <PercentLinearProgress
                                     prompt={'当前进度'}
@@ -89,7 +81,7 @@ export function LevelCourageTower(props: LevelExtendsProps) {
                                 />
                             </>
                         );
-                        Utils.SocketSendByQueue(42396, [101, 30, levelData.current.layerCount + 1]);
+                        Utils.SocketSendByQueue(42396, [102, 6, levelData.current.layerCount + 1]);
                     });
                     levelData.current = await updateLevelData();
                 }
@@ -100,7 +92,7 @@ export function LevelCourageTower(props: LevelExtendsProps) {
             case 2: //try get daily reward
                 setHint('正在查询每日奖励领取状态');
                 try {
-                    await Utils.SocketSendByQueue(42395, [101, 4, 0, 0]);
+                    await Utils.SocketSendByQueue(42395, [102, 3, 0, 0]);
                 } catch (error) {
                     setStep(-1);
                 }
@@ -113,7 +105,7 @@ export function LevelCourageTower(props: LevelExtendsProps) {
                 setRunning(false);
                 break;
             default:
-                setHint(RoutineModuleName +'日任完成');
+                setHint(RealmName +'日任完成');
                 setRunning(false);
                 break;
         }
@@ -121,5 +113,5 @@ export function LevelCourageTower(props: LevelExtendsProps) {
     React.useEffect(() => {
         effect();
     }, [step]);
-    return <LevelBase title={RoutineModuleName} hint={hint}></LevelBase>;
+    return <LevelBase title={RealmName} hint={hint}></LevelBase>;
 }

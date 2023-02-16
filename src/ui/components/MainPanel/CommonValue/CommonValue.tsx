@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useLayoutEffect, useState } from 'react';
 
 import Item from '@sa-core/entities/item';
-import { PanelStateContext } from '@sa-ui/context/PanelState';
+import { PanelState } from '@sa-ui/context/PanelState';
 import { PanelTableBase, PanelTableBodyRow, PercentLinearProgress } from '../base';
 import { idList, openModuleList } from './data';
 
@@ -18,8 +18,13 @@ const unitConvert = (count: number): string => {
 const tableHeads = ['物品ID', '图标', '名称', '数量', '兑换页面'];
 let icons: string[] | null = null;
 
-export function CommonValue() {
+interface Props {
+    panelState: PanelState;
+}
+
+export function CommonValue(props: Props) {
     const rows = idList.map((key) => ItemXMLInfo.getItemObj(key)).map((obj) => new Item(obj));
+    const { panelState } = props;
     let [imgEl, setImgEl] = useState(icons ?? []);
     let [initIcon, completeInitIcon] = useState(false);
 
@@ -49,49 +54,45 @@ export function CommonValue() {
     });
 
     return (
-        <PanelStateContext.Consumer>
-            {(panelState) => (
-                <PanelTableBase
-                    heads={tableHeads.map((v, i) => (
-                        <TableCell key={i}>{v}</TableCell>
-                    ))}
-                >
-                    {rows.map((row, index) => (
-                        <PanelTableBodyRow key={row.id}>
-                            <TableCell component="th" scope="row">
-                                {row.id}
-                            </TableCell>
-                            <TableCell>
-                                <img crossOrigin="anonymous" src={imgEl[index]} width={48} />
-                            </TableCell>
-                            <TableCell>{row.name}</TableCell>
-                            <TableCell>
-                                {row.limit ? (
-                                    <PercentLinearProgress
-                                        progress={row.amount}
-                                        total={row.limit}
-                                        cover={`${unitConvert(row.amount)}/${unitConvert(row.limit)}`}
-                                    />
-                                ) : (
-                                    <Typography>{unitConvert(row.amount)}</Typography>
-                                )}
-                            </TableCell>
-                            <TableCell>
-                                {openModuleList[row.id] ? (
-                                    <Button
-                                        onClick={() => {
-                                            openModuleList[row.id]();
-                                            panelState.setOpen(false);
-                                        }}
-                                    >
-                                        兑换
-                                    </Button>
-                                ) : undefined}
-                            </TableCell>
-                        </PanelTableBodyRow>
-                    ))}
-                </PanelTableBase>
-            )}
-        </PanelStateContext.Consumer>
+        <PanelTableBase
+            heads={tableHeads.map((v, i) => (
+                <TableCell key={i}>{v}</TableCell>
+            ))}
+        >
+            {rows.map((row, index) => (
+                <PanelTableBodyRow key={row.id}>
+                    <TableCell component="th" scope="row">
+                        {row.id}
+                    </TableCell>
+                    <TableCell>
+                        <img crossOrigin="anonymous" src={imgEl[index]} width={48} />
+                    </TableCell>
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>
+                        {row.limit ? (
+                            <PercentLinearProgress
+                                progress={row.amount}
+                                total={row.limit}
+                                cover={`${unitConvert(row.amount)}/${unitConvert(row.limit)}`}
+                            />
+                        ) : (
+                            <Typography>{unitConvert(row.amount)}</Typography>
+                        )}
+                    </TableCell>
+                    <TableCell>
+                        {openModuleList[row.id] ? (
+                            <Button
+                                onClick={() => {
+                                    openModuleList[row.id]();
+                                    panelState.setOpen(false);
+                                }}
+                            >
+                                兑换
+                            </Button>
+                        ) : undefined}
+                    </TableCell>
+                </PanelTableBodyRow>
+            ))}
+        </PanelTableBase>
     );
 }

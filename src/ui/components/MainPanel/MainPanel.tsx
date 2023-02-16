@@ -1,12 +1,13 @@
 import { Lock } from '@mui/icons-material';
 import { Box, Fade, Switch, SxProps, Tab, Tabs } from '@mui/material';
+import { PanelStateContext } from '@sa-ui/context/PanelState';
 import { mainColor } from '@sa-ui/style';
 import * as React from 'react';
 import { BattleManager } from './BattleManager';
 import { CommonValue } from './CommonValue';
-import { DailyRoutine } from './DailyRoutine';
 import { PackageCapture } from './PackageCapture';
 import { PetBag } from './PetBag';
+import { Realm } from './Realm';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -138,22 +139,28 @@ export function MainPanel(props: Props) {
                         <Tab label="抓包调试" {...a11yProps(5)} />
                     </Tabs>
                 </Box>
-                <TabPanel value={value} index={0}></TabPanel>
-                <TabPanel value={value} index={1}>
-                    <CommonValue />
-                </TabPanel>
-                <TabPanel value={value} index={2}>
-                    <DailyRoutine />
-                </TabPanel>
-                <TabPanel value={value} index={3}>
-                    <PetBag />
-                </TabPanel>
-                <TabPanel value={value} index={4}>
-                    <BattleManager />
-                </TabPanel>
-                <TabPanel value={value} index={5}>
-                    <PackageCapture />
-                </TabPanel>
+                <PanelStateContext.Consumer>
+                    {(panelState) => (
+                        <>
+                            <TabPanel value={value} index={0}></TabPanel>
+                            <TabPanel value={value} index={1}>
+                                <CommonValue panelState={panelState} />
+                            </TabPanel>
+                            <TabPanel value={value} index={2}>
+                                <Realm />
+                            </TabPanel>
+                            <TabPanel value={value} index={3}>
+                                <PetBag panelState={panelState} />
+                            </TabPanel>
+                            <TabPanel value={value} index={4}>
+                                <BattleManager />
+                            </TabPanel>
+                            <TabPanel value={value} index={5}>
+                                <PackageCapture />
+                            </TabPanel>{' '}
+                        </>
+                    )}
+                </PanelStateContext.Consumer>
             </Box>
         </Fade>
     );

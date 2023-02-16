@@ -129,6 +129,14 @@ const moveModules: { [name: string]: Battle.AutoBattle.MoveModule } = {
             Battle.Operator.auto();
         }
     },
+    圣谱单挑1: async (round, skills) => {
+        const r = skills.find((skill) => skill.name === ['神灵之触', '神灵救世光'][round.round % 2]);
+        if (r) {
+            Battle.Operator.useSkill(r.id);
+        } else {
+            Battle.Operator.auto();
+        }
+    },
     潘朵必先: Battle.generateStrategy(
         ['鬼焰·焚身术', '幻梦芳逝', '诸界混一击', '梦境残缺'],
         ['潘克多斯', '蒂朵', '鲁肃', '魔钰', '时空界皇']
@@ -183,6 +191,7 @@ const perStrategy: {
         strategy: moveModules['潘朵必先'],
     },
     圣谱单挑: { beforeBattle: async () => {}, cts: [1656092908], strategy: moveModules['圣谱单挑'] },
+    圣谱单挑1: { beforeBattle: async () => {}, cts: [1656092908], strategy: moveModules['圣谱单挑1'] },
     琉彩: { beforeBattle: async () => {}, cts: [1655917820, 1656056275, 1656386598], strategy: moveModules['琉彩'] },
 };
 
@@ -205,6 +214,19 @@ const options: PetFactor.Option[] = [
             perStrategy['圣谱单挑'],
             perStrategy['圣谱单挑'],
             perStrategy['琉彩'],
+        ],
+    },
+    //黑沃德
+    {
+        difficulty: PetFactor.LevelDifficulty.Ease,
+        sweep: false,
+        id: 77,
+        strategy: [
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑1'],
         ],
     },
 ];

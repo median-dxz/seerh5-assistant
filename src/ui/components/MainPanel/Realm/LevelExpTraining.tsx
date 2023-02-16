@@ -2,7 +2,7 @@ import { Typography } from '@mui/material';
 import { delay } from '@sa-core/common';
 import { Battle, Functions, PetHelper, Utils } from '@sa-core/index';
 import React from 'react';
-import { PercentLinearProgress } from "../base";
+import { PercentLinearProgress } from '../base';
 import dataProvider from './data';
 import { LevelBase, LevelExtendsProps } from './LevelBase';
 
@@ -13,14 +13,14 @@ interface LevelData {
     layerCount: number;
 }
 
-const RoutineModuleName = '学习力训练场';
-const customData = dataProvider['LevelStudyTraining'];
+const RealmName = '经验训练场';
+const customData = dataProvider['LevelExpTraining'];
 const maxDailyChallengeTimes = 6;
 
 const updateLevelData = async () => {
     const data = {} as LevelData;
-    const bits = await Utils.GetBitSet(637, 1000572);
-    const playerInfo = new DataView(await Utils.SocketSendByQueue(42397, [102]));
+    const bits = await Utils.GetBitSet(639, 1000571);
+    const playerInfo = new DataView(await Utils.SocketSendByQueue(42397, [103]));
 
     data.stimulation = bits[0];
     data.rewardReceived = bits[1];
@@ -31,8 +31,8 @@ const updateLevelData = async () => {
     return data;
 };
 
-export function LevelStudyTraining(props: LevelExtendsProps) {
-    const { setRunning } = props;
+export function LevelExpTraining(props: LevelExtendsProps) {
+    const { running, setRunning } = props;
     const [hint, setHint] = React.useState<JSX.Element | string>('');
     const [step, setStep] = React.useState(0);
     const levelData = React.useRef({} as LevelData);
@@ -53,6 +53,7 @@ export function LevelStudyTraining(props: LevelExtendsProps) {
                 } else {
                     setStep(3);
                 }
+
                 break;
             case 1: //daily challenge
                 setHint('正在准备背包');
@@ -81,7 +82,7 @@ export function LevelStudyTraining(props: LevelExtendsProps) {
                                 />
                             </>
                         );
-                        Utils.SocketSendByQueue(42396, [102, 6, levelData.current.layerCount + 1]);
+                        Utils.SocketSendByQueue(42396, [103, 6, levelData.current.layerCount + 1]);
                     });
                     levelData.current = await updateLevelData();
                 }
@@ -92,7 +93,7 @@ export function LevelStudyTraining(props: LevelExtendsProps) {
             case 2: //try get daily reward
                 setHint('正在查询每日奖励领取状态');
                 try {
-                    await Utils.SocketSendByQueue(42395, [102, 3, 0, 0]);
+                    await Utils.SocketSendByQueue(42395, [103, 3, 0, 0]);
                 } catch (error) {
                     setStep(-1);
                 }
@@ -105,7 +106,7 @@ export function LevelStudyTraining(props: LevelExtendsProps) {
                 setRunning(false);
                 break;
             default:
-                setHint(RoutineModuleName +'日任完成');
+                setHint(RealmName + '日任完成');
                 setRunning(false);
                 break;
         }
@@ -113,5 +114,5 @@ export function LevelStudyTraining(props: LevelExtendsProps) {
     React.useEffect(() => {
         effect();
     }, [step]);
-    return <LevelBase title={RoutineModuleName} hint={hint}></LevelBase>;
+    return <LevelBase title={RealmName} hint={hint}></LevelBase>;
 }

@@ -13,7 +13,7 @@ interface LevelData {
     weeklyCompletedCount: number;
 }
 
-const RoutineModuleName = 'X战队密室';
+const RealmName = 'X战队密室';
 const customData = dataProvider['LevelXTeamRoom'];
 const maxDailyChallengeTimes = 3;
 
@@ -107,7 +107,7 @@ export function LevelXTeamRoom(props: LevelExtendsProps) {
                 setStep(4);
                 break;
             default:
-                setHint(RoutineModuleName + '日任完成');
+                setHint(RealmName + '日任完成');
                 setRunning(false);
                 break;
         }
@@ -115,5 +115,5 @@ export function LevelXTeamRoom(props: LevelExtendsProps) {
     React.useEffect(() => {
         effect();
     }, [step]);
-    return <LevelBase title={RoutineModuleName} hint={hint}></LevelBase>;
+    return <LevelBase title={RealmName} hint={hint}></LevelBase>;
 }

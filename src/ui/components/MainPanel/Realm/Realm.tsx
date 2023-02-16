@@ -27,7 +27,7 @@ interface Level {
     getState(): Promise<boolean>;
 }
 
-export function DailyRoutine() {
+export function Realm() {
     const [open, setOpen] = React.useState(false);
     const [running, setRunning] = React.useState(false);
     const [taskModule, setTaskModule] = React.useState(<></>);
@@ -76,9 +76,9 @@ export function DailyRoutine() {
             name: '精灵王试炼',
             module: <LevelElfKingsTrial setRunning={setRunning} running={running} />,
             async getState() {
-                const [count] = await Utils.GetMultiValue(18745);
-                const [rewardCanReceive] = await Utils.GetBitSet(2000037);
-                return count === 15 && !rewardCanReceive;
+                const [count, weeklyCount] = await Utils.GetMultiValue(18745, 20134);
+                const [rewardClosed] = await Utils.GetBitSet(2000037);
+                return (count === 15 || weeklyCount >= 100) && rewardClosed;
             },
         },
         {
@@ -100,7 +100,7 @@ export function DailyRoutine() {
         <>
             <Button>一键日任</Button>
             <Divider />
-            <Table aria-label="daily routine table">
+            <Table aria-label="realm table">
                 <TableHead>
                     <TableRow>
                         <TableCell align="center">关卡名称</TableCell>

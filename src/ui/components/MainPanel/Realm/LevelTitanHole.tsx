@@ -16,7 +16,7 @@ interface LevelData {
     step3Count: number;
 }
 
-const RoutineModuleName = '泰坦矿洞';
+const RealmName = '泰坦矿洞';
 const customData = dataProvider['LevelTitanHole'];
 const maxDailyChallengeTimes = 2;
 
@@ -195,7 +195,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 setRunning(false);
                 break;
             default:
-                setHint(RoutineModuleName + '日任完成');
+                setHint(RealmName + '日任完成');
                 setRunning(false);
                 break;
         }
@@ -204,7 +204,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
         effect();
     }, [step]);
     return (
-        <LevelBase title={RoutineModuleName} hint={hint}>
+        <LevelBase title={RealmName} hint={hint}>
             <Typography>
                 {`今日进入关卡次数: ${levelData.current.levelOpenCount} / ${maxDailyChallengeTimes}`}
             </Typography>
