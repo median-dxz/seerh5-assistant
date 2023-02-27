@@ -78,7 +78,7 @@ export function Realm() {
             async getState() {
                 const [count, weeklyCount] = await Utils.GetMultiValue(18745, 20134);
                 const [rewardClosed] = await Utils.GetBitSet(2000037);
-                return (count === 15 || weeklyCount >= 100) && rewardClosed;
+                return count === 15 || (weeklyCount >= 100 && rewardClosed);
             },
         },
         {

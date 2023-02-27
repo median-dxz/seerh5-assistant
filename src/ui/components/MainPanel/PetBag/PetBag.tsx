@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { delay } from '@sa-core/common';
 import Pet from '@sa-core/entities/pet';
+import { SeerModuleHelper } from '@sa-core/utils/module-helper';
 import { PanelState } from '@sa-ui/context/PanelState';
 import { mainColor } from '@sa-ui/style';
 import React from 'react';
@@ -43,7 +44,6 @@ export function PetBag(props: Props) {
     const [battleFire, setBattleFire] = React.useState<BattleFireInfo>({ timeLeft: 0, type: 0, valid: false });
     const [timeLeft, setTimeLeft] = React.useState(0);
     const [timer, setTimer] = React.useState<undefined | number>(undefined);
-
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [menuOpen, setMenuOpen] = React.useState(false);
     const menuOption = React.useRef<MenuOption | null>(null);
@@ -58,7 +58,7 @@ export function PetBag(props: Props) {
         }
         return item as Array<number[]>;
     });
-
+    const [petHeadSrc, setPetHeadSrc] = React.useState<string[]>([]);
     const [userTitle, setUserTitle] = React.useState(Utils.UserTitle());
     const [userSuit, setUserSuit] = React.useState(Utils.UserSuit());
 
@@ -74,6 +74,17 @@ export function PetBag(props: Props) {
         PetHelper.getBagPets(Const.PET_POS.bag1).then((r) => {
             setPets(r);
             setPetsSelected(Array(r.length).fill(false));
+            let promises = r
+                .map((r) => r.id)
+                .map(async (id) => {
+                    const url = ClientConfig.getPetHeadPath(id);
+                    const i = await RES.getResByUrl(url);
+                    const src: string = i.bitmapData.source.src;
+                    return src ?? window.SAResourceMap.get(url);
+                });
+            Promise.all(promises).then((r) => {
+                setPetHeadSrc(r);
+            });
         });
     }, []);
 
@@ -109,6 +120,123 @@ export function PetBag(props: Props) {
         panelState.setOpen(false);
     };
 
+    const handleChangeSuit: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+        const suitId = Utils.UserAbilitySuits();
+        const suitName = suitId.map<string>(SuitXMLInfo.getName.bind(SuitXMLInfo));
+        menuOption.current = {
+            type: 'suit',
+            id: suitId,
+            options: suitName,
+        };
+        setAnchorEl(e.currentTarget);
+        setMenuOpen(true);
+    };
+
+    const handleChangeTitle: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
+        setAnchorEl(e.currentTarget);
+        const titleId = await Utils.UserAbilityTitles();
+        const titleName = titleId.map<string>(AchieveXMLInfo.getTitle.bind(AchieveXMLInfo));
+        menuOption.current = {
+            type: 'title',
+            id: titleId,
+            options: titleName,
+        };
+        setMenuOpen(true);
+    };
+
+    const handleCloseMenu = () => {
+        setAnchorEl(null);
+        setMenuOpen(false);
+    };
+
+    const handleSelectItem = async (index: number) => {
+        const info = menuOption.current!;
+        if (info.type === 'suit') {
+            Utils.ChangeSuit(info.id[index]);
+            setUserSuit(info.id[index]);
+        } else if (info.type === 'title') {
+            Utils.ChangeTitle(info.id[index]);
+            setUserTitle(info.id[index]);
+        } else if (info.type === 'setPets') {
+            Functions.switchBag(petPatterns[index]);
+        } else if (info.type === 'savePets') {
+            const newPets = await PetHelper.getBagPets(1);
+            setPetPattern((petPatterns) => {
+                const newValue = [...petPatterns];
+                newValue[index] = newPets.map((pet) => pet.catchTime);
+                window.localStorage.setItem(StorageKey, JSON.stringify(newValue));
+                return newValue;
+            });
+        }
+        handleCloseMenu();
+    };
+
+    const handleLowerBlood = () => {
+        const curePets = pets.filter((pet, index) => petsSelected[index]).map((r) => r.catchTime);
+        for (let curePet of curePets) {
+            PetHelper.cureOnePet(curePet);
+        }
+    };
+
+    const handleCurePets = () => {
+        const curePets = pets.filter((pet, index) => petsSelected[index]).map((r) => r.catchTime);
+        for (let curePet of curePets) {
+            PetHelper.cureOnePet(curePet);
+        }
+    };
+
+    const handleSwitchPetPattern: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+        setAnchorEl(e.currentTarget);
+        const patternName = Array(petPatterns.length)
+            .fill('')
+            .map(
+                (v, index) =>
+                    `方案${index}: ${(
+                        petPatterns[index]?.map(Number).map((ct) => {
+                            let name = PetManager.getPetInfo(ct)?.name;
+                            if (!name) {
+                                name = PetStorage2015InfoManager.allInfo.find((p) => p.catchTime === ct)!.name;
+                            }
+                            return name;
+                        }) ?? []
+                    ).join(',')}`
+            );
+        menuOption.current = {
+            type: 'setPets',
+            id: Array(petPatterns.length)
+                .fill(0)
+                .map((v, index) => index),
+            options: patternName,
+        };
+        setMenuOpen(true);
+    };
+
+    const handleSavePetPattern: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+        setAnchorEl(e.currentTarget);
+        const patternName = Array(petPatterns.length)
+            .fill('')
+            .map((v, index) => `方案${index}`);
+        menuOption.current = {
+            type: 'savePets',
+            id: Array(petPatterns.length)
+                .fill(0)
+                .map((v, index) => index),
+            options: patternName,
+        };
+        setMenuOpen(true);
+    };
+
+    const handleOpenPetItemUseProp = async (ct: number) => {
+        await ModuleManager.showModule('petBag');
+        const petBagModule = SeerModuleHelper.currentModule<petBag.PetBag>();
+        const petBagPanel = petBagModule.currentPanel!;
+        await delay(300);
+        petBagPanel.onSelectPet({ data: PetManager.getPetInfo(ct) });
+        await delay(300);
+        petBagPanel.showDevelopBaseView();
+        petBagPanel.showDevelopView(9);
+    };
+
     let fireRenderProps: { color: string; text: string };
     if (!battleFire.valid) {
         fireRenderProps = { color: 'inherit', text: '无火焰' };
@@ -138,51 +266,20 @@ export function PetBag(props: Props) {
             <h3>套装 / 称号</h3>
             <Typography display="flex" alignItems="baseline">
                 当前套装:
-                <Button
-                    onClick={(e) => {
-                        const suitId = Utils.UserAbilitySuits();
-                        const suitName = suitId.map<string>(SuitXMLInfo.getName.bind(SuitXMLInfo));
-                        menuOption.current = {
-                            type: 'suit',
-                            id: suitId,
-                            options: suitName,
-                        };
-                        setAnchorEl(e.currentTarget);
-                        setMenuOpen(true);
-                    }}
-                >
-                    {SuitXMLInfo.getName(userSuit)}
-                </Button>
+                <Button onClick={handleChangeSuit}>{SuitXMLInfo.getName(userSuit)}</Button>
                 效果: {ItemSeXMLInfo.getSuitEff(userSuit)}
             </Typography>
 
             <Typography display="flex" alignItems="baseline">
                 当前称号:
-                <Button
-                    onClick={async (e) => {
-                        setAnchorEl(e.currentTarget);
-                        const titleId = await Utils.UserAbilityTitles();
-                        const titleName = titleId.map<string>(AchieveXMLInfo.getTitle.bind(AchieveXMLInfo));
-                        menuOption.current = {
-                            type: 'title',
-                            id: titleId,
-                            options: titleName,
-                        };
-                        setMenuOpen(true);
-                    }}
-                >
-                    {AchieveXMLInfo.getTitle(userTitle)}
-                </Button>
+                <Button onClick={handleChangeTitle}>{AchieveXMLInfo.getTitle(userTitle)}</Button>
                 效果: {AchieveXMLInfo.getTitleEffDesc(userTitle)}
             </Typography>
             <Menu
                 id="suit-select-menu"
                 anchorEl={anchorEl}
                 open={menuOpen}
-                onClose={() => {
-                    setAnchorEl(null);
-                    setMenuOpen(false);
-                }}
+                onClose={handleCloseMenu}
                 MenuListProps={{
                     role: 'listbox',
                 }}
@@ -196,27 +293,8 @@ export function PetBag(props: Props) {
                 {menuOption.current?.options.map((option, index) => (
                     <MenuItem
                         key={option}
-                        onClick={async (e) => {
-                            const info = menuOption.current!;
-                            if (info.type === 'suit') {
-                                Utils.ChangeSuit(info.id[index]);
-                                setUserSuit(info.id[index]);
-                            } else if (info.type === 'title') {
-                                Utils.ChangeTitle(info.id[index]);
-                                setUserTitle(info.id[index]);
-                            } else if (info.type === 'setPets') {
-                                Functions.switchBag(petPatterns[index]);
-                            } else if (info.type === 'savePets') {
-                                const newPets = await PetHelper.getBagPets(1);
-                                setPetPattern((petPatterns) => {
-                                    const newValue = [...petPatterns];
-                                    newValue[index] = newPets.map((pet) => pet.catchTime);
-                                    window.localStorage.setItem(StorageKey, JSON.stringify(newValue));
-                                    return newValue;
-                                });
-                            }
-                            setAnchorEl(null);
-                            setMenuOpen(false);
+                        onClick={() => {
+                            handleSelectItem(index);
                         }}
                     >
                         {option}
@@ -226,80 +304,17 @@ export function PetBag(props: Props) {
 
             <Divider />
             <h3>精灵背包</h3>
-            <Button
-                onClick={() => {
-                    const lowerBloodPets = pets.filter((pet, index) => petsSelected[index]).map((r) => r.catchTime);
-                    Functions.lowerBlood(lowerBloodPets);
-                }}
-            >
-                压血
-            </Button>
-            <Button
-                onClick={() => {
-                    const curePets = pets.filter((pet, index) => petsSelected[index]).map((r) => r.catchTime);
-                    for (let curePet of curePets) {
-                        PetHelper.cureOnePet(curePet);
-                    }
-                }}
-            >
-                治疗
-            </Button>
+            <Button onClick={handleLowerBlood}>压血</Button>
+            <Button onClick={handleCurePets}>治疗</Button>
             <Button
                 onClick={() => {
                     console.log(pets.map((pet) => ({ name: pet.name, catchTime: pet.catchTime })));
                 }}
             >
-                dump
+                复制catchTime
             </Button>
-            <Button
-                onClick={(e) => {
-                    setAnchorEl(e.currentTarget);
-                    const patternName = Array(petPatterns.length)
-                        .fill('')
-                        .map(
-                            (v, index) =>
-                                `方案${index}: ${(
-                                    petPatterns[index]?.map(Number).map((ct) => {
-                                        let name = PetManager.getPetInfo(ct)?.name;
-                                        if (!name) {
-                                            name = PetStorage2015InfoManager.allInfo.find(
-                                                (p) => p.catchTime === ct
-                                            )!.name;
-                                        }
-                                        return name;
-                                    }) ?? []
-                                ).join(',')}`
-                        );
-                    menuOption.current = {
-                        type: 'setPets',
-                        id: Array(petPatterns.length)
-                            .fill(0)
-                            .map((v, index) => index),
-                        options: patternName,
-                    };
-                    setMenuOpen(true);
-                }}
-            >
-                更换方案
-            </Button>
-            <Button
-                onClick={(e) => {
-                    setAnchorEl(e.currentTarget);
-                    const patternName = Array(petPatterns.length)
-                        .fill('')
-                        .map((v, index) => `方案${index}`);
-                    menuOption.current = {
-                        type: 'savePets',
-                        id: Array(petPatterns.length)
-                            .fill(0)
-                            .map((v, index) => index),
-                        options: patternName,
-                    };
-                    setMenuOpen(true);
-                }}
-            >
-                保存方案
-            </Button>
+            <Button onClick={handleSwitchPetPattern}>更换方案</Button>
+            <Button onClick={handleSavePetPattern}>保存方案</Button>
 
             <Table size="small">
                 <TableHead>
@@ -329,7 +344,7 @@ export function PetBag(props: Props) {
                                 {row.id}
                             </TableCell>
                             <TableCell align="center">
-                                <img crossOrigin="anonymous" src={ClientConfig.getPetHeadPath(row.id)} width={48}></img>
+                                <img crossOrigin="anonymous" src={petHeadSrc[index]} width={48}></img>
                             </TableCell>
                             <TableCell align="center">{row.name}</TableCell>
                             <TableCell align="center">
@@ -337,15 +352,8 @@ export function PetBag(props: Props) {
                             </TableCell>
                             <TableCell align="center">
                                 <Button
-                                    onClick={async () => {
-                                        await ModuleManager.showModule('petBag');
-                                        const petBagModule = ModuleManager.currModule as petBag.PetBag;
-                                        const petBagPanel = petBagModule.currentPanel as petBag.MainPanel;
-                                        await delay(300);
-                                        petBagPanel.onSelectPet({ data: PetManager.getPetInfo(row.catchTime) });
-                                        await delay(300);
-                                        petBagPanel.showDevelopBaseView();
-                                        petBagPanel.showDevelopView(9);
+                                    onClick={() => {
+                                        handleOpenPetItemUseProp(row.catchTime);
                                     }}
                                 >
                                     道具

@@ -24,7 +24,7 @@ const handleBattleEnd = (e: Event) => {
             BattleModuleManager.running = false;
             const { lockingTrigger } = BattleModuleManager;
             if (BattleModuleManager.delayTimeout) {
-                BattleModuleManager.delayTimeout.then(() => {
+                Promise.all([BattleModuleManager.delayTimeout, delay(3000)]).then(() => {
                     lockingTrigger(isWin);
                 });
             }
@@ -128,7 +128,7 @@ const BattleModuleManager: {
             const pets = BattleInfoProvider.getPets()!;
 
             if (info.round <= 0) {
-                BattleModuleManager.delayTimeout = delay(6000);
+                BattleModuleManager.delayTimeout = delay(5000);
             }
 
             if (this.custom != undefined) {

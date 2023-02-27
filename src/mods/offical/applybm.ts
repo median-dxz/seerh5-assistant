@@ -138,8 +138,8 @@ const moveModules: { [name: string]: Battle.AutoBattle.MoveModule } = {
         }
     },
     潘朵必先: Battle.generateStrategy(
-        ['鬼焰·焚身术', '幻梦芳逝', '诸界混一击', '梦境残缺'],
-        ['潘克多斯', '蒂朵', '鲁肃', '魔钰', '时空界皇']
+        ['鬼焰·焚身术', '幻梦芳逝', '诸界混一击', '梦境残缺', '月下华尔兹'],
+        ['潘克多斯', '蒂朵', '鲁肃', '魔钰', '月照星魂', '时空界皇']
     ),
     克朵六时: Battle.generateStrategy(
         ['诸界混一击', '剑挥四方', '幻梦芳逝'],
@@ -185,9 +185,9 @@ const perStrategy: {
     },
     潘朵必先: {
         beforeBattle: async () => {
-            await Functions.lowerBlood([1656383521, 1656056275, 1655917820, 1655445699, 1655484346]);
+            await Functions.lowerBlood([1656383521, 1656056275, 1655917820, 1655445699, 1655484346, 1657943113]);
         },
-        cts: [1656383521, 1656056275, 1655917820, 1655445699, 1655484346],
+        cts: [1656383521, 1656056275, 1655917820, 1655445699, 1655484346, 1657943113],
         strategy: moveModules['潘朵必先'],
     },
     圣谱单挑: { beforeBattle: async () => {}, cts: [1656092908], strategy: moveModules['圣谱单挑'] },
@@ -203,20 +203,20 @@ const options: PetFactor.Option[] = [
         id: 65,
         strategy: [],
     },
-    //琉彩2
-    {
-        difficulty: PetFactor.LevelDifficulty.Ease,
-        sweep: false,
-        id: 84,
-        strategy: [
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['琉彩'],
-        ],
-    },
-    //黑沃德
+    // 琉彩2
+    // {
+    //     difficulty: PetFactor.LevelDifficulty.Ease,
+    //     sweep: false,
+    //     id: 84,
+    //     strategy: [
+    //         perStrategy['圣谱单挑'],
+    //         perStrategy['圣谱单挑'],
+    //         perStrategy['圣谱单挑'],
+    //         perStrategy['圣谱单挑'],
+    //         perStrategy['琉彩'],
+    //     ],
+    // },
+    // 黑沃德
     {
         difficulty: PetFactor.LevelDifficulty.Ease,
         sweep: false,
@@ -227,6 +227,19 @@ const options: PetFactor.Option[] = [
             perStrategy['圣谱单挑'],
             perStrategy['圣谱单挑'],
             perStrategy['圣谱单挑1'],
+        ],
+    },
+    // 特罗斯2
+    {
+        difficulty: PetFactor.LevelDifficulty.Ease,
+        sweep: false,
+        id: 56,
+        strategy: [
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
         ],
     },
 ];
@@ -268,6 +281,7 @@ class applyBm extends ReflectObjBase implements ModClass {
                     await Battle.Manager.runOnce(runner.battleOnce.bind(runner));
                 }
                 await runner.update();
+                await delay(Math.round(Math.random() * 2000) + 3000);
                 Battle.Manager.clear();
             }
         }

@@ -36,7 +36,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = ITEMS.P
     }
     log(`压血 -> 背包处理完成`);
 
-    const hpChecker = () => cts.filter((ct) => PetManager.getPetInfo(ct).hp >= 200);
+    const hpChecker = () => cts.filter((ct) => PetManager.getPetInfo(ct).hp >= 150);
 
     const usePotion = (ct: number) => {
         if (PetManager.getPetInfo(ct).hp <= 50) {

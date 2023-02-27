@@ -100,6 +100,12 @@ class sign extends ReflectObjBase implements ModClass {
         if (!curTimes) {
             Utils.SocketSendByQueue(CMDID.SEER_VIP_DAILY_REWARD);
         }
+
+        // 苍星签到
+        [curTimes, t] = await Utils.GetMultiValue(123157, 202284);
+        if (curTimes < 80 && !t) {
+            Utils.SocketSendByQueue(41800, [89, 12]);
+        }
     }
     async teamDispatch() {
         try {
