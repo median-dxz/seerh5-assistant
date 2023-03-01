@@ -79,7 +79,7 @@ export function PetBag(props: Props) {
                 .map(async (id) => {
                     const url = ClientConfig.getPetHeadPath(id);
                     const i = await RES.getResByUrl(url);
-                    const src: string = i.bitmapData.source.src;
+                    const src: string = i.bitmapData.source?.src;
                     return src ?? window.SAResourceMap.get(url);
                 });
             Promise.all(promises).then((r) => {
