@@ -7,6 +7,7 @@ import { BattleManager } from './BattleManager';
 import { CommonValue } from './CommonValue';
 import { PackageCapture } from './PackageCapture';
 import { PetBag } from './PetBag';
+import { QuickCommand } from './QuickCommand/QuickCommand';
 import { Realm } from './Realm';
 
 interface TabPanelProps {
@@ -142,7 +143,9 @@ export function MainPanel(props: Props) {
                 <PanelStateContext.Consumer>
                     {(panelState) => (
                         <>
-                            <TabPanel value={value} index={0}></TabPanel>
+                            <TabPanel value={value} index={0}>
+                                <QuickCommand />
+                            </TabPanel>
                             <TabPanel value={value} index={1}>
                                 <CommonValue panelState={panelState} />
                             </TabPanel>
@@ -157,7 +160,7 @@ export function MainPanel(props: Props) {
                             </TabPanel>
                             <TabPanel value={value} index={5}>
                                 <PackageCapture />
-                            </TabPanel>{' '}
+                            </TabPanel>
                         </>
                     )}
                 </PanelStateContext.Consumer>

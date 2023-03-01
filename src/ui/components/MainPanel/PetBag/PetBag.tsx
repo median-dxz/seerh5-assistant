@@ -2,8 +2,10 @@ import {
     Button,
     Checkbox,
     Divider,
+    FormControlLabel,
     Menu,
     MenuItem,
+    Switch,
     Table,
     TableBody,
     TableCell,
@@ -61,6 +63,7 @@ export function PetBag(props: Props) {
     const [petHeadSrc, setPetHeadSrc] = React.useState<string[]>([]);
     const [userTitle, setUserTitle] = React.useState(Utils.UserTitle());
     const [userSuit, setUserSuit] = React.useState(Utils.UserSuit());
+    const [animationMode, setAnimationMode] = React.useState(false);
 
     const updateBattleFire = async () => {
         const info = await Functions.updateBattleFireInfo();
@@ -86,6 +89,10 @@ export function PetBag(props: Props) {
                 setPetHeadSrc(r);
             });
         });
+        const fightMode = window.localStorage.getItem('fight_mode');
+        if (fightMode) {
+            setAnimationMode(fightMode === '0');
+        }
     }, []);
 
     React.useEffect(() => {
@@ -237,6 +244,27 @@ export function PetBag(props: Props) {
         petBagPanel.showDevelopView(9);
     };
 
+    const handleSetAnimationMode = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+        setAnimationMode(checked);
+        if (checked) {
+            FightManager.fightAnimateMode = 0;
+        } else {
+            FightManager.fightAnimateMode = 1;
+        }
+    };
+
+    const handleCopyCatchTime = () => {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(
+                JSON.stringify(pets.map((pet) => ({ name: pet.name, catchTime: pet.catchTime })))
+            );
+            BubblerManager.getInstance().showText('复制成功');
+        } else {
+            BubblerManager.getInstance().showText('无法访问剪切板API, 数据导出到控制台');
+            console.log(pets.map((pet) => ({ name: pet.name, catchTime: pet.catchTime })));
+        }
+    };
+
     let fireRenderProps: { color: string; text: string };
     if (!battleFire.valid) {
         fireRenderProps = { color: 'inherit', text: '无火焰' };
@@ -301,18 +329,17 @@ export function PetBag(props: Props) {
                     </MenuItem>
                 ))}
             </Menu>
-
+            <Divider />
+            <h3>动画模式</h3>
+            <FormControlLabel
+                control={<Switch checked={animationMode} onChange={handleSetAnimationMode} />}
+                label="动画模式"
+            />
             <Divider />
             <h3>精灵背包</h3>
             <Button onClick={handleLowerBlood}>压血</Button>
             <Button onClick={handleCurePets}>治疗</Button>
-            <Button
-                onClick={() => {
-                    console.log(pets.map((pet) => ({ name: pet.name, catchTime: pet.catchTime })));
-                }}
-            >
-                复制catchTime
-            </Button>
+            <Button onClick={handleCopyCatchTime}>复制catchTime</Button>
             <Button onClick={handleSwitchPetPattern}>更换方案</Button>
             <Button onClick={handleSavePetPattern}>保存方案</Button>
 
