@@ -121,7 +121,7 @@ const appConfig = {
             '@mui/styled-engine': '@mui/styled-engine-sc',
             '@data': '/src/data/index.js',
             '@sa-core': '/src/assistant',
-            '@sa-ui': '/src/ui',
+            '@sa-app': '/src/app',
             '@src': '/src',
         },
         extensions: ['.js', '.jsx', '.tsx', '.ts'],
@@ -132,7 +132,7 @@ const appConfig = {
     devtool: 'source-map',
     plugins: [
         new HtmlWebpackPlugin({
-            title: 'seer-assisant | 赛尔号h5登陆器 by median',
+            title: 'seer-assistant | 赛尔号h5登陆器 by median',
             scriptLoading: 'module',
             filename: 'index.html',
             template: './src/index.html',

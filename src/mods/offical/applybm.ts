@@ -85,7 +85,7 @@ namespace PetFactor {
             await beforeBattle();
             PetHelper.setDefault(cts[0]);
             await delay(300);
-            Battle.Manager.strategy.custom = strategy;
+            Battle.Manager.strategy = strategy;
         }
         async update() {
             const values = await Utils.GetMultiValue(

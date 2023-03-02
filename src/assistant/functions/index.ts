@@ -58,7 +58,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = ITEMS.P
 
     const { Manager, Operator, InfoProvider } = BattleModule;
 
-    Manager.strategy.custom = async (battleState, skills, battlePets) => {
+    Manager.strategy = async (battleState, skills, battlePets) => {
         if (battleState.round > 0 && battleState.self?.hp.remain! < 50) {
             let nextPet = battlePets.findIndex(
                 (v) => cts.includes(v.catchTime) && v.hp > 200 && v.catchTime !== battleState.self!.catchtime
@@ -86,7 +86,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = ITEMS.P
         if (leftCts.length > 0) {
             return delay(300).then(() => lowerBlood(leftCts, healPotionId));
         } else {
-            Manager.strategy.custom = undefined;
+            Manager.strategy = undefined;
             return delay(300);
         }
     });

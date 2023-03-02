@@ -22,14 +22,14 @@
             "@data": [
                 "src/data/index.js"
             ],
+            "@sa-core": [
+                "src/assistant/index"
+            ],
             "@sa-core/*": [
                 "src/assistant/*"
             ],
-            "@sa-ui/*": [
-                "src/ui/*"
-            ],
-            "@src/*": [
-                "src/*"
+            "@sa-app/*": [
+                "src/app/*"
             ],
             "@mui/styled-engine": [
                 "./node_modules/@mui/styled-engine-sc"

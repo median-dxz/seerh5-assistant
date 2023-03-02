@@ -37,6 +37,7 @@
     "@mui/system": "^5.11.7",
     "chalk": "^5.2.0",
     "gsap": "^3.11.4",
+    "immer": "^9.0.19",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "styled-components": "^5.3.6"
