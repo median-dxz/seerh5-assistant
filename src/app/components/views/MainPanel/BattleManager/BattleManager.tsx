@@ -1,82 +1,14 @@
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    Divider,
-    FormControlLabel,
-    Switch,
-    TableCell,
-    TextField,
-} from '@mui/material';
-import { SAContext } from '@sa-app/context/SAContext';
-import { mainColor } from '@sa-app/style';
-import { Battle } from '@sa-core/index';
+import { Button, Divider, FormControlLabel, Switch, TableCell } from '@mui/material';
+
 import produce from 'immer';
 import React from 'react';
+
+import { Battle } from '@sa-core/index';
+
+import { TextEditDialog, TextEditDialogProps } from '@sa-app/components/common/TextEditDialog';
+import { SAContext } from '@sa-app/context/SAContext';
+
 import { PanelTableBase, PanelTableBodyRow } from '../base';
-
-interface TextEditDialogProps {
-    open: boolean;
-    value: string;
-    onClose: (value: string) => void;
-}
-
-function TextEditDialog(props: TextEditDialogProps) {
-    const { open, value: initValue, onClose } = props;
-    const [value, setValue] = React.useState(initValue);
-
-    React.useEffect(() => {
-        setValue(initValue);
-    }, [open]);
-
-    return (
-        <Dialog
-            open={open}
-            onClose={(e, r) => {
-                if (r === 'backdropClick') {
-                    onClose('');
-                } else {
-                    onClose(value);
-                }
-            }}
-            sx={{
-                '& .MuiDialog-paper': {
-                    minWidth: 384,
-                    bgcolor: `rgba(${mainColor.front} / 18%)`,
-                    backdropFilter: 'blur(4px)',
-                },
-            }}
-        >
-            <DialogTitle>编辑</DialogTitle>
-            <DialogContent>
-                <DialogContentText>以英文逗号分隔</DialogContentText>
-                <TextField
-                    autoFocus
-                    margin="dense"
-                    id="text-battle-manager"
-                    fullWidth
-                    variant="standard"
-                    onChange={(e) => {
-                        setValue(e.target.value);
-                    }}
-                    value={value}
-                />
-            </DialogContent>
-            <DialogActions>
-                <Button
-                    onClick={() => {
-                        onClose(value);
-                    }}
-                >
-                    保存
-                </Button>
-            </DialogActions>
-        </Dialog>
-    );
-}
 
 const handleAdd = (arr: any[], value: string) => {
     arr.push(value.split(','));
@@ -95,26 +27,17 @@ const handleUpdated = (arr: any[], index: number, value: string) => {
     arr[index] = value.split(',');
 };
 
+const defaultDialogState: TextEditDialogProps = {
+    onClose: () => {},
+    open: false,
+    initialValue: '',
+};
+
 export function BattleManager() {
     const { Battle: battleContext } = React.useContext(SAContext);
     const { enableAuto: auto, updateAuto, strategy, updateStrategy } = battleContext;
 
-    const closeDialog = {
-        onClose: () => {},
-        open: false,
-        value: '',
-    };
-
-    const [dialogProps, setDialog] = React.useState<TextEditDialogProps>(
-        React.useCallback(
-            () => ({
-                onClose: () => {},
-                open: false,
-                value: '',
-            }),
-            []
-        )
-    );
+    const [dialogProps, setDialogState] = React.useState<TextEditDialogProps>(defaultDialogState);
 
     const withStrategy = (operator: (baseState: Battle.AutoBattle.Strategy) => void) =>
         updateStrategy(
@@ -122,6 +45,14 @@ export function BattleManager() {
                 operator(draft);
             })
         );
+
+    const closeDialog = React.useCallback(() => {
+        setDialogState(defaultDialogState);
+    }, [dialogProps]);
+
+    const openDialog = (onClose: (value: string) => void, initialValue: string) => {
+        setDialogState({ open: true, initialValue, onClose });
+    };
 
     return (
         <>
@@ -148,18 +79,14 @@ export function BattleManager() {
             <h3>出招表</h3>
             <Button
                 onClick={() => {
-                    setDialog({
-                        onClose: (value) => {
-                            if (value) {
-                                withStrategy((strategy) => {
-                                    handleAdd(strategy.snm, value);
-                                });
-                            }
-                            setDialog(closeDialog);
-                        },
-                        open: true,
-                        value: '',
-                    });
+                    openDialog((value) => {
+                        if (value) {
+                            withStrategy((strategy) => {
+                                handleAdd(strategy.snm, value);
+                            });
+                        }
+                        closeDialog();
+                    }, '');
                 }}
             >
                 添加
@@ -202,18 +129,14 @@ export function BattleManager() {
                             </Button>
                             <Button
                                 onClick={() => {
-                                    setDialog({
-                                        onClose: (value) => {
-                                            if (value) {
-                                                withStrategy((strategy) => {
-                                                    handleUpdated(strategy.snm, index, value);
-                                                });
-                                            }
-                                            setDialog(closeDialog);
-                                        },
-                                        open: true,
-                                        value: row.join(','),
-                                    });
+                                    openDialog((value) => {
+                                        if (value) {
+                                            withStrategy((strategy) => {
+                                                handleUpdated(strategy.snm, index, value);
+                                            });
+                                        }
+                                        closeDialog();
+                                    }, row.join(','));
                                 }}
                             >
                                 编辑
@@ -227,18 +150,14 @@ export function BattleManager() {
             <h3>死切链</h3>
             <Button
                 onClick={() => {
-                    setDialog({
-                        onClose: (value) => {
-                            if (value) {
-                                withStrategy((strategy) => {
-                                    handleAdd(strategy.dsl, value);
-                                });
-                            }
-                            setDialog(closeDialog);
-                        },
-                        open: true,
-                        value: '',
-                    });
+                    openDialog((value) => {
+                        if (value) {
+                            withStrategy((strategy) => {
+                                handleAdd(strategy.dsl, value);
+                            });
+                        }
+                        closeDialog();
+                    }, '');
                 }}
             >
                 添加
@@ -281,18 +200,14 @@ export function BattleManager() {
                             </Button>
                             <Button
                                 onClick={() => {
-                                    setDialog({
-                                        onClose: (value) => {
-                                            if (value) {
-                                                withStrategy((strategy) => {
-                                                    handleUpdated(strategy.dsl, index, value);
-                                                });
-                                            }
-                                            setDialog(closeDialog);
-                                        },
-                                        open: true,
-                                        value: row.join(','),
-                                    });
+                                    openDialog((value) => {
+                                        if (value) {
+                                            withStrategy((strategy) => {
+                                                handleUpdated(strategy.dsl, index, value);
+                                            });
+                                        }
+                                        closeDialog();
+                                    }, row.join(','));
                                 }}
                             >
                                 编辑

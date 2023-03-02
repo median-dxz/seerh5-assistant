@@ -9,7 +9,7 @@ const root = ReactDOM.createRoot(container);
 const onCoreReady = async () => {
     const canvas: HTMLCanvasElement = document.querySelector('#egret_player_container canvas')!;
     canvas.setAttribute('tabindex', '-1');
-    const { SaMain } = await import('./ui/main');
+    const { SaMain } = await import('./app/main');
     root.render(<SaMain />);
 };
 
