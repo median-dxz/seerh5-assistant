@@ -1,4 +1,4 @@
-import { delay } from '../common';
+import { delay, SAEventTarget } from '../common';
 import { EVENTS } from '../const';
 
 import Skill from '@sa-core/entities/skill';
@@ -30,7 +30,7 @@ const onBattleEnd = (e: Event) => {
         if (BattleManager.triggerLocker) {
             const { triggerLocker: lockingTrigger } = BattleManager;
             if (BattleManager.delayTimeout) {
-                Promise.all([BattleManager.delayTimeout, delay(3000)]).then(() => {
+                Promise.all([BattleManager.delayTimeout, delay(1000)]).then(() => {
                     lockingTrigger(isWin);
                 });
             }
@@ -83,9 +83,9 @@ const onRoundStart = () => {
     }
 };
 
-window.SAEventTarget.addEventListener(EVENTS.BattlePanel.panelReady, onRoundStart);
-window.SAEventTarget.addEventListener(EVENTS.BattlePanel.roundEnd, onRoundStart);
-window.SAEventTarget.addEventListener(EVENTS.BattlePanel.battleEnd, onBattleEnd);
+SAEventTarget.addEventListener(EVENTS.BattlePanel.panelReady, onRoundStart);
+SAEventTarget.addEventListener(EVENTS.BattlePanel.roundEnd, onRoundStart);
+SAEventTarget.addEventListener(EVENTS.BattlePanel.battleEnd, onBattleEnd);
 
 async function resolveStrategy(strategy: AutoBattle.Strategy) {
     if (FighterModelFactory.playerMode == null) {

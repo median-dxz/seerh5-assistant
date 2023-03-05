@@ -1,3 +1,4 @@
+import { SAEventTarget } from '../common';
 import { EVENTS as hook } from '../const';
 
 window.filterLogText = [
@@ -36,7 +37,7 @@ ModuleManager.loadScript = function (scriptName) {
                 script = script.replaceAll(/console\.warn/g, 'warnFilter');
                 o.text = `//@ sourceURL=${location.href + url + '\n'}${script}`;
                 document.head.appendChild(o).parentNode!.removeChild(o);
-                window.SAEventTarget.dispatchEvent(new CustomEvent(hook.Module.loadScript, { detail: scriptName }));
+                SAEventTarget.dispatchEvent(new CustomEvent(hook.Module.loadScript, { detail: scriptName }));
                 resolve();
             },
             this,
@@ -47,4 +48,5 @@ ModuleManager.loadScript = function (scriptName) {
 
 UIUtils = null;
 
-export {};
+export { };
+

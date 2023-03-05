@@ -1,3 +1,4 @@
+import { SAEventTarget } from '@sa-core/common';
 import { InfoProvider } from '../battle';
 import { EVENTS as hooks } from '../const';
 import RoundPetInfo from '../entities/round-info';
@@ -5,7 +6,6 @@ import { findObject } from '../functions';
 import { defaultStyle, SaModuleLogger } from '../logger';
 import { SeerModuleHelper } from '../utils';
 
-const GlobalEventManager = window.SAEventTarget;
 const log = SaModuleLogger('SAEventHandler', defaultStyle.core);
 
 export interface ModuleSubscriber<T extends BaseModule> {
@@ -81,7 +81,7 @@ const SeerModuleStatePublisher = {
     },
 };
 
-GlobalEventManager.addEventListener(hooks.Module.loadScript, (e) => {
+SAEventTarget.addEventListener(hooks.Module.loadScript, (e) => {
     if (e instanceof CustomEvent) {
         log(`检测到新模块加载: ${e.detail}`);
         const name = e.detail;
@@ -89,21 +89,21 @@ GlobalEventManager.addEventListener(hooks.Module.loadScript, (e) => {
     }
 });
 
-GlobalEventManager.addEventListener(hooks.Module.construct, (e) => {
+SAEventTarget.addEventListener(hooks.Module.construct, (e) => {
     if (e instanceof CustomEvent) {
         const name = e.detail;
         SeerModuleStatePublisher.notifyAll(name, 'show');
     }
 });
 
-GlobalEventManager.addEventListener(hooks.Module.destroy, (e) => {
+SAEventTarget.addEventListener(hooks.Module.destroy, (e) => {
     if (e instanceof CustomEvent) {
         const name = e.detail;
         SeerModuleStatePublisher.notifyAll(name, 'destroy');
     }
 });
 
-GlobalEventManager.addEventListener(hooks.Award.receive, (e) => {
+SAEventTarget.addEventListener(hooks.Award.receive, (e) => {
     if (e instanceof CustomEvent) {
         log(`获得物品:`);
         const logStr = e.detail.items.map((v: any) => ItemXMLInfo.getName(v.id) + ' ' + v.count);
@@ -111,7 +111,7 @@ GlobalEventManager.addEventListener(hooks.Award.receive, (e) => {
     }
 });
 
-GlobalEventManager.addEventListener(hooks.BattlePanel.onRoundData, (e) => {
+SAEventTarget.addEventListener(hooks.BattlePanel.onRoundData, (e) => {
     if (e instanceof CustomEvent) {
         const [fi, si] = [new RoundPetInfo(e.detail.info[0]), new RoundPetInfo(e.detail.info[1])];
         InfoProvider.cachedRoundInfo = [fi, si];
@@ -133,7 +133,7 @@ GlobalEventManager.addEventListener(hooks.BattlePanel.onRoundData, (e) => {
     }
 });
 
-GlobalEventManager.addEventListener(hooks.BattlePanel.panelReady, () => {
+SAEventTarget.addEventListener(hooks.BattlePanel.panelReady, () => {
     InfoProvider.cachedRoundInfo = null;
     if (FightManager.fightAnimateMode === 1) {
         PetFightController.setFightSpeed(10);
@@ -141,12 +141,12 @@ GlobalEventManager.addEventListener(hooks.BattlePanel.panelReady, () => {
     log(`检测到对战开始`);
 });
 
-GlobalEventManager.addEventListener(hooks.BattlePanel.battleEnd, () => {
+SAEventTarget.addEventListener(hooks.BattlePanel.battleEnd, () => {
     const win = FightManager.isWin;
     log(`检测到对战结束 对战胜利: ${win}`);
 });
 
-GlobalEventManager.addEventListener(hooks.BattlePanel.endPropShown, () => {
+SAEventTarget.addEventListener(hooks.BattlePanel.endPropShown, () => {
     const currModule = ModuleManager.currModule;
     currModule.onClose();
     EventManager.dispatchEvent(new PetFightEvent(PetFightEvent.ALARM_CLICK, CountExpPanelManager.overData));

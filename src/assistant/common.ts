@@ -12,6 +12,9 @@ function wrapper<F extends AnyFunction>(
     beforeDecorator?: (...args: Parameters<F>) => any,
     afterDecorator?: (result: Awaited<ReturnType<F>>, ...args: Parameters<F>) => any
 ) {
+    if (Object.hasOwn(func, 'rawFunction')) {
+        func = (func as any).rawFunction;
+    }
     const wrappedFunc = async function (this: any, ...args: any[]): Promise<Awaited<ReturnType<F>>> {
         beforeDecorator && (await beforeDecorator.apply(this, args));
         const r = await func.apply(this, arguments);
@@ -22,5 +25,6 @@ function wrapper<F extends AnyFunction>(
     return wrappedFunc;
 }
 
-export { wrapper, delay };
+const SAEventTarget = new EventTarget();
 
+export { SAEventTarget, wrapper, delay };

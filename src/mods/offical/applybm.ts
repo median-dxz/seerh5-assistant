@@ -1,7 +1,7 @@
 import { AutoBattle } from '@sa-core/battle/index';
 import { delay } from '@sa-core/common';
 import { Battle, Functions, PetHelper, Utils } from '@sa-core/index';
-import { defaultStyle, SaModuleLogger } from '@sa-core/logger';
+import { SaModuleLogger, defaultStyle } from '@sa-core/logger';
 import { ReflectObjBase } from '@sa-core/mod-type';
 
 const log = SaModuleLogger('精灵因子', defaultStyle.mod);
@@ -196,13 +196,6 @@ const perStrategy: {
 };
 
 const options: PetFactor.Option[] = [
-    // 东辉
-    {
-        difficulty: PetFactor.LevelDifficulty.Hard,
-        sweep: true,
-        id: 65,
-        strategy: [],
-    },
     // 琉彩2
     // {
     //     difficulty: PetFactor.LevelDifficulty.Ease,

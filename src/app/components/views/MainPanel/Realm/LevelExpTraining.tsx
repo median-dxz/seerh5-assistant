@@ -65,7 +65,7 @@ export function LevelExpTraining(props: LevelExtendsProps) {
 
                 updateCustomStrategy(customData.strategy);
 
-                while (levelData.current.challengeCount < maxDailyChallengeTimes) {
+                while (levelData.current.challengeCount < maxDailyChallengeTimes && running) {
                     await Battle.Manager.runOnce(() => {
                         setHint(
                             <>
@@ -113,6 +113,6 @@ export function LevelExpTraining(props: LevelExtendsProps) {
     };
     React.useEffect(() => {
         effect();
-    }, [step]);
+    }, [step, running]);
     return <LevelBase title={RealmName} hint={hint}></LevelBase>;
 }

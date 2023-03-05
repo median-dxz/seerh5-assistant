@@ -22,7 +22,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = ITEMS.P
 
     // 检测列表是否全在背包
     let curPets = await PetHelper.getBagPets(PET_POS.bag1);
-
+    
     for (let ct of cts) {
         if ((await PetHelper.getPetLocation(ct)) !== PET_POS.bag1) {
             if (PetManager.isBagFull) {

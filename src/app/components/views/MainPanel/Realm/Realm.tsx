@@ -1,12 +1,4 @@
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    Divider,
-    TableCell,
-    TableRow,
-    Typography
-} from '@mui/material';
+import { Button, Dialog, DialogActions, Divider, TableCell, TableRow, Typography } from '@mui/material';
 import { SAContext } from '@sa-app/context/SAContext';
 import { mainColor } from '@sa-app/style';
 import { Battle, Utils } from '@sa-core/index';
@@ -28,18 +20,25 @@ interface Level {
 
 export function Realm() {
     const [open, setOpen] = React.useState(false);
-    const [taskModule, setTaskModule] = React.useState(<></>);
+    const [running, setRunning] = React.useState(false);
+    const [taskModule, setTaskModule] = React.useState<null | number>(null);
     const [taskCompleted, setTaskCompleted] = React.useState<Array<boolean>>([]);
 
     const { Battle: battleContext } = React.useContext(SAContext);
-    const [running, setRunning] = [battleContext.enableAuto, battleContext.updateAuto];
+    const [battleAuto, setBattleAuto] = [battleContext.enableAuto, battleContext.updateAuto];
+
+    let taskModuleComponent = <></>;
+
     const closeHandler = () => {
         if (battleContext.enableAuto) {
             Battle.Manager.triggerLocker = undefined;
             Battle.Manager.strategy = undefined;
+            setBattleAuto(false);
         }
+        setRunning(false);
         setOpen(false);
     };
+
     const rows: Array<Level> = [
         {
             name: '经验训练场',
@@ -95,7 +94,11 @@ export function Realm() {
 
     React.useEffect(() => {
         Promise.all(rows.map((level) => level.getState())).then((r) => setTaskCompleted(r));
-    }, [open, running, taskModule]);
+    }, [open, taskModule, running]);
+
+    if (taskModule != null) {
+        taskModuleComponent = rows[taskModule].module;
+    }
 
     return (
         <>
@@ -132,12 +135,12 @@ export function Realm() {
                         <TableCell align="left">
                             <Button
                                 onClick={() => {
-                                    setTaskModule(row.module);
+                                    setTaskModule(index);
                                     setOpen(true);
                                 }}
                             >
                                 启动
-                            </Button>{' '}
+                            </Button>
                             {row.sweep && (
                                 <Button
                                     onClick={() => {
@@ -167,10 +170,10 @@ export function Realm() {
                     },
                 }}
             >
-                {taskModule}
+                {taskModuleComponent}
                 <DialogActions>
                     {/* {actions} */}
-                    <Button onClick={closeHandler}>{running ? '终止' : '退出'}</Button>
+                    <Button onClick={closeHandler}>{battleAuto ? '终止' : '退出'}</Button>
                 </DialogActions>
             </Dialog>
         </>

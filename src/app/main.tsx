@@ -1,8 +1,12 @@
+import React, { useCallback, useEffect, useState } from 'react';
+
 import { CssBaseline } from '@mui/material';
 import { Container, ThemeProvider } from '@mui/system';
+
 import { AutoBattle, defaultStrategy, resolveStrategy } from '@sa-core/battle';
+import { SAEventTarget } from '@sa-core/common';
 import { EVENTS } from '@sa-core/const';
-import React, { useCallback, useEffect, useState } from 'react';
+
 import { CommandBar } from './components/views/CommandBar';
 import { MainButton } from './components/views/MainButton';
 import { MainMenu } from './components/views/MainMenu';
@@ -27,9 +31,6 @@ export function SaMain() {
         return { default: defaultStrategy, dsl: dsl, snm: snm } as AutoBattle.Strategy;
     });
     const [battleAuto, setBattleAuto] = useState(false);
-
-    const { SAEventTarget } = window;
-
     const updateBattleStrategy = useCallback(
         (strategy: AutoBattle.Strategy) => {
             setBattleStrategy(strategy);
@@ -78,7 +79,6 @@ export function SaMain() {
             SAEventTarget.removeEventListener(EVENTS.BattlePanel.roundEnd, handleBattleRoundEnd);
         };
     }, [lockMainPanel, battleAuto, battleStrategy]);
-
     return (
         <>
             <CssBaseline />

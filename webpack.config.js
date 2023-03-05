@@ -66,7 +66,8 @@ const appConfig = {
     target: 'web',
     // dependencies: ['core'],
     entry: {
-        index: './src/index.tsx',
+        app: { dependOn: 'assistant', import: './src/index.tsx' },
+        assistant: './src/sa_loader.ts'
     },
     experiments: {
         outputModule: true,

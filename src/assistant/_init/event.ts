@@ -1,11 +1,10 @@
-import { delay, wrapper } from '../common';
+import { delay, wrapper, SAEventTarget } from '../common';
 import { CMDID, EVENTS as hook } from '../const';
 
 const EmitEvent = (type: string, detail = {}) => {
-    const { SAEventTarget: GlobalEventManager } = window;
-    GlobalEventManager.dispatchEvent(new CustomEvent(type, { detail }));
+    SAEventTarget.dispatchEvent(new CustomEvent(type, { detail }));
 };
-
+1;
 // (moduleName) => {
 //     if (ModuleManager.appJs[moduleName] === false) {
 //         EmitEvent(hook.Module.loadScript, moduleName);

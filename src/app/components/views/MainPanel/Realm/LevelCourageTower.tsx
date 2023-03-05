@@ -3,8 +3,8 @@ import { delay } from '@sa-core/common';
 import { Battle, Functions, PetHelper, Utils } from '@sa-core/index';
 import React from 'react';
 import { PercentLinearProgress } from '../base';
-import dataProvider from './data';
 import { LevelBase, LevelExtendsProps, updateCustomStrategy } from './LevelBase';
+import dataProvider from './data';
 
 interface LevelData {
     stimulation: boolean;
@@ -34,7 +34,7 @@ const updateLevelData = async () => {
 };
 
 export function LevelCourageTower(props: LevelExtendsProps) {
-    const { setRunning } = props;
+    const { running, setRunning } = props;
     const [hint, setHint] = React.useState<JSX.Element | string>('');
     const [step, setStep] = React.useState(0);
     const levelData = React.useRef({} as LevelData);
@@ -72,7 +72,7 @@ export function LevelCourageTower(props: LevelExtendsProps) {
                 }
 
                 updateCustomStrategy(customData.strategy);
-                while (levelData.current.challengeCount < maxDailyChallengeTimes) {
+                while (levelData.current.challengeCount < maxDailyChallengeTimes && running) {
                     await Battle.Manager.runOnce(() => {
                         setHint(
                             <>
@@ -120,6 +120,6 @@ export function LevelCourageTower(props: LevelExtendsProps) {
     };
     React.useEffect(() => {
         effect();
-    }, [step]);
+    }, [step, running]);
     return <LevelBase title={RealmName} hint={hint}></LevelBase>;
 }
