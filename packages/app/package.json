@@ -1,0 +1,28 @@
+{
+    "name": "seerh5-assistant-app",
+    "private": true,
+    "type": "module",
+    "version": "0.3.7",
+    "license": "AGPL-3.0-or-later",
+    "main": "./src/index.tsx",
+    "scripts": {
+        "build": "webpack --mode=production",
+        "watch": "webpack watch --mode=production",
+        "dev": "webpack-dev-server --mode=development",
+        "test": "echo 'not implement'"
+    },
+    "devDependencies": {
+        "gsap": "^3.11.4"
+    },
+    "dependencies": {
+        "@mui/icons-material": "latest",
+        "@mui/material": "latest",
+        "@mui/styled-engine-sc": "^5.11.0",
+        "@mui/system": "^5.11.7",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "styled-components": "^5.3.6",
+        "immer": "^9.0.19",
+        "seerh5-assistant-core": "^0.3.7"
+    }
+}

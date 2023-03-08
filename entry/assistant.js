@@ -339,7 +339,8 @@ var Main = (function (e) {
                 })
                 .then(() => {
                     // dispatch event begin
-                    window.dispatchEvent(new CustomEvent('seerh5_assistant_load'));
+                    window.dispatchEvent(new CustomEvent('seerh5_load'));
+                    window.SeerH5Ready = true;
                     // dispatch event end
                     window.hideWebload && window.hideWebload();
                 });

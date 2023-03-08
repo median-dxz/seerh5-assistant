@@ -1,0 +1,22 @@
+{
+    "name": "seerh5-assistant-core",
+    "private": true,
+    "type": "module",
+    "version": "0.3.7",
+    "license": "MPL-2.0",
+    "main": "./dist/index.js",
+    "browser": "./dist/index.js",
+    "types": "./types/global.d.ts",
+    "scripts": {
+        "build": "tsc --build",
+        "watch": "tsc --watch",
+        "dev": "webpack-dev-server --mode=development",
+        "test": "echo 'not implement'"
+    },
+    "dependencies": {
+        "chalk": "^5.2.0"
+    },
+    "devDependencies": {
+        "rimraf": "^4.3.1"
+    }
+}

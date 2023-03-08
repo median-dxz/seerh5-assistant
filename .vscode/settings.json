@@ -10,18 +10,19 @@
     "editor.codeActionsOnSave": {
         "source.organizeImports": true
     },
-    // "typescript.suggest.paths": false,
-    // "javascript.suggest.paths": false,
     "cSpell.words": [
         "Asynce",
         "catchtime",
         "CMDID",
+        "gsap",
         "hasmodule",
         "immer",
+        "middlewares",
         "Mnumber",
         "Mult",
         "petcatchtime",
         "PETPOS",
+        "pmmmwh",
         "Posi",
         "secondbag",
         "seerh5",

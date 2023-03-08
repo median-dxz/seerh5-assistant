@@ -27,7 +27,7 @@ let saProxyMiddleware = createProxyMiddleware({
                     res.end(data);
                     return;
                 } else if (req.url.indexOf('sentry.js') > 0) {
-                    res.end('var Sentry = {init: ()=>{}}');
+                    res.end('var Sentry = {init: ()=>{}, configureScope: ()=>{}}');
                 } else {
                     res.writeHead(proxyRes.statusCode, proxyRes.headers);
                     res.end(body);
@@ -37,19 +37,19 @@ let saProxyMiddleware = createProxyMiddleware({
     },
 });
 
-let saApiMiddleware = {
+let saRfcMiddleware = {
     name: 'sa-api',
     path: '/api',
     /**
      * @type {import('webpack-dev-server').ExpressRequestHandler}
      */
     middleware: (req, res) => {
-        // console.log(req.url);
-        // console.log(req.query);
-        // console.log(new URL(req.url, `http://${req.headers.host}`));
-        // res.json({});
+        console.log(req.url);
+        console.log(req.query);
+        console.log(new URL(req.url, `http://${req.headers.host}`));
+        res.json({});
     },
 };
 
-export { saProxyMiddleware, saApiMiddleware };
+export { saProxyMiddleware, saRfcMiddleware };
 

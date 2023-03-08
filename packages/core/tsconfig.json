@@ -1,0 +1,20 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "rootDir": "src",
+        "inlineSourceMap": true,
+        "declaration": true,
+        "declarationDir": "types",
+        "tsBuildInfoFile": "../../build/core.tsbuildinfo",
+        "paths": {
+            "@sa-core/*": [
+                "./packages/core/src/*"
+            ],
+        },
+    },
+    "include": [
+        "./src/**/*",
+        "../../types"
+    ]
+}

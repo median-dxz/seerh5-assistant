@@ -10,40 +10,32 @@
         "noImplicitThis": true,
         "allowSyntheticDefaultImports": true,
         "skipLibCheck": true,
-        "rootDir": "src",
-        "outDir": "./dist/",
-        "declaration": true,
-        "sourceMap": true,
-        "baseUrl": ".",
         "resolveJsonModule": true,
         "allowJs": true,
         "allowUmdGlobalAccess": true,
+        "forceConsistentCasingInFileNames": true,
+        "lib": [
+            "esnext",
+            "dom"
+        ],
+        "baseUrl": ".",
+        "composite": true,
         "paths": {
-            "@data": [
-                "src/data/index.js"
-            ],
-            "@sa-core": [
-                "src/assistant/index"
-            ],
-            "@sa-core/*": [
-                "src/assistant/*"
-            ],
             "@sa-app/*": [
-                "src/app/*"
+                "./packages/app/src/*"
             ],
             "@mui/styled-engine": [
-                "./node_modules/@mui/styled-engine-sc"
+                "node_modules/@mui/styled-engine-sc"
             ],
         }
     },
-    "exclude": [
-        "node_modules",
-        "dist",
-        "entry",
-        "./src/data",
-        "archive"
-    ],
-    "include": [
-        "./src/**/*"
-    ],
+    "include": [],
+    "references": [
+        {
+            "path": "packages/app"
+        },
+        {
+            "path": "packages/core"
+        }
+    ]
 }
