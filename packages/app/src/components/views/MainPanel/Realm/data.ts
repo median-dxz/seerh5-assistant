@@ -1,4 +1,4 @@
-const { Battle } = await useCore();
+const { Battle } = useCore();
 const { BaseStrategy, generateStrategy, InfoProvider, Operator } = Battle;
 import { useCore } from '@sa-app/provider/useCore';
 import { AutoBattle, delay } from 'seerh5-assistant-core';

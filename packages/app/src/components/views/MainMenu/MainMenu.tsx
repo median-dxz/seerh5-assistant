@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { useCore } from '@sa-app/provider/useCore';
 import { mainColor } from '@sa-app/style';
 import { StyledSpeedDial } from './StyledSpeedDial';
-const { PetHelper } = await useCore();
+
 const iconSx: SxProps = {
     color: `rgba(${mainColor.front} / 100%)`,
     filter: `drop-shadow(0 0 8px rgba(${mainColor.back} / 75%))`,
@@ -24,7 +24,8 @@ const actions = [
 export function MainMenu() {
     let [autoCure, setAutoCure] = useState(false);
     let [open, setOpen] = useState(false);
-
+    
+    const { PetHelper } = useCore();
     useEffect(() => {
         PetHelper.getAutoCureState().then(setAutoCure);
     }, []);

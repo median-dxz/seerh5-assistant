@@ -7,7 +7,7 @@ import dataProvider from './data';
 
 import { useCore } from '@sa-app/provider/useCore';
 import { delay } from 'seerh5-assistant-core';
-const { Battle, Functions, PetHelper, Utils } = await useCore();
+const { Battle, Functions, PetHelper, Utils } = useCore();
 
 interface LevelData {
     stimulation: boolean;
@@ -39,6 +39,8 @@ export function LevelStudyTraining(props: LevelExtendsProps) {
     const [hint, setHint] = React.useState<JSX.Element | string>('');
     const [step, setStep] = React.useState(0);
     const levelData = React.useRef({} as LevelData);
+    const currentRunning = React.useRef(false);
+    currentRunning.current = running;
 
     const effect = async () => {
         switch (step) {
@@ -67,7 +69,7 @@ export function LevelStudyTraining(props: LevelExtendsProps) {
 
                 updateCustomStrategy(customData.strategy);
 
-                while (levelData.current.challengeCount < maxDailyChallengeTimes && running) {
+                while (levelData.current.challengeCount < maxDailyChallengeTimes && currentRunning.current) {
                     await Battle.Manager.runOnce(() => {
                         setHint(
                             <>

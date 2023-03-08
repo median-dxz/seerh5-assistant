@@ -3,7 +3,7 @@ import { useCore } from '@sa-app/provider/useCore';
 import React from 'react';
 import { AutoBattle } from 'seerh5-assistant-core';
 
-const { Battle } = await useCore();
+const { Battle } = useCore();
 const { Manager } = Battle;
 
 export type LevelExtendsProps<P = unknown> = P & {

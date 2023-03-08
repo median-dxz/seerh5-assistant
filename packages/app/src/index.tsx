@@ -1,27 +1,20 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { useCore } from './provider/useCore';
+import { CoreLoader } from 'seerh5-assistant-core';
 import { useMod } from './provider/useMod';
 import './stylesheets/main.css';
 
 const container = document.getElementById('sa-container')!;
 const root = ReactDOM.createRoot(container);
 
-const SaMain = React.lazy(async () => {
-    return import(/* webpackChunkName: "SaAppMain" */ './components/views/main');
-});
-
 const renderApp = async () => {
+    await useMod();
     const canvas: HTMLCanvasElement = document.querySelector('#egret_player_container canvas')!;
     canvas.setAttribute('tabindex', '-1');
-    root.render(
-        <Suspense>
-            <SaMain />
-        </Suspense>
-    );
+    const { default: SaMain } = await import(/* webpackChunkName: "SaAppMain" */ './components/views/main');
+    root.render(<SaMain />);
 };
 
 window.addEventListener('seerh5_assistant_ready', renderApp);
 
-await useCore();
-await useMod();
+CoreLoader.load();

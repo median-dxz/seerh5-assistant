@@ -5,10 +5,10 @@ import React from 'react';
 
 import { TextEditDialog, TextEditDialogProps } from '@sa-app/components/common/TextEditDialog';
 import { SAContext } from '@sa-app/context/SAContext';
-import { AutoBattle } from 'seerh5-assistant-core';
 import { useCore } from '@sa-app/provider/useCore';
+import { AutoBattle } from 'seerh5-assistant-core';
 import { PanelTableBase, PanelTableBodyRow } from '../base';
-const { Battle } = await useCore();
+const { Battle } = useCore();
 
 const handleAdd = (arr: any[], value: string) => {
     arr.push(value.split(','));

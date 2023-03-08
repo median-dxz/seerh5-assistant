@@ -44,10 +44,14 @@ let saRfcMiddleware = {
      * @type {import('webpack-dev-server').ExpressRequestHandler}
      */
     middleware: (req, res) => {
-        console.log(req.url);
-        console.log(req.query);
-        console.log(new URL(req.url, `http://${req.headers.host}`));
-        res.json({});
+        switch (req.query.req) {
+            case 'data':
+                res.send(readFileSync(path.join(__dirname, 'data', 'data.json')));
+                break;
+
+            default:
+                break;
+        }
     },
 };
 

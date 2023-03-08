@@ -20,8 +20,8 @@ var warnFilter = new Proxy(console.warn, {
     },
 });
 
-var filterLogText = [];
-var filterWarnText = [];
+var filterLogText = filterLogText ?? [];
+var filterWarnText = filterWarnText ?? [];
 
 var __reflect =
     (this && this.__reflect) ||

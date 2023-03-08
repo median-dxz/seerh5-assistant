@@ -1,4 +1,7 @@
 import chalk, { ChalkInstance } from 'chalk';
+
+chalk.level = 3;
+
 export const defaultStyle = {
     mod: chalk.hex('#fc9667'),
     core: chalk.hex('#e067fc'),

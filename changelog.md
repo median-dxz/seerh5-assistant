@@ -32,9 +32,11 @@
 
 重构中（stage2）：
 
-- [ ] chalk的颜色失效
-- [ ] 全局log代理filter失效
-- [ ] rfc获取json未成功
+- [x] rfc获取json未成功
+- [x] 全局log代理filter失效
+- [x] mod无法加载
+- [x] hmr支持
+- [x] chalk的颜色失效
 
 RoadMap: `Core: v0.4.0`
 
@@ -48,13 +50,14 @@ RoadMap: `Core: v0.4.0`
   - [ ] 进行副作用消除
   - [ ] 目前先考虑在ui添加静态模组层(开发时扩展)
 
-RoadMap: `App & Core: v0.3.7 (v0.4.0)` 
+RoadMap: `App & Core: v0.3.7` 
 
 - [x] 模组输入命令后清空当前命令
 - [x] 校正剩余电池时间
 - [x] 修复战斗结束关闭新技能面板导致的看板娘消失
 - [x] 主面板关闭逻辑重构
 - [x] bubble替换的Alarm.show现在可以正常显示html
+- [x] 对日任循环终止的再修复
 - [ ] 背包状态更新与同步重构（react context上下文）
   - [ ] 背包子组件化
   - [ ] 检测精灵位置变化(查看pet_release cmd的流程)

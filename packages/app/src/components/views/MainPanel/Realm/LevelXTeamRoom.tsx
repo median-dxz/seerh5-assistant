@@ -4,7 +4,7 @@ import { delay } from 'seerh5-assistant-core';
 import { LevelBase, LevelExtendsProps, updateCustomStrategy } from './LevelBase';
 import dataProvider from './data';
 
-const { Battle, Functions, PetHelper, Utils } = await useCore();
+const { Battle, Functions, PetHelper, Utils } = useCore();
 
 interface LevelData {
     open: boolean;

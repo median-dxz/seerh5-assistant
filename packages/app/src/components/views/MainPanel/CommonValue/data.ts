@@ -1,6 +1,6 @@
 import { useCore } from '@sa-app/provider/useCore';
 
-const { Utils } = await useCore();
+const { Utils } = useCore();
 const { SeerModuleHelper } = Utils;
 
 export const idList = [

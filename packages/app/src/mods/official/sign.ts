@@ -3,10 +3,6 @@ import { Mod, SaModuleLogger, defaultStyle, delay } from 'seerh5-assistant-core'
 
 const log = SaModuleLogger('Sign', defaultStyle.mod);
 
-const { Utils, Const, PetHelper, Functions } = sa;
-
-const data = await useRfcData();
-
 const MULTI = {
     日常: {
         刻印抽奖次数: 16577,
@@ -29,11 +25,17 @@ const AWARD_LIST = {
     },
 };
 
+const { Utils, Const, PetHelper, Functions } = sa;
+
 class sign extends Mod {
     meta = { description: '日任常用功能' };
+    data: any;
     init() {}
     constructor() {
         super();
+        useRfcData().then((v) => {
+            this.data = v;
+        });
     }
     async run() {
         const CMDID = CommandID;
@@ -73,7 +75,8 @@ class sign extends Mod {
         curTimes = (await Utils.GetMultiValue(MULTI.战队.资源生产次数))[0];
         t = Math.max(0, 5 - curTimes);
         while (t--) {
-            Utils.SocketSendByQueue(CMDID.RES_PRODUCT_BUY, [2, 0]);
+            // RES_PRODUCT_BUY
+            Utils.SocketSendByQueue(CMDID.RES_PRODUCTORBUY, [2, 0]);
         }
         curTimes = (await Utils.GetMultiValue(MULTI.许愿.许愿签到))[0];
         if (!curTimes) {
@@ -112,7 +115,7 @@ class sign extends Mod {
         } catch (err) {
             void log('无法收取派遣');
         }
-        const ignorePetNames = data.ignorePetNames;
+        const ignorePetNames = new Set(this.data.ignorePetNames);
         const PosType = Const.PET_POS;
         let reprogress = false;
         for (let tid = 16; tid > 0; tid--) {

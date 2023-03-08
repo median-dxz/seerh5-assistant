@@ -7,7 +7,7 @@ import { PercentLinearProgress } from '../base';
 import { LevelBase, LevelExtendsProps, updateCustomStrategy } from './LevelBase';
 
 import dataProvider from './data';
-const { Battle, Functions, PetHelper, Utils, Const } = await useCore();
+const { Battle, Functions, PetHelper, Utils, Const } = useCore();
 interface LevelData {
     stimulation: boolean;
     levelOpen: boolean;

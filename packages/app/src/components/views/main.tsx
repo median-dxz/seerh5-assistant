@@ -14,7 +14,7 @@ import { MainMenu } from './MainMenu';
 import { MainPanel } from './MainPanel';
 
 import { SAEventTarget } from 'seerh5-assistant-core';
-const { Battle, Const } = await useCore();
+const { Battle, Const } = useCore();
 const { defaultStrategy, resolveStrategy } = Battle;
 const { EVENTS } = Const;
 
@@ -76,6 +76,7 @@ export default function SaMain() {
             SAEventTarget.removeEventListener(EVENTS.BattlePanel.roundEnd, handleBattleRoundEnd);
         };
     }, [lockMainPanel, battleAuto, battleStrategy]);
+
     return (
         <>
             <CssBaseline />

@@ -63,7 +63,7 @@ export const getStoragePets = async (location: StoragePetsPos) => {
 };
 
 export const isDefault = (ct: number) => PetManager.defaultTime === ct;
-export const setDefault: (ct: number) => void = PetManager.setDefault.bind(PetManager);
+export const setDefault = (ct: number) => PetManager.setDefault(ct);
 
 export const getPetLocation = async (ct: number) => {
     await updateStorageInfo();

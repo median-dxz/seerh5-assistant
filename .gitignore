@@ -3,7 +3,10 @@ dist
 archive
 build
 /entry/offical.js
-**/data/index.js
+
 doc/**
 not_support
 **/core/types
+
+data/*.json
+!data/example.json

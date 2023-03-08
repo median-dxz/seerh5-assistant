@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 
 import { delay, Pet } from 'seerh5-assistant-core';
-const sa = await useCore();
+const sa = useCore();
 
 import { PanelState } from '@sa-app/context/PanelState';
 import { mainColor } from '@sa-app/style';

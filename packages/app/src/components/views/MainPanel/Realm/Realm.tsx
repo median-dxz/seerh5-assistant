@@ -1,5 +1,6 @@
 import { Button, Dialog, DialogActions, Divider, TableCell, TableRow, Typography } from '@mui/material';
 import { SAContext } from '@sa-app/context/SAContext';
+import { useCore } from '@sa-app/provider/useCore';
 import { mainColor } from '@sa-app/style';
 import React from 'react';
 import { PanelTableBase } from '../base';
@@ -9,9 +10,8 @@ import { LevelExpTraining } from './LevelExpTraining';
 import { LevelStudyTraining } from './LevelStudyTraining';
 import { LevelTitanHole } from './LevelTitanHole';
 import { LevelXTeamRoom } from './LevelXTeamRoom';
-import { useCore } from '@sa-app/provider/useCore';
 
-const { Battle, Utils } = await useCore();
+const { Battle, Utils } = useCore();
 interface Level {
     name: string;
     module: JSX.Element;

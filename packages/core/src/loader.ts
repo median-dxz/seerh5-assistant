@@ -4,7 +4,7 @@ import { initModule } from './init/module';
 
 const CoreLoader = {
     async load() {
-        return new Promise<typeof import('./exports')>((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             try {
                 const sa_wait_login = async () => {
                     EventManager.addEventListener('game_login_success', sa_core_init, null);
@@ -15,12 +15,9 @@ const CoreLoader = {
                 const sa_core_init = async () => {
                     initEvent();
                     initHelper();
-                    await import(/* webpackChunkName: "core" */ './exports').then((core) => {
-                        window.sa = core;
-                        window.dispatchEvent(new CustomEvent('seerh5_assistant_ready'));
-                        console.log(`[GameLoader]: SeerH5-Assistant Loaded Successfully!`);
-                        resolve(core);
-                    });
+                    resolve();
+                    window.dispatchEvent(new CustomEvent('seerh5_assistant_ready'));
+                    console.log(`[GameLoader]: SeerH5-Assistant Loaded Successfully!`);
                     EventManager.removeEventListener('game_login_success', sa_core_init, null);
                 };
 
@@ -34,7 +31,6 @@ const CoreLoader = {
             }
         }).catch((e) => {
             console.error(`[GameLoader]: Seerh5 assistant Load Failed!`);
-            return undefined;
         });
     },
 };

@@ -4,7 +4,9 @@ import { SocketSendByQueue } from '../utils/socket';
 const log = SaModuleLogger('BattleOperator', defaultStyle.core);
 
 export const BattleOperator = {
-    auto: TimerManager.countDownOverHandler.bind(TimerManager),
+    auto: () => {
+        TimerManager.countDownOverHandler();
+    },
     useSkill: async (skillId: number) => {
         if (!FighterModelFactory.playerMode) {
             return;

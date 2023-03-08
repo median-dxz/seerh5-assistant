@@ -5,7 +5,7 @@ import { delay } from 'seerh5-assistant-core';
 import { PercentLinearProgress } from '../base';
 import { LevelBase, LevelExtendsProps, updateCustomStrategy } from './LevelBase';
 import dataProvider from './data';
-const { Battle, Functions, PetHelper, Utils } = await useCore();
+const { Battle, Functions, PetHelper, Utils } = useCore();
 
 const ElfKingsId = {
     光王斯嘉丽: 2,
@@ -55,6 +55,8 @@ export function LevelElfKingsTrial(props: LevelExtendsProps) {
     const [hint, setHint] = React.useState<JSX.Element | string>('');
     const [step, setStep] = React.useState(0);
     const levelData = React.useRef({ elfId: ElfKingsId.草王茉蕊儿 } as LevelData);
+    const currentRunning = React.useRef(false);
+    currentRunning.current = running;
 
     const effect = async () => {
         switch (step) {
@@ -84,7 +86,7 @@ export function LevelElfKingsTrial(props: LevelExtendsProps) {
                 await delay(500);
 
                 updateCustomStrategy(customData.strategy);
-                while (levelData.current.challengeCount < maxDailyChallengeTimes && running) {
+                while (levelData.current.challengeCount < maxDailyChallengeTimes && currentRunning.current) {
                     await Battle.Manager.runOnce(() => {
                         setHint(
                             <>

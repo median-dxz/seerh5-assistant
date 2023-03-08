@@ -9,142 +9,141 @@ import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import ReactRefreshTypeScript from 'react-refresh-typescript';
 import TerserPlugin from 'terser-webpack-plugin';
 
-import { saProxyMiddleware } from '../../webpack.proxy.js';
+import { saProxyMiddleware, saRfcMiddleware } from '../../webpack.proxy.js';
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-/** @type {webpack.Configuration} */
-const appConfig = {
-    name: 'app',
-    context: path.resolve(__dirname),
-    target: ['web', 'es2022'],
-    entry: './src/index.tsx',
-    experiments: {
-        topLevelAwait: true,
-    },
-    module: {
-        rules: [
-            {
-                test: /\.(t|j)sx?$/,
-                use: {
-                    loader: 'ts-loader',
-                    options: {
-                        projectReferences: true,
-                        getCustomTransformers: () => ({
-                            before: [ReactRefreshTypeScript()],
-                        }),
-                        transpileOnly: true,
-                    },
-                },
-                exclude: /node_modules/,
-                include: path.resolve(__dirname, 'src'),
-            },
-            {
-                test: /\.js$/,
-                loader: 'source-map-loader',
-                exclude: /node_modules/,
-                include: path.resolve(__dirname, 'src'),
-            },
-            {
-                test: /\.js$/,
-                resolve: {
-                    fullySpecified: false, // disable the behavior
-                },
-            },
-            {
-                test: /\.css$/,
-                use: ['style-loader', 'css-loader'],
-            },
-        ],
-    },
-    optimization: {
-        splitChunks: {
-            chunks: 'async',
-            hidePathInfo: true,
-            cacheGroups: {
-                vendor: {
-                    test: /[\\/]node_modules[\\/]/,
-                    name: 'vendor',
-                    chunks: 'all',
-                },
-            },
-        },
-        runtimeChunk: 'single',
-        minimize: true,
-        minimizer: [
-            new TerserPlugin({
-                parallel: true,
-                terserOptions: {
-                    ecma: 2020,
-                    module: true,
-                },
-            }),
-        ],
-    },
-    output: {
-        path: path.resolve(__dirname, 'dist'),
-        filename: '[name].[contenthash:8].js',
-        chunkFilename: '[id][contenthash:8].js',
-        publicPath: '/',
-        clean: true,
-    },
-    resolve: {
-        modules: ['../../node_modules', path.resolve(__dirname)],
-        alias: {
-            '@mui/styled-engine': '@mui/styled-engine-sc',
-            '@sa-app': '/src',
-        },
-        extensions: ['.js', '.jsx', '.tsx', '.ts'],
-    },
-    externals: {
-        gsap: 'root gsap', // global access from egret
-    },
-    devtool: 'source-map',
-    plugins: [
-        new HtmlWebpackPlugin({
-            title: 'SeerH5-Assistant | 赛尔号h5登陆器 by median',
-            filename: 'index.html',
-            template: './src/index.html',
-        }),
-    ],
-    devServer: {
-        static: './dist',
-        client: {
-            overlay: false,
-            logging: 'info',
-        },
-        hot: 'only',
-        port: 1234,
-        setupMiddlewares: (middlewares, devServer) => {
-            if (!devServer) {
-                throw new Error('webpack-dev-server is not defined');
-            }
-            middlewares.push(saProxyMiddleware);
-            return middlewares;
-        },
-    },
-};
 
 export default (env, argv) => {
-    let exports = appConfig;
-    const development = argv.mode === 'development';
+    const isDevelopment = argv.mode === 'development';
 
-    exports.optimization = {
-        chunkIds: development ? 'named' : 'deterministic',
-        moduleIds: development ? 'named' : 'deterministic',
+    /** @type {webpack.Configuration} */
+    const appConfig = {
+        name: 'app',
+        context: path.resolve(__dirname),
+        target: ['web', 'es2022'],
+        entry: './src/index.tsx',
+        experiments: {},
+        module: {
+            rules: [
+                {
+                    test: /\.(t|j)sx?$/,
+                    use: {
+                        loader: 'ts-loader',
+                        options: {
+                            projectReferences: true,
+                            getCustomTransformers: () => ({
+                                before: [isDevelopment && ReactRefreshTypeScript()].filter(Boolean),
+                            }),
+                            transpileOnly: isDevelopment,
+                        },
+                    },
+                    exclude: /node_modules/,
+                    include: path.resolve(__dirname, 'src'),
+                },
+                {
+                    test: /\.js$/,
+                    loader: 'source-map-loader',
+                    exclude: /node_modules/,
+                    include: path.resolve(__dirname, 'src'),
+                },
+                {
+                    test: /\.js$/,
+                    resolve: {
+                        fullySpecified: false, // disable the behavior
+                    },
+                },
+                {
+                    test: /\.css$/,
+                    use: ['style-loader', 'css-loader'],
+                },
+            ],
+        },
+        optimization: {
+            splitChunks: {
+                chunks: 'async',
+                hidePathInfo: true,
+                cacheGroups: {
+                    vendor: {
+                        test: /[\\/]node_modules[\\/]/,
+                        name: 'vendor',
+                        chunks: 'all',
+                    },
+                },
+            },
+            runtimeChunk: 'single',
+            minimize: true,
+            minimizer: [
+                new TerserPlugin({
+                    parallel: true,
+                    terserOptions: {
+                        ecma: 2020,
+                    },
+                }),
+            ],
+        },
+        output: {
+            path: path.resolve(__dirname, 'dist'),
+            filename: '[name].[contenthash:8].js',
+            chunkFilename: '[id].[contenthash:8].js',
+            publicPath: '/',
+            clean: true,
+        },
+        resolve: {
+            modules: ['../../node_modules', path.resolve(__dirname)],
+            alias: {
+                '@mui/styled-engine': '@mui/styled-engine-sc',
+                '@sa-app': '/src',
+            },
+            extensions: ['.js', '.jsx', '.tsx', '.ts'],
+        },
+        externals: {
+            gsap: 'root gsap', // global access from egret
+        },
+        devtool: 'source-map',
+        plugins: [
+            new HtmlWebpackPlugin({
+                title: 'SeerH5-Assistant | 赛尔号h5登陆器 by median',
+                filename: 'index.html',
+                template: './src/index.html',
+            }),
+            new ForkTsCheckerWebpackPlugin(),
+        ],
+        devServer: {
+            static: './dist',
+            client: {
+                overlay: false,
+                logging: 'info',
+            },
+            hot: true,
+            port: 1234,
+            liveReload: false,
+            setupMiddlewares: (middlewares, devServer) => {
+                if (!devServer) {
+                    throw new Error('webpack-dev-server is not defined');
+                }
+                middlewares.push(saProxyMiddleware);
+                middlewares.push(saRfcMiddleware);
+                return middlewares;
+            },
+            watchFiles: ['src/**/*', '../core/dist'],
+        },
     };
 
-    if (!development) {
+    let exports = appConfig;
+    exports.optimization = {
+        chunkIds: isDevelopment ? 'named' : 'deterministic',
+        moduleIds: isDevelopment ? 'named' : 'deterministic',
+    };
+    console.log(`dev-mode: ${isDevelopment}`);
+    if (!isDevelopment) {
         delete exports.devtool;
     } else {
         exports.plugins.push(
-            new webpack.HotModuleReplacementPlugin(),
-            new ForkTsCheckerWebpackPlugin(),
             new ReactRefreshWebpackPlugin({
                 overlay: false,
-                include: [path.resolve(__dirname, 'src'), /\.[jt]sx/],
             })
         );
     }
-    return appConfig;
+    return exports;
 };
