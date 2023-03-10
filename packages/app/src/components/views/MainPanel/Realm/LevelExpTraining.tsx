@@ -11,7 +11,6 @@ interface LevelData {
     stimulation: boolean;
     rewardReceived: boolean;
     challengeCount: number;
-    layerCount: number;
 }
 
 const RealmName = '经验训练场';
@@ -21,13 +20,12 @@ const maxDailyChallengeTimes = 6;
 const updateLevelData = async () => {
     const data = {} as LevelData;
     const bits = await Utils.GetBitSet(639, 1000571);
-    const playerInfo = new DataView(await Utils.SocketSendByQueue(42397, [103]));
+    const playerInfo = new DataView(await Utils.SocketSendByQueue(42397, [116]));
 
     data.stimulation = bits[0];
     data.rewardReceived = bits[1];
 
     data.challengeCount = playerInfo.getUint32(8);
-    data.layerCount = playerInfo.getUint32(56);
 
     return data;
 };
@@ -46,7 +44,7 @@ export function LevelExpTraining(props: LevelExtendsProps) {
                 setRunning(true);
                 setHint('正在查询关卡状态');
                 levelData.current = await updateLevelData();
-                // console.log(result);
+                console.log(levelData.current);
                 if (!levelData.current.rewardReceived) {
                     if (levelData.current.challengeCount < maxDailyChallengeTimes) {
                         setStep(1);
@@ -78,14 +76,13 @@ export function LevelExpTraining(props: LevelExtendsProps) {
                                     progress={levelData.current.challengeCount}
                                     total={6}
                                 />
-                                <PercentLinearProgress
-                                    prompt={'当前进度'}
-                                    progress={levelData.current.layerCount}
-                                    total={5}
-                                />
                             </>
                         );
-                        Utils.SocketSendByQueue(42396, [103, 6, levelData.current.layerCount + 1]);
+                        Utils.SocketSendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [
+                            116,
+                            6,
+                            1,
+                        ]);
                     });
                     levelData.current = await updateLevelData();
                 }
@@ -96,7 +93,7 @@ export function LevelExpTraining(props: LevelExtendsProps) {
             case 2: //try get daily reward
                 setHint('正在查询每日奖励领取状态');
                 try {
-                    await Utils.SocketSendByQueue(42395, [103, 3, 0, 0]);
+                    await Utils.SocketSendByQueue(42395, [116, 3, 0, 0]);
                 } catch (error) {
                     setStep(-1);
                 }

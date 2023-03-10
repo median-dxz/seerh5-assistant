@@ -52,7 +52,7 @@ export function Realm() {
             name: '学习力训练场',
             module: <LevelStudyTraining setRunning={setRunning} running={running} />,
             async getState() {
-                return (await Utils.GetBitSet(1000572))[0];
+                return (await  Utils.GetBitSet(1000572))[0];
             },
         },
         {
