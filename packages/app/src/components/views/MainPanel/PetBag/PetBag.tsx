@@ -10,7 +10,16 @@ import {
     Typography,
 } from '@mui/material';
 
-import { Constant, SAEngine, SAEntity, SAPetHelper, delay, lowerBlood, switchBag, updateBattleFireInfo } from 'seerh5-assistant-core';
+import {
+    Constant,
+    SAEngine,
+    SAEntity,
+    SAPetHelper,
+    delay,
+    lowerBlood,
+    switchBag,
+    updateBattleFireInfo,
+} from 'seerh5-assistant-core';
 
 import { PanelState } from '@sa-app/context/PanelState';
 import { mainColor } from '@sa-app/style';
@@ -155,7 +164,7 @@ export function PetBag({ panelState }: Props) {
     const handleSelectItem = async (index: number) => {
         const info = menuOption.current!;
         if (info.type === 'suit') {
-            if (SAEngine.UserSuit() !== userSuit) {
+            if (info.id[index] !== userSuit) {
                 SAEngine.ChangeSuit(info.id[index]);
                 setUserSuit(info.id[index]);
             }

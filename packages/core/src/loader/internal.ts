@@ -9,9 +9,9 @@ export function InternalLoader() {
     cacheResourceUrl();
 }
 
-function loadScript(this: ModuleManager, script: string) {
+function loadScript(this: ModuleManager, scriptName: string) {
     return new Promise<void>((resolve) => {
-        var url = 'resource/app/' + script + '/' + script + '.js';
+        var url = 'resource/app/' + scriptName + '/' + scriptName + '.js';
         RES.getResByUrl(
             url,
             function (script: string) {
@@ -24,7 +24,7 @@ function loadScript(this: ModuleManager, script: string) {
                 script = script.replaceAll(/console\.warn/g, 'warnFilter');
                 o.text = `//@ sourceURL=${location.href + url + '\n'}${script}`;
                 document.head.appendChild(o).parentNode!.removeChild(o);
-                SAEventTarget.dispatchEvent(new CustomEvent(Hook.Module.loadScript, { detail: script }));
+                SAEventTarget.dispatchEvent(new CustomEvent(Hook.Module.loadScript, { detail: scriptName }));
                 resolve();
             },
             this,

@@ -12,7 +12,7 @@ const testPetObjectType = (o: SAType.PetLike): o is SAType.PetObj => {
 };
 
 const testPetInfoType = (o: SAType.PetLike): o is PetInfo => {
-    return Object.hasOwn(o, 'maxHp');
+    return Object.hasOwn(o, 'nature');
 };
 
 const testPetStorage2015PetInfoType = (o: SAType.PetLike): o is PetStorage2015PetInfo => {
@@ -33,7 +33,7 @@ export class Pet extends EntityBase implements IPetObject {
     constructor(obj: SAType.PetLike) {
         super();
         if (testPetInfoType(obj)) {
-            [this.id, this.name, this.catchTime, this.dv, this.element, this.hp, this.maxHp, this.nature] = [
+            [this.id, this.name, this.catchTime, this.dv, this.element, this.nature, this.hp, this.maxHp] = [
                 obj.id,
                 obj.name,
                 obj.catchTime,

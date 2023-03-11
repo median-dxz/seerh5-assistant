@@ -18,7 +18,7 @@ export async function getItemNum(item: number | IItemObject) {
  * @returns 返回玩家拥有的能力称号id列表
  */
 export async function UserAbilityTitles(): Promise<number[]> {
-    return Socket.sendByQueue(CommandID.ACHIEVE_TITLE_LIST)
+    return Socket.sendByQueue(CommandID.ACHIEVETITLELIST)
         .then((r) => new egret.ByteArray(r))
         .then((r) => new AchieveTitleInfo(r))
         .then((r) => r.titleArr.filter(AchieveXMLInfo.isAbilityTitle.bind(AchieveXMLInfo)));
@@ -34,7 +34,7 @@ export function UserTitle(): number {
 export async function ChangeTitle(title: number): Promise<boolean> {
     if (MainManager.actorInfo.curTitle !== title) {
         try {
-            await Socket.sendByQueue(CommandID.SET_TITLE, [title]);
+            await Socket.sendByQueue(CommandID.SETTITLE, [title]);
             MainManager.actorInfo.curTitle = title;
             return true;
         } catch (err) {

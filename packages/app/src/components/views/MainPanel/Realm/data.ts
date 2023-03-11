@@ -14,8 +14,36 @@ const data: LevelPetsData = {
         strategy: generateStrategy(['幻梦芳逝', '剑挥四方', '破寂同灾'], ['蒂朵', '六界帝神', '深渊狱神·哈迪斯']),
     },
     LevelExpTraining: {
-        cts: [1656055512, 1656056275, 1656302059, 1656945596],
-        strategy: generateStrategy(['时空牵绊', '王·龙子盛威决', '破寂同灾', '竭血残蝶'], ['幻影蝶', '蒂朵']),
+        cts: [1656055512, 1656056275, 1656092908],
+        strategy: async (round, skills, pets) => {
+            let r;
+            console.log(pets, round.self?.catchtime);
+            const selfPetName = pets.find((p) => p.catchTime === round.self?.catchtime)?.name;
+            if (selfPetName === '蒂朵') {
+                r = skills.find((skill) => skill.name === ['琴·万律归一', '朵·盛夏咏叹'][round.round % 2]);
+            } else {
+                r = skills.find((skill) => skill.name === ['光荣之梦', '神灵救世光'][round.round % 2]);
+            }
+
+            if (round.isDiedSwitch) {
+                const dsl = new DiedSwitchLink(['幻影蝶', '蒂朵']);
+                if (round.isDiedSwitch) {
+                    const r = dsl.match(pets, round.self!.catchtime);
+                    if (r !== -1) {
+                        SABattle.Operator.switchPet(r);
+                    } else {
+                        SABattle.Operator.auto();
+                    }
+                }
+                await delay(300);
+                skills = SABattle.Provider.getCurSkills()!;
+            }
+            if (r) {
+                SABattle.Operator.useSkill(r.id);
+            } else {
+                SABattle.Operator.auto();
+            }
+        },
     },
     LevelStudyTraining: {
         cts: [1656055512, 1655101462, 1656302059, 1657039061],

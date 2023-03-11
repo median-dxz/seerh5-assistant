@@ -9,10 +9,7 @@ async function register(id: string, mod: typeof Mod) {
     RegisteredMods.set(id, new mod());
 }
 
-sac.Mods = RegisteredMods;
-
-export * from "./mod-type";
-export { register };
+export * from './mod-type';
+export { register, RegisteredMods };
 export { Mod };
-
 

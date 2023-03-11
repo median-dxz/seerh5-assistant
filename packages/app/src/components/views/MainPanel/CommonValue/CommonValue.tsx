@@ -1,9 +1,9 @@
 import { Button, TableCell, Typography } from '@mui/material';
 import * as React from 'react';
-import { useLayoutEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { PanelState } from '@sa-app/context/PanelState';
-import { SAEntity } from 'seerh5-assistant-core';
+import { SAEngine, SAEntity } from 'seerh5-assistant-core';
 import { PanelTableBase, PanelTableBodyRow, PercentLinearProgress } from '../base';
 import { idList, openModuleList } from './data';
 
@@ -23,11 +23,13 @@ interface Props {
 
 export function CommonValue(props: Props) {
     const rows = idList.map((key) => ItemXMLInfo.getItemObj(key)).map((obj) => new SAEntity.Item(obj));
+
     const { panelState } = props;
+    let [items, setItems] = useState(rows);
     let [imgEl, setImgEl] = useState(icons ?? []);
     let [initIcon, completeInitIcon] = useState(false);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (initIcon === false && icons == null) {
             let promises = rows.map((row) =>
                 RES.getResByUrl(ClientConfig.getItemIcon(row.id))
@@ -50,7 +52,11 @@ export function CommonValue(props: Props) {
                 completeInitIcon(true);
             });
         }
-    });
+        let promises = rows.map(async (row) => (row.amount = await SAEngine.getItemNum(row)));
+        Promise.all(promises).then(() => {
+            setItems([...rows]);
+        });
+    }, []);
 
     return (
         <PanelTableBase
@@ -66,7 +72,7 @@ export function CommonValue(props: Props) {
                 </>
             }
         >
-            {rows.map((row, index) => (
+            {items.map((row, index) => (
                 <PanelTableBodyRow key={row.id}>
                     <TableCell component="th" scope="row">
                         {row.id}

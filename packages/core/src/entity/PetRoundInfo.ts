@@ -23,6 +23,7 @@ export class PetRoundInfo extends EntityBase {
     status: number[];
     sideEffects: number[];
     constructor(attackValue: AttackValue) {
+        console.log(attackValue);
         super();
         [
             this.round,
