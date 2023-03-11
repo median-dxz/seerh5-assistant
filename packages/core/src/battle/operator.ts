@@ -1,9 +1,9 @@
 import { delay } from '../common';
+import { SocketSendByQueue } from '../engine/socket';
 import { defaultStyle, SaModuleLogger } from '../logger';
-import { SocketSendByQueue } from '../utils/socket';
 const log = SaModuleLogger('BattleOperator', defaultStyle.core);
 
-export const BattleOperator = {
+export const Operator = {
     auto: () => {
         TimerManager.countDownOverHandler();
     },

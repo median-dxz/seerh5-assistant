@@ -17,4 +17,4 @@ const renderApp = async () => {
 
 window.addEventListener('seerh5_assistant_ready', renderApp);
 
-CoreLoader.load();
+CoreLoader();

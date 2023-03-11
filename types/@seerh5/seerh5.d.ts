@@ -13,19 +13,17 @@ declare namespace SAType {
         get length(): number;
     }
 
-    type PetLike = PetInfo & PetStorage2015PetInfo;
-
     interface BaseObj {
         [property: string]: string | number | unknown | undefined;
         ID: number;
     }
 
-    interface ItemObj extends BaseObj {}
-
     interface PetObj extends BaseObj {
         DefName: string;
         Type: number;
     }
+
+    type PetLike = PetInfo | PetStorage2015PetInfo | PetObj | PetListInfo;
 
     interface MoveObj extends BaseObj {
         Name: string;
@@ -58,8 +56,36 @@ declare namespace SAType {
         purpose?: number;
         NewSeIdx?: number;
     }
+    interface ElementObj extends Omit<BaseObj, 'ID'> {
+        cn: string;
+        en: string;
+        id: number;
+        att?: string;
+        is_dou?: number;
+    }
 
     interface SideEffectObj extends BaseObj {}
+
+    interface PetFragmentLevelBoss extends BaseObj {
+        BattleBoss: number;
+        BossID: number;
+        Desc: string;
+    }
+
+    interface PetFragmentLevelObj extends BaseObj {
+        Configure: {
+            Times: number;
+            TimeValue: number;
+            FailTimes: number;
+            ProgressValue: number;
+        };
+        EasyBattle: { Task: PetFragmentLevelBoss[] };
+        NormalBattle: { Task: PetFragmentLevelBoss[] };
+        HardBattle: { Task: PetFragmentLevelBoss[] };
+        Reward: {
+            ItemID: number;
+        };
+    }
 
     interface ObserverList<T> {
         array: Array<T>;

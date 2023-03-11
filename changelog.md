@@ -30,13 +30,13 @@
 - [ ] 密战第4关脚本(潘朵魔钰)
 
 
-重构中（stage2）：
+重构（stage3）：
 
-- [x] rfc获取json未成功
-- [x] 全局log代理filter失效
-- [x] mod无法加载
-- [x] hmr支持
-- [x] chalk的颜色失效
+- [ ] 根据初版api设计方案重构
+- [ ] 编写单元测试
+- [ ] 反过来修改api文档
+
+- [ ] 部分副作用修改移入`Functions`模块
 
 RoadMap: `Core: v0.4.0`
 

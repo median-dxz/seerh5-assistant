@@ -59,6 +59,7 @@ const cmdFilter: number[] = [
     9274, //PET_GET_LEVEL_UP_EXP
     41228, // SYSTEM_TIME_CHECK
 ];
+// SocketConnection.mainSocket.filterCMDLog(1001, 1002, 1016, 2001, 2002, 2441, 9019, 41228, 42387);
 
 // clear() {
 //     this.captureList.splice(0);

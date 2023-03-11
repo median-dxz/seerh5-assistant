@@ -1,4 +1,4 @@
-import { Entity, type EntityType } from './Entity';
+import { EntityBase, type EntityType } from './EntityBase';
 
 type SkillEffects = [number[], number[]];
 type SkillEffectArgs = string | number | undefined;
@@ -15,7 +15,7 @@ interface ISkillObject {
     mustHit: boolean;
 }
 
-export default class Skill extends Entity implements ISkillObject {
+class Skill extends EntityBase implements ISkillObject {
     static readonly key = 'id';
     static readonly instanceKey = 'id';
     readonly __type: EntityType = 'Skill';
@@ -32,43 +32,41 @@ export default class Skill extends Entity implements ISkillObject {
     constructor(obj: SAType.MoveObj) {
         super();
         let tempEffects: [SkillEffectArgs, SkillEffectArgs];
-        if (obj) {
-            [
-                this.id,
-                this.name,
-                this.element,
-                this.category,
-                this.power,
-                this.priority,
-                this.accuracy,
-                this.pp,
-                this.maxPP,
-                tempEffects,
-                this.mustHit,
-            ] = [
-                obj.ID,
-                obj.Name,
-                obj.Type,
-                obj.Category,
-                obj.Power ?? 0,
-                obj.Priority ?? 0,
-                obj.Accuracy,
-                obj.pp ?? 0,
-                obj.MaxPP,
-                [obj.SideEffect, obj.SideEffectArg],
-                Boolean(obj.MustHit),
-            ];
-            const argSplit = (arg: SkillEffectArgs) => {
-                if (typeof arg === 'string') {
-                    return arg.split(' ').map(parseInt);
-                } else if (typeof arg === 'number') {
-                    return [arg];
-                } else {
-                    return [];
-                }
-            };
-            this.effects = tempEffects.map(argSplit) as SkillEffects;
-        }
+        [
+            this.id,
+            this.name,
+            this.element,
+            this.category,
+            this.power,
+            this.priority,
+            this.accuracy,
+            this.pp,
+            this.maxPP,
+            tempEffects,
+            this.mustHit,
+        ] = [
+            obj.ID,
+            obj.Name,
+            obj.Type,
+            obj.Category,
+            obj.Power ?? 0,
+            obj.Priority ?? 0,
+            obj.Accuracy,
+            obj.pp ?? 0,
+            obj.MaxPP,
+            [obj.SideEffect, obj.SideEffectArg],
+            Boolean(obj.MustHit),
+        ];
+        const argSplit = (arg: SkillEffectArgs) => {
+            if (typeof arg === 'string') {
+                return arg.split(' ').map(parseInt);
+            } else if (typeof arg === 'number') {
+                return [arg];
+            } else {
+                return [];
+            }
+        };
+        this.effects = tempEffects.map(argSplit) as SkillEffects;
     }
 
     static formatById(id: number) {

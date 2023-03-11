@@ -1,4 +1,4 @@
-import { Entity, type EntityType } from './Entity';
+import { EntityBase, type EntityType } from './EntityBase';
 
 interface IItemObject {
     id: number;
@@ -6,7 +6,7 @@ interface IItemObject {
     limit?: number;
 }
 
-export default class Item extends Entity implements IItemObject {
+class Item extends EntityBase implements IItemObject {
     static readonly key = 'id';
     static readonly instanceKey = 'id';
     readonly __type: EntityType = 'Item';

@@ -1,6 +1,6 @@
-import { PET_POS as PosType } from '../const';
-import Pet, { PetFactory } from '../entities/pet';
-import { GetBitSet, SocketReceivedPromise, SocketSendByQueue } from '../utils';
+import { PetPosition as PosType } from '../constant';
+import { GetBitSet, SocketReceivedPromise, SocketSendByQueue } from '../engine';
+import Pet from '../entity/Pet';
 
 type PosType = AttrConst<typeof PosType>;
 
@@ -167,18 +167,11 @@ export async function getAutoCureState(): Promise<boolean> {
     return r[0];
 }
 
-/**
- * @description 计算克制倍率
- */
-export function calcElementRatio(e1: number, e2: number) {
-    const mapping = (obj: any): number[] => {
-        if (Object.hasOwn(obj, 'is_dou')) {
-            return obj.att!.split(' ').map((v: string) => SkillXMLInfo.typeMap[v].en);
-        } else {
-            return [obj.en];
-        }
-    };
-    const eNameArr1 = mapping(SkillXMLInfo.typeMap[e1]);
-    const eNameArr2 = mapping(SkillXMLInfo.typeMap[e2]);
-    return TypeXMLInfo.getRelationsPow(eNameArr1, eNameArr2);
+export async function formatPetByCatchtime(ct: number) {
+    return new Pet(PetManager.getPetInfo(ct));
+}
+
+export async function formatPetByCatchtimeAsync(ct: number) {
+    const petInfo: PetInfo = await PetManager.UpdateBagPetInfoAsynce(ct);
+    return new Pet(petInfo);
 }

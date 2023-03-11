@@ -78,11 +78,7 @@ export function LevelExpTraining(props: LevelExtendsProps) {
                                 />
                             </>
                         );
-                        Utils.SocketSendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [
-                            116,
-                            6,
-                            1,
-                        ]);
+                        Utils.SocketSendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [116, 6, 1]);
                     });
                     levelData.current = await updateLevelData();
                 }

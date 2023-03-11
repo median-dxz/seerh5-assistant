@@ -1,5 +1,5 @@
-import { Entity, type EntityType } from './Entity';
-import Skill from './Skill';
+import { EntityBase, type EntityType } from './EntityBase';
+import { Skill } from './Skill';
 
 interface IPetObject {
     id: number;
@@ -19,7 +19,7 @@ const testPetStorage2015PetInfoType = (o: SAType.PetLike): o is PetStorage2015Pe
     return Object.hasOwn(o, 'posi');
 };
 
-export default class Pet extends Entity implements IPetObject {
+class Pet extends EntityBase implements IPetObject {
     __type: EntityType = 'Pet';
     static readonly key = 'id';
     static readonly instanceKey = 'catchTime';

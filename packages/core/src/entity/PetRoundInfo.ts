@@ -1,6 +1,6 @@
-import { Entity, type EntityType } from './Entity';
+import { EntityBase, type EntityType } from './EntityBase';
 
-export default class PetRoundInfo extends Entity {
+class PetRoundInfo extends EntityBase {
     __type: EntityType = 'PetRoundInfo';
     round: number;
 

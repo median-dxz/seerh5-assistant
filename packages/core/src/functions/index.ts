@@ -1,19 +1,19 @@
 import * as BattleModule from '../battle';
-import { ITEMS, PET_POS } from '../const';
+import { Item, PetPosition } from '../constant';
+import { BuyPetItem, GetMultiValue, SocketSendByQueue } from '../engine';
 import * as PetHelper from '../pet-helper';
-import { BuyPetItem, GetMultiValue, SocketSendByQueue } from '../utils';
 
 import { delay } from '../common';
 import { defaultStyle, SaModuleLogger } from '../logger';
 const log = SaModuleLogger('SAFunctions', defaultStyle.mod);
 
-type PotionId = AttrConst<typeof ITEMS.Potion>;
+type PotionId = AttrConst<typeof Item.Potion>;
 /**
  * @param {number[]} cts 要压血的精灵列表
  * @param {PotionId} healPotionId 血药id, 默认中级体力药
  * @description 利用谱尼封印自动压血
  */
-export async function lowerBlood(cts: number[], healPotionId: PotionId = ITEMS.Potion.中级体力药剂): Promise<void> {
+export async function lowerBlood(cts: number[], healPotionId: PotionId = Item.Potion.中级体力药剂): Promise<void> {
     cts = cts.slice(0, 6);
     cts = cts.filter(PetManager.getPetInfo.bind(PetManager));
     if (!cts || cts.length === 0) {
@@ -21,17 +21,17 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = ITEMS.P
     }
 
     // 检测列表是否全在背包
-    let curPets = await PetHelper.getBagPets(PET_POS.bag1);
+    let curPets = await PetHelper.getBagPets(PetPosition.bag1);
 
     for (let ct of cts) {
-        if ((await PetHelper.getPetLocation(ct)) !== PET_POS.bag1) {
+        if ((await PetHelper.getPetLocation(ct)) !== PetPosition.bag1) {
             if (PetManager.isBagFull) {
                 let replacePet = curPets.find((p) => !cts.includes(p.catchTime))!;
                 log(`压血 -> 将 ${replacePet.name} 放入仓库`);
                 await PetHelper.popPetFromBag(replacePet.catchTime);
-                curPets = await PetHelper.getBagPets(PET_POS.bag1);
+                curPets = await PetHelper.getBagPets(PetPosition.bag1);
             }
-            await PetHelper.setPetLocation(ct, PET_POS.bag1);
+            await PetHelper.setPetLocation(ct, PetPosition.bag1);
         }
     }
     log(`压血 -> 背包处理完成`);
@@ -42,7 +42,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = ITEMS.P
         if (PetManager.getPetInfo(ct).hp <= 50) {
             usePotionForPet(ct, healPotionId);
         }
-        usePotionForPet(ct, ITEMS.Potion.中级活力药剂);
+        usePotionForPet(ct, Item.Potion.中级活力药剂);
     };
 
     await delay(300);
@@ -51,7 +51,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = ITEMS.P
         return;
     }
 
-    BuyPetItem(ITEMS.Potion.中级活力药剂, cts.length);
+    BuyPetItem(Item.Potion.中级活力药剂, cts.length);
     BuyPetItem(healPotionId, cts.length);
     PetHelper.setDefault(cts[0]);
     await delay(300);
@@ -102,14 +102,14 @@ export function usePotionForPet(catchTime: number, potionId: number) {
 export async function switchBag(cts: number[]) {
     if (!cts || cts.length === 0) return;
     // 清空现有背包
-    for (let v of await PetHelper.getBagPets(PET_POS.bag1)) {
+    for (let v of await PetHelper.getBagPets(PetPosition.bag1)) {
         if (!cts.includes(v.catchTime)) {
             await PetHelper.popPetFromBag(v.catchTime);
             log(`SwitchBag -> 将 ${v.name} 放入仓库`);
         }
     }
     for (let v of cts) {
-        await PetHelper.setPetLocation(v, PET_POS.bag1);
+        await PetHelper.setPetLocation(v, PetPosition.bag1);
         log(`SwitchBag -> 将 ${PetManager.getPetInfo(v).name} 放入背包`);
     }
 }

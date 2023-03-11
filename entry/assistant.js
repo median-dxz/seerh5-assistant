@@ -1,7 +1,7 @@
 var logFilter = new Proxy(console.log, {
     apply: function (target, _this, args) {
         if (args.every((v) => typeof v == 'string')) {
-            args = args.filter((v) => !filterLogText.some((reg) => v.match(reg)));
+            args = args.filter((v) => !sac.filterLogText.some((reg) => v.match(reg)));
             args.length > 0 && Reflect.apply(target, _this, args);
         } else {
             Reflect.apply(target, _this, args);
@@ -12,7 +12,7 @@ var logFilter = new Proxy(console.log, {
 var warnFilter = new Proxy(console.warn, {
     apply: function (target, _this, args) {
         if (args.every((v) => typeof v == 'string')) {
-            args = args.filter((v) => !filterWarnText.some((reg) => v.match(reg)));
+            args = args.filter((v) => !sac.filterWarnText.some((reg) => v.match(reg)));
             args.length > 0 && Reflect.apply(target, _this, args);
         } else {
             Reflect.apply(target, _this, args);
@@ -20,8 +20,29 @@ var warnFilter = new Proxy(console.warn, {
     },
 });
 
-var filterLogText = filterLogText ?? [];
-var filterWarnText = filterWarnText ?? [];
+var sac = {
+    SeerH5Ready: false,
+    SacReady: false,
+    filterLogText: [
+        /=.*?lifecycle.on.*=.*?$/,
+        /(M|m)usic/,
+        /sound length.*?[0-9]*$/,
+        /module width.*?[0-9]*$/,
+        /=*?this._percent=*/,
+        /infos=*?>/,
+        /加载cjs 动画preview.*$/,
+    ],
+    filterWarnText: [
+        /开始执行战斗动画/,
+        /=.*?onUseSkill=.*=/,
+        />.*?>面板.*?还没有.*$/,
+        /head hit.*?index/,
+        /PetID:.*?offsetX:/,
+        /head.petInfo:/,
+        /battleResultPanel/,
+        /GuideManager.isCompleted/,
+    ],
+};
 
 var __reflect =
     (this && this.__reflect) ||
@@ -340,7 +361,7 @@ var Main = (function (e) {
                 .then(() => {
                     // dispatch event begin
                     window.dispatchEvent(new CustomEvent('seerh5_load'));
-                    window.SeerH5Ready = true;
+                    sac.SeerH5Ready = true;
                     // dispatch event end
                     window.hideWebload && window.hideWebload();
                 });

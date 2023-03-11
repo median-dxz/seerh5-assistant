@@ -31,12 +31,16 @@ export function matchPetName(nameReg: RegExp) {
     return DictMatcher(PetXMLInfo._dataMap, nameReg, 'DefName');
 }
 
-export function getTypeIdByName(name: any) {
-    return Object.values(SkillXMLInfo.typeMap).find((v) => v.cn.match(name))?.id;
-}
-
 export async function getStatusName(id: any) {
     return PetStatusEffectConfig.getName(0, id);
+}
+
+export function getElement(id: number) {
+    return SkillXMLInfo.typeMap[PetXMLInfo.getType(id)];
+}
+
+export function getElementByName(name: string) {
+    return Object.values(SkillXMLInfo.typeMap).find((v) => v.cn.match(name));
 }
 
 export * from './item-helper';

@@ -4,85 +4,63 @@ import url from 'url';
 import webpack from 'webpack';
 
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
-import TerserPlugin from 'terser-webpack-plugin';
 
 import { saProxyMiddleware, saRfcMiddleware } from '../../webpack.proxy.js';
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
-export default (env, argv) => {
-    const devEnv = argv.mode === 'development';
-    /**
-     * @type {webpack.Configuration}
-     */
-    const libConfig = {
-        name: 'seerh5-assistant-core',
-        target: ['es2022', 'web'],
-        entry: './src/index.ts',
-        experiments: {
-            outputModule: true,
-        },
-        module: {
-            rules: [
-                {
-                    test: /\.ts(x)?$/,
-                    loader: 'ts-loader',
-                    exclude: /node_modules/,
+/**
+ * @type {webpack.Configuration}
+ */
+const testConfig = {
+    name: 'sac-test',
+    target: ['es2022', 'web'],
+    entry: './test/browser-test.js',
+    mode: 'development',
+    experiments: {
+        outputModule: true,
+        topLevelAwait: true,
+    },
+    module: {
+        rules: [
+            {
+                test: /\.(m)?[jt]s(x)?$/,
+                loader: 'ts-loader',
+                resolve: {
+                    fullySpecified: false,
                 },
-            ],
-        },
-        optimization: {
-            minimize: true,
-            minimizer: [
-                new TerserPlugin({
-                    parallel: true,
-                    terserOptions: {
-                        ecma: 2020,
-                        module: true,
-                    },
-                }),
-            ],
-        },
-        resolve: {
-            extensions: ['.ts', '.js'],
-            alias: {
-                '@data': '/src/data/index.js',
+                exclude: /node_modules/,
             },
-        },
-        output: {
-            path: path.resolve(__dirname, 'dist'),
-            filename: 'bundle.js',
-            publicPath: '/',
-            library: {
-                type: 'module',
-            },
-        },
-        devtool: 'source-map',
-        plugins: [
-            new ForkTsCheckerWebpackPlugin(),
-            // new CopyPlugin({
-            //     patterns: [{ from: 'src/global.d.ts', to: 'global.d.ts' }],
-            // }),
         ],
-        devServer: {
-            static: './dev',
-            client: {
-                overlay: false,
-                logging: 'warn',
-            },
-            hot: false,
-            port: 1234,
-            setupMiddlewares: (middlewares, devServer) => {
-                if (!devServer) {
-                    throw new Error('webpack-dev-server is not defined');
-                }
-                middlewares.push(saProxyMiddleware);
-                middlewares.push(saRfcMiddleware);
-                return middlewares;
-            },
+    },
+    resolve: {
+        extensions: ['.ts', '.js'],
+        modules: [path.resolve(__dirname, 'src'), 'node_modules'],
+    },
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'bundle.js',
+        module: true,
+        publicPath: '/',
+    },
+    devtool: 'source-map',
+    plugins: [new ForkTsCheckerWebpackPlugin()],
+    devServer: {
+        static: './dev',
+        client: {
+            overlay: false,
+            logging: 'warn',
         },
-    };
-    console.log(`build in mode: ${argv.mode}`);
-    libConfig.mode = argv.mode;
-    let exports = libConfig;
-    return exports;
+        hot: false,
+        port: 1234,
+        setupMiddlewares: (middlewares, devServer) => {
+            if (!devServer) {
+                throw new Error('webpack-dev-server is not defined');
+            }
+            middlewares.push(saProxyMiddleware);
+            middlewares.push(saRfcMiddleware);
+            return middlewares;
+        },
+    },
 };
+
+export default testConfig;

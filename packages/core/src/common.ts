@@ -27,5 +27,16 @@ function wrapper<F extends AnyFunction>(
 
 const SAEventTarget = new EventTarget();
 
-export { SAEventTarget, wrapper, delay };
+const checkEnv = () =>
+    typeof window !== 'undefined' && window.sac != undefined && window.sac?.SacReady && window.sac?.SeerH5Ready;
+
+const extractObjectId = <T extends { [key in K]: number }, K extends string>(obj: T | number, key: K) => {
+    if (typeof obj === 'number') {
+        return obj;
+    } else {
+        return obj[key];
+    }
+};
+
+export { SAEventTarget, wrapper, delay, checkEnv, extractObjectId };
 

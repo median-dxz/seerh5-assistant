@@ -1,5 +1,4 @@
-import { AutoBattle, Mod, SaModuleLogger, defaultStyle } from 'seerh5-assistant-core';
-const { Utils, PetHelper, Battle, Functions } = sa;
+import { SAEntity, Constant, SaModuleLogger, defaultStyle } from 'seerh5-assistant-core';
 
 const log = SaModuleLogger('精灵因子', defaultStyle.mod);
 
@@ -7,47 +6,21 @@ declare namespace pvePetYinzi {
     const DataManager: any;
 }
 
-namespace PetFactor {
-    export enum LevelDifficulty {
-        NotSelected = 0,
-        Ease = 1,
-        Hard = 2,
-        Hell = 3,
-    }
-    interface Boss {
-        BattleBoss: number;
-        BossID: number;
-        Desc: string;
-        ID: number;
-    }
-    interface LevelConfig {
-        Configure: {
-            Times: number;
-            TimeValue: number;
-            FailTimes: number;
-            ProgressValue: number;
-        };
-        EasyBattle: { Task: Boss[] };
-        NormalBattle: { Task: Boss[] };
-        HardBattle: { Task: Boss[] };
-        Reward: {
-            ItemID: number;
-        };
-    }
+namespace PetFragment {
     export interface Option {
-        difficulty: LevelDifficulty;
+        difficulty: Constant.PetFragmentLevelDifficulty;
         id: number;
         sweep: boolean;
         strategy: Array<{ cts: number[]; strategy: AutoBattle.MoveModule; beforeBattle: () => PromiseLike<void> }>;
     }
 
     export class Runner {
-        configData: LevelConfig;
+        configData: SAType.PetFragmentLevelObj;
         option: Option;
         pieces: number;
-        bosses: Boss[];
+        bosses: SAType.PetFragmentLevelBoss[];
         isChallenge: boolean;
-        curDifficulty: LevelDifficulty;
+        curDifficulty: Constant.PetFragmentLevelDifficulty;
         leftChallengeTimes: number;
         failedTimes: number;
         curPosition: number;

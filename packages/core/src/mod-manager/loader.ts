@@ -1,4 +1,4 @@
-import { defaultStyle, SaModuleLogger } from './logger';
+import { defaultStyle, SaModuleLogger } from '../logger';
 import { Mod } from './mod-type';
 const log = SaModuleLogger('ModLoader', defaultStyle.mod);
 
@@ -9,7 +9,7 @@ async function register(id: string, mod: typeof Mod) {
     RegisteredMods.set(id, new mod());
 }
 
-window.SAMods = RegisteredMods;
+sac.Mods = RegisteredMods;
 
 export { register };
 export { Mod };

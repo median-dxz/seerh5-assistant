@@ -82,6 +82,18 @@ declare class PetSkillInfo {
     get name(): string;
 }
 
+declare class PetListInfo {
+    catchTime: number;
+    id: number;
+    get name(): string;
+}
+
+declare class PetStorage2015PetInfo extends PetListInfo {
+    level: number;
+    posi: number;
+    type: number;
+}
+
 declare class PetStorage2015PetInfo {
     catchTime: number;
     id: number;

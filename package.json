@@ -2,13 +2,14 @@
   "name": "seerh5-assistant-project",
   "private": true,
   "type": "module",
-  "version": "0.3.7",
+  "version": "0.4.0",
   "license": "MPL-2.0",
   "workspaces": [
     "./packages/core",
     "./packages/app"
   ],
   "scripts": {
+    "start": "npm run dev:app",
     "dev:core": "npm run dev --workspace=seerh5-assistant-core",
     "dev:app": "npm run dev --workspace=seerh5-assistant-app",
     "build:core": "npm run build --workspace=seerh5-assistant-core",

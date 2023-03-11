@@ -3,6 +3,8 @@ import { defaultStyle, SaModuleLogger } from '../logger';
 const log = SaModuleLogger('SAHelper', defaultStyle.core);
 
 export function HelperLoader() {
+    config.xml.load('new_super_design');
+    config.xml.load('Fragment');
     enableBetterAlarm();
     enableCancelAlertForUsePetItem();
     enableFastStaticAnimation();

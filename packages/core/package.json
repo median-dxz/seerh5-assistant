@@ -2,16 +2,16 @@
     "name": "seerh5-assistant-core",
     "private": true,
     "type": "module",
-    "version": "0.3.7",
+    "version": "0.4.0",
     "license": "MPL-2.0",
     "main": "./dist/index.js",
     "browser": "./dist/index.js",
-    "types": "./types/global.d.ts",
+    "types": "./types/index.d.ts",
     "scripts": {
         "build": "tsc --build",
         "watch": "tsc --watch",
-        "dev": "webpack-dev-server --mode=development",
-        "test": "echo 'not implement'"
+        "dev": " webpack-dev-server",
+        "test": "node --experimental-specifier-resolution=node test/unit-test.mjs"
     },
     "dependencies": {
         "chalk": "^5.2.0"

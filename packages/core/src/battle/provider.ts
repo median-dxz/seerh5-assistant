@@ -1,23 +1,13 @@
-import Pet, { PetFactory } from '../entities/pet';
-import RoundPetInfo from '../entities/round-info';
-import Skill, { SkillFactory } from '../entities/skill';
+import { Pet, PetRoundInfo, Skill } from '../entity';
 
-export type PetSwitchInfo = Pet & { index: number };
 export interface RoundInfo {
-    self?: RoundPetInfo;
-    other?: RoundPetInfo;
+    self?: PetRoundInfo;
+    other?: PetRoundInfo;
     round: number;
     isDiedSwitch: boolean;
 }
 
-interface BattleInfoProvider {
-    cachedRoundInfo: [RoundPetInfo, RoundPetInfo] | null;
-    getCurRoundInfo(): RoundInfo | null;
-    getCurSkills(): Skill[] | null;
-    getPets(): Array<PetSwitchInfo> | null;
-}
-
-export const BattleInfoProvider: BattleInfoProvider = {
+export const Provider = {
     cachedRoundInfo: null,
     getCurRoundInfo() {
         if (!FighterModelFactory.playerMode) return null;
@@ -39,20 +29,20 @@ export const BattleInfoProvider: BattleInfoProvider = {
         return result;
     },
 
-    getCurSkills() {
+    getCurSkills(): null | Skill[] {
         if (!FighterModelFactory.playerMode) return null;
 
         const infos = FighterModelFactory.playerMode.skillBtnViews;
         return infos.map((v) => {
-            return Object.assign(SkillFactory.formatById(v.skillID), { pp: v.pp });
+            return Object.assign(Skill.formatById(v.skillID), { pp: v.pp });
         });
     },
 
-    getPets() {
+    getPets(): null | Pet[] {
         if (!FightUserInfo.fighterInfos) return null;
         const infos = FightUserInfo.fighterInfos.myInfo.petCatchArr;
         return infos.map((v, i) => {
-            return Object.assign(PetFactory.formatByCatchtime(v), { index: i });
+            return Object.assign(PetHelper.formatByCatchtime(v));
         });
     },
 };

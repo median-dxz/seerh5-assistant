@@ -1,6 +1,6 @@
-import { Entity, type EntityType } from './Entity';
+import { EntityBase, type EntityType } from './EntityBase';
 
-export default class PetElement extends Entity {
+class PetElement extends EntityBase {
     __type: EntityType = 'PetElement';
     static readonly key = 'id';
     /** 是否是双属性 */

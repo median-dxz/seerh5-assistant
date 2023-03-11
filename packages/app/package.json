@@ -2,7 +2,7 @@
     "name": "seerh5-assistant-app",
     "private": true,
     "type": "module",
-    "version": "0.3.7",
+    "version": "0.4.0",
     "license": "AGPL-3.0-or-later",
     "main": "./src/index.tsx",
     "scripts": {

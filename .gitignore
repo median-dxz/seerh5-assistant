@@ -5,6 +5,8 @@ build
 /entry/offical.js
 
 doc/**
+!doc/1.api设计.md
+
 not_support
 **/core/types
 
