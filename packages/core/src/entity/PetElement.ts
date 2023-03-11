@@ -1,6 +1,6 @@
 import { EntityBase, type EntityType } from './EntityBase';
 
-class PetElement extends EntityBase {
+export class PetElement extends EntityBase {
     __type: EntityType = 'PetElement';
     static readonly key = 'id';
     /** 是否是双属性 */
@@ -17,11 +17,16 @@ class PetElement extends EntityBase {
         }
     }
 
+    static formatById(id: number) {
+        return new PetElement(SkillXMLInfo.typeMap[PetXMLInfo.getType(id)]);
+    }
+
     /** 计算克制倍率 */
-    calcRatio(b: PetElement) {
-        return TypeXMLInfo.getRelationsPow(this.identifier, b.identifier);
+    calcRatio(b: PetElement | number) {
+        if (typeof b === 'number') {
+            return TypeXMLInfo.getRelationsPow(this.identifier, PetElement.formatById(b).identifier);
+        } else {
+            return TypeXMLInfo.getRelationsPow(this.identifier, b.identifier);
+        }
     }
 }
-
-export { PetElement };
-

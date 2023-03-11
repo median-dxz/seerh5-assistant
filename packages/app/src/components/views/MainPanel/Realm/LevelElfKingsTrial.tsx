@@ -5,7 +5,7 @@ import { delay } from 'seerh5-assistant-core';
 import { PercentLinearProgress } from '../base';
 import { LevelBase, LevelExtendsProps, updateCustomStrategy } from './LevelBase';
 import dataProvider from './data';
-const { Battle, Functions, PetHelper, Utils } = useCore();
+const { SABattle, SAPetHelper, SAEngine, switchBag } = useCore();
 
 const ElfKingsId = {
     光王斯嘉丽: 2,
@@ -33,8 +33,8 @@ const maxDailyChallengeTimes = 15;
 
 const updateLevelData = async () => {
     const data = {} as LevelData;
-    const bits = await Utils.GetBitSet(8832, 2000037);
-    const values = await Utils.GetMultiValue(108105, 108106, 18745, 20134);
+    const bits = await SAEngine.Socket.bitSet(8832, 2000037);
+    const values = await SAEngine.Socket.multiValue(108105, 108106, 18745, 20134);
 
     data.elfId = ElfKingsId.草王茉蕊儿;
 
@@ -79,15 +79,15 @@ export function LevelElfKingsTrial(props: LevelExtendsProps) {
                 break;
             case 1: //daily challenge
                 setHint('正在准备背包');
-                await Functions.switchBag(customData.cts);
-                PetHelper.cureAllPet();
-                PetHelper.setDefault(customData.cts[0]);
+                await switchBag(customData.cts);
+                SAPetHelper.cureAllPet();
+                SAPetHelper.setDefault(customData.cts[0]);
                 setHint('准备背包完成');
                 await delay(500);
 
                 updateCustomStrategy(customData.strategy);
                 while (levelData.current.challengeCount < maxDailyChallengeTimes && currentRunning.current) {
-                    await Battle.Manager.runOnce(() => {
+                    await SABattle.Manager.runOnce(() => {
                         setHint(
                             <>
                                 <Typography component={'div'}>正在进行对战...</Typography>
@@ -98,7 +98,7 @@ export function LevelElfKingsTrial(props: LevelExtendsProps) {
                                 />
                             </>
                         );
-                        Utils.SocketSendByQueue(42396, [106, levelData.current.elfId, 2]);
+                        SAEngine.Socket.sendByQueue(42396, [106, levelData.current.elfId, 2]);
                     });
                     levelData.current = await updateLevelData();
                 }
@@ -109,7 +109,7 @@ export function LevelElfKingsTrial(props: LevelExtendsProps) {
                 setHint('正在查询每周奖励领取状态');
                 if (levelData.current.weeklyChallengeCount >= 100 && levelData.current.canRewardReceive) {
                     try {
-                        await Utils.SocketSendByQueue(42395, [106, 3, 0, 0]);
+                        await SAEngine.Socket.sendByQueue(42395, [106, 3, 0, 0]);
                     } catch (error) {
                         setStep(-1);
                     }

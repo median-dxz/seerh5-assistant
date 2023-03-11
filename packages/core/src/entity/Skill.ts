@@ -3,7 +3,7 @@ import { EntityBase, type EntityType } from './EntityBase';
 type SkillEffects = [number[], number[]];
 type SkillEffectArgs = string | number | undefined;
 
-interface ISkillObject {
+export interface ISkillObject {
     id: number;
     element: number;
     category: number;
@@ -15,7 +15,7 @@ interface ISkillObject {
     mustHit: boolean;
 }
 
-class Skill extends EntityBase implements ISkillObject {
+export class Skill extends EntityBase implements ISkillObject {
     static readonly key = 'id';
     static readonly instanceKey = 'id';
     readonly __type: EntityType = 'Skill';
@@ -90,7 +90,3 @@ class Skill extends EntityBase implements ISkillObject {
         return SkillXMLInfo.getCategoryName(this.id);
     }
 }
-
-export type { ISkillObject };
-export { Skill };
-

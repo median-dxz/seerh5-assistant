@@ -11,7 +11,7 @@ import { LevelStudyTraining } from './LevelStudyTraining';
 import { LevelTitanHole } from './LevelTitanHole';
 import { LevelXTeamRoom } from './LevelXTeamRoom';
 
-const { Battle, Utils } = useCore();
+const { SABattle, SAEngine } = useCore();
 interface Level {
     name: string;
     module: JSX.Element;
@@ -32,8 +32,8 @@ export function Realm() {
 
     const closeHandler = () => {
         if (battleContext.enableAuto) {
-            Battle.Manager.triggerLocker = undefined;
-            Battle.Manager.strategy = undefined;
+            SABattle.Manager.triggerLocker = undefined;
+            SABattle.Manager.strategy = undefined;
             setBattleAuto(false);
         }
         setRunning(false);
@@ -45,31 +45,31 @@ export function Realm() {
             name: '经验训练场',
             module: <LevelExpTraining setRunning={setRunning} running={running} />,
             async getState() {
-                return (await Utils.GetBitSet(1000571))[0];
+                return (await SAEngine.Socket.bitSet(1000571))[0];
             },
         },
         {
             name: '学习力训练场',
             module: <LevelStudyTraining setRunning={setRunning} running={running} />,
             async getState() {
-                return (await  Utils.GetBitSet(1000572))[0];
+                return (await SAEngine.Socket.bitSet(1000572))[0];
             },
         },
         {
             name: '勇者之塔',
             module: <LevelCourageTower setRunning={setRunning} running={running} />,
             async getState() {
-                return (await Utils.GetBitSet(1000577))[0];
+                return (await SAEngine.Socket.bitSet(1000577))[0];
             },
         },
         {
             name: '泰坦矿洞',
             module: <LevelTitanHole setRunning={setRunning} running={running} />,
             async sweep() {
-                await Utils.SocketSendByQueue(42395, [104, 6, 3, 0]);
+                await SAEngine.Socket.sendByQueue(42395, [104, 6, 3, 0]);
             },
             async getState() {
-                const [count, step] = await Utils.GetMultiValue(18724, 18725);
+                const [count, step] = await SAEngine.Socket.multiValue(18724, 18725);
                 return count === 2 && step === 0;
             },
         },
@@ -77,8 +77,8 @@ export function Realm() {
             name: '精灵王试炼',
             module: <LevelElfKingsTrial setRunning={setRunning} running={running} />,
             async getState() {
-                const [count, weeklyCount] = await Utils.GetMultiValue(18745, 20134);
-                const [rewardClosed] = await Utils.GetBitSet(2000037);
+                const [count, weeklyCount] = await SAEngine.Socket.multiValue(18745, 20134);
+                const [rewardClosed] = await SAEngine.Socket.bitSet(2000037);
                 return count === 15 || (weeklyCount >= 100 && rewardClosed);
             },
         },
@@ -86,7 +86,7 @@ export function Realm() {
             name: 'x战队密室',
             module: <LevelXTeamRoom setRunning={setRunning} running={running} />,
             async getState() {
-                return (await Utils.GetBitSet(1000585, 2000036)).some(Boolean);
+                return (await SAEngine.Socket.bitSet(1000585, 2000036)).some(Boolean);
             },
         },
         // { name: '作战实验室'

@@ -1,6 +1,7 @@
+import { extractObjectId } from '../common';
 import { PetPosition as PosType } from '../constant';
-import { GetBitSet, SocketReceivedPromise, SocketSendByQueue } from '../engine';
-import Pet from '../entity/Pet';
+import { Socket } from '../engine';
+import { Pet } from '../entity/Pet';
 
 type PosType = AttrConst<typeof PosType>;
 
@@ -59,7 +60,7 @@ export const getStoragePets = async (location: StoragePetsPos) => {
             dict = [];
     }
 
-    return dict.map((v) => () => PetFactory.formatByCatchtimeAsync(v.catchTime));
+    return dict.map((v) => () => formatPetByCatchtimeAsync(v.catchTime));
 };
 
 export const isDefault = (ct: number) => PetManager.defaultTime === ct;
@@ -88,7 +89,7 @@ export const setPetLocation = async (ct: number, newLocation: PosType) => {
     switch (newLocation) {
         case PosType.secondBag1:
             if (PetManager.isSecondBagFull) return false;
-            await SocketReceivedPromise(CommandID.PET_RELEASE, () => {
+            await Socket.sendWithReceivedPromise(CommandID.PET_RELEASE, () => {
                 if (l === PosType.bag1) {
                     PetManager.bagToSecondBag(ct);
                 } else if (l === PosType.storage || l === PosType.elite) {
@@ -98,7 +99,7 @@ export const setPetLocation = async (ct: number, newLocation: PosType) => {
             break;
         case PosType.bag1:
             if (PetManager.isBagFull) return false;
-            await SocketReceivedPromise(CommandID.PET_RELEASE, () => {
+            await Socket.sendWithReceivedPromise(CommandID.PET_RELEASE, () => {
                 if (l === PosType.secondBag1) {
                     PetManager.secondBagToBag(ct);
                 } else if (l === PosType.storage) {
@@ -110,10 +111,10 @@ export const setPetLocation = async (ct: number, newLocation: PosType) => {
             break;
         case PosType.storage:
             if (l === PosType.elite) {
-                await SocketReceivedPromise(CommandID.DEL_LOVE_PET, () => PetManager.delLovePet(0, ct, 0));
+                await Socket.sendWithReceivedPromise(CommandID.DEL_LOVE_PET, () => PetManager.delLovePet(0, ct, 0));
                 break;
             }
-            await SocketReceivedPromise(CommandID.PET_RELEASE, () => {
+            await Socket.sendWithReceivedPromise(CommandID.PET_RELEASE, () => {
                 if (l === PosType.bag1) {
                     PetManager.bagToStorage(ct);
                 } else if (l === PosType.secondBag1) {
@@ -123,7 +124,7 @@ export const setPetLocation = async (ct: number, newLocation: PosType) => {
             break;
         case PosType.elite:
             if (l !== PosType.storage) {
-                await SocketReceivedPromise(CommandID.PET_RELEASE, () => {
+                await Socket.sendWithReceivedPromise(CommandID.PET_RELEASE, () => {
                     if (l === PosType.bag1) {
                         PetManager.bagToStorage(ct);
                     } else if (l === PosType.secondBag1) {
@@ -132,7 +133,7 @@ export const setPetLocation = async (ct: number, newLocation: PosType) => {
                 });
             }
             if ((await getPetLocation(ct)) === PosType.storage) {
-                await SocketReceivedPromise(CommandID.ADD_LOVE_PET, () => PetManager.addLovePet(0, ct, 0));
+                await Socket.sendWithReceivedPromise(CommandID.ADD_LOVE_PET, () => PetManager.addLovePet(0, ct, 0));
                 PetStorage2015InfoManager.changePetPosi(ct, PosType.elite);
             }
             break;
@@ -151,7 +152,7 @@ export const popPetFromBag = async (ct: number) => {
 };
 
 export function cureOnePet(ct: number) {
-    SocketSendByQueue(CommandID.PET_ONE_CURE, ct);
+    Socket.sendByQueue(CommandID.PET_ONE_CURE, ct);
 }
 
 export function cureAllPet() {
@@ -159,15 +160,20 @@ export function cureAllPet() {
 }
 
 export function toggleAutoCure(enable: boolean) {
-    SocketSendByQueue(42019, [22439, Number(enable)]);
+    Socket.sendByQueue(42019, [22439, Number(enable)]);
 }
 
 export async function getAutoCureState(): Promise<boolean> {
-    const r = await GetBitSet(22439);
+    const r = await Socket.bitSet(22439);
     return r[0];
 }
 
-export async function formatPetByCatchtime(ct: number) {
+export async function getPet(ct: number) {
+    return new Pet(PetManager.getPetInfo(ct));
+}
+
+export function getPetCached(pet: number | Pet) {
+    const ct = extractObjectId(pet, Pet.instanceKey);
     return new Pet(PetManager.getPetInfo(ct));
 }
 

@@ -11,6 +11,8 @@ async function register(id: string, mod: typeof Mod) {
 
 sac.Mods = RegisteredMods;
 
+export * from "./mod-type";
 export { register };
 export { Mod };
+
 

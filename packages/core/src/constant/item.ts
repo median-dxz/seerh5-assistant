@@ -1,4 +1,4 @@
-const items = {
+export const Item = {
     Potion: {
         初级体力药剂: 300011,
         中级体力药剂: 300012,
@@ -32,5 +32,4 @@ const items = {
     '全面提升药剂-龙': 300810,
     友谊之星: 1400154,
 } as const;
-export { items as SA_CONST_ITEMS };
 

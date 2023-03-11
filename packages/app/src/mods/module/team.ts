@@ -1,5 +1,4 @@
-import { Mod, ModuleSubscriber } from 'seerh5-assistant-core';
-const { EventHandler, Utils } = sa;
+import { Mod, ModuleSubscriber, SAEngine, SAEventHandler } from 'seerh5-assistant-core';
 
 class TeamTechCenter extends Mod {
     subscriber: ModuleSubscriber<team.TeamTech> = {
@@ -20,7 +19,7 @@ class TeamTechCenter extends Mod {
                 }
 
                 const updateOnce = (): Promise<void> =>
-                    Utils.SocketSendByQueue(CommandID.NEW_TEAM_PET_RISE, [this._petInfo.catchTime, index])
+                    SAEngine.Socket.sendByQueue(CommandID.NEW_TEAM_PET_RISE, [this._petInfo.catchTime, index])
                         .then(() => PetManager.UpdateBagPetInfoAsynce(this._petInfo.catchTime))
                         .then((petInfo) => {
                             this._petInfo = petInfo;
@@ -40,11 +39,11 @@ class TeamTechCenter extends Mod {
     };
     constructor() {
         super();
-        EventHandler.SeerModuleStatePublisher.attach(this.subscriber, 'team');
+        SAEventHandler.SeerModuleStatePublisher.attach(this.subscriber, 'team');
     }
     init() {}
     destroy() {
-        EventHandler.SeerModuleStatePublisher.detach(this.subscriber, 'team');
+        SAEventHandler.SeerModuleStatePublisher.detach(this.subscriber, 'team');
     }
     meta = { description: '战队模块' };
 }

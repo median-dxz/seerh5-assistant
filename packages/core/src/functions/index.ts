@@ -1,9 +1,10 @@
-import * as BattleModule from '../battle';
+import * as Battle from '../battle';
 import { Item, PetPosition } from '../constant';
-import { BuyPetItem, GetMultiValue, SocketSendByQueue } from '../engine';
+import { BuyPetItem, Socket } from '../engine';
 import * as PetHelper from '../pet-helper';
 
 import { delay } from '../common';
+import { PetElement } from '../entity/PetElement';
 import { defaultStyle, SaModuleLogger } from '../logger';
 const log = SaModuleLogger('SAFunctions', defaultStyle.mod);
 
@@ -56,7 +57,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = Item.Po
     PetHelper.setDefault(cts[0]);
     await delay(300);
 
-    const { Manager, Operator, InfoProvider } = BattleModule;
+    const { Manager, Operator, Provider } = Battle;
 
     Manager.strategy = async (battleState, skills, battlePets) => {
         if (battleState.round > 0 && battleState.self?.hp.remain! < 50) {
@@ -70,7 +71,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = Item.Po
             }
             await Operator.switchPet(nextPet);
             if (battleState.isDiedSwitch) {
-                skills = InfoProvider.getCurSkills()!;
+                skills = Provider.getCurSkills()!;
                 Operator.useSkill(skills.find((v) => v.category !== 4)!.id);
             }
         } else {
@@ -78,7 +79,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = Item.Po
         }
     };
 
-    return BattleModule.Manager.runOnce(() => {
+    return Battle.Manager.runOnce(() => {
         FightManager.fightNoMapBoss(6730);
     }).then(() => {
         cts.forEach(usePotion);
@@ -96,7 +97,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = Item.Po
  * @description 对精灵使用药水
  */
 export function usePotionForPet(catchTime: number, potionId: number) {
-    return SocketSendByQueue(CommandID.USE_PET_ITEM_OUT_OF_FIGHT, [catchTime, potionId]);
+    return Socket.sendByQueue(CommandID.USE_PET_ITEM_OUT_OF_FIGHT, [catchTime, potionId]);
 }
 
 export async function switchBag(cts: number[]) {
@@ -124,7 +125,8 @@ export async function calcAllEfficientPet(e: number, radio: number = 1.5) {
         ...PetManager._bagMap.getValues(),
         ...PetManager._secondBagMap.getValues(),
     ];
-    let r = pets.filter((v) => PetHelper.calcElementRatio(PetXMLInfo.getType(v.id), e) >= radio);
+
+    let r = pets.filter((v) => PetElement.formatById(PetXMLInfo.getType(v.id)).calcRatio(e) >= radio);
     return r.map((v) => {
         let eid = PetXMLInfo.getType(v.id);
         return {
@@ -132,7 +134,7 @@ export async function calcAllEfficientPet(e: number, radio: number = 1.5) {
             elementId: eid,
             element: SkillXMLInfo.typeMap[eid].cn,
             id: v.id,
-            ratio: PetHelper.calcElementRatio(eid, e),
+            ratio: PetElement.formatById(eid).calcRatio(e),
         };
     });
 }
@@ -155,7 +157,7 @@ export async function delCounterMark() {
             for (let i in v) {
                 if (parseInt(i) >= 14) {
                     const mark = v[i];
-                    await SocketSendByQueue(CommandID.COUNTERMARK_RESOLVE, mark.obtainTime);
+                    await Socket.sendByQueue(CommandID.COUNTERMARK_RESOLVE, mark.obtainTime);
                     await delay(100);
                 }
             }
@@ -169,7 +171,7 @@ const BattleFireValue = {
 } as const;
 
 export async function updateBattleFireInfo() {
-    return GetMultiValue(BattleFireValue.类型, BattleFireValue.到期时间戳).then((r) => {
+    return Socket.multiValue(BattleFireValue.类型, BattleFireValue.到期时间戳).then((r) => {
         return {
             type: r[0],
             valid: r[1] > 0 && SystemTimerManager.time < r[1],
@@ -218,3 +220,6 @@ export function updateBatteryTime() {
         (MainManager.actorInfo.timeToday + Math.floor(Date.now() / 1000 - MainManager.actorInfo.logintimeThisTime));
     BatteryController.Instance._leftTime = Math.max(0, leftTime);
 }
+
+export { HelperLoader } from './helper';
+

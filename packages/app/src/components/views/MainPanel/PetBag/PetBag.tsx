@@ -10,15 +10,13 @@ import {
     Typography,
 } from '@mui/material';
 
-import { delay, Pet } from 'seerh5-assistant-core';
-const sa = useCore();
+import { Constant, SAEngine, SAEntity, SAPetHelper, delay, lowerBlood, switchBag, updateBattleFireInfo } from 'seerh5-assistant-core';
 
 import { PanelState } from '@sa-app/context/PanelState';
 import { mainColor } from '@sa-app/style';
 
 import React from 'react';
 import { PanelTableBase, PanelTableBodyRow } from '../base';
-import { useCore } from '@sa-app/provider/useCore';
 
 const numberFormatter = (n: number) => {
     const { format } = Intl.NumberFormat(undefined, {
@@ -40,15 +38,14 @@ interface Props {
 }
 
 export function PetBag({ panelState }: Props) {
-    const { Const, Functions, Utils, PetHelper } = sa;
-    type BattleFireInfo = Awaited<ReturnType<typeof Functions.updateBattleFireInfo>>;
+    type BattleFireInfo = Awaited<ReturnType<typeof updateBattleFireInfo>>;
     const [battleFire, setBattleFire] = React.useState<BattleFireInfo>({ timeLeft: 0, type: 0, valid: false });
     const [timeLeft, setTimeLeft] = React.useState(0);
     const [timer, setTimer] = React.useState<undefined | number>(undefined);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [menuOpen, setMenuOpen] = React.useState(false);
     const menuOption = React.useRef<MenuOption | null>(null);
-    const [pets, setPets] = React.useState<Pet[]>([]);
+    const [pets, setPets] = React.useState<SAEntity.Pet[]>([]);
     const [petsSelected, setPetsSelected] = React.useState<boolean[]>([]);
     const [petPatterns, setPetPattern] = React.useState(() => {
         let item: any[] | null | string = window.localStorage.getItem(StorageKey);
@@ -60,12 +57,12 @@ export function PetBag({ panelState }: Props) {
         return item as Array<number[]>;
     });
     const [petHeadSrc, setPetHeadSrc] = React.useState<string[]>([]);
-    const [userTitle, setUserTitle] = React.useState(Utils.UserTitle());
-    const [userSuit, setUserSuit] = React.useState(Utils.UserSuit());
+    const [userTitle, setUserTitle] = React.useState(SAEngine.UserTitle());
+    const [userSuit, setUserSuit] = React.useState(SAEngine.UserSuit());
     const [animationMode, setAnimationMode] = React.useState(false);
 
     const updateBattleFire = async () => {
-        const info = await Functions.updateBattleFireInfo();
+        const info = await updateBattleFireInfo();
         setBattleFire(info);
         setTimeLeft(info.timeLeft);
         return info;
@@ -73,7 +70,7 @@ export function PetBag({ panelState }: Props) {
 
     React.useEffect(() => {
         updateBattleFire();
-        PetHelper.getBagPets(Const.PET_POS.bag1).then((r) => {
+        SAPetHelper.getBagPets(Constant.PetPosition.bag1).then((r) => {
             setPets(r);
             setPetsSelected(Array(r.length).fill(false));
             let promises = r
@@ -82,7 +79,7 @@ export function PetBag({ panelState }: Props) {
                     const url = ClientConfig.getPetHeadPath(id);
                     const i = await RES.getResByUrl(url);
                     const src: string = i.bitmapData.source?.src;
-                    return src ?? window.SAResourceMap.get(url);
+                    return src ?? sac.ResourceCache.get(url);
                 });
             Promise.all(promises).then((r) => {
                 setPetHeadSrc(r);
@@ -127,7 +124,7 @@ export function PetBag({ panelState }: Props) {
     };
 
     const handleChangeSuit: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-        const suitId = Utils.UserAbilitySuits();
+        const suitId = SAEngine.UserAbilitySuits();
         const suitName = suitId.map<string>(SuitXMLInfo.getName.bind(SuitXMLInfo));
         menuOption.current = {
             type: 'suit',
@@ -140,7 +137,7 @@ export function PetBag({ panelState }: Props) {
 
     const handleChangeTitle: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
         setAnchorEl(e.currentTarget);
-        const titleId = await Utils.UserAbilityTitles();
+        const titleId = await SAEngine.UserAbilityTitles();
         const titleName = titleId.map<string>(AchieveXMLInfo.getTitle.bind(AchieveXMLInfo));
         menuOption.current = {
             type: 'title',
@@ -158,15 +155,17 @@ export function PetBag({ panelState }: Props) {
     const handleSelectItem = async (index: number) => {
         const info = menuOption.current!;
         if (info.type === 'suit') {
-            Utils.ChangeSuit(info.id[index]);
-            setUserSuit(info.id[index]);
+            if (SAEngine.UserSuit() !== userSuit) {
+                SAEngine.ChangeSuit(info.id[index]);
+                setUserSuit(info.id[index]);
+            }
         } else if (info.type === 'title') {
-            Utils.ChangeTitle(info.id[index]);
+            SAEngine.ChangeTitle(info.id[index]);
             setUserTitle(info.id[index]);
         } else if (info.type === 'setPets') {
-            Functions.switchBag(petPatterns[index]);
+            switchBag(petPatterns[index]);
         } else if (info.type === 'savePets') {
-            const newPets = await PetHelper.getBagPets(1);
+            const newPets = await SAPetHelper.getBagPets(1);
             setPetPattern((petPatterns) => {
                 const newValue = [...petPatterns];
                 newValue[index] = newPets.map((pet) => pet.catchTime);
@@ -179,13 +178,13 @@ export function PetBag({ panelState }: Props) {
 
     const handleLowerBlood = () => {
         const lowerBloodPets = pets.filter((pet, index) => petsSelected[index]).map((r) => r.catchTime);
-        Functions.lowerBlood(lowerBloodPets);
+        lowerBlood(lowerBloodPets);
     };
 
     const handleCurePets = () => {
         const curePets = pets.filter((pet, index) => petsSelected[index]).map((r) => r.catchTime);
         for (let curePet of curePets) {
-            PetHelper.cureOnePet(curePet);
+            SAPetHelper.cureOnePet(curePet);
         }
     };
 
@@ -232,7 +231,7 @@ export function PetBag({ panelState }: Props) {
 
     const handleOpenPetItemUseProp = async (ct: number) => {
         await ModuleManager.showModule('petBag');
-        const petBagModule = Utils.SeerModuleHelper.currentModule<petBag.PetBag>();
+        const petBagModule = SAEngine.SeerModuleHelper.currentModule<petBag.PetBag>();
         const petBagPanel = petBagModule.currentPanel!;
         await delay(300);
         petBagPanel.onSelectPet({ data: PetManager.getPetInfo(ct) });
@@ -266,9 +265,9 @@ export function PetBag({ panelState }: Props) {
     if (!battleFire.valid) {
         fireRenderProps = { color: 'inherit', text: '无火焰' };
     } else {
-        if (battleFire.type === Const.BATTLE_FIRE.绿火) {
+        if (battleFire.type === Constant.BattleFireType.绿火) {
             fireRenderProps = { color: 'green', text: '使用中: 绿火' };
-        } else if (battleFire.type === Const.BATTLE_FIRE.金火) {
+        } else if (battleFire.type === Constant.BattleFireType.金火) {
             fireRenderProps = { color: 'gold', text: '使用中: 金火' };
         } else {
             fireRenderProps = { color: 'inherit', text: '其他火焰' };
@@ -279,7 +278,7 @@ export function PetBag({ panelState }: Props) {
     return (
         <>
             <Button onClick={openPetBag}>打开背包界面</Button>
-            <Button onClick={PetHelper.cureAllPet}>全体治疗</Button>
+            <Button onClick={SAPetHelper.cureAllPet}>全体治疗</Button>
             <Divider />
             <h3>火焰信息</h3>
             <Typography color={fireRenderProps.color}>
@@ -386,7 +385,7 @@ export function PetBag({ panelState }: Props) {
                             </Button>
                             <Button
                                 onClick={() => {
-                                    PetHelper.cureOnePet(row.catchTime);
+                                    SAPetHelper.cureOnePet(row.catchTime);
                                 }}
                             >
                                 治疗

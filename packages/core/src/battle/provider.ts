@@ -1,5 +1,5 @@
 import { Pet, PetRoundInfo, Skill } from '../entity';
-
+import { getPetCached } from '../pet-helper';
 export interface RoundInfo {
     self?: PetRoundInfo;
     other?: PetRoundInfo;
@@ -8,7 +8,7 @@ export interface RoundInfo {
 }
 
 export const Provider = {
-    cachedRoundInfo: null,
+    cachedRoundInfo: null as null | [PetRoundInfo, PetRoundInfo],
     getCurRoundInfo() {
         if (!FighterModelFactory.playerMode) return null;
         let result: RoundInfo = {
@@ -41,8 +41,6 @@ export const Provider = {
     getPets(): null | Pet[] {
         if (!FightUserInfo.fighterInfos) return null;
         const infos = FightUserInfo.fighterInfos.myInfo.petCatchArr;
-        return infos.map((v, i) => {
-            return Object.assign(PetHelper.formatByCatchtime(v));
-        });
+        return infos.map((v) => ({ ...getPetCached(v) }));
     },
 };

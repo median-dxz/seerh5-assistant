@@ -1,4 +1,4 @@
-async function delay(time: number): Promise<void> {
+export async function delay(time: number): Promise<void> {
     return new Promise((resolver) => {
         const monitor = setTimeout(() => {
             clearTimeout(monitor);
@@ -7,8 +7,8 @@ async function delay(time: number): Promise<void> {
     });
 }
 
-function wrapper<F extends AnyFunction>(
-    func: F,
+export function wrapper<F extends AnyFunction>(
+     func: F,
     beforeDecorator?: (...args: Parameters<F>) => any,
     afterDecorator?: (result: Awaited<ReturnType<F>>, ...args: Parameters<F>) => any
 ) {
@@ -25,18 +25,15 @@ function wrapper<F extends AnyFunction>(
     return wrappedFunc;
 }
 
-const SAEventTarget = new EventTarget();
+export const SAEventTarget = new EventTarget();
 
-const checkEnv = () =>
+export const checkEnv = () =>
     typeof window !== 'undefined' && window.sac != undefined && window.sac?.SacReady && window.sac?.SeerH5Ready;
 
-const extractObjectId = <T extends { [key in K]: number }, K extends string>(obj: T | number, key: K) => {
+    export const extractObjectId = <T extends { [key in K]: number }, K extends string>(obj: T | number, key: K) => {
     if (typeof obj === 'number') {
         return obj;
     } else {
         return obj[key];
     }
 };
-
-export { SAEventTarget, wrapper, delay, checkEnv, extractObjectId };
-

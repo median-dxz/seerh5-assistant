@@ -1,10 +1,8 @@
 import { DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import { useCore } from '@sa-app/provider/useCore';
 import React from 'react';
-import { AutoBattle } from 'seerh5-assistant-core';
 
-const { Battle } = useCore();
-const { Manager } = Battle;
+import { SABattle } from 'seerh5-assistant-core';
+const { Manager } = SABattle;
 
 export type LevelExtendsProps<P = unknown> = P & {
     running: boolean;
@@ -28,6 +26,6 @@ export function LevelBase(props: React.PropsWithChildren<LevelBaseProps>) {
     );
 }
 
-export function updateCustomStrategy(custom?: AutoBattle.MoveModule) {
+export function updateCustomStrategy(custom?: SABattle.MoveModule) {
     Manager.strategy = custom;
 }

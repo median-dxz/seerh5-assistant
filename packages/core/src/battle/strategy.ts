@@ -1,10 +1,14 @@
 import { delay } from '../common';
 import { Pet, Skill } from '../entity';
+import { SaModuleLogger, defaultStyle } from '../logger';
 import type { MoveModule } from './manager';
+import { Manager } from './manager';
 import { Operator } from './operator';
 import { Provider } from './provider';
 
-class SkillNameMatch {
+const log = SaModuleLogger('BattleModuleManager', defaultStyle.core);
+
+export class SkillNameMatch {
     skillNames: string[] = [];
     constructor(names: string[]) {
         this.skillNames = names;
@@ -17,7 +21,7 @@ class SkillNameMatch {
     }
 }
 
-class DiedSwitchLink {
+export class DiedSwitchLink {
     petNames: string[] = [];
     constructor(names: string[]) {
         this.petNames = names;
@@ -26,18 +30,18 @@ class DiedSwitchLink {
      * @returns 匹配失败返回 -1
      */
     match(pets: Pet[], dyingCt: number) {
-        let swName = '';
+        let checkName = '';
         for (let pet of pets) {
             if (pet.catchTime === dyingCt) {
-                swName = pet.name;
+                checkName = pet.name;
                 break;
             }
         }
-        if (!this.petNames.includes(swName)) return -1;
-        swName = this.petNames[this.petNames.indexOf(swName) + 1];
-        for (let i = 1; i < pets.length; i++) {
+        if (!this.petNames.includes(checkName)) return -1;
+        checkName = this.petNames[this.petNames.indexOf(checkName) + 1];
+        for (let i = 0; i < pets.length; i++) {
             const pet = pets[i];
-            if (pet.name === swName) {
+            if (pet.name === checkName) {
                 if (pet.hp === 0) {
                     return -1;
                 } else {
@@ -49,7 +53,7 @@ class DiedSwitchLink {
     }
 }
 
-function generateStrategy(_snm: string[], _dsl: string[]): MoveModule {
+export function generateStrategy(_snm: string[], _dsl: string[]): MoveModule {
     return async (round, skills, pets) => {
         const snm = new SkillNameMatch(_snm);
         const dsl = new DiedSwitchLink(_dsl);
@@ -72,7 +76,7 @@ function generateStrategy(_snm: string[], _dsl: string[]): MoveModule {
     };
 }
 
-const defaultStrategy = {
+export const defaultStrategy = {
     switchNoBlood: async () => {
         Operator.auto();
     },
@@ -86,4 +90,68 @@ const defaultStrategy = {
     },
 };
 
-export { DiedSwitchLink, SkillNameMatch, generateStrategy };
+
+export interface Strategy {
+    dsl: Array<string[]>;
+    snm: Array<string[]>;
+    default: {
+        switchNoBlood: MoveModule;
+        useSkill: MoveModule;
+    };
+}
+
+export async function resolveStrategy(strategy: Strategy) {
+    if (FighterModelFactory.playerMode == null) {
+        log(`执行策略失败: 当前playerMode为空`);
+        return;
+    }
+
+    if (Manager.strategy != undefined) {
+        return;
+    }
+
+    const info = Provider.getCurRoundInfo()!;
+    let skills = Provider.getCurSkills()!;
+    const pets = Provider.getPets()!;
+
+    let success = false;
+
+    if (info.isDiedSwitch) {
+        for (let petNames of strategy.dsl) {
+            const matcher = new DiedSwitchLink(petNames);
+            const r = matcher.match(pets, info.self!.catchtime);
+            if (r !== -1) {
+                Operator.switchPet(r);
+                success = true;
+                log(`精灵索引 ${r} 匹配成功: 死切链: [${petNames.join('|')}]`);
+                break;
+            }
+        }
+
+        if (!success) {
+            strategy.default.switchNoBlood(info, skills, pets);
+            log('执行默认死切策略');
+        }
+
+        await delay(600);
+        skills = Provider.getCurSkills()!;
+    }
+
+    success = false;
+
+    for (let skillNames of strategy.snm) {
+        const matcher = new SkillNameMatch(skillNames);
+        const r = matcher.match(skills);
+        if (r) {
+            Operator.useSkill(r);
+            success = true;
+            log(`技能 ${r} 匹配成功: 技能组: [${skillNames.join('|')}]`);
+            break;
+        }
+    }
+
+    if (!success) {
+        strategy.default.useSkill(info, skills, pets);
+        log('执行默认技能使用策略');
+    }
+}

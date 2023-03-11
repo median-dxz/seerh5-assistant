@@ -1,6 +1,15 @@
-import { Mod, ModuleSubscriber, Pet, SaModuleLogger, defaultStyle } from 'seerh5-assistant-core';
+import {
+    Mod,
+    ModuleSubscriber,
+    SAEngine,
+    SAEntity,
+    SAEventHandler,
+    SaModuleLogger,
+    defaultStyle,
+    delay,
+    wrapper,
+} from 'seerh5-assistant-core';
 
-const { Utils, EventHandler } = sa;
 
 const log = SaModuleLogger('LocalCloth', defaultStyle.mod);
 
@@ -109,7 +118,7 @@ class LocalCloth extends Mod {
                 'petBag.MainPanelTouchPetItemBegin',
                 (e: egret.TouchEvent) => {
                     const { petInfo } = e.data as { petInfo: PetInfo };
-                    petInfo && log(new Pet(petInfo));
+                    petInfo && log(new SAEntity.Pet(petInfo));
                 },
                 null
             );
@@ -193,7 +202,7 @@ class LocalCloth extends Mod {
                 changeCloth.delete(petInfo.id);
                 originalCloth.set(petInfo.id, _skinId);
                 saveToStorage();
-                await Utils.SocketSendByQueue(47310, [catchTime, skinId]);
+                await SAEngine.Socket.sendByQueue(47310, [catchTime, skinId]);
             } else {
                 if (!originalCloth.has(petInfo.id)) {
                     originalCloth.set(petInfo.id, petInfo.skinId);
@@ -210,13 +219,13 @@ class LocalCloth extends Mod {
             callback && callback();
         };
 
-        EventHandler.SeerModuleStatePublisher.attach(this.subscriber, 'petBag');
+        SAEventHandler.SeerModuleStatePublisher.attach(this.subscriber, 'petBag');
     }
 
     meta = { description: '本地全皮肤解锁' };
     init() {}
     destroy() {
-        EventHandler.SeerModuleStatePublisher.detach(this.subscriber, 'petBag');
+        SAEventHandler.SeerModuleStatePublisher.detach(this.subscriber, 'petBag');
     }
 }
 

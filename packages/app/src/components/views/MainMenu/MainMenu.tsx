@@ -24,10 +24,10 @@ const actions = [
 export function MainMenu() {
     let [autoCure, setAutoCure] = useState(false);
     let [open, setOpen] = useState(false);
-    
-    const { PetHelper } = useCore();
+
+    const { SAPetHelper } = useCore();
     useEffect(() => {
-        PetHelper.getAutoCureState().then(setAutoCure);
+        SAPetHelper.getAutoCureState().then(setAutoCure);
     }, []);
 
     actions[0].name = `自动治疗:${autoCure ? '开' : '关'}`;
@@ -36,17 +36,17 @@ export function MainMenu() {
         () => {
             autoCure = !autoCure;
             setAutoCure(autoCure);
-            PetHelper.toggleAutoCure(autoCure);
+            SAPetHelper.toggleAutoCure(autoCure);
         },
         () => {
             FightManager.fightNoMapBoss(6730);
         },
         () => {
-            const { SAMods: mods } = window;
+            const { Mods: mods } = sac;
             mods.get('sign')!.run!();
         },
         () => {
-            const { SAMods: mods } = window;
+            const { Mods: mods } = sac;
             mods.get('sign')!.reflect('teamDispatch');
         },
     ];

@@ -1,7 +1,7 @@
 import { EntityBase, type EntityType } from './EntityBase';
 import { Skill } from './Skill';
 
-interface IPetObject {
+export interface IPetObject {
     id: number;
     name: string;
     element: number;
@@ -19,7 +19,7 @@ const testPetStorage2015PetInfoType = (o: SAType.PetLike): o is PetStorage2015Pe
     return Object.hasOwn(o, 'posi');
 };
 
-class Pet extends EntityBase implements IPetObject {
+export class Pet extends EntityBase implements IPetObject {
     __type: EntityType = 'Pet';
     static readonly key = 'id';
     static readonly instanceKey = 'catchTime';
@@ -38,7 +38,7 @@ class Pet extends EntityBase implements IPetObject {
                 obj.name,
                 obj.catchTime,
                 obj.dv,
-                PetXMLInfo.getType(3673),
+                PetXMLInfo.getType(obj.id),
                 obj.nature,
                 obj.hp,
                 obj.maxHp,
@@ -58,7 +58,3 @@ class Pet extends EntityBase implements IPetObject {
         }
     }
 }
-
-export type { IPetObject };
-export { Pet };
-

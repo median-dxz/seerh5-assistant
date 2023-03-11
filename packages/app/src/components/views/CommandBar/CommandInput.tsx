@@ -37,14 +37,14 @@ export function CommandInput() {
 
     useEffect(() => {
         let o = [];
-        const Mods = window.SAMods;
+        const Mods = sac.Mods;
         if (modName) {
             for (const key of Mods.get(modName)!.getKeys()) {
                 o.push(key);
             }
             o.push('return');
-        } else if (window.SAMods) {
-            for (const key of window.SAMods.keys()) {
+        } else if (sac.Mods) {
+            for (const key of sac.Mods.keys()) {
                 o.push(key);
             }
         }
@@ -89,7 +89,7 @@ export function CommandInput() {
             value={value}
             onChange={(event, newValue: string | null) => {
                 if (modName && newValue) {
-                    window.SAMods.get(modName)!.reflect(newValue);
+                    sac.Mods.get(modName)!.reflect(newValue);
                     useBubbleHint(`[Info]: 应用命令: ${modName}: ${newValue}`);
                     if (newValue === 'return') {
                         handleLeaveMod();

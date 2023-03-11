@@ -1,10 +1,7 @@
-export { SendByQueue as SocketSendByQueue };
-export { ReceivedPromise as SocketReceivedPromise };
-
 /**
  * @description 将数据包加到待发送队列
  */
-async function SendByQueue(cmd: number, data: Array<number> | number = []) {
+export async function sendByQueue(cmd: number, data: Array<number> | number = []) {
     let _data = typeof data === 'number' ? [data] : data;
     return new Promise<ArrayBuffer>((resolve, reject) => {
         SocketConnection.sendByQueue(
@@ -19,18 +16,33 @@ async function SendByQueue(cmd: number, data: Array<number> | number = []) {
 /**
  * @description 返回服务器响应cmd后才resolve的promise
  */
-async function ReceivedPromise(cmd: number, fn: VoidFunction) {
+export async function sendWithReceivedPromise(cmd: number, fn: VoidFunction) {
     if (!fn) return;
-    return new Promise<void>((resolve, reject) => {
-        new Promise((resolve: (value: VoidFunction) => void, reject) => {
-            function resolver() {
-                resolve(resolver);
+    return new Promise<ArrayBuffer>((resolve, reject) => {
+        new Promise<{ data: ArrayBuffer; resolver: CallBack<ArrayBuffer> }>((resolve, reject) => {
+            function resolver(data: ArrayBuffer) {
+                resolve({ data, resolver });
             }
             SocketConnection.addCmdListener(cmd, resolver);
-        }).then((v) => {
-            SocketConnection.removeCmdListener(cmd, v);
-            resolve();
+        }).then(({ data, resolver }) => {
+            SocketConnection.removeCmdListener(cmd, resolver);
+            resolve(data);
         });
         fn();
     });
+}
+
+export async function multiValue(...values: number[]): Promise<number[]> {
+    if (!values) return [];
+    return KTool.getMultiValueAsync(values);
+}
+
+export async function bitSet(...values: number[]): Promise<boolean[]> {
+    if (!values) return [];
+    return KTool.getBitSetAsync(values).then((r) => r.map(Boolean));
+}
+
+export async function playerInfo(...values: number[]): Promise<number[]> {
+    if (!values) return [];
+    return KTool.getPlayerInfoValueAsync(values);
 }

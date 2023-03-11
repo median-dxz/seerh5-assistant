@@ -1,4 +1,4 @@
-const events = {
+export const Hook = {
     Socket: {},
     Module: {
         loadScript: 'sa_module_script_loaded',
@@ -17,5 +17,5 @@ const events = {
         receive: 'sa_award_receive',
     },
 } as const;
-export { events as SA_CONST_EVENTS };
+
 

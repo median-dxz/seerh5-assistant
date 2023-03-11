@@ -5,7 +5,7 @@ import { delay } from 'seerh5-assistant-core';
 import { PercentLinearProgress } from '../base';
 import { LevelBase, LevelExtendsProps, updateCustomStrategy } from './LevelBase';
 import dataProvider from './data';
-const { Battle, Functions, PetHelper, Utils } = useCore();
+const { SABattle, SAPetHelper, SAEngine, switchBag } = useCore();
 
 interface LevelData {
     stimulation: boolean;
@@ -19,8 +19,8 @@ const maxDailyChallengeTimes = 5;
 
 const updateLevelData = async () => {
     const data = {} as LevelData;
-    const bits = await Utils.GetBitSet(636, 1000577);
-    const playerInfo = new DataView(await Utils.SocketSendByQueue(42397, [117]));
+    const bits = await SAEngine.Socket.bitSet(636, 1000577);
+    const playerInfo = new DataView(await SAEngine.Socket.sendByQueue(42397, [117]));
 
     data.stimulation = bits[0];
     data.rewardReceived = bits[1];
@@ -58,9 +58,9 @@ export function LevelCourageTower(props: LevelExtendsProps) {
                 break;
             case 1: //daily challenge
                 setHint('正在准备背包');
-                await Functions.switchBag(customData.cts);
-                PetHelper.cureAllPet();
-                PetHelper.setDefault(customData.cts[0]);
+                await switchBag(customData.cts);
+                SAPetHelper.cureAllPet();
+                SAPetHelper.setDefault(customData.cts[0]);
                 setHint('准备背包完成');
                 await delay(500);
 
@@ -68,7 +68,7 @@ export function LevelCourageTower(props: LevelExtendsProps) {
 
                 updateCustomStrategy(customData.strategy);
                 while (levelData.current.challengeCount < maxDailyChallengeTimes && currentRunning.current) {
-                    await Battle.Manager.runOnce(() => {
+                    await SABattle.Manager.runOnce(() => {
                         setHint(
                             <>
                                 <Typography component={'div'}>正在进行对战...</Typography>
@@ -79,7 +79,7 @@ export function LevelCourageTower(props: LevelExtendsProps) {
                                 />
                             </>
                         );
-                        Utils.SocketSendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [117, 30, 1]);
+                        SAEngine.Socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [117, 30, 1]);
                     });
                     levelData.current = await updateLevelData();
                 }
@@ -90,7 +90,7 @@ export function LevelCourageTower(props: LevelExtendsProps) {
             case 2: //try get daily reward
                 setHint('正在查询每日奖励领取状态');
                 try {
-                    await Utils.SocketSendByQueue(42395, [117, 4, 0, 0]);
+                    await SAEngine.Socket.sendByQueue(42395, [117, 4, 0, 0]);
                 } catch (error) {
                     setStep(-1);
                 }

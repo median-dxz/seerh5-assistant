@@ -5,18 +5,18 @@ import { Container, ThemeProvider } from '@mui/system';
 
 import { PanelStateContext } from '@sa-app/context/PanelState';
 import { SAContext } from '@sa-app/context/SAContext';
-import { useCore } from '@sa-app/provider/useCore';
+
 import { mainTheme } from '@sa-app/style';
-import { AutoBattle } from 'seerh5-assistant-core';
+
 import { CommandBar } from './CommandBar';
 import { MainButton } from './MainButton';
 import { MainMenu } from './MainMenu';
 import { MainPanel } from './MainPanel';
 
-import { SAEventTarget } from 'seerh5-assistant-core';
-const { Battle, Const } = useCore();
-const { defaultStrategy, resolveStrategy } = Battle;
-const { EVENTS } = Const;
+import { Constant, SABattle, SAEventTarget } from 'seerh5-assistant-core';
+
+const { defaultStrategy, resolveStrategy } = SABattle;
+const { Hook } = Constant;
 
 export default function SaMain() {
     const [isCommandBarOpen, toggleCommandBar] = useState(false);
@@ -32,11 +32,11 @@ export default function SaMain() {
         item && (dsl = JSON.parse(item));
         item = window.localStorage.getItem('BattleStrategySNM');
         item && (snm = JSON.parse(item));
-        return { default: defaultStrategy, dsl: dsl, snm: snm } as AutoBattle.Strategy;
+        return { default: defaultStrategy, dsl: dsl, snm: snm } as SABattle.Strategy;
     });
     const [battleAuto, setBattleAuto] = useState(false);
     const updateBattleStrategy = useCallback(
-        (strategy: AutoBattle.Strategy) => {
+        (strategy: SABattle.Strategy) => {
             setBattleStrategy(strategy);
             let item;
             item = strategy.dsl;
@@ -68,12 +68,12 @@ export default function SaMain() {
 
     useEffect(() => {
         document.body.addEventListener('keydown', handleShortCut);
-        SAEventTarget.addEventListener(EVENTS.BattlePanel.panelReady, handleBattleRoundEnd);
-        SAEventTarget.addEventListener(EVENTS.BattlePanel.roundEnd, handleBattleRoundEnd);
+        SAEventTarget.addEventListener(Hook.BattlePanel.panelReady, handleBattleRoundEnd);
+        SAEventTarget.addEventListener(Hook.BattlePanel.roundEnd, handleBattleRoundEnd);
         return () => {
             document.body.removeEventListener('keydown', handleShortCut);
-            SAEventTarget.removeEventListener(EVENTS.BattlePanel.panelReady, handleBattleRoundEnd);
-            SAEventTarget.removeEventListener(EVENTS.BattlePanel.roundEnd, handleBattleRoundEnd);
+            SAEventTarget.removeEventListener(Hook.BattlePanel.panelReady, handleBattleRoundEnd);
+            SAEventTarget.removeEventListener(Hook.BattlePanel.roundEnd, handleBattleRoundEnd);
         };
     }, [lockMainPanel, battleAuto, battleStrategy]);
 

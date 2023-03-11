@@ -5,10 +5,8 @@ import React from 'react';
 
 import { TextEditDialog, TextEditDialogProps } from '@sa-app/components/common/TextEditDialog';
 import { SAContext } from '@sa-app/context/SAContext';
-import { useCore } from '@sa-app/provider/useCore';
-import { AutoBattle } from 'seerh5-assistant-core';
+import { SABattle } from 'seerh5-assistant-core';
 import { PanelTableBase, PanelTableBodyRow } from '../base';
-const { Battle } = useCore();
 
 const handleAdd = (arr: any[], value: string) => {
     arr.push(value.split(','));
@@ -39,7 +37,7 @@ export function BattleManager() {
 
     const [dialogProps, setDialogState] = React.useState<TextEditDialogProps>(defaultDialogState);
 
-    const withStrategy = (operator: (baseState: AutoBattle.Strategy) => void) =>
+    const withStrategy = (operator: (baseState: SABattle.Strategy) => void) =>
         updateStrategy(
             produce(strategy, (draft) => {
                 operator(draft);
@@ -70,7 +68,7 @@ export function BattleManager() {
             />
             <Button
                 onClick={() => {
-                    Battle.Manager.clear();
+                    SABattle.Manager.clear();
                 }}
             >
                 一键复位

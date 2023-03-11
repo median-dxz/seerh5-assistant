@@ -1,5 +1,5 @@
 import { delay } from '../common';
-import { SocketSendByQueue } from '../engine/socket';
+import { Socket } from '../engine';
 import { defaultStyle, SaModuleLogger } from '../logger';
 const log = SaModuleLogger('BattleOperator', defaultStyle.core);
 
@@ -18,11 +18,11 @@ export const Operator = {
             log('非法的skillId');
         } else {
             log(FighterModelFactory.playerMode.info.petName, SkillXMLInfo.getName(skillId));
-            SocketSendByQueue(CommandID.USE_SKILL, skillId);
+            Socket.sendByQueue(CommandID.USE_SKILL, skillId);
         }
     },
     escape: () => {
-        SocketSendByQueue(CommandID.ESCAPE_FIGHT);
+        Socket.sendByQueue(CommandID.ESCAPE_FIGHT);
     },
 
     useItem: async (itemId: number) => {

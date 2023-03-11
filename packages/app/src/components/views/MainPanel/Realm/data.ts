@@ -1,12 +1,10 @@
-const { Battle } = useCore();
-const { BaseStrategy, generateStrategy, InfoProvider, Operator } = Battle;
-import { useCore } from '@sa-app/provider/useCore';
-import { AutoBattle, delay } from 'seerh5-assistant-core';
+import { SABattle, delay } from 'seerh5-assistant-core';
+const { generateStrategy, Operator, Provider, SkillNameMatch, DiedSwitchLink } = SABattle;
 
 interface LevelPetsData {
     [levelName: string]: {
         cts: number[];
-        strategy: AutoBattle.MoveModule;
+        strategy: SABattle.MoveModule;
     };
 }
 
@@ -26,8 +24,8 @@ const data: LevelPetsData = {
     LevelCourageTower: {
         cts: [1656055512, 1656302059, 1656056275, 1656092908],
         strategy: async (round, skills, pets) => {
-            const snm = new BaseStrategy.SkillNameMatch(['王·龙子盛威决', '竭血残蝶', '时空牵绊']);
-            const dsl = new BaseStrategy.DiedSwitchLink(['幻影蝶', '圣灵谱尼', '蒂朵']);
+            const snm = new SkillNameMatch(['王·龙子盛威决', '竭血残蝶', '时空牵绊']);
+            const dsl = new DiedSwitchLink(['幻影蝶', '圣灵谱尼', '蒂朵']);
             if (round.isDiedSwitch) {
                 const r = dsl.match(pets, round.self!.catchtime);
                 if (r !== -1) {
@@ -36,7 +34,7 @@ const data: LevelPetsData = {
                     Operator.auto();
                 }
                 await delay(600);
-                skills = InfoProvider.getCurSkills()!;
+                skills = Provider.getCurSkills()!;
             }
             const r = snm.match(skills);
             if (r) {

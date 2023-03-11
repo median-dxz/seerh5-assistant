@@ -1,5 +1,5 @@
 import { useRfcData } from '@sa-app/provider/useRfcData';
-import { Mod, SaModuleLogger, defaultStyle, delay } from 'seerh5-assistant-core';
+import { Constant, Mod, SAEngine, SAPetHelper, SaModuleLogger, defaultStyle, delay, usePotionForPet } from 'seerh5-assistant-core';
 
 const log = SaModuleLogger('Sign', defaultStyle.mod);
 
@@ -25,8 +25,6 @@ const AWARD_LIST = {
     },
 };
 
-const { Utils, Const, PetHelper, Functions } = sa;
-
 class sign extends Mod {
     meta = { description: '日任常用功能' };
     data: any;
@@ -39,15 +37,15 @@ class sign extends Mod {
     }
     async run() {
         const CMDID = CommandID;
-        let curTimes = (await Utils.GetMultiValue(MULTI.日常.刻印抽奖次数))[0];
+        let curTimes = (await SAEngine.Socket.multiValue(MULTI.日常.刻印抽奖次数))[0];
         if (curTimes === 0) {
             //CMD MARKDRAW: 46301
-            Utils.SocketSendByQueue(46301, [1, 0]);
+            SAEngine.Socket.sendByQueue(46301, [1, 0]);
         } else {
             log('今日已抽奖');
         }
 
-        curTimes = (await Utils.GetMultiValue(MULTI.许愿.登录时长))[0];
+        curTimes = (await SAEngine.Socket.multiValue(MULTI.许愿.登录时长))[0];
         curTimes =
             curTimes +
             Math.floor(SystemTimerManager.sysBJDate.getTime() / 1e3) -
@@ -67,66 +65,66 @@ class sign extends Mod {
             : curTimes >= 5
             ? (t = 1)
             : (t = 0);
-        t -= (await Utils.GetMultiValue(MULTI.许愿.已许愿次数))[0];
+        t -= (await SAEngine.Socket.multiValue(MULTI.许愿.已许愿次数))[0];
         while (t--) {
-            Utils.SocketSendByQueue(45801, [2, 1]);
+            SAEngine.Socket.sendByQueue(45801, [2, 1]);
         }
 
-        curTimes = (await Utils.GetMultiValue(MULTI.战队.资源生产次数))[0];
+        curTimes = (await SAEngine.Socket.multiValue(MULTI.战队.资源生产次数))[0];
         t = Math.max(0, 5 - curTimes);
         while (t--) {
             // RES_PRODUCT_BUY
-            Utils.SocketSendByQueue(CMDID.RES_PRODUCTORBUY, [2, 0]);
+            SAEngine.Socket.sendByQueue(CMDID.RES_PRODUCTORBUY, [2, 0]);
         }
-        curTimes = (await Utils.GetMultiValue(MULTI.许愿.许愿签到))[0];
+        curTimes = (await SAEngine.Socket.multiValue(MULTI.许愿.许愿签到))[0];
         if (!curTimes) {
-            t = (await Utils.GetMultiValue(MULTI.许愿.许愿签到天数))[0];
-            Utils.SocketSendByQueue(45801, [1, t + 1]);
+            t = (await SAEngine.Socket.multiValue(MULTI.许愿.许愿签到天数))[0];
+            SAEngine.Socket.sendByQueue(45801, [1, t + 1]);
         }
 
         // vip点数
-        curTimes = (await Utils.GetMultiValue(11516))[0];
+        curTimes = (await SAEngine.Socket.multiValue(11516))[0];
         if (!curTimes) {
-            Utils.SocketSendByQueue(CMDID.VIP_BONUS_201409, 1);
+            SAEngine.Socket.sendByQueue(CMDID.VIP_BONUS_201409, 1);
         }
 
         await delay(300);
         curTimes = MainManager.actorInfo.vipScore;
         if (curTimes >= 20) {
-            Utils.SocketSendByQueue(CommandID.VIP_SCORE_EXCHANGE, AWARD_LIST.vip点数.体力上限药).then(() => {
+            SAEngine.Socket.sendByQueue(CommandID.VIP_SCORE_EXCHANGE, AWARD_LIST.vip点数.体力上限药).then(() => {
                 EventManager.dispatchEventWith('vipRewardBuyOrGetItem');
             });
         }
 
-        curTimes = (await Utils.GetMultiValue(14204))[0];
+        curTimes = (await SAEngine.Socket.multiValue(14204))[0];
         if (!curTimes) {
-            Utils.SocketSendByQueue(CMDID.SEER_VIP_DAILY_REWARD);
+            SAEngine.Socket.sendByQueue(CMDID.SEER_VIP_DAILY_REWARD);
         }
 
         // 苍星签到
-        [curTimes, t] = await Utils.GetMultiValue(123157, 202284);
+        [curTimes, t] = await SAEngine.Socket.multiValue(123157, 202284);
         if (curTimes < 80 && !t) {
-            Utils.SocketSendByQueue(41800, [89, 12]);
+            SAEngine.Socket.sendByQueue(41800, [89, 12]);
         }
     }
     async teamDispatch() {
         try {
-            await Utils.SocketSendByQueue(45809, 0);
+            await SAEngine.Socket.sendByQueue(45809, 0);
         } catch (err) {
             void log('无法收取派遣');
         }
         const ignorePetNames = new Set(this.data.ignorePetNames);
-        const PosType = Const.PET_POS;
+        const PosType = Constant.PetPosition;
         let reprogress = false;
         for (let tid = 16; tid > 0; tid--) {
             if (tid === 5) tid = 1;
             if (!reprogress) {
                 // 清空背包
-                for (let p of await PetHelper.getBagPets(PosType.bag1)) {
-                    await PetHelper.setPetLocation(p.catchTime, PosType.storage);
+                for (let p of await SAPetHelper.getBagPets(PosType.bag1)) {
+                    await SAPetHelper.setPetLocation(p.catchTime, PosType.storage);
                 }
             }
-            const data = await Utils.SocketSendByQueue(45810, tid)
+            const data = await SAEngine.Socket.sendByQueue(45810, tid)
                 .then((v) => new DataView(v))
                 .catch((err) => undefined);
             if (!data) continue;
@@ -154,7 +152,7 @@ class sign extends Mod {
             for (let pid of e.petIds) {
                 const petName = PetXMLInfo.getName(pid);
                 if (ignorePetNames.has(petName)) {
-                    await PetHelper.setPetLocation(e.cts[index], 1);
+                    await SAPetHelper.setPetLocation(e.cts[index], 1);
                     log(`取出非派遣精灵: ${petName}`);
                 }
                 index++;
@@ -164,31 +162,31 @@ class sign extends Mod {
                 tid++;
             } else {
                 console.table(e.petIds.map((v) => PetXMLInfo.getName(v)));
-                Utils.SocketSendByQueue(45808, [tid, e.cts[0], e.cts[1], e.cts[2], e.cts[3], e.cts[4]]);
+                SAEngine.Socket.sendByQueue(45808, [tid, e.cts[0], e.cts[1], e.cts[2], e.cts[3], e.cts[4]]);
             }
             log(`派遣任务处理完成`);
         }
     }
 
-    craftDreamGem(id: AttrConst<typeof Const.ITEMS.DreamGem>, left: number) {
+    craftDreamGem(id: AttrConst<typeof Constant.Item.DreamGem>, left: number) {
         const total = ItemManager.getNumByID(id);
-        const { 低阶梦幻宝石, 中阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石, 高阶梦幻宝石 } = Const.ITEMS.DreamGem;
+        const { 低阶梦幻宝石, 中阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石, 高阶梦幻宝石 } = Constant.Item.DreamGem;
         const level = [低阶梦幻宝石, 中阶梦幻宝石, 高阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石];
         for (let i = 1; i <= Math.trunc((total - left) / 4); i++) {
-            Utils.SocketSendByQueue(9332, [level.indexOf(id), 4]);
+            SAEngine.Socket.sendByQueue(9332, [level.indexOf(id), 4]);
         }
     }
 
     async resetNature(ct: number, nature: number) {
         for (; ; await delay(200)) {
-            await Functions.usePotionForPet(ct, 300070);
+            await usePotionForPet(ct, 300070);
             const info = await PetManager.UpdateBagPetInfoAsynce(ct);
 
             log(`刷性格: 当前性格: ${NatureXMLInfo.getName(info.nature)}`);
             if (info.nature === nature) {
                 break;
             }
-            await Utils.SocketReceivedPromise(CommandID.MULTI_ITEM_LIST, () => {
+            await SAEngine.Socket.sendWithReceivedPromise(CommandID.MULTI_ITEM_LIST, () => {
                 ItemManager.updateItemNum([300070], [true]);
             });
             await delay(200);

@@ -1,14 +1,14 @@
 import { PetFragmentLevelDifficulty } from '../constant';
 import { EntityBase, type EntityType } from './EntityBase';
 
-interface IPFLevelBoss {
+export interface IPFLevelBoss {
     BattleBoss: number;
     pet: number;
     description: string;
     id: number;
 }
 
-interface IPetFragmentLevelObject {
+export interface IPetFragmentLevelObject {
     petFragmentItem: number;
     level: { ease: IPFLevelBoss[]; normal: IPFLevelBoss[]; hard: IPFLevelBoss[] };
     /** 今日总次数 */
@@ -31,7 +31,7 @@ interface IPetFragmentLevelObject {
     };
 }
 
-class PetFragmentLevel extends EntityBase implements IPetFragmentLevelObject {
+export class PetFragmentLevel extends EntityBase implements IPetFragmentLevelObject {
     static readonly key = 'id';
     static readonly instanceKey = 'id';
     readonly __type: EntityType = 'PetFragmentLevel';
@@ -89,7 +89,3 @@ class PetFragmentLevel extends EntityBase implements IPetFragmentLevelObject {
         };
     }
 }
-
-export type { IPetFragmentLevelObject, IPFLevelBoss };
-export { PetFragmentLevel };
-

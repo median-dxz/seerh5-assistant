@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useLayoutEffect, useState } from 'react';
 
 import { PanelState } from '@sa-app/context/PanelState';
-import { Item } from 'seerh5-assistant-core';
+import { SAEntity } from 'seerh5-assistant-core';
 import { PanelTableBase, PanelTableBodyRow, PercentLinearProgress } from '../base';
 import { idList, openModuleList } from './data';
 
@@ -22,7 +22,7 @@ interface Props {
 }
 
 export function CommonValue(props: Props) {
-    const rows = idList.map((key) => ItemXMLInfo.getItemObj(key)).map((obj) => new Item(obj));
+    const rows = idList.map((key) => ItemXMLInfo.getItemObj(key)).map((obj) => new SAEntity.Item(obj));
     const { panelState } = props;
     let [imgEl, setImgEl] = useState(icons ?? []);
     let [initIcon, completeInitIcon] = useState(false);
@@ -36,7 +36,7 @@ export function CommonValue(props: Props) {
                         if (r) {
                             return r.src;
                         } else {
-                            return window.SAResourceMap.get(ClientConfig.getItemIcon(row.id));
+                            return sac.ResourceCache.get(ClientConfig.getItemIcon(row.id));
                         }
                     })
                     .catch((reason) => {

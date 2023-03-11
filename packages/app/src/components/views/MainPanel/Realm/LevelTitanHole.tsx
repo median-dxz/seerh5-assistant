@@ -2,12 +2,13 @@ import { Typography } from '@mui/material';
 
 import { useCore } from '@sa-app/provider/useCore';
 import React from 'react';
-import { Pet, delay } from 'seerh5-assistant-core';
+import { Constant, delay, SAEntity } from 'seerh5-assistant-core';
 import { PercentLinearProgress } from '../base';
 import { LevelBase, LevelExtendsProps, updateCustomStrategy } from './LevelBase';
 
 import dataProvider from './data';
-const { Battle, Functions, PetHelper, Utils, Const } = useCore();
+const { SABattle, SAPetHelper, SAEngine, switchBag } = useCore();
+
 interface LevelData {
     stimulation: boolean;
     levelOpen: boolean;
@@ -23,8 +24,8 @@ const maxDailyChallengeTimes = 2;
 
 const updateLevelData = async () => {
     const data = {} as LevelData;
-    const bits = await Utils.GetBitSet(640);
-    const values = await Utils.GetMultiValue(18724, 18725, 18726, 18727);
+    const bits = await SAEngine.Socket.bitSet(640);
+    const values = await SAEngine.Socket.multiValue(18724, 18725, 18726, 18727);
 
     data.stimulation = bits[0];
 
@@ -44,8 +45,8 @@ export function LevelTitanHole(props: LevelExtendsProps) {
     const levelData = React.useRef({} as LevelData);
 
     const effect = async () => {
-        let pets: Pet[];
-        let pet: undefined | Pet;
+        let pets: SAEntity.Pet[];
+        let pet: undefined | SAEntity.Pet;
         switch (step) {
             case 0: //init
                 setRunning(true);
@@ -55,13 +56,13 @@ export function LevelTitanHole(props: LevelExtendsProps) {
 
                 if (levelData.current.levelOpenCount < maxDailyChallengeTimes || levelData.current.levelOpen) {
                     setHint('正在准备背包');
-                    await Functions.switchBag(customData.cts);
-                    PetHelper.cureAllPet();
-                    PetHelper.setDefault(customData.cts[0]);
+                    await switchBag(customData.cts);
+                    SAPetHelper.cureAllPet();
+                    SAPetHelper.setDefault(customData.cts[0]);
                     setHint('准备背包完成');
                     updateCustomStrategy(customData.strategy);
                     if (!levelData.current.levelOpen) {
-                        await Utils.SocketSendByQueue(42395, [104, 1, 3, 0]);
+                        await SAEngine.Socket.sendByQueue(42395, [104, 1, 3, 0]);
                         setStep(1);
                     } else {
                         setStep(levelData.current.step);
@@ -72,7 +73,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 break;
             case 1:
                 await delay(500);
-                await Battle.Manager.runOnce(() => {
+                await SABattle.Manager.runOnce(() => {
                     setHint(
                         <PercentLinearProgress
                             prompt={'正在进行泰坦矿洞'}
@@ -80,22 +81,22 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                             total={4}
                         />
                     );
-                    Utils.SocketSendByQueue(42396, [104, 3, 1]);
+                    SAEngine.Socket.sendByQueue(42396, [104, 3, 1]);
                 });
                 levelData.current = await updateLevelData();
                 setStep(0);
                 break;
             case 2:
-                pets = await PetHelper.getBagPets(Const.PET_POS.bag1);
+                pets = await SAPetHelper.getBagPets(Constant.PetPosition.bag1);
                 pet = pets.find((pet) => pet.name === '艾欧丽娅');
                 if (!pet) {
                     setStep(-3);
                     break;
                 }
-                PetHelper.setDefault(pet.catchTime);
+                SAPetHelper.setDefault(pet.catchTime);
                 await delay(500);
                 while (levelData.current.step2Count < 16) {
-                    await Battle.Manager.runOnce(() => {
+                    await SABattle.Manager.runOnce(() => {
                         setHint(
                             <>
                                 <PercentLinearProgress
@@ -110,7 +111,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                                 />
                             </>
                         );
-                        Utils.SocketSendByQueue(42396, [104, 3, 2]);
+                        SAEngine.Socket.sendByQueue(42396, [104, 3, 2]);
                     });
 
                     levelData.current = await updateLevelData();
@@ -139,8 +140,8 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                     console.log('dig', row, col, row * 11 + col);
 
                     try {
-                        await Utils.SocketReceivedPromise(42395, () => {
-                            Utils.SocketSendByQueue(42395, [104, 2, row * 11 + col, 0]);
+                        await SAEngine.Socket.sendWithReceivedPromise(42395, () => {
+                            SAEngine.Socket.sendByQueue(42395, [104, 2, row * 11 + col, 0]);
                         });
                     } catch (error) {
                         setStep(-2);
@@ -151,15 +152,15 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                     levelData.current = await updateLevelData();
                 }
             case 4:
-                pets = await PetHelper.getBagPets(Const.PET_POS.bag1);
+                pets = await SAPetHelper.getBagPets(Constant.PetPosition.bag1);
                 pet = pets.find((pet) => pet.name === '幻影蝶');
                 if (!pet) {
                     setStep(-3);
                     break;
                 }
-                PetHelper.setDefault(pet.catchTime);
+                SAPetHelper.setDefault(pet.catchTime);
                 await delay(500);
-                await Battle.Manager.runOnce(() => {
+                await SABattle.Manager.runOnce(() => {
                     setHint(
                         <PercentLinearProgress
                             prompt={'正在进行泰坦矿洞'}
@@ -167,7 +168,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                             total={4}
                         />
                     );
-                    Utils.SocketSendByQueue(42396, [104, 3, 4]);
+                    SAEngine.Socket.sendByQueue(42396, [104, 3, 4]);
                 });
                 levelData.current = await updateLevelData();
                 updateCustomStrategy(undefined);
@@ -177,7 +178,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 try {
                     setHint('正在领取奖励');
                     await delay(500);
-                    await Utils.SocketSendByQueue(42395, [104, 5, 0, 0]);
+                    await SAEngine.Socket.sendByQueue(42395, [104, 5, 0, 0]);
                 } catch (err) {
                     setStep(-1);
                 }

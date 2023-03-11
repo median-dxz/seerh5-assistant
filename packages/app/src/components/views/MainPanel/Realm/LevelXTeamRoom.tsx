@@ -4,7 +4,7 @@ import { delay } from 'seerh5-assistant-core';
 import { LevelBase, LevelExtendsProps, updateCustomStrategy } from './LevelBase';
 import dataProvider from './data';
 
-const { Battle, Functions, PetHelper, Utils } = useCore();
+const { SABattle, SAPetHelper, SAEngine, switchBag } = useCore();
 
 interface LevelData {
     open: boolean;
@@ -21,9 +21,9 @@ const maxDailyChallengeTimes = 3;
 
 const updateLevelData = async () => {
     const data = {} as LevelData;
-    const bits = await Utils.GetBitSet(1000585, 2000036);
-    const values = await Utils.GetMultiValue(12769, 12774, 20133);
-    const pInfos = await Utils.GetPlayerInfo(1197);
+    const bits = await SAEngine.Socket.bitSet(1000585, 2000036);
+    const values = await SAEngine.Socket.multiValue(12769, 12774, 20133);
+    const pInfos = await SAEngine.Socket.playerInfo(1197);
 
     data.dailyRewardReceived = bits[0];
     data.weeklyRewardReceived = bits[1];
@@ -69,21 +69,21 @@ export function LevelXTeamRoom(props: LevelExtendsProps) {
                 break;
             case 1: //daily challenge
                 setHint('正在准备背包');
-                await Functions.switchBag(customData.cts);
-                PetHelper.cureAllPet();
-                PetHelper.setDefault(customData.cts[0]);
+                await switchBag(customData.cts);
+                SAPetHelper.cureAllPet();
+                SAPetHelper.setDefault(customData.cts[0]);
                 setHint('准备背包完成');
                 await delay(500);
 
                 updateCustomStrategy(customData.strategy);
 
                 setHint('正在开启关卡');
-                await Utils.SocketSendByQueue(42395, [105, 1, 1, 0]);
+                await SAEngine.Socket.sendByQueue(42395, [105, 1, 1, 0]);
                 await delay(500);
 
-                await Battle.Manager.runOnce(() => {
+                await SABattle.Manager.runOnce(() => {
                     setHint(`正在进行对战...`);
-                    Utils.SocketSendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [105, 7, 0]);
+                    SAEngine.Socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [105, 7, 0]);
                 });
 
                 updateCustomStrategy(undefined);
@@ -93,7 +93,7 @@ export function LevelXTeamRoom(props: LevelExtendsProps) {
             case 2: //try get daily reward
                 setHint('正在查询每日奖励领取状态');
                 if (!levelData.current.dailyRewardReceived && levelData.current.dailyMinRound > 0) {
-                    await Utils.SocketSendByQueue(42395, [105, 2, 0, 0]);
+                    await SAEngine.Socket.sendByQueue(42395, [105, 2, 0, 0]);
                 }
 
                 await delay(500);
@@ -102,7 +102,7 @@ export function LevelXTeamRoom(props: LevelExtendsProps) {
             case 3: //try get weekly reward
                 setHint('正在查询每周奖励领取状态');
                 if (!levelData.current.weeklyRewardReceived && levelData.current.weeklyCompletedCount >= 5) {
-                    await Utils.SocketSendByQueue(42395, [105, 3, 0, 0]);
+                    await SAEngine.Socket.sendByQueue(42395, [105, 3, 0, 0]);
                 }
 
                 await delay(500);

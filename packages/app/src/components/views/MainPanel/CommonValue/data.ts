@@ -1,7 +1,9 @@
 import { useCore } from '@sa-app/provider/useCore';
+import { delay } from 'seerh5-assistant-core';
 
-const { Utils } = useCore();
-const { SeerModuleHelper } = Utils;
+const { SAEngine } = useCore();
+
+const { SeerModuleHelper } = SAEngine;
 
 export const idList = [
     1, //赛尔豆
@@ -28,7 +30,6 @@ declare namespace pveEnterPanel {
 }
 
 const showPveResourcePanel = async (itemValue: string) => {
-    const delay = window.delay;
     await ModuleManager.showModuleByID(18);
     const curModule = SeerModuleHelper.currentModule<pveEnterPanel.PveEnterPanel>();
     const panelName = 'pveEnterPanel.PveResourceCollection';

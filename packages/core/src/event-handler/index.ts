@@ -1,14 +1,14 @@
-import { InfoProvider } from '../battle';
-import { SAEventTarget } from '../common';
+import * as Battle from '../battle';
+import { delay, SAEventTarget } from '../common';
 import { Hook } from '../constant';
 import { SeerModuleHelper } from '../engine';
-import RoundInfo from '../entity/PetRoundInfo';
+import { PetRoundInfo } from '../entity/PetRoundInfo';
 import { findObject } from '../functions';
 import { defaultStyle, SaModuleLogger } from '../logger';
 
 const log = SaModuleLogger('SAEventHandler', defaultStyle.core);
 
-interface ModuleSubscriber<T extends BaseModule> {
+export interface ModuleSubscriber<T extends BaseModule> {
     load?(): void;
     show?(ctx: T): void;
     destroy?(ctx: T): void;
@@ -44,7 +44,7 @@ class ModuleSubject<T extends BaseModule> {
     }
 }
 
-const SeerModuleStatePublisher = {
+export const SeerModuleStatePublisher = {
     subjects: new Map<string, ModuleSubject<BaseModule>>(),
     attach<T extends BaseModule>(subscriber: ModuleSubscriber<T>, moduleName: string) {
         const exist = this.subjects.has(moduleName);
@@ -113,8 +113,8 @@ SAEventTarget.addEventListener(Hook.Award.receive, (e) => {
 
 SAEventTarget.addEventListener(Hook.BattlePanel.onRoundData, (e) => {
     if (e instanceof CustomEvent) {
-        const [fi, si] = [new RoundInfo(e.detail.info[0]), new RoundInfo(e.detail.info[1])];
-        InfoProvider.cachedRoundInfo = [fi, si];
+        const [fi, si] = [new PetRoundInfo(e.detail.info[0]), new PetRoundInfo(e.detail.info[1])];
+        Battle.Provider.cachedRoundInfo = [fi, si];
         log(
             `对局信息更新:
                 先手方:${fi.userId}
@@ -134,7 +134,7 @@ SAEventTarget.addEventListener(Hook.BattlePanel.onRoundData, (e) => {
 });
 
 SAEventTarget.addEventListener(Hook.BattlePanel.panelReady, () => {
-    InfoProvider.cachedRoundInfo = null;
+    Battle.Provider.cachedRoundInfo = null;
     if (FightManager.fightAnimateMode === 1) {
         PetFightController.setFightSpeed(10);
     }
@@ -163,6 +163,36 @@ SAEventTarget.addEventListener(Hook.BattlePanel.endPropShown, () => {
     AwardManager.resume();
 });
 
-export { SeerModuleStatePublisher };
-export type { ModuleSubscriber };
+const onBattleEnd = (e: Event) => {
+    if (e instanceof CustomEvent) {
+        const { isWin } = e.detail as { isWin: boolean };
+        if (Battle.Manager.triggerLocker) {
+            const { triggerLocker: lockingTrigger } = Battle.Manager;
+            if (Battle.Manager.delayTimeout) {
+                Promise.all([Battle.Manager.delayTimeout, delay(1000)]).then(() => {
+                    lockingTrigger(isWin);
+                });
+            }
+            Battle.Manager.triggerLocker = undefined;
+        }
+    }
+};
 
+const onRoundStart = () => {
+    const info = Battle.Provider.getCurRoundInfo()!;
+    const skills = Battle.Provider.getCurSkills()!;
+    const pets = Battle.Provider.getPets()!;
+
+    if (Battle.Manager.strategy != undefined) {
+        Battle.Manager.strategy(info, skills, pets);
+        log('执行自定义行动策略');
+    }
+
+    if (info.round <= 0) {
+        Battle.Manager.delayTimeout = delay(5000);
+    }
+};
+
+SAEventTarget.addEventListener(Hook.BattlePanel.panelReady, onRoundStart);
+SAEventTarget.addEventListener(Hook.BattlePanel.roundEnd, onRoundStart);
+SAEventTarget.addEventListener(Hook.BattlePanel.battleEnd, onBattleEnd);
