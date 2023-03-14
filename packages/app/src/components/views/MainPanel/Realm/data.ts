@@ -14,29 +14,35 @@ const data: LevelPetsData = {
         strategy: generateStrategy(['幻梦芳逝', '剑挥四方', '破寂同灾'], ['蒂朵', '六界帝神', '深渊狱神·哈迪斯']),
     },
     LevelExpTraining: {
-        cts: [1656055512, 1656056275, 1656092908],
+        cts: [1656092908, 1656055512, 1656056275],
         strategy: async (round, skills, pets) => {
             let r;
-            console.log(pets, round.self?.catchtime);
-            const selfPetName = pets.find((p) => p.catchTime === round.self?.catchtime)?.name;
-            if (selfPetName === '蒂朵') {
-                r = skills.find((skill) => skill.name === ['琴·万律归一', '朵·盛夏咏叹'][round.round % 2]);
-            } else {
-                r = skills.find((skill) => skill.name === ['光荣之梦', '神灵救世光'][round.round % 2]);
-            }
-
             if (round.isDiedSwitch) {
-                const dsl = new DiedSwitchLink(['幻影蝶', '蒂朵']);
+                const dsl = new DiedSwitchLink(['圣灵谱尼', '幻影蝶', '蒂朵']);
                 if (round.isDiedSwitch) {
                     const r = dsl.match(pets, round.self!.catchtime);
                     if (r !== -1) {
                         SABattle.Operator.switchPet(r);
+                        round.self!.catchtime = pets[r].catchTime;
                     } else {
                         SABattle.Operator.auto();
                     }
                 }
                 await delay(300);
                 skills = SABattle.Provider.getCurSkills()!;
+            }
+            const selfPetName = pets.find((p) => p.catchTime === round.self?.catchtime)?.name;
+            if (selfPetName === '圣灵谱尼') {
+                r = skills.find((skill) => skill.name === ['光荣之梦', '神灵救世光'][round.round % 2]);
+            } else if (selfPetName === '蒂朵') {
+                // console.log(round.other!.hp.remain, round.other!.hp.max, round.other!.hp.remain / round.other!.hp.max);
+                if (round.other!.hp.max > 0 && round.other!.hp.remain / round.other!.hp.max <= 0.28) {
+                    r = skills.find((skill) => skill.name === '时空牵绊');
+                } else {
+                    r = skills.find((skill) => skill.name === ['琴·万律归一', '朵·盛夏咏叹'][round.round % 2]);
+                }
+            } else {
+                r = skills.find((skill) => skill.name === '竭血残蝶');
             }
             if (r) {
                 SABattle.Operator.useSkill(r.id);

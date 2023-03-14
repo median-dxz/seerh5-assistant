@@ -39,11 +39,13 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = Item.Po
 
     const hpChecker = () => cts.filter((ct) => PetManager.getPetInfo(ct).hp >= 150);
 
-    const usePotion = (ct: number) => {
+    const usePotion = async (ct: number) => {
         if (PetManager.getPetInfo(ct).hp <= 50) {
             usePotionForPet(ct, healPotionId);
+            await delay(100);
         }
         usePotionForPet(ct, Item.Potion.中级活力药剂);
+        await delay(100);
     };
 
     await delay(300);

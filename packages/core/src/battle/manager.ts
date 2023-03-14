@@ -30,5 +30,6 @@ export const Manager: {
     clear() {
         this.triggerLocker = undefined;
         this.delayTimeout = undefined;
+        this.strategy = undefined;
     },
 };

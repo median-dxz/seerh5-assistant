@@ -23,7 +23,6 @@ export class PetRoundInfo extends EntityBase {
     status: number[];
     sideEffects: number[];
     constructor(attackValue: AttackValue) {
-        console.log(attackValue);
         super();
         [
             this.round,
@@ -44,8 +43,8 @@ export class PetRoundInfo extends EntityBase {
             attackValue.petcatchtime,
             {
                 gain: attackValue.gainHP,
-                remain: attackValue.maxHp,
-                max: attackValue.remainHP,
+                remain: attackValue.remainHP,
+                max: attackValue.maxHp,
             },
             attackValue.lostHP,
             Boolean(attackValue.isCrit),
@@ -54,5 +53,6 @@ export class PetRoundInfo extends EntityBase {
             attackValue.status,
             attackValue.sideEffects,
         ];
+        
     }
 }

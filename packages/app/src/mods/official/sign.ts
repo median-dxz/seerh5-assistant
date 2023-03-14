@@ -1,5 +1,14 @@
 import { useRfcData } from '@sa-app/provider/useRfcData';
-import { Constant, Mod, SAEngine, SAPetHelper, SaModuleLogger, defaultStyle, delay, usePotionForPet } from 'seerh5-assistant-core';
+import {
+    Constant,
+    Mod,
+    SAEngine,
+    SAPetHelper,
+    SaModuleLogger,
+    defaultStyle,
+    delay,
+    usePotionForPet
+} from 'seerh5-assistant-core';
 
 const log = SaModuleLogger('Sign', defaultStyle.mod);
 

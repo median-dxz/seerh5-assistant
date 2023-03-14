@@ -250,10 +250,11 @@ class applyBm extends Mod {
                     await SABattle.Manager.runOnce(runner.battleOnce.bind(runner));
                 }
                 await runner.update();
-                await delay(Math.round(Math.random() * 500) + 5000);
+                await delay(Math.round(Math.random() * 100) + 6000);
                 SABattle.Manager.clear();
             }
         }
+        
     }
 
     meta = { description: '' };

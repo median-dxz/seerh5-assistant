@@ -74,7 +74,9 @@ export class Skill extends EntityBase implements ISkillObject {
         if (obj) {
             return new Skill(obj);
         } else {
-            throw new Error('暂不支持解析技能石, 或者id有误');
+            console.error('暂不支持解析技能石, 或者id有误');
+            return {} as Skill;
+            // throw new Error('暂不支持解析技能石, 或者id有误');
         }
     }
 
