@@ -22,7 +22,7 @@ interface Props {
 }
 
 export function CommonValue(props: Props) {
-    const rows = idList.map((key) => ItemXMLInfo.getItemObj(key)).map((obj) => new SAEntity.Item(obj));
+    const rows = idList.map((key) => ItemXMLInfo.getItemObj(key)!).map((obj) => new SAEntity.Item(obj));
 
     const { panelState } = props;
     let [items, setItems] = useState(rows);

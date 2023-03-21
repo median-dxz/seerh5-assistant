@@ -1,4 +1,17 @@
-import { Mod, SABattle, SAEngine, SAPetHelper, delay, lowerBlood, switchBag } from 'seerh5-assistant-core';
+import {
+    Constant,
+    Mod,
+    SABattle,
+    SAEngine,
+    SAPetHelper,
+    SaModuleLogger,
+    defaultStyle,
+    delay,
+    lowerBlood,
+    switchBag
+} from 'seerh5-assistant-core';
+
+const log = SaModuleLogger('阿尔蒂克第三关', defaultStyle.mod);
 
 interface LevelConfig {
     update(): Promise<void>;
@@ -31,8 +44,8 @@ class 阿尔蒂克第三关 extends Mod {
     config: LevelConfig;
     async init() {
         // 银翼 音浪 潘朵魔钰 压血 关自动回血
-        SAEngine.ChangeSuit(365);
-        SAEngine.ChangeTitle(418);
+        SAEngine.changeSuit(365);
+        SAEngine.changeTitle(418);
         SAPetHelper.toggleAutoCure(false);
         switchBag(ct);
         // 获取关卡信息
@@ -58,42 +71,70 @@ class 阿尔蒂克第三关 extends Mod {
                 this.当前位置 = value[4]; // 1-BASE
                 this.位置参数 = posAttr[this.当前位置 - 1];
             },
-            async 领取奖励() {},
+            async 领取奖励() {
+                await SAEngine.Socket.sendByQueue(46328, [7, 1]);
+                return this.update();
+            },
             async 抽取一次() {
-                SAEngine.Socket.sendByQueue(46328, [5, 0]);
+                await SAEngine.Socket.sendByQueue(46328, [5, 0]);
                 return this.update();
             },
         };
-        await this.config.update();
+
         // 自动战斗
     }
     async runAll() {
-        SABattle.Manager.strategy = moveModule;
+        await this.config.update();
+        log(`更新信息`);
         while (
             (this.config.战斗晶石 < 100 || this.config.神秘晶石 < 100) &&
             (this.config.抽取次数 > 0 || this.config.击败情况[this.config.当前位置 - 1] === false)
         ) {
-            console.log(this.config);
-            if (this.config.当前位置 === 0 || this.config.击败情况[this.config.当前位置 - 1] === true) {
-                await this.config.抽取一次();
-                console.log('抽取一次');
-            }
-            if (this.config.位置参数 < 15) {
-                //检测战斗
-                await SABattle.Manager.runOnce(async () => {
-                    await lowerBlood(ct);
-                    FightManager.fightNoMapBoss(9736 + this.config.位置参数 - 1); //计算id
-                });
-            }
+            log(`顶层通过情况: ${this.config.击败情况.filter((v, i) => i >= 18).toString()}`);
             if (this.config.击败情况.filter((v, i) => i >= 18).every(Boolean)) {
                 await this.config.领取奖励();
-                debugger;
                 console.log('领取奖励');
+                debugger;
             }
+
+            log('成功进入关卡, 当前信息如下: ');
+            log(this.config);
+            log(
+                `当前位置: ${this.config.当前位置}, 当前位置击败情况: ${this.config.击败情况[this.config.当前位置 - 1]}`
+            );
+            if (this.config.当前位置 === 0 || this.config.击败情况[this.config.当前位置 - 1] === true) {
+                await this.config.抽取一次();
+                log('抽取一次, 信息更新完成');
+            }
+            log(
+                `当前位置: ${this.config.当前位置}, 当前位置击败情况: ${
+                    this.config.击败情况[this.config.当前位置 - 1]
+                } 当前位置参数: ${this.config.位置参数}`
+            );
+            if (this.config.位置参数 < 15) {
+                //检测战斗
+                await lowerBlood(ct);
+                SABattle.Manager.strategy = moveModule;
+                log(
+                    '压血完成, 当前精灵血线列表',
+                    (await SAPetHelper.getBagPets(Constant.PetPosition.bag1)).map((p) => ({
+                        name: p.name,
+                        hp: p.hp,
+                    }))
+                );
+
+                await SABattle.Manager.runOnce(async () => {
+                    log(`开始战斗发包, 参数: ${9736 + this.config.位置参数 - 1}`);
+                    FightManager.fightNoMapBoss(9736 + this.config.位置参数 - 1); //计算id
+                });
+                log(`战斗完成`);
+            }
+
             await delay(1000);
             await this.config.update();
+            log(`更新信息`);
         }
-        console.log('今日结束');
+        log('今日结束');
         SABattle.Manager.clear();
     }
 }

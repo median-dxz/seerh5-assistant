@@ -3,7 +3,7 @@ declare namespace SAType {
 
     type Dict<T extends object> = {
         [property: number | string]: T;
-    };
+    } | Array<T>;
 
     class HashMap<T extends object> {
         containsKey(key: any): boolean;
@@ -15,10 +15,10 @@ declare namespace SAType {
 
     interface BaseObj {
         [property: string]: string | number | unknown | undefined;
-        ID: number;
     }
 
     interface PetObj extends BaseObj {
+        ID: number;
         DefName: string;
         Type: number;
     }
@@ -26,6 +26,7 @@ declare namespace SAType {
     type PetLike = PetInfo | PetStorage2015PetInfo | PetObj | PetListInfo;
 
     interface MoveObj extends BaseObj {
+        ID: number;
         Name: string;
         Accuracy: number;
         Category: number;
@@ -40,6 +41,7 @@ declare namespace SAType {
     }
 
     interface ItemObj extends BaseObj {
+        ID: number;
         Name: string;
         Bean?: number;
         DailyKey?: number;
@@ -56,7 +58,8 @@ declare namespace SAType {
         purpose?: number;
         NewSeIdx?: number;
     }
-    interface ElementObj extends Omit<BaseObj, 'ID'> {
+
+    interface ElementObj extends BaseObj {
         cn: string;
         en: string;
         id: number;
@@ -67,12 +70,14 @@ declare namespace SAType {
     interface SideEffectObj extends BaseObj {}
 
     interface PetFragmentLevelBoss extends BaseObj {
+        ID: number;
         BattleBoss: number;
         BossID: number;
         Desc: string;
     }
 
     interface PetFragmentLevelObj extends BaseObj {
+        ID: number;
         Configure: {
             Times: number;
             TimeValue: number;

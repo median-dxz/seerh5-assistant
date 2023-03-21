@@ -14,7 +14,7 @@ const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 const testConfig = {
     name: 'sac-test',
     target: ['es2022', 'web'],
-    entry: './test/browser-test.js',
+    entry: './test/browser.entry.js',
     mode: 'development',
     experiments: {
         outputModule: true,

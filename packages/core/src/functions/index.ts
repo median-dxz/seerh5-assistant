@@ -1,6 +1,6 @@
 import * as Battle from '../battle';
 import { Item, PetPosition } from '../constant';
-import { BuyPetItem, Socket } from '../engine';
+import { buyPetItem, Socket } from '../engine';
 import * as PetHelper from '../pet-helper';
 
 import { delay } from '../common';
@@ -42,20 +42,19 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = Item.Po
     const usePotion = async (ct: number) => {
         if (PetManager.getPetInfo(ct).hp <= 50) {
             usePotionForPet(ct, healPotionId);
-            await delay(100);
+            await delay(50);
         }
         usePotionForPet(ct, Item.Potion.中级活力药剂);
-        await delay(100);
     };
 
     await delay(300);
     if (hpChecker().length === 0) {
         cts.forEach(usePotion);
-        return;
+        return delay(720);
     }
 
-    BuyPetItem(Item.Potion.中级活力药剂, cts.length);
-    BuyPetItem(healPotionId, cts.length);
+    buyPetItem(Item.Potion.中级活力药剂, cts.length);
+    buyPetItem(healPotionId, cts.length);
     PetHelper.setDefault(cts[0]);
     await delay(300);
 
@@ -81,18 +80,19 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = Item.Po
         }
     };
 
-    return Battle.Manager.runOnce(() => {
+    await Battle.Manager.runOnce(() => {
         FightManager.fightNoMapBoss(6730);
-    }).then(() => {
-        cts.forEach(usePotion);
-        let leftCts = hpChecker();
-        if (leftCts.length > 0) {
-            return delay(300).then(() => lowerBlood(leftCts, healPotionId));
-        } else {
-            Manager.strategy = undefined;
-            return delay(300);
-        }
     });
+
+    cts.forEach(usePotion);
+    await delay(720);
+    let leftCts = hpChecker();
+    if (leftCts.length > 0) {
+        return lowerBlood(leftCts, healPotionId);
+    } else {
+        Manager.strategy = undefined;
+        return;
+    }
 }
 
 /**

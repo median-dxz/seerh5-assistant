@@ -16,6 +16,8 @@ const ElfKingsId = {
     海瑟薇: 12,
     邪灵王摩哥斯: 14,
     格劳瑞: 9,
+    战王: 13,
+    秘王: 7,
 } as const;
 
 interface LevelData {
@@ -36,7 +38,7 @@ const updateLevelData = async () => {
     const bits = await SAEngine.Socket.bitSet(8832, 2000037);
     const values = await SAEngine.Socket.multiValue(108105, 108106, 18745, 20134);
 
-    data.elfId = ElfKingsId.草王茉蕊儿;
+    data.elfId = ElfKingsId.秘王;
 
     data.stimulation = bits[0];
     data.canRewardReceive = !bits[1];

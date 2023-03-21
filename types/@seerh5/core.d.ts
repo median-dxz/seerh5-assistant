@@ -281,7 +281,7 @@ declare class AchieveXMLInfo {
 declare class ItemXMLInfo {
     static _itemDict: SAType.Dict<SAType.ItemObj>;
     static getName(id: number): string;
-    static getItemObj(id: number): SAType.ItemObj;
+    static getItemObj(id: number): SAType.ItemObj | undefined;
     static getSkillStoneRank(id: number): number;
 }
 
@@ -298,18 +298,14 @@ declare class SkillXMLInfo {
     };
     static movesMap: SAType.Dict<SAType.MoveObj>;
     static typeMap: {
-        [Property: string]: {
-            id: number;
-            en: string;
-            cn: string;
-        };
+        [Property: string]: SAType.ElementObj;
     };
     static getName(id: number): string;
     static getTypeID(id: number): number;
     static getCategory(id: number): number;
     static getCategoryName(id: number): string;
     static getHideSkillId(petId: number): number;
-    static getSkillObj(id: number): SAType.MoveObj;
+    static getSkillObj(id: number): SAType.MoveObj | undefined;
 }
 
 declare class SuitXMLInfo {

@@ -165,11 +165,11 @@ export function PetBag({ panelState }: Props) {
         const info = menuOption.current!;
         if (info.type === 'suit') {
             if (info.id[index] !== userSuit) {
-                SAEngine.ChangeSuit(info.id[index]);
+                SAEngine.changeSuit(info.id[index]);
                 setUserSuit(info.id[index]);
             }
         } else if (info.type === 'title') {
-            SAEngine.ChangeTitle(info.id[index]);
+            SAEngine.changeTitle(info.id[index]);
             setUserTitle(info.id[index]);
         } else if (info.type === 'setPets') {
             switchBag(petPatterns[index]);

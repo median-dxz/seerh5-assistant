@@ -1,4 +1,15 @@
-import { Constant, Mod, SABattle, SAEngine, SAPetHelper, SaModuleLogger, defaultStyle, delay, lowerBlood, switchBag } from 'seerh5-assistant-core';
+import {
+    Constant,
+    Mod,
+    SABattle,
+    SAEngine,
+    SAPetHelper,
+    SaModuleLogger,
+    defaultStyle,
+    delay,
+    lowerBlood,
+    switchBag,
+} from 'seerh5-assistant-core';
 
 const log = SaModuleLogger('精灵因子', defaultStyle.mod);
 
@@ -114,6 +125,10 @@ const moveModules: { [name: string]: SABattle.MoveModule } = {
         ['鬼焰·焚身术', '幻梦芳逝', '诸界混一击', '梦境残缺', '月下华尔兹'],
         ['潘克多斯', '蒂朵', '鲁肃', '魔钰', '月照星魂', '时空界皇']
     ),
+    潘蒂表必先: SABattle.generateStrategy(
+        ['鬼焰·焚身术', '幻梦芳逝', '诸界混一击', '梦境残缺', '月下华尔兹', '守御八方'],
+        ['潘克多斯', '蒂朵', '帝皇之御', '魔钰', '月照星魂', '时空界皇']
+    ),
     克朵六时: SABattle.generateStrategy(
         ['诸界混一击', '剑挥四方', '幻梦芳逝'],
         ['神寂·克罗诺斯', '蒂朵', '六界帝神', '时空界皇']
@@ -166,6 +181,13 @@ const perStrategy: {
         cts: [1656383521, 1656056275, 1655917820, 1655445699, 1655484346, 1657943113],
         strategy: moveModules['潘朵必先'],
     },
+    潘蒂表必先: {
+        beforeBattle: async () => {
+            await lowerBlood([1656383521, 1656056275, 1675323310, 1655445699, 1655484346, 1657943113]);
+        },
+        cts: [1656383521, 1656056275, 1675323310, 1655445699, 1655484346, 1657943113],
+        strategy: moveModules['潘蒂表必先'],
+    },
     圣谱单挑: { beforeBattle: async () => {}, cts: [1656092908], strategy: moveModules['圣谱单挑'] },
     圣谱单挑1: { beforeBattle: async () => {}, cts: [1656092908], strategy: moveModules['圣谱单挑1'] },
     琉彩: { beforeBattle: async () => {}, cts: [1655917820, 1656056275, 1656386598], strategy: moveModules['琉彩'] },
@@ -211,6 +233,19 @@ const options: PetFragment.Option[] = [
             perStrategy['圣谱单挑'],
         ],
     },
+    // 卡莎
+    {
+        difficulty: Difficulty.Ease,
+        sweep: false,
+        id: 90,
+        strategy: [
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['潘蒂表必先'],
+        ],
+    },
 ];
 
 class applyBm extends Mod {
@@ -242,6 +277,8 @@ class applyBm extends Mod {
             await runners.at(-1)?.update();
         }
         for (let runner of runners) {
+            SAPetHelper.toggleAutoCure(false);
+            await delay(50);
             while (runner.isChallenge || runner.leftChallengeTimes > 0) {
                 if (runner.option.sweep) {
                     await runner.sweep();
@@ -253,8 +290,9 @@ class applyBm extends Mod {
                 await delay(Math.round(Math.random() * 100) + 6000);
                 SABattle.Manager.clear();
             }
+            SAPetHelper.toggleAutoCure(true);
+            await delay(50);
         }
-        
     }
 
     meta = { description: '' };

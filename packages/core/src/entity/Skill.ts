@@ -1,11 +1,11 @@
 import { EntityBase, type EntityType } from './EntityBase';
+import { PetElement } from './PetElement';
 
 type SkillEffects = [number[], number[]];
 type SkillEffectArgs = string | number | undefined;
 
 export interface ISkillObject {
     id: number;
-    element: number;
     category: number;
     power: number;
     priority: number;
@@ -19,7 +19,7 @@ export class Skill extends EntityBase implements ISkillObject {
     static readonly key = 'id';
     static readonly instanceKey = 'id';
     readonly __type: EntityType = 'Skill';
-    element: number;
+    element: PetElement;
     category: number;
     power: number;
     priority: number;
@@ -32,6 +32,7 @@ export class Skill extends EntityBase implements ISkillObject {
     constructor(obj: SAType.MoveObj) {
         super();
         let tempEffects: [SkillEffectArgs, SkillEffectArgs];
+
         [
             this.id,
             this.name,
@@ -47,7 +48,7 @@ export class Skill extends EntityBase implements ISkillObject {
         ] = [
             obj.ID,
             obj.Name,
-            obj.Type,
+            PetElement.formatById(obj.Type),
             obj.Category,
             obj.Power ?? 0,
             obj.Priority ?? 0,
@@ -59,7 +60,7 @@ export class Skill extends EntityBase implements ISkillObject {
         ];
         const argSplit = (arg: SkillEffectArgs) => {
             if (typeof arg === 'string') {
-                return arg.split(' ').map(parseInt);
+                return arg.split(' ').map(Number);
             } else if (typeof arg === 'number') {
                 return [arg];
             } else {

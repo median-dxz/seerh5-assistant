@@ -1,10 +1,10 @@
 import { EntityBase, type EntityType } from './EntityBase';
+import { PetElement } from './PetElement';
 import { Skill } from './Skill';
 
 export interface IPetObject {
     id: number;
     name: string;
-    element: number;
 }
 
 const testPetObjectType = (o: SAType.PetLike): o is SAType.PetObj => {
@@ -28,7 +28,7 @@ export class Pet extends EntityBase implements IPetObject {
     hp: number;
     catchTime: number;
     dv: number;
-    element: number;
+    element: PetElement;
     nature: number;
     constructor(obj: SAType.PetLike) {
         super();
@@ -38,7 +38,7 @@ export class Pet extends EntityBase implements IPetObject {
                 obj.name,
                 obj.catchTime,
                 obj.dv,
-                PetXMLInfo.getType(obj.id),
+                PetElement.formatById(PetXMLInfo.getType(obj.id)),
                 obj.nature,
                 obj.hp,
                 obj.maxHp,
@@ -50,9 +50,14 @@ export class Pet extends EntityBase implements IPetObject {
                 return o;
             });
         } else if (testPetObjectType(obj)) {
-            [this.id, this.name, this.element] = [obj.ID, obj.DefName, obj.Type];
+            [this.id, this.name, this.element] = [obj.ID, obj.DefName, PetElement.formatById(obj.Type)];
         } else if (testPetStorage2015PetInfoType(obj)) {
-            [this.id, this.name, this.catchTime, this.element] = [obj.id, obj.name, obj.catchTime, obj.type];
+            [this.id, this.name, this.catchTime, this.element] = [
+                obj.id,
+                obj.name,
+                obj.catchTime,
+                PetElement.formatById(obj.type),
+            ];
         } else {
             [this.id, this.name, this.catchTime] = [obj.id, obj.name, obj.catchTime];
         }

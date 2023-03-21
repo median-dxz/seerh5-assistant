@@ -18,6 +18,10 @@ import { Constant, SABattle, SAEventTarget } from 'seerh5-assistant-core';
 const { defaultStrategy, resolveStrategy } = SABattle;
 const { Hook } = Constant;
 
+import * as saco from 'seerh5-assistant-core';
+
+window.sac = { ...saco, ...sac };
+
 export default function SaMain() {
     const [isCommandBarOpen, toggleCommandBar] = useState(false);
     const [isMainPanelOpen, toggleMainPanel] = useState(false);

@@ -31,19 +31,6 @@ export function UserTitle(): number {
     return MainManager.actorInfo.curTitle;
 }
 
-export async function ChangeTitle(title: number): Promise<boolean> {
-    if (MainManager.actorInfo.curTitle !== title) {
-        try {
-            await Socket.sendByQueue(CommandID.SETTITLE, [title]);
-            MainManager.actorInfo.curTitle = title;
-            return true;
-        } catch (err) {
-            return false;
-        }
-    }
-    return false;
-}
-
 /**
  * @returns 返回玩家拥有的能力套装id列表
  */

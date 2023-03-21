@@ -28,16 +28,12 @@
 待定功能
 
 - [ ] 小舞第4关脚本(压血84)
-- [x] 密战第3关脚本(潘朵魔钰)
-- [x] 昔兰尼加三件套(潘朵必先)
 
 重构：
 
 - [ ] 根据初版api设计方案重构
 - [ ] 编写单元测试
 - [ ] 反过来修改api文档
-- [ ] skill effect有nan
-- [ ] skill describe => description 且 内容不正确
 - [ ] 战斗move module可以可选传递上一回合信息（reduce思路）
 - [ ] skill matcher便捷函数（用技能名声明要用的技能）
 - [ ] 首回合获取不到self和other
@@ -48,11 +44,20 @@
   - [ ] 背包子组件化
   - [ ] 检测精灵位置变化(查看pet_release cmd的流程)
 
-RoadMap: `Core: v0.4`
+RoadMap: `Core: v0.4.0`
 
 - [x] 重构项目为MonoRepo
 - [x] `sa-core`与`sa-app`分开独立构建
 - [ ] `sa-core`模块**全部重新设计实现**，详见doc/api设计
+
+v0.3.8
+1. 修复一个skill effect的解析错误
+2. 密战第3关脚本
+3. 新因子: 卡莎
+4. 优化压血延时
+5. 因子模组自动开关自动治疗
+6. 全局挂载sac对象
+7. 六界神王殿扫荡
 
 v0.3.7
 1. 模组输入命令后清空当前命令

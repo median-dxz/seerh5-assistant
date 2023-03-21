@@ -14,7 +14,7 @@ import { LevelXTeamRoom } from './LevelXTeamRoom';
 const { SABattle, SAEngine } = useCore();
 interface Level {
     name: string;
-    module: JSX.Element;
+    module?: JSX.Element;
     sweep?(): Promise<void>;
     getState(): Promise<boolean>;
 }
@@ -90,15 +90,35 @@ export function Realm() {
             },
         },
         // { name: '作战实验室'
-        // { name: '六界神王殿'
+        {
+            name: '六界神王殿',
+            async sweep() {
+                await SAEngine.Socket.sendByQueue(45767, [38, 3]);
+                return;
+            },
+            async getState() {
+                let state = true;
+                const values = await SAEngine.Socket.multiValue(11411, 11412, 11413, 11414);
+                for (let i = 1; i <= 7; i++) {
+                    const group = Math.trunc((i - 1) / 2);
+                    const v = [values[group] & ((1 << 16) - 1), values[group] >> 16];
+                    console.log(v[(i - 1) % 2] & 15);
+                    if ((v[(i - 1) % 2] & 15) < 3) {
+                        state = false;
+                        break;
+                    }
+                }
+                return state;
+            },
+        },
     ];
 
     React.useEffect(() => {
         Promise.all(rows.map((level) => level.getState())).then((r) => setTaskCompleted(r));
     }, [open, taskModule, running]);
 
-    if (taskModule != null) {
-        taskModuleComponent = rows[taskModule].module;
+    if (taskModule != null && Object.hasOwn(rows[taskModule], 'module')) {
+        taskModuleComponent = rows[taskModule].module!;
     }
 
     return (
@@ -134,14 +154,16 @@ export function Realm() {
                             </Typography>
                         </TableCell>
                         <TableCell align="left">
-                            <Button
-                                onClick={() => {
-                                    setTaskModule(index);
-                                    setOpen(true);
-                                }}
-                            >
-                                启动
-                            </Button>
+                            {row.module && (
+                                <Button
+                                    onClick={() => {
+                                        setTaskModule(index);
+                                        setOpen(true);
+                                    }}
+                                >
+                                    启动
+                                </Button>
+                            )}
                             {row.sweep && (
                                 <Button
                                     onClick={() => {
