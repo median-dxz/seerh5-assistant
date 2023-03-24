@@ -90,7 +90,6 @@ export const defaultStrategy = {
     },
 };
 
-
 export interface Strategy {
     dsl: Array<string[]>;
     snm: Array<string[]>;
@@ -106,7 +105,7 @@ export async function resolveStrategy(strategy: Strategy) {
         return;
     }
 
-    if (Manager.strategy != undefined) {
+    if (Manager.hasSetStrategy()) {
         return;
     }
 

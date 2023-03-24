@@ -166,14 +166,11 @@ SAEventTarget.addEventListener(Hook.BattlePanel.endPropShown, () => {
 const onBattleEnd = (e: Event) => {
     if (e instanceof CustomEvent) {
         const { isWin } = e.detail as { isWin: boolean };
-        if (Battle.Manager.triggerLocker) {
-            const { triggerLocker: lockingTrigger } = Battle.Manager;
-            if (Battle.Manager.delayTimeout) {
-                Promise.all([Battle.Manager.delayTimeout, delay(1000)]).then(() => {
-                    lockingTrigger(isWin);
-                });
-            }
-            Battle.Manager.triggerLocker = undefined;
+        if (Battle.Manager.hasSetStrategy()) {
+            Promise.all([Battle.Manager.delayTimeout, delay(1000)]).then(() => {
+                Battle.Manager.unlockTrigger(isWin);
+                Battle.Manager.clear();
+            });
         }
     }
 };
@@ -183,8 +180,8 @@ const onRoundStart = () => {
     const skills = Battle.Provider.getCurSkills()!;
     const pets = Battle.Provider.getPets()!;
 
-    if (Battle.Manager.strategy != undefined) {
-        Battle.Manager.strategy(info, skills, pets);
+    if (Battle.Manager.hasSetStrategy()) {
+        Battle.Manager.resolveStrategy(info, skills, pets);
         log('执行自定义行动策略');
     }
 

@@ -113,6 +113,8 @@ declare class FighterUserInfo {
 }
 
 declare class FightPetInfo {
+    get hp(): number;
+    get petID(): number;
     get petName(): string;
 }
 
@@ -297,6 +299,7 @@ declare class SkillXMLInfo {
         SideEffects: { SideEffect: Array<SAType.SideEffectObj>; _text: Array<string> };
     };
     static movesMap: SAType.Dict<SAType.MoveObj>;
+    static moveStoneMap: SAType.Dict<SAType.MoveObj>;
     static typeMap: {
         [Property: string]: SAType.ElementObj;
     };
@@ -306,6 +309,7 @@ declare class SkillXMLInfo {
     static getCategoryName(id: number): string;
     static getHideSkillId(petId: number): number;
     static getSkillObj(id: number): SAType.MoveObj | undefined;
+    static getStoneBySkill(id: number): number | undefined;
 }
 
 declare class SuitXMLInfo {

@@ -3,7 +3,7 @@ import { useCore } from '@sa-app/provider/useCore';
 import React from 'react';
 import { delay } from 'seerh5-assistant-core';
 import { PercentLinearProgress } from '../base';
-import { LevelBase, LevelExtendsProps, updateCustomStrategy } from './LevelBase';
+import { LevelBase, LevelExtendsProps } from './LevelBase';
 import dataProvider from './data';
 const { SABattle, SAPetHelper, SAEngine, switchBag } = useCore();
 
@@ -66,7 +66,6 @@ export function LevelCourageTower(props: LevelExtendsProps) {
 
                 setHint('正在进入关卡');
 
-                updateCustomStrategy(customData.strategy);
                 while (levelData.current.challengeCount < maxDailyChallengeTimes && currentRunning.current) {
                     await SABattle.Manager.runOnce(() => {
                         setHint(
@@ -80,10 +79,9 @@ export function LevelCourageTower(props: LevelExtendsProps) {
                             </>
                         );
                         SAEngine.Socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [117, 30, 1]);
-                    });
+                    }, customData.strategy);
                     levelData.current = await updateLevelData();
                 }
-                updateCustomStrategy(undefined);
                 setStep(0);
 
                 break;

@@ -1,3 +1,4 @@
+import { MoveModule } from 'packages/core/src/battle/manager';
 import {
     Constant,
     Mod,
@@ -39,6 +40,7 @@ namespace PetFragment {
         failedTimes: number;
         curPosition: number;
         designId: number;
+        strategy: MoveModule;
 
         init(option: Option) {
             this.option = option;
@@ -69,7 +71,7 @@ namespace PetFragment {
             await beforeBattle();
             SAPetHelper.setDefault(cts[0]);
             await delay(300);
-            SABattle.Manager.strategy = strategy;
+            this.strategy = strategy;
         }
         async update() {
             const values = await SAEngine.Socket.multiValue(
@@ -284,7 +286,7 @@ class applyBm extends Mod {
                     await runner.sweep();
                 } else {
                     await runner.prepare();
-                    await SABattle.Manager.runOnce(runner.battleOnce.bind(runner));
+                    await SABattle.Manager.runOnce(runner.battleOnce.bind(runner), runner.strategy);
                 }
                 await runner.update();
                 await delay(Math.round(Math.random() * 100) + 6000);

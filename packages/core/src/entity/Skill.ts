@@ -75,9 +75,14 @@ export class Skill extends EntityBase implements ISkillObject {
         if (obj) {
             return new Skill(obj);
         } else {
-            console.error('暂不支持解析技能石, 或者id有误');
-            return {} as Skill;
-            // throw new Error('暂不支持解析技能石, 或者id有误');
+            const stoneId = SkillXMLInfo.getStoneBySkill(id);
+            const stone = Object.values(SkillXMLInfo.moveStoneMap).find((v) => v.ItemID === stoneId);
+            if (stone) {
+                return new Skill(stone);
+            } else {
+                console.error('解析技能失败');
+                return {} as Skill;
+            }
         }
     }
 

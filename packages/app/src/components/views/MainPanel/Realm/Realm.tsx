@@ -32,8 +32,7 @@ export function Realm() {
 
     const closeHandler = () => {
         if (battleContext.enableAuto) {
-            SABattle.Manager.triggerLocker = undefined;
-            SABattle.Manager.strategy = undefined;
+            SABattle.Manager.clear();
             setBattleAuto(false);
         }
         setRunning(false);

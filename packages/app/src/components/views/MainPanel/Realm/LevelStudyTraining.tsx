@@ -2,7 +2,7 @@ import { Typography } from '@mui/material';
 
 import React from 'react';
 import { PercentLinearProgress } from '../base';
-import { LevelBase, LevelExtendsProps, updateCustomStrategy } from './LevelBase';
+import { LevelBase, LevelExtendsProps } from './LevelBase';
 import dataProvider from './data';
 
 import { useCore } from '@sa-app/provider/useCore';
@@ -65,8 +65,6 @@ export function LevelStudyTraining(props: LevelExtendsProps) {
                 setHint('准备背包完成');
                 await delay(500);
 
-                updateCustomStrategy(customData.strategy);
-
                 while (levelData.current.challengeCount < maxDailyChallengeTimes && currentRunning.current) {
                     await SABattle.Manager.runOnce(() => {
                         setHint(
@@ -80,10 +78,9 @@ export function LevelStudyTraining(props: LevelExtendsProps) {
                             </>
                         );
                         SAEngine.Socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [115, 6, 1]);
-                    });
+                    }, customData.strategy);
                     levelData.current = await updateLevelData();
                 }
-                updateCustomStrategy(undefined);
                 setStep(0);
 
                 break;

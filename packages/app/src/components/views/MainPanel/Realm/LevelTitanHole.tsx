@@ -4,7 +4,7 @@ import { useCore } from '@sa-app/provider/useCore';
 import React from 'react';
 import { Constant, delay, SAEntity } from 'seerh5-assistant-core';
 import { PercentLinearProgress } from '../base';
-import { LevelBase, LevelExtendsProps, updateCustomStrategy } from './LevelBase';
+import { LevelBase, LevelExtendsProps } from './LevelBase';
 
 import dataProvider from './data';
 const { SABattle, SAPetHelper, SAEngine, switchBag } = useCore();
@@ -60,7 +60,6 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                     SAPetHelper.cureAllPet();
                     SAPetHelper.setDefault(customData.cts[0]);
                     setHint('准备背包完成');
-                    updateCustomStrategy(customData.strategy);
                     if (!levelData.current.levelOpen) {
                         await SAEngine.Socket.sendByQueue(42395, [104, 1, 3, 0]);
                         setStep(1);
@@ -82,7 +81,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                         />
                     );
                     SAEngine.Socket.sendByQueue(42396, [104, 3, 1]);
-                });
+                }, customData.strategy);
                 levelData.current = await updateLevelData();
                 setStep(0);
                 break;
@@ -112,7 +111,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                             </>
                         );
                         SAEngine.Socket.sendByQueue(42396, [104, 3, 2]);
-                    });
+                    }, customData.strategy);
 
                     levelData.current = await updateLevelData();
                 }
@@ -169,9 +168,8 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                         />
                     );
                     SAEngine.Socket.sendByQueue(42396, [104, 3, 4]);
-                });
+                },customData.strategy);
                 levelData.current = await updateLevelData();
-                updateCustomStrategy(undefined);
                 setStep(5);
                 break;
             case 5:

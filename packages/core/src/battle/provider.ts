@@ -10,22 +10,31 @@ export interface RoundInfo {
 export const Provider = {
     cachedRoundInfo: null as null | [PetRoundInfo, PetRoundInfo],
     getCurRoundInfo() {
-        if (!FighterModelFactory.playerMode) return null;
+        if (!FighterModelFactory.playerMode || !FighterModelFactory.enemyMode) return null;
         let result: RoundInfo = {
             round: PetFightController.roundTimes,
             isDiedSwitch: PetFightController.roundTimes
                 ? FighterModelFactory.playerMode.propView.dispatchNoBlood
                 : false,
-            self: undefined,
-            other: undefined,
         };
         if (this.cachedRoundInfo) {
             this.cachedRoundInfo[0].isFirstMove = !(this.cachedRoundInfo[1].isFirstMove = false);
             if (this.cachedRoundInfo[0].userId !== FightUserInfo.fighterInfos!.myInfo.id) {
                 this.cachedRoundInfo = [this.cachedRoundInfo[1], this.cachedRoundInfo[0]];
             }
+            Object.assign(this.cachedRoundInfo[0], {
+                id: FighterModelFactory.playerMode.info.petID,
+                name: FighterModelFactory.playerMode.info.petName,
+                // hp: FighterModelFactory.playerMode.info.hp,
+            });
+            Object.assign(this.cachedRoundInfo[1], {
+                id: FighterModelFactory.enemyMode.info.petID,
+                name: FighterModelFactory.enemyMode.info.petName,
+                // hp: FighterModelFactory.enemyMode.info.hp,
+            });
             result = { ...result, self: this.cachedRoundInfo[0], other: this.cachedRoundInfo[1] };
         }
+
         return result;
     },
 

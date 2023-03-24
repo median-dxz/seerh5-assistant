@@ -25,7 +25,3 @@ export function LevelBase(props: React.PropsWithChildren<LevelBaseProps>) {
         </>
     );
 }
-
-export function updateCustomStrategy(custom?: SABattle.MoveModule) {
-    Manager.strategy = custom;
-}

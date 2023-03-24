@@ -8,7 +8,7 @@ import {
     defaultStyle,
     delay,
     lowerBlood,
-    switchBag
+    switchBag,
 } from 'seerh5-assistant-core';
 
 const log = SaModuleLogger('阿尔蒂克第三关', defaultStyle.mod);
@@ -114,7 +114,6 @@ class 阿尔蒂克第三关 extends Mod {
             if (this.config.位置参数 < 15) {
                 //检测战斗
                 await lowerBlood(ct);
-                SABattle.Manager.strategy = moveModule;
                 log(
                     '压血完成, 当前精灵血线列表',
                     (await SAPetHelper.getBagPets(Constant.PetPosition.bag1)).map((p) => ({
@@ -126,7 +125,7 @@ class 阿尔蒂克第三关 extends Mod {
                 await SABattle.Manager.runOnce(async () => {
                     log(`开始战斗发包, 参数: ${9736 + this.config.位置参数 - 1}`);
                     FightManager.fightNoMapBoss(9736 + this.config.位置参数 - 1); //计算id
-                });
+                }, moveModule);
                 log(`战斗完成`);
             }
 

@@ -1,7 +1,7 @@
 import { useCore } from '@sa-app/provider/useCore';
 import React from 'react';
 import { delay } from 'seerh5-assistant-core';
-import { LevelBase, LevelExtendsProps, updateCustomStrategy } from './LevelBase';
+import { LevelBase, LevelExtendsProps } from './LevelBase';
 import dataProvider from './data';
 
 const { SABattle, SAPetHelper, SAEngine, switchBag } = useCore();
@@ -75,8 +75,6 @@ export function LevelXTeamRoom(props: LevelExtendsProps) {
                 setHint('准备背包完成');
                 await delay(500);
 
-                updateCustomStrategy(customData.strategy);
-
                 setHint('正在开启关卡');
                 await SAEngine.Socket.sendByQueue(42395, [105, 1, 1, 0]);
                 await delay(500);
@@ -84,9 +82,7 @@ export function LevelXTeamRoom(props: LevelExtendsProps) {
                 await SABattle.Manager.runOnce(() => {
                     setHint(`正在进行对战...`);
                     SAEngine.Socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [105, 7, 0]);
-                });
-
-                updateCustomStrategy(undefined);
+                }, customData.strategy);
                 setStep(0);
 
                 break;
