@@ -31,7 +31,7 @@ interface LevelData {
 
 const RealmName = '精灵王的试炼';
 const customData = dataProvider['LevelElfKingsTrial'];
-const maxDailyChallengeTimes = 15;
+const maxDailyChallengeTimes = 6;
 
 const updateLevelData = async () => {
     const data = {} as LevelData;
@@ -95,7 +95,7 @@ export function LevelElfKingsTrial(props: LevelExtendsProps) {
                                 <PercentLinearProgress
                                     prompt={'当前次数'}
                                     progress={levelData.current.challengeCount}
-                                    total={15}
+                                    total={6}
                                 />
                             </>
                         );

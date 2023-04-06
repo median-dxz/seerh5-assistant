@@ -78,7 +78,7 @@ export function Realm() {
             async getState() {
                 const [count, weeklyCount] = await SAEngine.Socket.multiValue(18745, 20134);
                 const [rewardClosed] = await SAEngine.Socket.bitSet(2000037);
-                return count === 15 || (weeklyCount >= 100 && rewardClosed);
+                return count === 6 || (weeklyCount >= 30 && rewardClosed);
             },
         },
         {
@@ -101,7 +101,7 @@ export function Realm() {
                 for (let i = 1; i <= 7; i++) {
                     const group = Math.trunc((i - 1) / 2);
                     const v = [values[group] & ((1 << 16) - 1), values[group] >> 16];
-                    console.log(v[(i - 1) % 2] & 15);
+                    // console.log(v[(i - 1) % 2] & 15);
                     if ((v[(i - 1) % 2] & 15) < 3) {
                         state = false;
                         break;

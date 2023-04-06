@@ -94,7 +94,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 }
                 SAPetHelper.setDefault(pet.catchTime);
                 await delay(500);
-                while (levelData.current.step2Count < 16) {
+                while (levelData.current.step2Count < 6) {
                     await SABattle.Manager.runOnce(() => {
                         setHint(
                             <>
@@ -106,7 +106,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                                 <PercentLinearProgress
                                     prompt={'击败爆破先锋'}
                                     progress={levelData.current.step2Count}
-                                    total={16}
+                                    total={6}
                                 />
                             </>
                         );

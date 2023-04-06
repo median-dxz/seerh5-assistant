@@ -85,3 +85,6 @@ export function getTitleName(id: number) {
     // return PetStatusEffectConfig.getName(0, id);
     // TODO
 }
+
+// getTitleIdByName
+// getSuitIdByName
