@@ -1,9 +1,11 @@
 declare namespace SAType {
     type EventHandler<E extends egret.EventDispatcher> = (event?: E) => void;
 
-    type Dict<T extends object> = {
-        [property: number | string]: T;
-    } | Array<T>;
+    type Dict<T extends object> =
+        | {
+              [property: number | string]: T;
+          }
+        | Array<T>;
 
     class HashMap<T extends object> {
         containsKey(key: any): boolean;
@@ -90,6 +92,19 @@ declare namespace SAType {
         Reward: {
             ItemID: number;
         };
+    }
+
+    interface SuitObj extends BaseObj {
+        cloths: string;
+        id: number;
+        name: string;
+        suitdes: string;
+    }
+
+    interface TitleObj extends BaseObj {
+        ID: number;
+        Desc: string;
+        title: string;
     }
 
     interface ObserverList<T> {

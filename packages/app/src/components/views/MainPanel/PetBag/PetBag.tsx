@@ -259,15 +259,10 @@ export function PetBag({ panelState }: Props) {
     };
 
     const handleCopyCatchTime = () => {
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(
-                JSON.stringify(pets.map((pet) => ({ name: pet.name, catchTime: pet.catchTime })))
-            );
-            BubblerManager.getInstance().showText('复制成功');
-        } else {
-            BubblerManager.getInstance().showText('无法访问剪切板API, 数据导出到控制台');
-            console.log(pets.map((pet) => ({ name: pet.name, catchTime: pet.catchTime })));
-        }
+        navigator.clipboard.writeText(
+            JSON.stringify(pets.map((pet) => ({ name: pet.name, catchTime: pet.catchTime })))
+        );
+        BubblerManager.getInstance().showText('复制成功');
     };
 
     let fireRenderProps: { color: string; text: string };
@@ -299,13 +294,13 @@ export function PetBag({ panelState }: Props) {
             <h3>套装 / 称号</h3>
             <Typography display="flex" alignItems="baseline">
                 当前套装:
-                <Button onClick={handleChangeSuit}>{SuitXMLInfo.getName(userSuit)}</Button>
+                <Button onClick={handleChangeSuit}>{SAEngine.getSuitName(userSuit)}</Button>
                 效果: {ItemSeXMLInfo.getSuitEff(userSuit)}
             </Typography>
 
             <Typography display="flex" alignItems="baseline">
                 当前称号:
-                <Button onClick={handleChangeTitle}>{AchieveXMLInfo.getTitle(userTitle)}</Button>
+                <Button onClick={handleChangeTitle}>{SAEngine.getTitleName(userTitle)}</Button>
                 效果: {AchieveXMLInfo.getTitleEffDesc(userTitle)}
             </Typography>
             <Menu

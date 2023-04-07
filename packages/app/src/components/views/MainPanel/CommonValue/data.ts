@@ -25,7 +25,7 @@ declare namespace pveEnterPanel {
     class PveEnterPanel extends BasicMultPanelModule {}
     class PveResourceCollection extends BasicPanel {
         menu: baseMenuComponent.BaseMenuComponent;
-        onChangeMinor(): void;
+        updateView(): void;
     }
 }
 
@@ -37,7 +37,7 @@ const showPveResourcePanel = async (itemValue: string) => {
     await delay(1500);
     const curPanel = curModule.panelMap[panelName] as pveEnterPanel.PveResourceCollection;
     curPanel.menu.selectedValue = itemValue;
-    curPanel.onChangeMinor();
+    curPanel.updateView();
 };
 
 export const openModuleList: { [id: number]: any } = {

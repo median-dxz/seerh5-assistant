@@ -77,14 +77,17 @@ export function getStatusName(id: number) {
 }
 
 export function getSuitName(id: number) {
-    // return PetStatusEffectConfig.getName(0, id);
-    // TODO
+    return SuitXMLInfo.getName(id);
+}
+
+export function findSuitIdByName(name: string) {
+    return SuitXMLInfo._dataMap.getValues().find((s) => s.name === name);
 }
 
 export function getTitleName(id: number) {
-    // return PetStatusEffectConfig.getName(0, id);
-    // TODO
+    return AchieveXMLInfo.getTitle(id);
 }
 
-// getTitleIdByName
-// getSuitIdByName
+export function findTitleIdByName(name: string) {
+    return find(AchieveXMLInfo.titleRules, (t) => t.title === name);
+}

@@ -164,6 +164,7 @@ declare class MainManager {
         clothIDs: number[];
         curTitle: number;
         vipScore: number;
+        readonly coins: number;
         readonly logintimeThisTime: number;
         readonly timeToday: number;
         readonly timeLimit: number;
@@ -274,6 +275,7 @@ declare class CountermarkController {
 }
 
 declare class AchieveXMLInfo {
+    static titleRules: SAType.Dict<SAType.TitleObj>;
     static isAbilityTitle(id: number): boolean;
     static getTitle(id: number): string;
     static getTitleDesc(id: number): string;
@@ -313,6 +315,7 @@ declare class SkillXMLInfo {
 }
 
 declare class SuitXMLInfo {
+    static _dataMap: SAType.HashMap<SAType.SuitObj>;
     static getName(id: number): string;
     static getIsElite(id: number): boolean;
     static getSuitID(clothIds: number[]): number;

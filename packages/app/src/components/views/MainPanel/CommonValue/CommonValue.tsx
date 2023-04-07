@@ -52,8 +52,15 @@ export function CommonValue(props: Props) {
                 completeInitIcon(true);
             });
         }
-        let promises = rows.map(async (row) => (row.amount = await SAEngine.getItemNum(row)));
-        Promise.all(promises).then(() => {
+
+        new Promise<void>((resolve) => {
+            ItemManager.updateItems(
+                rows.map((r) => r.id),
+                resolve
+            );
+        }).then(() => {
+            rows.forEach((r) => (r.amount = SAEngine.getItemNum(r.id)));
+            rows.find((r) => r.name === '赛尔豆')!.amount = MainManager.actorInfo.coins;
             setItems([...rows]);
         });
     }, []);

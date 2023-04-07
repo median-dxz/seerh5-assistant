@@ -2,14 +2,7 @@ import { extractObjectId } from '../common';
 import { IItemObject, Item } from '../entity/Item';
 import * as Socket from './socket';
 
-export async function UpdateItemValues(...itemIds: number[]) {
-    if (itemIds.length == 0) return;
-    return new Promise<void>((resolve, reject) => {
-        ItemManager.updateItems(itemIds, resolve);
-    });
-}
-
-export async function getItemNum(item: number | IItemObject) {
+export function getItemNum(item: number | IItemObject) {
     let id = extractObjectId(item, Item.instanceKey);
     return ItemManager.getNumByID(id);
 }
