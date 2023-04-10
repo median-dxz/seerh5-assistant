@@ -1,4 +1,4 @@
-export const Item = {
+export const ItemId = {
     Potion: {
         初级体力药剂: 300011,
         中级体力药剂: 300012,

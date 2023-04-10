@@ -1,7 +1,7 @@
 import { MoveModule } from 'packages/core/src/battle/manager';
 import {
-    Constant,
     Mod,
+    PetFragmentLevelDifficulty as Difficulty,
     SABattle,
     SAEngine,
     SAPetHelper,
@@ -17,9 +17,6 @@ const log = SaModuleLogger('精灵因子', defaultStyle.mod);
 declare namespace pvePetYinzi {
     const DataManager: any;
 }
-
-type Difficulty = Constant.PetFragmentLevelDifficulty;
-const Difficulty = Constant.PetFragmentLevelDifficulty;
 
 namespace PetFragment {
     export interface Option {

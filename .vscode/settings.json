@@ -19,5 +19,6 @@
         "pmmmwh",
         "seerh5",
         "sac",
-    ]
+    ],
+    // "typescript.referencesCodeLens.enabled": true,
 }

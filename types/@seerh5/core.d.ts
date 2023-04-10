@@ -326,3 +326,9 @@ declare class PetXMLInfo {
     static getType(id: number): number;
     static getName(id: number): string;
 }
+
+declare class PetStatusEffectConfig {
+    static xml: {
+        BattleEffect: [{ Name: string; SubEffect: SAType.StatusEffectObj[] }];
+    };
+}

@@ -1,6 +1,6 @@
 import {
-    Constant,
     Mod,
+    PetPosition,
     SABattle,
     SAEngine,
     SAPetHelper,
@@ -116,7 +116,7 @@ class 阿尔蒂克第三关 extends Mod {
                 await lowerBlood(ct);
                 log(
                     '压血完成, 当前精灵血线列表',
-                    (await SAPetHelper.getBagPets(Constant.PetPosition.bag1)).map((p) => ({
+                    (await SAPetHelper.getBagPets(PetPosition.bag1)).map((p) => ({
                         name: p.name,
                         hp: p.hp,
                     }))

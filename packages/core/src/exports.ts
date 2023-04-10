@@ -46,5 +46,3 @@ export type { ModuleSubscriber } from './event-handler';
 export * from './functions';
 
 export const SAPetHelper = new Proxy(PetHelper, getHandler<typeof PetHelper>());
-
-

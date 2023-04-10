@@ -2,7 +2,7 @@ import { Typography } from '@mui/material';
 
 import { useCore } from '@sa-app/provider/useCore';
 import React from 'react';
-import { Constant, delay, SAEntity } from 'seerh5-assistant-core';
+import { delay, PetPosition, SAEntity } from 'seerh5-assistant-core';
 import { PercentLinearProgress } from '../base';
 import { LevelBase, LevelExtendsProps } from './LevelBase';
 
@@ -86,7 +86,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 setStep(0);
                 break;
             case 2:
-                pets = await SAPetHelper.getBagPets(Constant.PetPosition.bag1);
+                pets = await SAPetHelper.getBagPets(PetPosition.bag1);
                 pet = pets.find((pet) => pet.name === '艾欧丽娅');
                 if (!pet) {
                     setStep(-3);
@@ -151,7 +151,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                     levelData.current = await updateLevelData();
                 }
             case 4:
-                pets = await SAPetHelper.getBagPets(Constant.PetPosition.bag1);
+                pets = await SAPetHelper.getBagPets(PetPosition.bag1);
                 pet = pets.find((pet) => pet.name === '幻影蝶');
                 if (!pet) {
                     setStep(-3);
@@ -168,7 +168,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                         />
                     );
                     SAEngine.Socket.sendByQueue(42396, [104, 3, 4]);
-                },customData.strategy);
+                }, customData.strategy);
                 levelData.current = await updateLevelData();
                 setStep(5);
                 break;

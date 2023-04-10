@@ -1,13 +1,14 @@
 import { useRfcData } from '@sa-app/provider/useRfcData';
 import {
-    Constant,
+    ItemId,
     Mod,
+    PetPosition,
     SAEngine,
     SAPetHelper,
     SaModuleLogger,
     defaultStyle,
     delay,
-    usePotionForPet
+    usePotionForPet,
 } from 'seerh5-assistant-core';
 
 const log = SaModuleLogger('Sign', defaultStyle.mod);
@@ -123,7 +124,7 @@ class sign extends Mod {
             void log('无法收取派遣');
         }
         const ignorePetNames = new Set(this.data.ignorePetNames);
-        const PosType = Constant.PetPosition;
+        const PosType = PetPosition;
         let reprogress = false;
         for (let tid = 16; tid > 0; tid--) {
             if (tid === 5) tid = 1;
@@ -177,9 +178,9 @@ class sign extends Mod {
         }
     }
 
-    craftDreamGem(id: AttrConst<typeof Constant.Item.DreamGem>, left: number) {
+    craftDreamGem(id: AttrConst<typeof ItemId.DreamGem>, left: number) {
         const total = ItemManager.getNumByID(id);
-        const { 低阶梦幻宝石, 中阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石, 高阶梦幻宝石 } = Constant.Item.DreamGem;
+        const { 低阶梦幻宝石, 中阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石, 高阶梦幻宝石 } = ItemId.DreamGem;
         const level = [低阶梦幻宝石, 中阶梦幻宝石, 高阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石];
         for (let i = 1; i <= Math.trunc((total - left) / 4); i++) {
             SAEngine.Socket.sendByQueue(9332, [level.indexOf(id), 4]);

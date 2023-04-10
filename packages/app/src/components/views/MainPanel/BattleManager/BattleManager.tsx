@@ -16,7 +16,6 @@ const handleMoveToTop = (arr: any[], index: number) => {
     const item = arr.splice(index, 1)[0];
     arr.unshift(item);
 };
-
 const handleDelete = (arr: any[], index: number) => {
     arr.splice(index, 1);
 };

@@ -1,93 +1,93 @@
-type DataPredicate<T> = (value: T) => boolean;
+import { ConfigType } from '../constant';
 
-const match = <T extends SAType.BaseObj>(dict: SAType.Dict<T>, predicate: DataPredicate<T>) => {
-    return Object.values(dict).filter(predicate);
+type ConfigPredicate<T> = (value: T) => boolean;
+
+const Iterator = <T>(type: T) => {
+    let index = 0;
+    let objectArray: Array<SAType.BaseObj>;
+    switch (type) {
+        case ConfigType.item:
+            objectArray = Object.values(ItemXMLInfo._itemDict);
+            break;
+        case ConfigType.element:
+            objectArray = Object.values(SkillXMLInfo.typeMap);
+            break;
+        case ConfigType.skill:
+            objectArray = Object.values(SkillXMLInfo.SKILL_OBJ.Moves.Move);
+            break;
+        case ConfigType.pet:
+            objectArray = Object.values(PetXMLInfo._dataMap);
+            break;
+        case ConfigType.suit:
+            objectArray = SuitXMLInfo._dataMap.getValues();
+            break;
+        case ConfigType.title:
+            objectArray = Object.values(AchieveXMLInfo.titleRules);
+            break;
+        case ConfigType.statusEffect:
+            objectArray = PetStatusEffectConfig.xml.BattleEffect[0].SubEffect;
+            break;
+        default:
+            throw new Error('不支持的查询集合');
+    }
+    return {
+        next() {
+            return { done: index >= objectArray.length, value: objectArray[index++] as T };
+        },
+        [Symbol.iterator]() {
+            return this;
+        },
+    };
 };
 
-const find = <T extends SAType.BaseObj>(dict: SAType.Dict<T>, predicate: DataPredicate<T>) => {
-    return Object.values(dict).find(predicate);
+const getObjProperty = (obj: SAType.BaseObj, propertyTags: string[]) => {
+    for (const property of propertyTags) {
+        if (Object.hasOwn(obj, property)) {
+            return obj[property];
+        }
+    }
+    return undefined;
 };
 
-export function getItem(id: number) {
-    return ItemXMLInfo.getItemObj(id);
+const getObjectId = (obj: SAType.BaseObj) => {
+    return getObjProperty(obj, ['ID', 'id']) as number;
+};
+
+const getObjectName = (obj: SAType.BaseObj) => {
+    return getObjProperty(obj, ['Name', 'name', 'cn', 'title', 'DefName']) as string;
+};
+
+export function find<T extends SAType.BaseObj>(type: T, predicate: ConfigPredicate<T>) {
+    for (const obj of Iterator<T>(type)) {
+        if (predicate(obj)) {
+            return obj;
+        }
+    }
 }
 
-export function findItem(predicate: DataPredicate<SAType.ItemObj>) {
-    return find(ItemXMLInfo._itemDict, predicate);
+export function filter<T extends SAType.BaseObj>(type: T, predicate: ConfigPredicate<T>) {
+    const r = [];
+    for (const obj of Iterator<T>(type)) {
+        if (predicate(obj)) {
+            r.push(obj);
+        }
+    }
+    return r;
 }
 
-export function matchItem(predicate: DataPredicate<SAType.ItemObj>) {
-    return match(ItemXMLInfo._itemDict, predicate);
+export function get<T extends SAType.BaseObj>(type: T, id: number) {
+    return find(type, (v) => getObjectId(v) === id);
 }
 
-export function matchItemByName(nameReg: RegExp) {
-    return matchItem((item) => Boolean(item.Name.match(nameReg)));
+export function findByName<T extends SAType.BaseObj>(type: T, name: string) {
+    return find(type, (v) => getObjectName(v) === name);
 }
 
-export function getElement(id: number) {
-    return SkillXMLInfo.typeMap[id] ? SkillXMLInfo.typeMap[id] : undefined;
+export function filterByName<T extends SAType.BaseObj>(type: T, name: string | RegExp) {
+    return filter(type, (v) => Boolean(getObjectName(v).match(name)));
 }
 
-export function findElement(predicate: DataPredicate<SAType.ElementObj>) {
-    return find(SkillXMLInfo.typeMap, predicate);
-}
-
-export function matchElement(predicate: DataPredicate<SAType.ElementObj>) {
-    return match(SkillXMLInfo.typeMap, predicate);
-}
-
-export function findElementByName(name: string) {
-    return findElement((el) => el.cn === name);
-}
-
-export function getSkill(id: number) {
-    return SkillXMLInfo.getSkillObj(id);
-}
-
-export function findSkill(predicate: DataPredicate<SAType.MoveObj>) {
-    return find(SkillXMLInfo.SKILL_OBJ.Moves.Move, predicate);
-}
-
-export function matchSkill(predicate: DataPredicate<SAType.MoveObj>) {
-    return match(SkillXMLInfo.SKILL_OBJ.Moves.Move, predicate);
-}
-
-export function findSkillByName(name: string) {
-    return findSkill((skill) => skill.Name === name);
-}
-
-export function getPet(id: number) {
-    return find(PetXMLInfo._dataMap, (pet) => pet.ID === id);
-}
-
-export function findPet(predicate: DataPredicate<SAType.PetObj>) {
-    return find(PetXMLInfo._dataMap, predicate);
-}
-
-export function matchPet(predicate: DataPredicate<SAType.PetObj>) {
-    return match(PetXMLInfo._dataMap, predicate);
-}
-
-export function findPetByName(name: string) {
-    return findPet((pet) => pet.DefName === name);
-}
-
-export function getStatusName(id: number) {
-    return PetStatusEffectConfig.getName(0, id);
-}
-
-export function getSuitName(id: number) {
-    return SuitXMLInfo.getName(id);
-}
-
-export function findSuitIdByName(name: string) {
-    return SuitXMLInfo._dataMap.getValues().find((s) => s.name === name);
-}
-
-export function getTitleName(id: number) {
-    return AchieveXMLInfo.getTitle(id);
-}
-
-export function findTitleIdByName(name: string) {
-    return find(AchieveXMLInfo.titleRules, (t) => t.title === name);
+export function getName<T extends SAType.BaseObj>(type: T, id: number) {
+    const o = find(type, (v) => getObjectId(v) === id);
+    return o && getObjectName(o);
 }

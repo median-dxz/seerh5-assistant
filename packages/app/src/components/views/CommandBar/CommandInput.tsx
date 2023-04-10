@@ -1,7 +1,6 @@
 import { AutocompleteProps, Autocomplete as AutocompleteRaw } from '@mui/material';
 import { styled } from '@mui/system';
 import { mainColor } from '@sa-app/style';
-import { useBubbleHint } from '@sa-app/utils/useBubbleHint';
 import React, { useEffect, useState } from 'react';
 import { StyledTextField } from './StyledTextField';
 
@@ -90,7 +89,7 @@ export function CommandInput() {
             onChange={(event, newValue: string | null) => {
                 if (modName && newValue) {
                     sac.Mods.get(modName)!.reflect(newValue);
-                    useBubbleHint(`[Info]: 应用命令: ${modName}: ${newValue}`);
+                    BubblerManager.getInstance().showText(`[Info]: 应用命令: ${modName}: ${newValue}`);
                     if (newValue === 'return') {
                         handleLeaveMod();
                     } else {

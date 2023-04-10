@@ -13,10 +13,9 @@ import { MainButton } from './MainButton';
 import { MainMenu } from './MainMenu';
 import { MainPanel } from './MainPanel';
 
-import { Constant, SABattle, SAEventTarget } from 'seerh5-assistant-core';
+import { Hook, SABattle, SAEventTarget } from 'seerh5-assistant-core';
 
 const { defaultStrategy, resolveStrategy } = SABattle;
-const { Hook } = Constant;
 
 import * as saco from 'seerh5-assistant-core';
 

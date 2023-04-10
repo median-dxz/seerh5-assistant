@@ -11,7 +11,9 @@ import {
 } from '@mui/material';
 
 import {
-    Constant,
+    BattleFireType,
+    ConfigType,
+    PetPosition,
     SAEngine,
     SAEntity,
     SAPetHelper,
@@ -79,7 +81,7 @@ export function PetBag({ panelState }: Props) {
 
     React.useEffect(() => {
         updateBattleFire();
-        SAPetHelper.getBagPets(Constant.PetPosition.bag1).then((r) => {
+        SAPetHelper.getBagPets(PetPosition.bag1).then((r) => {
             setPets(r);
             setPetsSelected(Array(r.length).fill(false));
             let promises = r
@@ -269,9 +271,9 @@ export function PetBag({ panelState }: Props) {
     if (!battleFire.valid) {
         fireRenderProps = { color: 'inherit', text: '无火焰' };
     } else {
-        if (battleFire.type === Constant.BattleFireType.绿火) {
+        if (battleFire.type === BattleFireType.绿火) {
             fireRenderProps = { color: 'green', text: '使用中: 绿火' };
-        } else if (battleFire.type === Constant.BattleFireType.金火) {
+        } else if (battleFire.type === BattleFireType.金火) {
             fireRenderProps = { color: 'gold', text: '使用中: 金火' };
         } else {
             fireRenderProps = { color: 'inherit', text: '其他火焰' };
@@ -294,13 +296,13 @@ export function PetBag({ panelState }: Props) {
             <h3>套装 / 称号</h3>
             <Typography display="flex" alignItems="baseline">
                 当前套装:
-                <Button onClick={handleChangeSuit}>{SAEngine.getSuitName(userSuit)}</Button>
+                <Button onClick={handleChangeSuit}>{SAEngine.getName(ConfigType.suit, userSuit)}</Button>
                 效果: {ItemSeXMLInfo.getSuitEff(userSuit)}
             </Typography>
 
             <Typography display="flex" alignItems="baseline">
                 当前称号:
-                <Button onClick={handleChangeTitle}>{SAEngine.getTitleName(userTitle)}</Button>
+                <Button onClick={handleChangeTitle}>{SAEngine.getName(ConfigType.title, userTitle)}</Button>
                 效果: {AchieveXMLInfo.getTitleEffDesc(userTitle)}
             </Typography>
             <Menu

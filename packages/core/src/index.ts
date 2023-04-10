@@ -1,5 +1,5 @@
 export * from './common';
-export * as Constant from './constant';
+export * from './constant';
 export * from './exports';
 export * from './loader';
 export * from './logger';

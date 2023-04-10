@@ -69,7 +69,11 @@ declare namespace SAType {
         is_dou?: number;
     }
 
-    interface SideEffectObj extends BaseObj {}
+    interface StatusEffectObj extends BaseObj {
+        ID: number;
+        Name: number;
+        Efftype: 0 | 1;
+    }
 
     interface PetFragmentLevelBoss extends BaseObj {
         ID: number;
@@ -146,7 +150,6 @@ declare var UIUtils: null;
 
 // utils/sa-utils
 declare var CountermarkEvent: any;
-declare var PetStatusEffectConfig: any;
 
 // entities
 declare var EffectInfoManager: any;
