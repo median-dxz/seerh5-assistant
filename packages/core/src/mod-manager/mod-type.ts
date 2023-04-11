@@ -1,9 +1,9 @@
 declare interface ModClass {
     init: VoidFunction;
     run?: VoidFunction;
-    runOnce?: VoidFunction;
     update?: VoidFunction;
     meta: {
+        id: string;
         description: string;
     };
 }
@@ -17,7 +17,7 @@ export class Mod implements ModClass {
         return this[method]?.(args);
     }
 
-    getKeys(): Array<string> {
+    getKeys(): string[] {
         return Object.keys(Object.getOwnPropertyDescriptors(this.__proto__)).filter(
             (key) => !key.startsWith('_') && !['getKeys', 'getParameterList', 'reflect', 'constructor'].includes(key)
         );
@@ -31,5 +31,5 @@ export class Mod implements ModClass {
     }
 
     init() {}
-    meta: { description: string } = { description: '' };
+    meta = { id: '', description: '' };
 }

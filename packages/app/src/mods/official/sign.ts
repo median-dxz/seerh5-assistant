@@ -36,11 +36,9 @@ const AWARD_LIST = {
 };
 
 class sign extends Mod {
-    meta = { description: '日任常用功能' };
+    meta = { description: '日任常用功能', id: 'sign' };
     data: any;
-    init() {}
-    constructor() {
-        super();
+    init() {
         useRfcData().then((v) => {
             this.data = v;
         });
@@ -208,7 +206,4 @@ class sign extends Mod {
         }
     }
 }
-export default {
-    mod: sign,
-    id: 'sign',
-};
+export default sign;

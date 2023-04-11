@@ -1,16 +1,14 @@
 import { Mod, SAEngine } from 'seerh5-assistant-core';
 
 class CraftSkillStone extends Mod {
-    constructor() {
-        super();
-    }
-
     stones: {
         name: string;
         level: number;
         id: number;
         num: number;
     }[] = [];
+
+    async update() {}
 
     async init() {
         await SAEngine.Socket.sendWithReceivedPromise(4475, () => {
@@ -70,10 +68,7 @@ class CraftSkillStone extends Mod {
         return rate[level][targetLevel];
     }
 
-    meta = { description: '' };
+    meta = { description: '', id: 'CraftSkillStone' };
 }
 
-export default {
-    mod: CraftSkillStone,
-    id: 'CraftSkillStone',
-};
+export default CraftSkillStone;

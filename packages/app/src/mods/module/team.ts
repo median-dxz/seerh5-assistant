@@ -37,18 +37,13 @@ class TeamTechCenter extends Mod {
             };
         },
     };
-    constructor() {
-        super();
+    init() {
         SAEventHandler.SeerModuleStatePublisher.attach(this.subscriber, 'team');
     }
-    init() {}
     destroy() {
         SAEventHandler.SeerModuleStatePublisher.detach(this.subscriber, 'team');
     }
-    meta = { description: '战队模块' };
+    meta = { description: '战队模块', id: 'team' };
 }
 
-export default {
-    mod: TeamTechCenter,
-    id: 'team',
-};
+export default TeamTechCenter;

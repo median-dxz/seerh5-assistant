@@ -10,7 +10,6 @@ import {
     wrapper,
 } from 'seerh5-assistant-core';
 
-
 const log = SaModuleLogger('LocalCloth', defaultStyle.mod);
 
 interface SkinInfo {
@@ -131,9 +130,8 @@ class LocalCloth extends Mod {
             }
         },
     };
-    constructor() {
-        super();
-
+    meta = { description: '本地全皮肤解锁', id: 'petBag' };
+    init() {
         Object.defineProperty(FighterUserInfo.prototype, 'petInfoArr', {
             get: function () {
                 return this._petInfoArr;
@@ -220,16 +218,11 @@ class LocalCloth extends Mod {
         };
 
         SAEventHandler.SeerModuleStatePublisher.attach(this.subscriber, 'petBag');
+        console.log('here');
     }
-
-    meta = { description: '本地全皮肤解锁' };
-    init() {}
     destroy() {
         SAEventHandler.SeerModuleStatePublisher.detach(this.subscriber, 'petBag');
     }
 }
 
-export default {
-    mod: LocalCloth,
-    id: 'petBag',
-};
+export default LocalCloth;

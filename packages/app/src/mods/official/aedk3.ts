@@ -43,11 +43,6 @@ const ct = pets.map((p) => p.catchTime);
 class 阿尔蒂克第三关 extends Mod {
     config: LevelConfig;
     async init() {
-        // 银翼 音浪 潘朵魔钰 压血 关自动回血
-        SAEngine.changeSuit(365);
-        SAEngine.changeTitle(418);
-        SAPetHelper.toggleAutoCure(false);
-        switchBag(ct);
         // 获取关卡信息
         this.config = {
             抽取次数: 0,
@@ -80,10 +75,14 @@ class 阿尔蒂克第三关 extends Mod {
                 return this.update();
             },
         };
-
-        // 自动战斗
     }
     async runAll() {
+        // 银翼 音浪 潘朵魔钰 压血 关自动回血
+        SAEngine.changeSuit(365);
+        SAEngine.changeTitle(418);
+        SAPetHelper.toggleAutoCure(false);
+        switchBag(ct);
+        // 自动战斗
         await this.config.update();
         log(`更新信息`);
         while (
@@ -136,9 +135,7 @@ class 阿尔蒂克第三关 extends Mod {
         log('今日结束');
         SABattle.Manager.clear();
     }
+    meta = { id: 'aedk3', description: '' };
 }
 
-export default {
-    mod: 阿尔蒂克第三关,
-    id: 'aedk3',
-};
+export default 阿尔蒂克第三关;

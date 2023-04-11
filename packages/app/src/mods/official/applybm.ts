@@ -1,7 +1,7 @@
 import { MoveModule } from 'packages/core/src/battle/manager';
 import {
-    Mod,
     PetFragmentLevelDifficulty as Difficulty,
+    Mod,
     SABattle,
     SAEngine,
     SAPetHelper,
@@ -260,10 +260,7 @@ class applyBm extends Mod {
     getCurPanelInfo() {
         log(pvePetYinzi.DataManager._instance.curYinziData);
     }
-    init() {
-        config.xml.load('new_super_design');
-        config.xml.load('Fragment');
-    }
+    init() {}
     getRunner() {
         return new PetFragment.Runner();
     }
@@ -294,10 +291,7 @@ class applyBm extends Mod {
         }
     }
 
-    meta = { description: '' };
+    meta = { description: '', id: 'applyBm' };
 }
 
-export default {
-    mod: applyBm,
-    id: 'applyBm',
-};
+export default applyBm;

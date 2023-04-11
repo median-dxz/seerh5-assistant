@@ -12,6 +12,9 @@ export const useMod = async () => {
 
     for (let mod of mods) {
         const modObj = mod.default;
-        ModRegister(modObj.id, modObj.mod);
+        ModRegister(modObj);
+    }
+    for (let [id, mod] of sac.Mods) {
+        mod.init();
     }
 };

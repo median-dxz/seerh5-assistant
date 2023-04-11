@@ -1,6 +1,6 @@
 import { ConfigType } from '../constant';
 
-type ConfigPredicate<T> = (value: T) => boolean;
+type PredicateFn<T> = (value: T) => boolean;
 
 const Iterator = <T>(type: T) => {
     let index = 0;
@@ -50,14 +50,14 @@ const getObjProperty = (obj: SAType.BaseObj, propertyTags: string[]) => {
 };
 
 const getObjectId = (obj: SAType.BaseObj) => {
-    return getObjProperty(obj, ['ID', 'id']) as number;
+    return getObjProperty(obj, ['SpeNameBonus', 'id', 'ID']) as number;
 };
 
 const getObjectName = (obj: SAType.BaseObj) => {
-    return getObjProperty(obj, ['Name', 'name', 'cn', 'title', 'DefName']) as string;
+    return getObjProperty(obj, ['title', 'cn', 'name', 'DefName', 'Name']) as string;
 };
 
-export function find<T extends SAType.BaseObj>(type: T, predicate: ConfigPredicate<T>) {
+export function find<T extends SAType.BaseObj>(type: T, predicate: PredicateFn<T>) {
     for (const obj of Iterator<T>(type)) {
         if (predicate(obj)) {
             return obj;
@@ -65,7 +65,7 @@ export function find<T extends SAType.BaseObj>(type: T, predicate: ConfigPredica
     }
 }
 
-export function filter<T extends SAType.BaseObj>(type: T, predicate: ConfigPredicate<T>) {
+export function filter<T extends SAType.BaseObj>(type: T, predicate: PredicateFn<T>) {
     const r = [];
     for (const obj of Iterator<T>(type)) {
         if (predicate(obj)) {

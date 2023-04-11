@@ -1,6 +1,5 @@
 import { Lock } from '@mui/icons-material';
 import { Box, Fade, Switch, SxProps, Tab, Tabs } from '@mui/material';
-import { PanelStateContext } from '@sa-app/context/PanelState';
 import { mainColor } from '@sa-app/style';
 import * as React from 'react';
 import { BattleManager } from './BattleManager';
@@ -140,30 +139,27 @@ export function MainPanel(props: Props) {
                         <Tab label="抓包调试" {...a11yProps(5)} />
                     </Tabs>
                 </Box>
-                <PanelStateContext.Consumer>
-                    {(panelState) => (
-                        <>
-                            <TabPanel value={value} index={0}>
-                                <QuickCommand />
-                            </TabPanel>
-                            <TabPanel value={value} index={1}>
-                                <CommonValue panelState={panelState} />
-                            </TabPanel>
-                            <TabPanel value={value} index={2}>
-                                <Realm />
-                            </TabPanel>
-                            <TabPanel value={value} index={3}>
-                                <PetBag panelState={panelState} />
-                            </TabPanel>
-                            <TabPanel value={value} index={4}>
-                                <BattleManager />
-                            </TabPanel>
-                            <TabPanel value={value} index={5}>
-                                <PackageCapture />
-                            </TabPanel>
-                        </>
-                    )}
-                </PanelStateContext.Consumer>
+
+                <>
+                    <TabPanel value={value} index={0}>
+                        <QuickCommand />
+                    </TabPanel>
+                    <TabPanel value={value} index={1}>
+                        <CommonValue />
+                    </TabPanel>
+                    <TabPanel value={value} index={2}>
+                        <Realm />
+                    </TabPanel>
+                    <TabPanel value={value} index={3}>
+                        <PetBag />
+                    </TabPanel>
+                    <TabPanel value={value} index={4}>
+                        <BattleManager />
+                    </TabPanel>
+                    <TabPanel value={value} index={5}>
+                        <PackageCapture />
+                    </TabPanel>
+                </>
             </Box>
         </Fade>
     );

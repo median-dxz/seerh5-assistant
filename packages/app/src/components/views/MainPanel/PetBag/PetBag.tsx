@@ -11,7 +11,6 @@ import {
 } from '@mui/material';
 
 import {
-    BattleFireType,
     ConfigType,
     PetPosition,
     SAEngine,
@@ -20,21 +19,14 @@ import {
     delay,
     lowerBlood,
     switchBag,
-    updateBattleFireInfo,
 } from 'seerh5-assistant-core';
 
-import { PanelState } from '@sa-app/context/PanelState';
 import { mainColor } from '@sa-app/style';
 
+import { PanelStateContext } from '@sa-app/context/PanelState';
 import React from 'react';
 import { PanelTableBase, PanelTableBodyRow } from '../base';
-
-const numberFormatter = (n: number) => {
-    const { format } = Intl.NumberFormat(undefined, {
-        minimumIntegerDigits: 2,
-    });
-    return `${format(Math.trunc(n / 60))}:${format(n % 60)}`;
-};
+import { BattleFireInfo } from './BattleFireInfo';
 
 const StorageKey = 'PetPattern';
 
@@ -44,15 +36,7 @@ interface MenuOption {
     options: string[];
 }
 
-interface Props {
-    panelState: PanelState;
-}
-
-export function PetBag({ panelState }: Props) {
-    type BattleFireInfo = Awaited<ReturnType<typeof updateBattleFireInfo>>;
-    const [battleFire, setBattleFire] = React.useState<BattleFireInfo>({ timeLeft: 0, type: 0, valid: false });
-    const [timeLeft, setTimeLeft] = React.useState(0);
-    const [timer, setTimer] = React.useState<undefined | number>(undefined);
+export function PetBag() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [menuOpen, setMenuOpen] = React.useState(false);
     const menuOption = React.useRef<MenuOption | null>(null);
@@ -68,19 +52,11 @@ export function PetBag({ panelState }: Props) {
         return item as Array<number[]>;
     });
     const [petHeadSrc, setPetHeadSrc] = React.useState<string[]>([]);
-    const [userTitle, setUserTitle] = React.useState(SAEngine.UserTitle());
-    const [userSuit, setUserSuit] = React.useState(SAEngine.UserSuit());
+    const [userTitle, setUserTitle] = React.useState(SAEngine.getUserTitle());
+    const [userSuit, setUserSuit] = React.useState(SAEngine.getUserSuit());
     const [animationMode, setAnimationMode] = React.useState(false);
 
-    const updateBattleFire = async () => {
-        const info = await updateBattleFireInfo();
-        setBattleFire(info);
-        setTimeLeft(info.timeLeft);
-        return info;
-    };
-
     React.useEffect(() => {
-        updateBattleFire();
         SAPetHelper.getBagPets(PetPosition.bag1).then((r) => {
             setPets(r);
             setPetsSelected(Array(r.length).fill(false));
@@ -102,40 +78,8 @@ export function PetBag({ panelState }: Props) {
         }
     }, []);
 
-    React.useEffect(() => {
-        if (battleFire.timeLeft <= 0 || battleFire.valid === false) {
-            clearInterval(timer);
-            setTimer(undefined);
-        } else {
-            if (window) {
-                const { setInterval } = window;
-                clearInterval(timer);
-                setTimer(
-                    setInterval(() => {
-                        if (timeLeft <= 0) {
-                            updateBattleFire();
-                        } else {
-                            setTimeLeft((t) => t - 1);
-                        }
-                    }, 1000)
-                );
-            }
-        }
-        return () => clearInterval(timer);
-    }, [battleFire]);
-
-    const openPetBag = () => {
-        ModuleManager.showModule('petBag');
-        panelState.setOpen(false);
-    };
-
-    const exchangeBattleFire = () => {
-        ModuleManager.showModule('battleFirePanel', ['battleFirePanel'], null, null, AppDoStyle.NULL);
-        panelState.setOpen(false);
-    };
-
     const handleChangeSuit: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-        const suitId = SAEngine.UserAbilitySuits();
+        const suitId = SAEngine.getUserAbilitySuits();
         const suitName = suitId.map<string>(SuitXMLInfo.getName.bind(SuitXMLInfo));
         menuOption.current = {
             type: 'suit',
@@ -148,7 +92,7 @@ export function PetBag({ panelState }: Props) {
 
     const handleChangeTitle: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
         setAnchorEl(e.currentTarget);
-        const titleId = await SAEngine.UserAbilityTitles();
+        const titleId = await SAEngine.getUserAbilityTitles();
         const titleName = titleId.map<string>(AchieveXMLInfo.getTitle.bind(AchieveXMLInfo));
         menuOption.current = {
             type: 'title',
@@ -267,31 +211,17 @@ export function PetBag({ panelState }: Props) {
         BubblerManager.getInstance().showText('复制成功');
     };
 
-    let fireRenderProps: { color: string; text: string };
-    if (!battleFire.valid) {
-        fireRenderProps = { color: 'inherit', text: '无火焰' };
-    } else {
-        if (battleFire.type === BattleFireType.绿火) {
-            fireRenderProps = { color: 'green', text: '使用中: 绿火' };
-        } else if (battleFire.type === BattleFireType.金火) {
-            fireRenderProps = { color: 'gold', text: '使用中: 金火' };
-        } else {
-            fireRenderProps = { color: 'inherit', text: '其他火焰' };
-        }
-        fireRenderProps.text += `剩余时间: ${numberFormatter(timeLeft)}`;
-    }
-
+    const panelState = React.useContext(PanelStateContext);
+    const openPetBag = React.useCallback(() => {
+        ModuleManager.showModule('petBag');
+        panelState.setOpen(false);
+    }, [panelState]);
     return (
         <>
             <Button onClick={openPetBag}>打开背包界面</Button>
             <Button onClick={SAPetHelper.cureAllPet}>全体治疗</Button>
             <Divider />
-            <h3>火焰信息</h3>
-            <Typography color={fireRenderProps.color}>
-                {fireRenderProps.text}
-                <Button onClick={updateBattleFire}>刷新</Button>
-                <Button onClick={exchangeBattleFire}>兑换</Button>
-            </Typography>
+            <BattleFireInfo />
             <Divider />
             <h3>套装 / 称号</h3>
             <Typography display="flex" alignItems="baseline">

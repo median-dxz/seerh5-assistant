@@ -4,9 +4,10 @@ const log = SaModuleLogger('ModLoader', defaultStyle.mod);
 
 let RegisteredMods = new Map<string, Mod>();
 
-async function register(id: string, mod: typeof Mod) {
-    log(`加载模组: ${id}`);
-    RegisteredMods.set(id, new mod());
+async function register(mod: typeof Mod) {
+    const modIns = new mod();
+    log(`加载模组: ${modIns.meta.id}`);
+    RegisteredMods.set(modIns.meta.id, modIns);
 }
 
 export * from './mod-type';

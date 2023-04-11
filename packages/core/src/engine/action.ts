@@ -28,6 +28,6 @@ export async function changeTitle(title: number): Promise<boolean> {
 /**
  * 购买精灵物品(药剂和胶囊)
  */
-export function buyPetItem(potionId: number, amount: number) {
-    Socket.sendByQueue(CommandID.ITEM_BUY, [potionId, amount]);
+export async function buyPetItem(potionId: number, amount: number) {
+    return Socket.sendByQueue(CommandID.ITEM_BUY, [potionId, amount]);
 }
