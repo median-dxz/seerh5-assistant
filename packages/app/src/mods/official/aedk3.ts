@@ -81,7 +81,7 @@ class 阿尔蒂克第三关 extends Mod {
         SAEngine.changeSuit(365);
         SAEngine.changeTitle(418);
         SAPetHelper.toggleAutoCure(false);
-        switchBag(ct);
+        await switchBag(ct);
         // 自动战斗
         await this.config.update();
         log(`更新信息`);

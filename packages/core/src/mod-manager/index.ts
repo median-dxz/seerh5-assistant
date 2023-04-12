@@ -12,5 +12,4 @@ async function register(mod: typeof Mod) {
 
 export * from './mod-type';
 export { register, RegisteredMods };
-export { Mod };
 

@@ -15,38 +15,29 @@ const unitConvert = (count: number): string => {
     }
 };
 
-let icons: string[] | null = null;
-
 export function CommonValue() {
     const rows = idList.map((key) => ItemXMLInfo.getItemObj(key)!).map((obj) => new SAEntity.Item(obj));
 
     let [items, setItems] = useState(rows);
-    let [imgEl, setImgEl] = useState(icons ?? []);
-    let [initIcon, completeInitIcon] = useState(false);
+    let [iconSrc, setIconSrc] = useState<string[]>([]);
 
     useEffect(() => {
-        if (initIcon === false && icons == null) {
-            let promises = rows.map((row) =>
-                RES.getResByUrl(ClientConfig.getItemIcon(row.id))
-                    .then((r) => r.bitmapData.source)
-                    .then((r) => {
-                        if (r) {
-                            return r.src;
-                        } else {
-                            return sac.ResourceCache.get(ClientConfig.getItemIcon(row.id));
-                        }
-                    })
-                    .catch((reason) => {
-                        console.error(reason);
-                    })
-            );
-            Promise.all(promises).then((r) => {
-                // console.log(r);
-                setImgEl(r);
-                icons = r;
-                completeInitIcon(true);
-            });
-        }
+        Promise.all(
+            rows.map(async (row) => {
+                const url = ClientConfig.getItemIcon(row.id);
+                if (sac.ResourceCache.has(url)) {
+                    return sac.ResourceCache.get(url)!;
+                } else {
+                    return RES.getResByUrl(url)
+                        .then((r) => r.bitmapData.source)
+                        .then((r) => r.src)
+                        .catch((err) => console.error(err));
+                }
+            })
+        ).then((r) => {
+            // console.log(r);
+            setIconSrc(r);
+        });
 
         new Promise<void>((resolve) => {
             ItemManager.updateItems(
@@ -59,6 +50,8 @@ export function CommonValue() {
             setItems([...rows]);
         });
     }, []);
+
+    const panelState = React.useContext(PanelStateContext);
 
     return (
         <PanelTableBase
@@ -75,42 +68,38 @@ export function CommonValue() {
             }
         >
             {items.map((row, index) => (
-                <PanelStateContext.Consumer>
-                    {(panelState) => (
-                        <PanelTableBodyRow key={row.id}>
-                            <TableCell component="th" scope="row">
-                                {row.id}
-                            </TableCell>
-                            <TableCell>
-                                <img crossOrigin="anonymous" src={imgEl[index]} width={48} />
-                            </TableCell>
-                            <TableCell>{row.name}</TableCell>
-                            <TableCell>
-                                {row.limit ? (
-                                    <PercentLinearProgress
-                                        progress={row.amount}
-                                        total={row.limit}
-                                        cover={`${unitConvert(row.amount)}/${unitConvert(row.limit)}`}
-                                    />
-                                ) : (
-                                    <Typography>{unitConvert(row.amount)}</Typography>
-                                )}
-                            </TableCell>
-                            <TableCell>
-                                {openModuleList[row.id] ? (
-                                    <Button
-                                        onClick={() => {
-                                            openModuleList[row.id]();
-                                            panelState.setOpen(false);
-                                        }}
-                                    >
-                                        兑换
-                                    </Button>
-                                ) : undefined}
-                            </TableCell>
-                        </PanelTableBodyRow>
-                    )}
-                </PanelStateContext.Consumer>
+                <PanelTableBodyRow key={row.id}>
+                    <TableCell component="th" scope="row">
+                        {row.id}
+                    </TableCell>
+                    <TableCell>
+                        <img crossOrigin="anonymous" src={iconSrc[index]} width={48} />
+                    </TableCell>
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>
+                        {row.limit ? (
+                            <PercentLinearProgress
+                                progress={row.amount}
+                                total={row.limit}
+                                cover={`${unitConvert(row.amount)}/${unitConvert(row.limit)}`}
+                            />
+                        ) : (
+                            <Typography>{unitConvert(row.amount)}</Typography>
+                        )}
+                    </TableCell>
+                    <TableCell>
+                        {openModuleList[row.id] ? (
+                            <Button
+                                onClick={() => {
+                                    openModuleList[row.id]();
+                                    panelState.setOpen(false);
+                                }}
+                            >
+                                兑换
+                            </Button>
+                        ) : undefined}
+                    </TableCell>
+                </PanelTableBodyRow>
             ))}
         </PanelTableBase>
     );

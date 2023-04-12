@@ -13,7 +13,7 @@ const timeFormatter = (n: number) => {
 type BattleFireInfo = Awaited<ReturnType<typeof updateBattleFireInfo>>;
 
 export function BattleFireInfo() {
-    const [battleFire, setBattleFire] = React.useState<BattleFireInfo>({ timeLeft: 0, type: 0, valid: false });
+    const [battleFire, setBattleFire] = React.useState<BattleFireInfo>({} as BattleFireInfo);
     const [timeLeft, setTimeLeft] = React.useState(0);
     const [timer, setTimer] = React.useState<undefined | number>(undefined);
 
@@ -58,20 +58,17 @@ export function BattleFireInfo() {
             break;
     }
 
-    const { setOpen } = React.useContext(PanelStateContext);
+    const { open, setOpen } = React.useContext(PanelStateContext);
     const exchangeBattleFire = React.useCallback(() => {
         ModuleManager.showModule('battleFirePanel', ['battleFirePanel'], null, null, AppDoStyle.NULL);
         setOpen(false);
-    }, [setOpen]);
+    }, [open]);
 
     return (
-        <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']}>
-            火焰信息
-            <Typography color={renderProps.color}>
-                {renderProps.text}
-                <Button onClick={updateBattleFire}>刷新</Button>
-                <Button onClick={exchangeBattleFire}>兑换</Button>
-            </Typography>
+        <Typography color={renderProps.color}>
+            {renderProps.text}
+            <Button onClick={updateBattleFire}>刷新</Button>
+            <Button onClick={exchangeBattleFire}>兑换</Button>
         </Typography>
     );
 }

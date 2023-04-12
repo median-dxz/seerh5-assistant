@@ -76,13 +76,4 @@ export function HookLoader() {
         },
         null
     );
-
-    SocketConnection.addCmdListener(CommandID.NOTE_USE_SKILL, (e: SocketEvent) => {
-        const data: egret.ByteArray = Object.create(
-            Object.getPrototypeOf(e.data),
-            Object.getOwnPropertyDescriptors(e.data)
-        );
-        const info = new UseSkillInfo(data);
-        EmitEvent(Hook.BattlePanel.onRoundData, { info: [info.firstAttackInfo, info.secondAttackInfo] });
-    });
 }

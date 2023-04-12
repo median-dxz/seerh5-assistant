@@ -187,7 +187,7 @@ export async function updateBattleFireInfo() {
  */
 export function findObject<T extends { new (...args: any[]): InstanceType<T> }>(
     instanceClass: T,
-    predicate: (obj: egret.DisplayObject) => boolean
+    predicate?: (obj: egret.DisplayObject) => boolean
 ) {
     const root = LevelManager.stage;
 
@@ -197,7 +197,7 @@ export function findObject<T extends { new (...args: any[]): InstanceType<T> }>(
         }
         let result: InstanceType<T>[] = [];
         for (let child of parent.$children) {
-            if (child instanceof instanceClass && predicate(child) === true) {
+            if (child instanceof instanceClass && (predicate == undefined || predicate(child) === true)) {
                 result.push(child);
             }
             result = result.concat(find(child));

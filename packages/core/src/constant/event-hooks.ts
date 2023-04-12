@@ -8,7 +8,6 @@ export const Hook = {
     BattlePanel: {
         panelReady: 'sa_battle_start',
         roundEnd: 'sa_battle_roundEnd',
-        onRoundData: 'sa_battle_roundData',
         endPropShown: 'sa_battle_resultPanel_show',
         battleEnd: 'sa_battle_end',
     },

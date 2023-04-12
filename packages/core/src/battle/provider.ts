@@ -1,5 +1,7 @@
 import { Pet, PetRoundInfo, Skill } from '../entity';
+import { SocketDataAccess } from '../event-handler/SocketSubscriber';
 import { getPetCached } from '../pet-helper';
+
 export interface RoundInfo {
     self?: PetRoundInfo;
     other?: PetRoundInfo;
@@ -7,8 +9,11 @@ export interface RoundInfo {
     isDiedSwitch: boolean;
 }
 
+declare var CommandID: {
+    NOTE_USE_SKILL: 2505;
+};
+
 export const Provider = {
-    cachedRoundInfo: null as null | [PetRoundInfo, PetRoundInfo],
     getCurRoundInfo() {
         if (!FighterModelFactory.playerMode || !FighterModelFactory.enemyMode) return null;
         let result: RoundInfo = {
@@ -17,22 +22,23 @@ export const Provider = {
                 ? FighterModelFactory.playerMode.propView.dispatchNoBlood
                 : false,
         };
-        if (this.cachedRoundInfo) {
-            this.cachedRoundInfo[0].isFirstMove = !(this.cachedRoundInfo[1].isFirstMove = false);
-            if (this.cachedRoundInfo[0].userId !== FightUserInfo.fighterInfos!.myInfo.id) {
-                this.cachedRoundInfo = [this.cachedRoundInfo[1], this.cachedRoundInfo[0]];
+        let cachedRoundInfo = SocketDataAccess.getCache(CommandID.NOTE_USE_SKILL);
+        if (cachedRoundInfo) {
+            cachedRoundInfo[0].isFirstMove = !(cachedRoundInfo[1].isFirstMove = false);
+            if (cachedRoundInfo[0].userId !== FightUserInfo.fighterInfos!.myInfo.id) {
+                cachedRoundInfo = [cachedRoundInfo[1], cachedRoundInfo[0]];
             }
-            Object.assign(this.cachedRoundInfo[0], {
+            Object.assign(cachedRoundInfo[0], {
                 id: FighterModelFactory.playerMode.info.petID,
                 name: FighterModelFactory.playerMode.info.petName,
                 // hp: FighterModelFactory.playerMode.info.hp,
             });
-            Object.assign(this.cachedRoundInfo[1], {
+            Object.assign(cachedRoundInfo[1], {
                 id: FighterModelFactory.enemyMode.info.petID,
                 name: FighterModelFactory.enemyMode.info.petName,
                 // hp: FighterModelFactory.enemyMode.info.hp,
             });
-            result = { ...result, self: this.cachedRoundInfo[0], other: this.cachedRoundInfo[1] };
+            result = { ...result, self: cachedRoundInfo[0], other: cachedRoundInfo[1] };
         }
 
         return result;

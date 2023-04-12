@@ -1,14 +1,4 @@
-import {
-    Button,
-    Checkbox,
-    Divider,
-    FormControlLabel,
-    Menu,
-    MenuItem,
-    Switch,
-    TableCell,
-    Typography,
-} from '@mui/material';
+import { Button, Checkbox, Divider, Menu, MenuItem, TableCell, Typography } from '@mui/material';
 
 import {
     ConfigType,
@@ -26,6 +16,7 @@ import { mainColor } from '@sa-app/style';
 import { PanelStateContext } from '@sa-app/context/PanelState';
 import React from 'react';
 import { PanelTableBase, PanelTableBodyRow } from '../base';
+import { AnimationMode } from './AnimationMode';
 import { BattleFireInfo } from './BattleFireInfo';
 
 const StorageKey = 'PetPattern';
@@ -35,6 +26,9 @@ interface MenuOption {
     id: number[];
     options: string[];
 }
+
+const titleName = SAEngine.getName.bind(null, ConfigType.title);
+const suitName = SAEngine.getName.bind(null, ConfigType.suit);
 
 export function PetBag() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -52,59 +46,53 @@ export function PetBag() {
         return item as Array<number[]>;
     });
     const [petHeadSrc, setPetHeadSrc] = React.useState<string[]>([]);
+
     const [userTitle, setUserTitle] = React.useState(SAEngine.getUserTitle());
     const [userSuit, setUserSuit] = React.useState(SAEngine.getUserSuit());
-    const [animationMode, setAnimationMode] = React.useState(false);
 
     React.useEffect(() => {
         SAPetHelper.getBagPets(PetPosition.bag1).then((r) => {
             setPets(r);
             setPetsSelected(Array(r.length).fill(false));
-            let promises = r
-                .map((r) => r.id)
-                .map(async (id) => {
-                    const url = ClientConfig.getPetHeadPath(id);
+            Promise.all(
+                r.map(async (r) => {
+                    const url = ClientConfig.getPetHeadPath(r.id);
                     const i = await RES.getResByUrl(url);
-                    const src: string = i.bitmapData.source?.src;
-                    return src ?? sac.ResourceCache.get(url);
-                });
-            Promise.all(promises).then((r) => {
+                    return sac.ResourceCache.get(url) ?? i.bitmapData.source?.src;
+                })
+            ).then((r) => {
                 setPetHeadSrc(r);
             });
         });
-        const fightMode = window.localStorage.getItem('fight_mode');
-        if (fightMode) {
-            setAnimationMode(fightMode === '0');
-        }
     }, []);
 
-    const handleChangeSuit: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-        const suitId = SAEngine.getUserAbilitySuits();
-        const suitName = suitId.map<string>(SuitXMLInfo.getName.bind(SuitXMLInfo));
-        menuOption.current = {
-            type: 'suit',
-            id: suitId,
-            options: suitName,
-        };
-        setAnchorEl(e.currentTarget);
-        setMenuOpen(true);
+    const closeMenu = () => {
+        setAnchorEl(null);
+        setMenuOpen(false);
     };
 
     const handleChangeTitle: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
         setAnchorEl(e.currentTarget);
         const titleId = await SAEngine.getUserAbilityTitles();
-        const titleName = titleId.map<string>(AchieveXMLInfo.getTitle.bind(AchieveXMLInfo));
+        const titleNames = titleId.map<string>(titleName);
         menuOption.current = {
             type: 'title',
             id: titleId,
-            options: titleName,
+            options: titleNames,
         };
         setMenuOpen(true);
     };
 
-    const handleCloseMenu = () => {
-        setAnchorEl(null);
-        setMenuOpen(false);
+    const handleChangeSuit: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+        setAnchorEl(e.currentTarget);
+        const suitId = SAEngine.getUserAbilitySuits();
+        const suitNames = suitId.map<string>(suitName);
+        menuOption.current = {
+            type: 'suit',
+            id: suitId,
+            options: suitNames,
+        };
+        setMenuOpen(true);
     };
 
     const handleSelectItem = async (index: number) => {
@@ -128,18 +116,18 @@ export function PetBag() {
                 return newValue;
             });
         }
-        handleCloseMenu();
+        closeMenu();
     };
 
     const handleLowerBlood = () => {
-        const lowerBloodPets = pets.filter((pet, index) => petsSelected[index]).map((r) => r.catchTime);
-        lowerBlood(lowerBloodPets);
+        const lowerBloodPets = pets.filter((pet, index) => petsSelected[index]);
+        lowerBlood(lowerBloodPets.map((p) => p.catchTime));
     };
 
     const handleCurePets = () => {
-        const curePets = pets.filter((pet, index) => petsSelected[index]).map((r) => r.catchTime);
+        const curePets = pets.filter((pet, index) => petsSelected[index]);
         for (let curePet of curePets) {
-            SAPetHelper.cureOnePet(curePet);
+            SAPetHelper.cureOnePet(curePet.catchTime);
         }
     };
 
@@ -195,15 +183,6 @@ export function PetBag() {
         petBagPanel.showDevelopView(9);
     };
 
-    const handleSetAnimationMode = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-        setAnimationMode(checked);
-        if (checked) {
-            FightManager.fightAnimateMode = 0;
-        } else {
-            FightManager.fightAnimateMode = 1;
-        }
-    };
-
     const handleCopyCatchTime = () => {
         navigator.clipboard.writeText(
             JSON.stringify(pets.map((pet) => ({ name: pet.name, catchTime: pet.catchTime })))
@@ -211,35 +190,50 @@ export function PetBag() {
         BubblerManager.getInstance().showText('复制成功');
     };
 
-    const panelState = React.useContext(PanelStateContext);
+    const { setOpen } = React.useContext(PanelStateContext);
     const openPetBag = React.useCallback(() => {
         ModuleManager.showModule('petBag');
-        panelState.setOpen(false);
-    }, [panelState]);
+        setOpen(false);
+    }, [setOpen]);
+
     return (
         <>
             <Button onClick={openPetBag}>打开背包界面</Button>
             <Button onClick={SAPetHelper.cureAllPet}>全体治疗</Button>
             <Divider />
-            <BattleFireInfo />
-            <Divider />
-            <h3>套装 / 称号</h3>
-            <Typography display="flex" alignItems="baseline">
-                当前套装:
-                <Button onClick={handleChangeSuit}>{SAEngine.getName(ConfigType.suit, userSuit)}</Button>
-                效果: {ItemSeXMLInfo.getSuitEff(userSuit)}
+
+            <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']}>
+                火焰信息
+                <BattleFireInfo />
             </Typography>
 
-            <Typography display="flex" alignItems="baseline">
-                当前称号:
-                <Button onClick={handleChangeTitle}>{SAEngine.getName(ConfigType.title, userTitle)}</Button>
-                效果: {AchieveXMLInfo.getTitleEffDesc(userTitle)}
+            <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']}>
+                动画模式
+                <AnimationMode />
             </Typography>
+
+            <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']}>
+                套装
+                <Button variant="outlined" sx={{ m: 1 }} onClick={handleChangeSuit}>
+                    {SAEngine.getName(ConfigType.suit, userSuit)}
+                </Button>
+                <Typography>{`效果: ${ItemSeXMLInfo.getSuitEff(userSuit)}`}</Typography>
+            </Typography>
+
+            <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']}>
+                称号
+                <Button variant="outlined" sx={{ m: 1 }} onClick={handleChangeTitle}>
+                    {titleName(userTitle)}
+                </Button>
+                <Typography>{`效果: ${SAEngine.get(ConfigType.title, userTitle)?.abtext}`}</Typography>
+            </Typography>
+
+            <Divider />
             <Menu
                 id="suit-select-menu"
                 anchorEl={anchorEl}
                 open={menuOpen}
-                onClose={handleCloseMenu}
+                onClose={closeMenu}
                 MenuListProps={{
                     role: 'listbox',
                 }}
@@ -261,13 +255,7 @@ export function PetBag() {
                     </MenuItem>
                 ))}
             </Menu>
-            <Divider />
-            <h3>动画模式</h3>
-            <FormControlLabel
-                control={<Switch checked={animationMode} onChange={handleSetAnimationMode} />}
-                label="动画模式"
-            />
-            <Divider />
+
             <h3>精灵背包</h3>
             <Button onClick={handleLowerBlood}>压血</Button>
             <Button onClick={handleCurePets}>治疗</Button>

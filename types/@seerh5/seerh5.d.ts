@@ -102,6 +102,7 @@ declare namespace SAType {
         cloths: string;
         id: number;
         name: string;
+        Desc: string;
         suitdes: string;
     }
 
@@ -109,6 +110,7 @@ declare namespace SAType {
         ID: number;
         Desc: string;
         title: string;
+        abtext?: string;
     }
 
     interface ObserverList<T> {

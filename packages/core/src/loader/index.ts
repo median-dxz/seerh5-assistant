@@ -1,9 +1,10 @@
 import { HookLoader } from './event';
 import { InternalLoader } from './internal';
 
-import { defaultStyle, SaModuleLogger } from '../logger';
+import { EventHandlerLoader } from '../event-handler/internal';
 import { RegisteredMods } from '../mod-manager';
 
+import { defaultStyle, SaModuleLogger } from '../logger';
 const log = SaModuleLogger('SALoader', defaultStyle.core);
 
 export async function CoreLoader() {
@@ -16,6 +17,7 @@ export async function CoreLoader() {
 
         const sa_core_init = async () => {
             HookLoader();
+            EventHandlerLoader();
             resolve(true);
             sac.SacReady = true;
             sac.Mods = RegisteredMods;
@@ -23,7 +25,7 @@ export async function CoreLoader() {
             log(`SeerH5-Assistant Core Loaded Successfully!`);
             EventManager.removeEventListener('game_login_success', sa_core_init, null);
         };
-        
+
         if (typeof sac !== 'undefined' && sac.SeerH5Ready) {
             if (sac.SacReady) {
                 return true;
