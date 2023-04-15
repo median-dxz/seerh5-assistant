@@ -7,10 +7,56 @@ import {
     SaModuleLogger,
     defaultStyle,
     delay,
+    getImageButtonListener,
     wrapper,
 } from 'seerh5-assistant-core';
 
 const log = SaModuleLogger('LocalCloth', defaultStyle.mod);
+const NullCallBack = () => {};
+const StorageKey = 'LocalSkin';
+type Serializer<T> = (data: T) => string;
+type Deserializer<T> = (data: string) => T;
+
+interface LocalStorageProxy<T> {
+    clear(): void;
+}
+
+// function createLocalStorageProxy<T>(
+//     key: string,
+//     defaultValue: T,
+//     serializer: Serializer<T>,
+//     deserializer: Deserializer<T>
+// ): LocalStorageProxy<T> & T {
+//     const serializedData = localStorage.getItem(key);
+//     let data: T = defaultValue;
+//     if (serializedData !== null) {
+//         data = deserializer(serializedData);
+//     }
+
+//     const proxy = new Proxy(data, {
+//         set(target, prop, value) {
+//             target[prop] = value;
+//             localStorage.setItem(key, serializer(data));
+//             return true;
+//         },
+//         get(target, prop) {
+//             if (typeof target[prop] === 'undefined') {
+//                 const serializedData = localStorage.getItem(key);
+//                 if (serializedData !== null) {
+//                     data = deserializer(serializedData);
+//                 }
+//             }
+//             return target[prop];
+//         },
+//     });
+
+//     return {
+//         ...proxy,
+//         clear() {
+//             localStorage.removeItem(key);
+//         },
+//     };
+// }
 
 interface SkinInfo {
     skinId: number;
@@ -34,10 +80,17 @@ function saveToStorage() {
     window.localStorage.setItem('LocalSkin', JSON.stringify(clothArray));
 }
 
+const logTapPetInfo = (e: egret.TouchEvent) => {
+    const { petInfo } = e.data as { petInfo: PetInfo };
+    petInfo && log(new SAEntity.Pet(petInfo));
+};
+
+declare var StatLogger: any;
+
 class LocalCloth extends Mod {
     subscriber: ModuleSubscriber<petBag.PetBag> = {
         load() {
-            let protoFunc;
+            let protoFunc: AnyFunction;
             protoFunc = petBag.SkinView.prototype.onChooseSkin;
             petBag.SkinView.prototype.onChooseSkin = wrapper(
                 protoFunc,
@@ -71,63 +124,50 @@ class LocalCloth extends Mod {
                               : (this.txt3.text = '通过限时活动获得'));
                 }
             );
+            if (GuideManager.isCompleted()) {
+                petBag.MainPanel.prototype.checkChangePosition = checkChangePosition;
+            }
         },
         destroy(ctx) {
             if (refresh) {
-                SocketConnection.removeCmdListener(CommandID.PET_DEFAULT, refresh);
                 SocketConnection.removeCmdListener(CommandID.PET_RELEASE, refresh);
-                SocketConnection.removeCmdListener(CommandID.PET_ONE_CURE, refresh);
-                SocketConnection.removeCmdListener(CommandID.PET_CURE, refresh);
             }
+            EventManager.removeEventListener('petBag.MainPanelTouchPetItemBegin', logTapPetInfo, null);
         },
         async show(ctx) {
-            while (!ctx.currentPanel) {
-                await delay(100); // 主面板实例化部分代码还未执行
-            }
+            await delay(200); //等待panel实例化
+            let timerId: null | number = null;
+            const panel = ctx.panelMap['petBag.MainPanel'] as petBag.MainPanel;
 
-            const panel = ctx.currentPanel!;
-            panel.initBagView = wrapper(
-                panel.initBagView,
+            let listener;
+
+            listener = getImageButtonListener(panel.btnIntoStorage);
+            listener.callback = wrapper(
+                listener.callback,
                 () => {
-                    panel.uiChangePetFlag = true;
+                    panel.beginPetInfo = panel.arrFirstPet[0].petInfo;
                 },
                 () => {
-                    panel.uiChangePetFlag = false;
+                    panel.beginPetInfo = null;
                 }
             );
 
-            panel.checkChangePosition = wrapper(
-                panel.checkChangePosition,
-                () => {
-                    panel.uiChangePetFlag = true;
-                },
-                () => {
-                    panel.uiChangePetFlag = false;
-                }
-            );
+            refresh = (e: SocketEvent) => {
+                if (panel.beginPetInfo == null && !petBag.ChangePetPop.changeFlag) {
+                    // 非ui操作, 是直接发包
+                    // 则固定延时后执行刷新
+                    if (timerId) {
+                        clearTimeout(timerId);
+                        timerId = null;
+                    }
 
-            refresh = async () => {
-                if (!ctx.currentPanel?.uiChangePetFlag) {
-                    await delay(100);
-                    ctx.currentPanel?.initBagView();
+                    timerId = window.setTimeout(() => {
+                        panel.initBagView();
+                    }, 600);
                 }
             };
-
-            EventManager.addEventListener(
-                'petBag.MainPanelTouchPetItemBegin',
-                (e: egret.TouchEvent) => {
-                    const { petInfo } = e.data as { petInfo: PetInfo };
-                    petInfo && log(new SAEntity.Pet(petInfo));
-                },
-                null
-            );
-
-            if (refresh) {
-                SocketConnection.addCmdListener(CommandID.PET_DEFAULT, refresh);
-                SocketConnection.addCmdListener(CommandID.PET_RELEASE, refresh);
-                SocketConnection.addCmdListener(CommandID.PET_ONE_CURE, refresh);
-                SocketConnection.addCmdListener(CommandID.PET_CURE, refresh);
-            }
+            SocketConnection.addCmdListener(CommandID.PET_RELEASE, refresh);
+            EventManager.addEventListener('petBag.MainPanelTouchPetItemBegin', logTapPetInfo, null);
         },
     };
     meta = { description: '本地全皮肤解锁', id: 'petBag' };
@@ -223,6 +263,98 @@ class LocalCloth extends Mod {
     destroy() {
         SAEventHandler.SeerModuleStatePublisher.detach(this.subscriber, 'petBag');
     }
+}
+
+async function checkChangePosition(this: petBag.MainPanel) {
+    return (async () => {
+        if (!this.beginPetInfo || this.beginPetInfo == this.endPetInfo) {
+            return;
+        }
+
+        if (!this.endPetInfo) {
+            let arr1 = this.arrFirstPet;
+            let arr2 = this.arrSecondPet;
+            let srcIndex = -1;
+            for (let i = 0; i < 6; i++) {
+                if (this.arrFirstPet[i].petInfo == this.beginPetInfo) {
+                    if (this.endParent == this.groupPet2) {
+                        srcIndex = i;
+                        await PetManager.bagToSecondBag(this.beginPetInfo.catchTime);
+                        if (i == 0 && this.arrFirstPet[1].petInfo) {
+                            PetManager.setDefault(this.arrFirstPet[1].petInfo.catchTime);
+                        }
+                    }
+                    break;
+                }
+                if (this.arrSecondPet[i].petInfo == this.beginPetInfo) {
+                    if (this.endParent == this.groupPet1) {
+                        srcIndex = i;
+                        await PetManager.secondBagToBag(this.beginPetInfo.catchTime);
+                        if (this.arrFirstPet[0].petInfo == undefined) {
+                            PetManager.setDefault(this.beginPetInfo.catchTime);
+                        }
+                        [arr1, arr2] = [arr2, arr1];
+                    }
+                    break;
+                }
+            }
+            if (srcIndex === -1) {
+                return;
+            }
+            for (let i = srcIndex; i < arr1.length - 1; i++) {
+                arr1[i].setPetInfo(arr1[i + 1].petInfo);
+            }
+            arr1[arr1.length - 1].setPetInfo(null);
+
+            let destIndex = arr2.findIndex((el) => el.petInfo === null);
+            arr2[destIndex].setPetInfo(this.beginPetInfo);
+
+            if (PetManager.secondBagTotalLength < 6) {
+                for (let i = PetManager.secondBagTotalLength; i < 6; i++) {
+                    this.arrSecondPet[i].setPetInfo(null, i);
+                }
+            }
+        } else {
+            const combined = this.arrFirstPet.concat(this.arrSecondPet);
+
+            let index1 = -1;
+            let index2 = -1;
+            for (let i = 0; i < combined.length; i++) {
+                if (combined[i].petInfo === this.beginPetInfo) {
+                    index1 = i;
+                }
+                if (combined[i].petInfo === this.endPetInfo) {
+                    index2 = i;
+                }
+                if (index1 !== -1 && index2 !== -1) {
+                    break;
+                }
+            }
+
+            const temp = combined[index1].petInfo;
+            combined[index1].setPetInfo(combined[index2].petInfo);
+            combined[index2].setPetInfo(temp);
+
+            if (this.endParent === this.groupPet1 && index1 >= 6) {
+                await PetManager.bagToStorage(this.endPetInfo.catchTime);
+                await PetManager.secondBagToBag(this.beginPetInfo.catchTime);
+                await PetManager.storageToSecondBag(this.endPetInfo.catchTime);
+            } else if (this.endParent === this.groupPet2 && index1 < 6) {
+                await PetManager.bagToStorage(this.beginPetInfo.catchTime);
+                await PetManager.secondBagToBag(this.endPetInfo.catchTime);
+                await PetManager.storageToSecondBag(this.beginPetInfo.catchTime);
+            }
+            if (index2 === 0) {
+                PetManager.setDefault(this.beginPetInfo.catchTime);
+            }
+            if (index1 === 0) {
+                PetManager.setDefault(this.endPetInfo.catchTime);
+            }
+        }
+    })().then(() => {
+        this.beginPetInfo && EventManager.dispatchEventWith('petBag.MainPanelSelectPet', !1, this.beginPetInfo);
+        this.beginPetInfo = this.endPetInfo = this.endParent = null;
+    });
 }
 
 export default LocalCloth;

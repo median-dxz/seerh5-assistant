@@ -8,8 +8,20 @@ declare namespace petBag {
         showDevelopView(view: number): void;
         initBagView(): void;
         checkChangePosition(): Promise<void>;
-        uiChangePetFlag: boolean;
+        beginPetInfo: PetInfo | null;
+        endPetInfo: PetInfo | null;
+        arrFirstPet: petBag.MainPanelPetItem[];
+        arrSecondPet: petBag.MainPanelPetItem[];
+        btnChange: eui.UIComponent;
+        btnIntoStorage: eui.UIComponent;
+        endParent: any;
+        groupPet1: any;
+        groupPet2: any;
     }
-    var MainPanelPetItem: any;
+    class MainPanelPetItem {
+        petInfo: PetInfo;
+        setPetInfo(petInfo: PetInfo | null, index?: number): void;
+    }
     var SkinView: any;
+    var ChangePetPop: any;
 }

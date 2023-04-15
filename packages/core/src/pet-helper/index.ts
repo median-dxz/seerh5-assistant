@@ -89,48 +89,46 @@ export const setPetLocation = async (ct: number, newLocation: PosType) => {
     switch (newLocation) {
         case PosType.secondBag1:
             if (PetManager.isSecondBagFull) return false;
-            await Socket.sendWithReceivedPromise(CommandID.PET_RELEASE, () => {
-                if (l === PosType.bag1) {
-                    PetManager.bagToSecondBag(ct);
-                } else if (l === PosType.storage || l === PosType.elite) {
-                    PetManager.storageToSecondBag(ct);
-                }
-            });
+
+            if (l === PosType.bag1) {
+                await PetManager.bagToSecondBag(ct);
+            } else if (l === PosType.storage || l === PosType.elite) {
+                await PetManager.storageToSecondBag(ct);
+            }
+
             break;
         case PosType.bag1:
             if (PetManager.isBagFull) return false;
-            await Socket.sendWithReceivedPromise(CommandID.PET_RELEASE, () => {
-                if (l === PosType.secondBag1) {
-                    PetManager.secondBagToBag(ct);
-                } else if (l === PosType.storage) {
-                    PetManager.storageToBag(ct);
-                } else if (l === PosType.elite) {
-                    PetManager.loveToBag(ct);
-                }
-            });
+
+            if (l === PosType.secondBag1) {
+                await PetManager.secondBagToBag(ct);
+            } else if (l === PosType.storage) {
+                await PetManager.storageToBag(ct);
+            } else if (l === PosType.elite) {
+                await PetManager.loveToBag(ct);
+            }
+
             break;
         case PosType.storage:
             if (l === PosType.elite) {
                 await Socket.sendWithReceivedPromise(CommandID.DEL_LOVE_PET, () => PetManager.delLovePet(0, ct, 0));
                 break;
             }
-            await Socket.sendWithReceivedPromise(CommandID.PET_RELEASE, () => {
-                if (l === PosType.bag1) {
-                    PetManager.bagToStorage(ct);
-                } else if (l === PosType.secondBag1) {
-                    PetManager.secondBagToStorage(ct);
-                }
-            });
+
+            if (l === PosType.bag1) {
+                await PetManager.bagToStorage(ct);
+            } else if (l === PosType.secondBag1) {
+                await PetManager.secondBagToStorage(ct);
+            }
+
             break;
         case PosType.elite:
             if (l !== PosType.storage) {
-                await Socket.sendWithReceivedPromise(CommandID.PET_RELEASE, () => {
-                    if (l === PosType.bag1) {
-                        PetManager.bagToStorage(ct);
-                    } else if (l === PosType.secondBag1) {
-                        PetManager.secondBagToStorage(ct);
-                    }
-                });
+                if (l === PosType.bag1) {
+                    await PetManager.bagToStorage(ct);
+                } else if (l === PosType.secondBag1) {
+                    await PetManager.secondBagToStorage(ct);
+                }
             }
             if ((await getPetLocation(ct)) === PosType.storage) {
                 await Socket.sendWithReceivedPromise(CommandID.ADD_LOVE_PET, () => PetManager.addLovePet(0, ct, 0));

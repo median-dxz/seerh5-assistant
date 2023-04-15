@@ -6,6 +6,7 @@ import * as PetHelper from '../pet-helper';
 import { delay } from '../common';
 import { PetElement } from '../entity/PetElement';
 import { defaultStyle, SaModuleLogger } from '../logger';
+import { getBagPets } from '../pet-helper';
 const log = SaModuleLogger('SAFunctions', defaultStyle.mod);
 
 type PotionId = AttrConst<typeof ItemId.Potion>;
@@ -113,7 +114,7 @@ export async function switchBag(cts: number[]) {
     }
     for (let v of cts) {
         await PetHelper.setPetLocation(v, PetPosition.bag1);
-        log(`SwitchBag -> 将 ${PetManager.getPetInfo(v).name} 放入背包`);
+        log(`SwitchBag -> 将 ${(await getBagPets(PetPosition.bag1)).find((p) => p.catchTime === v)!.name} 放入背包`);
     }
 }
 
@@ -223,5 +224,8 @@ export function updateBatteryTime() {
     BatteryController.Instance._leftTime = Math.max(0, leftTime);
 }
 
-export { HelperLoader } from './helper';
+export function getImageButtonListener(button: eui.UIComponent) {
+    return ImageButtonUtil.imgs[`k_${button.hashCode}`];
+}
 
+export { HelperLoader } from './helper';

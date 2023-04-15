@@ -1,11 +1,9 @@
 declare namespace SAType {
     type EventHandler<E extends egret.EventDispatcher> = (event?: E) => void;
 
-    type Dict<T extends object> =
-        | {
-              [property: number | string]: T;
-          }
-        | Array<T>;
+    type Dict<T extends object> = {
+        [property: number | string]: T;
+    };
 
     class HashMap<T extends object> {
         containsKey(key: any): boolean;
@@ -164,6 +162,7 @@ declare var TypeXMLInfo: any;
 declare class PopView extends eui.Component {}
 
 // mods
+declare var GuideManager: any;
 declare var SystemTimerManager: any;
 declare var markCenter: any;
 declare var PetSkinController: any;

@@ -240,14 +240,16 @@ declare class PetManager {
     static upDateBagPetInfo(catchtime: number, callback: (info: PetInfo) => any);
     static getLovePetList(): void;
     static updateBagInfo(callback: CallBack): void;
-    static secondBagToBag(catchTime: number): void;
-    static storageToBag(catchTime: number): void;
-    static bagToSecondBag(catchTime: number): void;
-    static storageToSecondBag(catchTime: number): void;
-    static loveToBag(catchTime: number): void;
+
+    static bagToSecondBag(catchTime: number): Promise<void>;
+    static bagToStorage(catchTime: number): Promise<void>;
+    static secondBagToBag(catchTime: number): Promise<void>;
+    static secondBagToStorage(catchTime: number): Promise<void>;
+    static storageToBag(catchTime: number): Promise<void>;
+    static storageToSecondBag(catchTime: number): Promise<void>;
+    static loveToBag(catchTime: number): Promise<void>;
+    
     static delLovePet(arg0: number, catchTime: number, arg2: number): void;
-    static bagToStorage(catchTime: number): void;
-    static secondBagToStorage(catchTime: number): void;
     static addLovePet(arg0: number, catchTime: number, arg2: number): void;
     static noAlarmCureAll(): void;
     static getLovePetList(): void;
@@ -258,6 +260,7 @@ declare class PetManager {
     static isSecondBagFull: boolean;
     static _bagMap: SAType.HashMap<PetInfo>;
     static _secondBagMap: SAType.HashMap<PetInfo>;
+    static secondBagTotalLength: number;
     static defaultTime: number;
 }
 
