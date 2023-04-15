@@ -1,6 +1,6 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
-import { mainColor } from "@sa-app/style";
-import React from "react";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
+import { mainColor } from '@sa-app/style';
+import React from 'react';
 
 export interface TextEditDialogProps {
     open: boolean;
@@ -9,7 +9,11 @@ export interface TextEditDialogProps {
 }
 
 export function TextEditDialog({ open, initialValue, onClose }: TextEditDialogProps) {
-    const [value, setValue] = React.useState(initialValue);
+    const [value, setValue] = React.useState('');
+
+    React.useEffect(() => {
+        setValue(initialValue);
+    }, [open]);
 
     const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue(event.target.value);

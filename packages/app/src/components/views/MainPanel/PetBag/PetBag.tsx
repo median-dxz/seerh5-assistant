@@ -6,6 +6,7 @@ import {
     SAEngine,
     SAEntity,
     SAPetHelper,
+    createLocalStorageProxy,
     delay,
     lowerBlood,
     switchBag,
@@ -18,8 +19,7 @@ import React from 'react';
 import { PanelTableBase, PanelTableBodyRow } from '../base';
 import { AnimationMode } from './AnimationMode';
 import { BattleFireInfo } from './BattleFireInfo';
-
-const StorageKey = 'PetPattern';
+import { StorageKeys } from '@sa-app/provider/GlobalConfig';
 
 interface MenuOption {
     type: 'suit' | 'title' | 'savePets' | 'setPets';
@@ -30,40 +30,38 @@ interface MenuOption {
 const titleName = SAEngine.getName.bind(null, ConfigType.title);
 const suitName = SAEngine.getName.bind(null, ConfigType.suit);
 
+const petGroupsStorage = createLocalStorageProxy(...StorageKeys.PetGroups);
+
+//TODO 监听发包，数据同步
 export function PetBag() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [menuOpen, setMenuOpen] = React.useState(false);
     const menuOption = React.useRef<MenuOption | null>(null);
     const [pets, setPets] = React.useState<SAEntity.Pet[]>([]);
     const [petsSelected, setPetsSelected] = React.useState<boolean[]>([]);
-    const [petPatterns, setPetPattern] = React.useState(() => {
-        let item: any[] | null | string = window.localStorage.getItem(StorageKey);
-        if (!item) {
-            item = Array(6);
-        } else {
-            item = JSON.parse(item);
-        }
-        return item as Array<number[]>;
-    });
+    const [petGroups, setPetGroups] = React.useState(petGroupsStorage.ref);
     const [petHeadSrc, setPetHeadSrc] = React.useState<string[]>([]);
 
     const [userTitle, setUserTitle] = React.useState(SAEngine.getUserTitle());
     const [userSuit, setUserSuit] = React.useState(SAEngine.getUserSuit());
 
     React.useEffect(() => {
-        SAPetHelper.getBagPets(PetPosition.bag1).then((r) => {
-            setPets(r);
-            setPetsSelected(Array(r.length).fill(false));
-            Promise.all(
-                r.map(async (r) => {
-                    const url = ClientConfig.getPetHeadPath(r.id);
-                    const i = await RES.getResByUrl(url);
-                    return sac.ResourceCache.get(url) ?? i.bitmapData.source?.src;
-                })
-            ).then((r) => {
-                setPetHeadSrc(r);
+        SAPetHelper.updateStorageInfo()
+            .then(() => SAPetHelper.getBagPets(PetPosition.bag1))
+            .then((r) => {
+                setPets(r);
+                setPetsSelected(Array(r.length).fill(false));
+                Promise.all(
+                    r
+                        .map((r) => ClientConfig.getPetHeadPath(r.id))
+                        .map(async (url) => {
+                            const i = await RES.getResByUrl(url);
+                            return sac.ResourceCache.get(url) ?? i.bitmapData.source?.src;
+                        })
+                ).then((r) => {
+                    setPetHeadSrc(r);
+                });
             });
-        });
     }, []);
 
     const closeMenu = () => {
@@ -106,15 +104,13 @@ export function PetBag() {
             SAEngine.changeTitle(info.id[index]);
             setUserTitle(info.id[index]);
         } else if (info.type === 'setPets') {
-            switchBag(petPatterns[index]);
+            switchBag(petGroups[index]);
         } else if (info.type === 'savePets') {
-            const newPets = await SAPetHelper.getBagPets(1);
-            setPetPattern((petPatterns) => {
-                const newValue = [...petPatterns];
-                newValue[index] = newPets.map((pet) => pet.catchTime);
-                window.localStorage.setItem(StorageKey, JSON.stringify(newValue));
-                return newValue;
+            const newPets = await SAPetHelper.getBagPets(PetPosition.bag1);
+            petGroupsStorage.use((draft) => {
+                draft[index] = newPets.map((pet) => pet.catchTime);
             });
+            setPetGroups(petGroupsStorage.ref);
         }
         closeMenu();
     };
@@ -133,12 +129,12 @@ export function PetBag() {
 
     const handleSwitchPetPattern: React.MouseEventHandler<HTMLButtonElement> = (e) => {
         setAnchorEl(e.currentTarget);
-        const patternName = Array(petPatterns.length)
+        const patternName = Array(petGroups.length)
             .fill('')
             .map(
                 (v, index) =>
                     `方案${index}: ${(
-                        petPatterns[index]?.map(Number).map((ct) => {
+                        petGroups[index]?.map(Number).map((ct) => {
                             let name = PetManager.getPetInfo(ct)?.name;
                             if (!name) {
                                 name = PetStorage2015InfoManager.allInfo.find((p) => p.catchTime === ct)!.name;
@@ -149,7 +145,7 @@ export function PetBag() {
             );
         menuOption.current = {
             type: 'setPets',
-            id: Array(petPatterns.length)
+            id: Array(petGroups.length)
                 .fill(0)
                 .map((v, index) => index),
             options: patternName,
@@ -159,12 +155,12 @@ export function PetBag() {
 
     const handleSavePetPattern: React.MouseEventHandler<HTMLButtonElement> = (e) => {
         setAnchorEl(e.currentTarget);
-        const patternName = Array(petPatterns.length)
+        const patternName = Array(petGroups.length)
             .fill('')
             .map((v, index) => `方案${index}`);
         menuOption.current = {
             type: 'savePets',
-            id: Array(petPatterns.length)
+            id: Array(petGroups.length)
                 .fill(0)
                 .map((v, index) => index),
             options: patternName,

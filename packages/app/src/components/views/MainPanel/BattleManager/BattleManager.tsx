@@ -1,12 +1,13 @@
 import { Button, Divider, FormControlLabel, Switch, TableCell } from '@mui/material';
 
 import produce from 'immer';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { TextEditDialog, TextEditDialogProps } from '@sa-app/components/common/TextEditDialog';
 import { SAContext } from '@sa-app/context/SAContext';
-import { SABattle } from 'seerh5-assistant-core';
+import { SABattle, createLocalStorageProxy } from 'seerh5-assistant-core';
 import { PanelTableBase, PanelTableBodyRow } from '../base';
+import { StorageKeys } from '@sa-app/provider/GlobalConfig';
 
 const handleAdd = (arr: any[], value: string) => {
     arr.push(value.split(','));
@@ -30,18 +31,15 @@ const defaultDialogState: TextEditDialogProps = {
     initialValue: '',
 };
 
+const strategyStorage = createLocalStorageProxy(...StorageKeys.BattleStrategy);
+
 export function BattleManager() {
     const { Battle: battleContext } = React.useContext(SAContext);
-    const { enableAuto: auto, updateAuto, strategy, updateStrategy } = battleContext;
+    const { enableAuto: auto, updateAuto } = battleContext;
+
+    const [strategy, setStrategy] = useState(strategyStorage.ref);
 
     const [dialogProps, setDialogState] = React.useState<TextEditDialogProps>(defaultDialogState);
-
-    const withStrategy = (operator: (baseState: SABattle.Strategy) => void) =>
-        updateStrategy(
-            produce(strategy, (draft) => {
-                operator(draft);
-            })
-        );
 
     const closeDialog = React.useCallback(() => {
         setDialogState(defaultDialogState);
@@ -78,9 +76,10 @@ export function BattleManager() {
                 onClick={() => {
                     openDialog((value) => {
                         if (value) {
-                            withStrategy((strategy) => {
+                            strategyStorage.use((strategy) => {
                                 handleAdd(strategy.snm, value);
                             });
+                            setStrategy(strategyStorage.ref);
                         }
                         closeDialog();
                     }, '');
@@ -108,18 +107,20 @@ export function BattleManager() {
                         <TableCell align="center">
                             <Button
                                 onClick={() => {
-                                    withStrategy((strategy) => {
+                                    strategyStorage.use((strategy) => {
                                         handleMoveToTop(strategy.snm, index);
                                     });
+                                    setStrategy(strategyStorage.ref);
                                 }}
                             >
                                 置顶
                             </Button>
                             <Button
                                 onClick={() => {
-                                    withStrategy((strategy) => {
+                                    strategyStorage.use((strategy) => {
                                         handleDelete(strategy.snm, index);
                                     });
+                                    setStrategy(strategyStorage.ref);
                                 }}
                             >
                                 删除
@@ -128,9 +129,10 @@ export function BattleManager() {
                                 onClick={() => {
                                     openDialog((value) => {
                                         if (value) {
-                                            withStrategy((strategy) => {
+                                            strategyStorage.use((strategy) => {
                                                 handleUpdated(strategy.snm, index, value);
                                             });
+                                            setStrategy(strategyStorage.ref);
                                         }
                                         closeDialog();
                                     }, row.join(','));
@@ -149,9 +151,10 @@ export function BattleManager() {
                 onClick={() => {
                     openDialog((value) => {
                         if (value) {
-                            withStrategy((strategy) => {
+                            strategyStorage.use((strategy) => {
                                 handleAdd(strategy.dsl, value);
                             });
+                            setStrategy(strategyStorage.ref);
                         }
                         closeDialog();
                     }, '');
@@ -179,18 +182,20 @@ export function BattleManager() {
                         <TableCell align="center">
                             <Button
                                 onClick={() => {
-                                    withStrategy((strategy) => {
+                                    strategyStorage.use((strategy) => {
                                         handleMoveToTop(strategy.dsl, index);
                                     });
+                                    setStrategy(strategyStorage.ref);
                                 }}
                             >
                                 置顶
                             </Button>
                             <Button
                                 onClick={() => {
-                                    withStrategy((strategy) => {
+                                    strategyStorage.use((strategy) => {
                                         handleDelete(strategy.dsl, index);
                                     });
+                                    setStrategy(strategyStorage.ref);
                                 }}
                             >
                                 删除
@@ -199,9 +204,10 @@ export function BattleManager() {
                                 onClick={() => {
                                     openDialog((value) => {
                                         if (value) {
-                                            withStrategy((strategy) => {
+                                            strategyStorage.use((strategy) => {
                                                 handleUpdated(strategy.dsl, index, value);
                                             });
+                                            setStrategy(strategyStorage.ref);
                                         }
                                         closeDialog();
                                     }, row.join(','));

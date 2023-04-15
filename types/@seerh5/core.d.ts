@@ -65,6 +65,7 @@ declare class PetInfo {
     nature: number;
     hideSKill: PetSkillInfo;
     skillArray: Array<PetSkillInfo>;
+    _skinId: number;
     get hp(): number;
     get maxHp(): number;
     get skinId(): number;
@@ -248,7 +249,7 @@ declare class PetManager {
     static storageToBag(catchTime: number): Promise<void>;
     static storageToSecondBag(catchTime: number): Promise<void>;
     static loveToBag(catchTime: number): Promise<void>;
-    
+
     static delLovePet(arg0: number, catchTime: number, arg2: number): void;
     static addLovePet(arg0: number, catchTime: number, arg2: number): void;
     static noAlarmCureAll(): void;

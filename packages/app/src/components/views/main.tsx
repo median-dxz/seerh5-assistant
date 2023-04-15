@@ -6,6 +6,8 @@ import { Container, ThemeProvider } from '@mui/system';
 import { PanelStateContext } from '@sa-app/context/PanelState';
 import { SAContext } from '@sa-app/context/SAContext';
 
+import { StorageKeys } from '@sa-app/provider/GlobalConfig';
+
 import { mainTheme } from '@sa-app/style';
 
 import { CommandBar } from './CommandBar';
@@ -21,34 +23,15 @@ import * as saco from 'seerh5-assistant-core';
 
 window.sac = { ...saco, ...sac };
 
+const battleStrategyStorage = saco.createLocalStorageProxy(...StorageKeys.BattleStrategy);
+
 export default function SaMain() {
     const [isCommandBarOpen, toggleCommandBar] = useState(false);
     const [isMainPanelOpen, toggleMainPanel] = useState(false);
     const [lockMainPanel, toggleMainPanelLock] = useState(false);
     const mainRef = useRef(null);
 
-    const [battleStrategy, setBattleStrategy] = useState(() => {
-        let item;
-        let dsl: string[][] = [];
-        let snm: string[][] = [];
-        item = window.localStorage.getItem('BattleStrategyDSL');
-        item && (dsl = JSON.parse(item));
-        item = window.localStorage.getItem('BattleStrategySNM');
-        item && (snm = JSON.parse(item));
-        return { default: defaultStrategy, dsl: dsl, snm: snm } as SABattle.Strategy;
-    });
     const [battleAuto, setBattleAuto] = useState(false);
-    const updateBattleStrategy = useCallback(
-        (strategy: SABattle.Strategy) => {
-            setBattleStrategy(strategy);
-            let item;
-            item = strategy.dsl;
-            item && window.localStorage.setItem('BattleStrategyDSL', JSON.stringify(item));
-            item = strategy.snm;
-            item && window.localStorage.setItem('BattleStrategySNM', JSON.stringify(item));
-        },
-        [battleStrategy]
-    );
 
     const handleShortCut = (e: KeyboardEvent) => {
         if (e.key === 'p' && e.ctrlKey) {
@@ -65,9 +48,13 @@ export default function SaMain() {
 
     const handleBattleRoundEnd = useCallback(() => {
         if (battleAuto) {
-            resolveStrategy(battleStrategy);
+            resolveStrategy({
+                dsl: battleStrategyStorage.dsl,
+                snm: battleStrategyStorage.snm,
+                default: defaultStrategy,
+            });
         }
-    }, [battleAuto, battleStrategy]);
+    }, [battleAuto]);
 
     useEffect(() => {
         document.body.addEventListener('keydown', handleShortCut);
@@ -78,7 +65,7 @@ export default function SaMain() {
             SAEventTarget.removeEventListener(Hook.BattlePanel.panelReady, handleBattleRoundEnd);
             SAEventTarget.removeEventListener(Hook.BattlePanel.roundEnd, handleBattleRoundEnd);
         };
-    }, [lockMainPanel, battleAuto, battleStrategy]);
+    }, [lockMainPanel, battleAuto]);
 
     return (
         <>
@@ -90,8 +77,6 @@ export default function SaMain() {
                             Battle: {
                                 enableAuto: battleAuto,
                                 updateAuto: setBattleAuto,
-                                strategy: battleStrategy,
-                                updateStrategy: updateBattleStrategy,
                             },
                         }}
                     >

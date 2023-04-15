@@ -1,25 +1,25 @@
-const keys = {
-    PetBagScheme: 'PetBagScheme',
-    LocalSkin: 'LocalSkin',
-    CommandShortcut: 'CommandShortcut',
-    DiedSwitchLink: 'DiedSwitchLink',
-    SkillNameMatch: 'SkillNameMatch',
-} as const;
+import { createLocalStorageProxy } from 'seerh5-assistant-core';
 
-type SAStorageKey = AttrConst<typeof keys>;
+export const StorageKeys = {
+    BattleStrategy: [
+        'BattleStrategy',
+        {
+            dsl: [],
+            snm: [],
+        },
+        JSON.stringify,
+        JSON.parse,
+    ] as Parameters<
+        typeof createLocalStorageProxy<{
+            dsl: string[][];
+            snm: string[][];
+        }>
+    >,
+    PetGroups: ['PetGroups', Array(6), JSON.stringify, JSON.parse] as Parameters<
+        typeof createLocalStorageProxy<Array<number[]>>
+    >,
+};
 
-const serialize = JSON.stringify;
-const deserialize = JSON.parse;
-
-export function setObject(key: SAStorageKey, o: any) {
-    window.localStorage.setItem(key, serialize(o));
-}
-export function getObject(key: SAStorageKey) {
-    const item = window.localStorage.getItem(key);
-    if (!item) return undefined;
-    return deserialize(item);
-}
-
-export function clear(key: SAStorageKey) {
-    window.localStorage.removeItem(key);
-}
+// PetBagScheme: 'PetBagScheme',
+// LocalSkin: 'LocalSkin',
+// CommandShortcut: 'CommandShortcut',

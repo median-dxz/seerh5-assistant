@@ -5,6 +5,7 @@ import {
     SAEntity,
     SAEventHandler,
     SaModuleLogger,
+    createLocalStorageProxy,
     defaultStyle,
     delay,
     getImageButtonListener,
@@ -12,80 +13,42 @@ import {
 } from 'seerh5-assistant-core';
 
 const log = SaModuleLogger('LocalCloth', defaultStyle.mod);
+
 const NullCallBack = () => {};
 const StorageKey = 'LocalSkin';
-type Serializer<T> = (data: T) => string;
-type Deserializer<T> = (data: string) => T;
-
-interface LocalStorageProxy<T> {
-    clear(): void;
-}
-
-// function createLocalStorageProxy<T>(
-//     key: string,
-//     defaultValue: T,
-//     serializer: Serializer<T>,
-//     deserializer: Deserializer<T>
-// ): LocalStorageProxy<T> & T {
-//     const serializedData = localStorage.getItem(key);
-//     let data: T = defaultValue;
-//     if (serializedData !== null) {
-//         data = deserializer(serializedData);
-//     }
-
-//     const proxy = new Proxy(data, {
-//         set(target, prop, value) {
-//             target[prop] = value;
-//             localStorage.setItem(key, serializer(data));
-//             return true;
-//         },
-//         get(target, prop) {
-//             if (typeof target[prop] === 'undefined') {
-//                 const serializedData = localStorage.getItem(key);
-//                 if (serializedData !== null) {
-//                     data = deserializer(serializedData);
-//                 }
-//             }
-//             return target[prop];
-//         },
-//     });
-
-//     return {
-//         ...proxy,
-//         clear() {
-//             localStorage.removeItem(key);
-//         },
-//     };
-// }
 
 interface SkinInfo {
     skinId: number;
     petSkinId: number;
 }
 
-let item;
-let clothArray: [Array<[number, SkinInfo]> | null, Array<[number, number]> | null] = [null, null];
-
-item = window.localStorage.getItem('LocalSkin');
-if (item) {
-    clothArray = JSON.parse(item);
+interface LocalSkinInfos {
+    changed: Map<number, SkinInfo>;
+    original: Map<number, number>;
 }
 
-const changeCloth = new Map<number, SkinInfo>(clothArray[0]);
-const originalCloth = new Map<number, number>(clothArray[1]);
+const cloth = createLocalStorageProxy<LocalSkinInfos>(
+    StorageKey,
+    { changed: new Map(), original: new Map() },
+    (data) => {
+        const clothData = {
+            changed: Array.from(data.changed.entries()),
+            original: Array.from(data.original.entries()),
+        };
+        return JSON.stringify(clothData);
+    },
+    (serialized) => {
+        const { changed, original } = JSON.parse(serialized);
+        return { changed: new Map(changed), original: new Map(original) };
+    }
+);
+
 let refresh: null | CallBack = null;
-
-function saveToStorage() {
-    clothArray = [Array.from(changeCloth.entries()), Array.from(originalCloth.entries())];
-    window.localStorage.setItem('LocalSkin', JSON.stringify(clothArray));
-}
 
 const logTapPetInfo = (e: egret.TouchEvent) => {
     const { petInfo } = e.data as { petInfo: PetInfo };
     petInfo && log(new SAEntity.Pet(petInfo));
 };
-
-declare var StatLogger: any;
 
 class LocalCloth extends Mod {
     subscriber: ModuleSubscriber<petBag.PetBag> = {
@@ -209,56 +172,46 @@ class LocalCloth extends Mod {
         });
         Object.defineProperty(FightPetInfo.prototype, 'skinId', {
             get: function () {
-                return changeCloth.has(this._petID) && this.userID == MainManager.actorID
-                    ? changeCloth.get(this._petID)!.skinId
+                return cloth.changed.has(this._petID) && this.userID == MainManager.actorID
+                    ? cloth.changed.get(this._petID)!.skinId
                     : this._skinId;
             },
-            set: function (t) {
-                this._skinId = t;
-            },
-            enumerable: !0,
-            configurable: !0,
         });
         Object.defineProperty(PetInfo.prototype, 'skinId', {
-            get: function () {
-                return changeCloth.has(this.id) ? changeCloth.get(this.id)!.skinId : this._skinId ?? 0;
+            get: function (this: PetInfo) {
+                return cloth.changed.has(this.id) ? cloth.changed.get(this.id)!.skinId : this._skinId ?? 0;
             },
-            set: function (t) {
-                this._skinId = t;
-            },
-            enumerable: !0,
-            configurable: !0,
         });
-        PetManager.equipSkin = async function (catchTime, skinId, callback) {
-            let _skinId = skinId ?? 0;
+        PetManager.equipSkin = async function (catchTime, skinId = 0, callback = NullCallBack) {
             let petInfo = PetManager.getPetInfo(catchTime);
-            log('new skin id:', _skinId, 'previous skin id:', petInfo.skinId);
-            if (
-                (_skinId === 0 || PetSkinController.instance.haveSkin(_skinId)) &&
-                (!originalCloth.has(petInfo.id) || originalCloth.get(petInfo.id) !== _skinId)
-            ) {
-                changeCloth.delete(petInfo.id);
-                originalCloth.set(petInfo.id, _skinId);
-                saveToStorage();
-                await SAEngine.Socket.sendByQueue(47310, [catchTime, skinId]);
-            } else {
-                if (!originalCloth.has(petInfo.id)) {
-                    originalCloth.set(petInfo.id, petInfo.skinId);
+            log('new skin id:', skinId, 'previous skin id:', petInfo.skinId);
+            if (skinId === 0 || PetSkinController.instance.haveSkin(skinId)) {
+                if (cloth.original.get(petInfo.id) !== skinId) {
+                    await SAEngine.Socket.sendByQueue(47310, [catchTime, skinId]);
+                } else {
+                    cloth.use(({ original }) => {
+                        original.delete(petInfo.id);
+                    });
                 }
-                changeCloth.set(petInfo.id, {
-                    skinId: _skinId,
-                    petSkinId: PetSkinXMLInfo.getSkinPetId(_skinId, petInfo.id),
+                cloth.use(({ changed }) => {
+                    changed.delete(petInfo.id);
                 });
-                saveToStorage();
+            } else {
+                cloth.use(({ original, changed }) => {
+                    if (!original.has(petInfo.id)) {
+                        original.set(petInfo.id, petInfo.skinId);
+                    }
+                    changed.set(petInfo.id, {
+                        skinId: skinId,
+                        petSkinId: PetSkinXMLInfo.getSkinPetId(skinId, petInfo.id),
+                    });
+                });
             }
-            petInfo = PetManager.getPetInfo(catchTime);
-            petInfo.skinId = _skinId;
-            PetManager.dispatchEvent(new PetEvent(PetEvent.EQUIP_SKIN, catchTime, _skinId));
-            callback && callback();
+            PetManager.dispatchEvent(new PetEvent(PetEvent.EQUIP_SKIN, catchTime, skinId));
+            callback();
         };
 
         SAEventHandler.SeerModuleStatePublisher.attach(this.subscriber, 'petBag');
-        console.log('here');
     }
     destroy() {
         SAEventHandler.SeerModuleStatePublisher.detach(this.subscriber, 'petBag');
