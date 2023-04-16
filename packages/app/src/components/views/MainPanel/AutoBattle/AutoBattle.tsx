@@ -1,13 +1,12 @@
 import { Button, Divider, FormControlLabel, Switch, TableCell } from '@mui/material';
 
-import produce from 'immer';
 import React, { useState } from 'react';
 
 import { TextEditDialog, TextEditDialogProps } from '@sa-app/components/common/TextEditDialog';
 import { SAContext } from '@sa-app/context/SAContext';
+import { StorageKeys } from '@sa-app/provider/GlobalConfig';
 import { SABattle, createLocalStorageProxy } from 'seerh5-assistant-core';
 import { PanelTableBase, PanelTableBodyRow } from '../base';
-import { StorageKeys } from '@sa-app/provider/GlobalConfig';
 
 const handleAdd = (arr: any[], value: string) => {
     arr.push(value.split(','));
@@ -33,7 +32,7 @@ const defaultDialogState: TextEditDialogProps = {
 
 const strategyStorage = createLocalStorageProxy(...StorageKeys.BattleStrategy);
 
-export function BattleManager() {
+export function AutoBattle() {
     const { Battle: battleContext } = React.useContext(SAContext);
     const { enableAuto: auto, updateAuto } = battleContext;
 

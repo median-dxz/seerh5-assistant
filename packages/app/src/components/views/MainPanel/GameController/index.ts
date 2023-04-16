@@ -1,0 +1,1 @@
+export { GameController } from './GameController';

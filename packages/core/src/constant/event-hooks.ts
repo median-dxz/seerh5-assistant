@@ -1,5 +1,4 @@
 export const Hook = {
-    Socket: {},
     Module: {
         loadScript: 'sa_module_script_loaded',
         construct: 'sa_module_construct',
@@ -16,5 +15,3 @@ export const Hook = {
         receive: 'sa_award_receive',
     },
 } as const;
-
-

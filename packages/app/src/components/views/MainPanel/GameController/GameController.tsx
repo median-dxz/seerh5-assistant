@@ -15,11 +15,11 @@ import {
 import { mainColor } from '@sa-app/style';
 
 import { PanelStateContext } from '@sa-app/context/PanelState';
+import { StorageKeys } from '@sa-app/provider/GlobalConfig';
 import React from 'react';
 import { PanelTableBase, PanelTableBodyRow } from '../base';
 import { AnimationMode } from './AnimationMode';
 import { BattleFireInfo } from './BattleFireInfo';
-import { StorageKeys } from '@sa-app/provider/GlobalConfig';
 
 interface MenuOption {
     type: 'suit' | 'title' | 'savePets' | 'setPets';
@@ -33,7 +33,7 @@ const suitName = SAEngine.getName.bind(null, ConfigType.suit);
 const petGroupsStorage = createLocalStorageProxy(...StorageKeys.PetGroups);
 
 //TODO 监听发包，数据同步
-export function PetBag() {
+export function GameController() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [menuOpen, setMenuOpen] = React.useState(false);
     const menuOption = React.useRef<MenuOption | null>(null);
@@ -42,8 +42,8 @@ export function PetBag() {
     const [petGroups, setPetGroups] = React.useState(petGroupsStorage.ref);
     const [petHeadSrc, setPetHeadSrc] = React.useState<string[]>([]);
 
-    const [userTitle, setUserTitle] = React.useState(SAEngine.getUserTitle());
-    const [userSuit, setUserSuit] = React.useState(SAEngine.getUserSuit());
+    const [userTitle, setUserTitle] = React.useState(0);
+    const [userSuit, setUserSuit] = React.useState(0);
 
     React.useEffect(() => {
         SAPetHelper.updateStorageInfo()
@@ -51,16 +51,19 @@ export function PetBag() {
             .then((r) => {
                 setPets(r);
                 setPetsSelected(Array(r.length).fill(false));
-                Promise.all(
+                return Promise.all(
                     r
                         .map((r) => ClientConfig.getPetHeadPath(r.id))
                         .map(async (url) => {
                             const i = await RES.getResByUrl(url);
                             return sac.ResourceCache.get(url) ?? i.bitmapData.source?.src;
                         })
-                ).then((r) => {
-                    setPetHeadSrc(r);
-                });
+                );
+            })
+            .then((r) => {
+                setPetHeadSrc(r);
+                setUserTitle(SAEngine.getUserTitle());
+                setUserSuit(SAEngine.getUserSuit());
             });
     }, []);
 

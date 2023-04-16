@@ -1,5 +1,5 @@
 import * as Battle from '../battle';
-import { ItemId, PetPosition } from '../constant';
+import { PetPosition, Potion } from '../constant';
 import { buyPetItem, Socket } from '../engine';
 import * as PetHelper from '../pet-helper';
 
@@ -9,13 +9,13 @@ import { defaultStyle, SaModuleLogger } from '../logger';
 import { getBagPets } from '../pet-helper';
 const log = SaModuleLogger('SAFunctions', defaultStyle.mod);
 
-type PotionId = AttrConst<typeof ItemId.Potion>;
+type PotionId = AttrConst<typeof Potion>;
 /**
  * @param {number[]} cts 要压血的精灵列表
  * @param {PotionId} healPotionId 血药id, 默认中级体力药
  * @description 利用谱尼封印自动压血
  */
-export async function lowerBlood(cts: number[], healPotionId: PotionId = ItemId.Potion.中级体力药剂): Promise<void> {
+export async function lowerBlood(cts: number[], healPotionId: PotionId = Potion.中级体力药剂): Promise<void> {
     cts = cts.slice(0, 6);
     cts = cts.filter(PetManager.getPetInfo.bind(PetManager));
     if (!cts || cts.length === 0) {
@@ -45,7 +45,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = ItemId.
             usePotionForPet(ct, healPotionId);
             await delay(50);
         }
-        usePotionForPet(ct, ItemId.Potion.中级活力药剂);
+        usePotionForPet(ct, Potion.中级活力药剂);
     };
 
     await delay(300);
@@ -54,7 +54,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = ItemId.
         return delay(720);
     }
 
-    buyPetItem(ItemId.Potion.中级活力药剂, cts.length);
+    buyPetItem(Potion.中级活力药剂, cts.length);
     buyPetItem(healPotionId, cts.length);
     PetHelper.setDefault(cts[0]);
     await delay(300);
@@ -229,3 +229,4 @@ export function getImageButtonListener(button: eui.UIComponent) {
 }
 
 export { HelperLoader } from './helper';
+

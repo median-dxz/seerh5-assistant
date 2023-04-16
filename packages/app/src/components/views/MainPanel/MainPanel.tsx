@@ -2,10 +2,10 @@ import { Lock } from '@mui/icons-material';
 import { Box, Fade, Switch, SxProps, Tab, Tabs } from '@mui/material';
 import { mainColor } from '@sa-app/style';
 import * as React from 'react';
-import { BattleManager } from './BattleManager';
+import { AutoBattle } from './AutoBattle';
 import { CommonValue } from './CommonValue';
+import { GameController } from './GameController';
 import { PackageCapture } from './PackageCapture';
-import { PetBag } from './PetBag';
 import { QuickCommand } from './QuickCommand/QuickCommand';
 import { Realm } from './Realm';
 
@@ -131,33 +131,33 @@ export function MainPanel(props: Props) {
                     </Box>
 
                     <Tabs orientation="vertical" value={value} onChange={handleChange} aria-label="SA Main Panel Tabs">
-                        <Tab label="快捷命令组" {...a11yProps(0)} />
-                        <Tab label="常用数据速览" {...a11yProps(1)} />
-                        <Tab label="一键日常" {...a11yProps(2)} />
-                        <Tab label="精灵背包" {...a11yProps(3)} />
-                        <Tab label="自动战斗管理器" {...a11yProps(4)} />
-                        <Tab label="抓包调试" {...a11yProps(5)} />
+                        <Tab label="精灵背包" {...a11yProps(0)} />
+                        <Tab label="一键日常" {...a11yProps(1)} />
+                        <Tab label="常用数据速览" {...a11yProps(2)} />
+                        <Tab label="自动战斗管理器" {...a11yProps(3)} />
+                        <Tab label="抓包调试" {...a11yProps(4)} />
+                        <Tab label="快捷命令组" {...a11yProps(5)} />
                     </Tabs>
                 </Box>
 
                 <>
                     <TabPanel value={value} index={0}>
-                        <QuickCommand />
+                        <GameController />
                     </TabPanel>
                     <TabPanel value={value} index={1}>
-                        <CommonValue />
-                    </TabPanel>
-                    <TabPanel value={value} index={2}>
                         <Realm />
                     </TabPanel>
+                    <TabPanel value={value} index={2}>
+                        <CommonValue />
+                    </TabPanel>
                     <TabPanel value={value} index={3}>
-                        <PetBag />
+                        <AutoBattle />
                     </TabPanel>
                     <TabPanel value={value} index={4}>
-                        <BattleManager />
+                        <PackageCapture />
                     </TabPanel>
                     <TabPanel value={value} index={5}>
-                        <PackageCapture />
+                        <QuickCommand />
                     </TabPanel>
                 </>
             </Box>

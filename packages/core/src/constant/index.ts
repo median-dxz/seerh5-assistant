@@ -1,5 +1,5 @@
 export * from './event-hooks';
-export * from './item';
+export * from './item-id';
 
 export const PetPosition = {
     bag1: 1,
