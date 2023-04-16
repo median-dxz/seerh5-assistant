@@ -22,7 +22,7 @@ export const Provider = {
                 ? FighterModelFactory.playerMode.propView.dispatchNoBlood
                 : false,
         };
-        let cachedRoundInfo = SocketDataAccess.getCache(CommandID.NOTE_USE_SKILL);
+        let cachedRoundInfo = SocketDataAccess.getCache<[PetRoundInfo, PetRoundInfo]>(CommandID.NOTE_USE_SKILL);
         if (cachedRoundInfo) {
             cachedRoundInfo[0].isFirstMove = !(cachedRoundInfo[1].isFirstMove = false);
             if (cachedRoundInfo[0].userId !== FightUserInfo.fighterInfos!.myInfo.id) {

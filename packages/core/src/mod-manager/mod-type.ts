@@ -8,28 +8,27 @@ declare interface ModClass {
     };
 }
 
-export class Mod implements ModClass {
-    [key: string]: any;
-
+export abstract class Mod implements ModClass {
     constructor() {}
 
     reflect(method: string, ...args: any[]) {
-        return this[method]?.(args);
+        return (this as any)[method]?.(args);
     }
 
     getKeys(): string[] {
-        return Object.keys(Object.getOwnPropertyDescriptors(this.__proto__)).filter(
+        return Object.keys(Object.getOwnPropertyDescriptors((this as any).__proto__)).filter(
             (key) => !key.startsWith('_') && !['getKeys', 'getParameterList', 'reflect', 'constructor'].includes(key)
         );
     }
 
     getParameterList(method: string): string[] {
-        if (typeof this[method] === 'function') {
-            return /\(\s*([\s\S]*?)\s*\)/.exec(this[method])![1].split(/\s*,\s*/);
+        const prop = (this as any)[method];
+        if (typeof prop === 'function') {
+            return /\(\s*([\s\S]*?)\s*\)/.exec(prop)![1].split(/\s*,\s*/);
         }
         throw new TypeError(`${method} not a function`);
     }
 
-    init() {}
-    meta = { id: '', description: '' };
+    abstract init(): void;
+    abstract meta: { id: string; description: string };
 }

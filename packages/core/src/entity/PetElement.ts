@@ -18,7 +18,7 @@ export class PetElement extends EntityBase {
     }
 
     static formatById(id: number) {
-        return new PetElement(SkillXMLInfo.typeMap[PetXMLInfo.getType(id)]);
+        return new PetElement(SkillXMLInfo.typeMap[id]);
     }
 
     /** 计算克制倍率 */

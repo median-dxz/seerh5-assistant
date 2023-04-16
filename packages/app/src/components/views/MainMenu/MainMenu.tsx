@@ -42,12 +42,10 @@ export function MainMenu() {
             FightManager.fightNoMapBoss(6730);
         },
         () => {
-            const { Mods: mods } = sac;
-            mods.get('sign')!.run!();
+            sac.Mods.get('sign')!.reflect('run');
         },
         () => {
-            const { Mods: mods } = sac;
-            mods.get('sign')!.reflect('teamDispatch');
+            sac.Mods.get('sign')!.reflect('teamDispatch');
         },
     ];
 

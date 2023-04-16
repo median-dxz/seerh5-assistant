@@ -11,7 +11,8 @@ const getHandler = <T extends object>(): ProxyHandler<T> => ({
         if (checkEnv()) {
             return Reflect.get(target, prop, receiver);
         } else {
-            throw new Error("[SACore]: seerh5 app hasn't been loaded yet.");
+            // throw new Error("[SACore]: seerh5 app hasn't been loaded yet.");
+            return undefined;
         }
     },
 });

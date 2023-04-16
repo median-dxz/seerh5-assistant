@@ -1,5 +1,16 @@
 import { Mod, SAEngine } from 'seerh5-assistant-core';
 
+const rate = [
+    [0, 24, 5.8, 1.4, 0.3],
+    [0, 0, 23, 5.5, 1.3],
+    [0, 0, 0, 22, 5.3],
+    [0, 0, 0, 0, 21],
+];
+
+function calcProbability(level: number, targetLevel: number) {
+    return rate[level][targetLevel];
+}
+
 class CraftSkillStone extends Mod {
     stones: {
         name: string;
@@ -7,8 +18,6 @@ class CraftSkillStone extends Mod {
         id: number;
         num: number;
     }[] = [];
-
-    async update() {}
 
     async init() {
         await SAEngine.Socket.sendWithReceivedPromise(4475, () => {
@@ -34,10 +43,11 @@ class CraftSkillStone extends Mod {
             level: number;
             id: number;
         }[] = [];
+        
         const getRate = () => {
             const maxValue = Math.max(...toCraft.map((v) => v.level));
             if (maxValue === 4 || !isFinite(maxValue)) return 0;
-            const baseRate = toCraft.reduce((pre, cur) => pre + this.calcProbability(cur.level, maxValue + 1), 0);
+            const baseRate = toCraft.reduce((pre, cur) => pre + calcProbability(cur.level, maxValue + 1), 0);
             return Math.min(baseRate + 10, 100);
         };
 
@@ -56,16 +66,6 @@ class CraftSkillStone extends Mod {
             toCraft.map((v) => v.id)
         );
         await this.init();
-    }
-
-    calcProbability(level: number, targetLevel: number) {
-        const rate = [
-            [0, 24, 5.8, 1.4, 0.3],
-            [0, 0, 23, 5.5, 1.3],
-            [0, 0, 0, 22, 5.3],
-            [0, 0, 0, 0, 21],
-        ];
-        return rate[level][targetLevel];
     }
 
     meta = { description: '', id: 'CraftSkillStone' };

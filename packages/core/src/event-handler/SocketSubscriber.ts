@@ -52,8 +52,8 @@ export const SocketDataAccess = {
         });
     },
 
-    getCache(cmd: number) {
-        const subject = this.subjects.get(cmd);
+    getCache<T>(cmd: number) {
+        const subject: SocketSubject<T> | undefined = this.subjects.get(cmd);
         return subject?.cache;
     },
 
