@@ -4,7 +4,6 @@ import * as Battle from './battle';
 import * as Engine from './engine';
 import * as Entity from './entity';
 import * as EventHandler from './event-handler';
-import * as PetHelper from './pet-helper';
 
 const getHandler = <T extends object>(): ProxyHandler<T> => ({
     get: function (target, prop, receiver) {
@@ -43,7 +42,7 @@ export namespace SABattle {
 export const SAEngine = new Proxy(Engine, getHandler<typeof Engine>());
 
 export const SAEventHandler = new Proxy(EventHandler, getHandler<typeof EventHandler>());
+
 export type { ModuleSubscriber } from './event-handler';
 export * from './functions';
-
-export const SAPetHelper = new Proxy(PetHelper, getHandler<typeof PetHelper>());
+export * from './pet-helper';

@@ -1,44 +1,24 @@
-import { extractObjectId } from '../common';
 import { PetPosition as PosType } from '../constant';
-import { Socket } from '../engine';
-import { Pet } from '../entity/Pet';
+import { PetDataManger, ProxyPet } from './ProxyPet';
 
-type PosType = AttrConst<typeof PosType>;
-
-/**
- * @description 更新精灵数据
- */
-export const updateStorageInfo = async () => {
-    return new Promise<void>((resolve, reject) => {
-        PetManager.getLovePetList();
-        PetManager.updateBagInfo(resolve);
-    }).then(
-        () =>
-            new Promise<void>((resolve, reject) => {
-                PetStorage2015InfoManager.getTotalInfo(resolve);
-            })
-    );
-};
-
-type BagPetsPos = typeof PosType.bag1 | typeof PosType.secondBag1;
+type BagPetsPos = typeof PosType.bag1 | typeof PosType.secondBag1 | -1;
 /**
  * @description 获取背包精灵列表
  */
-export const getBagPets = async (location: BagPetsPos) => {
-    await updateStorageInfo();
-    let dict: Array<PetInfo>;
+export const getBagPets = async (location: BagPetsPos = -1) => {
+    let arr: Array<ProxyPet>;
     switch (location) {
         case PosType.bag1:
-            dict = PetManager._bagMap.getValues();
+            arr = (await PetDataManger.bag.get())[0];
             break;
         case PosType.secondBag1:
-            dict = PetManager._secondBagMap.getValues();
+            arr = (await PetDataManger.bag.get())[1];
             break;
         default:
-            dict = [];
+            arr = [];
     }
 
-    return dict.map((v) => new Pet(v));
+    return arr;
 };
 
 type StoragePetsPos = typeof PosType.storage | typeof PosType.elite;
@@ -47,135 +27,14 @@ type StoragePetsPos = typeof PosType.storage | typeof PosType.elite;
  * @return 获取精灵信息的异步函数
  */
 export const getStoragePets = async (location: StoragePetsPos) => {
-    await updateStorageInfo();
-    let dict: Array<PetStorage2015PetInfo>;
-    switch (location) {
-        case PosType.storage:
-            dict = PetStorage2015InfoManager.getInfoByType(0, 0);
-            break;
-        case PosType.elite:
-            dict = PetStorage2015InfoManager.getInfoByType(1, 0);
-            break;
-        default:
-            dict = [];
-    }
-
-    return dict.map((v) => () => formatPetByCatchtimeAsync(v.catchTime));
+    const dict = await PetDataManger.miniInfo.get();
+    return [...dict.values()].filter((p) => p.posi === location);
 };
-
-export const isDefault = (ct: number) => PetManager.defaultTime === ct;
-export const setDefault = (ct: number) => PetManager.setDefault(ct);
-
-export const getPetLocation = async (ct: number) => {
-    await updateStorageInfo();
-    const r = PetStorage2015InfoManager.allInfo.find((v) => v.catchTime === ct);
-    if (!r) {
-        if (PetManager._bagMap.containsKey(ct)) {
-            return PosType.bag1;
-        } else if (PetManager._secondBagMap.containsKey(ct)) {
-            return PosType.secondBag1;
-        } else {
-            return -1;
-        }
-    } else {
-        return r.posi;
-    }
-};
-
-export const setPetLocation = async (ct: number, newLocation: PosType) => {
-    if (!ct) return false;
-    let l = await getPetLocation(ct);
-    if (l === newLocation || l === -1) return false;
-    switch (newLocation) {
-        case PosType.secondBag1:
-            if (PetManager.isSecondBagFull) return false;
-
-            if (l === PosType.bag1) {
-                await PetManager.bagToSecondBag(ct);
-            } else if (l === PosType.storage || l === PosType.elite) {
-                await PetManager.storageToSecondBag(ct);
-            }
-
-            break;
-        case PosType.bag1:
-            if (PetManager.isBagFull) return false;
-
-            if (l === PosType.secondBag1) {
-                await PetManager.secondBagToBag(ct);
-            } else if (l === PosType.storage) {
-                await PetManager.storageToBag(ct);
-            } else if (l === PosType.elite) {
-                await PetManager.loveToBag(ct);
-            }
-
-            break;
-        case PosType.storage:
-            if (l === PosType.elite) {
-                await Socket.sendWithReceivedPromise(CommandID.DEL_LOVE_PET, () => PetManager.delLovePet(0, ct, 0));
-                break;
-            }
-
-            if (l === PosType.bag1) {
-                await PetManager.bagToStorage(ct);
-            } else if (l === PosType.secondBag1) {
-                await PetManager.secondBagToStorage(ct);
-            }
-
-            break;
-        case PosType.elite:
-            if (l !== PosType.storage) {
-                if (l === PosType.bag1) {
-                    await PetManager.bagToStorage(ct);
-                } else if (l === PosType.secondBag1) {
-                    await PetManager.secondBagToStorage(ct);
-                }
-            }
-            if ((await getPetLocation(ct)) === PosType.storage) {
-                await Socket.sendWithReceivedPromise(CommandID.ADD_LOVE_PET, () => PetManager.addLovePet(0, ct, 0));
-                PetStorage2015InfoManager.changePetPosi(ct, PosType.elite);
-            }
-            break;
-        default:
-            break;
-    }
-
-    return updateStorageInfo().then((v) => true);
-};
-
-export const popPetFromBag = async (ct: number) => {
-    const local = await getPetLocation(ct);
-    if (local !== PosType.elite && local !== PosType.storage) {
-        await setPetLocation(ct, PosType.storage);
-    }
-};
-
-export function cureOnePet(ct: number) {
-    Socket.sendByQueue(CommandID.PET_ONE_CURE, ct);
-}
 
 export function cureAllPet() {
     PetManager.noAlarmCureAll();
 }
 
-export function toggleAutoCure(enable: boolean) {
-    Socket.sendByQueue(42019, [22439, Number(enable)]);
-}
+export { SAPetLocation } from './PetLocation';
+export { PetDataManger, SAPet } from './ProxyPet';
 
-export async function getAutoCureState(): Promise<boolean> {
-    const r = await Socket.bitSet(22439);
-    return r[0];
-}
-
-export async function getPet(ct: number) {
-    return new Pet(PetManager.getPetInfo(ct));
-}
-
-export function getPetCached(pet: number | Pet) {
-    const ct = extractObjectId(pet, Pet.instanceKey);
-    return new Pet(PetManager.getPetInfo(ct));
-}
-
-export async function formatPetByCatchtimeAsync(ct: number) {
-    const petInfo: PetInfo = await PetManager.UpdateBagPetInfoAsynce(ct);
-    return new Pet(petInfo);
-}

@@ -5,9 +5,11 @@ import {
     PetPosition,
     SAEngine,
     SAEntity,
-    SAPetHelper,
+    SAPet,
     createLocalStorageProxy,
+    cureAllPet,
     delay,
+    getBagPets,
     lowerBlood,
     switchBag,
 } from 'seerh5-assistant-core';
@@ -46,8 +48,7 @@ export function GameController() {
     const [userSuit, setUserSuit] = React.useState(0);
 
     React.useEffect(() => {
-        SAPetHelper.updateStorageInfo()
-            .then(() => SAPetHelper.getBagPets(PetPosition.bag1))
+        getBagPets(PetPosition.bag1)
             .then((r) => {
                 setPets(r);
                 setPetsSelected(Array(r.length).fill(false));
@@ -109,7 +110,7 @@ export function GameController() {
         } else if (info.type === 'setPets') {
             switchBag(petGroups[index]);
         } else if (info.type === 'savePets') {
-            const newPets = await SAPetHelper.getBagPets(PetPosition.bag1);
+            const newPets = await getBagPets(PetPosition.bag1);
             petGroupsStorage.use((draft) => {
                 draft[index] = newPets.map((pet) => pet.catchTime);
             });
@@ -126,32 +127,24 @@ export function GameController() {
     const handleCurePets = () => {
         const curePets = pets.filter((pet, index) => petsSelected[index]);
         for (let curePet of curePets) {
-            SAPetHelper.cureOnePet(curePet.catchTime);
+            SAPet(curePet.catchTime).cure();
         }
     };
 
-    const handleSwitchPetPattern: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    const handleSwitchPetPattern: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
         setAnchorEl(e.currentTarget);
-        const patternName = Array(petGroups.length)
-            .fill('')
-            .map(
-                (v, index) =>
-                    `方案${index}: ${(
-                        petGroups[index]?.map(Number).map((ct) => {
-                            let name = PetManager.getPetInfo(ct)?.name;
-                            if (!name) {
-                                name = PetStorage2015InfoManager.allInfo.find((p) => p.catchTime === ct)!.name;
-                            }
-                            return name;
-                        }) ?? []
-                    ).join(',')}`
-            );
+        const pattern = [];
+        for (let index = 0; index < petGroups.length; index++) {
+            const pets = await Promise.all(petGroups[index]?.map(Number).map(async (ct) => SAPet(ct).name) ?? []);
+            const name = `方案${index}: ${pets.join(',')}`;
+            pattern.push(name);
+        }
         menuOption.current = {
             type: 'setPets',
             id: Array(petGroups.length)
                 .fill(0)
                 .map((v, index) => index),
-            options: patternName,
+            options: pattern,
         };
         setMenuOpen(true);
     };
@@ -198,7 +191,7 @@ export function GameController() {
     return (
         <>
             <Button onClick={openPetBag}>打开背包界面</Button>
-            <Button onClick={SAPetHelper.cureAllPet}>全体治疗</Button>
+            <Button onClick={cureAllPet}>全体治疗</Button>
             <Divider />
 
             <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']}>
@@ -308,7 +301,7 @@ export function GameController() {
                             </Button>
                             <Button
                                 onClick={() => {
-                                    SAPetHelper.cureOnePet(row.catchTime);
+                                    SAPet(row.catchTime).cure();
                                 }}
                             >
                                 治疗

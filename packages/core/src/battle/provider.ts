@@ -1,6 +1,5 @@
 import { Pet, PetRoundInfo, Skill } from '../entity';
 import { SocketDataAccess } from '../event-handler/SocketSubscriber';
-import { getPetCached } from '../pet-helper';
 
 export interface RoundInfo {
     self?: PetRoundInfo;
@@ -13,6 +12,10 @@ declare var CommandID: {
     NOTE_USE_SKILL: 2505;
 };
 
+declare namespace CommandData {
+    type NOTE_USE_SKILL = [PetRoundInfo, PetRoundInfo];
+}
+
 export const Provider = {
     getCurRoundInfo() {
         if (!FighterModelFactory.playerMode || !FighterModelFactory.enemyMode) return null;
@@ -22,7 +25,7 @@ export const Provider = {
                 ? FighterModelFactory.playerMode.propView.dispatchNoBlood
                 : false,
         };
-        let cachedRoundInfo = SocketDataAccess.getCache<[PetRoundInfo, PetRoundInfo]>(CommandID.NOTE_USE_SKILL);
+        let cachedRoundInfo = SocketDataAccess.getCache<CommandData.NOTE_USE_SKILL>(CommandID.NOTE_USE_SKILL);
         if (cachedRoundInfo) {
             cachedRoundInfo[0].isFirstMove = !(cachedRoundInfo[1].isFirstMove = false);
             if (cachedRoundInfo[0].userId !== FightUserInfo.fighterInfos!.myInfo.id) {
@@ -56,6 +59,6 @@ export const Provider = {
     getPets(): null | Pet[] {
         if (!FightUserInfo.fighterInfos) return null;
         const infos = FightUserInfo.fighterInfos.myInfo.petCatchArr;
-        return infos.map((v) => ({ ...getPetCached(v) }));
+        return infos.map((v) => new Pet(PetManager.getPetInfo(v)));
     },
 };

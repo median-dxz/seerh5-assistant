@@ -6,8 +6,8 @@ import { LevelBase, LevelExtendsProps } from './LevelBase';
 import dataProvider from './data';
 
 import { useCore } from '@sa-app/provider/useCore';
-import { delay } from 'seerh5-assistant-core';
-const { SABattle, SAPetHelper, SAEngine, switchBag } = useCore();
+import { cureAllPet, delay } from 'seerh5-assistant-core';
+const { SABattle, SAEngine, switchBag } = useCore();
 
 interface LevelData {
     stimulation: boolean;
@@ -60,8 +60,8 @@ export function LevelStudyTraining(props: LevelExtendsProps) {
             case 1: //daily challenge
                 setHint('正在准备背包');
                 await switchBag(customData.cts);
-                SAPetHelper.cureAllPet();
-                SAPetHelper.setDefault(customData.cts[0]);
+                cureAllPet();
+                PetManager.setDefault(customData.cts[0]);
                 setHint('准备背包完成');
                 await delay(500);
 

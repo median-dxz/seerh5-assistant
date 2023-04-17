@@ -4,11 +4,12 @@ import {
     Mod,
     PetPosition,
     SAEngine,
-    SAPetHelper,
+    SAPet,
+    SAPetLocation,
     SaModuleLogger,
     defaultStyle,
     delay,
-    usePotionForPet,
+    getBagPets,
 } from 'seerh5-assistant-core';
 
 const log = SaModuleLogger('Sign', defaultStyle.mod);
@@ -128,8 +129,8 @@ class sign extends Mod {
             if (tid === 5) tid = 1;
             if (!reprogress) {
                 // 清空背包
-                for (let p of await SAPetHelper.getBagPets(PosType.bag1)) {
-                    await SAPetHelper.setPetLocation(p.catchTime, PosType.storage);
+                for (let p of await getBagPets(PosType.bag1)) {
+                    await SAPet(p.catchTime).popFromBag();
                 }
             }
             const data = await SAEngine.Socket.sendByQueue(45810, tid)
@@ -160,7 +161,7 @@ class sign extends Mod {
             for (let pid of e.petIds) {
                 const petName = PetXMLInfo.getName(pid);
                 if (ignorePetNames.has(petName)) {
-                    await SAPetHelper.setPetLocation(e.cts[index], 1);
+                    await SAPet(e.cts[index]).setLocation(SAPetLocation.Bag);
                     log(`取出非派遣精灵: ${petName}`);
                 }
                 index++;
@@ -176,18 +177,18 @@ class sign extends Mod {
         }
     }
 
-    craftDreamGem(id: AttrConst<typeof ItemId.DreamGem>, left: number) {
+    craftDreamGem(id: number, left: number) {
         const total = ItemManager.getNumByID(id);
-        const { 低阶梦幻宝石, 中阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石, 高阶梦幻宝石 } = ItemId.DreamGem;
-        const level = [低阶梦幻宝石, 中阶梦幻宝石, 高阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石];
+        const { 低阶梦幻宝石, 中阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石, 高阶梦幻宝石 } = ItemId;
+        const level = [低阶梦幻宝石, 中阶梦幻宝石, 高阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石] as const;
         for (let i = 1; i <= Math.trunc((total - left) / 4); i++) {
-            SAEngine.Socket.sendByQueue(9332, [level.indexOf(id), 4]);
+            SAEngine.Socket.sendByQueue(9332, [level.indexOf(id as typeof level[number]), 4]);
         }
     }
 
     async resetNature(ct: number, nature: number) {
         for (; ; await delay(200)) {
-            await usePotionForPet(ct, 300070);
+            await SAPet(ct).useItem(300070);
             const info = await PetManager.UpdateBagPetInfoAsynce(ct);
 
             log(`刷性格: 当前性格: ${NatureXMLInfo.getName(info.nature)}`);

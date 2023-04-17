@@ -2,12 +2,12 @@ import { Typography } from '@mui/material';
 
 import { useCore } from '@sa-app/provider/useCore';
 import React from 'react';
-import { delay, PetPosition, SAEntity } from 'seerh5-assistant-core';
+import { delay, getBagPets, PetPosition, SAEntity } from 'seerh5-assistant-core';
 import { PercentLinearProgress } from '../base';
 import { LevelBase, LevelExtendsProps } from './LevelBase';
 
 import dataProvider from './data';
-const { SABattle, SAPetHelper, SAEngine, switchBag } = useCore();
+const { SABattle, SAEngine, switchBag } = useCore();
 
 interface LevelData {
     stimulation: boolean;
@@ -57,8 +57,8 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 if (levelData.current.levelOpenCount < maxDailyChallengeTimes || levelData.current.levelOpen) {
                     setHint('正在准备背包');
                     await switchBag(customData.cts);
-                    SAPetHelper.cureAllPet();
-                    SAPetHelper.setDefault(customData.cts[0]);
+                    cureAllPet();
+                    PetManager.setDefault(customData.cts[0]);
                     setHint('准备背包完成');
                     if (!levelData.current.levelOpen) {
                         await SAEngine.Socket.sendByQueue(42395, [104, 1, 3, 0]);
@@ -86,13 +86,13 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 setStep(0);
                 break;
             case 2:
-                pets = await SAPetHelper.getBagPets(PetPosition.bag1);
+                pets = await getBagPets(PetPosition.bag1);
                 pet = pets.find((pet) => pet.name === '艾欧丽娅');
                 if (!pet) {
                     setStep(-3);
                     break;
                 }
-                SAPetHelper.setDefault(pet.catchTime);
+                PetManager.setDefault(pet.catchTime);
                 await delay(500);
                 while (levelData.current.step2Count < 6) {
                     await SABattle.Manager.runOnce(() => {
@@ -151,13 +151,13 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                     levelData.current = await updateLevelData();
                 }
             case 4:
-                pets = await SAPetHelper.getBagPets(PetPosition.bag1);
+                pets = await getBagPets(PetPosition.bag1);
                 pet = pets.find((pet) => pet.name === '幻影蝶');
                 if (!pet) {
                     setStep(-3);
                     break;
                 }
-                SAPetHelper.setDefault(pet.catchTime);
+                PetManager.setDefault(pet.catchTime);
                 await delay(500);
                 await SABattle.Manager.runOnce(() => {
                     setHint(
@@ -210,4 +210,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
             </Typography>
         </LevelBase>
     );
+}
+function cureAllPet() {
+    throw new Error('Function not implemented.');
 }

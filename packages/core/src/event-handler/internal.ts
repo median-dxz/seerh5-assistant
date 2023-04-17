@@ -2,11 +2,11 @@ import * as Battle from '../battle';
 import { delay, SAEventTarget } from '../common';
 import { Hook } from '../constant';
 import { PetRoundInfo } from '../entity/PetRoundInfo';
-import { findObject } from '../functions';
 
 import { SeerModuleStatePublisher } from './ModuleSubscriber';
 import { SocketDataAccess, SocketListenerBuilder } from './SocketSubscriber';
 
+import { findObject } from '../engine';
 import { defaultStyle, SaModuleLogger } from '../logger';
 const log = SaModuleLogger('SAHookListener', defaultStyle.core);
 
@@ -24,7 +24,8 @@ export function EventHandlerLoader() {
     });
 
     SAEventTarget.addEventListener(Hook.BattlePanel.panelReady, () => {
-        SocketDataAccess.clearCache(CommandID.NOTE_USE_SKILL);
+        const subject = SocketDataAccess.subjects.get(CommandID.NOTE_USE_SKILL);
+        subject && (subject.cache = null);
         if (FightManager.fightAnimateMode === 1) {
             PetFightController.setFightSpeed(10);
         }
@@ -110,8 +111,8 @@ export function EventHandlerLoader() {
     });
 
     SocketDataAccess.attach(
-        ...new SocketListenerBuilder<readonly [PetRoundInfo, PetRoundInfo]>()
-            .data((data) => {
+        new SocketListenerBuilder<readonly [PetRoundInfo, PetRoundInfo]>(CommandID.NOTE_USE_SKILL)
+            .res((data) => {
                 const [fi, si] = data;
                 log(
                     `对局信息更新:
@@ -129,6 +130,5 @@ export function EventHandlerLoader() {
                 );
             })
             .cache()
-            .end(CommandID.NOTE_USE_SKILL)
     );
 }

@@ -58,6 +58,7 @@ declare class CountermarkInfo {
 }
 
 declare class PetInfo {
+    constructor(data: egret.ByteArray);
     id: number;
     name: string;
     catchTime: number;
@@ -65,6 +66,7 @@ declare class PetInfo {
     nature: number;
     hideSKill: PetSkillInfo;
     skillArray: Array<PetSkillInfo>;
+    isDefault: boolean;
     _skinId: number;
     get hp(): number;
     get maxHp(): number;
@@ -83,6 +85,11 @@ declare class PetSkillInfo {
     get name(): string;
 }
 
+declare class PetTakeOutInfo {
+    constructor(data: egret.ByteArray);
+    firstPetTime: number;
+}
+
 declare class PetListInfo {
     catchTime: number;
     id: number;
@@ -95,15 +102,6 @@ declare class PetStorage2015PetInfo extends PetListInfo {
     type: number;
 }
 
-declare class PetStorage2015PetInfo {
-    catchTime: number;
-    id: number;
-    level: number;
-    posi: number;
-    type: number;
-    get name(): string;
-}
-
 declare class FighterUserInfos {
     get myInfo(): FighterUserInfo;
 }
@@ -111,6 +109,7 @@ declare class FighterUserInfos {
 declare class FighterUserInfo {
     get id(): number;
     get petCatchArr(): number[];
+    get petInfoArr(): PetInfo[];
 }
 
 declare class FightPetInfo {
@@ -231,16 +230,17 @@ declare class ItemManager {
 }
 
 declare class ItemUseManager {
-    useItem(t: SAType.PetObj, e: number): void;
-    $usePetItem(obj: { petInfo: SAType.PetObj; itemId: number; itemName: string }, e: number): void;
+    static getInstance(): ItemUseManager;
+    useItem(t: PetInfo, e: number): void;
+    $usePetItem(obj: { petInfo: PetInfo; itemId: number; itemName: string }, e: number): void;
 }
 
 declare class PetManager {
     static getPetInfo(catchTime: number): PetInfo;
     static UpdateBagPetInfoAsynce(catchtime: number): PromiseLike<PetInfo>;
     static upDateBagPetInfo(catchtime: number, callback: (info: PetInfo) => any);
-    static getLovePetList(): void;
     static updateBagInfo(callback: CallBack): void;
+    static getLovePetList(): void;
 
     static bagToSecondBag(catchTime: number): Promise<void>;
     static bagToStorage(catchTime: number): Promise<void>;
@@ -253,7 +253,6 @@ declare class PetManager {
     static delLovePet(arg0: number, catchTime: number, arg2: number): void;
     static addLovePet(arg0: number, catchTime: number, arg2: number): void;
     static noAlarmCureAll(): void;
-    static getLovePetList(): void;
     static setDefault(catchTime: number): void;
     static equipSkin(catchTime: number, skinId: number, callback: CallBack): PromiseLike<void>;
     static dispatchEvent(e: PetEvent): void;
@@ -261,11 +260,15 @@ declare class PetManager {
     static isSecondBagFull: boolean;
     static _bagMap: SAType.HashMap<PetInfo>;
     static _secondBagMap: SAType.HashMap<PetInfo>;
+    static infos: PetInfo[];
+    static secondInfos: PetInfo[];
     static secondBagTotalLength: number;
-    static defaultTime: number;
+    static get defaultTime(): number;
+    static set defaultTime(ct: number);
 }
 
 declare class PetStorage2015InfoManager {
+    static getMiniInfo(callback: CallBack, page: number = 0): void;
     static getTotalInfo(callback: CallBack): void;
     static getInfoByType(arg1: number, arg2: number): PetStorage2015PetInfo[];
     static changePetPosi(catchTime: number, location: number): void;

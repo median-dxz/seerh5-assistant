@@ -1,12 +1,12 @@
 import * as Battle from '../battle';
 import { PetPosition, Potion } from '../constant';
 import { buyPetItem, Socket } from '../engine';
-import * as PetHelper from '../pet-helper';
+import { SAPet, SAPetLocation } from '../pet-helper';
 
 import { delay } from '../common';
 import { PetElement } from '../entity/PetElement';
 import { defaultStyle, SaModuleLogger } from '../logger';
-import { getBagPets } from '../pet-helper';
+import { getBagPets, PetDataManger } from '../pet-helper';
 const log = SaModuleLogger('SAFunctions', defaultStyle.mod);
 
 type PotionId = AttrConst<typeof Potion>;
@@ -17,38 +17,38 @@ type PotionId = AttrConst<typeof Potion>;
  */
 export async function lowerBlood(cts: number[], healPotionId: PotionId = Potion.中级体力药剂): Promise<void> {
     cts = cts.slice(0, 6);
-    cts = cts.filter(PetManager.getPetInfo.bind(PetManager));
     if (!cts || cts.length === 0) {
         return;
     }
 
     // 检测列表是否全在背包
-    let curPets = await PetHelper.getBagPets(PetPosition.bag1);
+    let curPets = await getBagPets(PetPosition.bag1);
+    let replacePets = curPets.filter((p) => !cts.includes(p.catchTime));
 
     for (let ct of cts) {
-        if ((await PetHelper.getPetLocation(ct)) !== PetPosition.bag1) {
+        const location = await SAPet(ct).location();
+        if (location !== SAPetLocation.Bag && location !== SAPetLocation.Default) {
             if (PetManager.isBagFull) {
-                let replacePet = curPets.find((p) => !cts.includes(p.catchTime))!;
+                let replacePet = replacePets.pop()!;
                 log(`压血 -> 将 ${replacePet.name} 放入仓库`);
-                await PetHelper.popPetFromBag(replacePet.catchTime);
-                curPets = await PetHelper.getBagPets(PetPosition.bag1);
+                await SAPet(replacePet.catchTime).popFromBag();
             }
-            await PetHelper.setPetLocation(ct, PetPosition.bag1);
+            await SAPet(ct).setLocation(SAPetLocation.Bag);
         }
     }
     log(`压血 -> 背包处理完成`);
+    await getBagPets();
 
-    const hpChecker = () => cts.filter((ct) => PetManager.getPetInfo(ct).hp >= 150);
+    const hpChecker = () => cts.filter((ct) => SAPet(ct).hp >= 150);
 
     const usePotion = async (ct: number) => {
-        if (PetManager.getPetInfo(ct).hp <= 50) {
-            usePotionForPet(ct, healPotionId);
+        if (SAPet(ct).hp <= 50) {
+            SAPet(ct).usePotion(healPotionId);
             await delay(50);
         }
-        usePotionForPet(ct, Potion.中级活力药剂);
+        SAPet(ct).usePotion(Potion.中级活力药剂);
     };
 
-    await delay(300);
     if (hpChecker().length === 0) {
         cts.forEach(usePotion);
         return delay(720);
@@ -56,8 +56,8 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = Potion.
 
     buyPetItem(Potion.中级活力药剂, cts.length);
     buyPetItem(healPotionId, cts.length);
-    PetHelper.setDefault(cts[0]);
-    await delay(300);
+    await SAPet(cts[0]).default();
+    await delay(600);
 
     const { Manager, Operator, Provider } = Battle;
 
@@ -66,7 +66,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = Potion.
             let nextPet = battlePets.findIndex(
                 (v) => cts.includes(v.catchTime) && v.hp > 200 && v.catchTime !== battleState.self!.catchtime
             );
-
+            log(nextPet, battlePets);
             if (nextPet === -1) {
                 Operator.escape();
                 return;
@@ -96,25 +96,17 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = Potion.
     }
 }
 
-/**
- * @description 对精灵使用药水
- */
-export function usePotionForPet(catchTime: number, potionId: number) {
-    return Socket.sendByQueue(CommandID.USE_PET_ITEM_OUT_OF_FIGHT, [catchTime, potionId]);
-}
-
 export async function switchBag(cts: number[]) {
-    if (!cts || cts.length === 0) return;
     // 清空现有背包
-    for (let v of await PetHelper.getBagPets(PetPosition.bag1)) {
+    for (const v of await getBagPets(PetPosition.bag1)) {
         if (!cts.includes(v.catchTime)) {
-            await PetHelper.popPetFromBag(v.catchTime);
+            await SAPet(v).popFromBag();
             log(`SwitchBag -> 将 ${v.name} 放入仓库`);
         }
     }
     for (let v of cts) {
-        await PetHelper.setPetLocation(v, PetPosition.bag1);
-        log(`SwitchBag -> 将 ${(await getBagPets(PetPosition.bag1)).find((p) => p.catchTime === v)!.name} 放入背包`);
+        await SAPet(v).setLocation(SAPetLocation.Bag);
+        log(`SwitchBag -> 将 ${SAPet(v).name} 放入背包`);
     }
 }
 
@@ -122,12 +114,9 @@ export async function switchBag(cts: number[]) {
  * @description 计算可用的高倍克制精灵(默认大于等于1.5)
  */
 export async function calcAllEfficientPet(e: number, radio: number = 1.5) {
-    await PetHelper.updateStorageInfo();
-    let pets = [
-        ...PetStorage2015InfoManager.allInfo,
-        ...PetManager._bagMap.getValues(),
-        ...PetManager._secondBagMap.getValues(),
-    ];
+    const [bag1, bag2] = await PetDataManger.bag.get();
+    const mini = (await PetDataManger.miniInfo.get()).values();
+    let pets = [...bag1, ...bag2, ...mini];
 
     let r = pets.filter((v) => PetElement.formatById(PetXMLInfo.getType(v.id)).calcRatio(e) >= radio);
     return r.map((v) => {
@@ -183,49 +172,11 @@ export async function updateBattleFireInfo() {
     });
 }
 
-/**
- * @description 获取EgretObject,以stage作为root寻找所有符合断言的obj,不会查找stage本身
- */
-export function findObject<T extends { new (...args: any[]): InstanceType<T> }>(
-    instanceClass: T,
-    predicate?: (obj: egret.DisplayObject) => boolean
-) {
-    const root = LevelManager.stage;
-
-    function find(parent: egret.DisplayObject) {
-        if (parent.$children == null) {
-            return [];
-        }
-        let result: InstanceType<T>[] = [];
-        for (let child of parent.$children) {
-            if (child instanceof instanceClass && (predicate == undefined || predicate(child) === true)) {
-                result.push(child);
-            }
-            result = result.concat(find(child));
-        }
-        return result;
-    }
-
-    return find(root);
-}
-
-export function getClickTarget() {
-    const listener = (e: egret.TouchEvent) => {
-        log(e.target);
-        LevelManager.stage.removeEventListener(egret.TouchEvent.TOUCH_BEGIN, listener, null);
-    };
-    LevelManager.stage.addEventListener(egret.TouchEvent.TOUCH_BEGIN, listener, null);
-}
-
 export function updateBatteryTime() {
     const leftTime =
         MainManager.actorInfo.timeLimit -
         (MainManager.actorInfo.timeToday + Math.floor(Date.now() / 1000 - MainManager.actorInfo.logintimeThisTime));
     BatteryController.Instance._leftTime = Math.max(0, leftTime);
-}
-
-export function getImageButtonListener(button: eui.UIComponent) {
-    return ImageButtonUtil.imgs[`k_${button.hashCode}`];
 }
 
 export { HelperLoader } from './helper';

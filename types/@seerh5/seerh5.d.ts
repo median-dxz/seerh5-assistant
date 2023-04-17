@@ -114,6 +114,8 @@ declare namespace SAType {
     interface ObserverList<T> {
         array: Array<T>;
     }
+
+    type SocketRequestData = (egret.ByteArray | number)[];
 }
 
 declare namespace RES {

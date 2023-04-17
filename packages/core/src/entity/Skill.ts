@@ -28,6 +28,8 @@ export class Skill extends EntityBase implements ISkillObject {
     maxPP: number;
     effects: SkillEffects;
     mustHit: boolean;
+    stoneSkillId?: number;
+    stoneItemId?: number;
 
     constructor(obj: SAType.MoveObj) {
         super();
@@ -78,7 +80,11 @@ export class Skill extends EntityBase implements ISkillObject {
             const stoneId = SkillXMLInfo.getStoneBySkill(id);
             const stone = Object.values(SkillXMLInfo.moveStoneMap).find((v) => v.ItemID === stoneId);
             if (stone) {
-                return new Skill(stone);
+                const skill = new Skill(stone);
+                skill.id = id;
+                skill.stoneSkillId = stone.ID;
+                skill.stoneItemId = stoneId;
+                return skill;
             } else {
                 console.error('解析技能失败');
                 return {} as Skill;

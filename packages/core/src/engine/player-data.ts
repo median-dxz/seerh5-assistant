@@ -37,3 +37,21 @@ export function getUserAbilitySuits() {
 export function getUserSuit(): number {
     return SuitXMLInfo.getSuitID(MainManager.actorInfo.clothIDs);
 }
+
+/**
+ * 获取精英收藏的上限
+ */
+export async function getEliteLimit() {
+    Socket.multiValue(121020).then((r) => {
+        let i = r[0];
+        i = 255 & i;
+        i += 1;
+        i = 30 >= i ? i : 30;
+        return parseFloat(config.Brave_lv.getItem(i).storehouse);
+    });
+}
+
+export async function getAutoCureState(): Promise<boolean> {
+    const r = await Socket.bitSet(22439);
+    return r[0];
+}

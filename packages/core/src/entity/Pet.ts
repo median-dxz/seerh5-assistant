@@ -23,13 +23,13 @@ export class Pet extends EntityBase implements IPetObject {
     __type: EntityType = 'Pet';
     static readonly key = 'id';
     static readonly instanceKey = 'catchTime';
-    skills: Skill[];
-    maxHp: number;
-    hp: number;
-    catchTime: number;
-    dv: number;
-    element: PetElement;
-    nature: number;
+    readonly skills: Skill[];
+    readonly maxHp: number;
+    readonly hp: number;
+    readonly catchTime: number;
+    readonly dv: number;
+    readonly element: PetElement;
+    readonly nature: number;
     constructor(obj: SAType.PetLike) {
         super();
         if (testPetInfoType(obj)) {

@@ -32,19 +32,23 @@ export default class LocalPetSkin extends Mod {
             set: function (t) {
                 const skinId = (r: PetInfo) => (this.id == MainManager.actorID ? r.skinId : r._skinId ?? 0);
                 this._petInfoArr = t;
-                this._petIDArr = this._petCatchArr = this._petSkillIDArr = [];
+                this._petIDArr = [];
+                this._petCatchArr = [];
+                this._petSkillIDArr = [];
                 this._aliveNum = 0;
                 for (const r of this._petInfoArr) {
-                    let o = PetFightSkinSkillReplaceXMLInfo.getSkills(skinId(r), r.id);
-                    let i = PetIdTransform.getPetId(r.id, r.catchTime, !0);
-                    if (0 != skinId(r)) {
-                        i = PetSkinXMLInfo.getSkinPetId(skinId(r), r.id);
-                    }
-                    this._petIDArr.push(i), this._petCatchArr.push(r.catchTime);
-                    for (const skill of r.skillArray) {
-                        skill instanceof PetSkillInfo
-                            ? this.add2List(this._petSkillIDArr, skill.id, o)
-                            : this.add2List(this._petSkillIDArr, skill, o);
+                    const o = PetFightSkinSkillReplaceXMLInfo.getSkills(skinId(r), r.id);
+                    let id = r.id;
+                    id = PetIdTransform.getPetId(id, r.catchTime, !0);
+                    0 != skinId(r) && (id = PetSkinXMLInfo.getSkinPetId(skinId(r), r.id));
+                    this._petIDArr.push(id);
+                    this._petCatchArr.push(r.catchTime);
+                    for (const _ of r.skillArray) {
+                        if (_ instanceof PetSkillInfo) {
+                            this.add2List(this._petSkillIDArr, _.id, o);
+                        } else {
+                            this.add2List(this._petSkillIDArr, _, o);
+                        }
                     }
                     r.hideSKill && this.add2List(this._petSkillIDArr, r.hideSKill.id, o);
                     r.hp > 0 && this._aliveNum++;

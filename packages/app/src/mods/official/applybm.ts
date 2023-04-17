@@ -4,8 +4,8 @@ import {
     Mod,
     SABattle,
     SAEngine,
-    SAPetHelper,
     SaModuleLogger,
+    cureAllPet,
     defaultStyle,
     delay,
     lowerBlood,
@@ -63,10 +63,10 @@ namespace PetFragment {
         async prepare() {
             let { cts, beforeBattle, strategy } = this.option.strategy[this.curPosition];
             await switchBag(cts);
-            SAPetHelper.cureAllPet();
+            cureAllPet();
             await delay(300);
             await beforeBattle();
-            SAPetHelper.setDefault(cts[0]);
+            PetManager.setDefault(cts[0]);
             await delay(300);
             this.strategy = strategy;
         }
@@ -273,7 +273,7 @@ class applyBm extends Mod {
             await runners.at(-1)?.update();
         }
         for (let runner of runners) {
-            SAPetHelper.toggleAutoCure(false);
+            SAEngine.toggleAutoCure(false);
             await delay(50);
             while (runner.isChallenge || runner.leftChallengeTimes > 0) {
                 if (runner.option.sweep) {
@@ -286,7 +286,7 @@ class applyBm extends Mod {
                 await delay(Math.round(Math.random() * 100) + 6000);
                 SABattle.Manager.clear();
             }
-            SAPetHelper.toggleAutoCure(true);
+            SAEngine.toggleAutoCure(true);
             await delay(50);
         }
     }

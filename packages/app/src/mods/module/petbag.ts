@@ -1,12 +1,12 @@
 import {
     Mod,
     ModuleSubscriber,
+    SAEngine,
     SAEntity,
     SAEventHandler,
     SaModuleLogger,
     defaultStyle,
     delay,
-    getImageButtonListener,
     wrapper,
 } from 'seerh5-assistant-core';
 
@@ -48,7 +48,7 @@ class LocalCloth extends Mod {
             let timerId: null | number = null;
             const panel = ctx.panelMap['petBag.MainPanel'] as petBag.MainPanel;
 
-            let listener = getImageButtonListener(panel.btnIntoStorage);
+            let listener = SAEngine.getImageButtonListener(panel.btnIntoStorage);
             listener.callback = wrapper(
                 listener.callback,
                 () => {
@@ -72,7 +72,7 @@ class LocalCloth extends Mod {
                     }, 600);
                 }
             };
-            
+
             SocketConnection.addCmdListener(CommandID.PET_RELEASE, refresh);
             EventManager.addEventListener('petBag.MainPanelTouchPetItemEnd', logTapPetInfo, null);
         },

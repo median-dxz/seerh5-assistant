@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 
 import { useCore } from '@sa-app/provider/useCore';
 import { mainColor } from '@sa-app/style';
+import { SAEngine } from 'seerh5-assistant-core';
 import { StyledSpeedDial } from './StyledSpeedDial';
 
 const iconSx: SxProps = {
@@ -25,9 +26,9 @@ export function MainMenu() {
     let [autoCure, setAutoCure] = useState(false);
     let [open, setOpen] = useState(false);
 
-    const { SAPetHelper } = useCore();
+    const {} = useCore();
     useEffect(() => {
-        SAPetHelper.getAutoCureState().then(setAutoCure);
+        SAEngine.getAutoCureState().then(setAutoCure);
     }, []);
 
     actions[0].name = `自动治疗:${autoCure ? '开' : '关'}`;
@@ -36,7 +37,7 @@ export function MainMenu() {
         () => {
             autoCure = !autoCure;
             setAutoCure(autoCure);
-            SAPetHelper.toggleAutoCure(autoCure);
+            SAEngine.toggleAutoCure(autoCure);
         },
         () => {
             FightManager.fightNoMapBoss(6730);

@@ -14,4 +14,7 @@ export const Hook = {
         show: 'sa_award_show',
         receive: 'sa_award_receive',
     },
+    Socket: {
+        send: 'sa_socket_send',
+    },
 } as const;

@@ -1,14 +1,16 @@
+import { SAEventTarget } from '../common';
+import { Hook } from '../constant/event-hooks';
 import { BaseSubject } from './BaseSubscriber';
 
 export interface SocketSubscriber<T> {
-    data?: (data: T) => void;
-    cache?: (data: T) => void;
+    response?: (data: T) => void;
+    request?: (data: SAType.SocketRequestData) => void;
+    cache: any;
 }
 
-type Hook = 'data' | 'cache';
+type Hook = 'request' | 'response' | 'cache';
 type DataBuilder<T> = (data: ArrayBuffer) => T;
-const VoidFunction = () => {};
-
+const VoidFunction = <T = null>() => null as T;
 class SocketSubject<T> extends BaseSubject<SocketSubscriber<T>> {
     cmd: number;
     builder: DataBuilder<T>;
@@ -35,20 +37,27 @@ class SocketSubject<T> extends BaseSubject<SocketSubscriber<T>> {
         return r;
     }
 
-    notify(hook: Hook, data: T) {
-        this.cache = this.useCache ? data : null;
-        this.subscribers.forEach((subscriber) => subscriber[hook]?.(data));
+    notify(hook: Hook, data: SAType.SocketRequestData | T | null) {
+        if (hook === 'request') {
+            this.subscribers.forEach((subscriber) => subscriber[hook]?.(data as SAType.SocketRequestData));
+        } else if (hook === 'response') {
+            this.cache = this.useCache ? (data as T) : null;
+            this.subscribers.forEach((subscriber) => subscriber[hook]?.(data as T));
+        }
     }
 }
 
 export const SocketDataAccess = {
     subjects: new Map<number, SocketSubject<any>>(),
 
-    subscribe<T>(cmd: number, builder: DataBuilder<T>) {
+    subscribe<T = null>(cmd: number, builder: DataBuilder<T> = VoidFunction) {
         this.subjects.set(cmd, new SocketSubject<T>(cmd, builder));
         SocketConnection.addCmdListener(cmd, (e: SocketEvent) => {
-            const data = new egret.ByteArray((e.data as egret.ByteArray).rawBuffer);
-            this.notifyAll(cmd, data);
+            let data = null;
+            if (e.data) {
+                data = new egret.ByteArray((e.data as egret.ByteArray).rawBuffer);
+            }
+            this.onResponse(cmd, data);
         });
     },
 
@@ -57,14 +66,7 @@ export const SocketDataAccess = {
         return subject?.cache;
     },
 
-    clearCache(cmd: number) {
-        const subject = this.subjects.get(cmd);
-        if (subject) {
-            subject.cache = null;
-        }
-    },
-
-    attach<T>(subscriber: SocketSubscriber<T>, cmd: number) {
+    attach<T>({ subscriber, cmd }: { subscriber: SocketSubscriber<T>; cmd: number }) {
         if (!this.subjects.has(cmd)) {
             return;
         }
@@ -79,29 +81,54 @@ export const SocketDataAccess = {
         }
     },
 
-    notifyAll<T>(cmd: number, buffer: egret.ByteArray) {
+    onResponse<T>(cmd: number, bytes: egret.ByteArray | null) {
         if (!this.subjects.has(cmd)) {
             return;
         }
         const subject = this.subjects.get(cmd) as SocketSubject<T>;
-        const data = subject.builder(buffer.buffer);
+        let data = null;
+        if (bytes) {
+            data = subject.builder(bytes.buffer);
+        }
+        subject.notify('response', data);
+    },
 
-        subject.notify('data', data);
+    onRequest(cmd: number, data: SAType.SocketRequestData) {
+        if (!this.subjects.has(cmd)) {
+            return;
+        }
+        const subject = this.subjects.get(cmd)!;
+        subject.notify('request', data);
     },
 };
 
+SAEventTarget.addEventListener(Hook.Socket.send, (e) => {
+    if (e instanceof CustomEvent) {
+        const { cmd, data }: { cmd: number; data: SAType.SocketRequestData } = e.detail;
+        SocketDataAccess.onRequest(cmd, data);
+    }
+});
+
 export class SocketListenerBuilder<T> {
     subscriber = {} as SocketSubscriber<T>;
-    data(onData: (data: T) => void) {
-        this.subscriber.data = onData;
-        return this;
+    cmd: number;
+
+    constructor(cmd: number) {
+        this.cmd = cmd;
     }
-    cache(onCache: (data: T) => void = VoidFunction) {
-        this.subscriber.cache = onCache;
+
+    req(onReq: (data: SAType.SocketRequestData) => void) {
+        this.subscriber.request = onReq;
         return this;
     }
 
-    end(cmd: number) {
-        return [this.subscriber, cmd] as const;
+    res(onRes: (data: T) => void) {
+        this.subscriber.response = onRes;
+        return this;
+    }
+
+    cache(onCache: (data: T) => void = VoidFunction) {
+        this.subscriber.cache = onCache;
+        return this;
     }
 }

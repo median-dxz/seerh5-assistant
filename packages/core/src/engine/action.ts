@@ -31,3 +31,7 @@ export async function changeTitle(title: number): Promise<boolean> {
 export async function buyPetItem(potionId: number, amount: number) {
     return Socket.sendByQueue(CommandID.ITEM_BUY, [potionId, amount]);
 }
+
+export function toggleAutoCure(enable: boolean) {
+    Socket.sendByQueue(42019, [22439, Number(enable)]);
+}

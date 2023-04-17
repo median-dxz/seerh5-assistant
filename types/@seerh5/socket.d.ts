@@ -15,7 +15,7 @@ declare class SocketEncryptImpl extends egret.WebSocket {
     removeCmdListener<T>(cmd: number, callback: CallBack<T>, thisObj: T): void;
     dispatchCmd(cmd: number, headInfo: HeadInfo, buf?: egret.ByteArray): void;
     log(cmd: number, ...msg: string[]): void;
-    send(cmd: number, data: Array<number | egret.ByteArray>): number | Promise<number>;
+    send(cmd: number, data: SAType.SocketRequestData): number | Promise<number>;
     parseData(data: egret.ByteArray): void;
 }
 

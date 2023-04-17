@@ -3,10 +3,10 @@ import {
     PetPosition,
     SABattle,
     SAEngine,
-    SAPetHelper,
     SaModuleLogger,
     defaultStyle,
     delay,
+    getBagPets,
     lowerBlood,
     switchBag,
 } from 'seerh5-assistant-core';
@@ -80,7 +80,7 @@ class 阿尔蒂克第三关 extends Mod {
         // 银翼 音浪 潘朵魔钰 压血 关自动回血
         SAEngine.changeSuit(365);
         SAEngine.changeTitle(418);
-        SAPetHelper.toggleAutoCure(false);
+        SAEngine.toggleAutoCure(false);
         await switchBag(ct);
         // 自动战斗
         await this.config.update();
@@ -115,7 +115,7 @@ class 阿尔蒂克第三关 extends Mod {
                 await lowerBlood(ct);
                 log(
                     '压血完成, 当前精灵血线列表',
-                    (await SAPetHelper.getBagPets(PetPosition.bag1)).map((p) => ({
+                    (await getBagPets(PetPosition.bag1)).map((p) => ({
                         name: p.name,
                         hp: p.hp,
                     }))

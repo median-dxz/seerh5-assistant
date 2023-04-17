@@ -1,6 +1,6 @@
 import { Button, TableCell, Toolbar } from '@mui/material';
 import * as React from 'react';
-import { wrapper } from 'seerh5-assistant-core';
+import { CmdMask, wrapper } from 'seerh5-assistant-core';
 import { PanelTableBase, PanelTableBodyRow } from '../base';
 
 interface CapturedPackage {
@@ -35,11 +35,11 @@ const wrapperFactory = <T extends 'addCmdListener' | 'removeCmdListener' | 'disp
 };
 
 const capturedPkgFactory = (
-    c: CapturedPackage[],
     update: React.Dispatch<React.SetStateAction<CapturedPackage[]>>,
     originalPack: Pick<CapturedPackage, 'cmd' | 'data' | 'type'>
 ) => {
-    update([
+    // 此处有性能问题
+    update((c) => [
         ...c,
         {
             ...originalPack,
@@ -49,16 +49,6 @@ const capturedPkgFactory = (
     ]);
 };
 
-const cmdFilter: number[] = [
-    1002, // SYSTEM_TIME
-    2001, // ENTER_MAP
-    2002, // LEAVE_MAP
-    2004, // MAP_OGRE_LIST
-    2441, // LOAD_PERCENT
-    9019, // NONO_FOLLOW_OR_HOOM
-    9274, //PET_GET_LEVEL_UP_EXP
-    41228, // SYSTEM_TIME_CHECK
-];
 // SocketConnection.mainSocket.filterCMDLog(1001, 1002, 1016, 2001, 2002, 2441, 9019, 41228, 42387);
 
 // clear() {
@@ -82,27 +72,27 @@ export function PackageCapture() {
     const [state, setState] = React.useState<State>('pending');
     const [capture, setCapture] = React.useState<CapturedPackage[]>([]);
 
-    const [getLabel, _] = React.useState<typeof SocketEncryptImpl.getCmdLabel>(() => SocketEncryptImpl.getCmdLabel);
+    const getLabel = SocketEncryptImpl.getCmdLabel;
 
     React.useEffect(() => {
         wrapperFactory('addCmdListener', (cmd, callback) => {
-            if (state !== 'capturing' || cmdFilter.includes(cmd)) return;
-            capturedPkgFactory(capture, setCapture, { cmd, type: 'AddListener', data: callback });
+            if (state !== 'capturing' || CmdMask.includes(cmd)) return;
+            capturedPkgFactory(setCapture, { cmd, type: 'AddListener', data: callback });
         });
 
         wrapperFactory('removeCmdListener', (cmd, callback) => {
-            if (state !== 'capturing' || cmdFilter.includes(cmd)) return;
-            capturedPkgFactory(capture, setCapture, { cmd, type: 'RemoveListener', data: callback });
+            if (state !== 'capturing' || CmdMask.includes(cmd)) return;
+            capturedPkgFactory(setCapture, { cmd, type: 'RemoveListener', data: callback });
         });
 
         wrapperFactory('dispatchCmd', (cmd, head, buf) => {
-            if (state !== 'capturing' || cmdFilter.includes(cmd)) return;
-            capturedPkgFactory(capture, setCapture, { cmd, data: buf?.dataView, type: 'Received' });
+            if (state !== 'capturing' || CmdMask.includes(cmd)) return;
+            capturedPkgFactory(setCapture, { cmd, data: buf?.dataView, type: 'Received' });
         });
 
         wrapperFactory('send', (cmd, data) => {
-            if (state !== 'capturing' || cmdFilter.includes(cmd)) return;
-            capturedPkgFactory(capture, setCapture, {
+            if (state !== 'capturing' || CmdMask.includes(cmd)) return;
+            capturedPkgFactory(setCapture, {
                 cmd,
                 data: data.flat().map((v) => (v instanceof egret.ByteArray ? v.dataView : v)),
                 type: 'Send',

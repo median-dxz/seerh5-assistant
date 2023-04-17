@@ -1,7 +1,7 @@
 import { SAEventTarget, wrapper } from '../common';
 import { Hook } from '../constant';
 
-export function InternalLoader() {
+export async function InternalLoader() {
     ModuleManager.loadScript = loadScript;
     UIUtils = null;
     SocketEncryptImpl.prototype.log = logSocket;

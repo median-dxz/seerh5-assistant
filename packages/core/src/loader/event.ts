@@ -1,5 +1,5 @@
 import { SAEventTarget, delay, wrapper } from '../common';
-import { Hook } from '../constant';
+import { CmdMask, Hook } from '../constant';
 
 export function HookLoader() {
     const EmitEvent = (type: string, detail = {}) => {
@@ -75,5 +75,17 @@ export function HookLoader() {
             EmitEvent(Hook.BattlePanel.battleEnd);
         },
         null
+    );
+
+    SocketConnection.mainSocket.send = wrapper(
+        SocketConnection.mainSocket.send.bind(SocketConnection.mainSocket) as typeof SocketConnection.mainSocket.send,
+        (cmd, data) => {
+            if (!CmdMask.includes(cmd)) {
+                EmitEvent(Hook.Socket.send, {
+                    cmd,
+                    data,
+                });
+            }
+        }
     );
 }

@@ -27,6 +27,7 @@ function TabPanel(props: TabPanelProps & { sx?: SxProps }) {
                 marginRight: '-1px',
                 '&::-webkit-scrollbar': {
                     width: 8,
+                    height: 8,
                 },
                 '&::-webkit-scrollbar-track': {
                     backgroundColor: `rgba(${mainColor.front} / 16%)`,
