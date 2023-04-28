@@ -40,7 +40,7 @@ class CacheData<T> {
 
     update(data: T) {
         this.data = data;
-        this.available = false;
+        this.available = true;
         this.updateResolve();
     }
 
