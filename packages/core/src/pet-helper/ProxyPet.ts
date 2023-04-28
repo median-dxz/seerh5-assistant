@@ -53,7 +53,7 @@ class CacheData<T> {
     }
 }
 
-class DataManger {
+class DataManager {
     private readonly CacheSize = 50;
     private cacheTimestamp = new Map<CatchTime, number>();
     private hasInit = false;
@@ -290,7 +290,7 @@ export class ProxyPet extends Pet {
     }
 }
 
-const ins = new DataManger();
+const ins = new DataManager();
 
 export function SAPet(pet: CatchTime | Pet) {
     const ct = extractObjectId(pet, Pet.instanceKey);
