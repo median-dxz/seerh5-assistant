@@ -11,6 +11,7 @@ declare var CommandID: {
     GET_PET_INFO_BY_ONCE: 43706;
     GET_PET_INFO: 2301;
     PET_RELEASE: 2304;
+    PET_CURE: 2306;
     PET_ONE_CURE: 2310;
     USE_PET_ITEM_OUT_OF_FIGHT: 2326;
     ADD_LOVE_PET: 2362;
@@ -97,6 +98,7 @@ class DataManager {
             });
             SocketDataAccess.subscribe(CommandID.ADD_LOVE_PET);
             SocketDataAccess.subscribe(CommandID.DEL_LOVE_PET);
+            SocketDataAccess.subscribe(CommandID.PET_CURE);
 
             SocketDataAccess.attach(
                 new SocketListenerBuilder<[ProxyPet[], ProxyPet[]]>(CommandID.GET_PET_INFO_BY_ONCE).res((pets) => {
@@ -141,9 +143,15 @@ class DataManager {
                     })
             );
 
+            SocketDataAccess.attach(
+                new SocketListenerBuilder<null>(CommandID.PET_CURE).res(() => {
+                    this.bag.disable();
+                })
+            );
+
             this.bag = new CacheData(
                 [PetManager.infos.map((p) => new ProxyPet(p)), PetManager.secondInfos.map((p) => new ProxyPet(p))],
-                () => Socket.sendByQueue(CommandID.GET_PET_INFO_BY_ONCE)
+                () => PetManager.updateBagInfo()
             );
 
             const miniInfo = () => {
@@ -190,6 +198,7 @@ class DataManager {
     }
 
     async query(ct: CatchTime) {
+        this.bag.disable();
         this.cache.delete(ct);
         return new Promise<ProxyPet>((resolve) => {
             this.queryQueue.set(ct, resolve);
@@ -298,8 +307,15 @@ export function SAPet(pet: CatchTime | Pet) {
         return ins.cache.get(ct)!;
     } else {
         const pet = new Proxy({} as ProxyPet, {
-            async get(target, p, receiver) {
-                return ins.query(ct).then((v) => v[p as keyof ProxyPet]);
+            get(target, key, receiver) {
+                const prop = key as keyof ProxyPet;
+                if (typeof ProxyPet.prototype[prop] === 'function') {
+                    return async (...args: unknown[]) => {
+                        return ins.query(ct).then((pet) => (pet[prop] as Function).apply(pet, args));
+                    };
+                } else {
+                    return ins.query(ct).then((pet) => pet[prop]);
+                }
             },
         });
         return pet;
@@ -307,4 +323,3 @@ export function SAPet(pet: CatchTime | Pet) {
 }
 
 export { ins as PetDataManger };
-

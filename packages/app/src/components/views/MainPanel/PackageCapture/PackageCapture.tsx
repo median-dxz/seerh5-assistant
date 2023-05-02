@@ -21,16 +21,16 @@ const timeFormat = Intl.DateTimeFormat('zh-cn', {
 
 const wrapperFactory = <T extends 'addCmdListener' | 'removeCmdListener' | 'dispatchCmd' | 'send'>(
     funcName: T,
-    decorator?: (...args: Parameters<typeof SocketConnection.mainSocket[T]>) => any
+    decorator?: (...args: Parameters<(typeof SocketConnection.mainSocket)[T]>) => any
 ) => {
     const thisObj = SocketConnection.mainSocket;
+    let func = thisObj[funcName];
     if (decorator) {
-        let func = thisObj[funcName];
         (thisObj[funcName] as any) = wrapper(func.bind(thisObj), undefined, (r, ...args) =>
             decorator.call(null, ...args)
         );
-    } else {
-        thisObj[funcName] = (thisObj[funcName] as any).rawFunction;
+    } else if ('rawFunction' in func) {
+        (thisObj[funcName] as any) = func.rawFunction;
     }
 };
 
@@ -75,15 +75,15 @@ export function PackageCapture() {
     const getLabel = SocketEncryptImpl.getCmdLabel;
 
     React.useEffect(() => {
-        wrapperFactory('addCmdListener', (cmd, callback) => {
-            if (state !== 'capturing' || CmdMask.includes(cmd)) return;
-            capturedPkgFactory(setCapture, { cmd, type: 'AddListener', data: callback });
-        });
+        // wrapperFactory('addCmdListener', (cmd, callback) => {
+        //     if (state !== 'capturing' || CmdMask.includes(cmd)) return;
+        //     capturedPkgFactory(setCapture, { cmd, type: 'AddListener', data: callback });
+        // });
 
-        wrapperFactory('removeCmdListener', (cmd, callback) => {
-            if (state !== 'capturing' || CmdMask.includes(cmd)) return;
-            capturedPkgFactory(setCapture, { cmd, type: 'RemoveListener', data: callback });
-        });
+        // wrapperFactory('removeCmdListener', (cmd, callback) => {
+        //     if (state !== 'capturing' || CmdMask.includes(cmd)) return;
+        //     capturedPkgFactory(setCapture, { cmd, type: 'RemoveListener', data: callback });
+        // });
 
         wrapperFactory('dispatchCmd', (cmd, head, buf) => {
             if (state !== 'capturing' || CmdMask.includes(cmd)) return;

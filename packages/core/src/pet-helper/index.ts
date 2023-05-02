@@ -1,24 +1,20 @@
 import { PetPosition as PosType } from '../constant';
-import { PetDataManger, ProxyPet } from './ProxyPet';
+import { PetDataManger } from './ProxyPet';
 
 type BagPetsPos = typeof PosType.bag1 | typeof PosType.secondBag1 | -1;
 /**
  * @description 获取背包精灵列表
  */
 export const getBagPets = async (location: BagPetsPos = -1) => {
-    let arr: Array<ProxyPet>;
+    let arr = await PetDataManger.bag.get();
     switch (location) {
         case PosType.bag1:
-            arr = (await PetDataManger.bag.get())[0];
-            break;
+            return arr[0];
         case PosType.secondBag1:
-            arr = (await PetDataManger.bag.get())[1];
-            break;
+            return arr[1];
         default:
-            arr = [];
+            return [];
     }
-
-    return arr;
 };
 
 type StoragePetsPos = typeof PosType.storage | typeof PosType.elite;

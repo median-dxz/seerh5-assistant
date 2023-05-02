@@ -43,21 +43,22 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = Potion.
 
     const usePotion = async (ct: number) => {
         if (SAPet(ct).hp <= 50) {
-            SAPet(ct).usePotion(healPotionId);
-            await delay(50);
+            await SAPet(ct).usePotion(healPotionId);
         }
-        SAPet(ct).usePotion(Potion.中级活力药剂);
+        await SAPet(ct).usePotion(Potion.中级活力药剂);
     };
 
     if (hpChecker().length === 0) {
-        cts.forEach(usePotion);
-        return delay(720);
+        for (const ct of cts) {
+            await usePotion(ct);
+        }
+        return;
     }
 
     buyPetItem(Potion.中级活力药剂, cts.length);
     buyPetItem(healPotionId, cts.length);
     await SAPet(cts[0]).default();
-    await delay(600);
+    await delay(500);
 
     const { Manager, Operator, Provider } = Battle;
 
@@ -85,12 +86,16 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = Potion.
         FightManager.fightNoMapBoss(6730);
     }, strategy);
 
-    cts.forEach(usePotion);
-    await delay(720);
+    for (const ct of cts) {
+        await usePotion(ct);
+    }
+
+    await delay(500);
     let leftCts = hpChecker();
     if (leftCts.length > 0) {
         return lowerBlood(leftCts, healPotionId);
     } else {
+        await getBagPets();
         Manager.clear();
         return;
     }

@@ -28,7 +28,7 @@ export const setLocationTable: {
     },
     Bag: {
         async Default(ct) {
-            PetManager.setDefault(ct);
+            await Socket.sendWithReceivedPromise(CommandID.PET_DEFAULT, () => PetManager.setDefault(ct));
             return true;
         },
         async SecondBag(ct) {
@@ -45,10 +45,9 @@ export const setLocationTable: {
     SecondBag: {
         async Default(ct) {
             if (PetManager.isBagFull) return false;
-            return PetManager.secondBagToBag(ct).then(() => {
-                PetManager.setDefault(ct);
-                return true;
-            });
+            return PetManager.secondBagToBag(ct)
+                .then(() => Socket.sendWithReceivedPromise(CommandID.PET_DEFAULT, () => PetManager.setDefault(ct)))
+                .then(() => true);
         },
         async Bag(ct) {
             if (PetManager.isBagFull) return false;
@@ -64,10 +63,9 @@ export const setLocationTable: {
     Elite: {
         async Default(ct) {
             if (PetManager.isBagFull) return false;
-            return PetManager.loveToBag(ct).then(() => {
-                PetManager.setDefault(ct);
-                return true;
-            });
+            return PetManager.loveToBag(ct)
+                .then(() => Socket.sendWithReceivedPromise(CommandID.PET_DEFAULT, () => PetManager.setDefault(ct)))
+                .then(() => true);
         },
         async Bag(ct) {
             if (PetManager.isBagFull) return false;
@@ -85,10 +83,9 @@ export const setLocationTable: {
     Storage: {
         async Default(ct) {
             if (PetManager.isBagFull) return false;
-            return PetManager.storageToBag(ct).then(() => {
-                PetManager.setDefault(ct);
-                return true;
-            });
+            return PetManager.storageToBag(ct)
+                .then(() => Socket.sendWithReceivedPromise(CommandID.PET_DEFAULT, () => PetManager.setDefault(ct)))
+                .then(() => true);
         },
         async Bag(ct) {
             if (PetManager.isBagFull) return false;

@@ -239,7 +239,7 @@ declare class PetManager {
     static getPetInfo(catchTime: number): PetInfo;
     static UpdateBagPetInfoAsynce(catchtime: number): PromiseLike<PetInfo>;
     static upDateBagPetInfo(catchtime: number, callback: (info: PetInfo) => any);
-    static updateBagInfo(callback: CallBack): void;
+    static updateBagInfo(callback?: CallBack): void;
     static getLovePetList(): void;
 
     static bagToSecondBag(catchTime: number): Promise<void>;

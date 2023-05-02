@@ -8,7 +8,7 @@ export const useMod = async () => {
         import('../mods/official/sign'),
         import('../mods/module/petbag'),
         import('../mods/module/team'),
-        import('../mods/official/aedk3'),
+        import('../mods/official/aedk4'),
     ]);
 
     for (let mod of mods) {
