@@ -2,11 +2,11 @@ import * as Socket from './socket';
 
 export async function changeSuit(suit: number): Promise<boolean> {
     try {
-        return new Promise((resolve) => {
-            MainManager.actorInfo.requestChangeClotherBySuit(suit, () => {
-                resolve(true);
-            });
+        await new Promise((resolve) => {
+            MainManager.actorInfo.requestChangeClotherBySuit(suit, resolve, undefined, MainManager.actorInfo);
         });
+        // 问就是淘米的神奇接口定义
+        return true;
     } catch (err) {
         return false;
     }
@@ -28,10 +28,10 @@ export async function changeTitle(title: number): Promise<boolean> {
 /**
  * 购买精灵物品(药剂和胶囊)
  */
-export async function buyPetItem(potionId: number, amount: number) {
+export function buyPetItem(potionId: number, amount: number) {
     return Socket.sendByQueue(CommandID.ITEM_BUY, [potionId, amount]);
 }
 
 export function toggleAutoCure(enable: boolean) {
-    Socket.sendByQueue(42019, [22439, Number(enable)]);
+    return Socket.sendByQueue(42019, [22439, Number(enable)]);
 }

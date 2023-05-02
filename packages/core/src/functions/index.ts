@@ -52,6 +52,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = Potion.
         for (const ct of cts) {
             await usePotion(ct);
         }
+        await getBagPets();
         return;
     }
 

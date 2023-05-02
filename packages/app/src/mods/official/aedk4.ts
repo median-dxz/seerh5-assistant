@@ -1,4 +1,13 @@
-import { Mod, SABattle, SAEngine, SaModuleLogger, defaultStyle, lowerBlood, switchBag } from 'seerh5-assistant-core';
+import {
+    Mod,
+    SABattle,
+    SAEngine,
+    SaModuleLogger,
+    defaultStyle,
+    delay,
+    lowerBlood,
+    switchBag,
+} from 'seerh5-assistant-core';
 
 const log = SaModuleLogger('阿尔蒂克三件套', defaultStyle.mod);
 
@@ -28,12 +37,17 @@ class 阿尔蒂克三件套 extends Mod {
         log(`圣王之心数量: ${itemNum}`);
         if (itemNum < 30) {
             // 银翼 音浪 压血 关自动回血
-            SAEngine.changeSuit(365);
-            SAEngine.changeTitle(418);
-            SAEngine.toggleAutoCure(false);
+            await Promise.all([
+                SAEngine.changeSuit(365),
+                SAEngine.changeTitle(418),
+                SAEngine.toggleAutoCure(false),
+                delay(300),
+            ]);
+
             await switchBag(ct);
             await lowerBlood(ct);
-            SABattle.Manager.runOnce(() => {
+
+            await SABattle.Manager.runOnce(() => {
                 FightManager.fightNoMapBoss(9752);
             }, moveModule);
 

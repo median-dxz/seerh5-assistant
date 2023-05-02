@@ -129,8 +129,9 @@ class sign extends Mod {
             if (tid === 5) tid = 1;
             if (!reprogress) {
                 // 清空背包
-                for (let p of await getBagPets(PosType.bag1)) {
-                    await SAPet(p.catchTime).popFromBag();
+                const pets = await getBagPets(PosType.bag1);
+                for (let p of pets) {
+                    await p.popFromBag();
                 }
             }
             const data = await SAEngine.Socket.sendByQueue(45810, tid)
@@ -173,8 +174,8 @@ class sign extends Mod {
                 console.table(e.petIds.map((v) => PetXMLInfo.getName(v)));
                 SAEngine.Socket.sendByQueue(45808, [tid, e.cts[0], e.cts[1], e.cts[2], e.cts[3], e.cts[4]]);
             }
-            log(`派遣任务处理完成`);
         }
+        log(`派遣任务处理完成`);
     }
 
     craftDreamGem(id: number, left: number) {
@@ -182,7 +183,7 @@ class sign extends Mod {
         const { 低阶梦幻宝石, 中阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石, 高阶梦幻宝石 } = ItemId;
         const level = [低阶梦幻宝石, 中阶梦幻宝石, 高阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石] as const;
         for (let i = 1; i <= Math.trunc((total - left) / 4); i++) {
-            SAEngine.Socket.sendByQueue(9332, [level.indexOf(id as typeof level[number]), 4]);
+            SAEngine.Socket.sendByQueue(9332, [level.indexOf(id as (typeof level)[number]), 4]);
         }
     }
 

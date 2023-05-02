@@ -83,13 +83,17 @@ export const setLocationTable: {
     Storage: {
         async Default(ct) {
             if (PetManager.isBagFull) return false;
-            return PetManager.storageToBag(ct)
+            return new Promise((res) => {
+                PetManager.storageToBag(ct, res);
+            })
                 .then(() => Socket.sendWithReceivedPromise(CommandID.PET_DEFAULT, () => PetManager.setDefault(ct)))
                 .then(() => true);
         },
         async Bag(ct) {
             if (PetManager.isBagFull) return false;
-            return PetManager.storageToBag(ct).then(() => true);
+            return new Promise((res) => {
+                PetManager.storageToBag(ct, res);
+            }).then(() => true);
         },
         async SecondBag(ct) {
             if (PetManager.isSecondBagFull) return false;

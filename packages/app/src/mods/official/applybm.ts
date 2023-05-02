@@ -112,6 +112,14 @@ const moveModules: { [name: string]: SABattle.MoveModule } = {
             SABattle.Operator.auto();
         }
     },
+    王哈单挑: async (round, skills) => {
+        const r = skills.find((skill) => skill.name === ['狂龙击杀', '龙子诞生'][round.round % 2]);
+        if (r) {
+            SABattle.Operator.useSkill(r.id);
+        } else {
+            SABattle.Operator.auto();
+        }
+    },
     圣谱单挑1: async (round, skills) => {
         const r = skills.find((skill) => skill.name === ['神灵之触', '神灵救世光'][round.round % 2]);
         if (r) {
@@ -188,6 +196,7 @@ const perStrategy: {
         strategy: moveModules['潘蒂表必先'],
     },
     圣谱单挑: { beforeBattle: async () => {}, cts: [1656092908], strategy: moveModules['圣谱单挑'] },
+    王哈单挑: { beforeBattle: async () => {}, cts: [1656302059], strategy: moveModules['王哈单挑'] },
     圣谱单挑1: { beforeBattle: async () => {}, cts: [1656092908], strategy: moveModules['圣谱单挑1'] },
     琉彩: { beforeBattle: async () => {}, cts: [1655917820, 1656056275, 1656386598], strategy: moveModules['琉彩'] },
 };
@@ -237,6 +246,109 @@ const options: PetFragment.Option[] = [
         difficulty: Difficulty.Ease,
         sweep: false,
         id: 90,
+        strategy: [
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['潘蒂表必先'],
+        ],
+    },
+    // 萝卜丝
+    {
+        difficulty: Difficulty.Ease,
+        sweep: false,
+        id: 14,
+        strategy: [
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['潘蒂表必先'],
+        ],
+    },
+    {
+        difficulty: Difficulty.Ease,
+        sweep: false,
+        id: 79,
+        strategy: [
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['潘蒂表必先'],
+        ],
+    },
+    // 格斯塔斯
+    {
+        difficulty: Difficulty.Ease,
+        sweep: false,
+        id: 82,
+        strategy: [
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['潘蒂表必先'],
+            perStrategy['潘蒂表必先'],
+        ],
+    },
+    // 启明星
+    {
+        difficulty: Difficulty.Ease,
+        sweep: false,
+        id: 86,
+        strategy: [
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['王哈单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['潘蒂表必先'],
+        ],
+    },
+    // 村长
+    {
+        difficulty: Difficulty.Ease,
+        sweep: false,
+        id: 91,
+        strategy: [
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['潘蒂表必先'],
+        ],
+    },
+    // 二长老
+    {
+        difficulty: Difficulty.Ease,
+        sweep: false,
+        id: 92,
+        strategy: [
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['潘蒂表必先'],
+        ],
+    },
+    // 嫉妒
+    {
+        difficulty: Difficulty.Ease,
+        sweep: false,
+        id: 95,
+        strategy: [
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['圣谱单挑'],
+            perStrategy['潘蒂表必先'],
+        ],
+    },
+    // 大长老
+    {
+        difficulty: Difficulty.Ease,
+        sweep: false,
+        id: 97,
         strategy: [
             perStrategy['圣谱单挑'],
             perStrategy['圣谱单挑'],

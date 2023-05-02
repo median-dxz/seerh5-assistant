@@ -168,7 +168,7 @@ declare class MainManager {
         readonly logintimeThisTime: number;
         readonly timeToday: number;
         readonly timeLimit: number;
-        requestChangeClotherBySuit(suitId: number, callback: CallBack): void;
+        requestChangeClotherBySuit(suitId: number, callback?: CallBack, arg?: unknown, thisArg?: any): void;
     };
 }
 
@@ -246,7 +246,7 @@ declare class PetManager {
     static bagToStorage(catchTime: number): Promise<void>;
     static secondBagToBag(catchTime: number): Promise<void>;
     static secondBagToStorage(catchTime: number): Promise<void>;
-    static storageToBag(catchTime: number): Promise<void>;
+    static storageToBag(catchTime: number, callback: CallBack): void;
     static storageToSecondBag(catchTime: number): Promise<void>;
     static loveToBag(catchTime: number): Promise<void>;
 
