@@ -1,24 +1,12 @@
 import { createLocalStorageProxy } from 'seerh5-assistant-core';
 
-export const StorageKeys = {
-    BattleStrategy: [
-        'BattleStrategy',
-        {
-            dsl: [],
-            snm: [],
-        },
-        JSON.stringify,
-        JSON.parse,
-    ] as Parameters<
-        typeof createLocalStorageProxy<{
-            dsl: string[][];
-            snm: string[][];
-        }>
-    >,
-    PetGroups: ['PetGroups', Array(6), JSON.stringify, JSON.parse] as Parameters<
-        typeof createLocalStorageProxy<Array<number[]>>
-    >,
-};
+export namespace SALocalStorage {
+    export const BattleStrategy = createLocalStorageProxy('BattleStrategy', {
+        dsl: [] as string[][],
+        snm: [] as string[][],
+    });
+    export const PetGroups = createLocalStorageProxy('PetGroups', Array(6).fill([]) as number[][]);
+}
 
 // PetBagScheme: 'PetBagScheme',
 // LocalSkin: 'LocalSkin',

@@ -1,6 +1,6 @@
 import * as Battle from '../battle';
 import { PetPosition, Potion } from '../constant';
-import { buyPetItem, Socket } from '../engine';
+import { buyPetItem, Socket, toggleAutoCure } from '../engine';
 import { SAPet, SAPetLocation } from '../pet-helper';
 
 import { delay } from '../common';
@@ -59,6 +59,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = Potion.
     buyPetItem(Potion.中级活力药剂, cts.length);
     buyPetItem(healPotionId, cts.length);
     await SAPet(cts[0]).default();
+    await toggleAutoCure(false);
     await delay(500);
 
     const { Manager, Operator, Provider } = Battle;

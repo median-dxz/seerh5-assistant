@@ -6,7 +6,7 @@ import { Container, ThemeProvider } from '@mui/system';
 import { PanelStateContext } from '@sa-app/context/PanelState';
 import { SAContext } from '@sa-app/context/SAContext';
 
-import { StorageKeys } from '@sa-app/provider/GlobalConfig';
+import { SALocalStorage } from '@sa-app/provider/GlobalConfig';
 
 import { mainTheme } from '@sa-app/style';
 
@@ -23,7 +23,7 @@ import * as saco from 'seerh5-assistant-core';
 
 window.sac = { ...saco, ...sac };
 
-const battleStrategyStorage = saco.createLocalStorageProxy(...StorageKeys.BattleStrategy);
+const battleStrategyStorage = SALocalStorage.BattleStrategy;
 
 export default function SaMain() {
     const [isCommandBarOpen, toggleCommandBar] = useState(false);

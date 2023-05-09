@@ -1,7 +1,7 @@
 import { Typography } from '@mui/material';
 import { useCore } from '@sa-app/provider/useCore';
 import React from 'react';
-import { delay } from 'seerh5-assistant-core';
+import { cureAllPet, delay } from 'seerh5-assistant-core';
 import { PercentLinearProgress } from '../base';
 import { LevelBase, LevelExtendsProps } from './LevelBase';
 import dataProvider from './data';
@@ -110,8 +110,5 @@ export function LevelCourageTower(props: LevelExtendsProps) {
         effect();
     }, [step, running]);
     return <LevelBase title={RealmName} hint={hint}></LevelBase>;
-}
-function cureAllPet() {
-    throw new Error('Function not implemented.');
 }
 

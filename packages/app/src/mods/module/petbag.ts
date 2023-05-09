@@ -65,7 +65,6 @@ class LocalCloth extends Mod {
                     // 则固定延时后执行刷新
                     if (timerId) {
                         clearTimeout(timerId);
-                        timerId = null;
                     }
                     timerId = window.setTimeout(() => {
                         panel.initBagView();

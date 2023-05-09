@@ -1,4 +1,5 @@
-import { extractObjectId } from '../common';
+import { SAEventTarget, extractObjectId } from '../common';
+import { Hook } from '../constant/event-hooks';
 import { Socket } from '../engine';
 import { Item } from '../entity/Item';
 import { Pet } from '../entity/Pet';
@@ -28,11 +29,11 @@ class CacheData<T> {
 
     constructor(data: T, updater: Function) {
         this.updater = updater;
-        this.disable();
+        this.deactivate();
         this.update(data);
     }
 
-    disable() {
+    deactivate() {
         this.available = false;
         this.updatePromise = new Promise((resolve, reject) => {
             this.updateResolve = resolve;
@@ -110,33 +111,36 @@ class DataManager {
             );
 
             SocketDataAccess.attach(
-                new SocketListenerBuilder<ProxyPet>(CommandID.GET_PET_INFO).res((pet) => this.cachePet(pet))
+                new SocketListenerBuilder<ProxyPet>(CommandID.GET_PET_INFO).res((pet) => {
+                    this.cachePet(pet);
+                    this.bag.deactivate();
+                })
             );
 
             SocketDataAccess.attach(
                 new SocketListenerBuilder<null>(CommandID.PET_DEFAULT).req(([ct]) => {
                     this.defaultCt = ct as number;
-                    this.bag.disable();
+                    this.bag.deactivate();
                 })
             );
 
             SocketDataAccess.attach(
                 new SocketListenerBuilder<null>(CommandID.ADD_LOVE_PET).req(() => {
-                    this.miniInfo.disable();
+                    this.miniInfo.deactivate();
                 })
             );
 
             SocketDataAccess.attach(
                 new SocketListenerBuilder<null>(CommandID.DEL_LOVE_PET).req(() => {
-                    this.miniInfo.disable();
+                    this.miniInfo.deactivate();
                 })
             );
 
             SocketDataAccess.attach(
                 new SocketListenerBuilder<PetTakeOutInfo>(CommandID.PET_RELEASE)
                     .req(() => {
-                        this.miniInfo.disable();
-                        this.bag.disable();
+                        this.miniInfo.deactivate();
+                        this.bag.deactivate();
                     })
                     .res((data) => {
                         PetManager.setDefault(data.firstPetTime);
@@ -145,7 +149,7 @@ class DataManager {
 
             SocketDataAccess.attach(
                 new SocketListenerBuilder<null>(CommandID.PET_CURE).res(() => {
-                    this.bag.disable();
+                    this.bag.deactivate();
                 })
             );
 
@@ -168,6 +172,20 @@ class DataManager {
             });
 
             this.defaultCt = PetManager.defaultTime;
+
+            this.bag.deactivate = new Proxy(this.bag.deactivate, {
+                apply: (target, thisArg, argArray) => {
+                    SAEventTarget.dispatchEvent(new CustomEvent(Hook.PetBag.deactivate));
+                    return Reflect.apply(target, thisArg, argArray);
+                },
+            });
+
+            this.bag.update = new Proxy(this.bag.update, {
+                apply: (target, thisArg, argArray) => {
+                    SAEventTarget.dispatchEvent(new CustomEvent(Hook.PetBag.update));
+                    return Reflect.apply(target, thisArg, argArray);
+                },
+            });
         }
         this.hasInit = true;
     }
@@ -198,7 +216,7 @@ class DataManager {
     }
 
     async query(ct: CatchTime) {
-        this.bag.disable();
+        this.bag.deactivate();
         this.cache.delete(ct);
         return new Promise<ProxyPet>((resolve) => {
             this.queryQueue.set(ct, resolve);
@@ -323,3 +341,4 @@ export function SAPet(pet: CatchTime | Pet) {
 }
 
 export { ins as PetDataManger };
+

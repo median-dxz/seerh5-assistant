@@ -19,7 +19,7 @@ export function BattleFireInfo() {
 
     const updateBattleFire = React.useCallback(() => {
         updateBattleFireInfo().then((i) => setBattleFire(i));
-    }, []);
+    }, [battleFire]);
 
     React.useEffect(() => {
         clearInterval(timer);

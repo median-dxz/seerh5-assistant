@@ -2,25 +2,25 @@ import {
     Mod,
     SABattle,
     SAEngine,
+    SAPet,
     SaModuleLogger,
     defaultStyle,
     delay,
     lowerBlood,
-    switchBag,
+    switchBag
 } from 'seerh5-assistant-core';
 
 const log = SaModuleLogger('阿尔蒂克三件套', defaultStyle.mod);
 
 const pets = [
-    { name: '潘克多斯', catchTime: 1656383521 },
-    { name: '魔钰', catchTime: 1655445699 },
-    { name: '蒂朵', catchTime: 1656056275 },
+    { name: '时空界皇', catchTime: 1655484346 },
+    { name: '六界帝神', catchTime: 1657863632 },
     { name: '帝皇之御', catchTime: 1675323310 },
 ];
 
 const moveModule: SABattle.MoveModule = SABattle.generateStrategy(
-    ['鬼焰·焚身术', '梦境残缺', '幻梦芳逝', '守御八方'],
-    ['潘克多斯', '蒂朵', '帝皇之御', '魔钰']
+    ['守御八方', '剑挥四方', '诸界混一击'],
+    ['帝皇之御', '六界帝神', '时空界皇']
 );
 
 const ct = pets.map((p) => p.catchTime);
@@ -45,7 +45,8 @@ class 阿尔蒂克三件套 extends Mod {
             ]);
 
             await switchBag(ct);
-            await lowerBlood(ct);
+            await lowerBlood([1655484346]);
+            await SAPet(1675323310).default();
 
             await SABattle.Manager.runOnce(() => {
                 FightManager.fightNoMapBoss(9752);

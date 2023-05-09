@@ -17,4 +17,8 @@ export const Hook = {
     Socket: {
         send: 'sa_socket_send',
     },
+    PetBag: {
+        update: 'sa_pet_bag_update',
+        deactivate: 'sa_pet_bag_deactivate',
+    },
 } as const;

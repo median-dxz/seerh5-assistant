@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 
 import { TextEditDialog, TextEditDialogProps } from '@sa-app/components/common/TextEditDialog';
 import { SAContext } from '@sa-app/context/SAContext';
-import { StorageKeys } from '@sa-app/provider/GlobalConfig';
-import { SABattle, createLocalStorageProxy } from 'seerh5-assistant-core';
+import { SALocalStorage } from '@sa-app/provider/GlobalConfig';
+import { SABattle } from 'seerh5-assistant-core';
 import { PanelTableBase, PanelTableBodyRow } from '../base';
 
 const handleAdd = (arr: any[], value: string) => {
@@ -30,7 +30,7 @@ const defaultDialogState: TextEditDialogProps = {
     initialValue: '',
 };
 
-const strategyStorage = createLocalStorageProxy(...StorageKeys.BattleStrategy);
+const strategyStorage = SALocalStorage.BattleStrategy;
 
 export function AutoBattle() {
     const { Battle: battleContext } = React.useContext(SAContext);

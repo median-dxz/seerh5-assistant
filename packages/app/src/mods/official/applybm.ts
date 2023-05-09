@@ -148,13 +148,11 @@ const moveModules: { [name: string]: SABattle.MoveModule } = {
         const r = skills.find((skill) => skill.name === ['琴·万律归一', '朵·盛夏咏叹'][round.round % 2]);
         if (round.isDiedSwitch) {
             const dsl = new SABattle.DiedSwitchLink(['鲁肃', '芳馨·茉蕊儿', '蒂朵']);
-            if (round.isDiedSwitch) {
-                const r = dsl.match(pets, round.self!.catchtime);
-                if (r !== -1) {
-                    SABattle.Operator.switchPet(r);
-                } else {
-                    SABattle.Operator.auto();
-                }
+            const r = dsl.match(pets, round.self!.catchtime);
+            if (r !== -1) {
+                SABattle.Operator.switchPet(r);
+            } else {
+                SABattle.Operator.auto();
             }
             await delay(300);
             skills = SABattle.Provider.getCurSkills()!;
@@ -215,19 +213,6 @@ const options: PetFragment.Option[] = [
     //         perStrategy['琉彩'],
     //     ],
     // },
-    // 黑沃德
-    {
-        difficulty: Difficulty.Ease,
-        sweep: false,
-        id: 77,
-        strategy: [
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑1'],
-        ],
-    },
     // 特罗斯2
     {
         difficulty: Difficulty.Ease,
@@ -239,19 +224,6 @@ const options: PetFragment.Option[] = [
             perStrategy['圣谱单挑'],
             perStrategy['圣谱单挑'],
             perStrategy['圣谱单挑'],
-        ],
-    },
-    // 卡莎
-    {
-        difficulty: Difficulty.Ease,
-        sweep: false,
-        id: 90,
-        strategy: [
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['潘蒂表必先'],
         ],
     },
     // 萝卜丝
@@ -318,37 +290,11 @@ const options: PetFragment.Option[] = [
             perStrategy['潘蒂表必先'],
         ],
     },
-    // 二长老
-    {
-        difficulty: Difficulty.Ease,
-        sweep: false,
-        id: 92,
-        strategy: [
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['潘蒂表必先'],
-        ],
-    },
     // 嫉妒
     {
         difficulty: Difficulty.Ease,
         sweep: false,
         id: 95,
-        strategy: [
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['潘蒂表必先'],
-        ],
-    },
-    // 大长老
-    {
-        difficulty: Difficulty.Ease,
-        sweep: false,
-        id: 97,
         strategy: [
             perStrategy['圣谱单挑'],
             perStrategy['圣谱单挑'],

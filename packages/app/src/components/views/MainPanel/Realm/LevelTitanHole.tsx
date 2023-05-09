@@ -2,7 +2,7 @@ import { Typography } from '@mui/material';
 
 import { useCore } from '@sa-app/provider/useCore';
 import React from 'react';
-import { delay, getBagPets, PetPosition, SAEntity } from 'seerh5-assistant-core';
+import { cureAllPet, delay, getBagPets, PetPosition, SAEntity } from 'seerh5-assistant-core';
 import { PercentLinearProgress } from '../base';
 import { LevelBase, LevelExtendsProps } from './LevelBase';
 
@@ -210,7 +210,4 @@ export function LevelTitanHole(props: LevelExtendsProps) {
             </Typography>
         </LevelBase>
     );
-}
-function cureAllPet() {
-    throw new Error('Function not implemented.');
 }
