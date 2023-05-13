@@ -1,19 +1,11 @@
 import { Pet, PetRoundInfo, Skill } from '../entity';
-import { SocketDataAccess } from '../event-handler/SocketSubscriber';
+import { cachedRoundInfo } from './internal';
 
 export interface RoundInfo {
     self?: PetRoundInfo;
     other?: PetRoundInfo;
     round: number;
     isDiedSwitch: boolean;
-}
-
-declare var CommandID: {
-    NOTE_USE_SKILL: 2505;
-};
-
-declare namespace CommandData {
-    type NOTE_USE_SKILL = [PetRoundInfo, PetRoundInfo];
 }
 
 export const Provider = {
@@ -25,23 +17,23 @@ export const Provider = {
                 ? FighterModelFactory.playerMode.propView.dispatchNoBlood
                 : false,
         };
-        let cachedRoundInfo = SocketDataAccess.getCache<CommandData.NOTE_USE_SKILL>(CommandID.NOTE_USE_SKILL);
-        if (cachedRoundInfo) {
-            cachedRoundInfo[0].isFirstMove = !(cachedRoundInfo[1].isFirstMove = false);
-            if (cachedRoundInfo[0].userId !== FightUserInfo.fighterInfos!.myInfo.id) {
-                cachedRoundInfo = [cachedRoundInfo[1], cachedRoundInfo[0]];
+        let roundInfo = cachedRoundInfo.getImmediate();
+        if (roundInfo) {
+            roundInfo[0].isFirstMove = !(roundInfo[1].isFirstMove = false);
+            if (roundInfo[0].userId !== FightUserInfo.fighterInfos!.myInfo.id) {
+                roundInfo = [roundInfo[1], roundInfo[0]];
             }
-            Object.assign(cachedRoundInfo[0], {
+            Object.assign(roundInfo[0], {
                 id: FighterModelFactory.playerMode.info.petID,
                 name: FighterModelFactory.playerMode.info.petName,
                 // hp: FighterModelFactory.playerMode.info.hp,
             });
-            Object.assign(cachedRoundInfo[1], {
+            Object.assign(roundInfo[1], {
                 id: FighterModelFactory.enemyMode.info.petID,
                 name: FighterModelFactory.enemyMode.info.petName,
                 // hp: FighterModelFactory.enemyMode.info.hp,
             });
-            result = { ...result, self: cachedRoundInfo[0], other: cachedRoundInfo[1] };
+            result = { ...result, self: roundInfo[0], other: roundInfo[1] };
         }
 
         return result;

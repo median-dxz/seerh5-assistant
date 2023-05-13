@@ -1,6 +1,6 @@
 import { Button, TableCell, Toolbar } from '@mui/material';
 import * as React from 'react';
-import { CmdMask, wrapper } from 'seerh5-assistant-core';
+import { CmdMask, Hook, SAEventTarget, hook, type SAHookData } from 'seerh5-assistant-core';
 import { PanelTableBase, PanelTableBodyRow } from '../base';
 
 interface CapturedPackage {
@@ -18,21 +18,6 @@ const timeFormat = Intl.DateTimeFormat('zh-cn', {
     minute: '2-digit',
     second: '2-digit',
 });
-
-const wrapperFactory = <T extends 'addCmdListener' | 'removeCmdListener' | 'dispatchCmd' | 'send'>(
-    funcName: T,
-    decorator?: (...args: Parameters<(typeof SocketConnection.mainSocket)[T]>) => any
-) => {
-    const thisObj = SocketConnection.mainSocket;
-    let func = thisObj[funcName];
-    if (decorator) {
-        (thisObj[funcName] as any) = wrapper(func.bind(thisObj), undefined, (r, ...args) =>
-            decorator.call(null, ...args)
-        );
-    } else if ('rawFunction' in func) {
-        (thisObj[funcName] as any) = func.rawFunction;
-    }
-};
 
 const capturedPkgFactory = (
     update: React.Dispatch<React.SetStateAction<CapturedPackage[]>>,
@@ -85,25 +70,29 @@ export function PackageCapture() {
         //     capturedPkgFactory(setCapture, { cmd, type: 'RemoveListener', data: callback });
         // });
 
-        wrapperFactory('dispatchCmd', (cmd, head, buf) => {
-            if (state !== 'capturing' || CmdMask.includes(cmd)) return;
+        hook(SocketConnection.mainSocket, 'dispatchCmd', (f, cmd, head, buf) => {
+            const r = f.call(SocketConnection.mainSocket, cmd, head, buf);
+            if (state !== 'capturing' || CmdMask.includes(cmd)) return r;
             capturedPkgFactory(setCapture, { cmd, data: buf?.dataView, type: 'Received' });
+            return r;
         });
 
-        wrapperFactory('send', (cmd, data) => {
+        const onSend = ({ cmd, data }: SAHookData['sa_socket_send']) => {
             if (state !== 'capturing' || CmdMask.includes(cmd)) return;
             capturedPkgFactory(setCapture, {
                 cmd,
                 data: data.flat().map((v) => (v instanceof egret.ByteArray ? v.dataView : v)),
                 type: 'Send',
             });
-        });
+        };
+
+        SAEventTarget.on(Hook.Socket.send, onSend);
 
         return () => {
-            wrapperFactory('addCmdListener');
-            wrapperFactory('removeCmdListener');
-            wrapperFactory('dispatchCmd');
-            wrapperFactory('send');
+            hook(SocketConnection.mainSocket, 'addCmdListener');
+            hook(SocketConnection.mainSocket, 'removeCmdListener');
+            hook(SocketConnection.mainSocket, 'dispatchCmd');
+            SAEventTarget.off(Hook.Socket.send, onSend);
         };
     }, [state, capture]);
 

@@ -1,15 +1,15 @@
 import { defaultStyle, SaModuleLogger } from '../logger';
-import { Mod } from './mod-type';
 const log = SaModuleLogger('ModLoader', defaultStyle.mod);
 
-let RegisteredMods = new Map<string, Mod>();
+import { BaseMod } from './mod-type';
 
-async function register<T extends new () => Mod>(mod: T) {
+export const Mods = new Map<string, BaseMod>();
+
+export function register<T extends new () => BaseMod>(mod: T) {
     const modIns = new mod();
     log(`加载模组: ${modIns.meta.id}`);
-    RegisteredMods.set(modIns.meta.id, modIns);
+    Mods.set(modIns.meta.id, modIns);
 }
 
 export * from './mod-type';
-export { register, RegisteredMods };
 

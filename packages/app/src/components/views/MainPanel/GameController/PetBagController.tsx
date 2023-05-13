@@ -8,9 +8,9 @@ import {
     PetPosition,
     SAEngine,
     SAEntity,
-    SAEventHandler,
     SAEventTarget,
     SAPet,
+    debounce,
     delay,
     getBagPets,
     lowerBlood,
@@ -19,7 +19,6 @@ import {
 import { PanelTableBase, PanelTableBodyRow } from '../base';
 
 const petGroupsStorage = SALocalStorage.PetGroups;
-let timer: null | number = null;
 
 export function PetBagController() {
     const [pets, setPets] = React.useState<SAEntity.Pet[]>([]);
@@ -30,28 +29,23 @@ export function PetBagController() {
     const [petGroups, setPetGroups] = React.useState(petGroupsStorage.ref);
 
     const [menuProps, openMenu] = usePopupMenuState<number[]>();
-
-    const updatePets = () => {
-        if (timer) {
-            clearTimeout(timer);
-        }
-        timer = window.setTimeout(async () => {
-            const pets = await getBagPets(PetPosition.bag1);
-            setPets(pets);
-            setSelected(pets.map(() => false));
-            Promise.all(pets.map((v) => ClientConfig.getPetHeadPath(v.id)).map(SAEngine.getImageResourceUrl)).then(
-                (v) => setPetHeadSrc(v)
-            );
-        }, 200);
-    };
+    const updatePets = debounce(async () => {
+        const pets = await getBagPets(PetPosition.bag1);
+        setPets(pets);
+        setSelected(pets.map(() => false));
+        const petHead = await Promise.all(
+            pets.map((v) => SAEngine.getImageResourceUrl(ClientConfig.getPetHeadPath(v.id)))
+        );
+        setPetHeadSrc(petHead);
+    }, 200);
 
     React.useEffect(() => {
         updatePets();
-        SAEventTarget.addEventListener(Hook.PetBag.deactivate, updatePets);
-        SAEventTarget.addEventListener(Hook.PetBag.update, updatePets);
+        SAEventTarget.on(Hook.PetBag.deactivate, updatePets);
+        SAEventTarget.on(Hook.PetBag.update, updatePets);
         return () => {
-            SAEventTarget.removeEventListener(Hook.PetBag.deactivate, updatePets);
-            SAEventTarget.removeEventListener(Hook.PetBag.update, updatePets);
+            SAEventTarget.on(Hook.PetBag.deactivate, updatePets);
+            SAEventTarget.on(Hook.PetBag.update, updatePets);
         };
     }, []);
 
@@ -70,8 +64,8 @@ export function PetBagController() {
     const handleOpenPetItemUseProp = async (ct: number) => {
         await ModuleManager.showModule('petBag');
         const petBagModule = SAEngine.SeerModuleHelper.currentModule<petBag.PetBag>();
-        const petBagPanel = petBagModule.currentPanel!;
         await delay(300);
+        const petBagPanel = petBagModule.currentPanel!;
         petBagPanel.onSelectPet({ data: PetManager.getPetInfo(ct) });
         await delay(300);
         petBagPanel.showDevelopBaseView();

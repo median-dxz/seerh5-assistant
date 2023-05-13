@@ -1,59 +1,13 @@
 import { SAEventTarget, extractObjectId } from '../common';
+import { CacheData } from '../common/CacheData';
 import { Hook } from '../constant/event-hooks';
 import { Socket } from '../engine';
 import { Item } from '../entity/Item';
 import { Pet } from '../entity/Pet';
-import { SocketDataAccess, SocketListenerBuilder } from '../event-handler/SocketSubscriber';
+import { SocketListener } from '../event-bus/socket';
 import { SAPetLocation, setLocationTable } from './PetLocation';
 
 type CatchTime = number;
-
-declare var CommandID: {
-    GET_PET_INFO_BY_ONCE: 43706;
-    GET_PET_INFO: 2301;
-    PET_RELEASE: 2304;
-    PET_CURE: 2306;
-    PET_ONE_CURE: 2310;
-    USE_PET_ITEM_OUT_OF_FIGHT: 2326;
-    ADD_LOVE_PET: 2362;
-    DEL_LOVE_PET: 2363;
-    PET_DEFAULT: 2308;
-};
-
-class CacheData<T> {
-    private data: T;
-    private available: boolean;
-    private updatePromise: Promise<void>;
-    private updateResolve: () => void;
-    private updater: Function;
-
-    constructor(data: T, updater: Function) {
-        this.updater = updater;
-        this.deactivate();
-        this.update(data);
-    }
-
-    deactivate() {
-        this.available = false;
-        this.updatePromise = new Promise((resolve, reject) => {
-            this.updateResolve = resolve;
-        });
-    }
-
-    update(data: T) {
-        this.data = data;
-        this.available = true;
-        this.updateResolve();
-    }
-
-    async get() {
-        if (!this.available) {
-            this.updater();
-        }
-        await this.updatePromise;
-        return this.data;
-    }
-}
 
 class DataManager {
     private readonly CacheSize = 50;
@@ -70,88 +24,61 @@ class DataManager {
 
     init() {
         if (!this.hasInit) {
-            SocketDataAccess.subscribe<[ProxyPet[], ProxyPet[]]>(CommandID.GET_PET_INFO_BY_ONCE, (data) => {
-                const bytes = new egret.ByteArray(data);
-                let size = bytes.readUnsignedInt();
-                const r1 = [];
-                for (let i = 0; i < size; i++) {
-                    const pet = new ProxyPet(new PetInfo(bytes));
-                    r1.push(pet);
-                }
-                size = bytes.readUnsignedInt();
-                const r2 = [];
-                for (let i = 0; i < size; i++) {
-                    const pet = new ProxyPet(new PetInfo(bytes));
-                    r2.push(pet);
-                }
-                return [r1, r2];
-            });
-
-            SocketDataAccess.subscribe<ProxyPet>(CommandID.GET_PET_INFO, (data) => {
-                const bytes = new egret.ByteArray(data);
-                return new ProxyPet(new PetInfo(bytes));
-            });
-
-            SocketDataAccess.subscribe(CommandID.PET_DEFAULT);
-            SocketDataAccess.subscribe(CommandID.PET_RELEASE, (data) => {
-                const bytes = new egret.ByteArray(data);
-                return new PetTakeOutInfo(bytes);
-            });
-            SocketDataAccess.subscribe(CommandID.ADD_LOVE_PET);
-            SocketDataAccess.subscribe(CommandID.DEL_LOVE_PET);
-            SocketDataAccess.subscribe(CommandID.PET_CURE);
-
-            SocketDataAccess.attach(
-                new SocketListenerBuilder<[ProxyPet[], ProxyPet[]]>(CommandID.GET_PET_INFO_BY_ONCE).res((pets) => {
-                    this.bag.update(pets);
+            SocketListener.on({
+                cmd: CommandID.GET_PET_INFO_BY_ONCE,
+                res: (pets) => {
+                    this.bag.update([...pets]);
                     pets[0].concat(pets[1]).forEach((pet) => {
                         this.cachePet(pet);
                     });
-                })
-            );
+                },
+            });
 
-            SocketDataAccess.attach(
-                new SocketListenerBuilder<ProxyPet>(CommandID.GET_PET_INFO).res((pet) => {
+            SocketListener.on({
+                cmd: CommandID.GET_PET_INFO,
+                res: (pet) => {
                     this.cachePet(pet);
                     this.bag.deactivate();
-                })
-            );
+                },
+            });
 
-            SocketDataAccess.attach(
-                new SocketListenerBuilder<null>(CommandID.PET_DEFAULT).req(([ct]) => {
-                    this.defaultCt = ct as number;
+            SocketListener.on({
+                cmd: CommandID.PET_DEFAULT,
+                req: (bytes) => {
+                    this.defaultCt = bytes[0] as number;
                     this.bag.deactivate();
-                })
-            );
+                },
+            });
 
-            SocketDataAccess.attach(
-                new SocketListenerBuilder<null>(CommandID.ADD_LOVE_PET).req(() => {
+            SocketListener.on({
+                cmd: CommandID.ADD_LOVE_PET,
+                req: () => this.miniInfo.deactivate(),
+            });
+
+            SocketListener.on({
+                cmd: CommandID.DEL_LOVE_PET,
+                req: () => {
                     this.miniInfo.deactivate();
-                })
-            );
+                },
+            });
 
-            SocketDataAccess.attach(
-                new SocketListenerBuilder<null>(CommandID.DEL_LOVE_PET).req(() => {
+            SocketListener.on({
+                cmd: CommandID.PET_CURE,
+                res: () => {
                     this.miniInfo.deactivate();
-                })
-            );
+                },
+            });
 
-            SocketDataAccess.attach(
-                new SocketListenerBuilder<PetTakeOutInfo>(CommandID.PET_RELEASE)
-                    .req(() => {
-                        this.miniInfo.deactivate();
-                        this.bag.deactivate();
-                    })
-                    .res((data) => {
-                        PetManager.setDefault(data.firstPetTime);
-                    })
-            );
-
-            SocketDataAccess.attach(
-                new SocketListenerBuilder<null>(CommandID.PET_CURE).res(() => {
+            SocketListener.on({
+                cmd: CommandID.PET_RELEASE,
+                req: () => {
+                    this.miniInfo.deactivate();
                     this.bag.deactivate();
-                })
-            );
+                },
+                res: (data) => {
+                    PetManager.setDefault(data.firstPetTime);
+                },
+            });
 
             this.bag = new CacheData(
                 [PetManager.infos.map((p) => new ProxyPet(p)), PetManager.secondInfos.map((p) => new ProxyPet(p))],
@@ -175,14 +102,14 @@ class DataManager {
 
             this.bag.deactivate = new Proxy(this.bag.deactivate, {
                 apply: (target, thisArg, argArray) => {
-                    SAEventTarget.dispatchEvent(new CustomEvent(Hook.PetBag.deactivate));
+                    SAEventTarget.emit(Hook.PetBag.deactivate);
                     return Reflect.apply(target, thisArg, argArray);
                 },
             });
 
             this.bag.update = new Proxy(this.bag.update, {
                 apply: (target, thisArg, argArray) => {
-                    SAEventTarget.dispatchEvent(new CustomEvent(Hook.PetBag.update));
+                    SAEventTarget.emit(Hook.PetBag.update);
                     return Reflect.apply(target, thisArg, argArray);
                 },
             });

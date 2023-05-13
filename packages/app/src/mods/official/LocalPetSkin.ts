@@ -1,7 +1,6 @@
-import { Mod, SAEngine, SaModuleLogger, createLocalStorageProxy, defaultStyle } from 'seerh5-assistant-core';
-
+import { NULL, SAEngine, SAMod, SaModuleLogger, createLocalStorageProxy, defaultStyle } from 'seerh5-assistant-core';
 const log = SaModuleLogger('LocalCloth', defaultStyle.mod);
-const NullCallBack = () => {};
+
 const StorageKey = 'LocalSkin';
 
 interface SkinInfo {
@@ -25,7 +24,7 @@ const cloth = createLocalStorageProxy<{ changed: Map<number, SkinInfo>; original
     }
 );
 
-export default class LocalPetSkin extends Mod {
+export default class LocalPetSkin extends SAMod.BaseMod {
     meta = { id: 'LocalPetSkin', description: '本地全皮肤解锁' };
     init() {
         Object.defineProperty(FighterUserInfo.prototype, 'petInfoArr', {
@@ -70,7 +69,7 @@ export default class LocalPetSkin extends Mod {
             },
         });
 
-        PetManager.equipSkin = async function (catchTime, skinId = 0, callback = NullCallBack) {
+        PetManager.equipSkin = async function (catchTime, skinId = 0, callback = NULL) {
             let petInfo = PetManager.getPetInfo(catchTime);
             log('new skin id:', skinId, 'previous skin id:', petInfo.skinId);
             if (skinId === 0 || PetSkinController.instance.haveSkin(skinId)) {

@@ -14,7 +14,7 @@ export const SeerModuleHelper = {
 /**
  * @description 获取EgretObject,以stage作为root寻找所有符合断言的obj,不会查找stage本身
  */
-export function findObject<T extends { new (...args: any[]): InstanceType<T> }>(
+export function findObject<T extends Constructor<T>>(
     instanceClass: T,
     predicate?: (obj: egret.DisplayObject) => boolean
 ) {

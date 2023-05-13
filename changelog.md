@@ -37,6 +37,7 @@
 - [ ] 编写单元测试
 - [ ] 使用service worker进行资源缓存
 - [ ] 完整可读的api doc
+- [ ] vsc对项目内部禁用node环境的提示
 
 待定功能
 
@@ -49,10 +50,22 @@
   - [ ] 判断特性是否开启, 同上
   - [ ] 判断第五是否开启, 同上
 
+RoadMap: **见Readme**
+
+Core: v0.4.2
+1. 事件总线模块整体重构，api更清晰简洁
+   1. SAEventTarget对原生EventTarget进行了一层封装，不需要提供CustomEvent，可以直接在on中获取data
+   2. api整体抽象为on/once/off/emit四个
+   3. SocketListener/GameModuleListener
+   4. 上述两个Listener传入对象进行监听配置，api统一
+2. 更多的基础配套函数
+   1. hook函数
+   2. debounce函数
+3. 更改Mod接口类型
+4. 调整整体的模块内初始化代码分布和加载
+
 App & Core: v0.4.1
 1. 背包状态更新可以在app中同步了
-
-RoadMap: **见Readme**
 
 Core: v0.4.0
 1. 重构项目为MonoRepo

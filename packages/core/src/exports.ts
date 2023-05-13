@@ -3,7 +3,7 @@ import { checkEnv } from './common';
 import * as Battle from './battle';
 import * as Engine from './engine';
 import * as Entity from './entity';
-import * as EventHandler from './event-handler';
+import * as EventHandler from './event-bus';
 
 const getHandler = <T extends object>(): ProxyHandler<T> => ({
     get: function (target, prop, receiver) {
@@ -41,8 +41,12 @@ export namespace SABattle {
 
 export const SAEngine = new Proxy(Engine, getHandler<typeof Engine>());
 
-export const SAEventHandler = new Proxy(EventHandler, getHandler<typeof EventHandler>());
+export const SAEvent = new Proxy(EventHandler, getHandler<typeof EventHandler>());
 
-export type { ModuleSubscriber } from './event-handler';
+export type { GameModuleEventHandler, SASocketData, SocketEventHandler } from './event-bus';
+
 export * from './functions';
 export * from './pet-helper';
+
+export * as SAMod from './mod-manager';
+

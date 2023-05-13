@@ -1,5 +1,5 @@
-import { wrapper } from '../common';
-import { defaultStyle, SaModuleLogger } from '../logger';
+import { hookPrototype } from '../common';
+import { SaModuleLogger, defaultStyle } from '../logger';
 const log = SaModuleLogger('SAHelper', defaultStyle.core);
 
 export function HelperLoader() {
@@ -46,42 +46,15 @@ function enableFastStaticAnimation() {
         if (this)
             if (FightManager.fightAnimateMode === 1) i.call(thisObj);
             else egret.setTimeout(i.bind(thisObj), this, 2e3);
-        this.animate && this.animate.parent && this.animate.parent.addChild(this.animate);
+        this.animate?.parent?.addChild(this.animate);
     };
 
-    UseSkillController.prototype.closeTxt = function () {
-        if (this.textTimer) {
-            this.textTimer.removeEventListener(egret.TimerEvent.TIMER, this.closeTxt, this);
-            this.textTimer.stop();
-            this.textTimer = null;
+    hookPrototype(UseSkillController, 'onMovieOver', function (f, ...args) {
+        f.apply(this, ...args);
+        if (FightManager.fightAnimateMode === 1) {
+            this.textTimer && (this.textTimer.delay = 300);
         }
-        if (FightManager.fightAnimateMode !== 1) {
-            this.dispatchEvent(new egret.Event('movieOver'));
-        }
-    };
-
-    UseSkillController.prototype.onMovieOver = wrapper(
-        UseSkillController.prototype.onMovieOver,
-        undefined,
-        function (this: UseSkillController) {
-            if (FightManager.fightAnimateMode === 1) {
-                setTimeout(() => {
-                    this.dispatchEvent(new egret.Event('movieOver'));
-                }, 300);
-            }
-        }
-    );
-
-    UseSkillController.prototype.closeTxt = function () {
-        if (this.textTimer) {
-            this.textTimer.removeEventListener(egret.TimerEvent.TIMER, this.closeTxt, this);
-            this.textTimer.stop();
-            this.textTimer = null;
-        }
-        if (FightManager.fightAnimateMode !== 1) {
-            this.dispatchEvent(new egret.Event('movieOver'));
-        }
-    };
+    });
 
     const _RenewPPEffect = RenewPPEffect;
     (RenewPPEffect as any) = function (model: BaseFighterModel, itemId: number) {

@@ -1,5 +1,5 @@
 import {
-    Mod,
+    SAMod,
     SABattle,
     SAEngine,
     SAPet,
@@ -7,7 +7,7 @@ import {
     defaultStyle,
     delay,
     lowerBlood,
-    switchBag
+    switchBag,
 } from 'seerh5-assistant-core';
 
 const log = SaModuleLogger('阿尔蒂克三件套', defaultStyle.mod);
@@ -29,7 +29,7 @@ const items = {
     圣王之心: 1713219,
 };
 
-class 阿尔蒂克三件套 extends Mod {
+class 阿尔蒂克三件套 extends SAMod.BaseMod {
     async init() {}
     async runAll() {
         await new Promise((res) => ItemManager.updateItems([items.圣王之心], res));

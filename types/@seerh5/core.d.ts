@@ -20,9 +20,14 @@ declare class BasicModuleService extends egret.EventDispatcher {
 
 declare class BasicMultPanelModule extends BaseModule {
     moduleName: string;
+    _mainPanelName: string;
     panelMap: { [panel: string]: BasicPanel };
     service: BasicModuleService;
     currentPanel?: BasicPanel;
+    init(): void;
+    initialized(): void;
+    openPanel(panelName: string): Promise<void>;
+    onShowMainPanel(): Promise<void>;
     getModuleConfig(): unknown;
     resList: unknown[];
     resEffectList: unknown[];
@@ -144,6 +149,18 @@ declare class UseSkillInfo {
 
 declare const CommandID: {
     [commandID: string]: number;
+    GET_PET_INFO: 2301;
+    PET_RELEASE: 2304;
+    PET_CURE: 2306;
+    PET_DEFAULT: 2308;
+    PET_ONE_CURE: 2310;
+    USE_PET_ITEM_OUT_OF_FIGHT: 2326;
+    ADD_LOVE_PET: 2362;
+    DEL_LOVE_PET: 2363;
+
+    NOTE_USE_SKILL: 2505;
+
+    GET_PET_INFO_BY_ONCE: 43706;
 };
 
 declare class BubblerManager {
@@ -173,7 +190,7 @@ declare class MainManager {
 }
 
 declare class ModuleManager {
-    static beginShow(moduleName: string): void;
+    static beginShow(moduleName: string): Promise<void>;
     static _openModelCompete(): void;
     static _addModuleToFreeRes(moduleName: string, resList: unknown[], resEffectList: unknown[], config: unknown): void;
     static loadScript(scriptName: string): Promise<void>;
@@ -282,7 +299,7 @@ declare class CountermarkController {
 }
 
 declare class AchieveXMLInfo {
-    static titleRules: SAType.Dict<SAType.TitleObj>;
+    static titleRules: Dict<SAType.TitleObj>;
     static isAbilityTitle(id: number): boolean;
     static getTitle(id: number): string;
     static getTitleDesc(id: number): string;
@@ -290,7 +307,7 @@ declare class AchieveXMLInfo {
 }
 
 declare class ItemXMLInfo {
-    static _itemDict: SAType.Dict<SAType.ItemObj>;
+    static _itemDict: Dict<SAType.ItemObj>;
     static getName(id: number): string;
     static getItemObj(id: number): SAType.ItemObj | undefined;
     static getSkillStoneRank(id: number): number;
@@ -307,8 +324,8 @@ declare class SkillXMLInfo {
         Moves: { Move: Array<SAType.MoveObj> };
         SideEffects: { SideEffect: Array<SAType.SideEffectObj>; _text: Array<string> };
     };
-    static movesMap: SAType.Dict<SAType.MoveObj>;
-    static moveStoneMap: SAType.Dict<SAType.MoveObj>;
+    static movesMap: Dict<SAType.MoveObj>;
+    static moveStoneMap: Dict<SAType.MoveObj>;
     static typeMap: {
         [Property: string]: SAType.ElementObj;
     };
@@ -329,7 +346,7 @@ declare class SuitXMLInfo {
 }
 
 declare class PetXMLInfo {
-    static _dataMap: SAType.Dict<SAType.PetObj>;
+    static _dataMap: Dict<SAType.PetObj>;
     static getType(id: number): number;
     static getName(id: number): string;
 }

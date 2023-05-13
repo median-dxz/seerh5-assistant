@@ -1,7 +1,7 @@
 import { MoveModule } from 'packages/core/src/battle/manager';
 import {
     PetFragmentLevelDifficulty as Difficulty,
-    Mod,
+    SAMod,
     SABattle,
     SAEngine,
     SaModuleLogger,
@@ -279,16 +279,10 @@ const options: PetFragment.Option[] = [
     },
     // 村长
     {
-        difficulty: Difficulty.Ease,
-        sweep: false,
+        difficulty: Difficulty.Hard,
+        sweep: true,
         id: 91,
-        strategy: [
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['潘蒂表必先'],
-        ],
+        strategy: [],
     },
     // 嫉妒
     {
@@ -305,7 +299,7 @@ const options: PetFragment.Option[] = [
     },
 ];
 
-class applyBm extends Mod {
+class applyBm extends SAMod.BaseMod {
     constructor() {
         super();
     }
@@ -338,7 +332,7 @@ class applyBm extends Mod {
                     await runner.sweep();
                 } else {
                     await runner.prepare();
-                    await SABattle.Manager.runOnce(runner.battleOnce.bind(runner), runner.strategy);
+                    await SABattle.Manager.runOnce(runner.battleOnce, runner.strategy);
                 }
                 await runner.update();
                 await delay(Math.round(Math.random() * 100) + 6000);

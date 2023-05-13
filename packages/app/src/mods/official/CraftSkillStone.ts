@@ -1,4 +1,4 @@
-import { Mod, SAEngine } from 'seerh5-assistant-core';
+import { SAMod, SAEngine } from 'seerh5-assistant-core';
 
 const rate = [
     [0, 24, 5.8, 1.4, 0.3],
@@ -11,7 +11,7 @@ function calcProbability(level: number, targetLevel: number) {
     return rate[level][targetLevel];
 }
 
-class CraftSkillStone extends Mod {
+class CraftSkillStone extends SAMod.BaseMod {
     stones: {
         name: string;
         level: number;
@@ -43,7 +43,7 @@ class CraftSkillStone extends Mod {
             level: number;
             id: number;
         }[] = [];
-        
+
         const getRate = () => {
             const maxValue = Math.max(...toCraft.map((v) => v.level));
             if (maxValue === 4 || !isFinite(maxValue)) return 0;

@@ -1,16 +1,7 @@
-declare interface ModClass {
-    init: VoidFunction;
-    run?: VoidFunction;
-    update?: VoidFunction;
-    meta: {
-        id: string;
-        description: string;
-    };
-}
+import { GameModuleEventHandler, GameModuleListener } from '../event-bus';
+import { SaModuleLogger, defaultStyle } from '../logger';
 
-export abstract class Mod implements ModClass {
-    constructor() {}
-
+export abstract class BaseMod {
     reflect(method: string, ...args: any[]) {
         return (this as any)[method]?.(args);
     }
@@ -30,5 +21,40 @@ export abstract class Mod implements ModClass {
     }
 
     abstract init(): void;
+    destroy?(): void;
     abstract meta: { id: string; description: string };
+}
+
+export abstract class ModuleMod<ModuleType extends BaseModule> extends BaseMod {
+    log: ReturnType<typeof SaModuleLogger>;
+
+    abstract moduleName: string;
+
+    load() {}
+
+    show(ctx: ModuleType) {}
+
+    mainPanel(ctx: ModuleType) {}
+
+    _destroy() {}
+
+    subscriber: GameModuleEventHandler<ModuleType>;
+
+    init() {
+        this.log = SaModuleLogger(this.meta.id, defaultStyle.mod);
+
+        this.subscriber = {
+            moduleName: this.moduleName,
+            load: this.load?.bind(this),
+            show: this.show?.bind(this),
+            mainPanel: this.mainPanel?.bind(this),
+            destroy: this._destroy?.bind(this),
+        };
+
+        GameModuleListener.on(this.subscriber);
+    }
+
+    destroy() {
+        GameModuleListener.off(this.subscriber);
+    }
 }

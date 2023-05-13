@@ -1,9 +1,9 @@
 import { useRfcData } from '@sa-app/provider/useRfcData';
 import {
     ItemId,
-    Mod,
     PetPosition,
     SAEngine,
+    SAMod,
     SAPet,
     SAPetLocation,
     SaModuleLogger,
@@ -36,7 +36,7 @@ const AWARD_LIST = {
     },
 };
 
-class sign extends Mod {
+class sign extends SAMod.BaseMod {
     meta = { description: '日任常用功能', id: 'sign' };
     data: any;
     init() {

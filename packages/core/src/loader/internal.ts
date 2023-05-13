@@ -1,12 +1,37 @@
-import { SAEventTarget, wrapper } from '../common';
+import { enableMapSet } from 'immer';
+import battle from '../battle/internal';
+import { NULL, SAEventTarget, wrapper } from '../common';
 import { Hook } from '../constant';
+import eventBus from '../event-bus/internal';
+import pet from '../pet-helper/internal';
+import event from './event';
 
-export async function InternalLoader() {
+export const InternalInitiator = {
+    loaders: [] as { loader: Function; priority: number }[],
+
+    push(loader: Function, priority: number) {
+        this.loaders.push({ loader, priority });
+    },
+
+    load() {
+        this.loaders.sort((a, b) => a.priority - b.priority).forEach((i) => i.loader());
+    },
+};
+
+export async function enableBasic() {
+    enableMapSet();
+
+    OnlineManager.prototype.setSentryScope = NULL;
     ModuleManager.loadScript = loadScript;
     UIUtils = null;
     SocketEncryptImpl.prototype.log = logSocket;
     enableBackgroundHBCheck();
     cacheResourceUrl();
+
+    InternalInitiator.push(event, 0);
+    InternalInitiator.push(eventBus, 1);
+    InternalInitiator.push(pet, 2);
+    InternalInitiator.push(battle, 2);
 }
 
 function loadScript(this: ModuleManager, scriptName: string) {
@@ -24,7 +49,7 @@ function loadScript(this: ModuleManager, scriptName: string) {
                 script = script.replaceAll(/console\.warn/g, 'warnFilter');
                 o.text = `//@ sourceURL=${location.href + url + '\n'}${script}`;
                 document.head.appendChild(o).parentNode!.removeChild(o);
-                SAEventTarget.dispatchEvent(new CustomEvent(Hook.Module.loadScript, { detail: scriptName }));
+                SAEventTarget.emit(Hook.Module.loadScript, scriptName);
                 resolve();
             },
             this,

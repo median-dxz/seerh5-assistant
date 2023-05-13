@@ -1,8 +1,6 @@
 declare namespace SAType {
     type EventHandler<E extends egret.EventDispatcher> = (event?: E) => void;
 
-    type Dict<T extends object> = Record<string | number, T>;
-
     class HashMap<T extends object> {
         containsKey(key: any): boolean;
         getValues(): Array<T>;

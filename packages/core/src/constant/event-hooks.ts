@@ -2,6 +2,7 @@ export const Hook = {
     Module: {
         loadScript: 'sa_module_script_loaded',
         construct: 'sa_module_construct',
+        openMainPanel: 'sa_module_open_main_panel',
         destroy: 'sa_module_destroy',
     },
     BattlePanel: {
@@ -22,3 +23,12 @@ export const Hook = {
         deactivate: 'sa_pet_bag_deactivate',
     },
 } as const;
+
+export type SAHookData = {
+    sa_module_open_main_panel: { module: string; panel: string };
+    sa_module_construct: string;
+    sa_module_destroy: string;
+    sa_award_receive: { items: any };
+    sa_socket_send: { cmd: number; data: SAType.SocketRequestData };
+    sa_module_script_loaded: string;
+};

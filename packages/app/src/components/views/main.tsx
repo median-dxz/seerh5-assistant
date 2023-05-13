@@ -58,12 +58,12 @@ export default function SaMain() {
 
     useEffect(() => {
         document.body.addEventListener('keydown', handleShortCut);
-        SAEventTarget.addEventListener(Hook.BattlePanel.panelReady, handleBattleRoundEnd);
-        SAEventTarget.addEventListener(Hook.BattlePanel.roundEnd, handleBattleRoundEnd);
+        SAEventTarget.on(Hook.BattlePanel.panelReady, handleBattleRoundEnd);
+        SAEventTarget.on(Hook.BattlePanel.roundEnd, handleBattleRoundEnd);
         return () => {
             document.body.removeEventListener('keydown', handleShortCut);
-            SAEventTarget.removeEventListener(Hook.BattlePanel.panelReady, handleBattleRoundEnd);
-            SAEventTarget.removeEventListener(Hook.BattlePanel.roundEnd, handleBattleRoundEnd);
+            SAEventTarget.on(Hook.BattlePanel.panelReady, handleBattleRoundEnd);
+            SAEventTarget.on(Hook.BattlePanel.roundEnd, handleBattleRoundEnd);
         };
     }, [lockMainPanel, battleAuto]);
 
