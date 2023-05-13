@@ -65,7 +65,7 @@ class DataManager {
             SocketListener.on({
                 cmd: CommandID.PET_CURE,
                 res: () => {
-                    this.miniInfo.deactivate();
+                    this.bag.deactivate();
                 },
             });
 
