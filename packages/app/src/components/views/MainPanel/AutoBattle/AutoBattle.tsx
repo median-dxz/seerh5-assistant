@@ -9,7 +9,7 @@ import { SABattle } from 'seerh5-assistant-core';
 import { PanelTableBase, PanelTableBodyRow } from '../base';
 
 const handleAdd = (arr: any[], value: string) => {
-    arr.push(value.split(','));
+    arr.push(value.split(',').map((s) => s.trim()));
 };
 
 const handleMoveToTop = (arr: any[], index: number) => {
@@ -21,7 +21,7 @@ const handleDelete = (arr: any[], index: number) => {
 };
 
 const handleUpdated = (arr: any[], index: number, value: string) => {
-    arr[index] = value.split(',');
+    arr[index] = value.split(',').map((s) => s.trim());
 };
 
 const defaultDialogState: TextEditDialogProps = {
@@ -102,7 +102,7 @@ export function AutoBattle() {
                         <TableCell component="th" scope="row" align="center">
                             {index + 1}
                         </TableCell>
-                        <TableCell align="center">{row.join(',')}</TableCell>
+                        <TableCell align="center">{row.join(', ')}</TableCell>
                         <TableCell align="center">
                             <Button
                                 onClick={() => {
@@ -134,7 +134,7 @@ export function AutoBattle() {
                                             setStrategy(strategyStorage.ref);
                                         }
                                         closeDialog();
-                                    }, row.join(','));
+                                    }, row.join(', '));
                                 }}
                             >
                                 编辑
@@ -177,7 +177,7 @@ export function AutoBattle() {
                         <TableCell component="th" scope="row" align="center">
                             {index + 1}
                         </TableCell>
-                        <TableCell align="center">{row.join(',')}</TableCell>
+                        <TableCell align="center">{row.join(', ')}</TableCell>
                         <TableCell align="center">
                             <Button
                                 onClick={() => {
@@ -209,7 +209,7 @@ export function AutoBattle() {
                                             setStrategy(strategyStorage.ref);
                                         }
                                         closeDialog();
-                                    }, row.join(','));
+                                    }, row.join(', '));
                                 }}
                             >
                                 编辑

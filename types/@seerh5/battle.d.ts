@@ -79,5 +79,6 @@ declare class SkillBtnView extends egret.EventDispatcher {
 }
 
 declare class PetBtnView extends egret.EventDispatcher {
+    info: PetInfo;
     autoUse(): void;
 }

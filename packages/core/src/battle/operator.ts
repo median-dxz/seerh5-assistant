@@ -16,8 +16,9 @@ export const Operator = {
         await delay(300);
         if (!skillId || skillId <= 0) {
             log('非法的skillId');
+            return;
         } else {
-            log(FighterModelFactory.playerMode.info.petName, SkillXMLInfo.getName(skillId));
+            log(`${FighterModelFactory.playerMode.info.petName} 使用技能: ${SkillXMLInfo.getName(skillId)}`);
             Socket.sendByQueue(CommandID.USE_SKILL, skillId);
         }
     },
@@ -50,7 +51,9 @@ export const Operator = {
             controlPanelObserver.showPet();
             await delay(300);
         }
-        controlPanelObserver.petPanel._petsArray[index].autoUse();
-        await delay(300);
+
+        const petBtn = controlPanelObserver.petPanel._petsArray[index];
+        petBtn.autoUse();
+        log(`切换精灵: ${index} ${petBtn.info.name}`);
     },
 };

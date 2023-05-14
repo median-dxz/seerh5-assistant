@@ -17,25 +17,41 @@ export const Provider = {
                 ? FighterModelFactory.playerMode.propView.dispatchNoBlood
                 : false,
         };
+
         let roundInfo = cachedRoundInfo.getImmediate();
-        if (roundInfo) {
+
+        if (!roundInfo || PetFightController.roundTimes === 0) {
+            roundInfo = [{}, {}] as [PetRoundInfo, PetRoundInfo];
+        } else {
             roundInfo[0].isFirstMove = !(roundInfo[1].isFirstMove = false);
             if (roundInfo[0].userId !== FightUserInfo.fighterInfos!.myInfo.id) {
                 roundInfo = [roundInfo[1], roundInfo[0]];
             }
-            Object.assign(roundInfo[0], {
-                id: FighterModelFactory.playerMode.info.petID,
-                name: FighterModelFactory.playerMode.info.petName,
-                // hp: FighterModelFactory.playerMode.info.hp,
-            });
-            Object.assign(roundInfo[1], {
-                id: FighterModelFactory.enemyMode.info.petID,
-                name: FighterModelFactory.enemyMode.info.petName,
-                // hp: FighterModelFactory.enemyMode.info.hp,
-            });
-            result = { ...result, self: roundInfo[0], other: roundInfo[1] };
         }
 
+        roundInfo[0] = Object.assign(
+            {
+                userId: FighterModelFactory.playerMode.info.userID,
+                id: FighterModelFactory.playerMode.info.petID,
+                name: FighterModelFactory.playerMode.info.petName,
+                hp: FighterModelFactory.playerMode.info.hp,
+                catchtime: FighterModelFactory.playerMode.info.catchTime,
+            },
+            roundInfo[0]
+        );
+
+        roundInfo[1] = Object.assign(
+            {
+                userId: FighterModelFactory.enemyMode.info.userID,
+                id: FighterModelFactory.enemyMode.info.petID,
+                name: FighterModelFactory.enemyMode.info.petName,
+                hp: FighterModelFactory.enemyMode.info.hp,
+                catchtime: FighterModelFactory.enemyMode.info.catchTime,
+            },
+            roundInfo[1]
+        );
+
+        result = { ...result, self: roundInfo[0], other: roundInfo[1] };
         return result;
     },
 

@@ -29,7 +29,7 @@ var sac = {
         /sound length.*?[0-9]*$/,
         /module width.*?[0-9]*$/,
         /=*?this._percent=*/,
-        /infos=*?>/,
+        /bossIcon——Index/,
         /加载cjs 动画preview.*$/,
     ],
     filterWarnText: [

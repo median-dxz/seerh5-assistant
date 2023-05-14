@@ -27,7 +27,6 @@ export const SocketListener = {
 
     unsubscribe(cmd: number) {
         if (this.builders.has(cmd)) {
-            SocketConnection.removeCmdListener(cmd, this.builders.get(cmd)!);
             this.builders.delete(cmd);
             this.handlers.delete(cmd);
         }

@@ -123,6 +123,8 @@ declare class FightPetInfo {
     get hp(): number;
     get petID(): number;
     get petName(): string;
+    get userID(): number;
+    get catchTime(): number;
 }
 
 declare class AttackValue {
