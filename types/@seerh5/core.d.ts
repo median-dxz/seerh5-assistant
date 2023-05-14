@@ -121,6 +121,7 @@ declare class FighterUserInfo {
 
 declare class FightPetInfo {
     get hp(): number;
+    get maxHP(): number;
     get petID(): number;
     get petName(): string;
     get userID(): number;
@@ -135,6 +136,7 @@ declare class AttackValue {
     get gainHP(): number;
     get lostHP(): number;
     get maxHp(): number;
+    _maxHP;
     get remainHP(): number;
     get isCrit(): number;
     get priority(): number;

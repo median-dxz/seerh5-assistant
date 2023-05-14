@@ -180,6 +180,7 @@ declare class PetEvent extends egret.Event {
 declare class PetFightEvent extends egret.Event {
     static readonly ALARM_CLICK: 'fight_alarmClick';
     static readonly ON_USE_PET_ITEM: 'onUsePetItem';
+    static readonly CHANGE_PET: 'changePet';
     constructor(type: string, obj?: any);
 }
 

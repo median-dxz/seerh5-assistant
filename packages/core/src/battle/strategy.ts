@@ -14,14 +14,12 @@ export class SkillNameMatch {
         this.skillNames = names;
     }
     match(skills: Skill[]) {
-        let r = this.skillNames.find((name) => {
-            return skills.some((v) => v.name === name && v.pp > 0);
-        });
-        return r && skills.find((v) => v.name === r)!.id;
+        let r = this.skillNames.find((name) => skills.some((v) => v.name === name && v.pp > 0));
+        return skills.find((v) => v.name === r)?.id;
     }
 }
 
-export class DiedSwitchLink {
+export class NoBloodSwitchLink {
     petNames: string[] = [];
     constructor(names: string[]) {
         this.petNames = names;
@@ -54,49 +52,35 @@ export class DiedSwitchLink {
 }
 
 export function generateStrategy(_snm: string[], _dsl: string[]): MoveModule {
-    return async (round, skills, pets) => {
-        const snm = new SkillNameMatch(_snm);
-        const dsl = new DiedSwitchLink(_dsl);
-        if (round.isDiedSwitch) {
-            const r = dsl.match(pets, round.self!.catchtime);
-            if (r !== -1) {
-                Operator.switchPet(r);
-            } else {
-                Operator.auto();
-            }
-            await delay(600);
-            skills = Provider.getCurSkills()!;
-        }
-        const r = snm.match(skills);
-        if (r) {
-            Operator.useSkill(r);
-        } else {
-            Operator.auto();
-        }
+    const snm = new SkillNameMatch(_snm);
+    const dsl = new NoBloodSwitchLink(_dsl);
+    return {
+        resolveNoBlood(round, skills, pets) {
+            return dsl.match(pets, round.self!.catchtime);
+        },
+        resolveMove(round, skills, pets) {
+            return Operator.useSkill(snm.match(skills));
+        },
     };
 }
 
-export const defaultStrategy = {
-    switchNoBlood: async () => {
+export const defaultStrategy: MoveModule = {
+    resolveNoBlood: () => -1,
+    resolveMove: async () => {
         Operator.auto();
+        return true;
     },
-    useSkill: async () => {
-        // if (!FighterModelFactory.playerMode) {
-        Operator.auto();
-        //     return;
-        // }
-        // const {skillPanel} = FighterModelFactory.playerMode.subject.array[1];
-        // skillPanel.auto();
-    },
+    // if (!FighterModelFactory.playerMode) {
+    //     return;
+    // }
+    // const {skillPanel} = FighterModelFactory.playerMode.subject.array[1];
+    // skillPanel.auto();
 };
 
 export interface Strategy {
     dsl: Array<string[]>;
     snm: Array<string[]>;
-    default: {
-        switchNoBlood: MoveModule;
-        useSkill: MoveModule;
-    };
+    default: MoveModule;
 }
 
 export async function resolveStrategy(strategy: Strategy) {
@@ -109,48 +93,51 @@ export async function resolveStrategy(strategy: Strategy) {
         return;
     }
 
-    const info = Provider.getCurRoundInfo()!;
+    await delay(300);
+    let info = Provider.getCurRoundInfo()!;
     let skills = Provider.getCurSkills()!;
     const pets = Provider.getPets()!;
 
     let success = false;
+    let index: number;
 
-    if (info.isDiedSwitch) {
+    if (info.isSwitchNoBlood) {
         for (let petNames of strategy.dsl) {
-            const matcher = new DiedSwitchLink(petNames);
-            const r = matcher.match(pets, info.self!.catchtime);
-            if (r !== -1) {
-                Operator.switchPet(r);
-                success = true;
-                log(`精灵索引 ${r} 匹配成功: 死切链: [${petNames.join('|')}]`);
+            const matcher = new NoBloodSwitchLink(petNames);
+            index = matcher.match(pets, info.self!.catchtime);
+            success = await Operator.switchPet(index);
+            if (success) {
+                log(`精灵索引 ${index} 匹配成功: 死切链: [${petNames.join('|')}]`);
                 break;
             }
         }
 
         if (!success) {
-            strategy.default.switchNoBlood(info, skills, pets);
+            index = strategy.default.resolveNoBlood(info, skills, pets) ?? -1;
+            const r = await Operator.switchPet(index);
+            r || Operator.auto();
             log('执行默认死切策略');
         }
 
-        await delay(600);
+        await delay(300);
         skills = Provider.getCurSkills()!;
+        info = Provider.getCurRoundInfo()!;
     }
 
     success = false;
 
     for (let skillNames of strategy.snm) {
         const matcher = new SkillNameMatch(skillNames);
-        const r = matcher.match(skills);
-        if (r) {
-            Operator.useSkill(r);
-            success = true;
-            log(`技能 ${r} 匹配成功: 技能组: [${skillNames.join('|')}]`);
+        const skillId = matcher.match(skills);
+        success = await Operator.useSkill(skillId);
+        if (success) {
+            log(`技能 ${skillId} 匹配成功: 技能组: [${skillNames.join('|')}]`);
             break;
         }
     }
 
     if (!success) {
-        strategy.default.useSkill(info, skills, pets);
+        strategy.default.resolveMove(info, skills, pets);
         log('执行默认技能使用策略');
     }
 }

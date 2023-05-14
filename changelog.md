@@ -41,6 +41,8 @@
   - [x] 调整首发精灵
   - [x] 计算最终基础血量
 - [x] 首回合获取不到self和other
+- [ ] 战队派遣模块的bug(重复刷新)
+- [ ] 更新背包精灵无响应的bug(hmr?)
 
 - [ ] 小舞第4关脚本(压血84)
 - [ ] log写入本地
@@ -58,7 +60,46 @@ Core: v0.4.3
 2. 优化类型推导，现在使用`game-data`模块只需要输入字符串即可
 3. 添加`SAEventBus`，这是一个helper类，可以方便的在模块内添加并卸载常用监听器(SAEventTarget/EventManager/MainSocket)
 4. 修复战斗模块首回合获取基础信息失败的问题
+5. **重构且适配MoveModule接口**！新接口剪除大量样板代码，编写自动战斗脚本更加简单！
+   1. 不需要判断skillId和index是否合法，自动执行auto操作
+   2. 不需要重新获取skill，死切后处理由manager自动进行
+   3. 保证RoundInfo中最重要的catchTime，id，name是最新的，这些字段会覆盖上一轮的实际RoundPetInfo收包中的值
 
+```typescript
+// 之前的最小自动战斗配置
+async (round, skill, pets) {
+   const snm = new SkillNameMatch(_snm);
+   const dsl = new DiedSwitchLink(_dsl);
+   if (round.isDiedSwitch) {
+      const r = dsl.match(pets, round.self!.catchtime);
+      if (r !== -1) {
+         Operator.switchPet(r);
+      } else {
+         Operator.auto();
+      }
+      await delay(600);
+      skills = Provider.getCurSkills()!;
+   }
+   const r = snm.match(skills);
+   if (r) {
+      Operator.useSkill(r);
+   } else {
+      Operator.auto();
+   }
+}
+
+// 现在
+const snm = new SkillNameMatch(_snm);
+const dsl = new NoBloodSwitchLink(_dsl);
+{
+   resolveNoBlood(round, skills, pets) {
+      return dsl.match(pets, round.self!.catchtime);
+   },
+   resolveMove(round, skills, pets) {
+      return Operator.useSkill(snm.match(skills));
+   },
+}
+```
 Core: v0.4.2
 1. 事件总线模块整体重构，api更清晰简洁
    1. SAEventTarget对原生EventTarget进行了一层封装，不需要提供CustomEvent，可以直接在on中获取data

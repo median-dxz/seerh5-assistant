@@ -53,6 +53,5 @@ export class PetRoundInfo extends EntityBase {
             attackValue.status,
             attackValue.sideEffects,
         ];
-        
     }
 }

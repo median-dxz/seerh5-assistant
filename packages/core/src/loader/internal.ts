@@ -27,6 +27,7 @@ export async function enableBasic() {
     SocketEncryptImpl.prototype.log = logSocket;
     enableBackgroundHBCheck();
     cacheResourceUrl();
+    betterSwitchPet();
 
     InternalInitiator.push(event, 0);
     InternalInitiator.push(eventBus, 1);
@@ -95,4 +96,21 @@ function cacheResourceUrl() {
             sac.ResourceCache.set(url, result.$bitmapData.source.src);
         }
     });
+}
+
+/** better switch pet handler */
+function betterSwitchPet() {
+    PetBtnView.prototype.autoUse = function () {
+        this.getMC().selected = !0;
+        if (this.locked) throw new Error('该精灵已被放逐，无法出战');
+        if (this.mc.selected) {
+            if (this.hp <= 0) throw new Error('该精灵已阵亡');
+            if (this.info.catchTime == FighterModelFactory.playerMode?.info.catchTime)
+                throw new Error('该精灵已经出战');
+            this.dispatchEvent(new PetFightEvent(PetFightEvent.CHANGE_PET, this.catchTime));
+        } else if (!this.mc.selected) {
+            this.dispatchEvent(new PetFightEvent('selectPet', this.catchTime));
+        }
+        this.getMC().selected = !1;
+    };
 }

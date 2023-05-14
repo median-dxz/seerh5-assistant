@@ -1,5 +1,5 @@
-import { SABattle, delay } from 'seerh5-assistant-core';
-const { generateStrategy, Operator, Provider, SkillNameMatch, DiedSwitchLink } = SABattle;
+import { SABattle, SAEntity, delay } from 'seerh5-assistant-core';
+const { generateStrategy, Operator, Provider, SkillNameMatch, NoBloodSwitchLink } = SABattle;
 
 interface LevelPetsData {
     [levelName: string]: {
@@ -15,40 +15,29 @@ const data: LevelPetsData = {
     },
     LevelExpTraining: {
         cts: [1656092908, 1656055512, 1656056275],
-        strategy: async (round, skills, pets) => {
-            let r;
-            if (round.isDiedSwitch) {
-                const dsl = new DiedSwitchLink(['圣灵谱尼', '幻影蝶', '蒂朵']);
-                if (round.isDiedSwitch) {
-                    const r = dsl.match(pets, round.self!.catchtime);
-                    if (r !== -1) {
-                        SABattle.Operator.switchPet(r);
-                        round.self!.catchtime = pets[r].catchTime;
+        strategy: {
+            async resolveMove(round, skills, pets) {
+                const selfPetName = round.self!.name;
+                let r: SAEntity.Skill | undefined;
+                if (selfPetName === '圣灵谱尼') {
+                    r = skills.find((skill) => skill.name === ['光荣之梦', '神灵救世光'][round.round % 2]);
+                } else if (selfPetName === '蒂朵') {
+                    // console.log(round.other!.hp.remain, round.other!.hp.max, round.other!.hp.remain / round.other!.hp.max);
+                    const hp = round.other!.hp;
+                    if (hp.max > 0 && hp.remain / hp.max <= 0.28) {
+                        r = skills.find((skill) => skill.name === '时空牵绊');
                     } else {
-                        SABattle.Operator.auto();
+                        r = skills.find((skill) => skill.name === ['琴·万律归一', '朵·盛夏咏叹'][round.round % 2]);
                     }
-                }
-                await delay(300);
-                skills = SABattle.Provider.getCurSkills()!;
-            }
-            const selfPetName = pets.find((p) => p.catchTime === round.self?.catchtime)?.name;
-            if (selfPetName === '圣灵谱尼') {
-                r = skills.find((skill) => skill.name === ['光荣之梦', '神灵救世光'][round.round % 2]);
-            } else if (selfPetName === '蒂朵') {
-                // console.log(round.other!.hp.remain, round.other!.hp.max, round.other!.hp.remain / round.other!.hp.max);
-                if (round.other!.hp.max > 0 && round.other!.hp.remain / round.other!.hp.max <= 0.28) {
-                    r = skills.find((skill) => skill.name === '时空牵绊');
                 } else {
-                    r = skills.find((skill) => skill.name === ['琴·万律归一', '朵·盛夏咏叹'][round.round % 2]);
+                    r = skills.find((skill) => skill.name === '竭血残蝶');
                 }
-            } else {
-                r = skills.find((skill) => skill.name === '竭血残蝶');
-            }
-            if (r) {
-                SABattle.Operator.useSkill(r.id);
-            } else {
-                SABattle.Operator.auto();
-            }
+                return SABattle.Operator.useSkill(r?.id);
+            },
+            resolveNoBlood(round, skills, pets) {
+                const dsl = new NoBloodSwitchLink(['圣灵谱尼', '幻影蝶', '蒂朵']);
+                return dsl.match(pets, round.self!.catchtime);
+            },
         },
     },
     LevelStudyTraining: {
@@ -57,30 +46,19 @@ const data: LevelPetsData = {
     },
     LevelCourageTower: {
         cts: [1656055512, 1656302059, 1656056275, 1656092908],
-        strategy: async (round, skills, pets) => {
-            const snm = new SkillNameMatch(['王·龙子盛威决', '竭血残蝶', '时空牵绊']);
-            const dsl = new DiedSwitchLink(['幻影蝶', '圣灵谱尼', '蒂朵']);
-            if (round.isDiedSwitch) {
-                const r = dsl.match(pets, round.self!.catchtime);
-                if (r !== -1) {
-                    Operator.switchPet(r);
-                } else {
-                    Operator.auto();
+        strategy: {
+            async resolveMove(round, skills, pets) {
+                const snm = new SkillNameMatch(['王·龙子盛威决', '竭血残蝶', '时空牵绊']);
+                let r = snm.match(skills);
+                if (!r) {
+                    r = skills.find((skill) => skill.name === ['光荣之梦', '神灵救世光'][round.round % 2])?.id;
                 }
-                await delay(600);
-                skills = Provider.getCurSkills()!;
-            }
-            const r = snm.match(skills);
-            if (r) {
-                Operator.useSkill(r);
-            } else {
-                const r = skills.find((skill) => skill.name === ['光荣之梦', '神灵救世光'][round.round % 2]);
-                if (r) {
-                    Operator.useSkill(r.id);
-                } else {
-                    Operator.auto();
-                }
-            }
+                return Operator.useSkill(r);
+            },
+            resolveNoBlood(round, skills, pets) {
+                const dsl = new NoBloodSwitchLink(['幻影蝶', '圣灵谱尼', '蒂朵']);
+                return dsl.match(pets, round.self!.catchtime);
+            },
         },
     },
     LevelTitanHole: {

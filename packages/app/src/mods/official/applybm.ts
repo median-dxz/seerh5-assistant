@@ -1,6 +1,7 @@
 import { MoveModule } from 'packages/core/src/battle/manager';
 import {
     PetFragmentLevelDifficulty as Difficulty,
+    NULL,
     SABattle,
     SAEngine,
     SAMod,
@@ -104,29 +105,26 @@ namespace PetFragment {
 }
 
 const moveModules: { [name: string]: SABattle.MoveModule } = {
-    圣谱单挑: async (round, skills) => {
-        const r = skills.find((skill) => skill.name === ['光荣之梦', '神灵救世光'][round.round % 2]);
-        if (r) {
-            SABattle.Operator.useSkill(r.id);
-        } else {
-            SABattle.Operator.auto();
-        }
+    圣谱单挑: {
+        resolveMove: (round, skills) => {
+            const r = skills.find((skill) => skill.name === ['光荣之梦', '神灵救世光'][round.round % 2]);
+            return SABattle.Operator.useSkill(r?.id);
+        },
+        resolveNoBlood: NULL,
     },
-    王哈单挑: async (round, skills) => {
-        const r = skills.find((skill) => skill.name === ['狂龙击杀', '龙子诞生'][round.round % 2]);
-        if (r) {
-            SABattle.Operator.useSkill(r.id);
-        } else {
-            SABattle.Operator.auto();
-        }
+    王哈单挑: {
+        resolveMove: (round, skills) => {
+            const r = skills.find((skill) => skill.name === ['狂龙击杀', '龙子诞生'][round.round % 2]);
+            return SABattle.Operator.useSkill(r?.id);
+        },
+        resolveNoBlood: NULL,
     },
-    圣谱单挑1: async (round, skills) => {
-        const r = skills.find((skill) => skill.name === ['神灵之触', '神灵救世光'][round.round % 2]);
-        if (r) {
-            SABattle.Operator.useSkill(r.id);
-        } else {
-            SABattle.Operator.auto();
-        }
+    圣谱单挑1: {
+        resolveMove: (round, skills) => {
+            const r = skills.find((skill) => skill.name === ['神灵之触', '神灵救世光'][round.round % 2]);
+            return SABattle.Operator.useSkill(r?.id);
+        },
+        resolveNoBlood: NULL,
     },
     潘朵必先: SABattle.generateStrategy(
         ['鬼焰·焚身术', '幻梦芳逝', '诸界混一击', '梦境残缺', '月下华尔兹'],
@@ -144,24 +142,15 @@ const moveModules: { [name: string]: SABattle.MoveModule } = {
         ['诸界混一击', '剑挥四方', '幻梦芳逝', '破寂同灾'],
         ['神寂·克罗诺斯', '蒂朵', '六界帝神', '时空界皇', '深渊狱神·哈迪斯']
     ),
-    琉彩: async (round, skills, pets) => {
-        const r = skills.find((skill) => skill.name === ['琴·万律归一', '朵·盛夏咏叹'][round.round % 2]);
-        if (round.isDiedSwitch) {
-            const dsl = new SABattle.DiedSwitchLink(['鲁肃', '芳馨·茉蕊儿', '蒂朵']);
-            const r = dsl.match(pets, round.self!.catchtime);
-            if (r !== -1) {
-                SABattle.Operator.switchPet(r);
-            } else {
-                SABattle.Operator.auto();
-            }
-            await delay(300);
-            skills = SABattle.Provider.getCurSkills()!;
-        }
-        if (r) {
-            SABattle.Operator.useSkill(r.id);
-        } else {
-            SABattle.Operator.auto();
-        }
+    琉彩: {
+        resolveNoBlood: (round, skills, pets) => {
+            const dsl = new SABattle.NoBloodSwitchLink(['鲁肃', '芳馨·茉蕊儿', '蒂朵']);
+            return dsl.match(pets, round.self!.catchtime);
+        },
+        resolveMove: (round, skills, pets) => {
+            const r = skills.find((skill) => skill.name === ['琴·万律归一', '朵·盛夏咏叹'][round.round % 2]);
+            return SABattle.Operator.useSkill(r?.id);
+        },
     },
     潘朵索: SABattle.generateStrategy(
         ['鬼焰·焚身术', '幻梦芳逝', '烈火净世击'],

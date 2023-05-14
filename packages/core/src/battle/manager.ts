@@ -1,8 +1,15 @@
+import { delay } from '../common';
 import { Pet, Skill } from '../entity';
-import { RoundInfo } from './provider';
+import { Operator } from './operator';
+import { Provider, RoundInfo } from './provider';
 
 export type Trigger = () => void;
-export type MoveModule = (battleState: RoundInfo, skills: Skill[], pets: Pet[]) => PromiseLike<void>;
+export type moveHandler = (battleState: RoundInfo, skills: Skill[], pets: Pet[]) => Promise<boolean>;
+export type switchNoBloodHandler = (battleState: RoundInfo, skills: Skill[], pets: Pet[]) => number | void;
+export type MoveModule = {
+    resolveNoBlood: switchNoBloodHandler;
+    resolveMove: moveHandler;
+};
 
 let strategy: undefined | MoveModule;
 let triggerLocker: undefined | ((value: boolean | PromiseLike<boolean>) => void);
@@ -27,8 +34,21 @@ export const Manager = {
     hasSetStrategy() {
         return strategy != undefined && triggerLocker != undefined;
     },
-    resolveStrategy(info: RoundInfo, skills: Skill[], pets: Pet[]) {
-        strategy && strategy(info, skills, pets);
+    async resolveStrategy(info: RoundInfo, skills: Skill[], pets: Pet[]) {
+        if (!strategy) return;
+        await delay(300);
+        if (info.isSwitchNoBlood) {
+            const index = strategy.resolveNoBlood(info, skills, pets) ?? -1;
+            const r = await Operator.switchPet(index);
+            r || Operator.auto();
+
+            await delay(300);
+            skills = Provider.getCurSkills()!;
+            info = Provider.getCurRoundInfo()!;
+        }
+
+        const r = await strategy.resolveMove(info, skills, pets);
+        r || Operator.auto();
     },
     unlockTrigger(win: boolean) {
         triggerLocker && triggerLocker(win);

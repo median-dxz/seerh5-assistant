@@ -7,28 +7,30 @@ export const Operator = {
     auto: () => {
         TimerManager.countDownOverHandler();
     },
-    useSkill: async (skillId: number) => {
-        if (!FighterModelFactory.playerMode) {
-            return;
+    useSkill: async (skillId?: number) => {
+        if (!FighterModelFactory.playerMode || !skillId) {
+            return false;
         }
         const controlPanelObserver = FighterModelFactory.playerMode.subject.array[1];
         controlPanelObserver.showFight();
         await delay(300);
-        if (!skillId || skillId <= 0) {
-            log('非法的skillId');
-            return;
+        if (skillId <= 0) {
+            // log('非法的skillId');
+            return false;
         } else {
             log(`${FighterModelFactory.playerMode.info.petName} 使用技能: ${SkillXMLInfo.getName(skillId)}`);
-            Socket.sendByQueue(CommandID.USE_SKILL, skillId);
+            await Socket.sendByQueue(CommandID.USE_SKILL, skillId);
         }
+        return true;
     },
-    escape: () => {
-        Socket.sendByQueue(CommandID.ESCAPE_FIGHT);
+    escape: async () => {
+        await Socket.sendByQueue(CommandID.ESCAPE_FIGHT);
+        return true;
     },
 
     useItem: async (itemId: number) => {
         if (!FighterModelFactory.playerMode) {
-            return;
+            return false;
         }
         const controlPanelObserver = FighterModelFactory.playerMode.subject.array[1];
         controlPanelObserver.showItem(1);
@@ -36,15 +38,16 @@ export const Operator = {
         controlPanelObserver.itemPanel.onUseItem(itemId);
         await delay(300);
         controlPanelObserver.showFight();
+        return true;
     },
 
     switchPet: async (index: number) => {
         if (!FighterModelFactory.playerMode) {
-            return;
+            return false;
         }
-        if (!index || index < 0) {
-            log('非法的petIndex');
-            return;
+        if (index == undefined || index < 0) {
+            // log('非法的petIndex');
+            return false;
         }
         const controlPanelObserver = FighterModelFactory.playerMode.subject.array[1];
         if (controlPanelObserver.petPanel == undefined) {
@@ -53,7 +56,13 @@ export const Operator = {
         }
 
         const petBtn = controlPanelObserver.petPanel._petsArray[index];
-        petBtn.autoUse();
-        log(`切换精灵: ${index} ${petBtn.info.name}`);
+        try {
+            petBtn.autoUse();
+            log(`切换精灵: ${index} ${petBtn.info.name}`);
+            return true;
+        } catch (error) {
+            log(`切换精灵失败: ${index} ${petBtn.info.name} ${error}`);
+            return false;
+        }
     },
 };

@@ -60,39 +60,44 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = Potion.
     buyPetItem(healPotionId, cts.length);
     await SAPet(cts[0]).default();
     await toggleAutoCure(false);
-    await delay(500);
+    await delay(300);
 
-    const { Manager, Operator, Provider } = Battle;
+    const { Manager, Operator } = Battle;
 
-    const strategy: Battle.MoveModule = async (battleState, skills, battlePets) => {
-        if (battleState.round > 0 && battleState.self?.hp.remain! < 50) {
-            let nextPet = battlePets.findIndex(
+    const strategy: Battle.MoveModule = {
+        resolveMove(battleState, skills, battlePets) {
+            log('move', battleState.round, battleState.self?.hp.remain);
+            if (
+                battleState.round > 0 &&
+                (battleState.self?.hp.remain! < 50 || !cts.includes(battleState.self?.catchtime!))
+            ) {
+                let nextPet = this.resolveNoBlood(battleState, skills, battlePets) ?? -1;
+                if (nextPet === -1) {
+                    return Operator.escape();
+                }
+                return Operator.switchPet(nextPet);
+            } else {
+                return Operator.useSkill(skills.find((v) => v.category !== 4)!.id);
+            }
+        },
+        resolveNoBlood: (battleState, skills, battlePets) => {
+            return battlePets.findIndex(
                 (v) => cts.includes(v.catchTime) && v.hp > 200 && v.catchTime !== battleState.self!.catchtime
             );
-            log(nextPet, battlePets);
-            if (nextPet === -1) {
-                Operator.escape();
-                return;
-            }
-            await Operator.switchPet(nextPet);
-            if (battleState.isDiedSwitch) {
-                skills = Provider.getCurSkills()!;
-                Operator.useSkill(skills.find((v) => v.category !== 4)!.id);
-            }
-        } else {
-            Operator.useSkill(skills.find((v) => v.category !== 4)!.id);
-        }
+        },
     };
 
     await Battle.Manager.runOnce(() => {
         FightManager.fightNoMapBoss(6730);
     }, strategy);
 
+    await delay(300);
+
     for (const ct of cts) {
         await usePotion(ct);
     }
 
-    await delay(500);
+    await delay(300);
     let leftCts = hpChecker();
     if (leftCts.length > 0) {
         return lowerBlood(leftCts, healPotionId);

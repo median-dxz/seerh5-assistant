@@ -80,5 +80,14 @@ declare class SkillBtnView extends egret.EventDispatcher {
 
 declare class PetBtnView extends egret.EventDispatcher {
     info: PetInfo;
+    locked: boolean;
+    catchTime: number;
+    hp: number;
     autoUse(): void;
+    getMC(): petMC;
+    mc: petMC;
+}
+
+declare class petMC extends eui.Component {
+    selected: boolean;
 }

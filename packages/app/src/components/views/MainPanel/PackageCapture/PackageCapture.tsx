@@ -70,12 +70,10 @@ export function PackageCapture() {
         //     capturedPkgFactory(setCapture, { cmd, type: 'RemoveListener', data: callback });
         // });
 
-        hook(SocketConnection.mainSocket, 'dispatchCmd', (f, cmd, head, buf) => {
-            const r = f.call(SocketConnection.mainSocket, cmd, head, buf);
-            if (state !== 'capturing' || CmdMask.includes(cmd)) return r;
-            capturedPkgFactory(setCapture, { cmd, data: buf?.dataView, type: 'Received' });
-            return r;
-        });
+        const onReceive = ({ buffer, cmd }: SAHookData['sa_socket_receive']) => {
+            if (state !== 'capturing' || CmdMask.includes(cmd)) return;
+            capturedPkgFactory(setCapture, { cmd, data: buffer?.dataView, type: 'Received' });
+        };
 
         const onSend = ({ cmd, data }: SAHookData['sa_socket_send']) => {
             if (state !== 'capturing' || CmdMask.includes(cmd)) return;
@@ -86,13 +84,14 @@ export function PackageCapture() {
             });
         };
 
+        SAEventTarget.on(Hook.Socket.receive, onReceive);
         SAEventTarget.on(Hook.Socket.send, onSend);
 
         return () => {
             hook(SocketConnection.mainSocket, 'addCmdListener');
             hook(SocketConnection.mainSocket, 'removeCmdListener');
-            hook(SocketConnection.mainSocket, 'dispatchCmd');
             SAEventTarget.off(Hook.Socket.send, onSend);
+            SAEventTarget.off(Hook.Socket.receive, onReceive);
         };
     }, [state, capture]);
 

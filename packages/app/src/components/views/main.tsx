@@ -56,6 +56,7 @@ export default function SaMain() {
             });
         }
     }, [battleAuto]);
+    
     useEffect(() => {
         document.body.addEventListener('keydown', handleShortCut);
         

@@ -5,7 +5,7 @@ export interface RoundInfo {
     self?: PetRoundInfo;
     other?: PetRoundInfo;
     round: number;
-    isDiedSwitch: boolean;
+    isSwitchNoBlood: boolean;
 }
 
 export const Provider = {
@@ -13,7 +13,7 @@ export const Provider = {
         if (!FighterModelFactory.playerMode || !FighterModelFactory.enemyMode) return null;
         let result: RoundInfo = {
             round: PetFightController.roundTimes,
-            isDiedSwitch: PetFightController.roundTimes
+            isSwitchNoBlood: PetFightController.roundTimes
                 ? FighterModelFactory.playerMode.propView.dispatchNoBlood
                 : false,
         };
@@ -29,27 +29,29 @@ export const Provider = {
             }
         }
 
-        roundInfo[0] = Object.assign(
-            {
-                userId: FighterModelFactory.playerMode.info.userID,
-                id: FighterModelFactory.playerMode.info.petID,
-                name: FighterModelFactory.playerMode.info.petName,
-                hp: FighterModelFactory.playerMode.info.hp,
-                catchtime: FighterModelFactory.playerMode.info.catchTime,
+        roundInfo[0] = Object.assign(roundInfo[0], {
+            userId: FighterModelFactory.playerMode.info.userID,
+            id: FighterModelFactory.playerMode.info.petID,
+            name: FighterModelFactory.playerMode.info.petName,
+            hp: {
+                gain: roundInfo[0]?.hp?.gain ?? 0,
+                remain: FighterModelFactory.playerMode.info.hp,
+                max: FighterModelFactory.playerMode.info.maxHP,
             },
-            roundInfo[0]
-        );
+            catchtime: FighterModelFactory.playerMode.info.catchTime,
+        });
 
-        roundInfo[1] = Object.assign(
-            {
-                userId: FighterModelFactory.enemyMode.info.userID,
-                id: FighterModelFactory.enemyMode.info.petID,
-                name: FighterModelFactory.enemyMode.info.petName,
-                hp: FighterModelFactory.enemyMode.info.hp,
-                catchtime: FighterModelFactory.enemyMode.info.catchTime,
+        roundInfo[1] = Object.assign(roundInfo[1], {
+            userId: FighterModelFactory.enemyMode.info.userID,
+            id: FighterModelFactory.enemyMode.info.petID,
+            name: FighterModelFactory.enemyMode.info.petName,
+            hp: {
+                gain: roundInfo[1]?.hp?.gain ?? 0,
+                remain: FighterModelFactory.enemyMode.info.hp,
+                max: FighterModelFactory.enemyMode.info.maxHP,
             },
-            roundInfo[1]
-        );
+            catchtime: FighterModelFactory.enemyMode.info.catchTime,
+        });
 
         result = { ...result, self: roundInfo[0], other: roundInfo[1] };
         return result;
