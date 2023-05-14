@@ -20,14 +20,14 @@ export enum PetFragmentLevelDifficulty {
     Hard = 3,
 }
 
-export const ConfigType = {
-    item: {} as SAType.ItemObj,
-    suit: {} as SAType.SuitObj,
-    title: {} as SAType.TitleObj,
-    element: {} as SAType.ElementObj,
-    skill: {} as SAType.MoveObj,
-    pet: {} as SAType.PetObj,
-    statusEffect: {} as SAType.StatusEffectObj,
+export type GameDataType = {
+    item: SAType.ItemObj;
+    suit: SAType.SuitObj;
+    title: SAType.TitleObj;
+    element: SAType.ElementObj;
+    skill: SAType.MoveObj;
+    pet: SAType.PetObj;
+    statusEffect: SAType.StatusEffectObj;
 };
 
 export const CmdMask = [

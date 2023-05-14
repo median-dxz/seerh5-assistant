@@ -1,9 +1,9 @@
 import { MoveModule } from 'packages/core/src/battle/manager';
 import {
     PetFragmentLevelDifficulty as Difficulty,
-    SAMod,
     SABattle,
     SAEngine,
+    SAMod,
     SaModuleLogger,
     cureAllPet,
     defaultStyle,
@@ -67,7 +67,7 @@ namespace PetFragment {
             await delay(300);
             await beforeBattle();
             PetManager.setDefault(cts[0]);
-            await delay(300);
+            await delay(2000);
             this.strategy = strategy;
         }
         async update() {
@@ -332,10 +332,10 @@ class applyBm extends SAMod.BaseMod {
                     await runner.sweep();
                 } else {
                     await runner.prepare();
-                    await SABattle.Manager.runOnce(runner.battleOnce, runner.strategy);
+                    await SABattle.Manager.runOnce(runner.battleOnce.bind(runner), runner.strategy);
                 }
                 await runner.update();
-                await delay(Math.round(Math.random() * 100) + 6000);
+                await delay(Math.round(Math.random() * 100) + 5000);
                 SABattle.Manager.clear();
             }
             SAEngine.toggleAutoCure(true);

@@ -18,4 +18,21 @@ const renderApp = async () => {
 
 window.addEventListener('seerh5_assistant_ready', renderApp);
 
+if ('serviceWorker' in navigator) {
+    window.addEventListener(
+        'load',
+        () => {
+            navigator.serviceWorker
+                .register('/service-worker.js')
+                .then((registration) => {
+                    console.log('SW registered: ', registration);
+                })
+                .catch((registrationError) => {
+                    console.log('SW registration failed: ', registrationError);
+                });
+        },
+        { once: true }
+    );
+}
+
 CoreLoader();

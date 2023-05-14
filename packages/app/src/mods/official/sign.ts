@@ -117,19 +117,16 @@ class sign extends SAMod.BaseMod {
         }
     }
     async teamDispatch() {
-        try {
-            await SAEngine.Socket.sendByQueue(45809, 0);
-        } catch (err) {
-            void log('无法收取派遣');
-        }
+        await SAEngine.Socket.sendByQueue(45809, 0).catch(() => log('没有可收取的派遣'));
+
         const ignorePetNames = new Set(this.data.ignorePetNames);
         const PosType = PetPosition;
         let reprogress = false;
         for (let tid = 16; tid > 0; tid--) {
             if (tid === 5) tid = 1;
+            const pets = await getBagPets(PosType.bag1);
             if (!reprogress) {
                 // 清空背包
-                const pets = await getBagPets(PosType.bag1);
                 for (let p of pets) {
                     await p.popFromBag();
                 }

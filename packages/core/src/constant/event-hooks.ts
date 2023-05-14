@@ -17,6 +17,7 @@ export const Hook = {
     },
     Socket: {
         send: 'sa_socket_send',
+        receive: 'sa_socket_receive',
     },
     PetBag: {
         update: 'sa_pet_bag_update',
@@ -30,5 +31,6 @@ export type SAHookData = {
     sa_module_destroy: string;
     sa_award_receive: { items: any };
     sa_socket_send: { cmd: number; data: SAType.SocketRequestData };
+    sa_socket_receive: { cmd: number; buffer: egret.ByteArray | undefined };
     sa_module_script_loaded: string;
 };

@@ -16,27 +16,19 @@ export interface SocketEventHandler<TCmd extends number> {
 
 export const SocketListener = {
     handlers: new Map<number, Set<SocketEventHandler<any>>>(),
-    cmdListeners: new Map<number, (e: SocketEvent) => void>(),
+    builders: new Map<number, DataBuilder<SocketData<any>>>(),
 
     subscribe<TCmd extends number>(cmd: TCmd, builder?: DataBuilder<SocketData<TCmd>>) {
-        if (this.cmdListeners.has(cmd)) this.unsubscribe(cmd);
-
-        this.cmdListeners.set(cmd, (e: SocketEvent) => {
-            let data: SocketData<TCmd> | null = null;
-            if (e.data != null && builder != null) {
-                const buf = (e.data as egret.ByteArray).rawBuffer;
-                data = builder(buf);
-            }
-            this.onRes(cmd, data);
-        });
-
-        SocketConnection.addCmdListener(cmd, this.cmdListeners.get(cmd)!);
+        if (this.builders.has(cmd)) this.unsubscribe(cmd);
+        if (builder) {
+            this.builders.set(cmd, builder);
+        }
     },
 
     unsubscribe(cmd: number) {
-        if (this.cmdListeners.has(cmd)) {
-            SocketConnection.removeCmdListener(cmd, this.cmdListeners.get(cmd)!);
-            this.cmdListeners.delete(cmd);
+        if (this.builders.has(cmd)) {
+            SocketConnection.removeCmdListener(cmd, this.builders.get(cmd)!);
+            this.builders.delete(cmd);
             this.handlers.delete(cmd);
         }
     },
@@ -61,10 +53,20 @@ export const SocketListener = {
         });
     },
 
-    onRes<TCmd extends number>(cmd: TCmd, data: SocketData<TCmd> | null) {
+    onRes<TCmd extends number>(cmd: TCmd, bytes?: egret.ByteArray) {
         if (!this.handlers.has(cmd)) {
             return;
         }
+
+        let data: any = null;
+
+        if (this.builders.has(cmd) && bytes) {
+            const builder = this.builders.get(cmd)!;
+            const buf = bytes.rawBuffer;
+
+            data = builder(buf);
+        }
+
         const handlers = this.handlers.get(cmd)!;
         handlers.forEach((handler) => {
             handler.res?.(data);

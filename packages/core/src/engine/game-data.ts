@@ -1,30 +1,30 @@
-import { ConfigType } from '../constant';
+import type { GameDataType } from '../constant';
 
 type PredicateFn<T> = (value: T) => boolean;
 
-const Iterator = <T>(type: T) => {
+const Iterator = <T extends keyof GameDataType>(type: T) => {
     let index = 0;
     let objectArray: Array<SAType.BaseObj>;
     switch (type) {
-        case ConfigType.item:
+        case 'item':
             objectArray = Object.values(ItemXMLInfo._itemDict);
             break;
-        case ConfigType.element:
+        case 'element':
             objectArray = Object.values(SkillXMLInfo.typeMap);
             break;
-        case ConfigType.skill:
+        case 'skill':
             objectArray = Object.values(SkillXMLInfo.SKILL_OBJ.Moves.Move);
             break;
-        case ConfigType.pet:
+        case 'pet':
             objectArray = Object.values(PetXMLInfo._dataMap);
             break;
-        case ConfigType.suit:
+        case 'suit':
             objectArray = SuitXMLInfo._dataMap.getValues();
             break;
-        case ConfigType.title:
+        case 'title':
             objectArray = Object.values(AchieveXMLInfo.titleRules);
             break;
-        case ConfigType.statusEffect:
+        case 'statusEffect':
             objectArray = PetStatusEffectConfig.xml.BattleEffect[0].SubEffect;
             break;
         default:
@@ -32,7 +32,7 @@ const Iterator = <T>(type: T) => {
     }
     return {
         next() {
-            return { done: index >= objectArray.length, value: objectArray[index++] as T };
+            return { done: index >= objectArray.length, value: objectArray[index++] as GameDataType[T] };
         },
         [Symbol.iterator]() {
             return this;
@@ -57,7 +57,7 @@ const getObjectName = (obj: SAType.BaseObj) => {
     return getObjProperty(obj, ['title', 'cn', 'name', 'DefName', 'Name']) as string;
 };
 
-export function find<T extends SAType.BaseObj>(type: T, predicate: PredicateFn<T>) {
+export function find<T extends keyof GameDataType>(type: T, predicate: PredicateFn<GameDataType[T]>) {
     for (const obj of Iterator<T>(type)) {
         if (predicate(obj)) {
             return obj;
@@ -65,7 +65,7 @@ export function find<T extends SAType.BaseObj>(type: T, predicate: PredicateFn<T
     }
 }
 
-export function filter<T extends SAType.BaseObj>(type: T, predicate: PredicateFn<T>) {
+export function filter<T extends keyof GameDataType>(type: T, predicate: PredicateFn<GameDataType[T]>) {
     const r = [];
     for (const obj of Iterator<T>(type)) {
         if (predicate(obj)) {
@@ -75,19 +75,19 @@ export function filter<T extends SAType.BaseObj>(type: T, predicate: PredicateFn
     return r;
 }
 
-export function get<T extends SAType.BaseObj>(type: T, id: number) {
+export function get<T extends keyof GameDataType>(type: T, id: number) {
     return find(type, (v) => getObjectId(v) === id);
 }
 
-export function findByName<T extends SAType.BaseObj>(type: T, name: string) {
+export function findByName<T extends keyof GameDataType>(type: T, name: string) {
     return find(type, (v) => getObjectName(v) === name);
 }
 
-export function filterByName<T extends SAType.BaseObj>(type: T, name: string | RegExp) {
+export function filterByName<T extends keyof GameDataType>(type: T, name: string | RegExp) {
     return filter(type, (v) => Boolean(getObjectName(v).match(name)));
 }
 
-export function getName<T extends SAType.BaseObj>(type: T, id: number) {
+export function getName<T extends keyof GameDataType>(type: T, id: number) {
     const o = find(type, (v) => getObjectId(v) === id);
     return o && getObjectName(o);
 }

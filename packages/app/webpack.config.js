@@ -8,6 +8,7 @@ import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import ReactRefreshTypeScript from 'react-refresh-typescript';
 import TerserPlugin from 'terser-webpack-plugin';
+import WorkboxPlugin from 'workbox-webpack-plugin';
 
 import { saProxyMiddleware, saRfcMiddleware } from '../../webpack.proxy.js';
 
@@ -136,6 +137,36 @@ export default (env, argv) => {
         moduleIds: isDevelopment ? 'named' : 'deterministic',
     };
     console.log(`dev-mode: ${isDevelopment}`);
+
+    const sw = new WorkboxPlugin.GenerateSW({
+        exclude: [/./],
+        navigationPreload: true,
+        runtimeCaching: [
+            {
+                urlPattern: /seerh5\.61\.com\/resource\/assets/,
+                handler: 'CacheFirst',
+                options: {
+                    cacheName: 'seerh5-game-cache',
+                    expiration: {
+                        maxAgeSeconds: 60 * 60 * 24 * 7,
+                    },
+                },
+            },
+        ],
+    });
+
+    Object.defineProperty(sw, 'alreadyCalled', {
+        get() {
+            return false;
+        },
+        set() {
+            // do nothing; the internals try to set it to true, which then results in a warning
+            // on the next run of webpack.
+        },
+    });
+    
+    exports.plugins.push(sw);
+
     if (!isDevelopment) {
         delete exports.devtool;
     } else {

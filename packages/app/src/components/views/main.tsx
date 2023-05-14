@@ -55,7 +55,6 @@ export default function SaMain() {
             });
         }
     }, [battleAuto]);
-
     useEffect(() => {
         document.body.addEventListener('keydown', handleShortCut);
         SAEventTarget.on(Hook.BattlePanel.panelReady, handleBattleRoundEnd);

@@ -4,12 +4,9 @@ import { GameModuleListener } from './module';
 
 import { SAEventTarget } from '../common';
 import { defaultStyle, SaModuleLogger } from '../logger';
-import { SAEventBus } from './SAEventBus';
 import { SocketListener } from './socket';
 
 const log = SaModuleLogger('SAHookListener', defaultStyle.core);
-
-export const EventBus = new SAEventBus();
 
 export default () => {
     SAEventTarget.on(Hook.Award.receive, (data) => {
@@ -38,5 +35,9 @@ export default () => {
 
     SAEventTarget.on(Hook.Socket.send, ({ cmd, data }) => {
         SocketListener.onReq(cmd, data);
+    });
+
+    SAEventTarget.on(Hook.Socket.receive, ({ cmd, buffer }) => {
+        SocketListener.onRes(cmd, buffer);
     });
 };

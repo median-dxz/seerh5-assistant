@@ -2,7 +2,7 @@
     "name": "seerh5-assistant-core",
     "private": true,
     "type": "module",
-    "version": "0.4.2",
+    "version": "0.4.3",
     "license": "MPL-2.0",
     "main": "./dist/index.js",
     "browser": "./dist/index.js",

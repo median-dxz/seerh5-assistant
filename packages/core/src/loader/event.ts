@@ -78,4 +78,10 @@ export default () => {
             SAEventTarget.emit(Hook.Socket.send, { cmd, data });
         }
     });
+
+    SocketConnection.mainSocket.dispatchCmd = wrapper(SocketConnection.mainSocket.dispatchCmd, (cmd, head, buffer) => {
+        if (!CmdMask.includes(cmd)) {
+            SAEventTarget.emit(Hook.Socket.receive, { cmd, buffer });
+        }
+    });
 };

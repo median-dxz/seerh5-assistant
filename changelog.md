@@ -52,6 +52,10 @@
 
 RoadMap: **见Readme**
 
+Core: v0.4.3
+1. 添加service-worker，缓存assets
+2. 优化类型推导，现在使用`game-data`模块只需要输入字符串即可
+
 Core: v0.4.2
 1. 事件总线模块整体重构，api更清晰简洁
    1. SAEventTarget对原生EventTarget进行了一层封装，不需要提供CustomEvent，可以直接在on中获取data
