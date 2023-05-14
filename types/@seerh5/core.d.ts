@@ -73,6 +73,8 @@ declare class PetInfo {
     skillArray: Array<PetSkillInfo>;
     isDefault: boolean;
     _skinId: number;
+    base_hp_total: number;
+    base_curHp: number;
     get hp(): number;
     get maxHp(): number;
     get skinId(): number;

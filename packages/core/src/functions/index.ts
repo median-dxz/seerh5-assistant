@@ -42,7 +42,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = Potion.
     const hpChecker = () => cts.filter((ct) => SAPet(ct).hp >= 150);
 
     const usePotion = async (ct: number) => {
-        if (SAPet(ct).hp <= 50) {
+        if (SAPet(ct).hp == 0) {
             await SAPet(ct).usePotion(healPotionId);
         }
         await SAPet(ct).usePotion(Potion.中级活力药剂);

@@ -24,16 +24,31 @@ export class Pet extends EntityBase implements IPetObject {
     static readonly key = 'id';
     static readonly instanceKey = 'catchTime';
     readonly skills: Skill[];
-    readonly maxHp: number;
-    readonly hp: number;
     readonly catchTime: number;
     readonly dv: number;
     readonly element: PetElement;
     readonly nature: number;
+    readonly hp: number;
+    readonly maxHp: number;
+
+    readonly baseCurHp: number;
+    readonly baseHpTotal: number;
+
     constructor(obj: SAType.PetLike) {
         super();
         if (testPetInfoType(obj)) {
-            [this.id, this.name, this.catchTime, this.dv, this.element, this.nature, this.hp, this.maxHp] = [
+            [
+                this.id,
+                this.name,
+                this.catchTime,
+                this.dv,
+                this.element,
+                this.nature,
+                this.hp,
+                this.maxHp,
+                this.baseCurHp,
+                this.baseHpTotal,
+            ] = [
                 obj.id,
                 obj.name,
                 obj.catchTime,
@@ -42,6 +57,8 @@ export class Pet extends EntityBase implements IPetObject {
                 obj.nature,
                 obj.hp,
                 obj.maxHp,
+                obj.base_curHp,
+                obj.base_hp_total,
             ];
 
             this.skills = [...obj.skillArray, obj.hideSKill].filter(Boolean).map((v) => {

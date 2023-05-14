@@ -5,8 +5,6 @@
 长期待定功能（此部分功能的需求不明确，较好的实现方式与手段未知）：
 
 - [ ] 全局状态栏
-- [ ] 重构事件总线
-- [ ] 更改wrapper api
 - [ ] react层次重构,优化react部分代码组织
 - [ ] 抽象日任模块公共代码部分
 - [ ] 背包模块优化
@@ -41,6 +39,9 @@
 
 待定功能
 
+- [x] 重构事件总线
+- [x] 更改wrapper api
+
 - [ ] 小舞第4关脚本(压血84)
 - [ ] log写入本地
 
@@ -55,6 +56,7 @@ RoadMap: **见Readme**
 Core: v0.4.3
 1. 添加service-worker，缓存assets
 2. 优化类型推导，现在使用`game-data`模块只需要输入字符串即可
+3. 添加`SAEventBus`，这是一个helper类，可以方便的在模块内添加并卸载常用监听器(SAEventTarget/EventManager/MainSocket)
 
 Core: v0.4.2
 1. 事件总线模块整体重构，api更清晰简洁
@@ -70,6 +72,8 @@ Core: v0.4.2
 
 App & Core: v0.4.1
 1. 背包状态更新可以在app中同步了
+2. 背包显示实际加成后血量
+3. 支持首发的提示和切换
 
 Core: v0.4.0
 1. 重构项目为MonoRepo

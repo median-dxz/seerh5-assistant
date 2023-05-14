@@ -15,7 +15,7 @@ import { MainButton } from './MainButton';
 import { MainMenu } from './MainMenu';
 import { MainPanel } from './MainPanel';
 
-import { Hook, SABattle, SAEventTarget } from 'seerh5-assistant-core';
+import { Hook, SABattle, SAEvent } from 'seerh5-assistant-core';
 
 const { defaultStrategy, resolveStrategy } = SABattle;
 
@@ -24,6 +24,7 @@ import * as saco from 'seerh5-assistant-core';
 window.sac = { ...saco, ...sac };
 
 const battleStrategyStorage = SALocalStorage.BattleStrategy;
+const eventBus = new SAEvent.SAEventBus();
 
 export default function SaMain() {
     const [isCommandBarOpen, toggleCommandBar] = useState(false);
@@ -57,12 +58,13 @@ export default function SaMain() {
     }, [battleAuto]);
     useEffect(() => {
         document.body.addEventListener('keydown', handleShortCut);
-        SAEventTarget.on(Hook.BattlePanel.panelReady, handleBattleRoundEnd);
-        SAEventTarget.on(Hook.BattlePanel.roundEnd, handleBattleRoundEnd);
+        
+        eventBus.hook(Hook.BattlePanel.panelReady, handleBattleRoundEnd);
+        eventBus.hook(Hook.BattlePanel.roundEnd, handleBattleRoundEnd);
+
         return () => {
             document.body.removeEventListener('keydown', handleShortCut);
-            SAEventTarget.on(Hook.BattlePanel.panelReady, handleBattleRoundEnd);
-            SAEventTarget.on(Hook.BattlePanel.roundEnd, handleBattleRoundEnd);
+            eventBus.unmount();
         };
     }, [lockMainPanel, battleAuto]);
 

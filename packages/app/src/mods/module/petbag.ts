@@ -1,10 +1,12 @@
-import { SAEngine, SAEntity, SAMod, debounce, hook, hookPrototype } from 'seerh5-assistant-core';
+import { SAEngine, SAEntity, SAMod, debounce, hook, hookPrototype, SAEvent } from 'seerh5-assistant-core';
+
+const { SAEventBus } = SAEvent;
 
 class LocalCloth extends SAMod.ModuleMod<petBag.PetBag> {
     moduleName = 'petBag';
     meta = { id: 'SA::ModuleMod::PetBag', description: '精灵背包模块注入' };
 
-    callback: Record<string, CallBack> = {};
+    eventBus = new SAEventBus();
 
     load() {
         // 开启本地换肤按钮
@@ -33,24 +35,24 @@ class LocalCloth extends SAMod.ModuleMod<petBag.PetBag> {
             panel.initBagView();
         }, 600);
 
-        this.callback.refresh = () => {
+        const refresh = () => {
             // 非ui操作, 是直接发包
             if (panel.beginPetInfo == null && !petBag.ChangePetPop.changeFlag) {
                 initBagView();
             }
         };
-        this.callback.printTappingPetInfo = (e: egret.TouchEvent) => {
+        const printTappingPetInfo = (e: egret.TouchEvent) => {
             const { petInfo } = e.data as { petInfo: PetInfo };
             petInfo && this.log(new SAEntity.Pet(petInfo));
         };
 
-        SocketConnection.addCmdListener(CommandID.PET_RELEASE, this.callback.refresh);
-        EventManager.addEventListener('petBag.MainPanelTouchPetItemEnd', this.callback.printTappingPetInfo, null);
+        this.eventBus.socket(CommandID.PET_DEFAULT, refresh);
+        this.eventBus.socket(CommandID.PET_RELEASE, refresh);
+        this.eventBus.egret('petBag.MainPanelTouchPetItemEnd', printTappingPetInfo);
     }
 
     _destroy(): void {
-        SocketConnection.removeCmdListener(CommandID.PET_RELEASE, this.callback.refresh);
-        EventManager.removeEventListener('petBag.MainPanelTouchPetItemBegin', this.callback.printTappingPetInfo, null);
+        this.eventBus.unmount();
     }
 }
 

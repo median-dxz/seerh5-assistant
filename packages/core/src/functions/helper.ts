@@ -30,11 +30,7 @@ function enableFastStaticAnimation() {
         if (FightManager.fightAnimateMode === 1) {
             callback.call(thisObj);
         } else {
-            const cb = () => {
-                callback.call(thisObj);
-                skillMC.removeEventListener(dragonBones.EventObject.COMPLETE, cb, this);
-            };
-            skillMC.addEventListener(dragonBones.EventObject.COMPLETE, cb, this);
+            skillMC.once(dragonBones.EventObject.COMPLETE, callback.bind(thisObj), this);
         }
     };
 

@@ -1,6 +1,5 @@
-import { SAEventTarget, extractObjectId } from '../common';
+import { extractObjectId } from '../common';
 import { CacheData } from '../common/CacheData';
-import { Hook } from '../constant/event-hooks';
 import { Socket } from '../engine';
 import { Item } from '../entity/Item';
 import { Pet } from '../entity/Pet';
@@ -85,34 +84,18 @@ class DataManager {
                 () => PetManager.updateBagInfo()
             );
 
-            const miniInfo = () => {
-                const data = new Map<CatchTime, PetStorage2015PetInfo>();
-                PetStorage2015InfoManager.allInfo.forEach((i) => data.set(i.catchTime, i));
-                return data;
-            };
-
-            this.miniInfo = new CacheData(miniInfo(), () => {
-                PetStorage2015InfoManager.allInfo = [];
+            const updateMiniInfo = () =>
                 PetStorage2015InfoManager.getMiniInfo(() => {
-                    this.miniInfo.update(miniInfo());
+                    const info = new Map<number, PetStorage2015PetInfo>();
+                    PetStorage2015InfoManager.allInfo.forEach((i) => info.set(i.catchTime, i));
+                    this.miniInfo.update(info);
                 });
-            });
+
+            this.miniInfo = new CacheData(new Map(), updateMiniInfo);
+
+            updateMiniInfo();
 
             this.defaultCt = PetManager.defaultTime;
-
-            this.bag.deactivate = new Proxy(this.bag.deactivate, {
-                apply: (target, thisArg, argArray) => {
-                    SAEventTarget.emit(Hook.PetBag.deactivate);
-                    return Reflect.apply(target, thisArg, argArray);
-                },
-            });
-
-            this.bag.update = new Proxy(this.bag.update, {
-                apply: (target, thisArg, argArray) => {
-                    SAEventTarget.emit(Hook.PetBag.update);
-                    return Reflect.apply(target, thisArg, argArray);
-                },
-            });
         }
         this.hasInit = true;
     }
@@ -268,4 +251,3 @@ export function SAPet(pet: CatchTime | Pet) {
 }
 
 export { ins as PetDataManger };
-

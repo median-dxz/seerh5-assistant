@@ -38,11 +38,7 @@ export function findObject<T extends Constructor<T>>(
 }
 
 export function getClickTarget() {
-    const listener = (e: egret.TouchEvent) => {
-        log(e.target);
-        LevelManager.stage.removeEventListener(egret.TouchEvent.TOUCH_BEGIN, listener, null);
-    };
-    LevelManager.stage.addEventListener(egret.TouchEvent.TOUCH_BEGIN, listener, null);
+    LevelManager.stage.once(egret.TouchEvent.TOUCH_BEGIN, (e: egret.TouchEvent) => log(e.target), null);
 }
 
 export function getImageButtonListener(button: eui.UIComponent) {

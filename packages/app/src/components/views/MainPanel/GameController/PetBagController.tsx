@@ -1,4 +1,4 @@
-import { Button, Checkbox, TableCell } from '@mui/material';
+import { Button, ButtonGroup, Checkbox, TableCell } from '@mui/material';
 import { PopupMenu, usePopupMenuState } from '@sa-app/components/common/PopupMenu';
 import { SALocalStorage } from '@sa-app/provider/GlobalConfig';
 import { mainColor } from '@sa-app/style';
@@ -145,7 +145,10 @@ export function PetBagController() {
                 }
             >
                 {pets.map((row, index) => (
-                    <PanelTableBodyRow key={row.catchTime}>
+                    <PanelTableBodyRow
+                        key={row.catchTime}
+                        sx={{ bgcolor: index === 0 ? `rgba(231 247 67 / 18%)` : 'inherit' }}
+                    >
                         <TableCell align="center">
                             <Checkbox
                                 color="primary"
@@ -164,23 +167,34 @@ export function PetBagController() {
                         </TableCell>
                         <TableCell align="center">{row.name}</TableCell>
                         <TableCell align="center">
-                            {row.hp} / {row.maxHp}
+                            {row.baseCurHp} / {row.baseHpTotal}
                         </TableCell>
                         <TableCell align="center">
-                            <Button
-                                onClick={() => {
-                                    handleOpenPetItemUseProp(row.catchTime);
-                                }}
-                            >
-                                道具
-                            </Button>
-                            <Button
-                                onClick={() => {
-                                    SAPet(row.catchTime).cure();
-                                }}
-                            >
-                                治疗
-                            </Button>
+                            <ButtonGroup>
+                                <Button
+                                    onClick={() => {
+                                        handleOpenPetItemUseProp(row.catchTime);
+                                    }}
+                                >
+                                    道具
+                                </Button>
+                                <Button
+                                    onClick={() => {
+                                        SAPet(row.catchTime).cure();
+                                    }}
+                                >
+                                    治疗
+                                </Button>
+                                {index !== 0 && (
+                                    <Button
+                                        onClick={() => {
+                                            SAPet(row.catchTime).default();
+                                        }}
+                                    >
+                                        首发
+                                    </Button>
+                                )}
+                            </ButtonGroup>
                         </TableCell>
                     </PanelTableBodyRow>
                 ))}

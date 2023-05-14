@@ -1,13 +1,13 @@
 import { SAHookData } from '../constant';
 
 type Listener<T> = (data: T) => void;
-type EventData<Type, Event extends Record<string, any>> = Type extends keyof Event ? Event[Type] : undefined;
+type EventData<Type, TEvent extends Record<string, any>> = Type extends keyof TEvent ? TEvent[Type] : undefined;
 
 interface SAEventTarget<Events extends Record<string, any>> {
-    on<Type extends string>(type: Type, listener: Listener<EventData<Type, Events>>): void;
-    once<Type extends string>(type: Type, listener: Listener<EventData<Type, Events>>): void;
-    emit<Type extends string>(type: Type, data?: EventData<Type, Events>): boolean;
-    off<Type extends string>(type: Type, listener: Listener<EventData<Type, Events>>): void;
+    on<T extends string>(type: T, listener: Listener<EventData<T, Events>>): void;
+    once<T extends string>(type: T, listener: Listener<EventData<T, Events>>): void;
+    off<T extends string>(type: T, listener: Listener<EventData<T, Events>>): void;
+    emit<T extends string>(type: T, data?: EventData<T, Events>): boolean;
 }
 
 const et = new EventTarget();
