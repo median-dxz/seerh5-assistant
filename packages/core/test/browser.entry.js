@@ -1,14 +1,11 @@
-import * as saco from '../src';
-import { SaModuleLogger, defaultStyle } from '../src/logger';
+import * as core from '../src';
 
-const logger = SaModuleLogger('SATest', defaultStyle.core);
+import './suites.js';
 
-await saco.CoreLoader();
+mocha.checkLeaks();
 
-console.log(`环境检测: ${saco.checkEnv()}`);
-window.saco  = saco;
-console.log(`整体具名导入已挂载在saco命名空间下`);
+await core.CoreLoader();
 
-let testModuleName = 'SAEngine/GameData';
+window.sac = { core, ...sac };
 
-logger(`开始测试功能模块: ${testModuleName}`);
+mocha.run();

@@ -140,7 +140,7 @@ export default (env, argv) => {
 
     const sw = new WorkboxPlugin.GenerateSW({
         exclude: [/./],
-        navigationPreload: true,
+        navigationPreload: false,
         runtimeCaching: [
             {
                 urlPattern: /seerh5\.61\.com\/resource\/assets/,
@@ -164,7 +164,7 @@ export default (env, argv) => {
             // on the next run of webpack.
         },
     });
-    
+
     exports.plugins.push(sw);
 
     if (!isDevelopment) {

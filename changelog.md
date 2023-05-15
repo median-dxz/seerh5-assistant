@@ -25,10 +25,8 @@
   - [ ] 模组代码片段(关卡/模块订阅注入修改/...)
 - [ ] 支持在模组中渲染界面
 - [ ] 战斗move module可以可选传递上一回合信息（reduce思路）
-- [ ] switchPet不会没法便捷获取新的pet
-- [ ] pet matcher便捷函数（用名称声明要换的精灵，同时获取到新的skill id）
+- [ ] pet matcher便捷函数（用名称声明要换的精灵）
 - [ ] 编写单元测试
-- [ ] 使用service worker进行资源缓存
 - [ ] 完整可读的api doc
 - [ ] vsc对项目内部禁用node环境的提示
 
@@ -41,8 +39,10 @@
   - [x] 调整首发精灵
   - [x] 计算最终基础血量
 - [x] 首回合获取不到self和other
+- [x] switchPet不会没法便捷获取新的pet
+- [x] 使用service worker进行资源缓存
 - [ ] 战队派遣模块的bug(重复刷新)
-- [ ] 更新背包精灵无响应的bug(hmr?)
+- [ ] 更新背包精灵发包后无响应的bug(cache await update一直不resolve)(hmr?)
 
 - [ ] 小舞第4关脚本(压血84)
 - [ ] log写入本地
@@ -55,7 +55,7 @@
 
 RoadMap: **见Readme**
 
-Core: v0.4.3
+Core: v0.4.3 (ps: 感觉大部分core模块都翻了个底朝天)
 1. 添加service-worker，缓存assets
 2. 优化类型推导，现在使用`game-data`模块只需要输入字符串即可
 3. 添加`SAEventBus`，这是一个helper类，可以方便的在模块内添加并卸载常用监听器(SAEventTarget/EventManager/MainSocket)
@@ -122,7 +122,7 @@ Core: v0.4.0
 1. 重构项目为MonoRepo
 2. `sa-core`与`sa-app`分开独立构建
 3. `sa-core`模块**全部重新设计实现**，详见doc/api设计
-4. 数据同步与缓存模块，socket订阅模块
+4. **数据同步与缓存模块，socket订阅模块**
 5. **全新的PetHelper模块**
 
 v0.3.10

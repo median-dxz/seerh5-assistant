@@ -10,13 +10,14 @@
     "scripts": {
         "build": "tsc --build",
         "watch": "tsc --watch",
-        "dev": " webpack-dev-server",
-        "test": "set NODE_OPTIONS=--experimental-vm-modules"
+        "test": " webpack-dev-server"
     },
     "dependencies": {
         "chalk": "^5.2.0"
     },
     "devDependencies": {
+        "@types/chai": "^4.3.5",
+        "@types/mocha": "^10.0.1",
         "rimraf": "^4.3.1"
     }
 }

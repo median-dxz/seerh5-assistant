@@ -9,11 +9,48 @@
 
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
         <link rel="shortcut icon" href="http://seerh5.61.com/favicon.ico" type="image/x-icon" />
+        <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />
         <style>
             body {
                 margin: 0;
             }
-            
+
+            #toggle-button {
+                position: absolute;
+                display: flex;
+                top: 0;
+                right: 0;
+                width: 150px;
+                height: 30px;
+                background-color: transparent;
+                border: 1px solid #fff467;
+                color: #eee;
+                border-radius: 8px;
+                cursor: pointer;
+                z-index: 11;
+                margin: 40px;
+                transition: all 0.3s;
+                align-items: center;
+                justify-content: center;
+                user-select: none;
+            }
+
+            #toggle-button:hover {
+                border: 1px solid rgba(0, 0, 0, 0);
+                background-color: #fff467;
+                color: #333;
+            }
+
+            #mocha {
+                position: absolute;
+                left: 0;
+                right: 0;
+                margin: 0;
+                height: 100%;
+                background-color: rgba(255, 255, 255, 0.8);
+                z-index: 0;
+            }
+
             @font-face {
                 font-family: HuaKangXinZongYi;
                 src: url('http://seerh5.61.com/resource/font/hkxzy.ttf');
@@ -45,7 +82,20 @@
                     script.innerHTML = appJs.replace(/loadSingleScript.*baidu.*\r\n/, '');
                     document.body.appendChild(script);
                 });
+
+            var toggleMocha = () => {
+                const el = document.getElementById('mocha');
+                const zIndex = el.style.zIndex;
+                el.style.zIndex = Number(zIndex) ? 0 : 1;
+            };
         </script>
-        <script src="/bundle.js"></script>
+        <script src="https://unpkg.com/chai/chai.js"></script>
+        <script src="https://unpkg.com/mocha/mocha.js"></script>
+        <div id="mocha"></div>
+        <div id="toggle-button" onclick="toggleMocha()">切换测试页显示</div>
+        <script>
+            mocha.setup('bdd');
+        </script>
+        <script type="module" src="/bundle.js"></script>
     </body>
 </html>

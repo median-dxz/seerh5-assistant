@@ -7,9 +7,12 @@
         "declaration": true,
         "declarationDir": "types",
         "tsBuildInfoFile": "../../build/core.tsbuildinfo",
+        "types": [
+            "chai"
+        ],
     },
     "include": [
         "./src/**/*",
         "../../types",
-    ]
+    ],
 }
