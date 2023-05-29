@@ -13,9 +13,14 @@ type PotionId = AttrConst<typeof Potion>;
 /**
  * @param {number[]} cts 要压血的精灵列表
  * @param {PotionId} healPotionId 血药id, 默认中级体力药
+ * @param {number} hpLimit 血量上限, 默认200, 压血后全部精灵血量低于该值
  * @description 利用谱尼封印自动压血
  */
-export async function lowerBlood(cts: number[], healPotionId: PotionId = Potion.中级体力药剂): Promise<void> {
+export async function lowerBlood(
+    cts: number[],
+    healPotionId: PotionId = Potion.中级体力药剂,
+    hpLimit: number = 200
+): Promise<void> {
     cts = cts.slice(0, 6);
     if (!cts || cts.length === 0) {
         return;
@@ -39,7 +44,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = Potion.
     log(`压血 -> 背包处理完成`);
     await getBagPets();
 
-    const hpChecker = () => cts.filter((ct) => SAPet(ct).hp >= 150);
+    const hpChecker = () => cts.filter((ct) => SAPet(ct).hp >= hpLimit);
 
     const usePotion = async (ct: number) => {
         if (SAPet(ct).hp == 0) {
@@ -67,10 +72,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = Potion.
     const strategy: Battle.MoveModule = {
         resolveMove(battleState, skills, battlePets) {
             log('move', battleState.round, battleState.self?.hp.remain);
-            if (
-                battleState.round > 0 &&
-                (battleState.self?.hp.remain! < 50 || !cts.includes(battleState.self?.catchtime!))
-            ) {
+            if (battleState.self?.hp.remain! < hpLimit || !cts.includes(battleState.self?.catchtime!)) {
                 let nextPet = this.resolveNoBlood(battleState, skills, battlePets) ?? -1;
                 if (nextPet === -1) {
                     return Operator.escape();
@@ -82,7 +84,7 @@ export async function lowerBlood(cts: number[], healPotionId: PotionId = Potion.
         },
         resolveNoBlood: (battleState, skills, battlePets) => {
             return battlePets.findIndex(
-                (v) => cts.includes(v.catchTime) && v.hp > 200 && v.catchTime !== battleState.self!.catchtime
+                (v) => cts.includes(v.catchTime) && v.hp >= hpLimit && v.catchTime !== battleState.self!.catchtime
             );
         },
     };
@@ -192,4 +194,3 @@ export function updateBatteryTime() {
 }
 
 export { HelperLoader } from './helper';
-

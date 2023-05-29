@@ -1,5 +1,5 @@
-import { SABattle, SAEntity, delay } from 'seerh5-assistant-core';
-const { generateStrategy, Operator, Provider, SkillNameMatch, NoBloodSwitchLink } = SABattle;
+import { SABattle, SAEntity } from 'seerh5-assistant-core';
+const { generateStrategy, Operator, SkillNameMatch, NoBloodSwitchLink } = SABattle;
 
 interface LevelPetsData {
     [levelName: string]: {

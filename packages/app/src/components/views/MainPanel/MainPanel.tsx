@@ -23,7 +23,8 @@ function TabPanel(props: TabPanelProps & { sx?: SxProps }) {
             sx={{
                 p: 1,
                 width: '100%',
-                overflow: 'auto',
+                overflowY: 'auto',
+                overflowX: 'hidden',
                 marginRight: '-1px',
                 '&::-webkit-scrollbar': {
                     width: 8,
@@ -97,7 +98,7 @@ export function MainPanel(props: Props) {
                     zIndex: 1,
                     color: `rgba(${mainColor.front} / 100%)`,
                     bgcolor: `rgba(${mainColor.back} / 35%)`,
-                    border: `2px solid rgba(${mainColor.front} / 75%)`,
+                    border: `1px solid rgba(${mainColor.front} / 35%)`,
                     backdropFilter: `blur(8px)`,
                     boxShadow: `0 0 16px rgba(${mainColor.front} / 50%),
                     0 0 16px rgba(${mainColor.back} / 50%) inset`,
@@ -141,26 +142,24 @@ export function MainPanel(props: Props) {
                     </Tabs>
                 </Box>
 
-                <>
-                    <TabPanel value={value} index={0}>
-                        <GameController />
-                    </TabPanel>
-                    <TabPanel value={value} index={1}>
-                        <Realm />
-                    </TabPanel>
-                    <TabPanel value={value} index={2}>
-                        <CommonValue />
-                    </TabPanel>
-                    <TabPanel value={value} index={3}>
-                        <AutoBattle />
-                    </TabPanel>
-                    <TabPanel value={value} index={4}>
-                        <PackageCapture />
-                    </TabPanel>
-                    <TabPanel value={value} index={5}>
-                        <QuickCommand />
-                    </TabPanel>
-                </>
+                <TabPanel value={value} index={0}>
+                    <GameController />
+                </TabPanel>
+                <TabPanel value={value} index={1}>
+                    <Realm />
+                </TabPanel>
+                <TabPanel value={value} index={2}>
+                    <CommonValue />
+                </TabPanel>
+                <TabPanel value={value} index={3}>
+                    <AutoBattle />
+                </TabPanel>
+                <TabPanel value={value} index={4}>
+                    <PackageCapture />
+                </TabPanel>
+                <TabPanel value={value} index={5}>
+                    <QuickCommand />
+                </TabPanel>
             </Box>
         </Fade>
     );

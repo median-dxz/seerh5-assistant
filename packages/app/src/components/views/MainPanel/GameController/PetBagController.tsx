@@ -1,4 +1,4 @@
-import { Button, LinearProgress, TableCell } from '@mui/material';
+import { Box, Button, LinearProgress, TableCell, Typography } from '@mui/material';
 import { PopupMenu, usePopupMenuState } from '@sa-app/components/common/PopupMenu';
 import { SALocalStorage } from '@sa-app/hooks/GlobalConfig';
 import { mainColor } from '@sa-app/style';
@@ -79,12 +79,6 @@ export function PetBagController() {
 
     return (
         <>
-            <h3>精灵背包</h3>
-            <Button onClick={handleLowerBlood}>压血</Button>
-            <Button onClick={handleCurePets}>治疗</Button>
-            <Button onClick={handleCopyCatchTime}>复制catchTime</Button>
-            <Button onClick={handleChangePetPattern}>更换方案</Button>
-            <Button onClick={handleSavePetPattern}>保存方案</Button>
             <PopupMenu
                 id="pet-bag-controller-menu"
                 sx={{
@@ -95,40 +89,70 @@ export function PetBagController() {
                 }}
                 {...menuProps}
             />
-            <PanelTableBase
-                aria-label="pet list"
-                size="small"
-                heads={
-                    <>
-                        <TableCell align="center"></TableCell>
-                        <TableCell align="center">id</TableCell>
-                        <TableCell align="center"></TableCell>
-                        <TableCell align="center">名称</TableCell>
-                        <TableCell align="center">血量</TableCell>
-                        <TableCell align="center">操作</TableCell>
-                    </>
-                }
+
+            <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']}>
+                精灵背包
+            </Typography>
+            <Button onClick={handleLowerBlood}>压血</Button>
+            <Button onClick={handleCurePets}>治疗</Button>
+            <Button onClick={handleCopyCatchTime}>复制catchTime</Button>
+            <Button onClick={handleChangePetPattern}>更换方案</Button>
+            <Button onClick={handleSavePetPattern}>保存方案</Button>
+
+            <Box
+                sx={{
+                    m: -1,
+                    overflowX: 'scroll',
+                    '&::-webkit-scrollbar': {
+                        width: 8,
+                        height: 8,
+                    },
+                    '&::-webkit-scrollbar-track': {
+                        backgroundColor: `rgba(${mainColor.front} / 16%)`,
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                        backgroundColor: `rgba(${mainColor.front} / 90%)`,
+                    },
+                }}
             >
-                {pets.map((row, index) => (
-                    <PetListRow
-                        key={row.catchTime}
-                        pet={row}
-                        selected={selected.includes(row.catchTime)}
-                        isDefault={index === 0}
-                        onClick={() =>
-                            setSelected(
-                                produce((draft) => {
-                                    if (draft.includes(row.catchTime)) {
-                                        draft.splice(draft.indexOf(row.catchTime), 1);
-                                    } else {
-                                        draft.push(row.catchTime);
-                                    }
-                                })
-                            )
-                        }
-                    />
-                ))}
-            </PanelTableBase>
+                <PanelTableBase
+                    sx={{
+                        width: 'max-content',
+                    }}
+                    aria-label="pet list"
+                    size="small"
+                    heads={
+                        <>
+                            <TableCell align="center"></TableCell>
+                            <TableCell align="center">id</TableCell>
+                            <TableCell align="center"></TableCell>
+                            <TableCell align="center">名称</TableCell>
+                            <TableCell align="center">血量</TableCell>
+                            <TableCell align="center">操作</TableCell>
+                        </>
+                    }
+                >
+                    {pets.map((row, index) => (
+                        <PetListRow
+                            key={row.catchTime}
+                            pet={row}
+                            selected={selected.includes(row.catchTime)}
+                            isDefault={index === 0}
+                            onClick={() =>
+                                setSelected(
+                                    produce((draft) => {
+                                        if (draft.includes(row.catchTime)) {
+                                            draft.splice(draft.indexOf(row.catchTime), 1);
+                                        } else {
+                                            draft.push(row.catchTime);
+                                        }
+                                    })
+                                )
+                            }
+                        />
+                    ))}
+                </PanelTableBase>
+            </Box>
         </>
     );
 }

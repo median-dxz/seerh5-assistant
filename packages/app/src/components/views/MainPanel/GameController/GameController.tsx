@@ -1,4 +1,4 @@
-import { Button, Divider, Typography } from '@mui/material';
+import { Box, Button, Divider, Typography } from '@mui/material';
 
 import { SAEngine, cureAllPet } from 'seerh5-assistant-core';
 

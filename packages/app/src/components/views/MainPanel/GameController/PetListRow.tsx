@@ -1,4 +1,10 @@
-import { Button, ButtonGroup, Checkbox, TableCell, type TableRowProps } from '@mui/material';
+import {
+    Button,
+    ButtonGroup,
+    Checkbox,
+    TableCell,
+    type TableRowProps
+} from '@mui/material';
 import { useEgretImageRes } from '@sa-app/hooks/useEgretRes';
 import React from 'react';
 import { SAEngine, SAEntity, SAPet, delay } from 'seerh5-assistant-core';
@@ -32,14 +38,16 @@ export function PetListRow({ pet, isDefault, selected, onSelect, ...props }: Pro
             <TableCell align="center">
                 <Checkbox color="primary" checked={selected} />
             </TableCell>
-            <TableCell component="th" scope="row" align="center">
+            <TableCell component="th" scope="row" align="center" sx={{ userSelect: 'none', cursor: 'pointer' }}>
                 {pet.id}
             </TableCell>
             <TableCell align="center">
                 <img crossOrigin="anonymous" src={headIcon} width={48}></img>
             </TableCell>
-            <TableCell align="center">{pet.name}</TableCell>
-            <TableCell align="center">
+            <TableCell sx={{ userSelect: 'none', cursor: 'pointer' }} align="center">
+                {pet.name}
+            </TableCell>
+            <TableCell sx={{ userSelect: 'none' }} align="center">
                 {pet.baseCurHp} / {pet.baseHpTotal}
             </TableCell>
             <TableCell align="center">
