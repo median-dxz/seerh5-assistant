@@ -1,11 +1,9 @@
 import { Typography } from '@mui/material';
-import { useCore } from '@sa-app/provider/useCore';
 import React from 'react';
-import { cureAllPet, delay } from 'seerh5-assistant-core';
+import { cureAllPet, delay, SABattle, SAEngine, switchBag } from 'seerh5-assistant-core';
 import { PercentLinearProgress } from '../base';
-import { LevelBase, LevelExtendsProps } from './LevelBase';
 import dataProvider from './data';
-const { SABattle, SAEngine, switchBag } = useCore();
+import { LevelBase, LevelExtendsProps } from './LevelBase';
 
 const ElfKingsId = {
     光王斯嘉丽: 2,
@@ -38,7 +36,7 @@ const updateLevelData = async () => {
     const bits = await SAEngine.Socket.bitSet(8832, 2000037);
     const values = await SAEngine.Socket.multiValue(108105, 108106, 18745, 20134);
 
-    data.elfId = ElfKingsId.秘王;
+    data.elfId = ElfKingsId.战王;
 
     data.stimulation = bits[0];
     data.canRewardReceive = !bits[1];

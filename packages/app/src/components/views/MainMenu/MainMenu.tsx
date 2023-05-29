@@ -4,7 +4,6 @@ import { SxProps } from '@mui/system';
 
 import React, { useEffect, useState } from 'react';
 
-import { useCore } from '@sa-app/provider/useCore';
 import { mainColor } from '@sa-app/style';
 import { SAEngine } from 'seerh5-assistant-core';
 import { StyledSpeedDial } from './StyledSpeedDial';
@@ -26,7 +25,6 @@ export function MainMenu() {
     let [autoCure, setAutoCure] = useState(false);
     let [open, setOpen] = useState(false);
 
-    const {} = useCore();
     useEffect(() => {
         SAEngine.getAutoCureState().then(setAutoCure);
     }, []);

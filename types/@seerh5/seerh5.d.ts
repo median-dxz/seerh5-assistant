@@ -115,7 +115,8 @@ declare namespace SAType {
 }
 
 declare namespace RES {
-    function getResByUrl(url: string): Promise<egret.Texture>;
+    function getVirtualUrl(url: string): string;
+    function getResByUrl(url: string): Promise<egret.HashObject>;
 }
 
 declare interface AppDoStyle {

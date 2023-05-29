@@ -1,10 +1,7 @@
-import { useCore } from '@sa-app/provider/useCore';
 import React from 'react';
-import { cureAllPet, delay } from 'seerh5-assistant-core';
-import { LevelBase, LevelExtendsProps } from './LevelBase';
+import { cureAllPet, delay, SABattle, SAEngine, switchBag } from 'seerh5-assistant-core';
 import dataProvider from './data';
-
-const { SABattle, SAEngine, switchBag } = useCore();
+import { LevelBase, LevelExtendsProps } from './LevelBase';
 
 interface LevelData {
     open: boolean;

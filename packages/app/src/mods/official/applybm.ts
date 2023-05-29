@@ -266,13 +266,6 @@ const options: PetFragment.Option[] = [
             perStrategy['潘蒂表必先'],
         ],
     },
-    // 村长
-    {
-        difficulty: Difficulty.Hard,
-        sweep: true,
-        id: 91,
-        strategy: [],
-    },
     // 嫉妒
     {
         difficulty: Difficulty.Ease,

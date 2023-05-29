@@ -1,11 +1,9 @@
 import { Typography } from '@mui/material';
-import { useCore } from '@sa-app/provider/useCore';
 import React from 'react';
-import { cureAllPet, delay } from 'seerh5-assistant-core';
+import { cureAllPet, delay, SABattle, SAEngine, switchBag } from 'seerh5-assistant-core';
 import { PercentLinearProgress } from '../base';
 import { LevelBase, LevelExtendsProps } from './LevelBase';
 import dataProvider from './data';
-const { SABattle,  SAEngine, switchBag } = useCore();
 
 interface LevelData {
     stimulation: boolean;
@@ -111,4 +109,3 @@ export function LevelCourageTower(props: LevelExtendsProps) {
     }, [step, running]);
     return <LevelBase title={RealmName} hint={hint}></LevelBase>;
 }
-

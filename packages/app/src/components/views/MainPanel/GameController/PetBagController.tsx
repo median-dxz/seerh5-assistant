@@ -1,75 +1,40 @@
-import { Button, ButtonGroup, Checkbox, TableCell } from '@mui/material';
+import { Button, LinearProgress, TableCell } from '@mui/material';
 import { PopupMenu, usePopupMenuState } from '@sa-app/components/common/PopupMenu';
-import { SALocalStorage } from '@sa-app/provider/GlobalConfig';
+import { SALocalStorage } from '@sa-app/hooks/GlobalConfig';
 import { mainColor } from '@sa-app/style';
+import produce from 'immer';
 import React from 'react';
-import {
-    Hook,
-    PetPosition,
-    SAEngine,
-    SAEntity,
-    SAEventTarget,
-    SAPet,
-    debounce,
-    delay,
-    getBagPets,
-    lowerBlood,
-    switchBag,
-} from 'seerh5-assistant-core';
-import { PanelTableBase, PanelTableBodyRow } from '../base';
+import { PetPosition, SAPet, getBagPets, lowerBlood, switchBag } from 'seerh5-assistant-core';
+
+import { useBagPets } from '@sa-app/hooks/useBagPets';
+import { PanelTableBase } from '../base';
+import { PetListRow } from './PetListRow';
 
 const petGroupsStorage = SALocalStorage.PetGroups;
 
 export function PetBagController() {
-    const [pets, setPets] = React.useState<SAEntity.Pet[]>([]);
-    const [petHeadSrc, setPetHeadSrc] = React.useState<string[]>([]);
+    const { pets } = useBagPets();
 
-    const [selected, setSelected] = React.useState<boolean[]>([]);
+    if (!pets) {
+        return <LinearProgress />;
+    }
 
+    const [selected, setSelected] = React.useState<number[]>([]);
     const [petGroups, setPetGroups] = React.useState(petGroupsStorage.ref);
-
     const [menuProps, openMenu] = usePopupMenuState<number[]>();
-    const updatePets = debounce(async () => {
-        const pets = await getBagPets(PetPosition.bag1);
-        setPets(pets);
-        setSelected(pets.map(() => false));
-        const petHead = await Promise.all(
-            pets.map((v) => SAEngine.getImageResourceUrl(ClientConfig.getPetHeadPath(v.id)))
-        );
-        setPetHeadSrc(petHead);
-    }, 200);
 
     React.useEffect(() => {
-        updatePets();
-        SAEventTarget.on(Hook.PetBag.deactivate, updatePets);
-        SAEventTarget.on(Hook.PetBag.update, updatePets);
-        return () => {
-            SAEventTarget.on(Hook.PetBag.deactivate, updatePets);
-            SAEventTarget.on(Hook.PetBag.update, updatePets);
-        };
-    }, []);
+        setSelected([]);
+    }, [pets]);
 
     const handleLowerBlood = () => {
-        const lowerBloodPets = pets.filter((pet, index) => selected[index]);
-        lowerBlood(lowerBloodPets.map((p) => p.catchTime));
+        lowerBlood(selected);
     };
 
     const handleCurePets = () => {
-        const curePets = pets.filter((pet, index) => selected[index]);
-        for (let curePet of curePets) {
-            SAPet(curePet.catchTime).cure();
+        for (let cureCt of selected) {
+            SAPet(cureCt).cure();
         }
-    };
-
-    const handleOpenPetItemUseProp = async (ct: number) => {
-        await ModuleManager.showModule('petBag');
-        const petBagModule = SAEngine.SeerModuleHelper.currentModule<petBag.PetBag>();
-        await delay(300);
-        const petBagPanel = petBagModule.currentPanel!;
-        petBagPanel.onSelectPet({ data: PetManager.getPetInfo(ct) });
-        await delay(300);
-        petBagPanel.showDevelopBaseView();
-        petBagPanel.showDevelopView(9);
     };
 
     const handleCopyCatchTime = () => {
@@ -145,58 +110,23 @@ export function PetBagController() {
                 }
             >
                 {pets.map((row, index) => (
-                    <PanelTableBodyRow
+                    <PetListRow
                         key={row.catchTime}
-                        sx={{ bgcolor: index === 0 ? `rgba(231 247 67 / 18%)` : 'inherit' }}
-                    >
-                        <TableCell align="center">
-                            <Checkbox
-                                color="primary"
-                                checked={selected[index]}
-                                onChange={(event) => {
-                                    selected.splice(index, 1, event.target.checked);
-                                    setSelected([...selected]);
-                                }}
-                            />
-                        </TableCell>
-                        <TableCell component="th" scope="row" align="center">
-                            {row.id}
-                        </TableCell>
-                        <TableCell align="center">
-                            <img crossOrigin="anonymous" src={petHeadSrc[index]} width={48}></img>
-                        </TableCell>
-                        <TableCell align="center">{row.name}</TableCell>
-                        <TableCell align="center">
-                            {row.baseCurHp} / {row.baseHpTotal}
-                        </TableCell>
-                        <TableCell align="center">
-                            <ButtonGroup>
-                                <Button
-                                    onClick={() => {
-                                        handleOpenPetItemUseProp(row.catchTime);
-                                    }}
-                                >
-                                    道具
-                                </Button>
-                                <Button
-                                    onClick={() => {
-                                        SAPet(row.catchTime).cure();
-                                    }}
-                                >
-                                    治疗
-                                </Button>
-                                {index !== 0 && (
-                                    <Button
-                                        onClick={() => {
-                                            SAPet(row.catchTime).default();
-                                        }}
-                                    >
-                                        首发
-                                    </Button>
-                                )}
-                            </ButtonGroup>
-                        </TableCell>
-                    </PanelTableBodyRow>
+                        pet={row}
+                        selected={selected.includes(row.catchTime)}
+                        isDefault={index === 0}
+                        onClick={() =>
+                            setSelected(
+                                produce((draft) => {
+                                    if (draft.includes(row.catchTime)) {
+                                        draft.splice(draft.indexOf(row.catchTime), 1);
+                                    } else {
+                                        draft.push(row.catchTime);
+                                    }
+                                })
+                            )
+                        }
+                    />
                 ))}
             </PanelTableBase>
         </>

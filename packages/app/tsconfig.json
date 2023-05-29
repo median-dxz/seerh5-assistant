@@ -9,7 +9,7 @@
         "tsBuildInfoFile": "../../build/app.tsbuildinfo",
     },
     "include": [
-        "./src/**/*",
+        "./src",
         "../../types"
     ],
     "references": [

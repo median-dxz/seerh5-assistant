@@ -14,6 +14,5 @@ declare global {
         var Mods: Map<string, import('./mod-manager').BaseMod>;
         var SeerH5Ready: boolean;
         var SacReady: boolean;
-        var ResourceCache: Map<string, string>;
     }
 }

@@ -1,6 +1,5 @@
 import { Button, Dialog, DialogActions, Divider, TableCell, TableRow, Typography } from '@mui/material';
 import { SAContext } from '@sa-app/context/SAContext';
-import { useCore } from '@sa-app/provider/useCore';
 import { mainColor } from '@sa-app/style';
 import React from 'react';
 import { PanelTableBase } from '../base';
@@ -11,7 +10,8 @@ import { LevelStudyTraining } from './LevelStudyTraining';
 import { LevelTitanHole } from './LevelTitanHole';
 import { LevelXTeamRoom } from './LevelXTeamRoom';
 
-const { SABattle, SAEngine } = useCore();
+import { SABattle, SAEngine } from 'seerh5-assistant-core';
+
 interface Level {
     name: string;
     module?: JSX.Element;

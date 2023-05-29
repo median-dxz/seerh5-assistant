@@ -47,7 +47,7 @@ export default () => {
 
     PetDataManger.bag.update = new Proxy(PetDataManger.bag.update, {
         apply: (target, thisArg, argArray) => {
-            SAEventTarget.emit(Hook.PetBag.update);
+            SAEventTarget.emit(Hook.PetBag.update, ...argArray);
             return Reflect.apply(target, thisArg, argArray);
         },
     });

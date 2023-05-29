@@ -48,7 +48,25 @@ let saRfcMiddleware = {
             case 'data':
                 res.send(readFileSync(path.join(__dirname, 'data', 'data.json')));
                 break;
-
+            case '14year':
+                fetch(`https://webevent.61.com/v2/?r=Seer14years/sign&callback=Callback`, {
+                    headers: {
+                        accept: '*/*',
+                        'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
+                        cookie: `PHPSESSID=${req.query['PHPSESSID']}; cookie_login_uid=${req.query['cookie_login_uid']}`,
+                        Referer: 'https://seer.61.com/',
+                        'Referrer-Policy': 'strict-origin-when-cross-origin',
+                    },
+                    method: 'GET',
+                })
+                    .then((r) => r.text())
+                    .then((t) => {
+                        let Callback = (d) => {
+                            res.send(d);
+                        };
+                        eval(t);
+                    });
+                break;
             default:
                 break;
         }

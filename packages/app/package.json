@@ -2,7 +2,7 @@
     "name": "seerh5-assistant-app",
     "private": true,
     "type": "module",
-    "version": "0.4.1",
+    "version": "0.4.2",
     "license": "AGPL-3.0-or-later",
     "main": "./src/index.tsx",
     "scripts": {
@@ -19,10 +19,11 @@
         "@mui/material": "latest",
         "@mui/styled-engine-sc": "^5.11.0",
         "@mui/system": "^5.11.7",
+        "immer": "^9.0.19",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
+        "seerh5-assistant-core": "^0.4.0",
         "styled-components": "^5.3.6",
-        "immer": "^9.0.19",
-        "seerh5-assistant-core": "^0.4.0"
+        "swr": "^2.1.5"
     }
 }

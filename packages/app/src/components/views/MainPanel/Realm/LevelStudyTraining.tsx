@@ -1,13 +1,10 @@
 import { Typography } from '@mui/material';
-
 import React from 'react';
 import { PercentLinearProgress } from '../base';
-import { LevelBase, LevelExtendsProps } from './LevelBase';
 import dataProvider from './data';
+import { LevelBase, LevelExtendsProps } from './LevelBase';
 
-import { useCore } from '@sa-app/provider/useCore';
-import { cureAllPet, delay } from 'seerh5-assistant-core';
-const { SABattle, SAEngine, switchBag } = useCore();
+import { cureAllPet, delay, SABattle, SAEngine, switchBag } from 'seerh5-assistant-core';
 
 interface LevelData {
     stimulation: boolean;

@@ -6,7 +6,7 @@ import { Container, ThemeProvider } from '@mui/system';
 import { PanelStateContext } from '@sa-app/context/PanelState';
 import { SAContext } from '@sa-app/context/SAContext';
 
-import { SALocalStorage } from '@sa-app/provider/GlobalConfig';
+import { SALocalStorage } from '@sa-app/hooks/GlobalConfig';
 
 import { mainTheme } from '@sa-app/style';
 

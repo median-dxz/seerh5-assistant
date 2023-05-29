@@ -1,7 +1,4 @@
-import { useCore } from '@sa-app/provider/useCore';
-import { delay } from 'seerh5-assistant-core';
-
-const { SAEngine } = useCore();
+import { delay, SAEngine } from 'seerh5-assistant-core';
 
 const { SeerModuleHelper } = SAEngine;
 

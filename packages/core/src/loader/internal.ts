@@ -1,6 +1,6 @@
 import { enableMapSet } from 'immer';
 import battle from '../battle/internal';
-import { NULL, SAEventTarget, wrapper } from '../common';
+import { NULL, SAEventTarget } from '../common';
 import { Hook } from '../constant';
 import eventBus from '../event-bus/internal';
 import pet from '../pet-helper/internal';
@@ -26,7 +26,6 @@ export async function enableBasic() {
     UIUtils = null;
     SocketEncryptImpl.prototype.log = logSocket;
     enableBackgroundHBCheck();
-    cacheResourceUrl();
     betterSwitchPet();
 
     InternalInitiator.push(event, 0);
@@ -85,17 +84,6 @@ function enableBackgroundHBCheck() {
         clearInterval(timer);
         timer = undefined;
     };
-}
-
-/** cache resource url */
-function cacheResourceUrl() {
-    sac.ResourceCache = new Map<string, string>();
-
-    RES.getResByUrl = wrapper(RES.getResByUrl as (url: string) => Promise<egret.Texture>, undefined, (result, url) => {
-        if (result.$bitmapData && result.$bitmapData.format === 'image' && result.$bitmapData.source) {
-            sac.ResourceCache.set(url, result.$bitmapData.source.src);
-        }
-    });
 }
 
 /** better switch pet handler */

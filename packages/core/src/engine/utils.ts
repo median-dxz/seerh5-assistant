@@ -44,8 +44,3 @@ export function getClickTarget() {
 export function getImageButtonListener(button: eui.UIComponent) {
     return ImageButtonUtil.imgs[`k_${button.hashCode}`];
 }
-
-export async function getImageResourceUrl(url: string) {
-    const i = await RES.getResByUrl(url);
-    return sac.ResourceCache.get(url) ?? (i.bitmapData.source?.src as string);
-}

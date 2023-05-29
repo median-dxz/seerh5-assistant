@@ -1,3 +1,5 @@
+import type { Pet } from '../entity/Pet';
+
 export const Hook = {
     Module: {
         loadScript: 'sa_module_script_loaded',
@@ -32,5 +34,6 @@ export type SAHookData = {
     sa_award_receive: { items: any };
     sa_socket_send: { cmd: number; data: SAType.SocketRequestData };
     sa_socket_receive: { cmd: number; buffer: egret.ByteArray | undefined };
+    sa_pet_bag_update: [Pet[], Pet[]];
     sa_module_script_loaded: string;
 };

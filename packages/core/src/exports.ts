@@ -17,26 +17,29 @@ const getHandler = <T extends object>(): ProxyHandler<T> => ({
 });
 
 export const SAEntity = new Proxy(Entity, getHandler<typeof Entity>());
+
 export namespace SAEntity {
-    export type IItemObject = import('./entity').IItemObject;
-    export type IPFLevelBoss = import('./entity').IPFLevelBoss;
-    export type IPetFragmentLevelObject = import('./entity').IPetFragmentLevelObject;
-    export type IPetObject = import('./entity').IPetObject;
-    export type ISkillObject = import('./entity').ISkillObject;
-    export type Pet = import('./entity').Pet;
-    export type Item = import('./entity').Item;
-    export type PetElement = import('./entity').PetElement;
-    export type PetFragmentLevel = import('./entity').PetFragmentLevel;
-    export type PetRoundInfo = import('./entity').PetRoundInfo;
-    export type Skill = import('./entity').Skill;
+    export type IItemObject = Entity.IItemObject;
+    export type IPFLevelBoss = Entity.IPFLevelBoss;
+    export type IPetFragmentLevelObject = Entity.IPetFragmentLevelObject;
+    export type IPetObject = Entity.IPetObject;
+    export type ISkillObject = Entity.ISkillObject;
+
+    export type Pet = Entity.Pet;
+    export type Item = Entity.Item;
+    export type PetElement = Entity.PetElement;
+    export type PetFragmentLevel = Entity.PetFragmentLevel;
+    export type PetRoundInfo = Entity.PetRoundInfo;
+    export type Skill = Entity.Skill;
 }
 
 export const SABattle = new Proxy(Battle, getHandler<typeof Battle>());
+
 export namespace SABattle {
-    export type MoveModule = import('./battle').MoveModule;
-    export type RoundInfo = import('./battle').RoundInfo;
-    export type Strategy = import('./battle').Strategy;
-    export type Trigger = import('./battle').Trigger;
+    export type MoveModule = Battle.MoveModule;
+    export type RoundInfo = Battle.RoundInfo;
+    export type Strategy = Battle.Strategy;
+    export type Trigger = Battle.Trigger;
 }
 
 export const SAEngine = new Proxy(Engine, getHandler<typeof Engine>());

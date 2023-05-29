@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { CoreLoader, HelperLoader } from 'seerh5-assistant-core';
-import { useMod } from './provider/useMod';
+import { useMod } from './hooks/useMod';
 import './stylesheets/main.css';
 
 const container = document.getElementById('sa-container')!;

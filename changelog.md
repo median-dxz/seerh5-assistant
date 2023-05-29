@@ -29,6 +29,7 @@
 - [ ] 编写单元测试
 - [ ] 完整可读的api doc
 - [ ] vsc对项目内部禁用node环境的提示
+- [ ] App引入swr库管理服务器状态，将逐步迁移重构相关代码
 
 待定功能
 
@@ -41,8 +42,10 @@
 - [x] 首回合获取不到self和other
 - [x] switchPet不会没法便捷获取新的pet
 - [x] 使用service worker进行资源缓存
+- [x] 删除sac的url cache，修改为原客户端获取真实url的接口
 - [ ] 战队派遣模块的bug(重复刷新)
 - [ ] 更新背包精灵发包后无响应的bug(cache await update一直不resolve)(hmr?)
+  - 目前倾向是原生PetManager那边的问题
 
 - [ ] 小舞第4关脚本(压血84)
 - [ ] log写入本地
@@ -67,7 +70,7 @@ Core: v0.4.3 (ps: 感觉大部分core模块都翻了个底朝天)
 
 ```typescript
 // 之前的最小自动战斗配置
-async (round, skill, pets) {
+const resolver = async (round, skill, pets) {
    const snm = new SkillNameMatch(_snm);
    const dsl = new DiedSwitchLink(_dsl);
    if (round.isDiedSwitch) {
@@ -91,7 +94,7 @@ async (round, skill, pets) {
 // 现在
 const snm = new SkillNameMatch(_snm);
 const dsl = new NoBloodSwitchLink(_dsl);
-{
+const resolver = {
    resolveNoBlood(round, skills, pets) {
       return dsl.match(pets, round.self!.catchtime);
    },

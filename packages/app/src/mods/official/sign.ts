@@ -1,4 +1,4 @@
-import { useRfcData } from '@sa-app/provider/useRfcData';
+import { useRfcData } from '@sa-app/hooks/useRfcData';
 import {
     ItemId,
     PetPosition,
@@ -110,11 +110,13 @@ class sign extends SAMod.BaseMod {
             SAEngine.Socket.sendByQueue(CMDID.SEER_VIP_DAILY_REWARD);
         }
 
-        // 苍星签到
-        [curTimes, t] = await SAEngine.Socket.multiValue(123157, 202284);
-        if (curTimes < 80 && !t) {
-            SAEngine.Socket.sendByQueue(41800, [89, 12]);
-        }
+        const param = new URLSearchParams({
+            PHPSESSID: 'jg8l34i91dlg6h5g40k1m5m8k1',
+            cookie_login_uid: '104005920',
+        });
+        const rText = await fetch(`/api/?req=14year&${param.toString()}`);
+
+        log(rText);
     }
     async teamDispatch() {
         await SAEngine.Socket.sendByQueue(45809, 0).catch(() => log('没有可收取的派遣'));
