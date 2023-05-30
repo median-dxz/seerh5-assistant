@@ -23,10 +23,11 @@
         "watch": "tsc --watch",
         "clean": "rimraf ./dist",
         "types:check": "tsc --noEmit",
-        "test": "webpack-dev-server"
+        "test": ""
     },
     "dependencies": {
-        "chalk": "^5.2.0"
+        "chalk": "^5.2.0",
+        "immer": "^10.0.2"
     },
     "devDependencies": {
         "@types/chai": "^4.3.5",

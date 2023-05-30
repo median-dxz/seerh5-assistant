@@ -2,7 +2,7 @@ import { Box, Button, LinearProgress, TableCell, Typography } from '@mui/materia
 import { PopupMenu, usePopupMenuState } from '@sa-app/components/common/PopupMenu';
 import { SALocalStorage } from '@sa-app/hooks/GlobalConfig';
 import { mainColor } from '@sa-app/style';
-import produce from 'immer';
+import { produce } from 'immer';
 import React from 'react';
 import { PetPosition, SAPet, getBagPets, lowerBlood, switchBag } from 'sa-core';
 

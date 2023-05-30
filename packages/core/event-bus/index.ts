@@ -20,7 +20,7 @@ export class SAEventBus {
         return SocketConnection.addCmdListener(...args);
     }
 
-    egret<T extends egret.Event>(event: string, callback: (evt?: T) => void) {
+    egret(event: string, callback: Function) {
         this.cleanFn.push(() => {
             EventManager.removeEventListener(event, callback, undefined);
         });

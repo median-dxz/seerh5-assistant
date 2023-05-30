@@ -10,7 +10,7 @@ import ReactRefreshTypeScript from 'react-refresh-typescript';
 import TerserPlugin from 'terser-webpack-plugin';
 import WorkboxPlugin from 'workbox-webpack-plugin';
 
-import { saProxyMiddleware, saRfcMiddleware } from '../../webpack.proxy.js';
+import { saProxyMiddleware, saRfcMiddleware } from '../../sa.proxy.middleware.js';
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

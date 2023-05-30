@@ -27,7 +27,7 @@ interface LevelData {
     canRewardReceive: boolean;
     weeklyChallengeCount: number;
     challengeCount: number;
-    elfId: AttrConst<typeof ElfKingsId>;
+    elfId: typeof ElfKingsId[keyof typeof ElfKingsId];
 }
 
 const RealmName = '精灵王的试炼';

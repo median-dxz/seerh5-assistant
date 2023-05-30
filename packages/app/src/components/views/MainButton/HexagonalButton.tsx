@@ -1,4 +1,5 @@
-import ButtonUnstyled, { ButtonUnstyledProps } from '@mui/base/ButtonUnstyled';
+import ButtonUnstyled from '@mui/base/Button';
+import type { ButtonBaseProps } from '@mui/material';
 import { styled } from '@mui/system';
 import * as React from 'react';
 import { ForwardedRef, forwardRef, PropsWithChildren } from 'react';
@@ -112,8 +113,8 @@ const CustomButtonRoot = styled(ButtonRoot)`
 `;
 
 export const HexagonalButton = forwardRef(function (
-    props: ButtonUnstyledProps & { baseSize: number },
+    props: ButtonBaseProps & { baseSize: number },
     ref: ForwardedRef<any>
 ) {
-    return <ButtonUnstyled {...props} component={CustomButtonRoot} ref={ref}/>;
+    return <ButtonUnstyled {...props} slots={{ root: CustomButtonRoot }} ref={ref} />;
 });

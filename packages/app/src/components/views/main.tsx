@@ -94,7 +94,7 @@ export default function SaMain() {
                             <ClickAwayListener onClickAway={handleClickAway}>
                                 <div ref={mainRef}>
                                     <MainButton
-                                        onClick={(e) => {
+                                        onClick={() => {
                                             toggleMainPanel((preState) => !preState);
                                         }}
                                     />
