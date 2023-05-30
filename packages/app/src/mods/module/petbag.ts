@@ -1,8 +1,9 @@
-import { SAEngine, SAEntity, SAMod, debounce, hook, hookPrototype, SAEvent } from 'seerh5-assistant-core';
+import { ModuleMod } from '@sa-app/mod-manager/mod-type';
+import { SAEngine, SAEntity, debounce, hook, hookPrototype, SAEvent } from 'seerh5-assistant-core';
 
 const { SAEventBus } = SAEvent;
 
-class LocalCloth extends SAMod.ModuleMod<petBag.PetBag> {
+class LocalCloth extends ModuleMod<petBag.PetBag> {
     moduleName = 'petBag';
     meta = { id: 'SA::ModuleMod::PetBag', description: '精灵背包模块注入' };
 

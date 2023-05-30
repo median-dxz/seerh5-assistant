@@ -1,7 +1,5 @@
 import { InternalInitiator, enableBasic } from './internal';
 
-import * as SAMod from '../mod-manager';
-
 import { SaModuleLogger, defaultStyle } from '../logger';
 
 const log = SaModuleLogger('SALoader', defaultStyle.core);
@@ -20,7 +18,6 @@ export async function CoreLoader() {
 
             resolve(true);
             sac.SacReady = true;
-            sac.Mods = SAMod.Mods;
 
             window.dispatchEvent(new CustomEvent('seerh5_assistant_ready'));
             log(`SeerH5-Assistant Core Loaded Successfully!`);

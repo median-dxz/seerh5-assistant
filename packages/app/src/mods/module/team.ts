@@ -1,6 +1,7 @@
-import { SAEngine, SAMod } from 'seerh5-assistant-core';
+import { ModuleMod } from '@sa-app/mod-manager/mod-type';
+import { SAEngine } from 'seerh5-assistant-core';
 
-class TeamTechCenter extends SAMod.ModuleMod<team.TeamTech> {
+class TeamTechCenter extends ModuleMod<team.TeamTech> {
     meta = { id: 'SA::Module::team', description: '精灵科技中心模块注入' };
 
     moduleName = 'team';

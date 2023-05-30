@@ -1,4 +1,4 @@
-import { SAMod } from 'seerh5-assistant-core';
+import { Mods, register } from '@sa-app/mod-manager';
 
 export const useMod = async () => {
     let mods = await Promise.all([
@@ -12,9 +12,9 @@ export const useMod = async () => {
 
     for (let mod of mods) {
         const modObj = mod.default;
-        SAMod.register(modObj);
+        register(modObj);
     }
-    for (let [id, mod] of sac.Mods) {
+    for (let [id, mod] of Mods) {
         mod.init();
     }
 };

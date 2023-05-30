@@ -6,7 +6,7 @@ import useSWRSubscription from 'swr/subscription';
 const eventBus = new SAEvent.SAEventBus();
 
 export function useBagPets() {
-    const { data: pets} = useSWRSubscription(
+    const { data: pets } = useSWRSubscription(
         'ds://PetBag',
         React.useCallback((_, { next }: SWRSubscriptionOptions<SAEntity.Pet[], Error>) => {
             eventBus.hook(Hook.PetBag.deactivate, debounce(getBagPets, 100));
@@ -20,7 +20,6 @@ export function useBagPets() {
         }, []),
         {
             fallbackData: PetDataManger.bag.getImmediate()[0],
-            
         }
     );
     return { pets };

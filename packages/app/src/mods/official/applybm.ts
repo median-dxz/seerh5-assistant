@@ -1,10 +1,10 @@
+import { BaseMod } from '@sa-app/mod-manager/mod-type';
 import { MoveModule } from 'packages/core/src/battle/manager';
 import {
     PetFragmentLevelDifficulty as Difficulty,
     NULL,
     SABattle,
     SAEngine,
-    SAMod,
     SaModuleLogger,
     cureAllPet,
     defaultStyle,
@@ -281,7 +281,7 @@ const options: PetFragment.Option[] = [
     },
 ];
 
-class applyBm extends SAMod.BaseMod {
+class applyBm extends BaseMod {
     constructor() {
         super();
     }

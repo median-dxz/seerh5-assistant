@@ -3,6 +3,7 @@ import { styled } from '@mui/system';
 import { mainColor } from '@sa-app/style';
 import React, { useEffect, useState } from 'react';
 import { StyledTextField } from './StyledTextField';
+import { Mods } from '@sa-app/mod-manager';
 
 const Autocomplete: typeof AutocompleteRaw = styled(
     ({ className, ...props }: AutocompleteProps<unknown, false, false, false>) => (
@@ -36,14 +37,13 @@ export function CommandInput() {
 
     useEffect(() => {
         let o = [];
-        const Mods = sac.Mods;
         if (modName) {
             for (const key of Mods.get(modName)!.getKeys()) {
                 o.push(key);
             }
             o.push('return');
-        } else if (sac.Mods) {
-            for (const key of sac.Mods.keys()) {
+        } else if (Mods) {
+            for (const key of Mods.keys()) {
                 o.push(key);
             }
         }
@@ -88,13 +88,13 @@ export function CommandInput() {
             value={value}
             onChange={(event, newValue: string | null) => {
                 if (modName && newValue) {
-                    sac.Mods.get(modName)!.reflect(newValue);
+                    Mods.get(modName)!.reflect(newValue);
                     BubblerManager.getInstance().showText(`[Info]: 应用命令: ${modName}: ${newValue}`);
                     if (newValue === 'return') {
                         handleLeaveMod();
                     } else {
                         setValue(null);
-                        setInputValue("");
+                        setInputValue('');
                     }
                 } else {
                     handleEnterMod(newValue!);

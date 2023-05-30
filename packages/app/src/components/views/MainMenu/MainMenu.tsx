@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { mainColor } from '@sa-app/style';
 import { SAEngine } from 'seerh5-assistant-core';
 import { StyledSpeedDial } from './StyledSpeedDial';
+import { Mods } from '@sa-app/mod-manager';
 
 const iconSx: SxProps = {
     color: `rgba(${mainColor.front} / 100%)`,
@@ -41,10 +42,10 @@ export function MainMenu() {
             FightManager.fightNoMapBoss(6730);
         },
         () => {
-            sac.Mods.get('sign')!.reflect('run');
+            Mods.get('sign')!.reflect('run');
         },
         () => {
-            sac.Mods.get('sign')!.reflect('teamDispatch');
+            Mods.get('sign')!.reflect('teamDispatch');
         },
     ];
 

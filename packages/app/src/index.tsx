@@ -4,7 +4,7 @@ import { CoreLoader, HelperLoader } from 'seerh5-assistant-core';
 import { useMod } from './hooks/useMod';
 import './stylesheets/main.css';
 
-const container = document.getElementById('sa-container')!;
+const container = document.getElementById('sa-app')!;
 const root = ReactDOM.createRoot(container);
 
 const renderApp = async () => {

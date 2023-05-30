@@ -1,4 +1,5 @@
-import { SAMod, SAEngine } from 'seerh5-assistant-core';
+import { BaseMod } from '@sa-app/mod-manager/mod-type';
+import { SAEngine } from 'seerh5-assistant-core';
 
 const rate = [
     [0, 24, 5.8, 1.4, 0.3],
@@ -11,7 +12,7 @@ function calcProbability(level: number, targetLevel: number) {
     return rate[level][targetLevel];
 }
 
-class CraftSkillStone extends SAMod.BaseMod {
+class CraftSkillStone extends BaseMod {
     stones: {
         name: string;
         level: number;

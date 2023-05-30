@@ -50,6 +50,3 @@ export type { GameModuleEventHandler, SASocketData, SocketEventHandler } from '.
 
 export * from './functions';
 export * from './pet-helper';
-
-export * as SAMod from './mod-manager';
-

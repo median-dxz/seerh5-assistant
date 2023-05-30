@@ -1,5 +1,6 @@
-import { GameModuleEventHandler, GameModuleListener } from '../event-bus';
-import { SaModuleLogger, defaultStyle } from '../logger';
+import { SAEvent, type GameModuleEventHandler } from 'seerh5-assistant-core';
+
+const { GameModuleListener } = SAEvent;
 
 export abstract class BaseMod {
     reflect(method: string, ...args: any[]) {
@@ -26,7 +27,7 @@ export abstract class BaseMod {
 }
 
 export abstract class ModuleMod<ModuleType extends BaseModule> extends BaseMod {
-    log: ReturnType<typeof SaModuleLogger>;
+    log: Function;
 
     abstract moduleName: string;
 
@@ -41,7 +42,7 @@ export abstract class ModuleMod<ModuleType extends BaseModule> extends BaseMod {
     subscriber: GameModuleEventHandler<ModuleType>;
 
     init() {
-        this.log = SaModuleLogger(this.meta.id, defaultStyle.mod);
+        this.log = console.log;
 
         this.subscriber = {
             moduleName: this.moduleName,

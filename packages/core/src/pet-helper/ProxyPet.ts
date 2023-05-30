@@ -105,17 +105,13 @@ class DataManager {
         this.cacheTimestamp.set(pet.catchTime, Date.now());
 
         if (this.cache.size > this.CacheSize) {
-            let oldestCt: CatchTime = -1;
-            let oldestTimestamp: number = Infinity;
-
-            for (const [k, v] of this.cacheTimestamp.entries()) {
-                if (v < oldestTimestamp) {
-                    [oldestCt, oldestTimestamp] = [k, v];
-                }
-            }
-
-            this.cache.delete(oldestCt);
-            this.cacheTimestamp.delete(oldestCt);
+            Array.from(this.cacheTimestamp.entries())
+                .sort((a, b) => a[1] - b[1])
+                .slice(0, this.cacheTimestamp.size - this.CacheSize - 1)
+                .forEach(([ct, _]) => {
+                    this.cache.delete(ct);
+                    this.cacheTimestamp.delete(ct);
+                });
         }
 
         if (this.queryQueue.has(pet.catchTime)) {
@@ -251,3 +247,4 @@ export function SAPet(pet: CatchTime | Pet) {
 }
 
 export { ins as PetDataManger };
+

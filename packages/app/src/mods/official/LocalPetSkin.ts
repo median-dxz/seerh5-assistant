@@ -1,4 +1,5 @@
-import { NULL, SAEngine, SAMod, SaModuleLogger, createLocalStorageProxy, defaultStyle } from 'seerh5-assistant-core';
+import { BaseMod } from '@sa-app/mod-manager/mod-type';
+import { NULL, SAEngine, SaModuleLogger, createLocalStorageProxy, defaultStyle } from 'seerh5-assistant-core';
 const log = SaModuleLogger('LocalCloth', defaultStyle.mod);
 
 const StorageKey = 'LocalSkin';
@@ -24,7 +25,7 @@ const cloth = createLocalStorageProxy<{ changed: Map<number, SkinInfo>; original
     }
 );
 
-export default class LocalPetSkin extends SAMod.BaseMod {
+export default class LocalPetSkin extends BaseMod {
     meta = { id: 'LocalPetSkin', description: '本地全皮肤解锁' };
     init() {
         Object.defineProperty(FighterUserInfo.prototype, 'petInfoArr', {
