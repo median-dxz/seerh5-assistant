@@ -1,9 +1,6 @@
 import { DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import React from 'react';
 
-import { SABattle } from 'seerh5-assistant-core';
-const { Manager } = SABattle;
-
 export type LevelExtendsProps<P = unknown> = P & {
     running: boolean;
     setRunning: React.Dispatch<React.SetStateAction<boolean>>;

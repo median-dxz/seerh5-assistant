@@ -1,7 +1,9 @@
 import React from 'react';
-import { cureAllPet, delay, SABattle, SAEngine, switchBag } from 'seerh5-assistant-core';
-import dataProvider from './data';
+import { cureAllPet, delay, switchBag } from 'sa-core';
+import * as SABattle from 'sa-core/battle';
+import * as SAEngine from 'sa-core/engine';
 import { LevelBase, LevelExtendsProps } from './LevelBase';
+import dataProvider from './data';
 
 interface LevelData {
     open: boolean;

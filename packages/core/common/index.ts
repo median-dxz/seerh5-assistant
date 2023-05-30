@@ -1,3 +1,6 @@
+export type AnyFunction = (...args: any) => any;
+export type Constructor<T extends new (...args: any) => any = any> = { new (...args: any[]): InstanceType<T> };
+
 export function delay(time: number): Promise<void> {
     return new Promise((resolver) => setTimeout(resolver, time));
 }
@@ -34,7 +37,7 @@ type HookedFunction<T extends object, K extends keyof T> = T[K] extends (...args
     ? (this: T, originalFunc: (...args: P) => R, ...args: P) => R
     : never;
 
-export function hook<T extends object, K extends keyof T>(target: T, funcName: K, hookedFunc?: HookedFunction<T, K>) {
+export function hookFn<T extends object, K extends keyof T>(target: T, funcName: K, hookedFunc?: HookedFunction<T, K>) {
     let originalFunc = target[funcName] as Function;
     if (typeof originalFunc !== 'function') return;
 
@@ -61,7 +64,7 @@ export function hookPrototype<T extends HasPrototype, K extends keyof T['prototy
     hookedFunc?: HookedFunction<T['prototype'], K>
 ) {
     const proto = target.prototype;
-    proto && hook(proto, funcName, hookedFunc);
+    proto && hookFn(proto, funcName, hookedFunc);
 }
 
 export const checkEnv = () =>
@@ -81,9 +84,25 @@ export { createLocalStorageProxy, type LocalStorageProxy } from './LocalStorage'
 
 export { SAEventTarget } from './SAEventTarget';
 
+export { CacheData } from './CacheData';
+
 export function tryGet<TKey, TValue>(map: Map<TKey, Set<TValue>>, key: TKey) {
     if (!map.has(key)) {
         map.set(key, new Set());
     }
     return map.get(key)!;
 }
+
+import chalk, { ChalkInstance } from 'chalk';
+
+chalk.level = 3;
+
+export const defaultStyle = {
+    mod: chalk.hex('#fc9667'),
+    core: chalk.hex('#e067fc'),
+    none: chalk.bgHex('#eff1f3'),
+} as const;
+
+export const SaModuleLogger = (module: string, fontStyle: ChalkInstance = defaultStyle.none): typeof console.log => {
+    return console.log.bind(console, fontStyle('[%s]:'), module);
+};

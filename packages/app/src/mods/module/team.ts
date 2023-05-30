@@ -1,5 +1,5 @@
 import { ModuleMod } from '@sa-app/mod-manager/mod-type';
-import { SAEngine } from 'seerh5-assistant-core';
+import { Socket } from 'sa-core';
 
 class TeamTechCenter extends ModuleMod<team.TeamTech> {
     meta = { id: 'SA::Module::team', description: '精灵科技中心模块注入' };
@@ -23,7 +23,7 @@ class TeamTechCenter extends ModuleMod<team.TeamTech> {
             }
 
             const updateOnce = (): Promise<void> =>
-                SAEngine.Socket.sendByQueue(CommandID.NEW_TEAM_PET_RISE, [this._petInfo.catchTime, index])
+                Socket.sendByQueue(CommandID.NEW_TEAM_PET_RISE, [this._petInfo.catchTime, index])
                     .then(() => PetManager.UpdateBagPetInfoAsynce(this._petInfo.catchTime))
                     .then((petInfo) => {
                         this._petInfo = petInfo;

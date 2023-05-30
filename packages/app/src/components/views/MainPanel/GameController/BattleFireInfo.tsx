@@ -1,7 +1,7 @@
 import { Button, Typography } from '@mui/material';
 import { PanelStateContext } from '@sa-app/context/PanelState';
 import React from 'react';
-import { BattleFireType, updateBattleFireInfo } from 'seerh5-assistant-core';
+import { BattleFireType, updateBattleFireInfo } from 'sa-core';
 
 const timeFormatter = (n: number) => {
     const { format } = Intl.NumberFormat(undefined, {

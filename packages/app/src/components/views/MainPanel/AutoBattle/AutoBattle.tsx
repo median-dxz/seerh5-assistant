@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { TextEditDialog, TextEditDialogProps } from '@sa-app/components/common/TextEditDialog';
 import { SAContext } from '@sa-app/context/SAContext';
 import { SALocalStorage } from '@sa-app/hooks/GlobalConfig';
-import { SABattle } from 'seerh5-assistant-core';
+import * as SABattle from 'sa-core/battle';
 import { PanelTableBase, PanelTableBodyRow } from '../base';
 
 const handleAdd = (arr: any[], value: string) => {

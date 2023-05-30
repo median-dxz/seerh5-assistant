@@ -1,24 +1,35 @@
 {
-    "name": "seerh5-assistant-core",
+    "name": "sa-core",
+    "description": "SeerH5-Assistant核心库",
     "private": true,
     "type": "module",
-    "version": "0.4.3",
+    "version": "0.4.4",
     "license": "MPL-2.0",
-    "main": "./dist/index.js",
+    "exports": {
+        ".": "./dist/index.js",
+        "./battle": "./dist/battle/index.js",
+        "./common": "./dist/common/index.js",
+        "./constant": "./dist/constant/index.js",
+        "./engine": "./dist/engine/index.js",
+        "./event-bus": "./dist/event-bus/index.js",
+        "./entity": "./dist/entity/index.js",
+        "./functions": "./dist/functions/index.js",
+        "./pet-helper": "./dist/pet-helper/index.js"
+    },
     "browser": "./dist/index.js",
-    "types": "./types/index.d.ts",
+    "types": "./dist/index.d.ts",
     "scripts": {
-        "build": "npm run clean & tsc --build",
+        "build": "npm run clean && tsc",
         "watch": "tsc --watch",
-        "clean": "rimraf ./dist & rimraf ./types",
-        "test": " webpack-dev-server"
+        "clean": "rimraf ./dist",
+        "types:check": "tsc --noEmit",
+        "test": "webpack-dev-server"
     },
     "dependencies": {
         "chalk": "^5.2.0"
     },
     "devDependencies": {
         "@types/chai": "^4.3.5",
-        "@types/mocha": "^10.0.1",
-        "rimraf": "^4.3.1"
+        "@types/mocha": "^10.0.1"
     }
 }

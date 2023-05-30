@@ -4,7 +4,7 @@ import { SALocalStorage } from '@sa-app/hooks/GlobalConfig';
 import { mainColor } from '@sa-app/style';
 import produce from 'immer';
 import React from 'react';
-import { PetPosition, SAPet, getBagPets, lowerBlood, switchBag } from 'seerh5-assistant-core';
+import { PetPosition, SAPet, getBagPets, lowerBlood, switchBag } from 'sa-core';
 
 import { useBagPets } from '@sa-app/hooks/useBagPets';
 import { PanelTableBase } from '../base';

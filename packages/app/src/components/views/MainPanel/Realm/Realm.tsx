@@ -10,7 +10,8 @@ import { LevelStudyTraining } from './LevelStudyTraining';
 import { LevelTitanHole } from './LevelTitanHole';
 import { LevelXTeamRoom } from './LevelXTeamRoom';
 
-import { SABattle, SAEngine } from 'seerh5-assistant-core';
+import * as SABattle from 'sa-core/battle';
+import * as SAEngine from 'sa-core/engine';
 
 interface Level {
     name: string;

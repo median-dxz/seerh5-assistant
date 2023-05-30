@@ -1,6 +1,5 @@
-import { delay } from '../common';
+import { SaModuleLogger, defaultStyle, delay } from '../common';
 import { Socket } from '../engine';
-import { defaultStyle, SaModuleLogger } from '../logger';
 const log = SaModuleLogger('BattleOperator', defaultStyle.core);
 
 export const Operator = {

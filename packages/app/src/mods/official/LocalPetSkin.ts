@@ -1,5 +1,5 @@
 import { BaseMod } from '@sa-app/mod-manager/mod-type';
-import { NULL, SAEngine, SaModuleLogger, createLocalStorageProxy, defaultStyle } from 'seerh5-assistant-core';
+import { NULL, SaModuleLogger, Socket, createLocalStorageProxy, defaultStyle } from 'sa-core';
 const log = SaModuleLogger('LocalCloth', defaultStyle.mod);
 
 const StorageKey = 'LocalSkin';
@@ -75,7 +75,7 @@ export default class LocalPetSkin extends BaseMod {
             log('new skin id:', skinId, 'previous skin id:', petInfo.skinId);
             if (skinId === 0 || PetSkinController.instance.haveSkin(skinId)) {
                 if (cloth.original.get(petInfo.id) !== skinId) {
-                    await SAEngine.Socket.sendByQueue(47310, [catchTime, skinId]);
+                    await Socket.sendByQueue(47310, [catchTime, skinId]);
                 } else {
                     cloth.use(({ original }) => {
                         original.delete(petInfo.id);

@@ -19,7 +19,7 @@ export async function sendByQueue(cmd: number, data: Array<number> | number = []
 export async function sendWithReceivedPromise(cmd: number, fn: VoidFunction) {
     if (!fn) return;
     return new Promise<ArrayBuffer>((resolve, reject) => {
-        new Promise<{ data: ArrayBuffer; resolver: CallBack<ArrayBuffer> }>((resolve, reject) => {
+        new Promise<{ data: ArrayBuffer; resolver: (data: ArrayBuffer) => void }>((resolve, reject) => {
             function resolver(data: ArrayBuffer) {
                 resolve({ data, resolver });
             }

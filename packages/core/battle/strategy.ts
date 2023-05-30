@@ -1,6 +1,5 @@
-import { delay } from '../common';
+import { SaModuleLogger, defaultStyle, delay } from '../common';
 import { Pet, Skill } from '../entity';
-import { SaModuleLogger, defaultStyle } from '../logger';
 import type { MoveModule } from './manager';
 import { Manager } from './manager';
 import { Operator } from './operator';

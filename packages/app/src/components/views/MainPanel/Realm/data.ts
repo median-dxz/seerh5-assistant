@@ -1,10 +1,11 @@
-import { SABattle, SAEntity } from 'seerh5-assistant-core';
-const { generateStrategy, Operator, SkillNameMatch, NoBloodSwitchLink } = SABattle;
+import { MoveModule, NoBloodSwitchLink, Operator, SkillNameMatch, generateStrategy } from 'sa-core';
+import * as SABattle from 'sa-core/battle';
+import * as SAEntity from 'sa-core/entity';
 
 interface LevelPetsData {
     [levelName: string]: {
         cts: number[];
-        strategy: SABattle.MoveModule;
+        strategy: MoveModule;
     };
 }
 

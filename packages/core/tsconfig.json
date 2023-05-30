@@ -2,17 +2,25 @@
     "extends": "../../tsconfig.json",
     "compilerOptions": {
         "outDir": "dist",
-        "rootDir": "src",
+        "rootDir": ".",
         "inlineSourceMap": true,
         "declaration": true,
-        "declarationDir": "types",
         "tsBuildInfoFile": "../../build/core.tsbuildinfo",
         "types": [
             "chai"
         ],
     },
     "include": [
-        "./src/**/*",
         "../../types",
+        "./battle/**/*",
+        "./common/**/*",
+        "./constant/**/*",
+        "./engine/**/*",
+        "./entity/**/*",
+        "./event-bus/**/*",
+        "./functions/**/*",
+        "./loader/**/*",
+        "./pet-helper/**/*",
+        "./index.ts"
     ],
 }

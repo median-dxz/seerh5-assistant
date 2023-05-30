@@ -1,6 +1,7 @@
-import { Box, Button, Divider, Typography } from '@mui/material';
+import { Button, Divider, Typography } from '@mui/material';
 
-import { SAEngine, cureAllPet } from 'seerh5-assistant-core';
+import { SAConfig, cureAllPet } from 'sa-core';
+import * as SAEngine from 'sa-core/engine';
 
 import { PopupMenu, PopupMenuItemHandler, usePopupMenuState } from '@sa-app/components/common/PopupMenu';
 import { mainColor } from '@sa-app/style';
@@ -11,8 +12,8 @@ import { AnimationMode } from './AnimationMode';
 import { BattleFireInfo } from './BattleFireInfo';
 import { PetBagController } from './PetBagController';
 
-const titleName = SAEngine.getName.bind(null, 'title');
-const suitName = SAEngine.getName.bind(null, 'suit');
+const titleName = SAConfig.getName.bind(null, 'title');
+const suitName = SAConfig.getName.bind(null, 'suit');
 
 export function GameController() {
     const [userTitle, setUserTitle] = React.useState(0);
@@ -84,7 +85,7 @@ export function GameController() {
             <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']}>
                 套装
                 <Button variant="outlined" sx={{ m: 1 }} onClick={handleChangeSuit}>
-                    {SAEngine.getName('suit', userSuit)}
+                    {SAConfig.getName('suit', userSuit)}
                 </Button>
                 <Typography>{`效果: ${ItemSeXMLInfo.getSuitEff(userSuit)}`}</Typography>
             </Typography>
@@ -94,7 +95,7 @@ export function GameController() {
                 <Button variant="outlined" sx={{ m: 1 }} onClick={handleChangeTitle}>
                     {titleName(userTitle)}
                 </Button>
-                <Typography>{`效果: ${SAEngine.get('title', userTitle)?.abtext}`}</Typography>
+                <Typography>{`效果: ${SAConfig.get('title', userTitle)?.abtext}`}</Typography>
             </Typography>
 
             <Divider />

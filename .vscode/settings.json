@@ -13,12 +13,14 @@
     "cSpell.words": [
         "catchtime",
         "gsap",
-        "hasmodule",
         "immer",
         "middlewares",
-        "pmmmwh",
         "seerh5",
         "sac",
     ],
+    "files.exclude": {
+        "**/packages/core/types": true,
+        "**/packages/core/node_modules": true
+    }
     // "typescript.referencesCodeLens.enabled": true,
 }

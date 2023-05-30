@@ -1,5 +1,5 @@
 import { extractObjectId } from '../common';
-import { IItemObject, Item } from '../entity/Item';
+import { IItemObject, Item } from '../entity';
 import * as Socket from './socket';
 
 export function getItemNum(item: number | IItemObject) {

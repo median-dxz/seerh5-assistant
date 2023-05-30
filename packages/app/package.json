@@ -12,18 +12,19 @@
         "test": "echo 'not implement'"
     },
     "devDependencies": {
-        "gsap": "^3.11.4"
+        "gsap": "^3.11.5",
+        "workbox-webpack-plugin": "^6.6.0"
     },
     "dependencies": {
         "@mui/icons-material": "latest",
         "@mui/material": "latest",
-        "@mui/styled-engine-sc": "^5.11.0",
-        "@mui/system": "^5.11.7",
-        "immer": "^9.0.19",
+        "@mui/styled-engine-sc": "^5.12.0",
+        "@mui/system": "^5.13.2",
+        "immer": "^10.0.2",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
-        "seerh5-assistant-core": "^0.4.0",
-        "styled-components": "^5.3.6",
+        "sa-core": "^0.4.0",
+        "styled-components": "^5.3.11",
         "swr": "^2.1.5"
     }
 }

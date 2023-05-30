@@ -1,4 +1,4 @@
-import { createLocalStorageProxy } from 'seerh5-assistant-core';
+import { createLocalStorageProxy } from 'sa-core';
 
 export namespace SALocalStorage {
     export const BattleStrategy = createLocalStorageProxy('BattleStrategy', {

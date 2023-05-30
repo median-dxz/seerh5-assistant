@@ -1,3 +1,5 @@
+declare type Dict<T extends object> = Record<string | number, T>;
+
 declare namespace SAType {
     type EventHandler<E extends egret.EventDispatcher> = (event?: E) => void;
 

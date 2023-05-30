@@ -3,14 +3,14 @@ import { BaseMod } from '@sa-app/mod-manager/mod-type';
 import {
     ItemId,
     PetPosition,
-    SAEngine,
     SAPet,
     SAPetLocation,
     SaModuleLogger,
+    Socket,
     defaultStyle,
     delay,
     getBagPets,
-} from 'seerh5-assistant-core';
+} from 'sa-core';
 
 const log = SaModuleLogger('Sign', defaultStyle.mod);
 
@@ -46,15 +46,15 @@ class sign extends BaseMod {
     }
     async run() {
         const CMDID = CommandID;
-        let curTimes = (await SAEngine.Socket.multiValue(MULTI.日常.刻印抽奖次数))[0];
+        let curTimes = (await Socket.multiValue(MULTI.日常.刻印抽奖次数))[0];
         if (curTimes === 0) {
             //CMD MARKDRAW: 46301
-            SAEngine.Socket.sendByQueue(46301, [1, 0]);
+            Socket.sendByQueue(46301, [1, 0]);
         } else {
             log('今日已抽奖');
         }
 
-        curTimes = (await SAEngine.Socket.multiValue(MULTI.许愿.登录时长))[0];
+        curTimes = (await Socket.multiValue(MULTI.许愿.登录时长))[0];
         curTimes =
             curTimes +
             Math.floor(SystemTimerManager.sysBJDate.getTime() / 1e3) -
@@ -74,40 +74,40 @@ class sign extends BaseMod {
             : curTimes >= 5
             ? (t = 1)
             : (t = 0);
-        t -= (await SAEngine.Socket.multiValue(MULTI.许愿.已许愿次数))[0];
+        t -= (await Socket.multiValue(MULTI.许愿.已许愿次数))[0];
         while (t--) {
-            SAEngine.Socket.sendByQueue(45801, [2, 1]);
+            Socket.sendByQueue(45801, [2, 1]);
         }
 
-        curTimes = (await SAEngine.Socket.multiValue(MULTI.战队.资源生产次数))[0];
+        curTimes = (await Socket.multiValue(MULTI.战队.资源生产次数))[0];
         t = Math.max(0, 5 - curTimes);
         while (t--) {
             // RES_PRODUCT_BUY
-            SAEngine.Socket.sendByQueue(CMDID.RES_PRODUCTORBUY, [2, 0]);
+            Socket.sendByQueue(CMDID.RES_PRODUCTORBUY, [2, 0]);
         }
-        curTimes = (await SAEngine.Socket.multiValue(MULTI.许愿.许愿签到))[0];
+        curTimes = (await Socket.multiValue(MULTI.许愿.许愿签到))[0];
         if (!curTimes) {
-            t = (await SAEngine.Socket.multiValue(MULTI.许愿.许愿签到天数))[0];
-            SAEngine.Socket.sendByQueue(45801, [1, t + 1]);
+            t = (await Socket.multiValue(MULTI.许愿.许愿签到天数))[0];
+            Socket.sendByQueue(45801, [1, t + 1]);
         }
 
         // vip点数
-        curTimes = (await SAEngine.Socket.multiValue(11516))[0];
+        curTimes = (await Socket.multiValue(11516))[0];
         if (!curTimes) {
-            SAEngine.Socket.sendByQueue(CMDID.VIP_BONUS_201409, 1);
+            Socket.sendByQueue(CMDID.VIP_BONUS_201409, 1);
         }
 
         await delay(300);
         curTimes = MainManager.actorInfo.vipScore;
         if (curTimes >= 20) {
-            SAEngine.Socket.sendByQueue(CommandID.VIP_SCORE_EXCHANGE, AWARD_LIST.vip点数.体力上限药).then(() => {
+            Socket.sendByQueue(CommandID.VIP_SCORE_EXCHANGE, AWARD_LIST.vip点数.体力上限药).then(() => {
                 EventManager.dispatchEventWith('vipRewardBuyOrGetItem');
             });
         }
 
-        curTimes = (await SAEngine.Socket.multiValue(14204))[0];
+        curTimes = (await Socket.multiValue(14204))[0];
         if (!curTimes) {
-            SAEngine.Socket.sendByQueue(CMDID.SEER_VIP_DAILY_REWARD);
+            Socket.sendByQueue(CMDID.SEER_VIP_DAILY_REWARD);
         }
 
         const param = new URLSearchParams({
@@ -119,7 +119,7 @@ class sign extends BaseMod {
         log(rText);
     }
     async teamDispatch() {
-        await SAEngine.Socket.sendByQueue(45809, 0).catch(() => log('没有可收取的派遣'));
+        await Socket.sendByQueue(45809, 0).catch(() => log('没有可收取的派遣'));
 
         const ignorePetNames = new Set(this.data.ignorePetNames);
         const PosType = PetPosition;
@@ -133,7 +133,7 @@ class sign extends BaseMod {
                     await p.popFromBag();
                 }
             }
-            const data = await SAEngine.Socket.sendByQueue(45810, tid)
+            const data = await Socket.sendByQueue(45810, tid)
                 .then((v) => new DataView(v))
                 .catch((err) => undefined);
             if (!data) continue;
@@ -171,7 +171,7 @@ class sign extends BaseMod {
                 tid++;
             } else {
                 console.table(e.petIds.map((v) => PetXMLInfo.getName(v)));
-                SAEngine.Socket.sendByQueue(45808, [tid, e.cts[0], e.cts[1], e.cts[2], e.cts[3], e.cts[4]]);
+                Socket.sendByQueue(45808, [tid, e.cts[0], e.cts[1], e.cts[2], e.cts[3], e.cts[4]]);
             }
         }
         log(`派遣任务处理完成`);
@@ -182,7 +182,7 @@ class sign extends BaseMod {
         const { 低阶梦幻宝石, 中阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石, 高阶梦幻宝石 } = ItemId;
         const level = [低阶梦幻宝石, 中阶梦幻宝石, 高阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石] as const;
         for (let i = 1; i <= Math.trunc((total - left) / 4); i++) {
-            SAEngine.Socket.sendByQueue(9332, [level.indexOf(id as (typeof level)[number]), 4]);
+            Socket.sendByQueue(9332, [level.indexOf(id as (typeof level)[number]), 4]);
         }
     }
 
@@ -195,7 +195,7 @@ class sign extends BaseMod {
             if (info.nature === nature) {
                 break;
             }
-            await SAEngine.Socket.sendWithReceivedPromise(CommandID.MULTI_ITEM_LIST, () => {
+            await Socket.sendWithReceivedPromise(CommandID.MULTI_ITEM_LIST, () => {
                 ItemManager.updateItemNum([300070], [true]);
             });
             await delay(200);

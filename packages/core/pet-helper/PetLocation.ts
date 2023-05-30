@@ -1,4 +1,4 @@
-import { PetPosition } from '../constant/index';
+import { PetPosition } from '../constant';
 import { Socket } from '../engine';
 
 export enum SAPetLocation {

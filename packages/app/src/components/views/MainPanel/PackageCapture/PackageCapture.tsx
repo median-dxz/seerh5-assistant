@@ -1,6 +1,6 @@
 import { Button, TableCell, Toolbar } from '@mui/material';
 import * as React from 'react';
-import { CmdMask, Hook, SAEventTarget, hook, type SAHookData } from 'seerh5-assistant-core';
+import { CmdMask, Hook, SAEventTarget, hookFn, type SAHookData } from 'sa-core';
 import { PanelTableBase, PanelTableBodyRow } from '../base';
 
 interface CapturedPackage {
@@ -88,8 +88,8 @@ export function PackageCapture() {
         SAEventTarget.on(Hook.Socket.send, onSend);
 
         return () => {
-            hook(SocketConnection.mainSocket, 'addCmdListener');
-            hook(SocketConnection.mainSocket, 'removeCmdListener');
+            hookFn(SocketConnection.mainSocket, 'addCmdListener');
+            hookFn(SocketConnection.mainSocket, 'removeCmdListener');
             SAEventTarget.off(Hook.Socket.send, onSend);
             SAEventTarget.off(Hook.Socket.receive, onReceive);
         };

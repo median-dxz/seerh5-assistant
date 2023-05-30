@@ -1,15 +1,12 @@
-import { Typography } from '@mui/material';
 import React from 'react';
-import {
-    PetPosition,
-    SABattle,
-    SAEngine,
-    SAEntity,
-    cureAllPet,
-    delay,
-    getBagPets,
-    switchBag,
-} from 'seerh5-assistant-core';
+
+import { PetPosition, cureAllPet, delay, getBagPets, switchBag } from 'sa-core';
+import * as SABattle from 'sa-core/battle';
+import * as SAEngine from 'sa-core/engine';
+import * as SAEntity from 'sa-core/entity';
+
+import { Typography } from '@mui/material';
+
 import { PercentLinearProgress } from '../base';
 import { LevelBase, LevelExtendsProps } from './LevelBase';
 

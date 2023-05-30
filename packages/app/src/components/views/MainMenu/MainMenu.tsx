@@ -4,10 +4,10 @@ import { SxProps } from '@mui/system';
 
 import React, { useEffect, useState } from 'react';
 
-import { mainColor } from '@sa-app/style';
-import { SAEngine } from 'seerh5-assistant-core';
-import { StyledSpeedDial } from './StyledSpeedDial';
 import { Mods } from '@sa-app/mod-manager';
+import { mainColor } from '@sa-app/style';
+import { getAutoCureState, toggleAutoCure } from 'sa-core';
+import { StyledSpeedDial } from './StyledSpeedDial';
 
 const iconSx: SxProps = {
     color: `rgba(${mainColor.front} / 100%)`,
@@ -27,7 +27,7 @@ export function MainMenu() {
     let [open, setOpen] = useState(false);
 
     useEffect(() => {
-        SAEngine.getAutoCureState().then(setAutoCure);
+        getAutoCureState().then(setAutoCure);
     }, []);
 
     actions[0].name = `自动治疗:${autoCure ? '开' : '关'}`;
@@ -36,7 +36,7 @@ export function MainMenu() {
         () => {
             autoCure = !autoCure;
             setAutoCure(autoCure);
-            SAEngine.toggleAutoCure(autoCure);
+            toggleAutoCure(autoCure);
         },
         () => {
             FightManager.fightNoMapBoss(6730);

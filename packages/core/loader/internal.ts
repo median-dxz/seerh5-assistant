@@ -1,7 +1,9 @@
 import { enableMapSet } from 'immer';
-import battle from '../battle/internal';
+
 import { NULL, SAEventTarget } from '../common';
 import { Hook } from '../constant';
+
+import battle from '../battle/internal';
 import eventBus from '../event-bus/internal';
 import pet from '../pet-helper/internal';
 import event from './event';

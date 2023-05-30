@@ -1,17 +1,11 @@
-import {
-    Button,
-    ButtonGroup,
-    Checkbox,
-    TableCell,
-    type TableRowProps
-} from '@mui/material';
+import { Button, ButtonGroup, Checkbox, TableCell, type TableRowProps } from '@mui/material';
 import { useEgretImageRes } from '@sa-app/hooks/useEgretRes';
 import React from 'react';
-import { SAEngine, SAEntity, SAPet, delay } from 'seerh5-assistant-core';
+import { SAPet, UIModuleHelper, delay, type Pet } from 'sa-core';
 import { PanelTableBodyRow } from '../base';
 
 type Props = {
-    pet: SAEntity.Pet;
+    pet: Pet;
     isDefault: boolean;
     selected: boolean;
 } & TableRowProps;
@@ -22,7 +16,7 @@ export function PetListRow({ pet, isDefault, selected, onSelect, ...props }: Pro
     const handleOpenPetItemUseProp = React.useCallback(
         async (ct: number) => {
             await ModuleManager.showModule('petBag');
-            const petBagModule = SAEngine.SeerModuleHelper.currentModule<petBag.PetBag>();
+            const petBagModule = UIModuleHelper.currentModule<petBag.PetBag>();
             await delay(300);
             const petBagPanel = petBagModule.currentPanel!;
             petBagPanel.onSelectPet({ data: PetManager.getPetInfo(ct) });

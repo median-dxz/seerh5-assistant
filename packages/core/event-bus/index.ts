@@ -4,7 +4,7 @@ export * from './module';
 export * from './socket';
 
 export class SAEventBus {
-    private cleanFn: CallBack[] = [];
+    private cleanFn: Function[] = [];
 
     hook<TEvent extends string>(...args: Parameters<typeof SAEventTarget.on<TEvent>>) {
         this.cleanFn.push(() => {
@@ -20,7 +20,7 @@ export class SAEventBus {
         return SocketConnection.addCmdListener(...args);
     }
 
-    egret<T extends egret.Event>(event: string, callback: CallBack<T>) {
+    egret<T extends egret.Event>(event: string, callback: (evt?: T) => void) {
         this.cleanFn.push(() => {
             EventManager.removeEventListener(event, callback, undefined);
         });

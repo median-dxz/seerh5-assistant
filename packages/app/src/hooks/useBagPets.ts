@@ -1,14 +1,15 @@
 import React from 'react';
-import { Hook, PetDataManger, SAEntity, SAEvent, debounce, getBagPets } from 'seerh5-assistant-core';
+import type { Pet } from 'sa-core';
+import { Hook, PetDataManger, SAEventBus, debounce, getBagPets } from 'sa-core';
 import type { SWRSubscriptionOptions } from 'swr/subscription';
 import useSWRSubscription from 'swr/subscription';
 
-const eventBus = new SAEvent.SAEventBus();
+const eventBus = new SAEventBus();
 
 export function useBagPets() {
     const { data: pets } = useSWRSubscription(
         'ds://PetBag',
-        React.useCallback((_, { next }: SWRSubscriptionOptions<SAEntity.Pet[], Error>) => {
+        React.useCallback((_, { next }: SWRSubscriptionOptions<Pet[], Error>) => {
             eventBus.hook(Hook.PetBag.deactivate, debounce(getBagPets, 100));
             eventBus.hook(
                 Hook.PetBag.update,

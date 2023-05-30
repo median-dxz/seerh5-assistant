@@ -1,10 +1,8 @@
-import { NULL, SAEventTarget, delay } from '../common';
-import { CacheData } from '../common/CacheData';
+import { CacheData, NULL, SAEventTarget, SaModuleLogger, defaultStyle, delay } from '../common';
 import { Hook } from '../constant';
 import { findObject } from '../engine';
 import { PetRoundInfo } from '../entity';
 import { SocketListener } from '../event-bus';
-import { SaModuleLogger, defaultStyle } from '../logger';
 import { Manager } from './manager';
 import { Provider } from './provider';
 

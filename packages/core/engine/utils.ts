@@ -1,8 +1,9 @@
-import { SaModuleLogger, defaultStyle } from '../logger';
+import type { Constructor } from '../common';
+import { SaModuleLogger, defaultStyle } from '../common';
 
 const log = SaModuleLogger('SAEngine-UI', defaultStyle.core);
 
-export const SeerModuleHelper = {
+export const UIModuleHelper = {
     currentModule<T extends BaseModule>() {
         return ModuleManager.currModule as T;
     },

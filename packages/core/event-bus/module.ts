@@ -1,5 +1,5 @@
 import { tryGet } from '../common';
-import { SeerModuleHelper } from '../engine';
+import { UIModuleHelper } from '../engine';
 
 export interface GameModuleEventHandler<T extends BaseModule = BaseModule> {
     moduleName: string;
@@ -35,7 +35,7 @@ export const GameModuleListener = {
         const subject = tryGet(this.handlers, moduleName);
 
         if (hook === 'show' || hook === 'mainPanel') {
-            const module = SeerModuleHelper.currentModule();
+            const module = UIModuleHelper.currentModule();
             subject.forEach((handler) => {
                 handler[hook]?.(module);
             });

@@ -1,15 +1,14 @@
 import * as Battle from '../battle';
 import { PetPosition, Potion } from '../constant';
-import { buyPetItem, Socket, toggleAutoCure } from '../engine';
+import { Socket, buyPetItem, toggleAutoCure } from '../engine';
 import { SAPet, SAPetLocation } from '../pet-helper';
 
-import { delay } from '../common';
+import { SaModuleLogger, defaultStyle, delay } from '../common';
 import { PetElement } from '../entity/PetElement';
-import { defaultStyle, SaModuleLogger } from '../logger';
-import { getBagPets, PetDataManger } from '../pet-helper';
+import { PetDataManger, getBagPets } from '../pet-helper';
 const log = SaModuleLogger('SAFunctions', defaultStyle.mod);
 
-type PotionId = AttrConst<typeof Potion>;
+type PotionId = (typeof Potion)[keyof typeof Potion];
 /**
  * @param {number[]} cts 要压血的精灵列表
  * @param {PotionId} healPotionId 血药id, 默认中级体力药
@@ -194,3 +193,4 @@ export function updateBatteryTime() {
 }
 
 export { HelperLoader } from './helper';
+

@@ -1,7 +1,5 @@
 import { ModuleMod } from '@sa-app/mod-manager/mod-type';
-import { SAEngine, SAEntity, debounce, hook, hookPrototype, SAEvent } from 'seerh5-assistant-core';
-
-const { SAEventBus } = SAEvent;
+import { Pet, SAEventBus, debounce, getImageButtonListener, hookFn, hookPrototype } from 'sa-core';
 
 class LocalCloth extends ModuleMod<petBag.PetBag> {
     moduleName = 'petBag';
@@ -24,9 +22,9 @@ class LocalCloth extends ModuleMod<petBag.PetBag> {
     mainPanel(ctx: petBag.PetBag) {
         const panel = ctx.panelMap['petBag.MainPanel'] as petBag.MainPanel;
 
-        const listener = SAEngine.getImageButtonListener(panel.btnIntoStorage);
+        const listener = getImageButtonListener(panel.btnIntoStorage);
 
-        hook(listener, 'callback', function (f) {
+        hookFn(listener, 'callback', function (f) {
             panel.beginPetInfo = panel.arrFirstPet[0].petInfo;
             f.call(listener);
             panel.beginPetInfo = null;
@@ -44,7 +42,7 @@ class LocalCloth extends ModuleMod<petBag.PetBag> {
         };
         const printTappingPetInfo = (e: egret.TouchEvent) => {
             const { petInfo } = e.data as { petInfo: PetInfo };
-            petInfo && this.log(new SAEntity.Pet(petInfo));
+            petInfo && this.log(new Pet(petInfo));
         };
 
         this.eventBus.socket(CommandID.PET_DEFAULT, refresh);

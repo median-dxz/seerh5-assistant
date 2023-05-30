@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { CoreLoader, HelperLoader } from 'seerh5-assistant-core';
+import { CoreLoader, HelperLoader } from 'sa-core';
 import { useMod } from './hooks/useMod';
 import './stylesheets/main.css';
 

@@ -1,17 +1,21 @@
 import { BaseMod } from '@sa-app/mod-manager/mod-type';
-import { MoveModule } from 'packages/core/src/battle/manager';
+
 import {
     PetFragmentLevelDifficulty as Difficulty,
     NULL,
-    SABattle,
-    SAEngine,
     SaModuleLogger,
     cureAllPet,
     defaultStyle,
     delay,
     lowerBlood,
     switchBag,
-} from 'seerh5-assistant-core';
+} from 'sa-core';
+
+import { cachedRoundInfo } from 'sa-core/battle/internal';
+
+import type { MoveModule } from 'sa-core/battle';
+import * as SABattle from 'sa-core/battle';
+import * as SAEngine from 'sa-core/engine';
 
 const log = SaModuleLogger('精灵因子', defaultStyle.mod);
 
@@ -24,7 +28,7 @@ namespace PetFragment {
         difficulty: Difficulty;
         id: number;
         sweep: boolean;
-        strategy: Array<{ cts: number[]; strategy: SABattle.MoveModule; beforeBattle: () => PromiseLike<void> }>;
+        strategy: Array<{ cts: number[]; strategy: MoveModule; beforeBattle: () => PromiseLike<void> }>;
     }
 
     export class Runner {

@@ -1,5 +1,5 @@
 import { BaseMod } from '@sa-app/mod-manager/mod-type';
-import { SAEngine } from 'seerh5-assistant-core';
+import { Socket } from 'sa-core';
 
 const rate = [
     [0, 24, 5.8, 1.4, 0.3],
@@ -21,7 +21,7 @@ class CraftSkillStone extends BaseMod {
     }[] = [];
 
     async init() {
-        await SAEngine.Socket.sendWithReceivedPromise(4475, () => {
+        await Socket.sendWithReceivedPromise(4475, () => {
             ItemManager.getSkillStone();
         });
         const stoneInfos = ItemManager.getSkillStoneInfos();
@@ -62,7 +62,7 @@ class CraftSkillStone extends BaseMod {
             return;
         }
         console.log(getRate(), toCraft);
-        await SAEngine.Socket.sendByQueue(
+        await Socket.sendByQueue(
             CommandID.SKILL_STONE_COMPOSE_ITEM,
             toCraft.map((v) => v.id)
         );

@@ -2,7 +2,7 @@ import { Button, TableCell, Typography, type TableRowProps } from '@mui/material
 import { PanelStateContext } from '@sa-app/context/PanelState';
 import { useEgretImageRes } from '@sa-app/hooks/useEgretRes';
 import React from 'react';
-import { SAEntity } from 'seerh5-assistant-core';
+import { type Item } from 'sa-core';
 import { PanelTableBodyRow, PercentLinearProgress } from '../base';
 import { openModuleList } from './data';
 
@@ -15,7 +15,7 @@ const unitConvert = (count: number): string => {
 };
 
 type Props = {
-    item: SAEntity.Item;
+    item: Item;
 } & TableRowProps;
 
 export function ItemListRow({ item, ...props }: Props) {

@@ -1,6 +1,4 @@
-import { SAEvent, type GameModuleEventHandler } from 'seerh5-assistant-core';
-
-const { GameModuleListener } = SAEvent;
+import { GameModuleListener, type GameModuleEventHandler } from 'sa-core';
 
 export abstract class BaseMod {
     reflect(method: string, ...args: any[]) {

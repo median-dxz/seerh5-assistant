@@ -1,6 +1,5 @@
+import { SaModuleLogger, defaultStyle } from '../common';
 import { InternalInitiator, enableBasic } from './internal';
-
-import { SaModuleLogger, defaultStyle } from '../logger';
 
 const log = SaModuleLogger('SALoader', defaultStyle.core);
 

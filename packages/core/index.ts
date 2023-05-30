@@ -1,8 +1,15 @@
 export * from './common';
 export * from './constant';
-export * from './exports';
+
+export * from './battle';
+export * from './engine';
+export * from './entity';
+export * from './event-bus';
+
+export * from './functions';
+export * from './pet-helper';
+
 export { CoreLoader } from './loader';
-export * from './logger';
 
 declare global {
     /** `sac`全局变量使用的额外命名空间 */
@@ -15,3 +22,5 @@ declare global {
         var SacReady: boolean;
     }
 }
+
+
