@@ -105,13 +105,12 @@ class DataManager {
         this.cacheTimestamp.set(pet.catchTime, Date.now());
 
         if (this.cache.size > this.CacheSize) {
-            Array.from(this.cacheTimestamp.entries())
+            const [ct, _] = Array.from(this.cacheTimestamp.entries())
                 .sort((a, b) => a[1] - b[1])
-                .slice(0, this.cacheTimestamp.size - this.CacheSize - 1)
-                .forEach(([ct, _]) => {
-                    this.cache.delete(ct);
-                    this.cacheTimestamp.delete(ct);
-                });
+                .pop()!;
+
+            this.cache.delete(ct);
+            this.cacheTimestamp.delete(ct);
         }
 
         if (this.queryQueue.has(pet.catchTime)) {
