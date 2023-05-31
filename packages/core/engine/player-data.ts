@@ -1,4 +1,4 @@
-import { extractObjectId } from '../common/index.js';
+import { extractObjectId } from '../common/utils.js';
 import { IItemObject, Item } from '../entity/index.js';
 import * as Socket from './socket.js';
 

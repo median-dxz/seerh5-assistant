@@ -1,4 +1,4 @@
-export * from './common/index.js';
+export * from './common/utils.js';
 export * from './constant/index.js';
 
 export * from './battle/index.js';

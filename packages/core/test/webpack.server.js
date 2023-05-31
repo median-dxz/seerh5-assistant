@@ -1,19 +1,24 @@
 //@ts-check
-import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import path from 'path';
 import { __dirname as dirname, saProxyMiddleware } from './saMiddleware.js';
 
 /** @type {import('webpack-dev-server').Configuration} */
 export const devServerOptions = {
-    open: false,
-    static: ['./test'],
+    open: true,
+    static: {
+        directory: './test',
+        watch: {
+            ignored: ['./*.js', './*.ts', './*.json'],
+            usePolling: false,
+        },
+    },
     client: {
         overlay: false,
         logging: 'warn',
     },
     hot: false,
     port: 1234,
-    watchFiles: ['./dist/**/*.js'],
+    watchFiles: ['../dist/**/*.js'],
     setupMiddlewares: (middlewares) => {
         middlewares.push(saProxyMiddleware);
         return middlewares;
@@ -30,18 +35,6 @@ export const config = {
         outputModule: true,
         topLevelAwait: true,
     },
-    module: {
-        rules: [
-            {
-                test: /\.(m)?[jt]s(x)?$/,
-                loader: 'ts-loader',
-                resolve: {
-                    fullySpecified: false,
-                },
-                exclude: /node_modules/,
-            },
-        ],
-    },
     resolve: {
         extensions: ['.ts', '.js'],
         modules: [dirname, 'node_modules'],
@@ -53,6 +46,5 @@ export const config = {
         publicPath: '/',
     },
     devtool: 'source-map',
-    plugins: [new ForkTsCheckerWebpackPlugin()],
     devServer: devServerOptions,
 };

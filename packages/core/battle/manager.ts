@@ -1,4 +1,4 @@
-import { delay } from '../common/index.js';
+import { delay } from '../common/utils.js';
 import { Pet, Skill } from '../entity/index.js';
 import { Operator } from './operator.js';
 import { Provider, RoundInfo } from './provider.js';

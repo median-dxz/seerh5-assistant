@@ -2,7 +2,7 @@ import { Hook } from '../constant/index.js';
 
 import { GameModuleListener } from './module.js';
 
-import { SAEventTarget, SaModuleLogger, defaultStyle } from '../common/index.js';
+import { SAEventTarget, SaModuleLogger, defaultStyle } from '../common/utils.js';
 import { SocketListener } from './socket.js';
 
 const log = SaModuleLogger('SAHookListener', defaultStyle.core);

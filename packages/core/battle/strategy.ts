@@ -1,4 +1,4 @@
-import { SaModuleLogger, defaultStyle, delay } from '../common/index.js';
+import { SaModuleLogger, defaultStyle, delay } from '../common/utils.js';
 import { Pet, Skill } from '../entity/index.js';
 import type { MoveModule } from './manager.js';
 import { Manager } from './manager.js';

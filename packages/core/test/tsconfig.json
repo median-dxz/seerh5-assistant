@@ -8,10 +8,11 @@
             "dom"
         ],
         "resolveJsonModule": true,
+        "checkJs": true,
         "noEmit": true
     },
     "include": [
-        "env.d.ts",
         "suites/**/*",
+        "env/**/*",
     ]
 }

@@ -1,5 +1,5 @@
 import * as Battle from '../battle/index.js';
-import { SaModuleLogger, defaultStyle, delay } from '../common/index.js';
+import { SaModuleLogger, defaultStyle, delay } from '../common/utils.js';
 import { PetPosition, Potion } from '../constant/index.js';
 import { Socket, buyPetItem, toggleAutoCure } from '../engine/index.js';
 import { PetElement } from '../entity/index.js';
@@ -116,8 +116,9 @@ export async function switchBag(cts: number[]) {
         }
     }
     for (let v of cts) {
+        const { name } = await SAPet(v).pet;
         await SAPet(v).setLocation(SAPetLocation.Bag);
-        log(`SwitchBag -> 将 ${SAPet(v).name} 放入背包`);
+        log(`SwitchBag -> 将 ${name} 放入背包`);
     }
 }
 

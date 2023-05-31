@@ -1,4 +1,4 @@
-import { CacheData, NULL, SAEventTarget, SaModuleLogger, defaultStyle, delay } from '../common/index.js';
+import { CacheData, NULL, SAEventTarget, SaModuleLogger, defaultStyle, delay } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
 import { findObject } from '../engine/index.js';
 import { PetRoundInfo } from '../entity/index.js';

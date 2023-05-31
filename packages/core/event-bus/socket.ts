@@ -1,4 +1,4 @@
-import { tryGet } from '../common/index.js';
+import { tryGet } from '../common/utils.js';
 import type { PetRoundInfo } from '../entity/index.js';
 import type { ProxyPet } from '../pet-helper/ProxyPet.js';
 

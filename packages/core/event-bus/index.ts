@@ -1,4 +1,4 @@
-import { SAEventTarget } from '../common/index.js';
+import { SAEventTarget } from '../common/utils.js';
 
 export * from './module.js';
 export * from './socket.js';

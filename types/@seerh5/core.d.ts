@@ -95,6 +95,7 @@ declare class PetSkillInfo {
 declare class PetTakeOutInfo {
     constructor(data: egret.ByteArray);
     firstPetTime: number;
+    flag: boolean;
 }
 
 declare class PetListInfo {

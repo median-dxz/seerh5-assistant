@@ -19,9 +19,7 @@
     ],
     "files.exclude": {
         "**/packages/core/types": true,
-        "**/packages/core/node_modules": true,
-        "**/packages/core/playwright-report": true,
-        "**/packages/core/test-results": true
+        "**/packages/core/node_modules": true
     }
     // "typescript.referencesCodeLens.enabled": true,
 }

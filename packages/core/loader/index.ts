@@ -1,4 +1,4 @@
-import { SaModuleLogger, defaultStyle } from '../common/index.js';
+import { SaModuleLogger, defaultStyle } from '../common/utils.js';
 import { InternalInitiator, enableBasic } from './internal.js';
 
 const log = SaModuleLogger('SALoader', defaultStyle.core);
@@ -24,7 +24,7 @@ export async function CoreLoader() {
 
         if (typeof sac !== 'undefined' && sac.SeerH5Ready) {
             if (sac.SacReady) {
-                return true;
+                resolve(true);
             } else {
                 sa_core_init();
             }

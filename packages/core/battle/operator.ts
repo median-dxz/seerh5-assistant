@@ -1,4 +1,4 @@
-import { SaModuleLogger, defaultStyle, delay } from '../common/index.js';
+import { SaModuleLogger, defaultStyle, delay } from '../common/utils.js';
 import { Socket } from '../engine/index.js';
 const log = SaModuleLogger('BattleOperator', defaultStyle.core);
 

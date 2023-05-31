@@ -1,4 +1,4 @@
-import { SAEventTarget } from '../common/index.js';
+import { SAEventTarget } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
 import { SocketListener } from '../event-bus/index.js';
 import { PetDataManger, ProxyPet } from './ProxyPet.js';

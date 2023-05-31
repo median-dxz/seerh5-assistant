@@ -1,6 +1,6 @@
 import { enableMapSet } from 'immer';
 
-import { NULL, SAEventTarget } from '../common/index.js';
+import { NULL, SAEventTarget } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
 
 import battle from '../battle/internal.js';
@@ -27,7 +27,7 @@ export async function enableBasic() {
     ModuleManager.loadScript = loadScript;
     UIUtils = null;
     SocketEncryptImpl.prototype.log = logSocket;
-    enableBackgroundHBCheck();
+    enableBackgroundHeartBeatCheck();
     betterSwitchPet();
 
     InternalInitiator.push(event, 0);
@@ -71,7 +71,7 @@ function logSocket(this: SocketEncryptImpl, cmd: number, ...msg: string[]) {
 }
 
 /** enable background heartbeat check */
-function enableBackgroundHBCheck() {
+function enableBackgroundHeartBeatCheck() {
     let timer: number | undefined = undefined;
 
     egret.lifecycle.onPause = () => {

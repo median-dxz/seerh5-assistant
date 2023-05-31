@@ -23,15 +23,14 @@
     "watch": "tsc --watch",
     "clean": "rimraf ./dist && rimraf ./test-results && rimraf ./playwright-report",
     "types:check": "tsc --noEmit",
-    "serve": "node ./test/runServer.js",
-    "test": "playwright test",
-    "test:ui": "playwright test --ui"
+    "test": "node ./test/runServer.js"
   },
   "dependencies": {
     "chalk": "^5.2.0",
     "immer": "^10.0.2"
   },
   "devDependencies": {
-    "@playwright/test": "^1.34.3"
+    "@types/chai": "^4.3.5",
+    "@types/mocha": "^10.0.1"
   }
 }

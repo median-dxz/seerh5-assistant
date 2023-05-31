@@ -1,4 +1,4 @@
-import { CacheData, extractObjectId } from '../common/index.js';
+import { CacheData, extractObjectId } from '../common/utils.js';
 import { Socket } from '../engine/index.js';
 import { Item, Pet } from '../entity/index.js';
 import { SocketListener } from '../event-bus/index.js';
@@ -13,7 +13,7 @@ class DataManager {
 
     private queryQueue = new Map<CatchTime, (value: ProxyPet) => void>();
 
-    defaultCt: CatchTime;
+    defaultCt: CatchTime = -1;
     bag: CacheData<[ProxyPet[], ProxyPet[]]>;
     miniInfo: CacheData<Map<CatchTime, PetStorage2015PetInfo>>;
 
@@ -68,12 +68,17 @@ class DataManager {
 
             SocketListener.on({
                 cmd: CommandID.PET_RELEASE,
-                req: () => {
+                req: (bytes) => {
+                    this.cache.delete(bytes[0] as number);
                     this.miniInfo.deactivate();
                     this.bag.deactivate();
                 },
                 res: (data) => {
-                    PetManager.setDefault(data.firstPetTime);
+                    if (data.flag) {
+                        PetManager.setDefault(data.firstPetTime);
+                    } else {
+                        this.defaultCt = -1;
+                    }
                 },
             });
 
@@ -187,7 +192,7 @@ export class ProxyPet extends Pet {
     }
 
     async cure() {
-        Socket.sendByQueue(CommandID.PET_ONE_CURE, this.catchTime);
+        await Socket.sendByQueue(CommandID.PET_ONE_CURE, this.catchTime);
         return ins.query(this.catchTime);
     }
 
@@ -196,7 +201,7 @@ export class ProxyPet extends Pet {
         if (local === SAPetLocation.Bag || local === SAPetLocation.SecondBag || local === SAPetLocation.Default) {
             await this.setLocation(SAPetLocation.Storage);
         }
-        return ins.query(this.catchTime);
+        return;
     }
 
     /**
@@ -244,4 +249,3 @@ export function SAPet(pet: CatchTime | Pet) {
 }
 
 export { ins as PetDataManger };
-

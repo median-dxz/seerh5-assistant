@@ -1,4 +1,4 @@
-import { SAEventTarget, delay, hookPrototype, wrapper } from '../common/index.js';
+import { SAEventTarget, delay, hookPrototype, wrapper } from '../common/utils.js';
 import { CmdMask, Hook } from '../constant/index.js';
 
 export default () => {
