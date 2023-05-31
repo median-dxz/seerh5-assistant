@@ -1,4 +1,4 @@
-import type { GameDataType } from '../constant';
+import type { GameDataType } from '../constant/index.js';
 
 type PredicateFn<T> = (value: T) => boolean;
 

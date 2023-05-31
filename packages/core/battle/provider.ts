@@ -1,5 +1,5 @@
-import { Pet, PetRoundInfo, Skill } from '../entity';
-import { cachedRoundInfo } from './internal';
+import { Pet, PetRoundInfo, Skill } from '../entity/index.js';
+import { cachedRoundInfo } from './internal.js';
 
 export interface RoundInfo {
     self?: PetRoundInfo;

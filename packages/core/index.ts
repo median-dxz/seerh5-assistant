@@ -1,15 +1,15 @@
-export * from './common';
-export * from './constant';
+export * from './common/index.js';
+export * from './constant/index.js';
 
-export * from './battle';
-export * from './engine';
-export * from './entity';
-export * from './event-bus';
+export * from './battle/index.js';
+export * from './engine/index.js';
+export * from './entity/index.js';
+export * from './event-bus/index.js';
 
-export * from './functions';
-export * from './pet-helper';
+export * from './functions/index.js';
+export * from './pet-helper/index.js';
 
-export { CoreLoader } from './loader';
+export { CoreLoader } from './loader/index.js';
 
 declare global {
     /** `sac`全局变量使用的额外命名空间 */
@@ -22,5 +22,3 @@ declare global {
         var SacReady: boolean;
     }
 }
-
-

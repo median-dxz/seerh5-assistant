@@ -1,4 +1,4 @@
-import { SaModuleLogger, defaultStyle, hookPrototype } from '../common';
+import { SaModuleLogger, defaultStyle, hookPrototype } from '../common/index.js';
 const log = SaModuleLogger('SAHelper', defaultStyle.core);
 
 export function HelperLoader() {

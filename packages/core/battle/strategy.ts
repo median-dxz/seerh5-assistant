@@ -1,9 +1,9 @@
-import { SaModuleLogger, defaultStyle, delay } from '../common';
-import { Pet, Skill } from '../entity';
-import type { MoveModule } from './manager';
-import { Manager } from './manager';
-import { Operator } from './operator';
-import { Provider } from './provider';
+import { SaModuleLogger, defaultStyle, delay } from '../common/index.js';
+import { Pet, Skill } from '../entity/index.js';
+import type { MoveModule } from './manager.js';
+import { Manager } from './manager.js';
+import { Operator } from './operator.js';
+import { Provider } from './provider.js';
 
 const log = SaModuleLogger('BattleModuleManager', defaultStyle.core);
 

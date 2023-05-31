@@ -1,5 +1,5 @@
-import type { Constructor } from '../common';
-import { SaModuleLogger, defaultStyle } from '../common';
+import type { Constructor } from '../common/index.js';
+import { SaModuleLogger, defaultStyle } from '../common/index.js';
 
 const log = SaModuleLogger('SAEngine-UI', defaultStyle.core);
 

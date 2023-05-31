@@ -11,11 +11,10 @@ import {
     switchBag,
 } from 'sa-core';
 
-import { cachedRoundInfo } from 'sa-core/battle/internal';
 
-import type { MoveModule } from 'sa-core/battle';
-import * as SABattle from 'sa-core/battle';
-import * as SAEngine from 'sa-core/engine';
+import type { MoveModule } from 'sa-../battle/index.js';
+import * as SABattle from 'sa-../battle/index.js';
+import * as SAEngine from 'sa-../engine/index.js';
 
 const log = SaModuleLogger('精灵因子', defaultStyle.mod);
 

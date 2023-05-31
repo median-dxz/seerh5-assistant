@@ -1,4 +1,4 @@
-import { EntityBase, type EntityType } from './EntityBase';
+import { EntityBase, type EntityType } from './EntityBase.js';
 
 export class PetRoundInfo extends EntityBase {
     __type: EntityType = 'PetRoundInfo';

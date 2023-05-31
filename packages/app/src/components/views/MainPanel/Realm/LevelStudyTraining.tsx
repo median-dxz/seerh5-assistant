@@ -6,8 +6,8 @@ import dataProvider from './data';
 
 import { cureAllPet, delay, switchBag } from 'sa-core';
 
-import * as SABattle from 'sa-core/battle';
-import * as SAEngine from 'sa-core/engine';
+import * as SABattle from 'sa-../battle/index.js';
+import * as SAEngine from 'sa-../engine/index.js';
 
 interface LevelData {
     stimulation: boolean;

@@ -1,5 +1,5 @@
-import { SaModuleLogger, defaultStyle } from '../common';
-import { InternalInitiator, enableBasic } from './internal';
+import { SaModuleLogger, defaultStyle } from '../common/index.js';
+import { InternalInitiator, enableBasic } from './internal.js';
 
 const log = SaModuleLogger('SALoader', defaultStyle.core);
 

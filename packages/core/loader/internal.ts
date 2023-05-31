@@ -1,12 +1,12 @@
 import { enableMapSet } from 'immer';
 
-import { NULL, SAEventTarget } from '../common';
-import { Hook } from '../constant';
+import { NULL, SAEventTarget } from '../common/index.js';
+import { Hook } from '../constant/index.js';
 
-import battle from '../battle/internal';
-import eventBus from '../event-bus/internal';
-import pet from '../pet-helper/internal';
-import event from './event';
+import battle from '../battle/internal.js';
+import eventBus from '../event-bus/internal.js';
+import pet from '../pet-helper/internal.js';
+import event from './event.js';
 
 export const InternalInitiator = {
     loaders: [] as { loader: Function; priority: number }[],

@@ -1,4 +1,4 @@
-import { SAHookData } from '../constant';
+import { SAHookData } from '../constant/index.js';
 
 type Listener<T> = (data: T) => void;
 type EventData<Type, TEvent extends Record<string, any>> = Type extends keyof TEvent ? TEvent[Type] : undefined;

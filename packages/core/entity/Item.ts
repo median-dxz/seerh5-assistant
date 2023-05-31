@@ -1,4 +1,4 @@
-import { EntityBase, type EntityType } from './EntityBase';
+import { EntityBase, type EntityType } from './EntityBase.js';
 
 export interface IItemObject {
     id: number;

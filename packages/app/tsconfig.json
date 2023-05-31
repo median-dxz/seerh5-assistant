@@ -1,10 +1,20 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
+        "moduleResolution": "node",
         "outDir": "dist",
         "rootDir": "src",
+        "baseUrl": ".",
         "jsx": "react",
-        "declaration": true
+        "declaration": true,
+        "paths": {
+            "@sa-app/*": [
+                "./src/*"
+            ],
+            "@mui/styled-engine": [
+                "../../node_modules/@mui/styled-engine-sc"
+            ],
+        }
     },
     "include": [
         "./src",

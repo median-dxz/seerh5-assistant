@@ -1,14 +1,14 @@
-import { delay } from '../common';
-import { Pet, Skill } from '../entity';
-import { Operator } from './operator';
-import { Provider, RoundInfo } from './provider';
+import { delay } from '../common/index.js';
+import { Pet, Skill } from '../entity/index.js';
+import { Operator } from './operator.js';
+import { Provider, RoundInfo } from './provider.js';
 
 export type Trigger = () => void;
-export type moveHandler = (battleState: RoundInfo, skills: Skill[], pets: Pet[]) => Promise<boolean>;
-export type switchNoBloodHandler = (battleState: RoundInfo, skills: Skill[], pets: Pet[]) => number | void;
+export type MoveHandler = (battleState: RoundInfo, skills: Skill[], pets: Pet[]) => Promise<boolean>;
+export type SwitchNoBloodHandler = (battleState: RoundInfo, skills: Skill[], pets: Pet[]) => number | void;
 export type MoveModule = {
-    resolveNoBlood: switchNoBloodHandler;
-    resolveMove: moveHandler;
+    resolveNoBlood: SwitchNoBloodHandler;
+    resolveMove: MoveHandler;
 };
 
 let strategy: undefined | MoveModule;

@@ -1,6 +1,6 @@
-import { tryGet } from '../common';
-import type { PetRoundInfo } from '../entity';
-import type { ProxyPet } from '../pet-helper/ProxyPet';
+import { tryGet } from '../common/index.js';
+import type { PetRoundInfo } from '../entity/index.js';
+import type { ProxyPet } from '../pet-helper/ProxyPet.js';
 
 type DataBuilder<T> = (data: ArrayBuffer) => T;
 type OnReqHandler = (bytes: SAType.SocketRequestData) => void;

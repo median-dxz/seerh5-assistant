@@ -1,11 +1,9 @@
-import * as Battle from '../battle';
-import { PetPosition, Potion } from '../constant';
-import { Socket, buyPetItem, toggleAutoCure } from '../engine';
-import { SAPet, SAPetLocation } from '../pet-helper';
-
-import { SaModuleLogger, defaultStyle, delay } from '../common';
-import { PetElement } from '../entity/PetElement';
-import { PetDataManger, getBagPets } from '../pet-helper';
+import * as Battle from '../battle/index.js';
+import { SaModuleLogger, defaultStyle, delay } from '../common/index.js';
+import { PetPosition, Potion } from '../constant/index.js';
+import { Socket, buyPetItem, toggleAutoCure } from '../engine/index.js';
+import { PetElement } from '../entity/index.js';
+import { PetDataManger, SAPet, SAPetLocation, getBagPets } from '../pet-helper/index.js';
 const log = SaModuleLogger('SAFunctions', defaultStyle.mod);
 
 type PotionId = (typeof Potion)[keyof typeof Potion];
@@ -192,5 +190,5 @@ export function updateBatteryTime() {
     BatteryController.Instance._leftTime = Math.max(0, leftTime);
 }
 
-export { HelperLoader } from './helper';
+export { HelperLoader } from './helper.js';
 

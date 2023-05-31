@@ -1,10 +1,10 @@
-import { CacheData, NULL, SAEventTarget, SaModuleLogger, defaultStyle, delay } from '../common';
-import { Hook } from '../constant';
-import { findObject } from '../engine';
-import { PetRoundInfo } from '../entity';
-import { SocketListener } from '../event-bus';
-import { Manager } from './manager';
-import { Provider } from './provider';
+import { CacheData, NULL, SAEventTarget, SaModuleLogger, defaultStyle, delay } from '../common/index.js';
+import { Hook } from '../constant/index.js';
+import { findObject } from '../engine/index.js';
+import { PetRoundInfo } from '../entity/index.js';
+import { SocketListener } from '../event-bus/index.js';
+import { Manager } from './manager.js';
+import { Provider } from './provider.js';
 
 const log = SaModuleLogger('SABattleManager', defaultStyle.core);
 

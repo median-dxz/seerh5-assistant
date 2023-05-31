@@ -1,6 +1,6 @@
+import * as SABattle from 'sa-../battle/index.js';
+import * as SAEntity from 'sa-../entity/index.js';
 import { MoveModule, NoBloodSwitchLink, Operator, SkillNameMatch, generateStrategy } from 'sa-core';
-import * as SABattle from 'sa-core/battle';
-import * as SAEntity from 'sa-core/entity';
 
 interface LevelPetsData {
     [levelName: string]: {

@@ -1,6 +1,7 @@
-export * from './Item';
-export * from './Pet';
-export * from './PetElement';
-export * from './PetFragmentLevel';
-export * from './PetRoundInfo';
-export * from './Skill';
+export * from './Item.js';
+export * from './Pet.js';
+export * from './PetElement.js';
+export * from './PetFragmentLevel.js';
+export * from './PetRoundInfo.js';
+export * from './Skill.js';
+

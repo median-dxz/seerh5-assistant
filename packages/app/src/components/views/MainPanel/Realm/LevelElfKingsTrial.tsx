@@ -1,8 +1,8 @@
 import { Typography } from '@mui/material';
 import React from 'react';
+import * as SABattle from 'sa-../battle/index.js';
+import * as SAEngine from 'sa-../engine/index.js';
 import { cureAllPet, delay, switchBag } from 'sa-core';
-import * as SABattle from 'sa-core/battle';
-import * as SAEngine from 'sa-core/engine';
 
 import { PercentLinearProgress } from '../base';
 import dataProvider from './data';

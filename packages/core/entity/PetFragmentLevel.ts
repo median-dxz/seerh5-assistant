@@ -1,5 +1,5 @@
-import { PetFragmentLevelDifficulty } from '../constant';
-import { EntityBase, type EntityType } from './EntityBase';
+import { PetFragmentLevelDifficulty } from '../constant/index.js';
+import { EntityBase, type EntityType } from './EntityBase.js';
 
 export interface IPFLevelBoss {
     BattleBoss: number;

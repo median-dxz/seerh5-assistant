@@ -3,12 +3,12 @@
     "compilerOptions": {
         "outDir": "dist",
         "rootDir": ".",
+        "baseUrl": ".",
         "inlineSourceMap": true,
         "declarationMap": true,
         "declaration": true,
-        "types": [
-            "chai"
-        ],
+        "incremental": true,
+        "types": [],
     },
     "include": [
         "../../types",

@@ -1,5 +1,5 @@
-import { EntityBase, type EntityType } from './EntityBase';
-import { PetElement } from './PetElement';
+import { EntityBase, type EntityType } from './EntityBase.js';
+import { PetElement } from './PetElement.js';
 
 type SkillEffects = [number[], number[]];
 type SkillEffectArgs = string | number | undefined;

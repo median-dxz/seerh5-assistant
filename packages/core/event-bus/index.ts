@@ -1,7 +1,7 @@
-import { SAEventTarget } from '../common';
+import { SAEventTarget } from '../common/index.js';
 
-export * from './module';
-export * from './socket';
+export * from './module.js';
+export * from './socket.js';
 
 export class SAEventBus {
     private cleanFn: Function[] = [];

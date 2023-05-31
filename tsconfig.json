@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "module": "ES2022",
-        "moduleResolution": "Node",
+        "moduleResolution": "nodenext",
         "target": "ES2022",
         "strictNullChecks": true,
         "strictFunctionTypes": true,
@@ -17,16 +17,7 @@
             "esnext",
             "dom"
         ],
-        "baseUrl": ".",
         "composite": true,
-        "paths": {
-            "@sa-app/*": [
-                "./packages/app/src/*"
-            ],
-            "@mui/styled-engine": [
-                "node_modules/@mui/styled-engine-sc"
-            ],
-        }
     },
     "include": [],
     "references": [

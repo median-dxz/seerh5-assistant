@@ -1,7 +1,7 @@
-import { SAEventTarget } from '../common';
-import { Hook } from '../constant';
-import { SocketListener } from '../event-bus';
-import { PetDataManger, ProxyPet } from './ProxyPet';
+import { SAEventTarget } from '../common/index.js';
+import { Hook } from '../constant/index.js';
+import { SocketListener } from '../event-bus/index.js';
+import { PetDataManger, ProxyPet } from './ProxyPet.js';
 
 export default () => {
     SocketListener.subscribe(CommandID.GET_PET_INFO_BY_ONCE, (data) => {

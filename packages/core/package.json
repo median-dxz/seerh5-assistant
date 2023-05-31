@@ -1,36 +1,37 @@
 {
-    "name": "sa-core",
-    "description": "SeerH5-Assistant核心库",
-    "private": true,
-    "type": "module",
-    "version": "0.4.4",
-    "license": "MPL-2.0",
-    "exports": {
-        ".": "./dist/index.js",
-        "./battle": "./dist/battle/index.js",
-        "./common": "./dist/common/index.js",
-        "./constant": "./dist/constant/index.js",
-        "./engine": "./dist/engine/index.js",
-        "./event-bus": "./dist/event-bus/index.js",
-        "./entity": "./dist/entity/index.js",
-        "./functions": "./dist/functions/index.js",
-        "./pet-helper": "./dist/pet-helper/index.js"
-    },
-    "browser": "./dist/index.js",
-    "types": "./dist/index.d.ts",
-    "scripts": {
-        "build": "npm run clean && tsc",
-        "watch": "tsc --watch",
-        "clean": "rimraf ./dist",
-        "types:check": "tsc --noEmit",
-        "test": ""
-    },
-    "dependencies": {
-        "chalk": "^5.2.0",
-        "immer": "^10.0.2"
-    },
-    "devDependencies": {
-        "@types/chai": "^4.3.5",
-        "@types/mocha": "^10.0.1"
-    }
+  "name": "sa-core",
+  "description": "SeerH5-Assistant核心库",
+  "private": true,
+  "type": "module",
+  "version": "0.4.4",
+  "license": "MPL-2.0",
+  "exports": {
+    ".": "./dist/index.js",
+    "./battle": "./dist/battle/index.js",
+    "./common": "./dist/common/index.js",
+    "./constant": "./dist/constant/index.js",
+    "./engine": "./dist/engine/index.js",
+    "./event-bus": "./dist/event-bus/index.js",
+    "./entity": "./dist/entity/index.js",
+    "./functions": "./dist/functions/index.js",
+    "./pet-helper": "./dist/pet-helper/index.js"
+  },
+  "browser": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "npm run clean && tsc",
+    "watch": "tsc --watch",
+    "clean": "rimraf ./dist && rimraf ./test-results && rimraf ./playwright-report",
+    "types:check": "tsc --noEmit",
+    "serve": "node ./test/runServer.js",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui"
+  },
+  "dependencies": {
+    "chalk": "^5.2.0",
+    "immer": "^10.0.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.34.3"
+  }
 }

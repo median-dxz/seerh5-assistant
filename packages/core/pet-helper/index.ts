@@ -1,5 +1,5 @@
-import { PetPosition as PosType } from '../constant';
-import { PetDataManger } from './ProxyPet';
+import { PetPosition as PosType } from '../constant/index.js';
+import { PetDataManger } from './ProxyPet.js';
 
 type BagPetsPos = typeof PosType.bag1 | typeof PosType.secondBag1 | -1;
 /**
@@ -31,6 +31,6 @@ export function cureAllPet() {
     PetManager.noAlarmCureAll();
 }
 
-export { SAPetLocation } from './PetLocation';
-export { PetDataManger, SAPet } from './ProxyPet';
+export { SAPetLocation } from './PetLocation.js';
+export { PetDataManger, SAPet } from './ProxyPet.js';
 

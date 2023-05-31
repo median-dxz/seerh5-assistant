@@ -1,4 +1,4 @@
-import type { Pet } from '../entity/Pet';
+import type { Pet } from '../entity/index.js';
 
 export const Hook = {
     Module: {

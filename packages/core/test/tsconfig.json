@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "module": "esnext",
+        "target": "esnext",
+        "moduleResolution": "nodenext",
+        "lib": [
+            "esnext",
+            "dom"
+        ],
+        "resolveJsonModule": true,
+        "noEmit": true
+    },
+    "include": [
+        "env.d.ts",
+        "suites/**/*",
+    ]
+}

@@ -1,5 +1,5 @@
-import { tryGet } from '../common';
-import { UIModuleHelper } from '../engine';
+import { tryGet } from '../common/index.js';
+import { UIModuleHelper } from '../engine/index.js';
 
 export interface GameModuleEventHandler<T extends BaseModule = BaseModule> {
     moduleName: string;

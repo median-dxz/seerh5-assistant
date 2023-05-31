@@ -1,4 +1,4 @@
-import * as Socket from './socket';
+import * as Socket from './socket.js';
 
 export async function changeSuit(suit: number): Promise<boolean> {
     try {

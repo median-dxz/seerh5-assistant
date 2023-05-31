@@ -80,11 +80,11 @@ export const extractObjectId = <T extends { [key in K]: number }, K extends stri
 
 export const NULL = () => {};
 
-export { createLocalStorageProxy, type LocalStorageProxy } from './LocalStorage';
+export { createLocalStorageProxy, type LocalStorageProxy } from './LocalStorage.js';
 
-export { SAEventTarget } from './SAEventTarget';
+export { SAEventTarget } from './SAEventTarget.js';
 
-export { CacheData } from './CacheData';
+export { CacheData } from './CacheData.js';
 
 export function tryGet<TKey, TValue>(map: Map<TKey, Set<TValue>>, key: TKey) {
     if (!map.has(key)) {

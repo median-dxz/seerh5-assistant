@@ -1,6 +1,6 @@
-import { extractObjectId } from '../common';
-import { IItemObject, Item } from '../entity';
-import * as Socket from './socket';
+import { extractObjectId } from '../common/index.js';
+import { IItemObject, Item } from '../entity/index.js';
+import * as Socket from './socket.js';
 
 export function getItemNum(item: number | IItemObject) {
     let id = extractObjectId(item, Item.instanceKey);

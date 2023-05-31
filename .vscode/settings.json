@@ -5,7 +5,6 @@
     "files.autoSave": "onFocusChange",
     "typescript.updateImportsOnFileMove.enabled": "always",
     "javascript.preferences.importModuleSpecifierEnding": "js",
-    "typescript.preferences.importModuleSpecifierEnding": "minimal",
     "typescript.inlayHints.parameterNames.enabled": "literals",
     "editor.codeActionsOnSave": {
         "source.organizeImports": true
@@ -20,7 +19,9 @@
     ],
     "files.exclude": {
         "**/packages/core/types": true,
-        "**/packages/core/node_modules": true
+        "**/packages/core/node_modules": true,
+        "**/packages/core/playwright-report": true,
+        "**/packages/core/test-results": true
     }
     // "typescript.referencesCodeLens.enabled": true,
 }

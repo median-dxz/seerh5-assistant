@@ -1,9 +1,9 @@
-import { Hook } from '../constant';
+import { Hook } from '../constant/index.js';
 
-import { GameModuleListener } from './module';
+import { GameModuleListener } from './module.js';
 
-import { SAEventTarget, SaModuleLogger, defaultStyle } from '../common';
-import { SocketListener } from './socket';
+import { SAEventTarget, SaModuleLogger, defaultStyle } from '../common/index.js';
+import { SocketListener } from './socket.js';
 
 const log = SaModuleLogger('SAHookListener', defaultStyle.core);
 

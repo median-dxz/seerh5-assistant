@@ -1,6 +1,6 @@
-import { EntityBase, type EntityType } from './EntityBase';
-import { PetElement } from './PetElement';
-import { Skill } from './Skill';
+import { EntityBase, type EntityType } from './EntityBase.js';
+import { PetElement } from './PetElement.js';
+import { Skill } from './Skill.js';
 
 export interface IPetObject {
     id: number;

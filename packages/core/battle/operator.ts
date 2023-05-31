@@ -1,5 +1,5 @@
-import { SaModuleLogger, defaultStyle, delay } from '../common';
-import { Socket } from '../engine';
+import { SaModuleLogger, defaultStyle, delay } from '../common/index.js';
+import { Socket } from '../engine/index.js';
 const log = SaModuleLogger('BattleOperator', defaultStyle.core);
 
 export const Operator = {

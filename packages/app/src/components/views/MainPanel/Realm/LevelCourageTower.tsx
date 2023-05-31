@@ -5,8 +5,8 @@ import { PercentLinearProgress } from '../base';
 import { LevelBase, LevelExtendsProps } from './LevelBase';
 import dataProvider from './data';
 
-import * as SABattle from 'sa-core/battle';
-import * as SAEngine from 'sa-core/engine';
+import * as SABattle from 'sa-../battle/index.js';
+import * as SAEngine from 'sa-../engine/index.js';
 
 interface LevelData {
     stimulation: boolean;

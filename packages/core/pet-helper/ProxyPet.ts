@@ -1,8 +1,8 @@
-import { CacheData, extractObjectId } from '../common';
-import { Socket } from '../engine';
-import { Item, Pet } from '../entity';
-import { SocketListener } from '../event-bus';
-import { SAPetLocation, setLocationTable } from './PetLocation';
+import { CacheData, extractObjectId } from '../common/index.js';
+import { Socket } from '../engine/index.js';
+import { Item, Pet } from '../entity/index.js';
+import { SocketListener } from '../event-bus/index.js';
+import { SAPetLocation, setLocationTable } from './PetLocation.js';
 
 type CatchTime = number;
 

@@ -1,5 +1,5 @@
-import { PetPosition } from '../constant';
-import { Socket } from '../engine';
+import { PetPosition } from '../constant/index.js';
+import { Socket } from '../engine/index.js';
 
 export enum SAPetLocation {
     Default = 'Default',

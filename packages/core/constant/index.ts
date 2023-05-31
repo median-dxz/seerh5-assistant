@@ -1,5 +1,5 @@
-export * from './event-hooks';
-export * from './item-id';
+export * from './event-hooks.js';
+export * from './item-id.js';
 
 export const PetPosition = {
     bag1: 1,
