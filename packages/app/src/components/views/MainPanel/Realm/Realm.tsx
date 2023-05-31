@@ -10,8 +10,8 @@ import { LevelStudyTraining } from './LevelStudyTraining';
 import { LevelTitanHole } from './LevelTitanHole';
 import { LevelXTeamRoom } from './LevelXTeamRoom';
 
-import * as SABattle from 'sa-../battle/index.js';
-import * as SAEngine from 'sa-../engine/index.js';
+import * as SABattle from 'sa-core/battle';
+import * as SAEngine from 'sa-core/engine';
 
 interface Level {
     name: string;

@@ -1,9 +1,9 @@
 import React from 'react';
 
-import * as SABattle from 'sa-../battle/index.js';
-import * as SAEngine from 'sa-../engine/index.js';
-import * as SAEntity from 'sa-../entity/index.js';
 import { PetPosition, cureAllPet, delay, getBagPets, switchBag } from 'sa-core';
+import * as SABattle from 'sa-core/battle';
+import * as SAEngine from 'sa-core/engine';
+import * as SAEntity from 'sa-core/entity';
 
 import { Typography } from '@mui/material';
 

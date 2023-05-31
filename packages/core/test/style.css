@@ -2,27 +2,32 @@ body {
     margin: 0;
 }
 
-#toggle-button {
+#test-toolbar {
     position: absolute;
     display: flex;
     top: 0;
     right: 0;
+    margin: 40px;
+}
+
+.test-button {
+    display: flex;
     width: 150px;
     height: 30px;
-    background-color: transparent;
+    margin: 1em;
+    background-color: rgba(0, 0, 0, 0.18);
     border: 1px solid #fff467;
     color: #eee;
     border-radius: 8px;
     cursor: pointer;
     z-index: 11;
-    margin: 40px;
     transition: all 0.3s;
     align-items: center;
     justify-content: center;
     user-select: none;
 }
 
-#toggle-button:hover {
+.test-button:hover {
     border: 1px solid rgba(0, 0, 0, 0);
     background-color: #fff467;
     color: #333;

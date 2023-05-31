@@ -1,7 +1,7 @@
 import { Button, Divider, Typography } from '@mui/material';
 
-import * as SAEngine from 'sa-../engine/index.js';
 import { SAConfig, cureAllPet } from 'sa-core';
+import * as SAEngine from 'sa-core/engine';
 
 import { PopupMenu, PopupMenuItemHandler, usePopupMenuState } from '@sa-app/components/common/PopupMenu';
 import { mainColor } from '@sa-app/style';

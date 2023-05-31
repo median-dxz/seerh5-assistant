@@ -3,7 +3,7 @@
   "description": "SeerH5-Assistant核心库",
   "private": true,
   "type": "module",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "license": "MPL-2.0",
   "exports": {
     ".": "./dist/index.js",
@@ -23,7 +23,7 @@
     "watch": "tsc --watch",
     "clean": "rimraf ./dist && rimraf ./test-results && rimraf ./playwright-report",
     "types:check": "tsc --noEmit",
-    "test": "node ./test/runServer.js"
+    "test": "vite --config ./test/vite.config.js"
   },
   "dependencies": {
     "chalk": "^5.2.0",

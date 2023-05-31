@@ -76,6 +76,7 @@ class DataManager {
                 res: (data) => {
                     if (data.flag) {
                         PetManager.setDefault(data.firstPetTime);
+                        this.defaultCt = data.firstPetTime;
                     } else {
                         this.defaultCt = -1;
                     }
@@ -249,3 +250,4 @@ export function SAPet(pet: CatchTime | Pet) {
 }
 
 export { ins as PetDataManger };
+

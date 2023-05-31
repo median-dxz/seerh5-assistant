@@ -24,6 +24,7 @@
     "rimraf": "^5.0.1",
     "http-proxy-middleware": "^3.0.0-beta.0",
     "fork-ts-checker-webpack-plugin": "^8.0.0",
-    "type-fest": "^3.11.0"
+    "type-fest": "^3.11.0",
+    "vite": "^4.3.9"
   }
 }

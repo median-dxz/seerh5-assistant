@@ -1,3 +1,5 @@
+import env from '../env/pet.json';
+
 var expect = chai.expect;
 
 describe('PetHelper', function () {
@@ -6,21 +8,23 @@ describe('PetHelper', function () {
     /** @type {typeof window.saCore} */
     let core;
 
-    /** @type {typeof window.testEnv} */
-    let env;
-
     before(() => {
         core = window.saCore;
-        env = window.testEnv;
         core.toggleAutoCure(false);
+        core.HelperLoader();
     });
 
     beforeEach(async function () {
+        console.log(`${this.currentTest.title}: start`);
+    });
+
+    afterEach(async function () {
+        console.log(`${this.currentTest.title}: end`);
         await core.delay(1000);
     });
 
     it('should get a pet', async function () {
-        const { catchTime, name } = env.pet.测试精灵1;
+        const { catchTime, name } = env.测试精灵1;
 
         const pet = await core.SAPet(catchTime).pet;
 
@@ -30,7 +34,7 @@ describe('PetHelper', function () {
     });
 
     it('should clear main bag', async function () {
-        const { catchTime, name } = env.pet.测试精灵1;
+        const { catchTime, name } = env.测试精灵1;
 
         await core.switchBag([catchTime]);
         await core.switchBag([]);
@@ -40,7 +44,7 @@ describe('PetHelper', function () {
     });
 
     it('should set pet in main bag and let it default', async function () {
-        const { catchTime } = env.pet.测试精灵1;
+        const { catchTime } = env.测试精灵1;
 
         await core.SAPet(catchTime).setLocation(core.SAPetLocation.Bag);
         const loc = await core.SAPet(catchTime).location();
@@ -48,8 +52,17 @@ describe('PetHelper', function () {
         expect(loc).to.be.an('string').equal(core.SAPetLocation.Default);
     });
 
+    it('should cure pet', async function () {
+        const { catchTime } = env.测试精灵1;
+
+        await core.SAPet(catchTime).cure();
+        const pet = await core.SAPet(catchTime).pet;
+
+        expect(pet.hp).equal(pet.maxHp);
+    });
+
     it('should set pet in elite', async function () {
-        const { catchTime } = env.pet.测试精灵1;
+        const { catchTime } = env.测试精灵1;
 
         await core.SAPet(catchTime).popFromBag();
         const loc = await core.SAPet(catchTime).location();
@@ -58,7 +71,7 @@ describe('PetHelper', function () {
     });
 
     it('should lower pet hp', async function () {
-        const { catchTime } = env.pet.测试精灵1;
+        const { catchTime } = env.测试精灵1;
 
         await core.lowerBlood([catchTime]);
 

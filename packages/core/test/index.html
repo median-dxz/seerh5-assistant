@@ -15,35 +15,15 @@
     </head>
     <body>
         <div id="mocha"></div>
-        <div id="toggle-button" onclick="toggleMocha()">切换测试页显示</div>
+        <div id="test-toolbar">
+            <div id="test-run" class="test-button">开始测试</div>
+            <div id="test-page" class="test-button">切换测试页显示</div>
+        </div>
 
         <div id="logo"></div>
+        <script type="module" src="./entry.js"></script>
 
-        <script defer>
-            window.wwwroot = '/seerh5.61.com/';
-            fetch('/seerh5.61.com/app.js?t=' + Date.now())
-                .then((response) => response.text())
-                .then((appJs) => {
-                    let script = document.createElement('script');
-                    while (appJs.startsWith('eval')) {
-                        appJs = eval(appJs.match(/eval([^)].*)/)[1]);
-                    }
-                    script.innerHTML = appJs.replace(/loadSingleScript.*baidu.*\r\n/, '');
-                    document.body.appendChild(script);
-                });
-            var toggleMocha = () => {
-                const el = document.getElementById('mocha');
-                const zIndex = el.style.zIndex;
-                el.style.zIndex = Number(zIndex) ? 0 : 1;
-            };
-            mocha.setup('bdd');
-        </script>
-
-        <script type="module" src="env/main.js"></script>
-        
-        <script src="suites/loader.spec.js"></script>
-        <script src="suites/pet.spec.js"></script>
-
-        <script type="module" src="/bundle.js"></script>
+        <script type="module" src="suites/loader.spec.js"></script>
+        <script type="module" src="suites/pet.spec.js"></script>
     </body>
 </html>

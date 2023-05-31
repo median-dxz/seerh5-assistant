@@ -12,9 +12,9 @@ import {
 } from 'sa-core';
 
 
-import type { MoveModule } from 'sa-../battle/index.js';
-import * as SABattle from 'sa-../battle/index.js';
-import * as SAEngine from 'sa-../engine/index.js';
+import type { MoveModule } from 'sa-core/battle';
+import * as SABattle from 'sa-core/battle';
+import * as SAEngine from 'sa-core/engine';
 
 const log = SaModuleLogger('精灵因子', defaultStyle.mod);
 

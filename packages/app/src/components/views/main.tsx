@@ -17,8 +17,8 @@ import { MainPanel } from './MainPanel';
 
 import * as core from 'sa-core';
 
-import { SAEventBus } from 'sa-../event-bus/index.js';
 import { Hook, defaultStrategy, resolveStrategy } from 'sa-core';
+import { SAEventBus } from 'sa-core/event-bus';
 
 window.sac = { ...core, ...sac };
 
