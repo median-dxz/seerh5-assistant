@@ -18,7 +18,7 @@ export const Operator = {
             return false;
         } else {
             log(`${FighterModelFactory.playerMode.info.petName} 使用技能: ${SkillXMLInfo.getName(skillId)}`);
-            await Socket.sendByQueue(CommandID.USE_SKILL, skillId);
+            await Socket.sendByQueue(CommandID.USE_SKILL, [skillId]);
         }
         return true;
     },
@@ -60,7 +60,7 @@ export const Operator = {
             log(`切换精灵: ${index} ${petBtn.info.name}`);
             return true;
         } catch (error) {
-            log(`切换精灵失败: ${index} ${petBtn.info.name} ${error}`);
+            error instanceof Error && log(`切换精灵失败: ${index} ${petBtn.info.name} ${error.message}`);
             return false;
         }
     },

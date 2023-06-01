@@ -1,5 +1,6 @@
 import { enableMapSet } from 'immer';
 
+import type { AnyFunction } from '../common/utils.js';
 import { NULL, SAEventTarget } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
 
@@ -9,20 +10,25 @@ import pet from '../pet-helper/internal.js';
 import event from './event.js';
 
 export const InternalInitiator = {
-    loaders: [] as { loader: Function; priority: number }[],
+    loaders: [] as { loader: AnyFunction; priority: number }[],
 
-    push(loader: Function, priority: number) {
+    push(loader: AnyFunction, priority: number) {
         this.loaders.push({ loader, priority });
     },
 
     load() {
-        this.loaders.sort((a, b) => a.priority - b.priority).forEach((i) => i.loader());
+        this.loaders
+            .sort((a, b) => a.priority - b.priority)
+            .forEach((i) => {
+                i.loader();
+            });
     },
 };
 
-export async function enableBasic() {
+export function enableBasic() {
     enableMapSet();
 
+    // eslint-disable-next-line
     OnlineManager.prototype.setSentryScope = NULL;
     ModuleManager.loadScript = loadScript;
     UIUtils = null;
@@ -38,14 +44,14 @@ export async function enableBasic() {
 
 function loadScript(this: ModuleManager, scriptName: string) {
     return new Promise<void>((resolve) => {
-        var url = 'resource/app/' + scriptName + '/' + scriptName + '.js';
+        const url = 'resource/app/' + scriptName + '/' + scriptName + '.js';
         RES.getResByUrl(
             url,
             function (script: string) {
                 const o = document.createElement('script');
                 o.type = 'text/javascript';
                 while (script.startsWith('eval')) {
-                    script = eval(script.match(/eval([^)].*)/)![1]);
+                    script = eval(script.match(/eval([^)].*)/)![1]) as string;
                 }
                 script = script.replaceAll(/console\.log/g, 'logFilter');
                 script = script.replaceAll(/console\.warn/g, 'warnFilter');

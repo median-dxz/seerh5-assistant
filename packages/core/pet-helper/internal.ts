@@ -1,7 +1,7 @@
 import { SAEventTarget } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
 import { SocketListener } from '../event-bus/index.js';
-import { PetDataManger, ProxyPet } from './ProxyPet.js';
+import { PetDataManger, ProxyPet } from './PetDataManager.js';
 
 export default () => {
     SocketListener.subscribe(CommandID.GET_PET_INFO_BY_ONCE, (data) => {
@@ -38,17 +38,21 @@ export default () => {
 
     PetDataManger.init();
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     PetDataManger.bag.deactivate = new Proxy(PetDataManger.bag.deactivate, {
         apply: (target, thisArg, argArray) => {
             SAEventTarget.emit(Hook.PetBag.deactivate);
-            return Reflect.apply(target, thisArg, argArray);
+            Reflect.apply(target, thisArg, argArray);
+            return;
         },
     });
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     PetDataManger.bag.update = new Proxy(PetDataManger.bag.update, {
-        apply: (target, thisArg, argArray) => {
+        apply: (target, thisArg, argArray: [[ProxyPet[], ProxyPet[]]]) => {
             SAEventTarget.emit(Hook.PetBag.update, ...argArray);
-            return Reflect.apply(target, thisArg, argArray);
+            Reflect.apply(target, thisArg, argArray);
+            return;
         },
     });
 };

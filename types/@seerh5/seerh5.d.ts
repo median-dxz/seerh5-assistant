@@ -1,4 +1,5 @@
 declare type Dict<T extends object> = Record<string | number, T>;
+declare type Callback<T = unknown> = (this: T, ...args: any[]) => void;
 
 declare namespace SAType {
     type EventHandler<E extends egret.EventDispatcher> = (event?: E) => void;
@@ -138,9 +139,6 @@ declare var EventManager: egret.EventDispatcher;
 // sa-loader
 declare var OnlineManager: any;
 
-// init/event
-declare var AwardManager: any;
-
 // init/helper
 declare var Alarm: any;
 declare var Alert: any;
@@ -155,9 +153,6 @@ declare var CountermarkEvent: any;
 // entities
 declare var EffectInfoManager: any;
 declare var CountExpPanelManager: any;
-
-// pet-helper
-declare var TypeXMLInfo: any;
 
 // popViewManager
 declare class PopView extends eui.Component {}
@@ -175,11 +170,16 @@ declare var PetFightSkinSkillReplaceXMLInfo: any;
 declare var PetIdTransform: any;
 declare var NatureXMLInfo: any;
 
-declare class SocketEvent extends egret.Event {}
+declare class SocketEvent extends egret.Event {
+    data?: egret.ByteArray;
+}
+declare class SocketErrorEvent extends egret.Event {}
+
 declare class PetEvent extends egret.Event {
     static readonly EQUIP_SKIN: string;
     constructor(type: string, catchTime: number, obj: any);
 }
+
 declare class PetFightEvent extends egret.Event {
     static readonly ALARM_CLICK: 'fight_alarmClick';
     static readonly ON_USE_PET_ITEM: 'onUsePetItem';

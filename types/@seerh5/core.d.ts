@@ -45,12 +45,12 @@ declare class AchieveTitleInfo {
 declare class DBSkillAnimator {
     static skillMC: SkillMC;
     skillId: number;
-    play(_: any, callback: CallBack, thisObj: any): void;
+    play(_: unknown, callback: Callback, thisObj: unknown): void;
 }
 
 declare class CardPetAnimator {
     animate: any;
-    playAnimate(t: any, e: CallBack, i: CallBack, thisObj: any): void;
+    playAnimate(_: unknown, e: Callback, i: Callback, thisObj: unknown): void;
 }
 
 declare class CountermarkInfo {
@@ -170,15 +170,26 @@ declare const CommandID: {
     GET_PET_INFO_BY_ONCE: 43706;
 };
 
+declare class AwardManager {
+    static resume(): void;
+    static showDialog(
+        dialog: unknown,
+        items: Array<{
+            id: number;
+            count: number;
+        }>
+    ): void;
+}
+
 declare class BubblerManager {
     static getInstance(): BubblerManager;
     showText(text: string, isHtml?: boolean): void;
 }
 
-type BitValue = 0 | 1;
+type Bit = 0 | 1;
 declare class KTool {
     static getMultiValueAsync(value: number[]): PromiseLike<number[]>;
-    static getBitSetAsync(value: number[]): PromiseLike<BitValue[]>;
+    static getBitSetAsync(value: number[]): PromiseLike<Bit[]>;
     static getPlayerInfoValueAsync(value: number[]): PromiseLike<number[]>;
 }
 
@@ -192,7 +203,7 @@ declare class MainManager {
         readonly logintimeThisTime: number;
         readonly timeToday: number;
         readonly timeLimit: number;
-        requestChangeClotherBySuit(suitId: number, callback?: CallBack, arg?: unknown, thisArg?: any): void;
+        requestChangeClotherBySuit(suitId: number, callback?: Callback, arg?: unknown, thisArg?: any): void;
     };
 }
 
@@ -224,8 +235,8 @@ declare class ModuleManager {
 declare class FightManager {
     static isWin: boolean | undefined;
     static fightAnimateMode: number;
-    static fightNoMapBoss(id: number, r?: boolean, o?: boolean, callback?: CallBack): void;
-    static fightNoMapBoss(arg0: '', id: number, r?: boolean, o?: boolean, callback?: CallBack): void;
+    static fightNoMapBoss(id: number, r?: boolean, o?: boolean, callback?: Callback): void;
+    static fightNoMapBoss(arg0: '', id: number, r?: boolean, o?: boolean, callback?: Callback): void;
 }
 
 declare class FightUserInfo {
@@ -246,7 +257,7 @@ declare class ItemManager {
 
     static getSkillStone(): void;
     static getNumByID(id: number): number;
-    static updateItems(idList: number[] | undefined, n: CallBack): void;
+    static updateItems(idList: number[] | undefined, n: Callback): void;
     static updateItemNum(idList: number[], enable: boolean[]): void;
     /** @description 获取精灵背包内物品 */
     static getPetItemIDs(): number[];
@@ -263,14 +274,14 @@ declare class PetManager {
     static getPetInfo(catchTime: number): PetInfo;
     static UpdateBagPetInfoAsynce(catchtime: number): PromiseLike<PetInfo>;
     static upDateBagPetInfo(catchtime: number, callback: (info: PetInfo) => any);
-    static updateBagInfo(callback?: CallBack): void;
+    static updateBagInfo(callback?: Callback): void;
     static getLovePetList(): void;
 
     static bagToSecondBag(catchTime: number): Promise<void>;
     static bagToStorage(catchTime: number): Promise<void>;
     static secondBagToBag(catchTime: number): Promise<void>;
     static secondBagToStorage(catchTime: number): Promise<void>;
-    static storageToBag(catchTime: number, callback: CallBack): void;
+    static storageToBag(catchTime: number, callback: Callback): void;
     static storageToSecondBag(catchTime: number): Promise<void>;
     static loveToBag(catchTime: number): Promise<void>;
 
@@ -278,7 +289,7 @@ declare class PetManager {
     static addLovePet(arg0: number, catchTime: number, arg2: number): void;
     static noAlarmCureAll(): void;
     static setDefault(catchTime: number): void;
-    static equipSkin(catchTime: number, skinId: number, callback: CallBack): PromiseLike<void>;
+    static equipSkin(catchTime: number, skinId: number, callback: Callback): PromiseLike<void>;
     static dispatchEvent(e: PetEvent): void;
     static isBagFull: boolean;
     static isSecondBagFull: boolean;
@@ -292,11 +303,16 @@ declare class PetManager {
 }
 
 declare class PetStorage2015InfoManager {
-    static getMiniInfo(callback: CallBack, page: number = 0): void;
-    static getTotalInfo(callback: CallBack): void;
+    static getMiniInfo(callback: Callback, page: number = 0): void;
+    static getTotalInfo(callback: Callback): void;
     static getInfoByType(arg1: number, arg2: number): PetStorage2015PetInfo[];
     static changePetPosi(catchTime: number, location: number): void;
     static allInfo: PetStorage2015PetInfo[];
+}
+
+declare class SystemTimerManager {
+    static queryTime(): void;
+    static time: number;
 }
 
 declare class CountermarkController {
@@ -362,4 +378,8 @@ declare class PetStatusEffectConfig {
     static xml: {
         BattleEffect: [{ Name: string; SubEffect: SAType.StatusEffectObj[] }];
     };
+}
+
+declare class TypeXMLInfo {
+    static getRelationsPow(a: string, b: string): number;
 }

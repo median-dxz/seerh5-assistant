@@ -20,11 +20,11 @@ export default () => {
     });
 
     SAEventTarget.on(Hook.BattlePanel.battleEnd, () => {
-        const win = FightManager.isWin;
+        const win = Boolean(FightManager.isWin);
         log(`检测到对战结束 对战胜利: ${win}`);
     });
 
-    SAEventTarget.on(Hook.BattlePanel.endPropShown, async () => {
+    SAEventTarget.on(Hook.BattlePanel.endPropShown, () => {
         if (FightManager.fightAnimateMode === 1) {
             PetFightController.setFightSpeed(1);
         }
@@ -33,9 +33,10 @@ export default () => {
             newSkillPanel?._view.hide();
             newSkillPanel?.onClose();
         }
-        const currModule: any = ModuleManager.currModule;
+        const currModule = ModuleManager.currModule;
         currModule.onClose();
         AwardManager.resume();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         EventManager.dispatchEvent(new PetFightEvent(PetFightEvent.ALARM_CLICK, CountExpPanelManager.overData));
     });
 
@@ -59,10 +60,14 @@ export default () => {
     SAEventTarget.on(Hook.BattlePanel.battleEnd, () => {
         const isWin = Boolean(FightManager.isWin);
         if (Manager.hasSetStrategy()) {
-            Promise.all([Manager.delayTimeout, delay(1000)]).then(() => {
-                Manager.unlockTrigger(isWin);
-                Manager.clear();
-            });
+            Promise.all([Manager.delayTimeout, delay(1000)])
+                .then(() => {
+                    Manager.unlockTrigger(isWin);
+                    Manager.clear();
+                })
+                .catch((e) => {
+                    console.error(e);
+                });
         }
     });
 

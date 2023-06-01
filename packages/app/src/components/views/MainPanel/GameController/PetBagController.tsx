@@ -32,8 +32,8 @@ export function PetBagController() {
     };
 
     const handleCurePets = () => {
-        for (let cureCt of selected) {
-            SAPet(cureCt).cure();
+        for (const cureCt of selected) {
+            SAPet.cure(cureCt);
         }
     };
 
@@ -48,8 +48,8 @@ export function PetBagController() {
         const target = e.currentTarget;
         const pattern = [];
         for (let index = 0; index < petGroups.length; index++) {
-            const pets = await Promise.all(petGroups[index]?.map(Number).map((ct) => SAPet(ct).name) ?? []);
-            const name = `方案${index}: ${pets.join(',')}`;
+            const pets = await Promise.all(petGroups[index]?.map((ct) => SAPet.get(ct)) ?? []);
+            const name = `方案${index}: ${pets.map((pet) => pet.name).join(',')}`;
             pattern.push(name);
         }
 

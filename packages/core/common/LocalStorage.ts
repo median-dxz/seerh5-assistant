@@ -9,7 +9,7 @@ export type LocalStorageProxy<T> = {
     use(producer: (data: Draft<T>) => void): void;
 } & T;
 
-const StorageMap = new Map<string, LocalStorageProxy<any>>();
+const StorageMap = new Map<string, LocalStorageProxy<unknown>>();
 
 export function createLocalStorageProxy<T extends object>(
     key: string,
@@ -19,7 +19,7 @@ export function createLocalStorageProxy<T extends object>(
 ): LocalStorageProxy<T> {
     key = 'SeerAssistant.' + key;
     if (StorageMap.has(key)) {
-        return StorageMap.get(key);
+        return StorageMap.get(key) as LocalStorageProxy<T>;
     }
     const serializedData = localStorage.getItem(key);
     let data: T = defaultValue;

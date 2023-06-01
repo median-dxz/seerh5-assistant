@@ -1,14 +1,16 @@
+import type { AnyFunction } from '../common/utils.js';
+import { SocketListener } from '../event-bus/index.js';
+
 /**
  * @description 将数据包加到待发送队列
  */
-export async function sendByQueue(cmd: number, data: Array<number> | number = []) {
-    let _data = typeof data === 'number' ? [data] : data;
-    return new Promise<ArrayBuffer>((resolve, reject) => {
+export async function sendByQueue(cmd: number, data: number[] = []) {
+    return new Promise<ArrayBuffer | undefined>((resolve, reject) => {
         SocketConnection.sendByQueue(
             cmd,
-            _data,
-            (v: any) => resolve(v.data?.buffer),
-            (err: any) => reject(err.data?.buffer)
+            data,
+            (v: SocketEvent) => resolve(v.data?.buffer),
+            (err: SocketErrorEvent) => reject(err.data)
         );
     });
 }
@@ -16,18 +18,11 @@ export async function sendByQueue(cmd: number, data: Array<number> | number = []
 /**
  * @description 返回服务器响应cmd后才resolve的promise
  */
-export async function sendWithReceivedPromise(cmd: number, fn: VoidFunction) {
+export async function sendWithReceivedPromise(cmd: number, fn: AnyFunction) {
     if (!fn) return;
-    return new Promise<ArrayBuffer>((resolve, reject) => {
-        new Promise<{ data: ArrayBuffer; resolver: (data: ArrayBuffer) => void }>((resolve, reject) => {
-            function resolver(data: ArrayBuffer) {
-                resolve({ data, resolver });
-            }
-            SocketConnection.addCmdListener(cmd, resolver);
-        }).then(({ data, resolver }) => {
-            SocketConnection.removeCmdListener(cmd, resolver);
-            resolve(data);
-        });
+
+    return new Promise<unknown>((resolve) => {
+        SocketListener.once({ cmd, res: resolve });
         fn();
     });
 }

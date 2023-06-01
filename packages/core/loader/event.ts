@@ -1,4 +1,5 @@
-import { SAEventTarget, delay, hookPrototype, wrapper } from '../common/utils.js';
+/* eslint-disable @typescript-eslint/unbound-method */
+import { SAEventTarget, delay, hookPrototype, wrapper, wrapperAsync } from '../common/utils.js';
 import { CmdMask, Hook } from '../constant/index.js';
 
 export default () => {
@@ -15,9 +16,11 @@ export default () => {
         SAEventTarget.emit(Hook.Module.openMainPanel, { module: this.moduleName, panel: this._mainPanelName });
     };
 
-    ModuleManager.beginShow = wrapper(ModuleManager.beginShow, undefined, function (r, moduleName: string) {
+    type withClass<T> = T & { __class__: string };
+    ModuleManager.beginShow = wrapperAsync(ModuleManager.beginShow, undefined, function (_, moduleName: string) {
         SAEventTarget.emit(Hook.Module.construct, moduleName);
-        const moduleClass: String = (ModuleManager.currModule as any).__class__;
+        const curModule = ModuleManager.currModule as withClass<typeof ModuleManager.currModule>;
+        const moduleClass = curModule.__class__;
         switch (moduleName) {
             case 'battleResultPanel':
                 if (
@@ -26,11 +29,11 @@ export default () => {
                 ) {
                     SAEventTarget.emit(Hook.BattlePanel.endPropShown);
                 }
+                break;
             default:
                 break;
         }
     });
-
     ModuleManager.removeModuleInstance = function (module) {
         const key = Object.keys(this._modules).find((key) => this._modules[key] === module);
         if (key) {
@@ -50,7 +53,7 @@ export default () => {
         this.destroy();
     });
 
-    AwardManager.showDialog = wrapper(AwardManager.showDialog, undefined, function (r, dialog: any, items: any) {
+    AwardManager.showDialog = wrapper(AwardManager.showDialog, undefined, function (_, _dialog, items) {
         SAEventTarget.emit(Hook.Award.receive, { items });
     });
 
@@ -60,7 +63,7 @@ export default () => {
         if (!enemyMode || !playerMode) return;
         enemyMode.setHpView(true);
         enemyMode.setHpView = function () {
-            this.propView!.isShowFtHp = true;
+            this.propView.isShowFtHp = true;
         };
         playerMode.nextRound = wrapper(playerMode.nextRound.bind(playerMode), undefined, () => {
             SAEventTarget.emit(Hook.BattlePanel.roundEnd);

@@ -1,10 +1,11 @@
+import type { AnyFunction } from '../common/utils.js';
 import { SAEventTarget } from '../common/utils.js';
 
 export * from './module.js';
 export * from './socket.js';
 
 export class SAEventBus {
-    private cleanFn: Function[] = [];
+    private cleanFn: AnyFunction[] = [];
 
     hook<TEvent extends string>(...args: Parameters<typeof SAEventTarget.on<TEvent>>) {
         this.cleanFn.push(() => {
@@ -20,7 +21,7 @@ export class SAEventBus {
         return SocketConnection.addCmdListener(...args);
     }
 
-    egret(event: string, callback: Function) {
+    egret(event: string, callback: Callback) {
         this.cleanFn.push(() => {
             EventManager.removeEventListener(event, callback, undefined);
         });

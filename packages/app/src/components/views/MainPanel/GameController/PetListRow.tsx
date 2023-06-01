@@ -57,7 +57,7 @@ export function PetListRow({ pet, isDefault, selected, onSelect, ...props }: Pro
                     <Button
                         onClick={(e) => {
                             e.stopPropagation();
-                            SAPet(pet.catchTime).cure();
+                            SAPet.cure(pet.catchTime);
                         }}
                     >
                         治疗
@@ -66,7 +66,7 @@ export function PetListRow({ pet, isDefault, selected, onSelect, ...props }: Pro
                         <Button
                             onClick={(e) => {
                                 e.stopPropagation();
-                                SAPet(pet.catchTime).default();
+                                SAPet.default(pet.catchTime);
                             }}
                         >
                             首发

@@ -142,9 +142,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                     console.log('dig', row, col, row * 11 + col);
 
                     try {
-                        await SAEngine.Socket.sendWithReceivedPromise(42395, () => {
-                            SAEngine.Socket.sendByQueue(42395, [104, 2, row * 11 + col, 0]);
-                        });
+                        await SAEngine.Socket.sendByQueue(42395, [104, 2, row * 11 + col, 0]);
                     } catch (error) {
                         setStep(-2);
                         break;

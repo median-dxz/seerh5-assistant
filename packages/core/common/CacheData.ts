@@ -3,9 +3,9 @@ export class CacheData<T> {
     private available: boolean;
     private updatePromise: Promise<void>;
     private updateResolve: () => void;
-    private updater: Function;
+    private updater: () => void;
 
-    constructor(data: T, updater: Function) {
+    constructor(data: T, updater: () => void) {
         this.updater = updater;
         this.deactivate();
         this.update(data);
@@ -13,7 +13,7 @@ export class CacheData<T> {
 
     deactivate() {
         this.available = false;
-        this.updatePromise = new Promise((resolve, reject) => {
+        this.updatePromise = new Promise((resolve) => {
             this.updateResolve = resolve;
         });
     }

@@ -19,6 +19,9 @@
     ],
     "files.exclude": {
         "**/packages/core/node_modules": true
-    }
-    // "typescript.referencesCodeLens.enabled": true,
+    },
+    "eslint.workingDirectories": [
+        "./packages/core",
+        "./packages/app"
+    ]
 }

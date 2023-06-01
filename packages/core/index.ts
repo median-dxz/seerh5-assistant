@@ -15,10 +15,10 @@ declare global {
     /** `sac`全局变量使用的额外命名空间 */
     export namespace sac {
         /** 原生客户端`console.log`的正则过滤列表 */
-        var filterLogText: RegExp[];
+        const filterLogText: RegExp[];
         /** 原生客户端`console.warn`的正则过滤列表 */
-        var filterWarnText: RegExp[];
-        var SeerH5Ready: boolean;
-        var SacReady: boolean;
+        const filterWarnText: RegExp[];
+        let SeerH5Ready: boolean;
+        let SacReady: boolean;
     }
 }

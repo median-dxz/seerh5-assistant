@@ -26,7 +26,7 @@ describe('PetHelper', function () {
     it('should get a pet', async function () {
         const { catchTime, name } = env.测试精灵1;
 
-        const pet = await core.SAPet(catchTime).pet;
+        const pet = await core.SAPet.get(catchTime);
 
         expect(pet).to.be.an('object').that.has.property('__type', 'Pet');
         expect(pet.catchTime).equal(catchTime);
@@ -46,8 +46,8 @@ describe('PetHelper', function () {
     it('should set pet in main bag and let it default', async function () {
         const { catchTime } = env.测试精灵1;
 
-        await core.SAPet(catchTime).setLocation(core.SAPetLocation.Bag);
-        const loc = await core.SAPet(catchTime).location();
+        await core.SAPet.setLocation(catchTime, core.SAPetLocation.Bag);
+        const loc = await core.SAPet.location(catchTime);
 
         expect(loc).to.be.an('string').equal(core.SAPetLocation.Default);
     });
@@ -55,8 +55,8 @@ describe('PetHelper', function () {
     it('should cure pet', async function () {
         const { catchTime } = env.测试精灵1;
 
-        await core.SAPet(catchTime).cure();
-        const pet = await core.SAPet(catchTime).pet;
+        await core.SAPet.cure(catchTime);
+        const pet = await core.SAPet.get(catchTime);
 
         expect(pet.hp).equal(pet.maxHp);
     });
@@ -64,8 +64,8 @@ describe('PetHelper', function () {
     it('should set pet in elite', async function () {
         const { catchTime } = env.测试精灵1;
 
-        await core.SAPet(catchTime).popFromBag();
-        const loc = await core.SAPet(catchTime).location();
+        await core.SAPet.popFromBag(catchTime);
+        const loc = await core.SAPet.location(catchTime);
 
         expect(loc).to.be.an('string').equal(core.SAPetLocation.Elite);
     });
@@ -75,11 +75,15 @@ describe('PetHelper', function () {
 
         await core.lowerBlood([catchTime]);
 
-        const pet = core.SAPet(catchTime).pet;
-        const loc = await core.SAPet(catchTime).location();
+        const pet = await core.SAPet.get(catchTime);
+        const loc = await pet.location();
 
         expect(pet.hp).equal(50);
         expect(loc).to.be.an('string').equal(core.SAPetLocation.Default);
+    });
+
+    it('should close the BattleEnd panel', async function () {
+        expect(ModuleManager.currModule).instanceOf(mainPanel.MainPanel);
     });
 
     after(function () {

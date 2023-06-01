@@ -1,5 +1,6 @@
-export type AnyFunction = (...args: any) => any;
-export type Constructor<T extends new (...args: any) => any = any> = { new (...args: any[]): InstanceType<T> };
+/* eslint-disable */
+export type AnyFunction = (...args: any[]) => unknown;
+export type Constructor<T extends new (...args: any) => unknown> = { new (...args: any[]): InstanceType<T> };
 
 export function delay(time: number): Promise<void> {
     return new Promise((resolver) => setTimeout(resolver, time));
@@ -7,7 +8,7 @@ export function delay(time: number): Promise<void> {
 
 export function debounce<F extends AnyFunction>(func: F, wait: number) {
     let timer: number | undefined;
-    return function (this: any, ...args: Parameters<F>) {
+    return function (this: unknown, ...args: Parameters<F>) {
         timer && clearTimeout(timer);
         timer = window.setTimeout(() => {
             func.apply(this, args);
@@ -15,18 +16,36 @@ export function debounce<F extends AnyFunction>(func: F, wait: number) {
     };
 }
 
-export function wrapper<F extends AnyFunction>(
+export function wrapperAsync<F extends (...args: any) => PromiseLike<R>, R>(
     func: F,
-    beforeDecorator?: (...args: Parameters<F>) => any,
-    afterDecorator?: (result: Awaited<ReturnType<F>>, ...args: Parameters<F>) => any
+    beforeDecorator?: (...args: Parameters<F>) => void | Promise<void>,
+    afterDecorator?: (result: R, ...args: Parameters<F>) => void | Promise<void>
 ) {
     if (Object.hasOwn(func, 'rawFunction')) {
         func = (func as any).rawFunction;
     }
-    const wrappedFunc = async function (this: any, ...args: Parameters<F>): Promise<Awaited<ReturnType<F>>> {
+    const wrappedFunc = async function (this: unknown, ...args: Parameters<F>): Promise<R> {
         beforeDecorator && (await beforeDecorator.apply(this, args));
         const r = await func.apply(this, args);
-        afterDecorator && (await afterDecorator.call(this, r, ...(args as any[])));
+        afterDecorator && (await afterDecorator.call(this, r, ...args));
+        return r;
+    };
+    (wrappedFunc as any).rawFunction = func;
+    return wrappedFunc;
+}
+
+export function wrapper<F extends (...args: any) => any>(
+    func: F,
+    beforeDecorator?: (...args: Parameters<F>) => void,
+    afterDecorator?: (result: ReturnType<F>, ...args: Parameters<F>) => void
+) {
+    if (Object.hasOwn(func, 'rawFunction')) {
+        func = (func as any).rawFunction;
+    }
+    const wrappedFunc = function (this: unknown, ...args: Parameters<F>): ReturnType<F> {
+        beforeDecorator && beforeDecorator.apply(this, args);
+        const r = func.apply(this, args);
+        afterDecorator && afterDecorator.call(this, r, ...args);
         return r;
     };
     (wrappedFunc as any).rawFunction = func;
@@ -38,7 +57,7 @@ type HookedFunction<T extends object, K extends keyof T> = T[K] extends (...args
     : never;
 
 export function hookFn<T extends object, K extends keyof T>(target: T, funcName: K, hookedFunc?: HookedFunction<T, K>) {
-    let originalFunc = target[funcName] as Function;
+    let originalFunc = target[funcName] as AnyFunction;
     if (typeof originalFunc !== 'function') return;
 
     if (Object.hasOwn(originalFunc, 'rawFunction')) {

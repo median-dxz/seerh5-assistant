@@ -22,7 +22,8 @@
     "build": "npm run clean && tsc",
     "watch": "tsc --watch",
     "clean": "rimraf ./dist && rimraf ./test-results && rimraf ./playwright-report",
-    "types:check": "tsc --noEmit",
+    "lint": "eslint --fix .",
+    "check:types": "tsc --noEmit",
     "test": "vite --config ./test/vite.config.js"
   },
   "dependencies": {

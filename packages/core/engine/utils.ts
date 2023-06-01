@@ -26,7 +26,7 @@ export function findObject<T extends Constructor<T>>(
             return [];
         }
         let result: InstanceType<T>[] = [];
-        for (let child of parent.$children) {
+        for (const child of parent.$children) {
             if (child instanceof instanceClass && (predicate == undefined || predicate(child) === true)) {
                 result.push(child);
             }

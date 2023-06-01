@@ -1,17 +1,20 @@
-import { SAHookData } from '../constant/index.js';
+import type { SAHookData } from '../constant/index.js';
 
 type Listener<T> = (data: T) => void;
-type EventData<Type, TEvent extends Record<string, any>> = Type extends keyof TEvent ? TEvent[Type] : undefined;
+type EventData<Type extends string, TEvents extends Record<string, unknown>> = Type extends keyof TEvents
+    ? TEvents[Type]
+    : undefined;
 
-interface SAEventTarget<Events extends Record<string, any>> {
-    on<T extends string>(type: T, listener: Listener<EventData<T, Events>>): void;
-    once<T extends string>(type: T, listener: Listener<EventData<T, Events>>): void;
-    off<T extends string>(type: T, listener: Listener<EventData<T, Events>>): void;
-    emit<T extends string>(type: T, data?: EventData<T, Events>): boolean;
+interface SAEventTarget<TEvents extends Record<string, unknown>> {
+    on<T extends string>(type: T, listener: Listener<EventData<T, TEvents>>): void;
+    once<T extends string>(type: T, listener: Listener<EventData<T, TEvents>>): void;
+    off<T extends string>(type: T, listener: Listener<EventData<T, TEvents>>): void;
+    emit<T extends string>(type: T, data?: EventData<T, TEvents>): boolean;
 }
 
 const et = new EventTarget();
-const listenerMap = new Map<Listener<any>, EventListener>();
+
+const listenerMap = new Map<Listener<never>, EventListener>();
 
 export const SAEventTarget: SAEventTarget<SAHookData> = {
     on(type, listener) {
@@ -19,7 +22,7 @@ export const SAEventTarget: SAEventTarget<SAHookData> = {
         if (wrappedListener == undefined) {
             wrappedListener = (e: Event) => {
                 if (e instanceof CustomEvent) {
-                    listener(e.detail);
+                    listener(e.detail as EventData<typeof type, SAHookData>);
                 }
             };
             listenerMap.set(listener, wrappedListener);
@@ -28,7 +31,11 @@ export const SAEventTarget: SAEventTarget<SAHookData> = {
     },
 
     once(type, listener) {
-        et.addEventListener(type, (e: Event) => listener((e as CustomEvent).detail), { once: true });
+        et.addEventListener(
+            type,
+            (e: Event) => listener((e as CustomEvent).detail as EventData<typeof type, SAHookData>),
+            { once: true }
+        );
     },
 
     off(type, listener) {

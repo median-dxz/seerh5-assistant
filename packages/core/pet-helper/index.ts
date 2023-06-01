@@ -1,12 +1,12 @@
 import { PetPosition as PosType } from '../constant/index.js';
-import { PetDataManger } from './ProxyPet.js';
+import { PetDataManger } from './PetDataManager.js';
 
 type BagPetsPos = typeof PosType.bag1 | typeof PosType.secondBag1 | -1;
 /**
  * @description 获取背包精灵列表
  */
 export const getBagPets = async (location: BagPetsPos = -1) => {
-    let arr = await PetDataManger.bag.get();
+    const arr = await PetDataManger.bag.get();
     switch (location) {
         case PosType.bag1:
             return arr[0];
@@ -31,5 +31,7 @@ export function cureAllPet() {
     PetManager.noAlarmCureAll();
 }
 
+export { PetDataManger } from './PetDataManager.js';
 export { SAPetLocation } from './PetLocation.js';
-export { PetDataManger, SAPet } from './ProxyPet.js';
+export { SAPet } from './SAPet.js';
+

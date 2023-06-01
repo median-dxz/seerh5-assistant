@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { SaModuleLogger, defaultStyle, hookPrototype } from '../common/utils.js';
 const log = SaModuleLogger('SAHelper', defaultStyle.core);
 
@@ -37,10 +39,10 @@ function enableFastStaticAnimation() {
         thisObj = thisObj ?? this;
         if (e)
             if (FightManager.fightAnimateMode === 1) e.call(thisObj);
-            else egret.setTimeout(e.bind(thisObj), this, 1e3);
+            else egret.setTimeout(e.bind(thisObj), thisObj, 1e3);
         if (this)
             if (FightManager.fightAnimateMode === 1) i.call(thisObj);
-            else egret.setTimeout(i.bind(thisObj), this, 2e3);
+            else egret.setTimeout(i.bind(thisObj), thisObj, 2e3);
         this.animate?.parent?.addChild(this.animate);
     };
 
@@ -52,9 +54,10 @@ function enableFastStaticAnimation() {
     });
 
     const _RenewPPEffect = RenewPPEffect;
-    (RenewPPEffect as any) = function (model: BaseFighterModel, itemId: number) {
+    (RenewPPEffect as unknown) = function (model: BaseFighterModel, itemId: number) {
         const ins = new _RenewPPEffect(model, itemId);
         if (FightManager.fightAnimateMode === 1) {
+            // eslint-disable-next-line @typescript-eslint/unbound-method
             ins.timer?.removeEventListener(egret.TimerEvent.TIMER, ins.closeTxt, ins);
             ins.timer?.stop();
             ins.timer = null;

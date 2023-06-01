@@ -1,9 +1,10 @@
 import { extractObjectId } from '../common/utils.js';
-import { IItemObject, Item } from '../entity/index.js';
+import type { IItemObject } from '../entity/index.js';
+import { Item } from '../entity/index.js';
 import * as Socket from './socket.js';
 
 export function getItemNum(item: number | IItemObject) {
-    let id = extractObjectId(item, Item.instanceKey);
+    const id = extractObjectId(item, Item.instanceKey);
     return ItemManager.getNumByID(id);
 }
 
@@ -42,11 +43,12 @@ export function getUserSuit(): number {
  * 获取精英收藏的上限
  */
 export async function getEliteLimit() {
-    Socket.multiValue(121020).then((r) => {
+    return Socket.multiValue(121020).then((r) => {
         let i = r[0];
         i = 255 & i;
         i += 1;
         i = 30 >= i ? i : 30;
+        // eslint-disable-next-line
         return parseFloat(config.Brave_lv.getItem(i).storehouse);
     });
 }

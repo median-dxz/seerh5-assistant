@@ -1,7 +1,8 @@
 import { delay } from '../common/utils.js';
-import { Pet, Skill } from '../entity/index.js';
+import type { Pet, Skill } from '../entity/index.js';
 import { Operator } from './operator.js';
-import { Provider, RoundInfo } from './provider.js';
+import type { RoundInfo } from './provider.js';
+import { Provider } from './provider.js';
 
 export type Trigger = () => void;
 export type MoveHandler = (battleState: RoundInfo, skills: Skill[], pets: Pet[]) => Promise<boolean>;

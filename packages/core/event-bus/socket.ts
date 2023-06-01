@@ -1,12 +1,12 @@
 import { tryGet } from '../common/utils.js';
 import type { PetRoundInfo } from '../entity/index.js';
-import type { ProxyPet } from '../pet-helper/ProxyPet.js';
+import type { ProxyPet } from '../pet-helper/PetDataManager.js';
 
 type DataBuilder<T> = (data: ArrayBuffer) => T;
 type OnReqHandler = (bytes: SAType.SocketRequestData) => void;
 type OnResHandler<TCmd extends number> = (data: SocketData<TCmd>) => void;
 
-type SocketData<TCmd> = TCmd extends keyof SASocketData ? SASocketData[TCmd] : null;
+type SocketData<TCmd extends number> = TCmd extends keyof SASocketData ? SASocketData[TCmd] : unknown;
 
 export interface SocketEventHandler<TCmd extends number> {
     cmd: TCmd;
@@ -15,8 +15,8 @@ export interface SocketEventHandler<TCmd extends number> {
 }
 
 export const SocketListener = {
-    handlers: new Map<number, Set<SocketEventHandler<any>>>(),
-    builders: new Map<number, DataBuilder<SocketData<any>>>(),
+    handlers: new Map<number, Set<SocketEventHandler<number>>>(),
+    builders: new Map<number, DataBuilder<SocketData<number>>>(),
 
     subscribe<TCmd extends number>(cmd: TCmd, builder?: DataBuilder<SocketData<TCmd>>) {
         if (this.builders.has(cmd)) this.unsubscribe(cmd);
@@ -33,13 +33,26 @@ export const SocketListener = {
     },
 
     on<TCmd extends number>(handler: SocketEventHandler<TCmd>) {
-        tryGet(this.handlers, handler.cmd).add(handler);
+        const { cmd } = handler;
+        tryGet(this.handlers, cmd).add(handler as unknown as SocketEventHandler<number>);
     },
 
     off<TCmd extends number>(handler: SocketEventHandler<TCmd>) {
-        if (this.handlers.has(handler.cmd)) {
-            tryGet(this.handlers, handler.cmd).delete(handler);
+        const { cmd } = handler;
+        if (this.handlers.has(cmd)) {
+            tryGet(this.handlers, cmd).delete(handler as unknown as SocketEventHandler<number>);
         }
+    },
+
+    once<TCmd extends number>(handler: SocketEventHandler<TCmd>) {
+        const warpHandler: SocketEventHandler<TCmd> = {
+            ...handler,
+            res: (data) => {
+                handler.res?.(data);
+                SocketListener.off(warpHandler);
+            },
+        };
+        SocketListener.on(warpHandler);
     },
 
     onReq(cmd: number, bytes: SAType.SocketRequestData) {
@@ -52,12 +65,12 @@ export const SocketListener = {
         });
     },
 
-    onRes<TCmd extends number>(cmd: TCmd, bytes?: egret.ByteArray) {
+    onRes(cmd: number, bytes?: egret.ByteArray) {
         if (!this.handlers.has(cmd)) {
             return;
         }
 
-        let data: any = null;
+        let data: unknown = null;
 
         if (this.builders.has(cmd) && bytes) {
             const builder = this.builders.get(cmd)!;

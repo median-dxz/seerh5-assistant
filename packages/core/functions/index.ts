@@ -16,7 +16,7 @@ type PotionId = (typeof Potion)[keyof typeof Potion];
 export async function lowerBlood(
     cts: number[],
     healPotionId: PotionId = Potion.中级体力药剂,
-    hpLimit: number = 200
+    hpLimit = 200
 ): Promise<void> {
     cts = cts.slice(0, 6);
     if (!cts || cts.length === 0) {
@@ -24,18 +24,18 @@ export async function lowerBlood(
     }
 
     // 检测列表是否全在背包
-    let curPets = await getBagPets(PetPosition.bag1);
-    let replacePets = curPets.filter((p) => !cts.includes(p.catchTime));
+    const curPets = await getBagPets(PetPosition.bag1);
+    const replacePets = curPets.filter((p) => !cts.includes(p.catchTime));
 
-    for (let ct of cts) {
-        const location = await SAPet(ct).location();
+    for (const ct of cts) {
+        const location = await SAPet.location(ct);
         if (location !== SAPetLocation.Bag && location !== SAPetLocation.Default) {
             if (PetManager.isBagFull) {
-                let replacePet = replacePets.pop()!;
+                const replacePet = replacePets.pop()!;
                 log(`压血 -> 将 ${replacePet.name} 放入仓库`);
-                await SAPet(replacePet.catchTime).popFromBag();
+                await replacePet.popFromBag();
             }
-            await SAPet(ct).setLocation(SAPetLocation.Bag);
+            await SAPet.setLocation(ct, SAPetLocation.Bag);
         }
     }
     log(`压血 -> 背包处理完成`);
@@ -44,10 +44,11 @@ export async function lowerBlood(
     const hpChecker = () => cts.filter((ct) => SAPet(ct).hp >= hpLimit);
 
     const usePotion = async (ct: number) => {
-        if (SAPet(ct).hp == 0) {
-            await SAPet(ct).usePotion(healPotionId);
+        let pet = await SAPet.get(ct);
+        if (pet.hp == 0) {
+            pet = await pet.usePotion(healPotionId);
         }
-        await SAPet(ct).usePotion(Potion.中级活力药剂);
+        await pet.usePotion(Potion.中级活力药剂);
     };
 
     if (hpChecker().length === 0) {
@@ -60,7 +61,7 @@ export async function lowerBlood(
 
     buyPetItem(Potion.中级活力药剂, cts.length);
     buyPetItem(healPotionId, cts.length);
-    await SAPet(cts[0]).default();
+    await SAPet.default(cts[0]);
     await toggleAutoCure(false);
     await delay(300);
 
@@ -69,8 +70,8 @@ export async function lowerBlood(
     const strategy: Battle.MoveModule = {
         resolveMove(battleState, skills, battlePets) {
             log('move', battleState.round, battleState.self?.hp.remain);
-            if (battleState.self?.hp.remain! < hpLimit || !cts.includes(battleState.self?.catchtime!)) {
-                let nextPet = this.resolveNoBlood(battleState, skills, battlePets) ?? -1;
+            if (battleState.self.hp.remain < hpLimit || !cts.includes(battleState.self.catchtime)) {
+                const nextPet = this.resolveNoBlood(battleState, skills, battlePets) ?? -1;
                 if (nextPet === -1) {
                     return Operator.escape();
                 }
@@ -79,11 +80,10 @@ export async function lowerBlood(
                 return Operator.useSkill(skills.find((v) => v.category !== 4)!.id);
             }
         },
-        resolveNoBlood: (battleState, skills, battlePets) => {
-            return battlePets.findIndex(
-                (v) => cts.includes(v.catchTime) && v.hp >= hpLimit && v.catchTime !== battleState.self!.catchtime
-            );
-        },
+        resolveNoBlood: (battleState, skills, battlePets) =>
+            battlePets.findIndex(
+                (v) => cts.includes(v.catchTime) && v.hp >= hpLimit && v.catchTime !== battleState.self.catchtime
+            ),
     };
 
     await Battle.Manager.runOnce(() => {
@@ -97,7 +97,7 @@ export async function lowerBlood(
     }
 
     await delay(300);
-    let leftCts = hpChecker();
+    const leftCts = hpChecker();
     if (leftCts.length > 0) {
         return lowerBlood(leftCts, healPotionId);
     } else {
@@ -111,12 +111,12 @@ export async function switchBag(cts: number[]) {
     // 清空现有背包
     for (const v of await getBagPets(PetPosition.bag1)) {
         if (!cts.includes(v.catchTime)) {
-            await SAPet(v).popFromBag();
+            await SAPet.popFromBag(v);
             log(`SwitchBag -> 将 ${v.name} 放入仓库`);
         }
     }
-    for (let v of cts) {
-        const { name } = await SAPet(v).pet;
+    for (const v of cts) {
+        const { name } = await SAPet.get(v);
         await SAPet(v).setLocation(SAPetLocation.Bag);
         log(`SwitchBag -> 将 ${name} 放入背包`);
     }
@@ -125,14 +125,14 @@ export async function switchBag(cts: number[]) {
 /**
  * @description 计算可用的高倍克制精灵(默认大于等于1.5)
  */
-export async function calcAllEfficientPet(e: number, radio: number = 1.5) {
+export async function calcAllEfficientPet(e: number, radio = 1.5) {
     const [bag1, bag2] = await PetDataManger.bag.get();
     const mini = (await PetDataManger.miniInfo.get()).values();
-    let pets = [...bag1, ...bag2, ...mini];
+    const pets = [...bag1, ...bag2, ...mini];
 
-    let r = pets.filter((v) => PetElement.formatById(PetXMLInfo.getType(v.id)).calcRatio(e) >= radio);
+    const r = pets.filter((v) => PetElement.formatById(PetXMLInfo.getType(v.id)).calcRatio(e) >= radio);
     return r.map((v) => {
-        let eid = PetXMLInfo.getType(v.id);
+        const eid = PetXMLInfo.getType(v.id);
         return {
             name: v.name,
             elementId: eid,
@@ -156,14 +156,12 @@ export async function delCounterMark() {
         return pre;
     }, new Map<string, CountermarkInfo[]>());
 
-    for (let [k, v] of universalMarks) {
+    for (const [_, v] of universalMarks) {
         if (v.length > 5) {
-            for (let i in v) {
-                if (parseInt(i) >= 14) {
-                    const mark = v[i];
-                    await Socket.sendByQueue(CommandID.COUNTERMARK_RESOLVE, mark.obtainTime);
-                    await delay(100);
-                }
+            for (let i = 18; i < v.length; i++) {
+                const mark = v[i];
+                await Socket.sendByQueue(CommandID.COUNTERMARK_RESOLVE, [mark.obtainTime]);
+                await delay(100);
             }
         }
     }
@@ -175,19 +173,18 @@ const BattleFireValue = {
 } as const;
 
 export async function updateBattleFireInfo() {
-    return Socket.multiValue(BattleFireValue.类型, BattleFireValue.到期时间戳).then((r) => {
-        return {
-            type: r[0],
-            valid: r[1] > 0 && SystemTimerManager.time < r[1],
-            timeLeft: r[1] - SystemTimerManager.time,
-        };
-    });
+    return Socket.multiValue(BattleFireValue.类型, BattleFireValue.到期时间戳).then((r) => ({
+        type: r[0],
+        valid: r[1] > 0 && SystemTimerManager.time < r[1],
+        timeLeft: r[1] - SystemTimerManager.time,
+    }));
 }
 
 export function updateBatteryTime() {
     const leftTime =
         MainManager.actorInfo.timeLimit -
         (MainManager.actorInfo.timeToday + Math.floor(Date.now() / 1000 - MainManager.actorInfo.logintimeThisTime));
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     BatteryController.Instance._leftTime = Math.max(0, leftTime);
 }
 

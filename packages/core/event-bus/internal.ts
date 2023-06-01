@@ -10,7 +10,7 @@ const log = SaModuleLogger('SAHookListener', defaultStyle.core);
 export default () => {
     SAEventTarget.on(Hook.Award.receive, (data) => {
         log(`获得物品:`);
-        const logStr = data.items.map((v: any) => ItemXMLInfo.getName(v.id) + ' ' + v.count);
+        const logStr = data.items.map((v) => `${ItemXMLInfo.getName(v.id)} ${v.count}`);
         log(logStr.join('\r\n'));
     });
 

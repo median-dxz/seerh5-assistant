@@ -4,6 +4,7 @@
         "moduleResolution": "nodenext",
         "target": "ES2022",
         "strictNullChecks": true,
+        "strictBindCallApply": true,
         "strictFunctionTypes": true,
         "noImplicitAny": true,
         "noImplicitThis": true,

@@ -1,0 +1,43 @@
+{
+    "rules": {
+        "no-unused-vars": "off",
+        "arrow-body-style": [
+            "error",
+            "as-needed"
+        ],
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/no-floating-promises": "off",
+        "@typescript-eslint/no-explicit-any": "warn",
+        "@typescript-eslint/consistent-type-imports": "error",
+        "@typescript-eslint/restrict-template-expressions": [
+            "error",
+            {
+                "allowNumber": true,
+                "allowBoolean": true,
+                "allowNullish": true
+            }
+        ],
+        "@typescript-eslint/no-misused-promises": [
+            "error",
+            {
+                "checksConditionals": true,
+                "checksVoidReturn": false,
+                "checksSpreads": true
+            }
+        ],
+        "@typescript-eslint/no-namespace": [
+            "error",
+            {
+                "allowDeclarations": true,
+                "allowDefinitionFiles": true
+            }
+        ]
+    },
+    "reportUnusedDisableDirectives": true,
+    "ignorePatterns": [
+        "dist",
+        "test",
+        "*.config.js"
+    ]
+}

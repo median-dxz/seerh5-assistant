@@ -2,9 +2,10 @@ import { CacheData, extractObjectId } from '../common/utils.js';
 import { Socket } from '../engine/index.js';
 import { Item, Pet } from '../entity/index.js';
 import { SocketListener } from '../event-bus/index.js';
+
 import { SAPetLocation, setLocationTable } from './PetLocation.js';
 
-type CatchTime = number;
+export type CatchTime = number;
 
 class DataManager {
     private readonly CacheSize = 50;
@@ -95,7 +96,7 @@ class DataManager {
                     this.miniInfo.update(info);
                 });
 
-            this.miniInfo = new CacheData(new Map(), updateMiniInfo);
+            this.miniInfo = new CacheData<Map<number, PetStorage2015PetInfo>>(new Map(), updateMiniInfo);
 
             updateMiniInfo();
 
@@ -111,7 +112,13 @@ class DataManager {
         if (this.cache.size > this.CacheSize) {
             const [ct, _] = Array.from(this.cacheTimestamp.entries())
                 .sort((a, b) => a[1] - b[1])
-                .pop()!;
+                .find(
+                    ([ct, _]) =>
+                        !this.bag
+                            .getImmediate()
+                            .flat()
+                            .some((pet) => pet.catchTime === ct)
+                )!;
 
             this.cache.delete(ct);
             this.cacheTimestamp.delete(ct);
@@ -127,20 +134,21 @@ class DataManager {
     async query(ct: CatchTime) {
         this.bag.deactivate();
         this.cache.delete(ct);
+        this.cacheTimestamp.delete(ct);
         return new Promise<ProxyPet>((resolve) => {
             this.queryQueue.set(ct, resolve);
-            Socket.sendByQueue(CommandID.GET_PET_INFO, ct);
+            void Socket.sendByQueue(CommandID.GET_PET_INFO, [ct]);
         });
     }
 }
 
+const ins = new DataManager();
+
+export { ins as PetDataManger };
+
 export class ProxyPet extends Pet {
     constructor(i: PetInfo) {
         super(i);
-    }
-
-    get pet(): Pet {
-        return this;
     }
 
     get isDefault(): boolean {
@@ -193,7 +201,7 @@ export class ProxyPet extends Pet {
     }
 
     async cure() {
-        await Socket.sendByQueue(CommandID.PET_ONE_CURE, this.catchTime);
+        await Socket.sendByQueue(CommandID.PET_ONE_CURE, [this.catchTime]);
         return ins.query(this.catchTime);
     }
 
@@ -219,35 +227,9 @@ export class ProxyPet extends Pet {
     /**
      * @description 对精灵使用药品
      */
-    async usePotion(item: Item | number) {
-        const itemId = extractObjectId(item, Item.instanceKey);
+    async usePotion(potion: Item | number) {
+        const itemId = extractObjectId(potion, Item.instanceKey);
         await Socket.sendByQueue(CommandID.USE_PET_ITEM_OUT_OF_FIGHT, [this.catchTime, itemId]);
         return ins.query(this.catchTime);
     }
 }
-
-const ins = new DataManager();
-
-export function SAPet(pet: CatchTime | Pet) {
-    const ct = extractObjectId(pet, Pet.instanceKey);
-    if (ins.cache.has(ct)) {
-        return ins.cache.get(ct)!;
-    } else {
-        const pet = new Proxy({} as ProxyPet, {
-            get(target, key, receiver) {
-                const prop = key as keyof ProxyPet;
-                if (typeof ProxyPet.prototype[prop] === 'function') {
-                    return async (...args: unknown[]) => {
-                        return ins.query(ct).then((pet) => (pet[prop] as Function).apply(pet, args));
-                    };
-                } else {
-                    return ins.query(ct).then((pet) => pet[prop]);
-                }
-            },
-        });
-        return pet;
-    }
-}
-
-export { ins as PetDataManger };
-

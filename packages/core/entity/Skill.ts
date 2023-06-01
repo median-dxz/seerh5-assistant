@@ -94,8 +94,10 @@ export class Skill extends EntityBase implements ISkillObject {
 
     get describe() {
         return this.effects[0].reduce((pre, v) => {
+            /* eslint-disable */
             const effect = EffectInfoManager.getEffect(v);
             pre += effect.getInfo(this.effects[1].splice(0, effect.argsNum)) + '\n';
+            /* eslint-enable */
             return pre;
         }, '');
     }

@@ -1,9 +1,10 @@
-import { Pet, PetRoundInfo, Skill } from '../entity/index.js';
+import type { PetRoundInfo} from '../entity/index.js';
+import { Pet, Skill } from '../entity/index.js';
 import { cachedRoundInfo } from './internal.js';
 
 export interface RoundInfo {
-    self?: PetRoundInfo;
-    other?: PetRoundInfo;
+    self: PetRoundInfo;
+    other: PetRoundInfo;
     round: number;
     isSwitchNoBlood: boolean;
 }
@@ -11,7 +12,7 @@ export interface RoundInfo {
 export const Provider = {
     getCurRoundInfo() {
         if (!FighterModelFactory.playerMode || !FighterModelFactory.enemyMode) return null;
-        let result: RoundInfo = {
+        const result = {
             round: PetFightController.roundTimes,
             isSwitchNoBlood: PetFightController.roundTimes
                 ? FighterModelFactory.playerMode.propView.dispatchNoBlood
@@ -53,17 +54,14 @@ export const Provider = {
             catchtime: FighterModelFactory.enemyMode.info.catchTime,
         });
 
-        result = { ...result, self: roundInfo[0], other: roundInfo[1] };
-        return result;
+        return { ...result, self: roundInfo[0], other: roundInfo[1] } as RoundInfo;
     },
 
     getCurSkills(): null | Skill[] {
         if (!FighterModelFactory.playerMode) return null;
 
         const infos = FighterModelFactory.playerMode.skillBtnViews;
-        return infos.map((v) => {
-            return Object.assign(Skill.formatById(v.skillID), { pp: v.pp });
-        });
+        return infos.map((v) => Object.assign(Skill.formatById(v.skillID), { pp: v.pp }));
     },
 
     getPets(): null | Pet[] {

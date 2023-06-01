@@ -5,12 +5,12 @@ const log = SaModuleLogger('SALoader', defaultStyle.core);
 
 export async function CoreLoader() {
     return new Promise<boolean>((resolve, reject) => {
-        const sa_wait_login = async () => {
-            await enableBasic();
+        const sa_wait_login = () => {
+            enableBasic();
             EventManager.addEventListener('event_first_show_main_panel', sa_core_init, null);
         };
 
-        const sa_core_init = async () => {
+        const sa_core_init = () => {
             EventManager.removeEventListener('event_first_show_main_panel', sa_core_init, null);
 
             InternalInitiator.load();

@@ -4,7 +4,7 @@ archive
 build
 .vscode
 
-/entry/offical.js
+entry/offical.js
 
 doc/**
 

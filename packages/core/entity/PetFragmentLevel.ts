@@ -1,4 +1,4 @@
-import { PetFragmentLevelDifficulty } from '../constant/index.js';
+import type { PetFragmentLevelDifficulty } from '../constant/index.js';
 import { EntityBase, type EntityType } from './EntityBase.js';
 
 export interface IPFLevelBoss {

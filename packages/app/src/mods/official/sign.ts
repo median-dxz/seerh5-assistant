@@ -94,13 +94,13 @@ class sign extends BaseMod {
         // vip点数
         curTimes = (await Socket.multiValue(11516))[0];
         if (!curTimes) {
-            Socket.sendByQueue(CMDID.VIP_BONUS_201409, 1);
+            Socket.sendByQueue(CMDID.VIP_BONUS_201409, [1]);
         }
 
         await delay(300);
         curTimes = MainManager.actorInfo.vipScore;
         if (curTimes >= 20) {
-            Socket.sendByQueue(CommandID.VIP_SCORE_EXCHANGE, AWARD_LIST.vip点数.体力上限药).then(() => {
+            Socket.sendByQueue(CommandID.VIP_SCORE_EXCHANGE, [AWARD_LIST.vip点数.体力上限药]).then(() => {
                 EventManager.dispatchEventWith('vipRewardBuyOrGetItem');
             });
         }
@@ -119,7 +119,7 @@ class sign extends BaseMod {
         log(rText);
     }
     async teamDispatch() {
-        await Socket.sendByQueue(45809, 0).catch(() => log('没有可收取的派遣'));
+        await Socket.sendByQueue(45809, [0]).catch(() => log('没有可收取的派遣'));
 
         const ignorePetNames = new Set(this.data.ignorePetNames);
         const PosType = PetPosition;
@@ -133,8 +133,8 @@ class sign extends BaseMod {
                     await p.popFromBag();
                 }
             }
-            const data = await Socket.sendByQueue(45810, tid)
-                .then((v) => new DataView(v))
+            const data = await Socket.sendByQueue(45810, [tid])
+                .then((v) => new DataView(v!))
                 .catch((err) => undefined);
             if (!data) continue;
 
@@ -161,7 +161,7 @@ class sign extends BaseMod {
             for (let pid of e.petIds) {
                 const petName = PetXMLInfo.getName(pid);
                 if (ignorePetNames.has(petName)) {
-                    await SAPet(e.cts[index]).setLocation(SAPetLocation.Bag);
+                    await SAPet.setLocation(e.cts[index], SAPetLocation.Bag);
                     log(`取出非派遣精灵: ${petName}`);
                 }
                 index++;
@@ -188,7 +188,7 @@ class sign extends BaseMod {
 
     async resetNature(ct: number, nature: number) {
         for (; ; await delay(200)) {
-            await SAPet(ct).useItem(300070);
+            await SAPet.get(ct).then((pet) => pet.useItem(300070));
             const info = await PetManager.UpdateBagPetInfoAsynce(ct);
 
             log(`刷性格: 当前性格: ${NatureXMLInfo.getName(info.nature)}`);
