@@ -2,13 +2,11 @@ node_modules
 dist
 archive
 build
-.vscode
+.vscode/
 
 entry/offical.js
 
 doc/**
-
-**/core/types
 
 data/*.json
 !data/example.json

@@ -12,18 +12,9 @@
         "test": "echo 'not implement'"
     },
     "devDependencies": {
-        "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
         "@types/react": "^18.2.7",
         "@types/react-dom": "^18.2.4",
-        "ts-loader": "^9.4.3",
-        "source-map-loader": "^4.0.1",
-        "css-loader": "^6.8.1",
-        "style-loader": "^3.3.3",
-        "react-refresh": "^0.14.0",
-        "react-refresh-typescript": "^2.0.9",
-        "gsap": "^3.11.5",
-        "html-webpack-plugin": "^5.5.1",
-        "workbox-webpack-plugin": "^6.6.0"
+        "gsap": "^3.11.5"
     },
     "dependencies": {
         "@mui/icons-material": "latest",
