@@ -4,7 +4,7 @@ import { InternalInitiator, enableBasic } from './internal.js';
 const log = SaModuleLogger('SALoader', defaultStyle.core);
 
 export async function CoreLoader() {
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<boolean>((resolve) => {
         const sa_wait_login = () => {
             enableBasic();
             EventManager.addEventListener('event_first_show_main_panel', sa_core_init, null);

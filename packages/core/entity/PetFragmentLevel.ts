@@ -34,7 +34,7 @@ export interface IPetFragmentLevelObject {
 export class PetFragmentLevel extends EntityBase implements IPetFragmentLevelObject {
     static readonly key = 'id';
     static readonly instanceKey = 'id';
-    readonly __type: EntityType = 'PetFragmentLevel';
+    declare readonly __type: EntityType;
 
     totalTimes: number;
     petFragmentItem: number;
@@ -59,6 +59,8 @@ export class PetFragmentLevel extends EntityBase implements IPetFragmentLevelObj
 
     constructor(obj: SAType.PetFragmentLevelObj) {
         super();
+        this.__type = 'PetFragmentLevel';
+        
         const { Configure, EasyBattle, HardBattle, NormalBattle } = obj;
         [this.id, this.petFragmentItem] = [obj.ID, obj.Reward.ItemID];
         this.totalTimes = obj.Configure.Times;

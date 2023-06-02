@@ -57,7 +57,7 @@ export function generateStrategy(_snm: string[], _dsl: string[]): MoveModule {
         resolveNoBlood(round, skills, pets) {
             return dsl.match(pets, round.self.catchtime);
         },
-        resolveMove(round, skills, pets) {
+        resolveMove(round, skills, _pets) {
             return Operator.useSkill(snm.match(skills));
         },
     };

@@ -126,6 +126,7 @@ export function LevelElfKingsTrial(props: LevelExtendsProps) {
             case -2:
                 setHint('未解锁困难难度');
                 setRunning(false);
+                break;
             default:
                 setHint(RealmName + '日任完成');
                 setRunning(false);

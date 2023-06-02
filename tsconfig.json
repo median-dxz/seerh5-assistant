@@ -10,15 +10,11 @@
         "noImplicitThis": true,
         "allowSyntheticDefaultImports": true,
         "skipLibCheck": true,
-        "resolveJsonModule": true,
-        "allowJs": true,
-        "allowUmdGlobalAccess": true,
         "forceConsistentCasingInFileNames": true,
         "lib": [
             "esnext",
             "dom"
         ],
-        "composite": true,
     },
     "include": [],
     "references": [

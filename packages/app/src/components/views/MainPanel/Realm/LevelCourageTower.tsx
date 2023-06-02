@@ -21,7 +21,8 @@ const maxDailyChallengeTimes = 5;
 const updateLevelData = async () => {
     const data = {} as LevelData;
     const bits = await SAEngine.Socket.bitSet(636, 1000577);
-    const playerInfo = new DataView(await SAEngine.Socket.sendByQueue(42397, [117]));
+    const buf = await SAEngine.Socket.sendByQueue(42397, [117]);
+    const playerInfo = new DataView(buf!);
 
     data.stimulation = bits[0];
     data.rewardReceived = bits[1];

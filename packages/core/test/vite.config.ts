@@ -1,4 +1,3 @@
-//@ts-check
 import { defineConfig } from 'vite';
 
 import { readFileSync, writeFileSync } from 'fs';
@@ -21,8 +20,7 @@ export default defineConfig({
                 rewrite: (path) => path.replace(/^\/seerh5.61.com/, ''),
                 configure: (proxy, options) => {
                     proxy.on('proxyRes', (proxyRes, req, res) => {
-                        /** @type {Buffer[]} */
-                        let data = [];
+                        let data: Buffer[] = [];
                         proxyRes.on('data', function (chunk) {
                             data.push(chunk);
                         });

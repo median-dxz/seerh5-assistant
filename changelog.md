@@ -3,6 +3,8 @@
 
 **注意，0.4.0版本对大部分api进行了重构**
 
+下面的内容拟定迁移到Project看板，方便维护
+
 长期待定功能（此部分功能的需求不明确，较好的实现方式与手段未知）：
 
 - [ ] 全局状态栏
@@ -27,26 +29,22 @@
 - [ ] 支持在模组中渲染界面
 - [ ] 战斗move module可以可选传递上一回合信息（reduce思路）
 - [ ] pet matcher便捷函数（用名称声明要换的精灵）
-- [ ] 编写单元测试
 - [ ] 完整可读的api doc
-- [ ] vsc对项目内部禁用node环境的提示
-- [ ] App引入swr库管理服务器状态，将逐步迁移重构相关代码
+- [ ] 生产环境下禁用script解密
 
-待定功能
+on progress:
 
-- [x] 重构事件总线
-- [x] 更改wrapper api
-- [x] 背包模块优化
-  - [x] 显示首发精灵
-  - [x] 调整首发精灵
-  - [x] 计算最终基础血量
-- [x] 首回合获取不到self和other
-- [x] switchPet不会没法便捷获取新的pet
-- [x] 使用service worker进行资源缓存
-- [x] 删除sac的url cache，修改为原客户端获取真实url的接口
+以插件/中间件模式，启动服务器，开发时vite以中间件和插件加载，生产时直接代理
+将合并入整个开发服务器（后端集成？）
+还有就是把eslint的一堆报错修掉...
+
+issues:
+
 - [ ] 战队派遣模块的bug(重复刷新)
 - [ ] 更新背包精灵发包后无响应的bug(cache await update一直不resolve)(hmr?)
   - 目前倾向是原生PetManager那边的问题
+
+待定模组功能:
 
 - [ ] 小舞第4关脚本(压血84)
 - [ ] log写入本地
@@ -59,7 +57,12 @@
 
 RoadMap: **见Readme**
 
-Core: v0.4.4-0.4.5
+App: v0.4.2
+
+1. 添加eslint支持
+2. 迁移到vite进行打包
+
+Core: v0.4.5
 
 1. 确定测试框架为浏览器端mocha
 2. 搭建测试环境
@@ -87,6 +90,7 @@ Core: v0.4.3 (ps: 感觉大部分core模块都翻了个底朝天)
    1. 不需要判断skillId和index是否合法，自动执行auto操作
    2. 不需要重新获取skill，死切后处理由manager自动进行
    3. 保证RoundInfo中最重要的catchTime，id，name是最新的，这些字段会覆盖上一轮的实际RoundPetInfo收包中的值
+   4. 首回合就能获取到部分精灵信息
 
 ```typescript
 // 之前的最小自动战斗配置

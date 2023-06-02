@@ -1,12 +1,13 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "moduleResolution": "node",
-        "outDir": "dist",
-        "rootDir": "src",
-        "baseUrl": ".",
+        "tsBuildInfoFile": "../../.tsbuildinfo/app.tsbuildinfo",
+        "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
+        "isolatedModules": true,
+        "resolveJsonModule": true,
+        "noEmit": true,
         "jsx": "react",
-        "declaration": true,
         "paths": {
             "@sa-app/*": [
                 "./src/*"
@@ -14,7 +15,8 @@
             "@mui/styled-engine": [
                 "../../node_modules/@mui/styled-engine-sc"
             ],
-        }
+        },
+        "composite": true
     },
     "include": [
         "./src",
@@ -23,6 +25,9 @@
     "references": [
         {
             "path": "../core"
+        },
+        {
+            "path": "./tsconfig.node.json"
         }
     ]
 }

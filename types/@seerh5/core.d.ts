@@ -313,6 +313,9 @@ declare class PetStorage2015InfoManager {
 declare class SystemTimerManager {
     static queryTime(): void;
     static time: number;
+    static sysBJDate: {
+        getTime(): number;
+    };
 }
 
 declare class CountermarkController {

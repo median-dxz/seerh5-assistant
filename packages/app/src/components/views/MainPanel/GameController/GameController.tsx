@@ -42,20 +42,20 @@ export function GameController() {
     const handleChangeTitle: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
         const target = e.currentTarget;
         const titleId = await SAEngine.getUserAbilityTitles();
-        const titleNames = titleId.map<string>(titleName);
+        const titleNames = titleId.map(titleName);
         openMenu(target, {
             data: titleId,
-            displayText: titleNames,
+            displayText: titleNames as string[],
             handler: changeTitle,
         });
     };
 
     const handleChangeSuit: React.MouseEventHandler<HTMLButtonElement> = (e) => {
         const suitId = SAEngine.getUserAbilitySuits();
-        const suitNames = suitId.map<string>(suitName);
+        const suitNames = suitId.map(suitName);
         openMenu(e.currentTarget, {
             data: suitId,
-            displayText: suitNames,
+            displayText: suitNames as string[],
             handler: changeSuit,
         });
     };

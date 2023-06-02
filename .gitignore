@@ -1,12 +1,14 @@
 node_modules
 dist
 archive
-build
+.tsbuildinfo/
 .vscode/
 
 entry/offical.js
 
 doc/**
 
-data/*.json
-!data/example.json
+packages/app/dev-dist/
+
+packages/app/data/*.json
+!packages/app/data/example.json

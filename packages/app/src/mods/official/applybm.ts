@@ -11,7 +11,6 @@ import {
     switchBag,
 } from 'sa-core';
 
-
 import type { MoveModule } from 'sa-core/battle';
 import * as SABattle from 'sa-core/battle';
 import * as SAEngine from 'sa-core/engine';
@@ -19,90 +18,89 @@ import * as SAEngine from 'sa-core/engine';
 const log = SaModuleLogger('精灵因子', defaultStyle.mod);
 
 declare namespace pvePetYinzi {
-    const DataManager: any;
+    const DataManager: unknown;
 }
 
-namespace PetFragment {
-    export interface Option {
-        difficulty: Difficulty;
-        id: number;
-        sweep: boolean;
-        strategy: Array<{ cts: number[]; strategy: MoveModule; beforeBattle: () => PromiseLike<void> }>;
+export interface Option {
+    difficulty: Difficulty;
+    id: number;
+    sweep: boolean;
+    strategy: Array<{ cts: number[]; strategy: MoveModule; beforeBattle: () => PromiseLike<void> }>;
+}
+
+export class Runner {
+    configData: SAType.PetFragmentLevelObj;
+    option: Option;
+    pieces: number;
+    bosses: SAType.PetFragmentLevelBoss[];
+    isChallenge: boolean;
+    curDifficulty: Difficulty;
+    leftChallengeTimes: number;
+    failedTimes: number;
+    curPosition: number;
+    designId: number;
+    strategy: MoveModule;
+
+    init(option: Option) {
+        this.option = option;
+        this.designId = option.id;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        this.configData = config.xml.getAnyRes('new_super_design').Root.Design.find((r: any) => r.ID === option.id);
     }
-
-    export class Runner {
-        configData: SAType.PetFragmentLevelObj;
-        option: Option;
-        pieces: number;
-        bosses: SAType.PetFragmentLevelBoss[];
-        isChallenge: boolean;
-        curDifficulty: Difficulty;
-        leftChallengeTimes: number;
-        failedTimes: number;
-        curPosition: number;
-        designId: number;
-        strategy: MoveModule;
-
-        init(option: Option) {
-            this.option = option;
-            this.designId = option.id;
-            this.configData = config.xml.getAnyRes('new_super_design').Root.Design.find((r: any) => r.ID === option.id);
+    openPanel() {
+        ModuleManager.showModuleByID(151, `{Design:${this.designId}}`);
+    }
+    async sweep() {
+        await SAEngine.Socket.sendByQueue(41283, [this.designId, 4 + this.curDifficulty]);
+        log('执行一次扫荡');
+    }
+    async battleOnce() {
+        const checkData = await SAEngine.Socket.sendByQueue(41284, [this.designId, this.curDifficulty]);
+        const check = new DataView(checkData!).getUint32(0);
+        if (check === 0) {
+            SAEngine.Socket.sendByQueue(41282, [this.designId, this.curDifficulty]);
+        } else {
+            BubblerManager.getInstance().showText(`出战情况不合法: ${check}`);
         }
-        openPanel() {
-            ModuleManager.showModuleByID(151, `{Design:${this.designId}}`);
+    }
+    async prepare() {
+        const { cts, beforeBattle, strategy } = this.option.strategy[this.curPosition];
+        await switchBag(cts);
+        cureAllPet();
+        await delay(300);
+        await beforeBattle();
+        PetManager.setDefault(cts[0]);
+        await delay(2000);
+        this.strategy = strategy;
+    }
+    async update() {
+        const values = await SAEngine.Socket.multiValue(
+            this.configData.Configure.TimeValue,
+            this.configData.Configure.FailTimes,
+            this.configData.Configure.ProgressValue
+        );
+        ItemManager.updateItemNum([this.configData.Reward.ItemID], [true]);
+        this.pieces = ItemManager.getNumByID(this.configData.Reward.ItemID);
+        this.leftChallengeTimes = this.configData.Configure.Times - values[0];
+        this.failedTimes = values[1];
+        this.curDifficulty = (values[2] >> 8) & 255;
+        if (this.curDifficulty === Difficulty.NotSelected && this.option.difficulty) {
+            this.curDifficulty = this.option.difficulty;
         }
-        async sweep() {
-            await SAEngine.Socket.sendByQueue(41283, [this.designId, 4 + this.curDifficulty]);
-            log('执行一次扫荡');
-        }
-        async battleOnce() {
-            const checkData = await SAEngine.Socket.sendByQueue(41284, [this.designId, this.curDifficulty]);
-            let check = new DataView(checkData).getUint32(0);
-            if (check === 0) {
-                SAEngine.Socket.sendByQueue(41282, [this.designId, this.curDifficulty]);
-            } else {
-                BubblerManager.getInstance().showText(`出战情况不合法: ${check}`);
-            }
-        }
-        async prepare() {
-            let { cts, beforeBattle, strategy } = this.option.strategy[this.curPosition];
-            await switchBag(cts);
-            cureAllPet();
-            await delay(300);
-            await beforeBattle();
-            PetManager.setDefault(cts[0]);
-            await delay(2000);
-            this.strategy = strategy;
-        }
-        async update() {
-            const values = await SAEngine.Socket.multiValue(
-                this.configData.Configure.TimeValue,
-                this.configData.Configure.FailTimes,
-                this.configData.Configure.ProgressValue
-            );
-            ItemManager.updateItemNum([this.configData.Reward.ItemID], [true]);
-            this.pieces = ItemManager.getNumByID(this.configData.Reward.ItemID);
-            this.leftChallengeTimes = this.configData.Configure.Times - values[0];
-            this.failedTimes = values[1];
-            this.curDifficulty = (values[2] >> 8) & 255;
-            if (this.curDifficulty === Difficulty.NotSelected && this.option.difficulty) {
-                this.curDifficulty = this.option.difficulty;
-            }
-            this.curPosition = values[2] >> 16;
-            this.isChallenge = this.curDifficulty !== 0 && this.curPosition !== 0;
-            switch (this.curDifficulty) {
-                case Difficulty.Ease:
-                    this.bosses = this.configData.EasyBattle.Task;
-                    break;
-                case Difficulty.Normal:
-                    this.bosses = this.configData.NormalBattle.Task;
-                    break;
-                case Difficulty.Hard:
-                    this.bosses = this.configData.HardBattle.Task;
-                    break;
-                default:
-                    break;
-            }
+        this.curPosition = values[2] >> 16;
+        this.isChallenge = this.curDifficulty !== 0 && this.curPosition !== 0;
+        switch (this.curDifficulty) {
+            case Difficulty.Ease:
+                this.bosses = this.configData.EasyBattle.Task;
+                break;
+            case Difficulty.Normal:
+                this.bosses = this.configData.NormalBattle.Task;
+                break;
+            case Difficulty.Hard:
+                this.bosses = this.configData.HardBattle.Task;
+                break;
+            default:
+                break;
         }
     }
 }
@@ -146,11 +144,11 @@ const moveModules: { [name: string]: SABattle.MoveModule } = {
         ['神寂·克罗诺斯', '蒂朵', '六界帝神', '时空界皇', '深渊狱神·哈迪斯']
     ),
     琉彩: {
-        resolveNoBlood: (round, skills, pets) => {
+        resolveNoBlood: (round, _skills, pets) => {
             const dsl = new SABattle.NoBloodSwitchLink(['鲁肃', '芳馨·茉蕊儿', '蒂朵']);
             return dsl.match(pets, round.self!.catchtime);
         },
-        resolveMove: (round, skills, pets) => {
+        resolveMove: (round, skills, _pets) => {
             const r = skills.find((skill) => skill.name === ['琴·万律归一', '朵·盛夏咏叹'][round.round % 2]);
             return SABattle.Operator.useSkill(r?.id);
         },
@@ -185,13 +183,37 @@ const perStrategy: {
         cts: [1656383521, 1656056275, 1675323310, 1655445699, 1655484346, 1657943113],
         strategy: moveModules['潘蒂表必先'],
     },
-    圣谱单挑: { beforeBattle: async () => {}, cts: [1656092908], strategy: moveModules['圣谱单挑'] },
-    王哈单挑: { beforeBattle: async () => {}, cts: [1656302059], strategy: moveModules['王哈单挑'] },
-    圣谱单挑1: { beforeBattle: async () => {}, cts: [1656092908], strategy: moveModules['圣谱单挑1'] },
-    琉彩: { beforeBattle: async () => {}, cts: [1655917820, 1656056275, 1656386598], strategy: moveModules['琉彩'] },
+    圣谱单挑: {
+        beforeBattle: async () => {
+            /* do nothing */
+        },
+        cts: [1656092908],
+        strategy: moveModules['圣谱单挑'],
+    },
+    王哈单挑: {
+        beforeBattle: async () => {
+            /* do nothing */
+        },
+        cts: [1656302059],
+        strategy: moveModules['王哈单挑'],
+    },
+    圣谱单挑1: {
+        beforeBattle: async () => {
+            /* do nothing */
+        },
+        cts: [1656092908],
+        strategy: moveModules['圣谱单挑1'],
+    },
+    琉彩: {
+        beforeBattle: async () => {
+            /* do nothing */
+        },
+        cts: [1655917820, 1656056275, 1656386598],
+        strategy: moveModules['琉彩'],
+    },
 };
 
-const options: PetFragment.Option[] = [
+const options: Option[] = [
     // 琉彩2
     // {
     //     difficulty: PetFragment.LevelDifficulty.Ease,
@@ -289,27 +311,31 @@ class applyBm extends BaseMod {
         super();
     }
     logDataByName(factorName: string) {
-        let data = config.xml
+        const data = config.xml
             .getAnyRes('new_super_design')
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .Root.Design.find((r: any) => (r.Desc as string).match(factorName));
         log(data);
     }
     getCurPanelInfo() {
-        log(pvePetYinzi.DataManager._instance.curYinziData);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        log((pvePetYinzi.DataManager as any)._instance.curYinziData);
     }
-    init() {}
+    init() {
+        // do nothing
+    }
     getRunner() {
-        return new PetFragment.Runner();
+        return new Runner();
     }
     async runAll() {
-        const runners: PetFragment.Runner[] = [];
+        const runners: Runner[] = [];
 
-        for (let option of options) {
-            runners.push(new PetFragment.Runner());
+        for (const option of options) {
+            runners.push(new Runner());
             runners.at(-1)?.init(option);
             await runners.at(-1)?.update();
         }
-        for (let runner of runners) {
+        for (const runner of runners) {
             SAEngine.toggleAutoCure(false);
             await delay(50);
             while (runner.isChallenge || runner.leftChallengeTimes > 0) {

@@ -18,7 +18,7 @@ export interface ISkillObject {
 export class Skill extends EntityBase implements ISkillObject {
     static readonly key = 'id';
     static readonly instanceKey = 'id';
-    readonly __type: EntityType = 'Skill';
+    declare readonly __type: EntityType;
     element: PetElement;
     category: number;
     power: number;
@@ -33,6 +33,7 @@ export class Skill extends EntityBase implements ISkillObject {
 
     constructor(obj: SAType.MoveObj) {
         super();
+        this.__type = 'Skill';
         let tempEffects: [SkillEffectArgs, SkillEffectArgs];
 
         [

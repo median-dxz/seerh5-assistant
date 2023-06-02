@@ -118,9 +118,12 @@ export function LevelTitanHole(props: LevelExtendsProps) {
 
                     levelData.current = await updateLevelData();
                 }
+                setStep(3);
+                break;
             case 3:
                 while (levelData.current.step3Count < 48) {
                     const i = levelData.current.step3Count + 1;
+                    // eslint-disable-next-line prefer-const
                     let [row, col] = [Math.trunc(i / 11), (i % 11) + 1];
                     if (row % 2 === 1) {
                         col = 11 - col + 1;
@@ -151,6 +154,8 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                     await delay(Math.random() * 100 + 200);
                     levelData.current = await updateLevelData();
                 }
+                setStep(4);
+                break;
             case 4:
                 pets = await getBagPets(PetPosition.bag1);
                 pet = pets.find((pet) => pet.name === '幻影蝶');

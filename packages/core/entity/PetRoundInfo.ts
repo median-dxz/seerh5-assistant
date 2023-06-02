@@ -1,7 +1,7 @@
 import { EntityBase, type EntityType } from './EntityBase.js';
 
 export class PetRoundInfo extends EntityBase {
-    __type: EntityType = 'PetRoundInfo';
+    declare readonly __type: EntityType;
     round: number;
 
     userId: number;
@@ -24,6 +24,7 @@ export class PetRoundInfo extends EntityBase {
     sideEffects: number[];
     constructor(attackValue: AttackValue) {
         super();
+        this.__type = 'PetRoundInfo';
         [
             this.round,
             this.userId,

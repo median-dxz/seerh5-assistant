@@ -6,19 +6,17 @@
     "license": "AGPL-3.0-or-later",
     "main": "./src/index.tsx",
     "scripts": {
-        "build": "webpack --mode=production",
-        "watch": "webpack watch --mode=production",
-        "dev": "webpack-dev-server --mode=development",
-        "test": "echo 'not implement'"
-    },
-    "devDependencies": {
-        "@types/react": "^18.2.7",
-        "@types/react-dom": "^18.2.4",
-        "gsap": "^3.11.5"
+        "dev": "vite --open",
+        "watch:tsc": "tsc --watch",
+        "build": "tsc && vite build",
+        "preview": "vite preview",
+        "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+        "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
+        "clean": "rimrf ./dist && rimrf ./build && rimraf ../../.tsbuildinfo/app.tsbuildinfo"
     },
     "dependencies": {
-        "@mui/icons-material": "latest",
-        "@mui/material": "latest",
+        "@mui/icons-material": "^5.11.16",
+        "@mui/material": "^5.13.3",
         "@mui/styled-engine-sc": "^5.12.0",
         "@mui/system": "^5.13.2",
         "immer": "^10.0.2",
@@ -27,6 +25,15 @@
         "sa-core": "^0.4.0",
         "styled-components": "^5.3.11",
         "swr": "^2.1.5"
+    },
+    "devDependencies": {
+        "@types/react": "^18.2.7",
+        "@types/react-dom": "^18.2.4",
+        "@vitejs/plugin-react": "^4.0.0",
+        "eslint-plugin-react-hooks": "^4.6.0",
+        "eslint-plugin-react-refresh": "^0.4.1",
+        "gsap": "^3.11.5",
+        "vite-plugin-pwa": "^0.16.1"
     },
     "alias": {
         "@mui/styled-engine": "@mui/styled-engine-sc"

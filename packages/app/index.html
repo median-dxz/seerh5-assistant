@@ -5,7 +5,7 @@
         <meta name="viewport" content="initial-scale=1, width=device-width" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
 
-        <title><%= htmlWebpackPlugin.options.title %></title>
+        <title>SeerH5-Assistant | 赛尔号h5登陆器 by median</title>
 
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
         <link rel="shortcut icon" href="http://seerh5.61.com/favicon.ico" type="image/x-icon" />
@@ -15,6 +15,8 @@
         <div id="logo" class="logo bg-white center">
             <img src="http://seerh5.61.com/resource/web/image/logo.svg" width="50%" />
         </div>
+        <div id="sa-app"></div>
+
         <script defer>
             window.wwwroot = '/seerh5.61.com/';
             fetch('/seerh5.61.com/app.js?t=' + Date.now())
@@ -28,6 +30,6 @@
                     document.body.appendChild(script);
                 });
         </script>
-        <div id="sa-app"></div>
+        <script type="module" src="/src/index.tsx"></script>
     </body>
 </html>

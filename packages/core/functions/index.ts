@@ -189,4 +189,3 @@ export function updateBatteryTime() {
 }
 
 export { HelperLoader } from './helper.js';
-

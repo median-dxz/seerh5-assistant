@@ -19,12 +19,12 @@
   "browser": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "npm run clean && tsc",
+    "build": "tsc --build",
     "watch": "tsc --watch",
-    "clean": "rimraf ./dist && rimraf ./test-results && rimraf ./playwright-report",
+    "clean": "rimraf ./dist && rimraf ../../.tsbuildinfo/core.tsbuildinfo",
     "lint": "eslint --fix .",
     "check:types": "tsc --noEmit",
-    "test": "vite --config ./test/vite.config.js"
+    "test": "vite --config ./test/vite.config.ts"
   },
   "dependencies": {
     "chalk": "^5.2.0",

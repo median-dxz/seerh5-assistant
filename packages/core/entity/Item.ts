@@ -9,7 +9,7 @@ export interface IItemObject {
 export class Item extends EntityBase implements IItemObject {
     static readonly key = 'id';
     static readonly instanceKey = 'id';
-    readonly __type: EntityType = 'Item';
+    declare readonly __type: EntityType;
     limit?: number;
     amount: number;
 
