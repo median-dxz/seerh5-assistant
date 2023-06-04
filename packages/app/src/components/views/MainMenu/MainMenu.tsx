@@ -1,5 +1,11 @@
-import { AssignmentInd, Medication, MenuOpen, ScheduleSend, SmartToy } from '@mui/icons-material';
+import AssignmentInd from '@mui/icons-material/AssignmentInd';
+import Medication from '@mui/icons-material/Medication';
+import MenuOpen from '@mui/icons-material/MenuOpen';
+import ScheduleSend from '@mui/icons-material/ScheduleSend';
+import SmartToy from '@mui/icons-material/SmartToy';
+
 import { SpeedDialAction } from '@mui/material';
+
 import { SxProps } from '@mui/system';
 
 import React, { useEffect, useState } from 'react';
@@ -23,8 +29,8 @@ const actions = [
 ];
 
 export function MainMenu() {
-    let [autoCure, setAutoCure] = useState(false);
-    let [open, setOpen] = useState(false);
+    const [autoCure, setAutoCure] = useState(false);
+    const [open, setOpen] = useState(false);
 
     useEffect(() => {
         getAutoCureState().then(setAutoCure);
@@ -34,9 +40,8 @@ export function MainMenu() {
 
     const handleClicks = [
         () => {
-            autoCure = !autoCure;
+            toggleAutoCure(!autoCure);
             setAutoCure(autoCure);
-            toggleAutoCure(autoCure);
         },
         () => {
             FightManager.fightNoMapBoss(6730);
@@ -61,10 +66,10 @@ export function MainMenu() {
                 zIndex: 2,
             }}
             open={open}
-            onOpen={(event, reason) => {
+            onOpen={() => {
                 setOpen(true);
             }}
-            onClose={(event, reason) => {
+            onClose={(_, reason) => {
                 if (reason !== 'blur') {
                     setOpen(false);
                 }

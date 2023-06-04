@@ -71,7 +71,7 @@ export default class LocalPetSkin extends BaseMod {
         });
 
         PetManager.equipSkin = async function (catchTime, skinId = 0, callback = NULL) {
-            let petInfo = PetManager.getPetInfo(catchTime);
+            const petInfo = PetManager.getPetInfo(catchTime);
             log('new skin id:', skinId, 'previous skin id:', petInfo.skinId);
             if (skinId === 0 || PetSkinController.instance.haveSkin(skinId)) {
                 if (cloth.original.get(petInfo.id) !== skinId) {

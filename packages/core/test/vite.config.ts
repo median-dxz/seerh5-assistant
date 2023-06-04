@@ -1,9 +1,8 @@
 import { defineConfig } from 'vite';
 
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import path from 'path';
 import url from 'url';
-import { gunzipSync } from 'zlib';
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
@@ -32,10 +31,7 @@ export default defineConfig({
                                 return;
                             }
                             if (req.url.indexOf('resource/app/entry/entry.js') > 0) {
-                                body = gunzipSync(body);
-                                const entryFolder = path.resolve(__dirname, '../../..', 'entry');
-                                writeFileSync(path.join(entryFolder, 'official.js'), body.toString());
-                                const newEntry = readFileSync(path.join(entryFolder, 'assistant.js'));
+                                const newEntry = readFileSync(path.join(__dirname, 'env', 'seer-entry.js'));
                                 res.end(newEntry);
                             } else if (req.url.indexOf('sentry.js') > 0) {
                                 res.end('var Sentry = {init: ()=>{}, configureScope: ()=>{}}');

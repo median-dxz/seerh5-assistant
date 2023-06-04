@@ -4,11 +4,12 @@ archive
 .tsbuildinfo/
 .vscode/
 
-entry/offical.js
+.env.local
 
 doc/**
 
 packages/app/dev-dist/
 
-packages/app/data/*.json
-!packages/app/data/example.json
+**/backend/data/*.json
+**/backend/entry/official.js
+!**/backend/data/example.json

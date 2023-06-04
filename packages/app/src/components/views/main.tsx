@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { ClickAwayListener, CssBaseline } from '@mui/material';
 import { Container, ThemeProvider } from '@mui/system';
@@ -6,7 +6,7 @@ import { Container, ThemeProvider } from '@mui/system';
 import { PanelStateContext } from '@sa-app/context/PanelState';
 import { SAContext } from '@sa-app/context/SAContext';
 
-import { SALocalStorage } from '@sa-app/hooks/GlobalConfig';
+import * as SALocalStorage from '@sa-app/hooks/SALocalStorage';
 
 import { mainTheme } from '@sa-app/style';
 
@@ -46,17 +46,17 @@ export default function SaMain() {
         }
     };
 
-    const handleBattleRoundEnd = useCallback(() => {
-        if (battleAuto) {
-            resolveStrategy({
-                dsl: battleStrategyStorage.dsl,
-                snm: battleStrategyStorage.snm,
-                default: defaultStrategy,
-            });
-        }
-    }, [battleAuto]);
-
     useEffect(() => {
+        const handleBattleRoundEnd = () => {
+            if (battleAuto) {
+                resolveStrategy({
+                    dsl: battleStrategyStorage.dsl,
+                    snm: battleStrategyStorage.snm,
+                    default: defaultStrategy,
+                });
+            }
+        };
+
         document.body.addEventListener('keydown', handleShortCut);
 
         eventBus.hook(Hook.BattlePanel.panelReady, handleBattleRoundEnd);

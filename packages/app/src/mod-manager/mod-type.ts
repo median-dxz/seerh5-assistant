@@ -1,7 +1,8 @@
-import { GameModuleListener, type GameModuleEventHandler } from 'sa-core';
+/* eslint-disable */
+import { AnyFunction, GameModuleListener, type GameModuleEventHandler } from 'sa-core';
 
 export abstract class BaseMod {
-    reflect(method: string, ...args: any[]) {
+    reflect(method: string, ...args: unknown[]) {
         return (this as any)[method]?.(args);
     }
 
@@ -25,16 +26,13 @@ export abstract class BaseMod {
 }
 
 export abstract class ModuleMod<ModuleType extends BaseModule> extends BaseMod {
-    log: Function;
+    log: AnyFunction;
 
     abstract moduleName: string;
 
     load() {}
-
     show(ctx: ModuleType) {}
-
     mainPanel(ctx: ModuleType) {}
-
     _destroy() {}
 
     subscriber: GameModuleEventHandler<ModuleType>;

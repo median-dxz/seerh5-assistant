@@ -11,7 +11,7 @@ class LocalCloth extends ModuleMod<petBag.PetBag> {
         // 开启本地换肤按钮
         hookPrototype(petBag.SkinView, 'onChooseSkin', function (f, ...args) {
             f.call(this, ...args);
-            let skinId = this.arrayCollection.getItemAt(this.selectSkinIndex)?.id ?? 0;
+            const skinId = this.arrayCollection.getItemAt(this.selectSkinIndex)?.id ?? 0;
             if (skinId) {
                 this.btnPutOn.visible = skinId !== this.petInfo.skinId;
                 this.imgHasPutOn.visible = skinId === this.petInfo.skinId;

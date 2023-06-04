@@ -1,6 +1,6 @@
 import { Box, Button, LinearProgress, TableCell, Typography } from '@mui/material';
 import { PopupMenu, usePopupMenuState } from '@sa-app/components/common/PopupMenu';
-import { SALocalStorage } from '@sa-app/hooks/GlobalConfig';
+import * as SALocalStorage from '@sa-app/hooks/SALocalStorage';
 import { mainColor } from '@sa-app/style';
 import { produce } from 'immer';
 import React from 'react';
@@ -15,10 +15,6 @@ const petGroupsStorage = SALocalStorage.PetGroups;
 export function PetBagController() {
     const { pets } = useBagPets();
 
-    if (!pets) {
-        return <LinearProgress />;
-    }
-
     const [selected, setSelected] = React.useState<number[]>([]);
     const [petGroups, setPetGroups] = React.useState(petGroupsStorage.ref);
     const [menuProps, openMenu] = usePopupMenuState<number[]>();
@@ -27,6 +23,10 @@ export function PetBagController() {
         setSelected([]);
     }, [pets]);
 
+    if (!pets) {
+        return <LinearProgress />;
+    }
+    
     const handleLowerBlood = () => {
         lowerBlood(selected);
     };

@@ -4,28 +4,29 @@ import React, { useState } from 'react';
 
 import { TextEditDialog, TextEditDialogProps } from '@sa-app/components/common/TextEditDialog';
 import { SAContext } from '@sa-app/context/SAContext';
-import { SALocalStorage } from '@sa-app/hooks/GlobalConfig';
+import * as SALocalStorage from '@sa-app/hooks/SALocalStorage';
 import * as SABattle from 'sa-core/battle';
 import { PanelTableBase, PanelTableBodyRow } from '../base';
+import { NULL } from 'sa-core';
 
-const handleAdd = (arr: any[], value: string) => {
+const handleAdd = (arr: unknown[], value: string) => {
     arr.push(value.split(',').map((s) => s.trim()));
 };
 
-const handleMoveToTop = (arr: any[], index: number) => {
+const handleMoveToTop = (arr: unknown[], index: number) => {
     const item = arr.splice(index, 1)[0];
     arr.unshift(item);
 };
-const handleDelete = (arr: any[], index: number) => {
+const handleDelete = (arr: unknown[], index: number) => {
     arr.splice(index, 1);
 };
 
-const handleUpdated = (arr: any[], index: number, value: string) => {
+const handleUpdated = (arr: unknown[], index: number, value: string) => {
     arr[index] = value.split(',').map((s) => s.trim());
 };
 
 const defaultDialogState: TextEditDialogProps = {
-    onClose: () => {},
+    onClose: NULL,
     open: false,
     initialValue: '',
 };

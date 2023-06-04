@@ -34,8 +34,12 @@
 
 on progress:
 
-以插件/中间件模式，启动服务器，开发时vite以中间件和插件加载，生产时直接代理
-将合并入整个开发服务器（后端集成？）
+后端集成暂时是express，后面计划替换为fastify，考虑到后面迁移electron要使用的模式，暂时还是采用前后端分离而不考虑ssr。
+实现ctrl-c正常退出程序
+加个currency什么的包,并行运行前后端两个server
+静态 /dist
+http://rp-ta.61.com/tm.js 什么情况？
+pwa怎么又不行了...
 还有就是把eslint的一堆报错修掉...
 
 issues:

@@ -1,12 +1,13 @@
 {
     "compilerOptions": {
-        "composite": true,
         "module": "ESNext",
         "moduleResolution": "node",
-        "allowSyntheticDefaultImports": true
+        "allowSyntheticDefaultImports": true,
+        "checkJs": true,
+        "noEmit": true
     },
     "include": [
         "vite.config.ts",
-        "sa.proxy.ts"
+        "backend/*.js"
     ]
 }

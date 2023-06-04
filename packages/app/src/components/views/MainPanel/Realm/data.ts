@@ -17,7 +17,7 @@ const data: LevelPetsData = {
     LevelExpTraining: {
         cts: [1656092908, 1656055512, 1656056275],
         strategy: {
-            async resolveMove(round, skills, pets) {
+            async resolveMove(round, skills, _pets) {
                 const selfPetName = round.self!.name;
                 let r: SAEntity.Skill | undefined;
                 if (selfPetName === '圣灵谱尼') {
@@ -48,12 +48,13 @@ const data: LevelPetsData = {
     LevelCourageTower: {
         cts: [1656055512, 1656302059, 1656056275, 1656092908],
         strategy: {
-            async resolveMove(round, skills, pets) {
+            async resolveMove(round, skills, _pets) {
                 const snm = new SkillNameMatch(['王·龙子盛威决', '竭血残蝶', '时空牵绊']);
                 let r = snm.match(skills);
                 if (!r) {
                     r = skills.find((skill) => skill.name === ['光荣之梦', '神灵救世光'][round.round % 2])?.id;
                 }
+                // eslint-disable-next-line react-hooks/rules-of-hooks
                 return Operator.useSkill(r);
             },
             resolveNoBlood(round, skills, pets) {

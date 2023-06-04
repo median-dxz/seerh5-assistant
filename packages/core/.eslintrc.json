@@ -5,7 +5,6 @@
         "plugin:@typescript-eslint/recommended-requiring-type-checking"
     ],
     "rules": {
-        "no-unused-vars": "off",
         "arrow-body-style": [
             "error",
             "as-needed"

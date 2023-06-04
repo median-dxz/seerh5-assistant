@@ -16,7 +16,10 @@
                 "../../node_modules/@mui/styled-engine-sc"
             ],
         },
-        "composite": true
+        "composite": true,
+        "types": [
+            "vite/client"
+        ]
     },
     "include": [
         "./src",
@@ -25,9 +28,6 @@
     "references": [
         {
             "path": "../core"
-        },
-        {
-            "path": "./tsconfig.node.json"
         }
     ]
 }

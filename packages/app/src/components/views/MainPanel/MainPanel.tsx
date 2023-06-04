@@ -1,4 +1,4 @@
-import { Lock } from '@mui/icons-material';
+import Lock from '@mui/icons-material/Lock';
 import { Box, Fade, Switch, SxProps, Tab, Tabs } from '@mui/material';
 import { mainColor } from '@sa-app/style';
 import * as React from 'react';

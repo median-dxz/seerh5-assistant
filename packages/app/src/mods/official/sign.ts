@@ -1,5 +1,5 @@
-import { useRfcData } from '@sa-app/hooks/useRfcData';
 import { BaseMod } from '@sa-app/mod-manager/mod-type';
+import { requestSAApi } from '@sa-app/utils/requestSAApi';
 import {
     ItemId,
     PetPosition,
@@ -38,9 +38,11 @@ const AWARD_LIST = {
 
 class sign extends BaseMod {
     meta = { description: '日任常用功能', id: 'sign' };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any;
     init() {
-        useRfcData().then((v) => {
+        requestSAApi().then((v) => {
             this.data = v;
         });
     }
@@ -111,10 +113,10 @@ class sign extends BaseMod {
         }
 
         const param = new URLSearchParams({
-            PHPSESSID: 'jg8l34i91dlg6h5g40k1m5m8k1',
+            PHPSESSID: 'efchci05h59bmvlh2morukk156',
             cookie_login_uid: '104005920',
         });
-        const rText = await fetch(`/api/?req=14year&${param.toString()}`);
+        const rText = await fetch(`/api/14year/?${param.toString()}`);
 
         log(rText);
     }
@@ -129,17 +131,17 @@ class sign extends BaseMod {
             const pets = await getBagPets(PosType.bag1);
             if (!reprogress) {
                 // 清空背包
-                for (let p of pets) {
+                for (const p of pets) {
                     await p.popFromBag();
                 }
             }
             const data = await Socket.sendByQueue(45810, [tid])
                 .then((v) => new DataView(v!))
-                .catch((err) => undefined);
+                .catch((_) => undefined);
             if (!data) continue;
 
             const a = data.getUint32(4);
-            let e: {
+            const e: {
                 petIds: number[];
                 cts: number[];
                 levels: number[];
@@ -158,7 +160,7 @@ class sign extends BaseMod {
             reprogress = e.petIds.some((v) => ignorePetNames.has(PetXMLInfo.getName(v)));
 
             let index = 0;
-            for (let pid of e.petIds) {
+            for (const pid of e.petIds) {
                 const petName = PetXMLInfo.getName(pid);
                 if (ignorePetNames.has(petName)) {
                     await SAPet.setLocation(e.cts[index], SAPetLocation.Bag);

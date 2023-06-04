@@ -1,7 +1,7 @@
 import { Mods, register } from '@sa-app/mod-manager';
 
-export const useMod = async () => {
-    let mods = await Promise.all([
+export const registerAllMod = async () => {
+    const mods = await Promise.all([
         import('../mods/official/LocalPetSkin'),
         import('../mods/official/CraftSkillStone'),
         import('../mods/official/applybm'),
@@ -10,11 +10,11 @@ export const useMod = async () => {
         import('../mods/module/team'),
     ]);
 
-    for (let mod of mods) {
+    for (const mod of mods) {
         const modObj = mod.default;
         register(modObj);
     }
-    for (let [id, mod] of Mods) {
+    for (const [_, mod] of Mods) {
         mod.init();
     }
 };

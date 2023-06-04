@@ -12,6 +12,8 @@ export * from './pet-helper/index.js';
 export { CoreLoader } from './loader/index.js';
 
 declare global {
+    // eslint-disable-next-line no-var
+    export var wwwroot: string;
     /** `sac`全局变量使用的额外命名空间 */
     export namespace sac {
         /** 原生客户端`console.log`的正则过滤列表 */

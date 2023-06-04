@@ -1,4 +1,4 @@
-import { ElectricBolt } from '@mui/icons-material';
+import ElectricBolt from '@mui/icons-material/ElectricBolt';
 import type { ButtonBaseProps } from '@mui/material';
 import { styled } from '@mui/system';
 import React from 'react';

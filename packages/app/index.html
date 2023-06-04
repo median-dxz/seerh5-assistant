@@ -16,20 +16,6 @@
             <img src="http://seerh5.61.com/resource/web/image/logo.svg" width="50%" />
         </div>
         <div id="sa-app"></div>
-
-        <script defer>
-            window.wwwroot = '/seerh5.61.com/';
-            fetch('/seerh5.61.com/app.js?t=' + Date.now())
-                .then((response) => response.text())
-                .then((appJs) => {
-                    let script = document.createElement('script');
-                    while (appJs.startsWith('eval')) {
-                        appJs = eval(appJs.match(/eval([^)].*)/)[1]);
-                    }
-                    script.innerHTML = appJs.replace(/loadSingleScript.*baidu.*\r\n/, '');
-                    document.body.appendChild(script);
-                });
-        </script>
         <script type="module" src="/src/index.tsx"></script>
     </body>
 </html>

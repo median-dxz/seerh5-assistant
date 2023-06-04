@@ -19,10 +19,10 @@
     "include": [],
     "references": [
         {
-            "path": "packages/app"
+            "path": "packages/app/tsconfig.json"
         },
         {
-            "path": "packages/core"
+            "path": "packages/core/tsconfig.json"
         }
     ]
 }
