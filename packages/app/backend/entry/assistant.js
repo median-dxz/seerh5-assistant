@@ -268,7 +268,6 @@ var Main = (function (e) {
         __extends(t, e),
         (t.prototype.createChildren = function () {
             e.prototype.createChildren.call(this),
-                egret.lifecycle.addLifecycleListener(function (e) {}),
                 'true' == egret.getOption('isApp') && (GameInfo.isApp = !0),
                 this.setInputUp(),
                 (window.SeerCache = window.SeerCache || { config: {} });
@@ -293,7 +292,7 @@ var Main = (function (e) {
                                           console.warn(e);
                                       });
                           })
-                        : n.runGame()['catch'](function (e) {
+                        : n.runGame().catch(function (e) {
                               console.warn(e);
                           });
             });
@@ -350,21 +349,13 @@ var Main = (function (e) {
         (t.prototype.driverComplete = function () {
             window.LevelManager.setup(this);
             window.MainManager.stage = this;
-            Promise.resolve()
-                .then(() => {
-                    if (egret.getOption('newLogin')) {
-                        return window.ModuleManager.showModuleByID(140);
-                    } else {
-                        return window.ModuleManager.showModule('login', ['login']);
-                    }
-                })
-                .then(() => {
-                    // dispatch event begin
-                    window.dispatchEvent(new CustomEvent('seerh5_load'));
-                    sac.SeerH5Ready = true;
-                    // dispatch event end
-                    window.hideWebload && window.hideWebload();
-                });
+            window.ModuleManager.showModuleByID(140).then(() => {
+                // dispatch event begin
+                window.dispatchEvent(new CustomEvent('seerh5_load'));
+                sac.SeerH5Ready = true;
+                // dispatch event end
+                window.hideWebload && window.hideWebload();
+            });
         }),
         (t.prototype.onselectSeverOver = function () {}),
         (t.prototype.loadResource = function () {
@@ -437,7 +428,7 @@ var Main = (function (e) {
                 window.addEventListener('native.keyboardhide', function (e) {
                     window.scrollTo(0, 0);
                     var t = document.getElementById('bg');
-                    t && (t.height = '0px'), (n = 0);
+                    t && (t.style.height = '0px'), (n = 0);
                 }),
                 (egret.web.HTML5StageText.prototype._onClickHandler = function (e) {
                     this._isNeedShow &&
@@ -725,7 +716,7 @@ var SeerVersionController = (function () {
         }),
         (e.getVersionUrl = function (t) {
             if (!t || -1 != t.search(/^\/|^\w+:\/\//)) return t;
-            if (GameInfo.isApp && 'test' == GameInfo.channel) return GameInfo.wwwRoot + t + '?t=' + Date.now();
+            if (GameInfo.isApp && 'preview' == GameInfo.channel) return GameInfo.wwwRoot + t + '?t=' + Date.now();
             var n = t.split('/'),
                 i = n[n.length - 1],
                 r = '',
