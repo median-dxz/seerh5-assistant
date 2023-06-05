@@ -2,7 +2,7 @@ import express from 'express';
 import { readFileSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { saProxy } from './sa.proxy.js';
+import { saProxyAssets, saProxyLogin } from './sa.proxy.js';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -10,11 +10,41 @@ async function createServer() {
     const app = express();
 
     app.use((req, res, next) => {
-        console.log(`[info]: sa-app: ${req.url}`);
+        // console.log(`[info]: sa-app: ${req.url}`);
         next();
     });
 
-    app.use(['/seerh5.61.com', '/resource/sound'], saProxy);
+    app.use('/worker', express.static(path.join(dirname, 'worker'), { cacheControl: false }));
+
+    app.use(['/seerh5.61.com', '/resource/sound'], saProxyAssets);
+
+    app.get('/api/taomeeSDK', (req, res) => {
+        delete req.headers.host;
+        fetch(`https://opensdk.61.com/v1/js/taomeesdk.1.1.1.js`, {
+            headers: req.headers,
+            referrer: 'http://seerh5.61.com/',
+            cache: 'no-cache',
+            method: 'GET',
+        })
+            .then((r) => {
+                res.writeHead(r.status, r.headers);
+                return r.text();
+            })
+            .then((r) =>
+                r
+                    .replace('window.location.protocol+"//account-co.61.com/', `window.location.href+"api/login/`)
+                    .replace(`t&&t[0]===i.a`, `((t && t[0] === i.a) || (i.a === 'localhost'))`)
+                    .replace(
+                        `this._app.formatUrl("?r=authorization/success")`,
+                        `this._app.formatUrl("?r=authorization/success").replace(window.location.host+'/api/login','account-co.61.com')`
+                    )
+            )
+            .then((r) => {
+                res.end(r);
+            });
+    });
+
+    app.use('/api/login', saProxyLogin);
 
     app.get('/api/data', (req, res) => {
         const data = readFileSync(path.resolve(dirname, 'data', 'data.json')).toString('utf8');

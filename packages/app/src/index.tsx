@@ -16,6 +16,12 @@ const renderApp = async () => {
     root.render(<SaMain />);
 };
 
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register(
+        import.meta.env.MODE === 'production' ? '/service-worker.js' : '/dev-sw.js?dev-sw'
+    );
+}
+
 if (import.meta.env.DEV) {
     window.wwwroot = '/dev/seerh5.61.com/';
 } else {
@@ -23,22 +29,16 @@ if (import.meta.env.DEV) {
 }
 
 fetch(`${window.wwwroot}app.js?t=${Date.now()}`)
-    .then((response) => response.text())
+    .then((r) => r.text())
     .then((appJs) => {
         const script = document.createElement('script');
         while (appJs.startsWith('eval')) {
             appJs = eval(appJs.match(/eval([^)].*)/)![1]);
         }
-        script.innerHTML = appJs.replace(/loadSingleScript.*baidu.*\r\n/, '');
+        script.innerHTML = appJs;
         document.body.appendChild(script);
     });
 
 window.addEventListener('seerh5_assistant_ready', renderApp);
-
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register(
-        import.meta.env.MODE === 'production' ? '/service-worker.js' : '/dev-sw.js?dev-sw'
-    );
-}
 
 CoreLoader();

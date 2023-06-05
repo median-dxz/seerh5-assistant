@@ -24,7 +24,7 @@
     "include": [
         "./src",
         "../../types"
-    ],
+, "backend/worker/set-cookie.js"    ],
     "references": [
         {
             "path": "../core"

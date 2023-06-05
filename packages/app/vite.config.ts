@@ -36,6 +36,7 @@ export default defineConfig(({ command, mode }) => {
                 },
                 workbox: {
                     navigationPreload: false,
+                    importScripts: [`http://localhost:${env['BACKEND_PORT']}/worker/iframe-cookie.js`],
                     runtimeCaching: [
                         {
                             urlPattern: /seerh5\.61\.com\/resource\/assets/,
