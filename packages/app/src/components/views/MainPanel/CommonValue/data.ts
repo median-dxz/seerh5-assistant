@@ -40,13 +40,13 @@ export const openModuleList: { [id: number]: any } = {
         ModuleManager.showModule('battleFirePanel', ['battleFirePanel'], null, null, AppDoStyle.NULL);
     },
     1707511: async () => {
-        const curPanel = await showPveResourcePanel('ITEM');
+        const _ = await showPveResourcePanel('ITEM');
     }, //功勋点数
     1721558: async () => {
-        const curPanel = await showPveResourcePanel('ITEM');
+        const _ = await showPveResourcePanel('ITEM');
     }, //界神印记
     1721761: async () => {
-        const curPanel = await showPveResourcePanel('MARK');
+        const _ = await showPveResourcePanel('MARK');
     }, //王者精魄
     1717452: async () => {
         ModuleManager.showModuleByID(2);

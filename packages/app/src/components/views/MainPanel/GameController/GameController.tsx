@@ -3,7 +3,8 @@ import { Button, Divider, Typography } from '@mui/material';
 import { SAConfig, cureAllPet } from 'sa-core';
 import * as SAEngine from 'sa-core/engine';
 
-import { PopupMenu, PopupMenuItemHandler, usePopupMenuState } from '@sa-app/components/common/PopupMenu';
+import { PopupMenu, PopupMenuItemHandler } from '@sa-app/components/common/PopupMenu';
+import { usePopupMenuState } from '@sa-app/components/common/usePopupMenuState';
 import { mainColor } from '@sa-app/style';
 
 import { PanelStateContext } from '@sa-app/context/PanelState';
@@ -25,19 +26,25 @@ export function GameController() {
         setUserSuit(SAEngine.getUserSuit());
     }, []);
 
-    const changeTitle: PopupMenuItemHandler<number> = React.useCallback((item) => {
-        if (item !== userTitle) {
-            SAEngine.changeTitle(item);
-            setUserTitle(item);
-        }
-    }, []);
+    const changeTitle: PopupMenuItemHandler<number> = React.useCallback(
+        (item) => {
+            if (item !== userTitle) {
+                SAEngine.changeTitle(item);
+                setUserTitle(item);
+            }
+        },
+        [userTitle]
+    );
 
-    const changeSuit: PopupMenuItemHandler<number> = React.useCallback((item) => {
-        if (item !== userSuit) {
-            SAEngine.changeSuit(item);
-            setUserSuit(item);
-        }
-    }, []);
+    const changeSuit: PopupMenuItemHandler<number> = React.useCallback(
+        (item) => {
+            if (item !== userSuit) {
+                SAEngine.changeSuit(item);
+                setUserSuit(item);
+            }
+        },
+        [userSuit]
+    );
 
     const handleChangeTitle: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
         const target = e.currentTarget;

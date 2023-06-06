@@ -117,6 +117,18 @@ declare namespace SAType {
     type SocketRequestData = (egret.ByteArray | number)[];
 }
 
+/** `sac`全局变量使用的额外命名空间 */
+declare interface Window {
+    sac: {
+        /** 原生客户端`console.log`的正则过滤列表 */
+        filterLogText: RegExp[];
+        /** 原生客户端`console.warn`的正则过滤列表 */
+        filterWarnText: RegExp[];
+        SeerH5Ready: boolean;
+        SacReady: boolean;
+    };
+}
+
 declare namespace RES {
     function getVirtualUrl(url: string): string;
     function getResByUrl(url: string): Promise<egret.HashObject>;

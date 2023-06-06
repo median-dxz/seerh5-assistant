@@ -22,15 +22,18 @@ if ('serviceWorker' in navigator) {
     );
 }
 
+let wwwroot: string;
+
 if (import.meta.env.DEV) {
-    window.wwwroot = '/dev/seerh5.61.com/';
+    wwwroot = '/dev/seerh5.61.com/';
 } else {
-    window.wwwroot = '/seerh5.61.com/';
+    wwwroot = '/seerh5.61.com/';
 }
 
-fetch(`${window.wwwroot}app.js?t=${Date.now()}`)
+fetch(`${wwwroot}app.js?t=${Date.now()}`)
     .then((r) => r.text())
     .then((appJs) => {
+        (window as unknown as { wwwroot: string }).wwwroot = wwwroot;
         const script = document.createElement('script');
         while (appJs.startsWith('eval')) {
             appJs = eval(appJs.match(/eval([^)].*)/)![1]);

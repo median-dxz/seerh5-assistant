@@ -10,7 +10,7 @@ import { ItemListRow } from './ItemListRow';
 export function CommonValue() {
     const rows = idList.map((key) => ItemXMLInfo.getItemObj(key)!).map((obj) => new Item(obj));
 
-    let [items, setItems] = useState(rows);
+    const [items, setItems] = useState(rows);
 
     useEffect(() => {
         new Promise<void>((resolve) => {
@@ -23,7 +23,7 @@ export function CommonValue() {
             rows.find((r) => r.name === '赛尔豆')!.amount = MainManager.actorInfo.coins;
             setItems([...rows]);
         });
-    }, []);
+    }, [rows]);
 
     return (
         <PanelTableBase

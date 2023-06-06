@@ -21,6 +21,7 @@
         "./functions",
         "./loader",
         "./pet-helper",
+        "./level",
         "./index.ts"
     ],
 }

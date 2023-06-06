@@ -12,6 +12,7 @@ export default defineConfig({
         open: true,
         port: 1234,
         proxy: {
+            '/api': `http://localhost:2147`,
             '/seerh5.61.com': {
                 target: 'http://seerh5.61.com/',
                 changeOrigin: true,

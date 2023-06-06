@@ -20,7 +20,8 @@ import * as core from 'sa-core';
 import { Hook, defaultStrategy, resolveStrategy } from 'sa-core';
 import { SAEventBus } from 'sa-core/event-bus';
 
-window.sac = { ...core, ...sac };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(window as any).sac = { ...core, ...sac };
 
 const battleStrategyStorage = SALocalStorage.BattleStrategy;
 const eventBus = new SAEventBus();

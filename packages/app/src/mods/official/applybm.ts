@@ -11,7 +11,7 @@ import {
     switchBag,
 } from 'sa-core';
 
-import type { MoveModule } from 'sa-core/battle';
+import type { MoveStrategy } from 'sa-core/battle';
 import * as SABattle from 'sa-core/battle';
 import * as SAEngine from 'sa-core/engine';
 
@@ -25,7 +25,7 @@ export interface Option {
     difficulty: Difficulty;
     id: number;
     sweep: boolean;
-    strategy: Array<{ cts: number[]; strategy: MoveModule; beforeBattle: () => PromiseLike<void> }>;
+    strategy: Array<{ cts: number[]; strategy: MoveStrategy; beforeBattle: () => PromiseLike<void> }>;
 }
 
 export class Runner {
@@ -39,7 +39,7 @@ export class Runner {
     failedTimes: number;
     curPosition: number;
     designId: number;
-    strategy: MoveModule;
+    strategy: MoveStrategy;
 
     init(option: Option) {
         this.option = option;
@@ -105,7 +105,7 @@ export class Runner {
     }
 }
 
-const moveModules: { [name: string]: SABattle.MoveModule } = {
+const moveModules: { [name: string]: SABattle.MoveStrategy } = {
     圣谱单挑: {
         resolveMove: (round, skills) => {
             const r = skills.find((skill) => skill.name === ['光荣之梦', '神灵救世光'][round.round % 2]);
@@ -160,7 +160,7 @@ const moveModules: { [name: string]: SABattle.MoveModule } = {
 };
 
 const perStrategy: {
-    [key: string]: { cts: number[]; strategy: SABattle.MoveModule; beforeBattle: () => PromiseLike<void> };
+    [key: string]: { cts: number[]; strategy: SABattle.MoveStrategy; beforeBattle: () => PromiseLike<void> };
 } = {
     克朵六时: {
         beforeBattle: async () => {

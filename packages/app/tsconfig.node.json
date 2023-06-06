@@ -8,6 +8,7 @@
     },
     "include": [
         "vite.config.ts",
-        "backend/*.js"
+        "backend/**/*.js",
+        "backend/env.d.ts"
     ]
 }

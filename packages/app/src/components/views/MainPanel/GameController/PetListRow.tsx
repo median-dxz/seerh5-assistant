@@ -10,22 +10,19 @@ type Props = {
     selected: boolean;
 } & TableRowProps;
 
-export function PetListRow({ pet, isDefault, selected, onSelect, ...props }: Props) {
+export function PetListRow({ pet, isDefault, selected, ...props }: Props) {
     const { src: headIcon } = useEgretImageRes(ClientConfig.getPetHeadPath(pet.id));
 
-    const handleOpenPetItemUseProp = React.useCallback(
-        async (ct: number) => {
-            await ModuleManager.showModule('petBag');
-            const petBagModule = UIModuleHelper.currentModule<petBag.PetBag>();
-            await delay(300);
-            const petBagPanel = petBagModule.currentPanel!;
-            petBagPanel.onSelectPet({ data: PetManager.getPetInfo(ct) });
-            await delay(300);
-            petBagPanel.showDevelopBaseView();
-            petBagPanel.showDevelopView(9);
-        },
-        [pet.catchTime]
-    );
+    const handleOpenPetItemUseProp = React.useCallback(async (ct: number) => {
+        await ModuleManager.showModule('petBag');
+        const petBagModule = UIModuleHelper.currentModule<petBag.PetBag>();
+        await delay(300);
+        const petBagPanel = petBagModule.currentPanel!;
+        petBagPanel.onSelectPet({ data: PetManager.getPetInfo(ct) });
+        await delay(300);
+        petBagPanel.showDevelopBaseView();
+        petBagPanel.showDevelopView(9);
+    }, []);
 
     return (
         <PanelTableBodyRow selected={selected} {...props}>

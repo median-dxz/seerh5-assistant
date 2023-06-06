@@ -36,7 +36,7 @@ const updateLevelData = async () => {
 };
 
 export function LevelXTeamRoom(props: LevelExtendsProps) {
-    const { running, setRunning } = props;
+    const { running: _, setRunning } = props;
     const [hint, setHint] = React.useState<string | JSX.Element>('');
     const [step, setStep] = React.useState(0);
     const levelData = React.useRef({} as LevelData);

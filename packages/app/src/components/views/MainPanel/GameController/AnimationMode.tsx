@@ -14,7 +14,7 @@ export function AnimationMode() {
             FightManager.fightAnimateMode = Number(!checked);
             setAnimationMode(checked);
         },
-        [animationMode]
+        [setAnimationMode]
     );
 
     return <Switch checked={animationMode} onChange={handleToggleMode} />;

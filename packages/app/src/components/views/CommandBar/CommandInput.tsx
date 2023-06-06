@@ -1,9 +1,9 @@
 import { AutocompleteProps, Autocomplete as AutocompleteRaw } from '@mui/material';
 import { styled } from '@mui/system';
+import { Mods } from '@sa-app/mod-manager';
 import { mainColor } from '@sa-app/style';
 import React, { useEffect, useState } from 'react';
 import { StyledTextField } from './StyledTextField';
-import { Mods } from '@sa-app/mod-manager';
 
 const Autocomplete: typeof AutocompleteRaw = styled(
     ({ className, ...props }: AutocompleteProps<unknown, false, false, false>) => (
@@ -36,7 +36,7 @@ export function CommandInput() {
     const [value, setValue] = useState<null | string>(null);
 
     useEffect(() => {
-        let o = [];
+        const o = [];
         if (modName) {
             for (const key of Mods.get(modName)!.getKeys()) {
                 o.push(key);

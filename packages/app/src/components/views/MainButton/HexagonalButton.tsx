@@ -5,7 +5,7 @@ import * as React from 'react';
 import { ForwardedRef, forwardRef, PropsWithChildren } from 'react';
 
 const ButtonRoot = forwardRef(function ButtonRoot(
-    props: PropsWithChildren<{}> & { baseSize: number },
+    props: PropsWithChildren<object> & { baseSize: number },
     ref: ForwardedRef<any>
 ) {
     const { children, baseSize, ...other } = props;

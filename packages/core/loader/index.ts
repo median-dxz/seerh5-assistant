@@ -16,11 +16,14 @@ export async function CoreLoader() {
             InternalInitiator.load();
 
             resolve(true);
-            sac.SacReady = true;
+
+            window.sac.SacReady = true;
 
             window.dispatchEvent(new CustomEvent('seerh5_assistant_ready'));
             log(`SeerH5-Assistant Core Loaded Successfully!`);
         };
+
+        const { sac } = window;
 
         if (typeof sac !== 'undefined' && sac.SeerH5Ready) {
             if (sac.SacReady) {

@@ -75,7 +75,7 @@ export function MainPanel(props: Props) {
         }
         const canvas: HTMLCanvasElement = document.querySelector('#egret_player_container canvas')!;
         const eventProperty: any = {};
-        for (let k in e.nativeEvent) {
+        for (const k in e.nativeEvent) {
             eventProperty[k] = e.nativeEvent[k as keyof typeof e.nativeEvent];
         }
         if (e.nativeEvent instanceof MouseEvent) {

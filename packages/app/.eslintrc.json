@@ -28,6 +28,7 @@
     "ignorePatterns": [
         "vite.config.ts",
         "dev-dist/",
+        "dist/",
         "backend/"
     ]
 }

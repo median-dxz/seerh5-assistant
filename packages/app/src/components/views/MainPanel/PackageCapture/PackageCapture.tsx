@@ -1,6 +1,7 @@
 import { Button, TableCell, Toolbar } from '@mui/material';
 import * as React from 'react';
-import { CmdMask, Hook, SAEventTarget, hookFn, type SAHookData } from 'sa-core';
+import type { AnyFunction, SAHookData } from 'sa-core';
+import { CmdMask, Hook, SAEventTarget, hookFn } from 'sa-core';
 import { PanelTableBase, PanelTableBodyRow } from '../base';
 
 interface CapturedPackage {
@@ -8,7 +9,7 @@ interface CapturedPackage {
     time: string;
     cmd: number;
     label: string;
-    data?: Array<number | DataView> | DataView | Function;
+    data?: Array<number | DataView> | DataView | AnyFunction;
 }
 
 type State = 'pending' | 'capturing';
@@ -57,7 +58,7 @@ export function PackageCapture() {
     const [state, setState] = React.useState<State>('pending');
     const [capture, setCapture] = React.useState<CapturedPackage[]>([]);
 
-    const getLabel = SocketEncryptImpl.getCmdLabel;
+    // const getLabel = SocketEncryptImpl.getCmdLabel;
 
     React.useEffect(() => {
         // wrapperFactory('addCmdListener', (cmd, callback) => {
@@ -161,7 +162,7 @@ export function PackageCapture() {
                             <Button
                                 onClick={() => {
                                     if (row.type === 'Send') {
-                                        let data = row.data as Array<number | DataView>;
+                                        const data = row.data as Array<number | DataView>;
                                         SocketConnection.mainSocket.send(
                                             row.cmd,
                                             data.map((v) => (typeof v === 'object' ? new egret.ByteArray(v.buffer) : v))

@@ -86,8 +86,7 @@ export function hookPrototype<T extends HasPrototype, K extends keyof T['prototy
     proto && hookFn(proto, funcName, hookedFunc);
 }
 
-export const checkEnv = () =>
-    typeof window !== 'undefined' && window.sac != undefined && window.sac?.SacReady && window.sac?.SeerH5Ready;
+export const checkEnv = () => typeof window !== 'undefined' && window.sac != undefined && window.sac?.SacReady && window.sac?.SeerH5Ready;
 
 export const extractObjectId = <T extends { [key in K]: number }, K extends string>(obj: T | number, key: K) => {
     if (typeof obj === 'number') {

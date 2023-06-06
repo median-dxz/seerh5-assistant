@@ -25,6 +25,6 @@ document.querySelector('#test-page').addEventListener('click', () => {
     el.style.zIndex = Number(zIndex) ? 0 : 1;
 });
 
-window.saCore = lib;
+window.sac = { ...window.sac, ...lib };
 
 await lib.CoreLoader();

@@ -1,5 +1,6 @@
 import { Box, Button, LinearProgress, TableCell, Typography } from '@mui/material';
-import { PopupMenu, usePopupMenuState } from '@sa-app/components/common/PopupMenu';
+import { PopupMenu } from '@sa-app/components/common/PopupMenu';
+import { usePopupMenuState } from '@sa-app/components/common/usePopupMenuState';
 import * as SALocalStorage from '@sa-app/hooks/SALocalStorage';
 import { mainColor } from '@sa-app/style';
 import { produce } from 'immer';

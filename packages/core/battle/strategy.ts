@@ -1,6 +1,6 @@
 import { SaModuleLogger, defaultStyle, delay } from '../common/utils.js';
 import type { Pet, Skill } from '../entity/index.js';
-import type { MoveModule } from './manager.js';
+import type { MoveStrategy } from './manager.js';
 import { Manager } from './manager.js';
 import { Operator } from './operator.js';
 import { Provider } from './provider.js';
@@ -50,7 +50,7 @@ export class NoBloodSwitchLink {
     }
 }
 
-export function generateStrategy(_snm: string[], _dsl: string[]): MoveModule {
+export function generateStrategy(_snm: string[], _dsl: string[]): MoveStrategy {
     const snm = new SkillNameMatch(_snm);
     const dsl = new NoBloodSwitchLink(_dsl);
     return {
@@ -63,7 +63,7 @@ export function generateStrategy(_snm: string[], _dsl: string[]): MoveModule {
     };
 }
 
-export const defaultStrategy: MoveModule = {
+export const defaultStrategy: MoveStrategy = {
     resolveNoBlood: () => -1,
     resolveMove: async () => {
         Operator.auto();
@@ -76,13 +76,13 @@ export const defaultStrategy: MoveModule = {
     // skillPanel.auto();
 };
 
-export interface Strategy {
+export interface GeneralStrategy {
     dsl: Array<string[]>;
     snm: Array<string[]>;
-    default: MoveModule;
+    default: MoveStrategy;
 }
 
-export async function resolveStrategy(strategy: Strategy) {
+export async function resolveStrategy(strategy: GeneralStrategy) {
     if (FighterModelFactory.playerMode == null) {
         log(`执行策略失败: 当前playerMode为空`);
         return;

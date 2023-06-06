@@ -14,7 +14,8 @@
     "./event-bus": "./dist/event-bus/index.js",
     "./entity": "./dist/entity/index.js",
     "./functions": "./dist/functions/index.js",
-    "./pet-helper": "./dist/pet-helper/index.js"
+    "./pet-helper": "./dist/pet-helper/index.js",
+    "./level": "./dist/level/index.js"
   },
   "browser": "./dist/index.js",
   "types": "./dist/index.d.ts",

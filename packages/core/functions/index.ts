@@ -67,7 +67,7 @@ export async function lowerBlood(
 
     const { Manager, Operator } = Battle;
 
-    const strategy: Battle.MoveModule = {
+    const strategy: Battle.MoveStrategy = {
         resolveMove(battleState, skills, battlePets) {
             log('move', battleState.round, battleState.self?.hp.remain);
             if (battleState.self.hp.remain < hpLimit || !cts.includes(battleState.self.catchtime)) {

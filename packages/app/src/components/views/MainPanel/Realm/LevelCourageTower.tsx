@@ -56,7 +56,6 @@ export function LevelCourageTower(props: LevelExtendsProps) {
                 } else {
                     setStep(3);
                 }
-
                 break;
             case 1: //daily challenge
                 setHint('正在准备背包');
@@ -69,17 +68,17 @@ export function LevelCourageTower(props: LevelExtendsProps) {
                 setHint('正在进入关卡');
 
                 while (levelData.current.challengeCount < maxDailyChallengeTimes && currentRunning.current) {
+                    setHint(
+                        <>
+                            <Typography component={'div'}>正在进行对战...</Typography>
+                            <PercentLinearProgress
+                                prompt={'当前次数'}
+                                progress={levelData.current.challengeCount}
+                                total={5}
+                            />
+                        </>
+                    );
                     await SABattle.Manager.runOnce(() => {
-                        setHint(
-                            <>
-                                <Typography component={'div'}>正在进行对战...</Typography>
-                                <PercentLinearProgress
-                                    prompt={'当前次数'}
-                                    progress={levelData.current.challengeCount}
-                                    total={5}
-                                />
-                            </>
-                        );
                         SAEngine.Socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [117, 30, 1]);
                     }, customData.strategy);
                     levelData.current = await updateLevelData();

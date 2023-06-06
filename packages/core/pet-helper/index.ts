@@ -31,6 +31,10 @@ export function cureAllPet() {
     PetManager.noAlarmCureAll();
 }
 
+export function matchName(_name: string) {
+    throw new Error('not implemented');
+}
+
 export { PetDataManger } from './PetDataManager.js';
 export { SAPetLocation } from './PetLocation.js';
 export { SAPet } from './SAPet.js';

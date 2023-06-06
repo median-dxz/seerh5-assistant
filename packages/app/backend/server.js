@@ -11,10 +11,12 @@ async function createServer() {
 
     app.use((req, res, next) => {
         // console.log(`[info]: sa-app: ${req.url}`);
+        res.setHeader('Access-Control-Allow-Origin', '*');
         next();
     });
 
     app.use('/worker', express.static(path.join(dirname, 'worker'), { cacheControl: false }));
+    app.use('/strategy', express.static(path.join(dirname, 'strategy'), { cacheControl: false }));
 
     app.use(['/seerh5.61.com', '/resource/sound'], saProxyAssets);
 

@@ -35,6 +35,7 @@ export default defineConfig(({ command, mode }) => {
                     enabled: true,
                 },
                 workbox: {
+                    globIgnores: ['./**/*'],
                     navigationPreload: false,
                     importScripts: [`http://localhost:${env['BACKEND_PORT']}/worker/iframe-cookie.js`],
                     runtimeCaching: [

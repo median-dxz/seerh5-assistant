@@ -19,7 +19,7 @@ export function BattleFireInfo() {
 
     const updateBattleFire = React.useCallback(() => {
         updateBattleFireInfo().then((i) => setBattleFire(i));
-    }, [battleFire]);
+    }, [setBattleFire]);
 
     React.useEffect(() => {
         clearInterval(timer);
@@ -38,9 +38,9 @@ export function BattleFireInfo() {
             setTimer(timerId);
         }
         return () => clearInterval(timer);
-    }, [battleFire]);
+    }, [battleFire.timeLeft, battleFire.valid, timeLeft, timer, updateBattleFire]);
 
-    React.useEffect(updateBattleFire, []);
+    React.useEffect(updateBattleFire, [updateBattleFire]);
 
     let renderProps: { color: string; text: string };
     switch (true) {

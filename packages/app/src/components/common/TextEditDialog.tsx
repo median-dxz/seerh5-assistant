@@ -13,7 +13,7 @@ export function TextEditDialog({ open, initialValue, onClose }: TextEditDialogPr
 
     React.useEffect(() => {
         setValue(initialValue);
-    }, [open]);
+    }, [open, initialValue]);
 
     const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue(event.target.value);

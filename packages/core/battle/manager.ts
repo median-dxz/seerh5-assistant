@@ -7,17 +7,17 @@ import { Provider } from './provider.js';
 export type Trigger = () => void;
 export type MoveHandler = (battleState: RoundInfo, skills: Skill[], pets: Pet[]) => Promise<boolean>;
 export type SwitchNoBloodHandler = (battleState: RoundInfo, skills: Skill[], pets: Pet[]) => number | void;
-export type MoveModule = {
+export type MoveStrategy = {
     resolveNoBlood: SwitchNoBloodHandler;
     resolveMove: MoveHandler;
 };
 
-let strategy: undefined | MoveModule;
+let strategy: undefined | MoveStrategy;
 let triggerLocker: undefined | ((value: boolean | PromiseLike<boolean>) => void);
 
 export const Manager = {
     delayTimeout: undefined as undefined | Promise<void>,
-    runOnce(trigger: Trigger, _strategy: MoveModule): Promise<boolean> {
+    runOnce(trigger: Trigger, _strategy: MoveStrategy): Promise<boolean> {
         if (triggerLocker == undefined) {
             try {
                 trigger();

@@ -5,9 +5,9 @@ import React, { useState } from 'react';
 import { TextEditDialog, TextEditDialogProps } from '@sa-app/components/common/TextEditDialog';
 import { SAContext } from '@sa-app/context/SAContext';
 import * as SALocalStorage from '@sa-app/hooks/SALocalStorage';
+import { NULL } from 'sa-core';
 import * as SABattle from 'sa-core/battle';
 import { PanelTableBase, PanelTableBodyRow } from '../base';
-import { NULL } from 'sa-core';
 
 const handleAdd = (arr: unknown[], value: string) => {
     arr.push(value.split(',').map((s) => s.trim()));
@@ -43,7 +43,7 @@ export function AutoBattle() {
 
     const closeDialog = React.useCallback(() => {
         setDialogState(defaultDialogState);
-    }, [dialogProps]);
+    }, [setDialogState]);
 
     const openDialog = (onClose: (value: string) => void, initialValue: string) => {
         setDialogState({ open: true, initialValue, onClose });

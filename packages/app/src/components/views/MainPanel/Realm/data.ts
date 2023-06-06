@@ -1,11 +1,11 @@
-import { MoveModule, NoBloodSwitchLink, Operator, SkillNameMatch, generateStrategy } from 'sa-core';
+import { MoveStrategy, NoBloodSwitchLink, Operator, SkillNameMatch, generateStrategy } from 'sa-core';
 import * as SABattle from 'sa-core/battle';
 import * as SAEntity from 'sa-core/entity';
 
 interface LevelPetsData {
     [levelName: string]: {
         cts: number[];
-        strategy: MoveModule;
+        strategy: MoveStrategy;
     };
 }
 

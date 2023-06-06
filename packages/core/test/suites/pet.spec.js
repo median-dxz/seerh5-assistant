@@ -5,11 +5,11 @@ var expect = chai.expect;
 describe('PetHelper', function () {
     this.timeout('15s');
 
-    /** @type {typeof window.saCore} */
+    /** @type {typeof window.sac} */
     let core;
 
     before(() => {
-        core = window.saCore;
+        core = window.sac;
         core.toggleAutoCure(false);
         core.HelperLoader();
     });
