@@ -12,12 +12,9 @@ export default defineConfig(({ command, mode }) => {
         server: {
             port: 1234,
             proxy: {
-                '/dev/': {
-                    target: `http://localhost:${env['BACKEND_PORT']}`,
-                    rewrite: (path) => path.replace(/^\/dev/, ''),
-                },
-                '/resource': `http://localhost:${env['BACKEND_PORT']}/resource`,
-                '/api': `http://localhost:${env['BACKEND_PORT']}`,
+                '/resource': `http://localhost:${env['VITE_BACKEND_PORT']}/resource`,
+                '/seerh5.61.com': `http://localhost:${env['VITE_BACKEND_PORT']}/seerh5.61.com`,
+                '/api': `http://localhost:${env['VITE_BACKEND_PORT']}`,
             },
             watch: {
                 ignored: ['!**/node_modules/sa-core/**'],

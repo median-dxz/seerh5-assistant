@@ -215,7 +215,7 @@ const strategies: { [name: string]: SABattle.MoveStrategy } = {
     ),
 };
 
-const perStrategy: Record<string, ILevelBattleStrategy> = {
+const battleStrategy: Record<string, ILevelBattleStrategy> = {
     克朵六时: {
         beforeBattle: async () => {
             await lowerBlood([1655484346]);
@@ -279,11 +279,11 @@ const options: Option[] = [
         sweep: false,
         id: 56,
         strategy: [
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
         ],
     },
     // 萝卜丝
@@ -292,11 +292,11 @@ const options: Option[] = [
         sweep: false,
         id: 14,
         strategy: [
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['潘蒂表必先'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['潘蒂表必先'],
         ],
     },
     {
@@ -304,11 +304,11 @@ const options: Option[] = [
         sweep: false,
         id: 79,
         strategy: [
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['潘蒂表必先'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['潘蒂表必先'],
         ],
     },
     // 格斯塔斯
@@ -317,11 +317,11 @@ const options: Option[] = [
         sweep: false,
         id: 82,
         strategy: [
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['潘蒂表必先'],
-            perStrategy['潘蒂表必先'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['潘蒂表必先'],
+            battleStrategy['潘蒂表必先'],
         ],
     },
     // 启明星
@@ -330,11 +330,11 @@ const options: Option[] = [
         sweep: false,
         id: 86,
         strategy: [
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['王哈单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['潘蒂表必先'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['王哈单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['潘蒂表必先'],
         ],
     },
     // 嫉妒
@@ -343,11 +343,11 @@ const options: Option[] = [
         sweep: false,
         id: 95,
         strategy: [
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['潘蒂表必先'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['潘蒂表必先'],
         ],
     },
     // 卫岳
@@ -356,11 +356,11 @@ const options: Option[] = [
         sweep: false,
         id: 103,
         strategy: [
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['圣谱单挑'],
-            perStrategy['蒂朵单挑'],
-            perStrategy['潘蒂表必先'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['蒂朵单挑'],
+            battleStrategy['潘蒂表必先'],
         ],
     },
 ];

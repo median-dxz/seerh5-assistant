@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from 'fs';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import * as zlib from 'zlib';
+import zlib from 'zlib';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 

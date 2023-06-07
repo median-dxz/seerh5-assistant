@@ -1,2 +1,0 @@
-export { AutoBattle } from './AutoBattle';
-

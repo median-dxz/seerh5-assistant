@@ -1,5 +1,4 @@
 import { BaseMod } from '@sa-app/mod-manager/mod-type';
-import { requestSAApi } from '@sa-app/utils/requestSAApi';
 import {
     ItemId,
     PetPosition,
@@ -36,16 +35,23 @@ const AWARD_LIST = {
     },
 };
 
+interface Config {
+    ignorePets: string[];
+}
+
 class sign extends BaseMod {
     meta = { description: '日任常用功能', id: 'sign' };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    data: any;
+    defaultConfig = {
+        ignorePets: [],
+    };
+
+    declare config: Config;
+
     init() {
-        requestSAApi().then((v) => {
-            this.data = v;
-        });
+        // do nothing
     }
+
     async run() {
         const CMDID = CommandID;
         let curTimes = (await Socket.multiValue(MULTI.日常.刻印抽奖次数))[0];
@@ -123,7 +129,7 @@ class sign extends BaseMod {
     async teamDispatch() {
         await Socket.sendByQueue(45809, [0]).catch(() => log('没有可收取的派遣'));
 
-        const ignorePetNames = new Set(this.data.ignorePetNames);
+        const ignorePetNames = new Set(this.config.ignorePets);
         const PosType = PetPosition;
         let reprogress = false;
         for (let tid = 16; tid > 0; tid--) {

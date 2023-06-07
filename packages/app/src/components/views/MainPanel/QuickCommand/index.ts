@@ -1,2 +1,0 @@
-export { QuickCommand } from './QuickCommand';
-

@@ -1,2 +1,0 @@
-export { MainButton } from './MainButton';
-

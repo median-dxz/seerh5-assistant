@@ -16,8 +16,6 @@
 
 on progress:
 
-后端集成暂时是express，，考虑到后面迁移electron要使用的模式，暂时还是采用前后端分离而不考虑ssr。
-实现ctrl-c正常退出程序
 加个currency什么的包,并行运行前后端两个server
 静态 /dist
 http://rp-ta.61.com/tm.js 什么情况？
@@ -35,6 +33,7 @@ pet matcher便捷函数，通过名字找ct
 添加半自动模式，策略添加fallback选项
 自爆模式识别 附带重新梳理自定义策略，预制策略，默认策略，关卡定义策略的优先级关系
 借火操作
+后端迁移fastify
 
 issues:
 

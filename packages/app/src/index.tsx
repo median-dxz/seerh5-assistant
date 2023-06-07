@@ -1,19 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { CoreLoader, HelperLoader } from 'sa-core';
-import './stylesheets/main.css';
+import './index.css';
 import { registerAllMod } from './utils/registerMods';
+import { dataProvider } from './utils/saDataProvider';
 
 const container = document.getElementById('sa-app')!;
 const root = ReactDOM.createRoot(container);
 
 const renderApp = async () => {
     HelperLoader();
-    await registerAllMod();
+    await dataProvider.init();
+
     const canvas: HTMLCanvasElement = document.querySelector('#egret_player_container canvas')!;
     canvas.setAttribute('tabindex', '-1');
-    const { default: SaMain } = await import('./components/views/main');
-    root.render(<SaMain />);
+    const { default: SaMain } = await import('./main');
+    root.render(
+        <React.StrictMode>
+            <SaMain />
+        </React.StrictMode>
+    );
+
+    await registerAllMod();
 };
 
 if ('serviceWorker' in navigator) {
@@ -22,13 +30,7 @@ if ('serviceWorker' in navigator) {
     );
 }
 
-let wwwroot: string;
-
-if (import.meta.env.DEV) {
-    wwwroot = '/dev/seerh5.61.com/';
-} else {
-    wwwroot = '/seerh5.61.com/';
-}
+const wwwroot = `/seerh5.61.com/`;
 
 fetch(`${wwwroot}app.js?t=${Date.now()}`)
     .then((r) => r.text())

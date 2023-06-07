@@ -1,7 +1,8 @@
 import express from 'express';
-import { readFileSync } from 'fs';
 import path from 'path';
+
 import { fileURLToPath } from 'url';
+import { saDataProvider } from './sa.dataProvider.js';
 import { saProxyAssets, saProxyLogin } from './sa.proxy.js';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -48,12 +49,7 @@ async function createServer() {
 
     app.use('/api/login', saProxyLogin);
 
-    app.get('/api/data', (req, res) => {
-        const data = readFileSync(path.resolve(dirname, 'data', 'data.json')).toString('utf8');
-        res.setHeader('Content-Type', 'application/json');
-        res.setHeader('Cache-Control', 'no-cache');
-        res.status(200).send(data);
-    });
+    app.use('/api/data', saDataProvider);
 
     app.get('/api/14year', (req, res) => {
         const PHPSESSID = req.query['PHPSESSID'];

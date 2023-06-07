@@ -23,6 +23,9 @@ export abstract class BaseMod {
     abstract init(): void;
     destroy?(): void;
     abstract meta: { id: string; description: string };
+
+    config: unknown;
+    defaultConfig?: unknown;
 }
 
 export abstract class ModuleMod<ModuleType extends BaseModule> extends BaseMod {
