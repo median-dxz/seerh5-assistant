@@ -60,9 +60,9 @@ export class PetFragmentLevel extends EntityBase implements IPetFragmentLevelObj
     constructor(obj: SAType.PetFragmentLevelObj) {
         super();
         this.__type = 'PetFragmentLevel';
-        
+
         const { Configure, EasyBattle, HardBattle, NormalBattle } = obj;
-        [this.id, this.petFragmentItem] = [obj.ID, obj.Reward.ItemID];
+        [this.id, this.name, this.petFragmentItem] = [obj.ID, obj.Desc, obj.Reward.ItemID];
         this.totalTimes = obj.Configure.Times;
         this.values = {
             openTimes: Configure.TimeValue,

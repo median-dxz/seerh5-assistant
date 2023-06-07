@@ -15,32 +15,26 @@ type BattleFireInfo = Awaited<ReturnType<typeof updateBattleFireInfo>>;
 export function BattleFireInfo() {
     const [battleFire, setBattleFire] = React.useState<BattleFireInfo>({} as BattleFireInfo);
     const [timeLeft, setTimeLeft] = React.useState(0);
-    const [timer, setTimer] = React.useState<undefined | number>(undefined);
 
     const updateBattleFire = React.useCallback(() => {
         updateBattleFireInfo().then((i) => setBattleFire(i));
-    }, [setBattleFire]);
-
-    React.useEffect(() => {
-        clearInterval(timer);
-        setTimeLeft(battleFire.timeLeft);
-        if (battleFire.timeLeft <= 0 || battleFire.valid === false) {
-            setTimer(undefined);
-        } else {
-            const { setInterval } = window;
-            const timerId = setInterval(() => {
-                if (timeLeft <= 0) {
-                    updateBattleFire();
-                } else {
-                    setTimeLeft((t) => t - 1);
-                }
-            }, 1000);
-            setTimer(timerId);
-        }
-        return () => clearInterval(timer);
-    }, [battleFire.timeLeft, battleFire.valid, timeLeft, timer, updateBattleFire]);
+    }, []);
 
     React.useEffect(updateBattleFire, [updateBattleFire]);
+
+    React.useEffect(() => {
+        setTimeLeft(battleFire.timeLeft);
+        if (battleFire.timeLeft <= 0 || battleFire.valid === false) {
+            return;
+        }
+        const timer = setInterval(() => {
+            setTimeLeft((t) => {
+                if (t <= 0) updateBattleFire();
+                return t - 1;
+            });
+        }, 1000);
+        return () => clearInterval(timer);
+    }, [battleFire, updateBattleFire]);
 
     let renderProps: { color: string; text: string };
     switch (true) {

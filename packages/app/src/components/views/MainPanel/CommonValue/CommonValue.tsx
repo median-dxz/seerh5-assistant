@@ -2,7 +2,7 @@ import { TableCell } from '@mui/material';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 
-import { getItemNum, Item } from 'sa-core';
+import { Item, updateItems } from 'sa-core';
 import { PanelTableBase } from '../base';
 import { idList } from './data';
 import { ItemListRow } from './ItemListRow';
@@ -13,13 +13,8 @@ export function CommonValue() {
     const [items, setItems] = useState(rows);
 
     useEffect(() => {
-        new Promise<void>((resolve) => {
-            ItemManager.updateItems(
-                rows.map((r) => r.id),
-                resolve
-            );
-        }).then(() => {
-            rows.forEach((r) => (r.amount = getItemNum(r.id)));
+        updateItems(rows.map((r) => r.id)).then(() => {
+            rows.forEach((r) => (r.amount = ItemManager.getNumByID(r.id)));
             rows.find((r) => r.name === '赛尔豆')!.amount = MainManager.actorInfo.coins;
             setItems([...rows]);
         });

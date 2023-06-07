@@ -16,6 +16,7 @@ fetch('/seerh5.61.com/app.js?t=' + Date.now())
     });
 
 document.querySelector('#test-run').addEventListener('click', () => {
+    window.sac = { ...window.sac, ...lib };
     mocha.run();
 });
 
@@ -24,7 +25,5 @@ document.querySelector('#test-page').addEventListener('click', () => {
     const zIndex = el.style.zIndex;
     el.style.zIndex = Number(zIndex) ? 0 : 1;
 });
-
-window.sac = { ...window.sac, ...lib };
 
 await lib.CoreLoader();

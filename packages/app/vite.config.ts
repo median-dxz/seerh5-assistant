@@ -16,12 +16,15 @@ export default defineConfig(({ command, mode }) => {
                     target: `http://localhost:${env['BACKEND_PORT']}`,
                     rewrite: (path) => path.replace(/^\/dev/, ''),
                 },
-                '/resource/sound': `http://localhost:${env['BACKEND_PORT']}/resource/sound`,
+                '/resource': `http://localhost:${env['BACKEND_PORT']}/resource`,
                 '/api': `http://localhost:${env['BACKEND_PORT']}`,
+            },
+            watch: {
+                ignored: ['!**/node_modules/sa-core/**'],
             },
         },
         optimizeDeps: {
-            include: ['sa-core'],
+            exclude: ['sa-core'],
         },
         preview: {
             port: 1234,

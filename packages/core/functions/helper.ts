@@ -49,7 +49,7 @@ function enableFastStaticAnimation() {
     hookPrototype(UseSkillController, 'onMovieOver', function (f, ...args) {
         f.apply(this, ...args);
         if (FightManager.fightAnimateMode === 1) {
-            this.textTimer && (this.textTimer.delay = 300);
+            this.textTimer && (this.textTimer.delay = 200);
         }
     });
 

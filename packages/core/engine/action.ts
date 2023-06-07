@@ -35,3 +35,7 @@ export function buyPetItem(potionId: number, amount: number) {
 export function toggleAutoCure(enable: boolean) {
     return Socket.sendByQueue(42019, [22439, Number(enable)]);
 }
+
+export function updateItems(idList: number[]) {
+    return new Promise((res) => ItemManager.updateItems(idList, res));
+}

@@ -10,7 +10,7 @@ async function createServer() {
     const app = express();
 
     app.use((req, res, next) => {
-        // console.log(`[info]: sa-app: ${req.url}`);
+        console.log(`[info]: sa-app: ${req.url}`);
         res.setHeader('Access-Control-Allow-Origin', '*');
         next();
     });
@@ -18,7 +18,7 @@ async function createServer() {
     app.use('/worker', express.static(path.join(dirname, 'worker'), { cacheControl: false }));
     app.use('/strategy', express.static(path.join(dirname, 'strategy'), { cacheControl: false }));
 
-    app.use(['/seerh5.61.com', '/resource/sound'], saProxyAssets);
+    app.use(['/seerh5.61.com', '/resource'], saProxyAssets);
 
     app.get('/api/taomeeSDK', (req, res) => {
         delete req.headers.host;
@@ -82,7 +82,13 @@ async function createServer() {
         res.status(200).send('这里什么也没有~');
     });
 
-    app.listen(2147);
+    const server = app.listen(2147);
+
+    process.on('SIGINT', function () {
+        console.log('Detected SIGINT (Ctrl-C), progress is shutting down...');
+        server.close();
+        process.exit();
+    });
 }
 
 createServer();

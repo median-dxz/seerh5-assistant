@@ -81,6 +81,7 @@ declare namespace SAType {
 
     interface PetFragmentLevelObj extends BaseObj {
         ID: number;
+        Desc: string;
         Configure: {
             Times: number;
             TimeValue: number;
