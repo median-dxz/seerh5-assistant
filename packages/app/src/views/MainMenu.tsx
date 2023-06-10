@@ -12,12 +12,12 @@ import React, { useEffect, useState } from 'react';
 
 import { StyledSpeedDial } from '@sa-app/components/StyledSpeedDial';
 import { Mods } from '@sa-app/mod-manager';
-import { mainColor } from '@sa-app/style';
+import { mainTheme } from '@sa-app/style';
 import { getAutoCureState, toggleAutoCure } from 'sa-core';
 
 const iconSx: SxProps = {
-    color: `rgba(${mainColor.front} / 100%)`,
-    filter: `drop-shadow(0 0 8px rgba(${mainColor.back} / 75%))`,
+    color: mainTheme.palette.text.primary,
+    filter: `drop-shadow(0 0 8px rgba(0 0 0 / 75%))`,
     opacity: 1,
 };
 
@@ -33,15 +33,16 @@ export function MainMenu() {
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
-        getAutoCureState().then(setAutoCure);
-    }, []);
+        toggleAutoCure(autoCure)
+            .then(() => getAutoCureState())
+            .then(setAutoCure);
+    }, [autoCure]);
 
     actions[0].name = `自动治疗:${autoCure ? '开' : '关'}`;
 
     const handleClicks = [
         () => {
-            toggleAutoCure(!autoCure);
-            setAutoCure(autoCure);
+            setAutoCure((pre) => !pre);
         },
         () => {
             FightManager.fightNoMapBoss(6730);

@@ -1,6 +1,5 @@
 import Lock from '@mui/icons-material/Lock';
 import { Box, Fade, Switch, SxProps, Tab, Tabs } from '@mui/material';
-import { mainColor } from '@sa-app/style';
 import * as React from 'react';
 import { AutoBattle } from './AutoBattle';
 import { CommonValue } from './CommonValue';
@@ -30,12 +29,8 @@ function TabPanel(props: TabPanelProps & { sx?: SxProps }) {
                     width: 8,
                     height: 8,
                 },
-                '&::-webkit-scrollbar-track': {
-                    backgroundColor: `rgba(${mainColor.front} / 16%)`,
-                },
-                '&::-webkit-scrollbar-thumb': {
-                    backgroundColor: `rgba(${mainColor.front} / 90%)`,
-                },
+                '&::-webkit-scrollbar-track': {},
+                '&::-webkit-scrollbar-thumb': {},
                 ...sx,
             }}
             role="tabpanel"
@@ -96,12 +91,6 @@ export function MainPanel(props: Props) {
                     width: '60vw',
                     height: '75vh',
                     zIndex: 1,
-                    color: `rgba(${mainColor.front} / 100%)`,
-                    bgcolor: `rgba(${mainColor.back} / 35%)`,
-                    border: `1px solid rgba(${mainColor.front} / 35%)`,
-                    backdropFilter: `blur(8px)`,
-                    boxShadow: `0 0 16px rgba(${mainColor.front} / 50%),
-                    0 0 16px rgba(${mainColor.back} / 50%) inset`,
                 }}
                 onClick={(e) => {
                     e.nativeEvent.stopPropagation();
@@ -115,7 +104,6 @@ export function MainPanel(props: Props) {
                 <Box
                     sx={{
                         minWidth: '155px',
-                        bgcolor: `rgba(${mainColor.back} / 12%)`,
                         borderRight: 1,
                         // backdropFilter: `blur(8px)`,
                         borderColor: 'rgba(255 255 255 / 12%)',

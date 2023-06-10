@@ -1,22 +1,14 @@
 import { createTheme } from '@mui/material';
-import { lime } from '@mui/material/colors';
-
-export const mainColor = {
-    front: `211 244 254`,
-    back: '10 55 118',
-};
+import { indigo, yellow } from '@mui/material/colors';
 
 export const mainTheme = createTheme({
     typography: {
         fontSize: 16,
-        fontFamily: `MFShangHei, Roboto, Helvetica, Arial, sans-serif`,
+        fontFamily: `MFShangHei, Open Sans, Helvetica, Arial, sans-serif`,
     },
     palette: {
-        primary: {
-            light: lime[400],
-            dark: lime[600],
-            main: lime['A200'],
-        },
+        primary: yellow,
+        secondary: indigo,
         text: {
             primary: 'rgba(211, 244, 254, 87%)',
             secondary: 'rgba(211, 244, 254, 60%)',

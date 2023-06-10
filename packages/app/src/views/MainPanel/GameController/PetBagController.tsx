@@ -1,6 +1,5 @@
-import { Box, Button, LinearProgress, TableCell, Typography } from '@mui/material';
+import { Box, Button, LinearProgress, TableCell, Typography, alpha } from '@mui/material';
 
-import { mainColor } from '@sa-app/style';
 import * as SALocalStorage from '@sa-app/utils/hooks/SALocalStorage';
 import { produce } from 'immer';
 import React from 'react';
@@ -8,6 +7,7 @@ import { PetPosition, SAPet, getBagPets, lowerBlood, switchBag } from 'sa-core';
 
 import { PopupMenu } from '@sa-app/components/PopupMenu';
 import { usePopupMenuState } from '@sa-app/components/usePopupMenuState';
+import { mainTheme } from '@sa-app/style';
 import { useBagPets } from '@sa-app/utils/hooks/useBagPets';
 import { PanelTableBase } from '../../../components/PanelTableBase';
 import { PetListRow } from './PetListRow';
@@ -85,7 +85,7 @@ export function PetBagController() {
                 id="pet-bag-controller-menu"
                 sx={{
                     '& .MuiPaper-root': {
-                        bgcolor: `rgba(${mainColor.front} / 18%)`,
+                        bgcolor: mainTheme.palette.background.default,
                         backdropFilter: 'blur(4px)',
                     },
                 }}
@@ -110,16 +110,17 @@ export function PetBagController() {
                         height: 8,
                     },
                     '&::-webkit-scrollbar-track': {
-                        backgroundColor: `rgba(${mainColor.front} / 16%)`,
+                        backgroundColor: alpha(mainTheme.palette.background.default, 0.24),
                     },
                     '&::-webkit-scrollbar-thumb': {
-                        backgroundColor: `rgba(${mainColor.front} / 90%)`,
+                        backgroundColor: mainTheme.palette.background.default,
                     },
                 }}
             >
                 <PanelTableBase
                     sx={{
-                        width: 'max-content',
+                        maxWidth: '100%',
+                        minWidth: 'max-content',
                     }}
                     aria-label="pet list"
                     size="small"

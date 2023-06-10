@@ -30,16 +30,11 @@ body {
 }
 
 @font-face {
-    font-family: HuaKangXinZongYi;
-    src: url('http://seerh5.61.com/resource/font/hkxzy.ttf');
-}
-
-@font-face {
     font-family: MFShangHei;
-    src: url('http://seerh5.61.com/resource/font/MFShangHei_Noncommercial-Regular.otf');
+    src: url('https://seerh5.61.com/resource/font/MFShangHei_Noncommercial-Regular.otf');
 }
 
 @font-face {
     font-family: REEJI;
-    src: url('http://seerh5.61.com/resource/font/REEJI_Honghuangli.TTF');
+    src: url('https://seerh5.61.com/resource/font/REEJI_Honghuangli.TTF');
 }

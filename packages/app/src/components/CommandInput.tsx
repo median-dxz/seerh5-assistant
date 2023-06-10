@@ -1,32 +1,28 @@
-import { AutocompleteProps, Autocomplete as AutocompleteRaw } from '@mui/material';
+import { Autocomplete as AutocompleteRaw } from '@mui/material';
 import { styled } from '@mui/system';
 import { Mods } from '@sa-app/mod-manager';
-import { mainColor } from '@sa-app/style';
+import { mainTheme } from '@sa-app/style';
 import React, { useEffect, useState } from 'react';
 import { StyledTextField } from './StyledTextField';
 
-const Autocomplete: typeof AutocompleteRaw = styled(
-    ({ className, ...props }: AutocompleteProps<unknown, false, false, false>) => (
-        <AutocompleteRaw {...props} classes={{ popper: className }} />
-    )
-)`
-    --color-front-75: rgba(${mainColor.front} / 75%);
-    --color-front-100: rgba(${mainColor.front} / 100%);
-    --color-back-50: rgba(${mainColor.back} / 50%);
+const AutocompleteWrapped: typeof AutocompleteRaw = ({ className, ...props }) => (
+    <AutocompleteRaw {...props} classes={{ popper: className }} />
+);
 
+const Autocomplete = styled(AutocompleteWrapped)`
     & .MuiAutocomplete-paper {
         backdrop-filter: blur(12px);
-        background-color: var(--color-back-50);
-        box-shadow: 0 0 16px var(--color-back-50);
+        background-color: ${mainTheme.palette.background.default};
+        box-shadow: 0 0 16px rgba(0, 0, 0, 0.18);
         border-radius: 0;
-        color: var(--color-front-100);
+        color: ${mainTheme.palette.text};
         font-family: HuaKangXinZongYi;
         font-weight: 200;
         & .MuiAutocomplete-noOptions {
-            color: var(--color-front-100);
+            color: ${mainTheme.palette.text.primary};
         }
     }
-`;
+` as typeof AutocompleteRaw;
 
 export function CommandInput() {
     const [open, setOpen] = useState(false);

@@ -3,8 +3,6 @@ import { Button, Divider, Typography } from '@mui/material';
 import { SAConfig, cureAllPet } from 'sa-core';
 import * as SAEngine from 'sa-core/engine';
 
-import { mainColor } from '@sa-app/style';
-
 import { PopupMenu, PopupMenuItemHandler } from '@sa-app/components/PopupMenu';
 import { usePopupMenuState } from '@sa-app/components/usePopupMenuState';
 import { PanelStateContext } from '@sa-app/context/PanelState';
@@ -112,7 +110,6 @@ export function GameController() {
                 id="game-controller-menu"
                 sx={{
                     '& .MuiPaper-root': {
-                        bgcolor: `rgba(${mainColor.front} / 18%)`,
                         backdropFilter: 'blur(4px)',
                     },
                 }}

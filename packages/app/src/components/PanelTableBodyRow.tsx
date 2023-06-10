@@ -1,8 +1,4 @@
-import {
-    styled, TableRow,
-    TableRowProps
-} from '@mui/material';
-
+import { styled, TableRow, TableRowProps } from '@mui/material';
 
 export const PanelTableBodyRow = styled(TableRow)<TableRowProps>(() => ({
     '&:last-child td, &:last-child th': { border: 0 },

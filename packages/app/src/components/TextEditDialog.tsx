@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
-import { mainColor } from '@sa-app/style';
+
 import React from 'react';
 
 export interface TextEditDialogProps {
@@ -32,7 +32,6 @@ export function TextEditDialog({ open, initialValue, onClose }: TextEditDialogPr
             sx={{
                 '& .MuiDialog-paper': {
                     minWidth: 384,
-                    bgcolor: `rgba(${mainColor.front} / 18%)`,
                     backdropFilter: 'blur(4px)',
                 },
             }}

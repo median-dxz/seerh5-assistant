@@ -1,6 +1,5 @@
-import { Button, Dialog, DialogActions, Divider, TableCell, TableRow, Typography } from '@mui/material';
+import { Button, Dialog, DialogActions, Divider, TableCell, TableRow, Typography, alpha } from '@mui/material';
 import { SAContext } from '@sa-app/context/SAContext';
-import { mainColor } from '@sa-app/style';
 import React from 'react';
 import { PanelTableBase } from '../../../components/PanelTableBase';
 import { LevelCourageTower } from './LevelCourageTower';
@@ -10,6 +9,7 @@ import { LevelStudyTraining } from './LevelStudyTraining';
 import { LevelTitanHole } from './LevelTitanHole';
 import { LevelXTeamRoom } from './LevelXTeamRoom';
 
+import { mainTheme } from '@sa-app/style';
 import * as SABattle from 'sa-core/battle';
 import * as SAEngine from 'sa-core/engine';
 
@@ -145,7 +145,9 @@ export function Realm() {
                         key={index}
                         sx={{
                             '&:last-child td, &:last-child th': { border: 0 },
-                            backgroundColor: taskCompleted[index] ? `rgba(${mainColor.front}/ 18%)` : 'transparent',
+                            backgroundColor: taskCompleted[index]
+                                ? `${alpha(mainTheme.palette.primary.main, 0.18)}`
+                                : 'transparent',
                         }}
                     >
                         <TableCell component="th" scope="row" align="center">
@@ -191,7 +193,7 @@ export function Realm() {
                 sx={{
                     '& .MuiDialog-paper': {
                         minWidth: 384,
-                        bgcolor: `rgba(${mainColor.front} / 18%)`,
+
                         backdropFilter: 'blur(4px)',
                     },
                 }}

@@ -55,7 +55,7 @@ export class PetFragmentRunner implements ILevelRunner<LevelData, Config> {
         this.option = option;
         this.option.strategy = this.option.strategy.map((strategy) => {
             const beforeBattle = async () => {
-                await delay(Math.round(Math.random() * 100) + 5000);
+                await delay(Math.round(Math.random() * 1000) + 5000);
                 return strategy.beforeBattle?.();
             };
             return { ...strategy, beforeBattle };

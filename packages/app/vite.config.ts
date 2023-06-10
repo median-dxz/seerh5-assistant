@@ -30,17 +30,22 @@ export default defineConfig(({ command, mode }) => {
             react(),
             VitePWA({
                 manifest: false,
-                injectManifest: undefined,
+                injectManifest: {
+                    injectionPoint: undefined,
+                },
                 devOptions: {
                     enabled: true,
                 },
                 workbox: {
-                    globIgnores: ['./**/*'],
-                    navigationPreload: false,
-                    importScripts: [`http://localhost:${env['BACKEND_PORT']}/worker/iframe-cookie.js`],
+                    skipWaiting: true,
+                    globIgnores: ['**/*'],
+                    globPatterns: [],
+                    navigateFallback: null,
+                    navigationPreload: true,
+                    importScripts: [`http://localhost:${env['VITE_BACKEND_PORT']}/worker/iframe-cookie.js`],
                     runtimeCaching: [
                         {
-                            urlPattern: /seerh5\.61\.com\/resource\/assets/,
+                            urlPattern: /(seerh5\.61\.com\/resource\/assets)|(fonts\.gstatic\.com)/,
                             handler: 'CacheFirst',
                             options: {
                                 cacheName: 'seerh5-game-cache',
