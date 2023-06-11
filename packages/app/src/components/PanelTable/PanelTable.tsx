@@ -1,11 +1,11 @@
-import { Table, TableBody, TableCell, TableHead, TableProps, TableRow, TableRowProps } from '@mui/material';
+import type { TableCellProps, TableProps, TableRowProps } from '@mui/material';
+import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import React from 'react';
 import { SaTableRow } from '../styled/TableRow';
-import { PanelFieldProps } from './PanelField';
 import { PanelRow } from './PanelRow';
 
 export type PanelColumnRender<TDataType> = (data: TDataType, index: number) => Record<string, React.ReactNode | string>;
-export type PanelColumns = Array<PanelFieldProps>;
+export type PanelColumns = Array<{ field: string; columnName: string } & TableCellProps>;
 
 type PanelTableProps<TDataType> = {
     data: TDataType[];
@@ -22,8 +22,8 @@ export function PanelTable<TDataType>(props: PanelTableProps<TDataType>) {
         <Table size="small" {...tableProps}>
             <TableHead>
                 <TableRow>
-                    {columns.map(({ columnName: name, ...rest }) => (
-                        <TableCell align="center" {...rest}>
+                    {columns.map(({ columnName: name, ...rest }, index) => (
+                        <TableCell key={index} align="center" {...rest}>
                             {name}
                         </TableCell>
                     ))}
@@ -31,7 +31,7 @@ export function PanelTable<TDataType>(props: PanelTableProps<TDataType>) {
             </TableHead>
             <TableBody>
                 {data.map((row, index) => {
-                    const rowKey = toRowKey?.(row) ?? undefined;
+                    const rowKey = toRowKey?.(row) ?? index;
                     return (
                         <SaTableRow key={rowKey} {...rowProps?.(row, index)}>
                             <PanelRow columns={columns} renderData={columnRender(row, index)} />

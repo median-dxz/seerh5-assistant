@@ -8,8 +8,8 @@ interface PanelRowProps {
 }
 
 export function PanelRow({ columns, renderData }: PanelRowProps) {
-    return columns.map(({ field: key, ...rest }) => (
-        <PanelField field={key} {...rest}>
+    return columns.map(({ field: key, columnName: _, ...rest }) => (
+        <PanelField key={key} {...rest}>
             {renderData[key]}
         </PanelField>
     ));

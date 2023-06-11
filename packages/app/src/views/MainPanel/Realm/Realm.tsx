@@ -130,6 +130,7 @@ export function Realm() {
             <Divider />
             <PanelTable
                 data={rows}
+                toRowKey={(row) => row.name}
                 columns={[
                     {
                         field: 'name',
@@ -195,6 +196,9 @@ export function Realm() {
             <Dialog
                 open={open}
                 sx={{
+                    '& .MuiBackdrop-root': {
+                        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                    },
                     '& .MuiDialog-paper': {
                         minWidth: 384,
                     },

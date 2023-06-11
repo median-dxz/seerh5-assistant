@@ -26,6 +26,11 @@ export function PopupMenu(props: PopupMenuProps) {
             MenuListProps={{
                 role: 'listbox',
             }}
+            sx={{
+                ['&	.MuiBackdrop-root']: {
+                    backgroundColor: 'transparent',
+                },
+            }}
             {...menuProps}
         >
             {menuItems.map((item) => (
