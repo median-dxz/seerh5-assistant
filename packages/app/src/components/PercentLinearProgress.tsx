@@ -4,14 +4,14 @@ import {
 } from '@mui/material';
 import React from 'react';
 
-type PercentLinearProgressProps = LinearProgressProps & {
+type Props = LinearProgressProps & {
     prompt?: string;
     cover?: string;
     progress: number;
     total: number;
 };
 
-export function PercentLinearProgress(props: PercentLinearProgressProps) {
+export function PercentLinearProgress(props: Props) {
     let display = null;
     if (props.cover != undefined) {
         display = props.cover;

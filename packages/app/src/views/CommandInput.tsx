@@ -1,28 +1,11 @@
-import { Autocomplete as AutocompleteRaw } from '@mui/material';
-import { styled } from '@mui/system';
 import { Mods } from '@sa-app/mod-manager';
-import { mainTheme } from '@sa-app/style';
 import React, { useEffect, useState } from 'react';
-import { StyledTextField } from './StyledTextField';
+import { SaAutocomplete } from '../components/styled/Autocomplete';
+import { SaTextField } from '../components/styled/TextField';
 
-const AutocompleteWrapped: typeof AutocompleteRaw = ({ className, ...props }) => (
-    <AutocompleteRaw {...props} classes={{ popper: className }} />
-);
-
-const Autocomplete = styled(AutocompleteWrapped)`
-    & .MuiAutocomplete-paper {
-        backdrop-filter: blur(12px);
-        background-color: ${mainTheme.palette.background.default};
-        box-shadow: 0 0 16px rgba(0, 0, 0, 0.18);
-        border-radius: 0;
-        color: ${mainTheme.palette.text};
-        font-family: HuaKangXinZongYi;
-        font-weight: 200;
-        & .MuiAutocomplete-noOptions {
-            color: ${mainTheme.palette.text.primary};
-        }
-    }
-` as typeof AutocompleteRaw;
+// const AutocompleteWrapped: typeof MuiAutocomplete = ({ className, ...props }) => (
+//     <MuiAutocomplete {...props} classes={{ popper: className }} />
+// );
 
 export function CommandInput() {
     const [open, setOpen] = useState(false);
@@ -60,7 +43,7 @@ export function CommandInput() {
     };
 
     return (
-        <Autocomplete
+        <SaAutocomplete
             id="command-input"
             sx={{
                 width: '100%',
@@ -108,7 +91,7 @@ export function CommandInput() {
                 return value === option || value === '' || value === null;
             }}
             renderInput={(params) => (
-                <StyledTextField
+                <SaTextField
                     {...params}
                     label={modName ? `应用 ${modName}:` : '选择以应用模组...'}
                     autoFocus

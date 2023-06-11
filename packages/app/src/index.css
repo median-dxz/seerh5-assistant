@@ -1,26 +1,8 @@
-html,
-body {
-    background: #ffffff;
-    padding: 0;
-    border: 0;
-    margin: 0;
-    height: 100%;
-}
-
 .logo {
     width: 100%;
     height: 100%;
     text-align: center;
     position: fixed;
-    color: #fff;
-}
-
-.bg-black {
-    background: #000;
-}
-
-.bg-white {
-    background: #fff;
 }
 
 .center {
@@ -29,12 +11,6 @@ body {
     justify-content: center;
 }
 
-@font-face {
-    font-family: MFShangHei;
-    src: url('https://seerh5.61.com/resource/font/MFShangHei_Noncommercial-Regular.otf');
-}
-
-@font-face {
-    font-family: REEJI;
-    src: url('https://seerh5.61.com/resource/font/REEJI_Honghuangli.TTF');
+body {
+    margin: 0;
 }

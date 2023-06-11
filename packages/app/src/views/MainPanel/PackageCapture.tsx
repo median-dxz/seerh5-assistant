@@ -1,6 +1,5 @@
-import { Button, TableCell, Toolbar } from '@mui/material';
-import { PanelTableBase } from '@sa-app/components/PanelTableBase';
-import { PanelTableBodyRow } from '@sa-app/components/PanelTableBodyRow';
+import { Button, Toolbar } from '@mui/material';
+import { PanelColumns, PanelTable } from '@sa-app/components/PanelTable/PanelTable';
 import * as React from 'react';
 import type { AnyFunction, SAHookData } from 'sa-core';
 import { CmdMask, Hook, SAEventTarget, hookFn } from 'sa-core';
@@ -97,6 +96,14 @@ export function PackageCapture() {
         };
     }, [state, capture]);
 
+    const cols: PanelColumns = [
+        { field: 'time', columnName: '时间' },
+        { field: 'type', columnName: '类型' },
+        { field: 'cmd', columnName: '命令ID' },
+        { field: 'label', columnName: '命令名', sx: { fontFamily: 'Open Sans, Helvetica', fontSize: '0.9rem', p: 0 } },
+        { field: 'data', columnName: '操作' },
+    ];
+
     return (
         <>
             <Toolbar>
@@ -129,30 +136,13 @@ export function PackageCapture() {
                 </Button>
             </Toolbar>
 
-            <PanelTableBase
-                size="small"
-                aria-label="capture package table"
-                heads={
-                    <>
-                        <TableCell align="center">时间</TableCell>
-                        <TableCell align="center">类型</TableCell>
-                        <TableCell align="center">命令ID</TableCell>
-                        <TableCell align="center">命令名</TableCell>
-                        <TableCell align="center">操作</TableCell>
-                    </>
-                }
-            >
-                {capture.map((row, index) => (
-                    <PanelTableBodyRow key={index}>
-                        <TableCell component="th" scope="row" align="center">
-                            {row.time}
-                        </TableCell>
-                        <TableCell align="center">{row.type}</TableCell>
-                        <TableCell align="center">{row.cmd}</TableCell>
-                        <TableCell align="center" sx={{ fontFamily: 'Roboto, Helvetica', fontSize: '0.9rem', p: 0 }}>
-                            {row.label}
-                        </TableCell>
-                        <TableCell align="center">
+            <PanelTable
+                data={capture}
+                columns={cols}
+                columnRender={(row) => ({
+                    ...row,
+                    data: (
+                        <>
                             <Button
                                 onClick={() => {
                                     console.log(row);
@@ -173,10 +163,10 @@ export function PackageCapture() {
                             >
                                 重放
                             </Button>
-                        </TableCell>
-                    </PanelTableBodyRow>
-                ))}
-            </PanelTableBase>
+                        </>
+                    ),
+                })}
+            />
         </>
     );
 }

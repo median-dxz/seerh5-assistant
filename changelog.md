@@ -36,6 +36,9 @@ pet matcher便捷函数，通过名字找ct
 后端迁移fastify
 核心模块基本上只剩下helper和function，strategy三部分需要重构整合了，重构完将release v1.0
 
+theme传sx，不用手动导入！
+zIndex统一
+
 issues:
 
 - [ ] 关闭面板导致的看板娘消失问题
@@ -67,6 +70,13 @@ Backend:
 App: v0.5.0
 
 Core: v0.5.0
+
+App: v0.4.3
+
+1. 修复背包组件渲染时不能获取精灵数据的bug
+2. 添加周年庆签到
+3. 添加周年庆因子
+4. 添加战队商店自动兑换
 
 App: v0.4.2
 

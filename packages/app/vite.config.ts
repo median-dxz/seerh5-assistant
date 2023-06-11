@@ -41,7 +41,6 @@ export default defineConfig(({ command, mode }) => {
                     globIgnores: ['**/*'],
                     globPatterns: [],
                     navigateFallback: null,
-                    navigationPreload: true,
                     importScripts: [`http://localhost:${env['VITE_BACKEND_PORT']}/worker/iframe-cookie.js`],
                     runtimeCaching: [
                         {

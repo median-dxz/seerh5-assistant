@@ -1,19 +1,21 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { ClickAwayListener, CssBaseline } from '@mui/material';
-import { Container, ThemeProvider } from '@mui/system';
+import { CssBaseline } from '@mui/material';
+import { Container, GlobalStyles, ThemeProvider, alpha } from '@mui/system';
 
 import { PanelStateContext } from '@sa-app/context/PanelState';
 import { SAContext } from '@sa-app/context/SAContext';
 
 import * as SALocalStorage from '@sa-app/utils/hooks/SALocalStorage';
 
-import { mainTheme } from '@sa-app/style';
+import { saTheme } from '@sa-app/style';
 
+import ElectricBolt from '@mui/icons-material/ElectricBolt';
+
+import { HexagonalButton } from '@sa-app/components/styled/HexagonalButton';
 import { CommandBar } from './views/CommandBar';
-import { MainButton } from './views/MainButton';
-import { MainMenu } from './views/MainMenu';
 import { MainPanel } from './views/MainPanel';
+import { QuickAccess } from './views/QuickAccess';
 
 import * as core from 'sa-core';
 
@@ -31,7 +33,6 @@ export default function SaMain() {
     const [isCommandBarOpen, toggleCommandBar] = useState(false);
     const [isMainPanelOpen, toggleMainPanel] = useState(false);
     const [lockMainPanel, toggleMainPanelLock] = useState(false);
-    const mainRef = useRef(null);
 
     const [battleAuto, setBattleAuto] = useState(false);
 
@@ -39,12 +40,6 @@ export default function SaMain() {
         if (e.key === 'p' && e.ctrlKey) {
             toggleCommandBar((preState) => !preState);
             e.preventDefault();
-        }
-    };
-
-    const handleClickAway = () => {
-        if (!lockMainPanel) {
-            toggleMainPanel(false);
         }
     };
 
@@ -71,46 +66,54 @@ export default function SaMain() {
     }, [lockMainPanel, battleAuto]);
 
     return (
-        <>
+        <ThemeProvider theme={saTheme}>
             <CssBaseline />
-            <ThemeProvider theme={mainTheme}>
-                <Container id="sa-main">
-                    <SAContext.Provider
+            <GlobalStyles
+                styles={{
+                    '::-webkit-scrollbar': {
+                        width: 8,
+                        height: 8,
+                    },
+                    '::-webkit-scrollbar-track': {
+                        backgroundColor: alpha(saTheme.palette.background.default, 0.24),
+                    },
+                    '::-webkit-scrollbar-thumb': {
+                        backgroundColor: saTheme.palette.background.default,
+                    },
+                }}
+            />
+            <Container id="sa-main">
+                <SAContext.Provider
+                    value={{
+                        Battle: {
+                            enableAuto: battleAuto,
+                            updateAuto: setBattleAuto,
+                        },
+                    }}
+                >
+                    <PanelStateContext.Provider
                         value={{
-                            Battle: {
-                                enableAuto: battleAuto,
-                                updateAuto: setBattleAuto,
-                            },
+                            open: isMainPanelOpen,
+                            setOpen: toggleMainPanel,
+                            lock: lockMainPanel,
+                            setLock: toggleMainPanelLock,
                         }}
                     >
-                        <MainMenu />
+                        <QuickAccess />
                         <CommandBar show={isCommandBarOpen} />
-                        <PanelStateContext.Provider
-                            value={{
-                                open: isMainPanelOpen,
-                                setOpen: toggleMainPanel,
-                                lock: lockMainPanel,
-                                setLock: toggleMainPanelLock,
+                        <HexagonalButton
+                            baseSize={32}
+                            sx={{ top: '10vh', left: '6vw', position: 'absolute', zIndex: 3 }}
+                            onClick={() => {
+                                toggleMainPanel((preState) => !preState);
                             }}
                         >
-                            <ClickAwayListener onClickAway={handleClickAway}>
-                                <div ref={mainRef}>
-                                    <MainButton
-                                        onClick={() => {
-                                            toggleMainPanel((preState) => !preState);
-                                        }}
-                                    />
-                                    <MainPanel
-                                        show={isMainPanelOpen}
-                                        lock={lockMainPanel}
-                                        setLock={toggleMainPanelLock}
-                                    />
-                                </div>
-                            </ClickAwayListener>
-                        </PanelStateContext.Provider>
-                    </SAContext.Provider>
-                </Container>
-            </ThemeProvider>
-        </>
+                            <ElectricBolt />
+                        </HexagonalButton>
+                        <MainPanel show={isMainPanelOpen} lock={lockMainPanel} setLock={toggleMainPanelLock} />
+                    </PanelStateContext.Provider>
+                </SAContext.Provider>
+            </Container>
+        </ThemeProvider>
     );
 }

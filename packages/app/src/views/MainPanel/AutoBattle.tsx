@@ -1,9 +1,8 @@
-import { Button, Divider, FormControlLabel, Switch, TableCell } from '@mui/material';
+import { Button, Divider, FormControlLabel, Switch } from '@mui/material';
 
 import React, { useState } from 'react';
 
-import { PanelTableBase } from '@sa-app/components/PanelTableBase';
-import { PanelTableBodyRow } from '@sa-app/components/PanelTableBodyRow';
+import { PanelTable } from '@sa-app/components/PanelTable/PanelTable';
 import { TextEditDialog, TextEditDialogProps } from '@sa-app/components/TextEditDialog';
 import { SAContext } from '@sa-app/context/SAContext';
 import * as SALocalStorage from '@sa-app/utils/hooks/SALocalStorage';
@@ -88,24 +87,27 @@ export function AutoBattle() {
             >
                 添加
             </Button>
-            <PanelTableBase
-                size="small"
-                aria-label="skill match settings"
-                heads={
-                    <>
-                        <TableCell align="center">优先级</TableCell>
-                        <TableCell align="center">技能组</TableCell>
-                        <TableCell align="center">操作</TableCell>
-                    </>
-                }
-            >
-                {strategy.snm.map((row, index) => (
-                    <PanelTableBodyRow key={index}>
-                        <TableCell component="th" scope="row" align="center">
-                            {index + 1}
-                        </TableCell>
-                        <TableCell align="center">{row.join(', ')}</TableCell>
-                        <TableCell align="center">
+            <PanelTable
+                columns={[
+                    {
+                        field: 'priority',
+                        columnName: '优先级',
+                    },
+                    {
+                        field: 'skillGroup',
+                        columnName: '技能组',
+                    },
+                    {
+                        field: 'operation',
+                        columnName: '操作',
+                    },
+                ]}
+                data={strategy.snm}
+                columnRender={(row, index) => ({
+                    priority: index + 1,
+                    skillGroup: row.join(', '),
+                    operation: (
+                        <>
                             <Button
                                 onClick={() => {
                                     strategyStorage.use((strategy) => {
@@ -141,10 +143,10 @@ export function AutoBattle() {
                             >
                                 编辑
                             </Button>
-                        </TableCell>
-                    </PanelTableBodyRow>
-                ))}
-            </PanelTableBase>
+                        </>
+                    ),
+                })}
+            ></PanelTable>
 
             <Divider />
             <h3>死切链</h3>
@@ -163,24 +165,27 @@ export function AutoBattle() {
             >
                 添加
             </Button>
-            <PanelTableBase
-                size="small"
-                aria-label="died switch link settings"
-                heads={
-                    <>
-                        <TableCell align="center">优先级</TableCell>
-                        <TableCell align="center">精灵链</TableCell>
-                        <TableCell align="center">操作</TableCell>
-                    </>
-                }
-            >
-                {strategy.dsl.map((row, index) => (
-                    <PanelTableBodyRow key={index}>
-                        <TableCell component="th" scope="row" align="center">
-                            {index + 1}
-                        </TableCell>
-                        <TableCell align="center">{row.join(', ')}</TableCell>
-                        <TableCell align="center">
+            <PanelTable
+                data={strategy.dsl}
+                columns={[
+                    {
+                        field: 'priority',
+                        columnName: '优先级',
+                    },
+                    {
+                        field: 'petLink',
+                        columnName: '死切链',
+                    },
+                    {
+                        field: 'operation',
+                        columnName: '操作',
+                    },
+                ]}
+                columnRender={(row, index) => ({
+                    priority: index + 1,
+                    petLink: row.join(', '),
+                    operation: (
+                        <>
                             <Button
                                 onClick={() => {
                                     strategyStorage.use((strategy) => {
@@ -216,10 +221,10 @@ export function AutoBattle() {
                             >
                                 编辑
                             </Button>
-                        </TableCell>
-                    </PanelTableBodyRow>
-                ))}
-            </PanelTableBase>
+                        </>
+                    ),
+                })}
+            />
         </>
     );
 }

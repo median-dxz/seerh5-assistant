@@ -108,11 +108,6 @@ export function GameController() {
 
             <PopupMenu
                 id="game-controller-menu"
-                sx={{
-                    '& .MuiPaper-root': {
-                        backdropFilter: 'blur(4px)',
-                    },
-                }}
                 {...menuProps}
             />
             <PetBagController />

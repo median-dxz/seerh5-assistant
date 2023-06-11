@@ -1,11 +1,11 @@
 import Lock from '@mui/icons-material/Lock';
-import { Box, Fade, Switch, SxProps, Tab, Tabs } from '@mui/material';
+import { Backdrop, Box, Fade, Switch, SxProps, Tab, Tabs } from '@mui/material';
 import * as React from 'react';
-import { AutoBattle } from './AutoBattle';
 import { CommonValue } from './CommonValue';
 import { GameController } from './GameController';
 import { PackageCapture } from './PackageCapture';
 import { QuickCommand } from './QuickCommand';
+import { AutoBattle } from './AutoBattle';
 import { Realm } from './Realm';
 
 interface TabPanelProps {
@@ -82,19 +82,9 @@ export function MainPanel(props: Props) {
 
     return (
         <Fade in={props.show}>
-            <Box
-                sx={{
-                    position: 'absolute',
-                    display: 'flex',
-                    top: '12vh',
-                    left: 'calc((100vw - 60vw) / 2)',
-                    width: '60vw',
-                    height: '75vh',
-                    zIndex: 1,
-                }}
-                onClick={(e) => {
-                    e.nativeEvent.stopPropagation();
-                }}
+            <Backdrop
+                sx={{ zIndex: 2 }}
+                open={props.show}
                 onTouchCancel={dispatchClickEvent}
                 onTouchStart={dispatchClickEvent}
                 onTouchEnd={dispatchClickEvent}
@@ -103,52 +93,71 @@ export function MainPanel(props: Props) {
             >
                 <Box
                     sx={{
-                        minWidth: '155px',
-                        borderRight: 1,
-                        // backdropFilter: `blur(8px)`,
-                        borderColor: 'rgba(255 255 255 / 12%)',
-                        paddingBlockStart: '10%',
+                        position: 'absolute',
+                        display: 'flex',
+                        left: 'calc(40vw / 2)',
+                        width: '60vw',
+                        height: '100%',
+                        overflowY: 'scroll',
+                        overflowX: 'hidden',
+                    }}
+                    onClick={(e) => {
+                        e.nativeEvent.stopPropagation();
                     }}
                 >
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Lock />
-                        <Switch
-                            checked={props.lock}
-                            onChange={(e, newValue) => {
-                                props.setLock(newValue);
-                            }}
-                        />
+                    <Box
+                        sx={{
+                            minWidth: '155px',
+                            borderRight: 1,
+                            borderColor: 'rgba(255 255 255 / 12%)',
+                            paddingBlockStart: '10%',
+                        }}
+                    >
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Lock />
+                            <Switch
+                                checked={props.lock}
+                                onChange={(e, newValue) => {
+                                    props.setLock(newValue);
+                                }}
+                            />
+                        </Box>
+
+                        <Tabs
+                            orientation="vertical"
+                            value={value}
+                            onChange={handleChange}
+                            aria-label="SA Main Panel Tabs"
+                        >
+                            <Tab label="精灵背包" {...a11yProps(0)} />
+                            <Tab label="一键日常" {...a11yProps(1)} />
+                            <Tab label="常用数据速览" {...a11yProps(2)} />
+                            <Tab label="自动战斗管理器" {...a11yProps(3)} />
+                            <Tab label="抓包调试" {...a11yProps(4)} />
+                            <Tab label="快捷命令组" {...a11yProps(5)} />
+                        </Tabs>
                     </Box>
 
-                    <Tabs orientation="vertical" value={value} onChange={handleChange} aria-label="SA Main Panel Tabs">
-                        <Tab label="精灵背包" {...a11yProps(0)} />
-                        <Tab label="一键日常" {...a11yProps(1)} />
-                        <Tab label="常用数据速览" {...a11yProps(2)} />
-                        <Tab label="自动战斗管理器" {...a11yProps(3)} />
-                        <Tab label="抓包调试" {...a11yProps(4)} />
-                        <Tab label="快捷命令组" {...a11yProps(5)} />
-                    </Tabs>
+                    <TabPanel value={value} index={0}>
+                        <GameController />
+                    </TabPanel>
+                    <TabPanel value={value} index={1}>
+                        <Realm />
+                    </TabPanel>
+                    <TabPanel value={value} index={2}>
+                        <CommonValue />
+                    </TabPanel>
+                    <TabPanel value={value} index={3}>
+                        <AutoBattle />
+                    </TabPanel>
+                    <TabPanel value={value} index={4}>
+                        <PackageCapture />
+                    </TabPanel>
+                    <TabPanel value={value} index={5}>
+                        <QuickCommand />
+                    </TabPanel>
                 </Box>
-
-                <TabPanel value={value} index={0}>
-                    <GameController />
-                </TabPanel>
-                <TabPanel value={value} index={1}>
-                    <Realm />
-                </TabPanel>
-                <TabPanel value={value} index={2}>
-                    <CommonValue />
-                </TabPanel>
-                <TabPanel value={value} index={3}>
-                    <AutoBattle />
-                </TabPanel>
-                <TabPanel value={value} index={4}>
-                    <PackageCapture />
-                </TabPanel>
-                <TabPanel value={value} index={5}>
-                    <QuickCommand />
-                </TabPanel>
-            </Box>
+            </Backdrop>
         </Fade>
     );
 }

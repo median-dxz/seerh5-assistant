@@ -6,29 +6,20 @@ import SmartToy from '@mui/icons-material/SmartToy';
 
 import { SpeedDialAction } from '@mui/material';
 
-import { SxProps } from '@mui/system';
-
 import React, { useEffect, useState } from 'react';
 
-import { StyledSpeedDial } from '@sa-app/components/StyledSpeedDial';
+import { SaQuickAccess } from '@sa-app/components/styled/QuickAccess';
 import { Mods } from '@sa-app/mod-manager';
-import { mainTheme } from '@sa-app/style';
 import { getAutoCureState, toggleAutoCure } from 'sa-core';
 
-const iconSx: SxProps = {
-    color: mainTheme.palette.text.primary,
-    filter: `drop-shadow(0 0 8px rgba(0 0 0 / 75%))`,
-    opacity: 1,
-};
-
 const actions = [
-    { icon: <Medication sx={iconSx} />, name: '自动治疗' },
-    { icon: <SmartToy sx={iconSx} />, name: '对战谱尼' },
-    { icon: <AssignmentInd sx={iconSx} />, name: '一键签到' },
-    { icon: <ScheduleSend sx={iconSx} />, name: '一键战队派遣' },
+    { icon: <Medication />, name: '自动治疗' },
+    { icon: <SmartToy />, name: '对战谱尼' },
+    { icon: <AssignmentInd />, name: '一键签到' },
+    { icon: <ScheduleSend />, name: '一键战队派遣' },
 ];
 
-export function MainMenu() {
+export function QuickAccess() {
     const [autoCure, setAutoCure] = useState(false);
     const [open, setOpen] = useState(false);
 
@@ -56,8 +47,8 @@ export function MainMenu() {
     ];
 
     return (
-        <StyledSpeedDial
-            ariaLabel="Seerh5 Assistant Main Menu Button"
+        <SaQuickAccess
+            ariaLabel="Seerh5 Assistant Quick Access"
             icon={<MenuOpen />}
             direction="right"
             sx={{
@@ -65,6 +56,11 @@ export function MainMenu() {
                 bottom: '8vh',
                 left: '4vw',
                 zIndex: 2,
+            }}
+            FabProps={{
+                sx: {
+                    color: (theme) => theme.palette.primary.main,
+                },
             }}
             open={open}
             onOpen={() => {
@@ -79,6 +75,11 @@ export function MainMenu() {
             {actions.map((action, index) => (
                 <SpeedDialAction
                     key={index}
+                    FabProps={{
+                        sx: {
+                            color: (theme) => theme.palette.primary.main,
+                        },
+                    }}
                     icon={action.icon}
                     tooltipTitle={action.name}
                     onClick={() => {
@@ -86,6 +87,6 @@ export function MainMenu() {
                     }}
                 />
             ))}
-        </StyledSpeedDial>
+        </SaQuickAccess>
     );
 }

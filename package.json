@@ -2,7 +2,7 @@
   "name": "seerh5-assistant-project",
   "private": true,
   "type": "module",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "license": "MPL-2.0",
   "workspaces": [
     "./packages/core",

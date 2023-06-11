@@ -1,16 +1,15 @@
-import { Box, Button, LinearProgress, TableCell, Typography, alpha } from '@mui/material';
+import { Box, Button, ButtonGroup, Checkbox, LinearProgress, Typography } from '@mui/material';
 
 import * as SALocalStorage from '@sa-app/utils/hooks/SALocalStorage';
-import { produce } from 'immer';
 import React from 'react';
-import { PetPosition, SAPet, getBagPets, lowerBlood, switchBag } from 'sa-core';
+import { PetPosition, SAPet, UIModuleHelper, delay, getBagPets, lowerBlood, switchBag } from 'sa-core';
 
 import { PopupMenu } from '@sa-app/components/PopupMenu';
 import { usePopupMenuState } from '@sa-app/components/usePopupMenuState';
-import { mainTheme } from '@sa-app/style';
+import { getPetHeadIcon } from '@sa-app/utils/egretRes';
 import { useBagPets } from '@sa-app/utils/hooks/useBagPets';
-import { PanelTableBase } from '../../../components/PanelTableBase';
-import { PetListRow } from './PetListRow';
+import { produce } from 'immer';
+import { PanelColumns, PanelTable } from '../../../components/PanelTable/PanelTable';
 
 const petGroupsStorage = SALocalStorage.PetGroups;
 
@@ -25,9 +24,31 @@ export function PetBagController() {
         setSelected([]);
     }, [pets]);
 
-    if (!pets) {
-        return <LinearProgress />;
-    }
+    const handleOpenPetItemUseProp = React.useCallback(async (ct: number) => {
+        await ModuleManager.showModule('petBag');
+        const petBagModule = UIModuleHelper.currentModule<petBag.PetBag>();
+        await delay(300);
+        const petBagPanel = petBagModule.currentPanel!;
+        petBagPanel.onSelectPet({ data: PetManager.getPetInfo(ct) });
+        await delay(300);
+        petBagPanel.showDevelopBaseView();
+        petBagPanel.showDevelopView(9);
+    }, []);
+
+    const cols = React.useMemo(
+        () =>
+            [
+                { columnName: '', field: 'select' },
+                { columnName: 'id', field: 'id', sx: { userSelect: 'none', cursor: 'pointer' } },
+                { columnName: '', field: 'icon', sx: { userSelect: 'none' } },
+                { columnName: '名称', field: 'name', sx: { userSelect: 'none', cursor: 'pointer' } },
+                { columnName: '血量', field: 'hp' },
+                { columnName: '操作', field: 'action' },
+            ] as PanelColumns,
+        []
+    );
+
+    if (!pets) return <LinearProgress />;
 
     const handleLowerBlood = () => {
         lowerBlood(selected);
@@ -81,16 +102,7 @@ export function PetBagController() {
 
     return (
         <>
-            <PopupMenu
-                id="pet-bag-controller-menu"
-                sx={{
-                    '& .MuiPaper-root': {
-                        bgcolor: mainTheme.palette.background.default,
-                        backdropFilter: 'blur(4px)',
-                    },
-                }}
-                {...menuProps}
-            />
+            <PopupMenu id="pet-bag-controller-menu" {...menuProps} />
 
             <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']}>
                 精灵背包
@@ -105,56 +117,67 @@ export function PetBagController() {
                 sx={{
                     m: -1,
                     overflowX: 'scroll',
-                    '&::-webkit-scrollbar': {
-                        width: 8,
-                        height: 8,
-                    },
-                    '&::-webkit-scrollbar-track': {
-                        backgroundColor: alpha(mainTheme.palette.background.default, 0.24),
-                    },
-                    '&::-webkit-scrollbar-thumb': {
-                        backgroundColor: mainTheme.palette.background.default,
-                    },
                 }}
             >
-                <PanelTableBase
+                <PanelTable
                     sx={{
                         maxWidth: '100%',
                         minWidth: 'max-content',
                     }}
-                    aria-label="pet list"
-                    size="small"
-                    heads={
-                        <>
-                            <TableCell align="center"></TableCell>
-                            <TableCell align="center">id</TableCell>
-                            <TableCell align="center"></TableCell>
-                            <TableCell align="center">名称</TableCell>
-                            <TableCell align="center">血量</TableCell>
-                            <TableCell align="center">操作</TableCell>
-                        </>
-                    }
-                >
-                    {pets.map((row, index) => (
-                        <PetListRow
-                            key={row.catchTime}
-                            pet={row}
-                            selected={selected.includes(row.catchTime)}
-                            isDefault={index === 0}
-                            onClick={() =>
-                                setSelected(
-                                    produce((draft) => {
-                                        if (draft.includes(row.catchTime)) {
-                                            draft.splice(draft.indexOf(row.catchTime), 1);
-                                        } else {
-                                            draft.push(row.catchTime);
-                                        }
-                                    })
-                                )
-                            }
-                        />
-                    ))}
-                </PanelTableBase>
+                    columns={cols}
+                    columnRender={(pet, index) => ({
+                        select: <Checkbox checked={selected.includes(pet.catchTime)} />,
+                        id: pet.id,
+                        icon: <img crossOrigin="anonymous" src={getPetHeadIcon(pet.id)} alt={pet.name} width={48} />,
+                        name: pet.name,
+                        hp: `${pet.baseCurHp}/${pet.baseMaxHp}`,
+                        action: (
+                            <ButtonGroup>
+                                <Button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleOpenPetItemUseProp(pet.catchTime);
+                                    }}
+                                >
+                                    道具
+                                </Button>
+                                <Button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        SAPet.cure(pet.catchTime);
+                                    }}
+                                >
+                                    治疗
+                                </Button>
+                                {index !== 0 && (
+                                    <Button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            SAPet.default(pet.catchTime);
+                                        }}
+                                    >
+                                        首发
+                                    </Button>
+                                )}
+                            </ButtonGroup>
+                        ),
+                    })}
+                    data={pets}
+                    toRowKey={(pet) => pet.catchTime}
+                    rowProps={(pet) => ({
+                        onClick: () => {
+                            setSelected(
+                                produce((draft) => {
+                                    if (draft.includes(pet.catchTime)) {
+                                        draft.splice(draft.indexOf(pet.catchTime), 1);
+                                    } else {
+                                        draft.push(pet.catchTime);
+                                    }
+                                })
+                            );
+                        },
+                    })}
+                />
             </Box>
         </>
     );

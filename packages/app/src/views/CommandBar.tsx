@@ -1,5 +1,5 @@
 import { Box, Grow } from '@mui/material';
-import { CommandInput } from '@sa-app/components/CommandInput';
+import { CommandInput } from '@sa-app/views/CommandInput';
 import React from 'react';
 
 interface Props {

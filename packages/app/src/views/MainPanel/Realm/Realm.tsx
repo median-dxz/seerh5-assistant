@@ -1,7 +1,7 @@
-import { Button, Dialog, DialogActions, Divider, TableCell, TableRow, Typography, alpha } from '@mui/material';
+import { Button, Dialog, DialogActions, Divider, Typography, alpha } from '@mui/material';
 import { SAContext } from '@sa-app/context/SAContext';
 import React from 'react';
-import { PanelTableBase } from '../../../components/PanelTableBase';
+import { PanelTable } from '../../../components/PanelTable/PanelTable';
 import { LevelCourageTower } from './LevelCourageTower';
 import { LevelElfKingsTrial } from './LevelElfKingsTrial';
 import { LevelExpTraining } from './LevelExpTraining';
@@ -9,7 +9,7 @@ import { LevelStudyTraining } from './LevelStudyTraining';
 import { LevelTitanHole } from './LevelTitanHole';
 import { LevelXTeamRoom } from './LevelXTeamRoom';
 
-import { mainTheme } from '@sa-app/style';
+import { saTheme } from '@sa-app/style';
 import * as SABattle from 'sa-core/battle';
 import * as SAEngine from 'sa-core/engine';
 
@@ -128,37 +128,35 @@ export function Realm() {
         <>
             <Button>一键日任</Button>
             <Divider />
-            <PanelTableBase
-                size="small"
-                aria-label="realm table"
-                heads={
-                    <>
-                        <TableCell align="center">关卡名称</TableCell>
-                        <TableCell align="center">完成状态</TableCell>
-                        <TableCell align="left">操作</TableCell>
-                        <TableCell align="center">配置</TableCell>
-                    </>
-                }
-            >
-                {rows.map((row, index) => (
-                    <TableRow
-                        key={index}
-                        sx={{
-                            '&:last-child td, &:last-child th': { border: 0 },
-                            backgroundColor: taskCompleted[index]
-                                ? `${alpha(mainTheme.palette.primary.main, 0.18)}`
-                                : 'transparent',
-                        }}
-                    >
-                        <TableCell component="th" scope="row" align="center">
-                            {row.name}
-                        </TableCell>
-                        <TableCell align="center">
-                            <Typography color={taskCompleted[index] ? '#eeff41' : 'inherited'}>
-                                {taskCompleted[index] ? '已完成' : '未完成'}
-                            </Typography>
-                        </TableCell>
-                        <TableCell align="left">
+            <PanelTable
+                data={rows}
+                columns={[
+                    {
+                        field: 'name',
+                        columnName: '关卡名称',
+                    },
+                    {
+                        field: 'state',
+                        columnName: '完成状态',
+                    },
+                    {
+                        field: 'action',
+                        columnName: '操作',
+                    },
+                    {
+                        field: 'config',
+                        columnName: '配置',
+                    },
+                ]}
+                columnRender={(row, index) => ({
+                    name: row.name,
+                    state: (
+                        <Typography color={taskCompleted[index] ? '#eeff41' : 'inherited'}>
+                            {taskCompleted[index] ? '已完成' : '未完成'}
+                        </Typography>
+                    ),
+                    action: (
+                        <>
                             {row.module && (
                                 <Button
                                     onClick={() => {
@@ -183,18 +181,22 @@ export function Realm() {
                                     扫荡
                                 </Button>
                             )}
-                        </TableCell>
-                        <TableCell align="center"></TableCell>
-                    </TableRow>
-                ))}
-            </PanelTableBase>
+                        </>
+                    ),
+                })}
+                rowProps={(_, index) => ({
+                    sx: {
+                        backgroundColor: taskCompleted[index]
+                            ? `${alpha(saTheme.palette.primary.main, 0.18)}`
+                            : 'transparent',
+                    },
+                })}
+            />
             <Dialog
                 open={open}
                 sx={{
                     '& .MuiDialog-paper': {
                         minWidth: 384,
-
-                        backdropFilter: 'blur(4px)',
                     },
                 }}
             >

@@ -26,7 +26,7 @@ export class Pet extends EntityBase implements IPetObject {
     readonly maxHp: number;
 
     readonly baseCurHp: number;
-    readonly baseHpTotal: number;
+    readonly baseMaxHp: number;
 
     constructor(obj: SAType.PetLike) {
         super();
@@ -43,7 +43,7 @@ export class Pet extends EntityBase implements IPetObject {
                 this.hp,
                 this.maxHp,
                 this.baseCurHp,
-                this.baseHpTotal,
+                this.baseMaxHp,
             ] = [
                 obj.id,
                 obj.name,

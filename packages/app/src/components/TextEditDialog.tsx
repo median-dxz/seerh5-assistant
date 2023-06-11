@@ -32,7 +32,6 @@ export function TextEditDialog({ open, initialValue, onClose }: TextEditDialogPr
             sx={{
                 '& .MuiDialog-paper': {
                     minWidth: 384,
-                    backdropFilter: 'blur(4px)',
                 },
             }}
         >
