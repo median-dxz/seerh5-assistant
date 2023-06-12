@@ -60,14 +60,15 @@ export function LevelCourageTower(props: LevelExtendsProps) {
             case 1: //daily challenge
                 setHint('正在准备背包');
                 await switchBag(customData.cts);
-                cureAllPet();
                 PetManager.setDefault(customData.cts[0]);
                 setHint('准备背包完成');
-                await delay(500);
+                await delay(300);
 
                 setHint('正在进入关卡');
 
                 while (levelData.current.challengeCount < maxDailyChallengeTimes && currentRunning.current) {
+                    cureAllPet();
+                    await delay(200);
                     setHint(
                         <>
                             <Typography component={'div'}>正在进行对战...</Typography>

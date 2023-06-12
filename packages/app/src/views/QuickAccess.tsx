@@ -3,10 +3,10 @@ import Medication from '@mui/icons-material/Medication';
 import MenuOpen from '@mui/icons-material/MenuOpen';
 import ScheduleSend from '@mui/icons-material/ScheduleSend';
 import SmartToy from '@mui/icons-material/SmartToy';
-
 import { SpeedDialAction } from '@mui/material';
+import useSWR from 'swr';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { SaQuickAccess } from '@sa-app/components/styled/QuickAccess';
 import { Mods } from '@sa-app/mod-manager';
@@ -20,20 +20,18 @@ const actions = [
 ];
 
 export function QuickAccess() {
-    const [autoCure, setAutoCure] = useState(false);
+    const { data: autoCure, mutate } = useSWR('ds://MultiValue/AutoCure', getAutoCureState);
     const [open, setOpen] = useState(false);
-
-    useEffect(() => {
-        toggleAutoCure(autoCure)
-            .then(() => getAutoCureState())
-            .then(setAutoCure);
-    }, [autoCure]);
 
     actions[0].name = `自动治疗:${autoCure ? '开' : '关'}`;
 
     const handleClicks = [
         () => {
-            setAutoCure((pre) => !pre);
+            mutate((preState) => {
+                const curState = !preState;
+                toggleAutoCure(curState);
+                return preState;
+            });
         },
         () => {
             FightManager.fightNoMapBoss(6730);

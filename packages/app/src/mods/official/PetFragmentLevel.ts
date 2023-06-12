@@ -307,18 +307,19 @@ const options: Option[] = [
             battleStrategy['潘蒂表必先'],
         ],
     },
-    {
-        difficulty: Difficulty.Ease,
-        sweep: false,
-        id: 90,
-        strategy: [
-            battleStrategy['圣谱单挑'],
-            battleStrategy['圣谱单挑'],
-            battleStrategy['圣谱单挑'],
-            battleStrategy['圣谱单挑'],
-            battleStrategy['潘蒂表必先'],
-        ],
-    },
+    // 卡莎?
+    // {
+    //     difficulty: Difficulty.Ease,
+    //     sweep: false,
+    //     id: 90,
+    //     strategy: [
+    //         battleStrategy['圣谱单挑'],
+    //         battleStrategy['圣谱单挑'],
+    //         battleStrategy['圣谱单挑'],
+    //         battleStrategy['圣谱单挑'],
+    //         battleStrategy['潘蒂表必先'],
+    //     ],
+    // },
     // 格斯塔斯
     {
         difficulty: Difficulty.Ease,
@@ -392,7 +393,7 @@ const options: Option[] = [
     },
 ];
 
-class applyBm extends BaseMod {
+class PetFragmentLevelMod extends BaseMod {
     ins: SALevelManager;
 
     constructor() {
@@ -427,7 +428,7 @@ class applyBm extends BaseMod {
         }
     }
 
-    meta = { description: '', id: 'applyBm' };
+    meta = { description: '', id: 'pf:精灵因子' };
 }
 
-export default applyBm;
+export default PetFragmentLevelMod;

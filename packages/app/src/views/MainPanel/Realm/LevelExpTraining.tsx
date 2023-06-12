@@ -61,12 +61,13 @@ export function LevelExpTraining(props: LevelExtendsProps) {
             case 1: //daily challenge
                 setHint('正在准备背包');
                 await switchBag(customData.cts);
-                cureAllPet();
                 PetManager.setDefault(customData.cts[0]);
                 setHint('准备背包完成');
-                await delay(500);
+                await delay(300);
 
                 while (levelData.current.challengeCount < maxDailyChallengeTimes && currentRunning.current) {
+                    cureAllPet();
+                    await delay(200);
                     await SABattle.Manager.runOnce(() => {
                         setHint(
                             <>
