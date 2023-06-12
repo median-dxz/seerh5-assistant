@@ -1,4 +1,11 @@
 {
-    "petCts": {},
-    "ignorePetNames": []
+    "pets": {},
+    "mods": {
+        "sign": {
+            "ignorePets": []
+        },
+        "localStroage": {
+            "data": {}
+        }
+    }
 }

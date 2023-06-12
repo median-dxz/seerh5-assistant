@@ -1,4 +1,5 @@
 import { BaseMod } from '@sa-app/mod-manager/mod-type';
+import { intervalToDuration } from 'date-fns';
 import {
     ItemId,
     PetPosition,
@@ -119,12 +120,54 @@ class sign extends BaseMod {
         }
 
         const param = new URLSearchParams({
-            PHPSESSID: 'efchci05h59bmvlh2morukk156',
-            cookie_login_uid: '104005920',
+            PHPSESSID: import.meta.env.VITE_14YEAR_SIGN_COOKIE,
+            cookie_login_uid: import.meta.env.VITE_USER_ID,
         });
         const rText = await fetch(`/api/14year/?${param.toString()}`);
 
-        log(rText);
+        log(await rText.json());
+
+        {
+            const interval = intervalToDuration({
+                start: new Date(2023, 5, 1),
+                end: Date.now(),
+            });
+            const subDays = interval.days!;
+            const signBits = await Socket.multiValue(121581, 121582);
+            if (subDays >= 32) {
+                curTimes = signBits[1] & (1 << (subDays - 32));
+            } else {
+                curTimes = signBits[0] & (1 << (subDays - 1));
+            }
+            if (!curTimes) {
+                Socket.sendByQueue(41388, [64, subDays]);
+            }
+        }
+
+        {
+            const interval = intervalToDuration({
+                start: new Date(2023, 5, 8),
+                end: Date.now(),
+            });
+            const subDays = interval.days!;
+            const signBits = await Socket.multiValue(121583);
+            if (subDays >= 32) {
+                curTimes = signBits[1] & (1 << (subDays - 32));
+            } else {
+                curTimes = signBits[0] & (1 << (subDays - 1));
+            }
+            if (!curTimes) {
+                Socket.sendByQueue(41388, [65, subDays]);
+            }
+        }
+        //战队不灭珠
+        {
+            curTimes = (await Socket.multiValue(12471))[0];
+            for (let i = curTimes; i < 3; i++) {
+                // 有问题, 要先打开战队面板?
+                // await Socket.sendByQueue(2940, [1, 10]);
+            }
+        }
     }
     async teamDispatch() {
         await Socket.sendByQueue(45809, [0]).catch(() => log('没有可收取的派遣'));

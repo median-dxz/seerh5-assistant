@@ -15,12 +15,12 @@ import ElectricBolt from '@mui/icons-material/ElectricBolt';
 import { HexagonalButton } from '@sa-app/components/styled/HexagonalButton';
 import { CommandBar } from './views/CommandBar';
 import { MainPanel } from './views/MainPanel';
-import { QuickAccess } from './views/QuickAccess';
 
 import * as core from 'sa-core';
 
-import { Hook, defaultStrategy, resolveStrategy } from 'sa-core';
+import { Hook, resolveStrategy } from 'sa-core';
 import { SAEventBus } from 'sa-core/event-bus';
+import { QuickAccess } from './views/QuickAccess';
 
 const sac = window.sac;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -33,6 +33,7 @@ export default function SaMain() {
     const [isCommandBarOpen, toggleCommandBar] = useState(false);
     const [isMainPanelOpen, toggleMainPanel] = useState(false);
     const [lockMainPanel, toggleMainPanelLock] = useState(false);
+    const [isFighting, toggleFighting] = useState(false);
 
     const [battleAuto, setBattleAuto] = useState(false);
 
@@ -45,11 +46,16 @@ export default function SaMain() {
 
     useEffect(() => {
         const handleBattleRoundEnd = () => {
+            toggleFighting(true);
             if (battleAuto) {
                 resolveStrategy({
                     dsl: battleStrategyStorage.dsl,
                     snm: battleStrategyStorage.snm,
-                    default: defaultStrategy,
+                    // fallback: autoStrategy,
+                    fallback: {
+                        resolveMove: async () => true,
+                        resolveNoBlood: core.NULL,
+                    },
                 });
             }
         };
@@ -58,6 +64,9 @@ export default function SaMain() {
 
         eventBus.hook(Hook.BattlePanel.panelReady, handleBattleRoundEnd);
         eventBus.hook(Hook.BattlePanel.roundEnd, handleBattleRoundEnd);
+        eventBus.hook(Hook.BattlePanel.battleEnd, () => {
+            toggleFighting(false);
+        });
 
         return () => {
             document.body.removeEventListener('keydown', handleShortCut);
@@ -99,7 +108,7 @@ export default function SaMain() {
                             setLock: toggleMainPanelLock,
                         }}
                     >
-                        <QuickAccess />
+                        {!isFighting && <QuickAccess />}
                         <CommandBar show={isCommandBarOpen} />
                         <HexagonalButton
                             baseSize={32}

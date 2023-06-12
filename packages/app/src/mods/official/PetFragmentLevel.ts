@@ -5,6 +5,7 @@ import {
     ILevelBattleStrategy,
     ILevelRunner,
     NULL,
+    Potion,
     SALevelManager,
     SALevelState,
     SaModuleLogger,
@@ -13,7 +14,7 @@ import {
     lowerBlood,
 } from 'sa-core';
 
-import { IPFLevelBoss, IPetFragmentLevelObject, PetFragmentLevel } from 'sa-core/entity';
+import { IPFLevelBoss, IPetFragmentLevelObject, PetFragmentLevel, type Skill } from 'sa-core/entity';
 import type { SALevelConfig, SALevelData } from 'sa-core/level';
 
 import * as SABattle from 'sa-core/battle';
@@ -164,13 +165,6 @@ const strategies: { [name: string]: SABattle.MoveStrategy } = {
         },
         resolveNoBlood: NULL,
     },
-    圣谱单挑1: {
-        resolveMove: (round, skills) => {
-            const r = skills.find((skill) => skill.name === ['神灵之触', '神灵救世光'][round.round % 2]);
-            return SABattle.Operator.useSkill(r?.id);
-        },
-        resolveNoBlood: NULL,
-    },
     蒂朵单挑: {
         resolveMove: (round, skills) => {
             let r;
@@ -191,10 +185,6 @@ const strategies: { [name: string]: SABattle.MoveStrategy } = {
         ['鬼焰·焚身术', '幻梦芳逝', '诸界混一击', '梦境残缺', '月下华尔兹', '守御八方'],
         ['潘克多斯', '蒂朵', '帝皇之御', '魔钰', '月照星魂', '时空界皇']
     ),
-    克朵六时: SABattle.generateStrategy(
-        ['诸界混一击', '剑挥四方', '幻梦芳逝'],
-        ['神寂·克罗诺斯', '蒂朵', '六界帝神', '时空界皇']
-    ),
     克朵补刀: SABattle.generateStrategy(
         ['诸界混一击', '剑挥四方', '幻梦芳逝', '破寂同灾'],
         ['神寂·克罗诺斯', '蒂朵', '六界帝神', '时空界皇', '深渊狱神·哈迪斯']
@@ -209,20 +199,26 @@ const strategies: { [name: string]: SABattle.MoveStrategy } = {
             return SABattle.Operator.useSkill(r?.id);
         },
     },
-    潘朵索: SABattle.generateStrategy(
-        ['鬼焰·焚身术', '幻梦芳逝', '烈火净世击'],
-        ['潘克多斯', '蒂朵', '混沌魔君索伦森']
-    ),
+    千裳单挑: {
+        resolveNoBlood: NULL,
+        resolveMove: (round, skills, _) => {
+            let r: Skill | undefined = undefined;
+            const { round: t } = round;
+            if (t === 0) {
+                r = skills.find((skill) => skill.name === '落花');
+            } else {
+                r = skills.find((skill) => skill.name === '浮梦千裳诀');
+            }
+            if (r && r.pp > 0) {
+                return SABattle.Operator.useSkill(r?.id);
+            } else {
+                return SABattle.Operator.useItem(Potion.中级活力药剂);
+            }
+        },
+    },
 };
 
 const battleStrategy: Record<string, ILevelBattleStrategy> = {
-    克朵六时: {
-        beforeBattle: async () => {
-            await lowerBlood([1655484346]);
-        },
-        pets: [1656696029, 1656056275, 1657863632, 1655484346],
-        strategy: strategies['克朵六时'],
-    },
     潘朵必先: {
         beforeBattle: async () => {
             await lowerBlood([1656383521, 1656056275, 1655917820, 1655445699, 1655484346, 1657943113]);
@@ -245,13 +241,13 @@ const battleStrategy: Record<string, ILevelBattleStrategy> = {
         pets: [1656302059],
         strategy: strategies['王哈单挑'],
     },
-    圣谱单挑1: {
-        pets: [1656092908],
-        strategy: strategies['圣谱单挑1'],
-    },
     蒂朵单挑: {
         pets: [1656056275],
         strategy: strategies['蒂朵单挑'],
+    },
+    千裳单挑: {
+        pets: [1657039061],
+        strategy: strategies['千裳单挑'],
     },
     琉彩: {
         pets: [1655917820, 1656056275, 1656386598],
@@ -311,6 +307,18 @@ const options: Option[] = [
             battleStrategy['潘蒂表必先'],
         ],
     },
+    {
+        difficulty: Difficulty.Ease,
+        sweep: false,
+        id: 90,
+        strategy: [
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['潘蒂表必先'],
+        ],
+    },
     // 格斯塔斯
     {
         difficulty: Difficulty.Ease,
@@ -362,6 +370,25 @@ const options: Option[] = [
             battleStrategy['蒂朵单挑'],
             battleStrategy['潘蒂表必先'],
         ],
+    },
+    {
+        difficulty: Difficulty.Ease,
+        sweep: false,
+        id: 105,
+        strategy: [
+            battleStrategy['圣谱单挑'],
+            battleStrategy['圣谱单挑'],
+            battleStrategy['千裳单挑'],
+            battleStrategy['蒂朵单挑'],
+            battleStrategy['潘蒂表必先'],
+        ],
+    },
+    // 南霜
+    {
+        difficulty: Difficulty.Hard,
+        sweep: true,
+        id: 104,
+        strategy: [],
     },
 ];
 

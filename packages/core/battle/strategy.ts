@@ -63,7 +63,7 @@ export function generateStrategy(_snm: string[], _dsl: string[]): MoveStrategy {
     };
 }
 
-export const defaultStrategy: MoveStrategy = {
+export const autoStrategy: MoveStrategy = {
     resolveNoBlood: () => -1,
     resolveMove: async () => {
         Operator.auto();
@@ -79,7 +79,7 @@ export const defaultStrategy: MoveStrategy = {
 export interface GeneralStrategy {
     dsl: Array<string[]>;
     snm: Array<string[]>;
-    default: MoveStrategy;
+    fallback: MoveStrategy;
 }
 
 export async function resolveStrategy(strategy: GeneralStrategy) {
@@ -98,12 +98,10 @@ export async function resolveStrategy(strategy: GeneralStrategy) {
     const pets = Provider.getPets()!;
 
     let success = false;
-    let index: number;
-
     if (info.isSwitchNoBlood) {
         for (const petNames of strategy.dsl) {
             const matcher = new NoBloodSwitchLink(petNames);
-            index = matcher.match(pets, info.self.catchtime);
+            const index = matcher.match(pets, info.self.catchtime);
             success = await Operator.switchPet(index);
             if (success) {
                 log(`精灵索引 ${index} 匹配成功: 死切链: [${petNames.join('|')}]`);
@@ -112,9 +110,10 @@ export async function resolveStrategy(strategy: GeneralStrategy) {
         }
 
         if (!success) {
-            index = strategy.default.resolveNoBlood(info, skills, pets) ?? -1;
-            const r = await Operator.switchPet(index);
-            r || Operator.auto();
+            const index = strategy.fallback.resolveNoBlood(info, skills, pets);
+            if (index) {
+                (await Operator.switchPet(index)) || Operator.auto();
+            }
             log('执行默认死切策略');
         }
 
@@ -136,7 +135,7 @@ export async function resolveStrategy(strategy: GeneralStrategy) {
     }
 
     if (!success) {
-        strategy.default.resolveMove(info, skills, pets);
+        strategy.fallback.resolveMove(info, skills, pets);
         log('执行默认技能使用策略');
     }
 }
