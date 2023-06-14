@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, Divider, Typography, alpha } from '@mui/material';
 import { SAContext } from '@sa-app/context/SAContext';
-import React from 'react';
-import { PanelTable } from '../../../components/PanelTable/PanelTable';
+import React, { useCallback } from 'react';
+import { PanelColumnRender, PanelColumns, PanelTable } from '../../../components/PanelTable/PanelTable';
 import { LevelCourageTower } from './LevelCourageTower';
 import { LevelElfKingsTrial } from './LevelElfKingsTrial';
 import { LevelExpTraining } from './LevelExpTraining';
@@ -10,6 +10,7 @@ import { LevelTitanHole } from './LevelTitanHole';
 import { LevelXTeamRoom } from './LevelXTeamRoom';
 
 import { saTheme } from '@sa-app/style';
+import { produce } from 'immer';
 import * as SABattle from 'sa-core/battle';
 import * as SAEngine from 'sa-core/engine';
 
@@ -124,75 +125,87 @@ export function Realm() {
         taskModuleComponent = rows[taskModule].module!;
     }
 
+    const render: PanelColumnRender<Level> = useCallback(
+        (row, index) => ({
+            name: row.name,
+            state: (
+                <Typography color={taskCompleted[index] ? '#eeff41' : 'inherited'}>
+                    {taskCompleted[index] ? '已完成' : '未完成'}
+                </Typography>
+            ),
+            action: (
+                <>
+                    {row.module && (
+                        <Button
+                            onClick={() => {
+                                setTaskModule(index);
+                                setOpen(true);
+                            }}
+                        >
+                            启动
+                        </Button>
+                    )}
+                    {row.sweep && (
+                        <Button
+                            onClick={() => {
+                                row.sweep!()
+                                    .then(() => row.getState())
+                                    .then((r) => {
+                                        setTaskCompleted(
+                                            produce((draft) => {
+                                                draft[index] = r;
+                                            })
+                                        );
+                                    });
+                            }}
+                        >
+                            扫荡
+                        </Button>
+                    )}
+                </>
+            ),
+        }),
+        [taskCompleted]
+    );
+
+    const col: PanelColumns = React.useMemo(
+        () => [
+            {
+                field: 'name',
+                columnName: '关卡名称',
+            },
+            {
+                field: 'state',
+                columnName: '完成状态',
+            },
+            {
+                field: 'action',
+                columnName: '操作',
+            },
+            {
+                field: 'config',
+                columnName: '配置',
+            },
+        ],
+        []
+    );
+
+    const toRowKey = useCallback((row: Level) => row.name, []);
+
+    const rowProps = useCallback(
+        (row: Level, index: number) => ({
+            sx: {
+                backgroundColor: taskCompleted[index] ? `${alpha(saTheme.palette.primary.main, 0.18)}` : 'transparent',
+            },
+        }),
+        [taskCompleted]
+    );
+
     return (
         <>
             <Button>一键日任</Button>
             <Divider />
-            <PanelTable
-                data={rows}
-                toRowKey={(row) => row.name}
-                columns={[
-                    {
-                        field: 'name',
-                        columnName: '关卡名称',
-                    },
-                    {
-                        field: 'state',
-                        columnName: '完成状态',
-                    },
-                    {
-                        field: 'action',
-                        columnName: '操作',
-                    },
-                    {
-                        field: 'config',
-                        columnName: '配置',
-                    },
-                ]}
-                columnRender={(row, index) => ({
-                    name: row.name,
-                    state: (
-                        <Typography color={taskCompleted[index] ? '#eeff41' : 'inherited'}>
-                            {taskCompleted[index] ? '已完成' : '未完成'}
-                        </Typography>
-                    ),
-                    action: (
-                        <>
-                            {row.module && (
-                                <Button
-                                    onClick={() => {
-                                        setTaskModule(index);
-                                        setOpen(true);
-                                    }}
-                                >
-                                    启动
-                                </Button>
-                            )}
-                            {row.sweep && (
-                                <Button
-                                    onClick={() => {
-                                        row.sweep!()
-                                            .then(() => row.getState())
-                                            .then((r) => {
-                                                taskCompleted[index] = r;
-                                                setTaskCompleted([...taskCompleted]);
-                                            });
-                                    }}
-                                >
-                                    扫荡
-                                </Button>
-                            )}
-                        </>
-                    ),
-                })}
-                rowProps={(_, index) => ({
-                    sx: {
-                        backgroundColor: taskCompleted[index]
-                            ? `${alpha(saTheme.palette.primary.main, 0.18)}`
-                            : 'transparent',
-                    },
-                })}
-            />
+            <PanelTable data={rows} toRowKey={toRowKey} columns={col} columnRender={render} rowProps={rowProps} />
             <Dialog
                 open={open}
                 sx={{

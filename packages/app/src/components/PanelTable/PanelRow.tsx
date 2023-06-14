@@ -4,10 +4,10 @@ import { PanelColumns } from './PanelTable';
 
 interface PanelRowProps {
     columns: PanelColumns;
-    renderData: Record<string, React.ReactNode | string>;
+    render: Record<string, React.ReactNode | string>;
 }
 
-export function PanelRow({ columns, renderData }: PanelRowProps) {
+export function PanelFields({ columns, render: renderData }: PanelRowProps) {
     return columns.map(({ field: key, columnName: _, ...rest }) => (
         <PanelField key={key} {...rest}>
             {renderData[key]}

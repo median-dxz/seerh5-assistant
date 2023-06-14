@@ -2,7 +2,9 @@ import type { TableCellProps, TableProps, TableRowProps } from '@mui/material';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import React from 'react';
 import { SaTableRow } from '../styled/TableRow';
-import { PanelRow } from './PanelRow';
+
+import { PanelFields } from './PanelRow';
+import { useCachedReturn } from './useCachedReturn';
 
 export type PanelColumnRender<TDataType> = (data: TDataType, index: number) => Record<string, React.ReactNode | string>;
 export type PanelColumns = Array<{ field: string; columnName: string } & TableCellProps>;
@@ -15,8 +17,14 @@ type PanelTableProps<TDataType> = {
     rowProps?: (data: TDataType, index: number) => TableRowProps;
 } & Omit<TableProps, 'children'>;
 
+const MemoizedRow = React.memo(SaTableRow);
+
 export function PanelTable<TDataType>(props: PanelTableProps<TDataType>) {
     const { toRowKey, data, columns, columnRender, rowProps, ...tableProps } = props;
+
+    const keyRef = useCachedReturn(data, toRowKey, (r, data) => r ?? JSON.stringify(data));
+    const renderDataRef = useCachedReturn(data, columnRender, (r) => <PanelFields columns={columns} render={r!} />);
+    const rowPropsRef = useCachedReturn(data, rowProps, (r) => r);
 
     return (
         <Table size="small" {...tableProps}>
@@ -30,12 +38,14 @@ export function PanelTable<TDataType>(props: PanelTableProps<TDataType>) {
                 </TableRow>
             </TableHead>
             <TableBody>
-                {data.map((row, index) => {
-                    const rowKey = toRowKey?.(row) ?? index;
+                {data.map((data) => {
+                    const key = keyRef.current.get(data);
+                    const props = rowPropsRef.current.get(data);
+                    const renderedRow = renderDataRef.current.get(data)!;
                     return (
-                        <SaTableRow key={rowKey} {...rowProps?.(row, index)}>
-                            <PanelRow columns={columns} renderData={columnRender(row, index)} />
-                        </SaTableRow>
+                        <MemoizedRow key={key} {...props}>
+                            {renderedRow}
+                        </MemoizedRow>
                     );
                 })}
             </TableBody>

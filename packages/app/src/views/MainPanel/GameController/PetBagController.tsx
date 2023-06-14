@@ -2,14 +2,14 @@ import { Box, Button, ButtonGroup, Checkbox, LinearProgress, Typography } from '
 
 import * as SALocalStorage from '@sa-app/utils/hooks/SALocalStorage';
 import React from 'react';
-import { PetPosition, SAPet, UIModuleHelper, delay, getBagPets, lowerBlood, switchBag } from 'sa-core';
+import { Pet, PetPosition, SAPet, UIModuleHelper, delay, getBagPets, lowerBlood, switchBag } from 'sa-core';
 
 import { PopupMenu } from '@sa-app/components/PopupMenu';
 import { usePopupMenuState } from '@sa-app/components/usePopupMenuState';
 import { getPetHeadIcon } from '@sa-app/utils/egretRes';
 import { useBagPets } from '@sa-app/utils/hooks/useBagPets';
-import { produce } from 'immer';
-import { PanelColumns, PanelTable } from '../../../components/PanelTable/PanelTable';
+
+import { PanelColumnRender, PanelColumns, PanelTable } from '../../../components/PanelTable/PanelTable';
 
 const petGroupsStorage = SALocalStorage.PetGroups;
 
@@ -35,16 +35,73 @@ export function PetBagController() {
         petBagPanel.showDevelopView(9);
     }, []);
 
-    const cols = React.useMemo(
-        () =>
-            [
-                { columnName: '', field: 'select' },
-                { columnName: 'id', field: 'id', sx: { userSelect: 'none', cursor: 'pointer' } },
-                { columnName: '', field: 'icon', sx: { userSelect: 'none' } },
-                { columnName: '名称', field: 'name', sx: { userSelect: 'none', cursor: 'pointer' } },
-                { columnName: '血量', field: 'hp' },
-                { columnName: '操作', field: 'action' },
-            ] as PanelColumns,
+    const cols: PanelColumns = React.useMemo(
+        () => [
+            { columnName: '', field: 'select' },
+            { columnName: 'id', field: 'id', sx: { userSelect: 'none', cursor: 'pointer' } },
+            { columnName: '', field: 'icon', sx: { userSelect: 'none' } },
+            { columnName: '名称', field: 'name', sx: { userSelect: 'none', cursor: 'pointer' } },
+            { columnName: '血量', field: 'hp' },
+            { columnName: '操作', field: 'action' },
+        ],
+        []
+    );
+
+    const colRender: PanelColumnRender<Pet> = React.useCallback(
+        (pet, index) => ({
+            select: <Checkbox checked={selected.includes(pet.catchTime)} />,
+            id: pet.id,
+            icon: <img crossOrigin="anonymous" src={getPetHeadIcon(pet.id)} alt={pet.name} width={48} />,
+            name: pet.name,
+            hp: `${pet.baseCurHp}/${pet.baseMaxHp}`,
+            action: (
+                <ButtonGroup>
+                    <Button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenPetItemUseProp(pet.catchTime);
+                        }}
+                    >
+                        道具
+                    </Button>
+                    <Button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            SAPet.cure(pet.catchTime);
+                        }}
+                    >
+                        治疗
+                    </Button>
+                    {index !== 0 && (
+                        <Button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                SAPet.default(pet.catchTime);
+                            }}
+                        >
+                            首发
+                        </Button>
+                    )}
+                </ButtonGroup>
+            ),
+        }),
+        [handleOpenPetItemUseProp, selected]
+    );
+
+    const toRowKey = React.useCallback((pet: Pet) => pet.catchTime, []);
+
+    const rowProps = React.useCallback(
+        (pet: Pet) => ({
+            onClick: () => {
+                setSelected((selected) => {
+                    if (selected.includes(pet.catchTime)) {
+                        return selected.filter((ct) => ct !== pet.catchTime);
+                    } else {
+                        return [...selected, pet.catchTime];
+                    }
+                });
+            },
+        }),
         []
     );
 
@@ -125,58 +182,10 @@ export function PetBagController() {
                         minWidth: 'max-content',
                     }}
                     columns={cols}
-                    columnRender={(pet, index) => ({
-                        select: <Checkbox checked={selected.includes(pet.catchTime)} />,
-                        id: pet.id,
-                        icon: <img crossOrigin="anonymous" src={getPetHeadIcon(pet.id)} alt={pet.name} width={48} />,
-                        name: pet.name,
-                        hp: `${pet.baseCurHp}/${pet.baseMaxHp}`,
-                        action: (
-                            <ButtonGroup>
-                                <Button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleOpenPetItemUseProp(pet.catchTime);
-                                    }}
-                                >
-                                    道具
-                                </Button>
-                                <Button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        SAPet.cure(pet.catchTime);
-                                    }}
-                                >
-                                    治疗
-                                </Button>
-                                {index !== 0 && (
-                                    <Button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            SAPet.default(pet.catchTime);
-                                        }}
-                                    >
-                                        首发
-                                    </Button>
-                                )}
-                            </ButtonGroup>
-                        ),
-                    })}
+                    columnRender={colRender}
                     data={pets}
-                    toRowKey={(pet) => pet.catchTime}
-                    rowProps={(pet) => ({
-                        onClick: () => {
-                            setSelected(
-                                produce((draft) => {
-                                    if (draft.includes(pet.catchTime)) {
-                                        draft.splice(draft.indexOf(pet.catchTime), 1);
-                                    } else {
-                                        draft.push(pet.catchTime);
-                                    }
-                                })
-                            );
-                        },
-                    })}
+                    toRowKey={toRowKey}
+                    rowProps={rowProps}
                 />
             </Box>
         </>

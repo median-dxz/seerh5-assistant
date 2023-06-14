@@ -160,7 +160,10 @@ const strategies: { [name: string]: SABattle.MoveStrategy } = {
     },
     王哈单挑: {
         resolveMove: (round, skills) => {
-            const r = skills.find((skill) => skill.name === ['狂龙击杀', '龙子诞生'][round.round % 2]);
+            let r = skills.find((skill) => skill.name === ['狂龙击杀', '龙子诞生'][round.round % 2]);
+            if (r && r.name === '龙子诞生' && r.pp === 0) {
+                r = skills.find((skill) => skill.name === '王·龙子盛威决');
+            }
             return SABattle.Operator.useSkill(r?.id);
         },
         resolveNoBlood: NULL,
@@ -307,19 +310,13 @@ const options: Option[] = [
             battleStrategy['潘蒂表必先'],
         ],
     },
-    // 卡莎?
-    // {
-    //     difficulty: Difficulty.Ease,
-    //     sweep: false,
-    //     id: 90,
-    //     strategy: [
-    //         battleStrategy['圣谱单挑'],
-    //         battleStrategy['圣谱单挑'],
-    //         battleStrategy['圣谱单挑'],
-    //         battleStrategy['圣谱单挑'],
-    //         battleStrategy['潘蒂表必先'],
-    //     ],
-    // },
+    // 卡莎
+    {
+        difficulty: Difficulty.Normal,
+        sweep: true,
+        id: 90,
+        strategy: [],
+    },
     // 格斯塔斯
     {
         difficulty: Difficulty.Ease,

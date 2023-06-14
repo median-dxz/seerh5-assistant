@@ -1,15 +1,17 @@
 import { Button, Toolbar } from '@mui/material';
-import { PanelColumns, PanelTable } from '@sa-app/components/PanelTable/PanelTable';
+import { PanelColumnRender, PanelColumns, PanelTable } from '@sa-app/components/PanelTable/PanelTable';
+import { produce } from 'immer';
 import * as React from 'react';
 import type { AnyFunction, SAHookData } from 'sa-core';
 import { CmdMask, Hook, SAEventTarget, hookFn } from 'sa-core';
 
 interface CapturedPackage {
     type: 'RemoveListener' | 'AddListener' | 'Received' | 'Send';
-    time: string;
+    time: number;
     cmd: number;
     label: string;
     data?: Array<number | DataView> | DataView | AnyFunction;
+    index: number; // 用作生成React.key
 }
 
 type State = 'pending' | 'capturing';
@@ -20,19 +22,23 @@ const timeFormat = Intl.DateTimeFormat('zh-cn', {
     second: '2-digit',
 });
 
+const listLimit = 300;
+
 const capturedPkgFactory = (
     update: React.Dispatch<React.SetStateAction<CapturedPackage[]>>,
     originalPack: Pick<CapturedPackage, 'cmd' | 'data' | 'type'>
 ) => {
-    // 此处有性能问题
-    update((c) => [
-        ...c,
-        {
-            ...originalPack,
-            time: timeFormat.format(new Date()),
-            label: SocketEncryptImpl.getCmdLabel(originalPack.cmd),
-        },
-    ]);
+    update(
+        produce((draft) => {
+            draft.push({
+                ...originalPack,
+                time: Date.now(),
+                label: SocketEncryptImpl.getCmdLabel(originalPack.cmd),
+                index: draft.length,
+            });
+            draft.splice(0, draft.length - listLimit);
+        })
+    );
 };
 
 // SocketConnection.mainSocket.filterCMDLog(1001, 1002, 1016, 2001, 2002, 2441, 9019, 41228, 42387);
@@ -96,13 +102,52 @@ export function PackageCapture() {
         };
     }, [state, capture]);
 
-    const cols: PanelColumns = [
-        { field: 'time', columnName: '时间' },
-        { field: 'type', columnName: '类型' },
-        { field: 'cmd', columnName: '命令ID' },
-        { field: 'label', columnName: '命令名', sx: { fontFamily: 'Open Sans, Helvetica', fontSize: '0.9rem', p: 0 } },
-        { field: 'data', columnName: '操作' },
-    ];
+    const cols: PanelColumns = React.useMemo(
+        () => [
+            { field: 'time', columnName: '时间' },
+            { field: 'type', columnName: '类型' },
+            { field: 'cmd', columnName: '命令ID' },
+            {
+                field: 'label',
+                columnName: '命令名',
+                sx: { fontFamily: 'Open Sans, Helvetica', fontSize: '0.9rem', p: 0 },
+            },
+            { field: 'data', columnName: '操作' },
+        ],
+        []
+    );
+
+    const render: PanelColumnRender<CapturedPackage> = React.useCallback(
+        (row) => ({
+            ...row,
+            time: timeFormat.format(row.time),
+            data: (
+                <>
+                    <Button
+                        onClick={() => {
+                            console.log(row);
+                        }}
+                    >
+                        dump
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            if (row.type === 'Send') {
+                                const data = row.data as Array<number | DataView>;
+                                SocketConnection.mainSocket.send(
+                                    row.cmd,
+                                    data.map((v) => (typeof v === 'object' ? new egret.ByteArray(v.buffer) : v))
+                                );
+                            }
+                        }}
+                    >
+                        重放
+                    </Button>
+                </>
+            ),
+        }),
+        []
+    );
 
     return (
         <>
@@ -136,37 +181,7 @@ export function PackageCapture() {
                 </Button>
             </Toolbar>
 
-            <PanelTable
-                data={capture}
-                columns={cols}
-                columnRender={(row) => ({
-                    ...row,
-                    data: (
-                        <>
-                            <Button
-                                onClick={() => {
-                                    console.log(row);
-                                }}
-                            >
-                                dump
-                            </Button>
-                            <Button
-                                onClick={() => {
-                                    if (row.type === 'Send') {
-                                        const data = row.data as Array<number | DataView>;
-                                        SocketConnection.mainSocket.send(
-                                            row.cmd,
-                                            data.map((v) => (typeof v === 'object' ? new egret.ByteArray(v.buffer) : v))
-                                        );
-                                    }
-                                }}
-                            >
-                                重放
-                            </Button>
-                        </>
-                    ),
-                })}
-            />
+            <PanelTable data={capture} columns={cols} columnRender={render} />
         </>
     );
 }
