@@ -57,7 +57,7 @@ export default () => {
         SAEventTarget.emit(Hook.Award.receive, { items });
     });
 
-    PetFightController.setup = wrapper(PetFightController.setup, undefined, function () {
+    PetFightController.onStartFight = wrapper(PetFightController.onStartFight, undefined, function () {
         SAEventTarget.emit(Hook.BattlePanel.panelReady);
         const { enemyMode, playerMode } = FighterModelFactory;
         if (!enemyMode || !playerMode) return;

@@ -1,33 +1,22 @@
-import {
-    LinearProgress,
-    LinearProgressProps, Typography
-} from '@mui/material';
+import { LinearProgress, LinearProgressProps, Typography } from '@mui/material';
 import React from 'react';
 
 type Props = LinearProgressProps & {
     prompt?: string;
-    cover?: string;
+    overridePrompt?: React.ReactNode;
     progress: number;
     total: number;
 };
 
-export function PercentLinearProgress(props: Props) {
-    let display = null;
-    if (props.cover != undefined) {
-        display = props.cover;
-    } else if (props.prompt) {
-        display = `${props.prompt}${props.prompt && ':'} ${props.progress} / ${props.total}`;
-    } else {
-        display = `${props.progress} / ${props.total}`;
-    }
+export function PercentLinearProgress({ progress, total, prompt, overridePrompt, ...rest }: Props) {
+    let display = prompt ? `${prompt}: ` : '';
+    
+    display += `${progress} / ${total}`;
+
     return (
         <Typography component={'div'}>
-            {display}
-            <LinearProgress
-                color="inherit"
-                variant="determinate"
-                value={(props.progress / props.total) * 100}
-                {...props} />
+            {overridePrompt ?? display}
+            <LinearProgress variant="determinate" value={(progress / total) * 100} {...rest} />
         </Typography>
     );
 }

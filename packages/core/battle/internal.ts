@@ -14,7 +14,7 @@ export default () => {
     SAEventTarget.on(Hook.BattlePanel.panelReady, () => {
         cachedRoundInfo.deactivate();
         if (FightManager.fightAnimateMode === 1) {
-            PetFightController.setFightSpeed(10);
+            TimeScaleManager.setBattleAnimateSpeed(10);
         }
         log(`检测到对战开始`);
     });
@@ -26,7 +26,7 @@ export default () => {
 
     SAEventTarget.on(Hook.BattlePanel.endPropShown, () => {
         if (FightManager.fightAnimateMode === 1) {
-            PetFightController.setFightSpeed(1);
+            TimeScaleManager.setBattleAnimateSpeed(1);
         }
         if (window.petNewSkillPanel) {
             const newSkillPanel = findObject(petNewSkillPanel.PetNewSkillPanel).at(0);

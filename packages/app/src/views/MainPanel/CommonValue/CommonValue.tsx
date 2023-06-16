@@ -49,7 +49,7 @@ export function CommonValue() {
                 <PercentLinearProgress
                     progress={item.amount}
                     total={item.limit}
-                    cover={`${convertUnit(item.amount)}/${convertUnit(item.limit)}`}
+                    overridePrompt={`${convertUnit(item.amount)}/${convertUnit(item.limit)}`}
                 />
             ) : (
                 <Typography>{convertUnit(item.amount)}</Typography>

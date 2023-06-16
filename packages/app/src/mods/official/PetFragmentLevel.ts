@@ -344,18 +344,18 @@ const options: Option[] = [
         ],
     },
     // 嫉妒
-    {
-        difficulty: Difficulty.Ease,
-        sweep: false,
-        id: 95,
-        strategy: [
-            battleStrategy['圣谱单挑'],
-            battleStrategy['圣谱单挑'],
-            battleStrategy['圣谱单挑'],
-            battleStrategy['圣谱单挑'],
-            battleStrategy['潘蒂表必先'],
-        ],
-    },
+    // {
+    //     difficulty: Difficulty.Ease,
+    //     sweep: false,
+    //     id: 95,
+    //     strategy: [
+    //         battleStrategy['圣谱单挑'],
+    //         battleStrategy['圣谱单挑'],
+    //         battleStrategy['圣谱单挑'],
+    //         battleStrategy['圣谱单挑'],
+    //         battleStrategy['潘蒂表必先'],
+    //     ],
+    // },
     // 卫岳
     {
         difficulty: Difficulty.Ease,
@@ -370,16 +370,10 @@ const options: Option[] = [
         ],
     },
     {
-        difficulty: Difficulty.Ease,
-        sweep: false,
+        difficulty: Difficulty.Hard,
+        sweep: true,
         id: 105,
-        strategy: [
-            battleStrategy['圣谱单挑'],
-            battleStrategy['圣谱单挑'],
-            battleStrategy['千裳单挑'],
-            battleStrategy['蒂朵单挑'],
-            battleStrategy['潘蒂表必先'],
-        ],
+        strategy: [],
     },
     // 南霜
     {

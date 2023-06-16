@@ -1,8 +1,7 @@
 declare class PetFightController {
     static roundTimes: number;
     static GameSpeed: number;
-    static setFightSpeed(speed: number): void;
-    static setup(): void;
+    static onStartFight(): void;
     static mvContainer: egret.DisplayObjectContainer;
 }
 
@@ -12,6 +11,10 @@ declare class FightOverController {
 
 declare class TimerManager {
     static countDownOverHandler(): void;
+}
+
+declare class TimeScaleManager {
+    static setBattleAnimateSpeed(speed: number): void;
 }
 
 declare class UseSkillController extends egret.EventDispatcher {
