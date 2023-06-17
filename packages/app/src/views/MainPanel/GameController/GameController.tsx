@@ -3,11 +3,11 @@ import { Button, Divider, Typography } from '@mui/material';
 import { SAConfig, cureAllPet } from 'sa-core';
 import * as SAEngine from 'sa-core/engine';
 
-import { PopupMenu, PopupMenuItemHandler } from '@sa-app/components/PopupMenu';
-import { usePopupMenuState } from '@sa-app/components/usePopupMenuState';
 import { PanelStateContext } from '@sa-app/context/PanelState';
 
+import { PopupMenuButton } from '@sa-app/components/PopupMenuButton';
 import React from 'react';
+import useSWR from 'swr';
 import { AnimationMode } from './AnimationMode';
 import { BattleFireInfo } from './BattleFireInfo';
 import { PetBagController } from './PetBagController';
@@ -16,55 +16,30 @@ const titleName = SAConfig.getName.bind(null, 'title');
 const suitName = SAConfig.getName.bind(null, 'suit');
 
 export function GameController() {
-    const [userTitle, setUserTitle] = React.useState(0);
-    const [userSuit, setUserSuit] = React.useState(0);
-    const [menuProps, openMenu] = usePopupMenuState<number>();
+    const [userTitle, setUserTitle] = React.useState(SAEngine.getUserTitle());
+    const [userSuit, setUserSuit] = React.useState(SAEngine.getUserSuit());
 
-    React.useEffect(() => {
-        setUserTitle(SAEngine.getUserTitle());
-        setUserSuit(SAEngine.getUserSuit());
-    }, []);
-
-    const changeTitle: PopupMenuItemHandler<number> = React.useCallback(
-        (item) => {
-            if (item !== userTitle) {
-                SAEngine.changeTitle(item);
-                setUserTitle(item);
-            }
-        },
-        [userTitle]
-    );
-
-    const changeSuit: PopupMenuItemHandler<number> = React.useCallback(
-        (item) => {
-            if (item !== userSuit) {
-                SAEngine.changeSuit(item);
-                setUserSuit(item);
+    const suits = SAEngine.getUserAbilitySuits();
+    const changeSuit = React.useCallback(
+        (suit: number) => {
+            if (suit !== userSuit) {
+                SAEngine.changeSuit(suit);
+                setUserSuit(suit);
             }
         },
         [userSuit]
     );
 
-    const handleChangeTitle: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
-        const target = e.currentTarget;
-        const titleId = await SAEngine.getUserAbilityTitles();
-        const titleNames = titleId.map(titleName);
-        openMenu(target, {
-            data: titleId,
-            displayText: titleNames as string[],
-            handler: changeTitle,
-        });
-    };
-
-    const handleChangeSuit: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-        const suitId = SAEngine.getUserAbilitySuits();
-        const suitNames = suitId.map(suitName);
-        openMenu(e.currentTarget, {
-            data: suitId,
-            displayText: suitNames as string[],
-            handler: changeSuit,
-        });
-    };
+    const { data: titles } = useSWR('ds://PlayerData/title', SAEngine.getUserAbilityTitles);
+    const changeTitle = React.useCallback(
+        (title: number) => {
+            if (title !== userTitle) {
+                SAEngine.changeTitle(title);
+                setUserTitle(title);
+            }
+        },
+        [userTitle]
+    );
 
     const { setOpen } = React.useContext(PanelStateContext);
     const openPetBag = React.useCallback(() => {
@@ -90,26 +65,34 @@ export function GameController() {
 
             <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']}>
                 套装
-                <Button variant="outlined" sx={{ m: 1 }} onClick={handleChangeSuit}>
+                <PopupMenuButton
+                    id="change-suit"
+                    buttonProps={{ sx: { m: 1 }, variant: 'outlined' }}
+                    data={suits}
+                    renderItem={suitName}
+                    onSelectItem={changeSuit}
+                >
                     {SAConfig.getName('suit', userSuit)}
-                </Button>
+                </PopupMenuButton>
                 <Typography>{`效果: ${ItemSeXMLInfo.getSuitEff(userSuit)}`}</Typography>
             </Typography>
 
             <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']}>
                 称号
-                <Button variant="outlined" sx={{ m: 1 }} onClick={handleChangeTitle}>
-                    {titleName(userTitle)}
-                </Button>
+                <PopupMenuButton
+                    id="change-title"
+                    buttonProps={{ sx: { m: 1 }, variant: 'outlined' }}
+                    data={titles}
+                    renderItem={titleName}
+                    onSelectItem={changeTitle}
+                >
+                    {SAConfig.getName('title', userTitle)}
+                </PopupMenuButton>
                 <Typography>{`效果: ${SAConfig.get('title', userTitle)?.abtext}`}</Typography>
             </Typography>
 
             <Divider />
 
-            <PopupMenu
-                id="game-controller-menu"
-                {...menuProps}
-            />
             <PetBagController />
         </>
     );

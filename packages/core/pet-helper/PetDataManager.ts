@@ -12,7 +12,7 @@ class DataManager {
     private cacheTimestamp = new Map<CatchTime, number>();
     private hasInit = false;
 
-    private queryQueue = new Map<CatchTime, (value: ProxyPet) => void>();
+    private queryQueue = new Map<CatchTime, Array<(value: ProxyPet) => void>>();
 
     defaultCt: CatchTime = -1;
     bag: CacheData<[ProxyPet[], ProxyPet[]]>;
@@ -125,19 +125,24 @@ class DataManager {
         }
 
         if (this.queryQueue.has(pet.catchTime)) {
-            const resolver = this.queryQueue.get(pet.catchTime)!;
+            const resolvers = this.queryQueue.get(pet.catchTime)!;
+            resolvers.forEach((resolver) => resolver(pet));
             this.queryQueue.delete(pet.catchTime);
-            resolver(pet);
         }
     }
 
-    async query(ct: CatchTime) {
+    query(ct: CatchTime) {
         this.bag.deactivate();
         this.cache.delete(ct);
         this.cacheTimestamp.delete(ct);
-        return new Promise<ProxyPet>((resolve) => {
-            this.queryQueue.set(ct, resolve);
+
+        if (!this.queryQueue.has(ct)) {
+            this.queryQueue.set(ct, []);
             void Socket.sendByQueue(CommandID.GET_PET_INFO, [ct]);
+        }
+
+        return new Promise<ProxyPet>((resolve) => {
+            this.queryQueue.get(ct)!.push(resolve);
         });
     }
 }

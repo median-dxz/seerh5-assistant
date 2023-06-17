@@ -1,16 +1,22 @@
 import { LinearProgress, LinearProgressProps, Typography } from '@mui/material';
 import React from 'react';
 
-type Props = LinearProgressProps & {
+type LabeledProgressProps = LinearProgressProps & {
     prompt?: string;
     overridePrompt?: React.ReactNode;
     progress: number;
     total: number;
 };
 
-export function PercentLinearProgress({ progress, total, prompt, overridePrompt, ...rest }: Props) {
+export function LabeledLinearProgress({
+    progress,
+    total,
+    prompt,
+    overridePrompt,
+    ...rest
+}: LabeledProgressProps) {
     let display = prompt ? `${prompt}: ` : '';
-    
+
     display += `${progress} / ${total}`;
 
     return (

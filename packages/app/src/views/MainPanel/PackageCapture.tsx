@@ -110,7 +110,7 @@ export function PackageCapture() {
             {
                 field: 'label',
                 columnName: '命令名',
-                sx: { fontFamily: 'Open Sans, Helvetica', fontSize: '0.9rem', p: 0 },
+                sx: { fontFamily: 'Open Sans, MFShangHei', fontSize: '0.9rem', p: 0 },
             },
             { field: 'data', columnName: '操作' },
         ],

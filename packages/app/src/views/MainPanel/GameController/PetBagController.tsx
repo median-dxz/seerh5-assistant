@@ -1,24 +1,45 @@
-import { Box, Button, ButtonGroup, Checkbox, LinearProgress, Typography } from '@mui/material';
+import { Box, Button, ButtonGroup, Checkbox, CircularProgress, LinearProgress, Typography } from '@mui/material';
 
 import * as SALocalStorage from '@sa-app/utils/hooks/SALocalStorage';
 import React from 'react';
-import { Pet, PetPosition, SAPet, UIModuleHelper, delay, getBagPets, lowerBlood, switchBag } from 'sa-core';
+import { Pet, SAPet, UIModuleHelper, delay, lowerBlood, switchBag } from 'sa-core';
 
-import { PopupMenu } from '@sa-app/components/PopupMenu';
-import { usePopupMenuState } from '@sa-app/components/usePopupMenuState';
 import { getPetHeadIcon } from '@sa-app/utils/egretRes';
 import { useBagPets } from '@sa-app/utils/hooks/useBagPets';
 
+import { PopupMenuButton } from '@sa-app/components/PopupMenuButton';
 import { PanelColumnRender, PanelColumns, PanelTable } from '../../../components/PanelTable/PanelTable';
 
 const petGroupsStorage = SALocalStorage.PetGroups;
+
+type BasePetInfo = Pick<Pet, 'catchTime' | 'id' | 'name'>;
+
+function usePetPatternInfos() {
+    const [data, setData] = React.useState<BasePetInfo[][]>();
+    const [loading, setLoading] = React.useState(false);
+
+    const updater = React.useCallback(async () => {
+        setLoading(true);
+        const promises = petGroupsStorage.ref
+            .flat()
+            .map((ct) => SAPet.get(ct).then((pet) => ({ catchTime: ct, id: pet.id, name: pet.name })));
+
+        const r = await Promise.all(promises);
+
+        const petGroups = petGroupsStorage.ref.map((group) => group.map((pet) => r.find((v) => v.catchTime === pet)!));
+
+        setData(petGroups);
+        setLoading(false);
+    }, []);
+
+    return [data, loading, updater] as const;
+}
 
 export function PetBagController() {
     const { pets } = useBagPets();
 
     const [selected, setSelected] = React.useState<number[]>([]);
-    const [petGroups, setPetGroups] = React.useState(petGroupsStorage.ref);
-    const [menuProps, openMenu] = usePopupMenuState<number[]>();
+    const [petGroups, loading, updatePetGroups] = usePetPatternInfos();
 
     React.useEffect(() => {
         setSelected([]);
@@ -56,22 +77,6 @@ export function PetBagController() {
             hp: `${pet.baseCurHp}/${pet.baseMaxHp}`,
             action: (
                 <ButtonGroup>
-                    <Button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleOpenPetItemUseProp(pet.catchTime);
-                        }}
-                    >
-                        道具
-                    </Button>
-                    <Button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            SAPet.cure(pet.catchTime);
-                        }}
-                    >
-                        治疗
-                    </Button>
                     {index !== 0 && (
                         <Button
                             onClick={(e) => {
@@ -82,6 +87,22 @@ export function PetBagController() {
                             首发
                         </Button>
                     )}
+                    <Button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            SAPet.cure(pet.catchTime);
+                        }}
+                    >
+                        治疗
+                    </Button>
+                    <Button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenPetItemUseProp(pet.catchTime);
+                        }}
+                    >
+                        道具
+                    </Button>
                 </ButtonGroup>
             ),
         }),
@@ -124,51 +145,47 @@ export function PetBagController() {
         BubblerManager.getInstance().showText('复制成功');
     };
 
-    const handleChangePetPattern: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
-        const target = e.currentTarget;
-        const pattern = [];
-        for (let index = 0; index < petGroups.length; index++) {
-            const pets = await Promise.all(petGroups[index]?.map((ct) => SAPet.get(ct)) ?? []);
-            const name = `方案${index}: ${pets.map((pet) => pet.name).join(',')}`;
-            pattern.push(name);
-        }
-
-        openMenu(target, {
-            data: petGroups,
-            displayText: pattern,
-            handler: (item) => switchBag(item),
-        });
+    const pattern = (group: BasePetInfo[], index: number) => {
+        return `方案${index}: ${group.map((pet) => pet.name).join(', ')}`;
     };
 
-    const handleSavePetPattern: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-        const target = e.currentTarget;
-        const patternName = petGroups.map((v, index) => `方案${index}`);
-
-        openMenu(target, {
-            data: petGroups,
-            displayText: patternName,
-            handler: async (item, index) => {
-                const pets = await getBagPets(PetPosition.bag1);
-                petGroupsStorage.use((draft) => {
-                    draft[index] = pets.map((pet) => pet.catchTime);
-                });
-                setPetGroups(petGroupsStorage.ref);
-            },
+    const handleSavePattern = (_: BasePetInfo[], index: number) => {
+        petGroupsStorage.use((draft) => {
+            draft[index] = pets.map((pet) => pet.catchTime);
         });
+        updatePetGroups();
+    };
+
+    const handleSwitchBag = (group: BasePetInfo[]) => {
+        switchBag(group.map((pet) => pet.catchTime));
     };
 
     return (
         <>
-            <PopupMenu id="pet-bag-controller-menu" {...menuProps} />
-
             <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']}>
                 精灵背包
             </Typography>
             <Button onClick={handleLowerBlood}>压血</Button>
             <Button onClick={handleCurePets}>治疗</Button>
             <Button onClick={handleCopyCatchTime}>复制catchTime</Button>
-            <Button onClick={handleChangePetPattern}>更换方案</Button>
-            <Button onClick={handleSavePetPattern}>保存方案</Button>
+
+            <PopupMenuButton
+                data={petGroups}
+                renderItem={pattern}
+                onSelectItem={handleSwitchBag}
+                buttonProps={{ onClick: updatePetGroups }}
+            >
+                {loading ? <CircularProgress size={16} /> : '更换方案'}
+            </PopupMenuButton>
+
+            <PopupMenuButton
+                data={petGroups}
+                renderItem={pattern}
+                onSelectItem={handleSavePattern}
+                buttonProps={{ onClick: updatePetGroups }}
+            >
+                {loading ? <CircularProgress size={16} /> : '保存方案'}
+            </PopupMenuButton>
 
             <Box
                 sx={{

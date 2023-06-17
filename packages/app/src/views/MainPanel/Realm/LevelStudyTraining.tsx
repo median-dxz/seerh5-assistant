@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material';
-import { PercentLinearProgress } from '@sa-app/components/PercentLinearProgress';
+import { LabeledLinearProgress } from '@sa-app/components/LabeledProgress';
 import React from 'react';
 import { LevelBase, LevelExtendsProps } from './LevelBase';
 import dataProvider from './data';
@@ -72,7 +72,7 @@ export function LevelStudyTraining(props: LevelExtendsProps) {
                         setHint(
                             <>
                                 <Typography component={'div'}>正在进行对战...</Typography>
-                                <PercentLinearProgress
+                                <LabeledLinearProgress
                                     prompt={'当前次数'}
                                     progress={levelData.current.challengeCount}
                                     total={6}

@@ -4,8 +4,8 @@ import { Item, updateItems } from 'sa-core';
 
 import { Button, Typography } from '@mui/material';
 
+import { LabeledLinearProgress } from '@sa-app/components/LabeledProgress';
 import { PanelColumnRender, PanelColumns, PanelTable } from '@sa-app/components/PanelTable';
-import { PercentLinearProgress } from '@sa-app/components/PercentLinearProgress';
 import { PanelStateContext } from '@sa-app/context/PanelState';
 import { getItemIcon } from '@sa-app/utils/egretRes';
 
@@ -46,7 +46,7 @@ export function CommonValue() {
             icon: <img crossOrigin="anonymous" src={getItemIcon(item.id)} alt={item.name} width={48} />,
             name: item.name,
             amount: item.limit ? (
-                <PercentLinearProgress
+                <LabeledLinearProgress
                     progress={item.amount}
                     total={item.limit}
                     overridePrompt={`${convertUnit(item.amount)}/${convertUnit(item.limit)}`}

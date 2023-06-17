@@ -85,6 +85,10 @@ Backend:
 
 1. 可以使用Ctrl-C在正常终端正确退出程序
 
+Core:
+
+v0.4.6: 修复`PetDataManager`中不正确的缓存逻辑
+
 App:
 
 v0.5.1

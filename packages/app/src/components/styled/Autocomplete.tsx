@@ -8,9 +8,8 @@ export const SaAutocomplete = styled<typeof MuiAutocomplete>(({ className, ...pr
 ))`
     & .MuiAutocomplete-paper {
         border-radius: 0;
-        backdrop-filter: blur(12px);
         background-color: ${saTheme.palette.background.default};
         box-shadow: ${saTheme.boxShadow};
-        color: ${saTheme.palette.text.primary};
+        backdrop-filter: blur(12px);
     }
 ` as typeof MuiAutocomplete;

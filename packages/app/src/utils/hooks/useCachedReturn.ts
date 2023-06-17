@@ -3,7 +3,7 @@ import { useRef } from 'react';
 export function useCachedReturn<TKey, TFn extends (data: TKey, index: number) => unknown, TCache>(
     data: TKey[],
     fn: TFn | undefined,
-    factory: (value: ReturnType<TFn>, data: TKey, index: number) => TCache
+    factory: (value: ReturnType<TFn> | undefined, data: TKey, index: number) => TCache
 ) {
     const valueRef = useRef(new Map<TKey, TCache>());
     const fnCache = useRef(fn);
@@ -12,12 +12,18 @@ export function useCachedReturn<TKey, TFn extends (data: TKey, index: number) =>
         fnCache.current = fn;
         valueRef.current.clear();
         data.forEach((data, index) => {
-            valueRef.current.set(data, factory(fnCache.current?.(data, index) as ReturnType<TFn>, data, index));
+            valueRef.current.set(
+                data,
+                factory(fnCache.current?.(data, index) as ReturnType<TFn> | undefined, data, index)
+            );
         });
     } else {
         data.forEach((data, index) => {
             if (!valueRef.current.has(data)) {
-                valueRef.current.set(data, factory(fnCache.current?.(data, index) as ReturnType<TFn>, data, index));
+                valueRef.current.set(
+                    data,
+                    factory(fnCache.current?.(data, index) as ReturnType<TFn> | undefined, data, index)
+                );
             }
         });
 

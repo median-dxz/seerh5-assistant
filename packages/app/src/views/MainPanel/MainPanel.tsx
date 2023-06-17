@@ -1,11 +1,11 @@
 import Lock from '@mui/icons-material/Lock';
 import { Backdrop, Box, Fade, Switch, SxProps, Tab, Tabs } from '@mui/material';
 import * as React from 'react';
+import { AutoBattle } from './AutoBattle';
 import { CommonValue } from './CommonValue';
 import { GameController } from './GameController';
 import { PackageCapture } from './PackageCapture';
 import { QuickCommand } from './QuickCommand';
-import { AutoBattle } from './AutoBattle';
 import { Realm } from './Realm';
 
 interface TabPanelProps {
@@ -83,7 +83,7 @@ export function MainPanel(props: Props) {
     return (
         <Fade in={props.show}>
             <Backdrop
-                sx={{ zIndex: 2 }}
+                sx={{ zIndex: 2, bgcolor: 'rgba(0, 0, 0, 0.75)' }}
                 open={props.show}
                 onTouchCancel={dispatchClickEvent}
                 onTouchStart={dispatchClickEvent}
@@ -95,8 +95,8 @@ export function MainPanel(props: Props) {
                     sx={{
                         position: 'absolute',
                         display: 'flex',
-                        left: 'calc(40vw / 2)',
-                        width: '60vw',
+                        left: 'calc(30vw / 2)',
+                        width: '70vw',
                         height: '100%',
                         overflowY: 'scroll',
                         overflowX: 'hidden',

@@ -6,7 +6,7 @@ declare module '@mui/material/styles' {
     }
 
     interface PaletteOptions {
-        emphases: PaletteOptions['primary'];
+        emphases?: PaletteOptions['primary'];
     }
 
     interface Theme {
@@ -14,12 +14,12 @@ declare module '@mui/material/styles' {
     }
 
     interface ThemeOptions {
-        boxShadow: string;
+        boxShadow?: string;
     }
 }
 
 export const saTheme = createTheme({
-    boxShadow: `0 0 16px rgba(0 0 0 / 24%)`,
+    boxShadow: `0 8px 16px rgba(0 0 0 / 24%)`,
     palette: {
         mode: 'dark',
         emphases: {
@@ -36,8 +36,8 @@ export const saTheme = createTheme({
             secondary: 'rgba(225, 245, 254, 0.75)',
         },
         background: {
-            default: 'rgba(236 245 255/ 25%)',
-            paper: 'rgba(10 55 118 / 50%)',
+            default: 'rgba(30 136 224 / 25%)',
+            paper: 'rgb(30 136 224)',
         },
     },
     typography: {
@@ -47,20 +47,13 @@ export const saTheme = createTheme({
     components: {
         MuiBackdrop: {
             styleOverrides: {
-                root: { backgroundColor: 'rgba(0, 0, 0, 0.75)' },
+                root: { backgroundColor: 'rgba(0, 0, 0, 0.2)' },
             },
         },
         MuiTooltip: {
             styleOverrides: {
                 tooltip: {
                     backgroundColor: 'rgba(33 150 243 / 45%)',
-                    backdropFilter: 'blur(4px)',
-                },
-            },
-        },
-        MuiPaper: {
-            styleOverrides: {
-                root: {
                     backdropFilter: 'blur(4px)',
                 },
             },

@@ -3,8 +3,8 @@ import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
 import React from 'react';
 import { SaTableRow } from '../styled/TableRow';
 
+import { useCachedReturn } from '@sa-app/utils/hooks/useCachedReturn';
 import { PanelFields } from './PanelRow';
-import { useCachedReturn } from './useCachedReturn';
 
 export type PanelColumnRender<TDataType> = (data: TDataType, index: number) => Record<string, React.ReactNode | string>;
 export type PanelColumns = Array<{ field: string; columnName: string } & TableCellProps>;

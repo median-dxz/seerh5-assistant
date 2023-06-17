@@ -29,11 +29,6 @@ export function TextEditDialog({ open, initialValue, onClose }: TextEditDialogPr
                     onClose(value);
                 }
             }}
-            sx={{
-                '& .MuiDialog-paper': {
-                    minWidth: 384,
-                },
-            }}
         >
             <DialogTitle>编辑</DialogTitle>
             <DialogContent>

@@ -7,7 +7,7 @@ import * as SAEntity from 'sa-core/entity';
 
 import { Typography } from '@mui/material';
 
-import { PercentLinearProgress } from '@sa-app/components/PercentLinearProgress';
+import { LabeledLinearProgress } from '@sa-app/components/LabeledProgress';
 import { LevelBase, LevelExtendsProps } from './LevelBase';
 
 import dataProvider from './data';
@@ -77,7 +77,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 await delay(500);
                 await SABattle.Manager.runOnce(() => {
                     setHint(
-                        <PercentLinearProgress
+                        <LabeledLinearProgress
                             prompt={'正在进行泰坦矿洞'}
                             progress={levelData.current.step}
                             total={4}
@@ -101,12 +101,12 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                     await SABattle.Manager.runOnce(() => {
                         setHint(
                             <>
-                                <PercentLinearProgress
+                                <LabeledLinearProgress
                                     prompt={'正在进行泰坦矿洞'}
                                     progress={levelData.current.step}
                                     total={4}
                                 />
-                                <PercentLinearProgress
+                                <LabeledLinearProgress
                                     prompt={'击败爆破先锋'}
                                     progress={levelData.current.step2Count}
                                     total={6}
@@ -130,12 +130,12 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                     }
                     setHint(
                         <>
-                            <PercentLinearProgress
+                            <LabeledLinearProgress
                                 prompt={'正在进行泰坦矿洞'}
                                 progress={levelData.current.step}
                                 total={4}
                             />
-                            <PercentLinearProgress
+                            <LabeledLinearProgress
                                 prompt={'开采矿石'}
                                 progress={levelData.current.step3Count}
                                 total={48}
@@ -167,7 +167,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 await delay(500);
                 await SABattle.Manager.runOnce(() => {
                     setHint(
-                        <PercentLinearProgress
+                        <LabeledLinearProgress
                             prompt={'正在进行泰坦矿洞'}
                             progress={levelData.current.step}
                             total={4}
