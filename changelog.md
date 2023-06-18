@@ -25,13 +25,10 @@ on progress:
 静态 /dist
 http://rp-ta.61.com/tm.js 什么情况？
 pwa怎么又不行了...
-还有就是把eslint的一堆报错修掉...
 sapet的mixin模式
 什么鬼百度的hm怎么又跑进来了
 开头那个有localhost的cookie。。
-重新规划
 生产环境下禁用script解密
-战斗模式隐藏快捷按钮
 快捷按钮为加载一个函数片段，由mod提供
 pet matcher便捷函数，通过名字找ct
 抽象日任模块公共代码部分 全新的level模块！
@@ -40,6 +37,7 @@ pet matcher便捷函数，通过名字找ct
 借火操作
 后端迁移fastify
 核心模块基本上只剩下helper和function，strategy三部分需要重构整合了，重构完将release v1.0
+preload cancel是什么鬼
 
 theme传sx，不用手动导入！
 zIndex统一

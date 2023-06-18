@@ -17,7 +17,7 @@ async function createServer() {
     });
 
     app.use('/worker', express.static(path.join(dirname, 'worker'), { cacheControl: false }));
-    app.use('/strategy', express.static(path.join(dirname, 'strategy'), { cacheControl: false }));
+    app.use('/strategy', express.static(path.join(dirname, 'data/strategy'), { cacheControl: false }));
 
     app.use(['/seerh5.61.com', '/resource'], saProxyAssets);
 

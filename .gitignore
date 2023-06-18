@@ -6,7 +6,7 @@ archive
 
 .env.local
 
-doc/**
+docs/**
 
 packages/app/dev-dist/
 

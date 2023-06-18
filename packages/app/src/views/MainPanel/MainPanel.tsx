@@ -1,4 +1,4 @@
-import { ElectricBolt } from '@mui/icons-material';
+import ElectricBolt from '@mui/icons-material/ElectricBolt';
 import Lock from '@mui/icons-material/Lock';
 import { Backdrop, Box, Fade, Switch, SxProps, Tab, Tabs } from '@mui/material';
 import { HexagonalButton } from '@sa-app/components/styled/HexagonalButton';

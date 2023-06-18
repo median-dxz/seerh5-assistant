@@ -28,9 +28,7 @@ const renderApp = async () => {
 };
 
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register(
-        import.meta.env.MODE === 'production' ? '/service-worker.js' : '/dev-sw.js?dev-sw'
-    );
+    navigator.serviceWorker.register(import.meta.env.MODE === 'production' ? '/sw.js' : '/dev-sw.js?dev-sw');
 }
 
 const wwwroot = `/seerh5.61.com/`;

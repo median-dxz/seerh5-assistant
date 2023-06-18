@@ -11,6 +11,6 @@ module.exports = {
         project: ['./packages/app/tsconfig.json', './packages/core/tsconfig.json'],
     },
     plugins: ['@typescript-eslint'],
-    ignorePatterns: ['/types', '/entry', 'sa.*.ts', '.*rc.cjs'],
+    ignorePatterns: ['/types', '/entry', '/sdk-template', 'sa.*.ts', '.*rc.cjs'],
     root: true,
 };
