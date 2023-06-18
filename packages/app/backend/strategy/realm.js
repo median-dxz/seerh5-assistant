@@ -5,6 +5,7 @@ export default {
         beforeBattle() {
             sac.BattleFireType;
         },
+        /** @type {import('sa-core').MoveStrategy} */
         moveModule: sac.generateStrategy([], []),
         pets: [],
     },

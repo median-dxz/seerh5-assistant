@@ -12,10 +12,9 @@ import { saTheme } from '@sa-app/style';
 import { CommandBar } from './views/CommandBar';
 import { MainPanel } from './views/MainPanel';
 
-import * as core from 'sa-core';
-
-import { Hook, resolveStrategy } from 'sa-core';
+import { Hook, NULL, resolveStrategy } from 'sa-core';
 import { SAEventBus } from 'sa-core/event-bus';
+
 import { QuickAccess } from './views/QuickAccess';
 
 const battleStrategyStorage = SALocalStorage.BattleStrategy;
@@ -41,7 +40,7 @@ export default function SaApp() {
                 // fallback: autoStrategy,
                 fallback: {
                     resolveMove: async () => true,
-                    resolveNoBlood: (core.NULL),
+                    resolveNoBlood: NULL,
                 },
             });
         }
