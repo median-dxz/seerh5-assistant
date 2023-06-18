@@ -3,9 +3,9 @@ import { Button, Divider, FormControlLabel, Switch } from '@mui/material';
 import React, { useState } from 'react';
 
 import { PanelTable } from '@sa-app/components/PanelTable/PanelTable';
-import { TextEditDialog, TextEditDialogProps } from '@sa-app/components/TextEditDialog';
 import { SAContext } from '@sa-app/context/SAContext';
 import * as SALocalStorage from '@sa-app/utils/hooks/SALocalStorage';
+import { TextEditDialog } from '@sa-app/views/MainPanel/AutoBattle/TextEditDialog';
 import { NULL } from 'sa-core';
 import * as SABattle from 'sa-core/battle';
 
@@ -25,33 +25,40 @@ const handleUpdated = (arr: unknown[], index: number, value: string) => {
     arr[index] = value.split(',').map((s) => s.trim());
 };
 
-const defaultDialogState: TextEditDialogProps = {
-    onClose: NULL,
-    open: false,
-    initialValue: '',
-};
-
 const strategyStorage = SALocalStorage.BattleStrategy;
+
+// 待编辑文本的上下文
+export const TextContext = React.createContext(
+    {} as { text: string; setText: React.Dispatch<React.SetStateAction<string>> }
+);
 
 export function AutoBattle() {
     const { Battle: battleContext } = React.useContext(SAContext);
     const { enableAuto: auto, updateAuto } = battleContext;
-
     const [strategy, setStrategy] = useState(strategyStorage.ref);
 
-    const [dialogProps, setDialogState] = React.useState<TextEditDialogProps>(defaultDialogState);
+    const [open, setOpen] = useState(false);
+    const [text, setText] = useState('');
+    const [onClose, setOnClose] = useState<(value: string) => void>(() => NULL);
 
-    const closeDialog = React.useCallback(() => {
-        setDialogState(defaultDialogState);
-    }, [setDialogState]);
-
-    const openDialog = (onClose: (value: string) => void, initialValue: string) => {
-        setDialogState({ open: true, initialValue, onClose });
+    const openDialog = (callback: (value: string) => void, value = '') => {
+        setOpen(true);
+        setText(value);
+        setOnClose(() => {
+            return (value: string) => {
+                setOpen(false);
+                setText('');
+                callback(value);
+            };
+        });
     };
 
     return (
         <>
-            <TextEditDialog {...dialogProps} />
+            <TextContext.Provider value={{ text, setText }}>
+                <TextEditDialog open={open} onClose={onClose} />
+            </TextContext.Provider>
+
             <FormControlLabel
                 control={
                     <Switch
@@ -81,8 +88,7 @@ export function AutoBattle() {
                             });
                             setStrategy(strategyStorage.ref);
                         }
-                        closeDialog();
-                    }, '');
+                    });
                 }}
             >
                 添加
@@ -137,7 +143,6 @@ export function AutoBattle() {
                                             });
                                             setStrategy(strategyStorage.ref);
                                         }
-                                        closeDialog();
                                     }, row.join(', '));
                                 }}
                             >
@@ -146,7 +151,7 @@ export function AutoBattle() {
                         </>
                     ),
                 })}
-            ></PanelTable>
+            />
 
             <Divider />
             <h3>死切链</h3>
@@ -159,8 +164,7 @@ export function AutoBattle() {
                             });
                             setStrategy(strategyStorage.ref);
                         }
-                        closeDialog();
-                    }, '');
+                    });
                 }}
             >
                 添加
@@ -215,7 +219,6 @@ export function AutoBattle() {
                                             });
                                             setStrategy(strategyStorage.ref);
                                         }
-                                        closeDialog();
                                     }, row.join(', '));
                                 }}
                             >

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { CoreLoader, HelperLoader } from 'sa-core';
+import * as core from 'sa-core';
 import './index.css';
 import { registerAllMod } from './utils/registerMods';
 import { dataProvider } from './utils/saDataProvider';
@@ -9,12 +9,15 @@ const container = document.getElementById('sa-app')!;
 const root = ReactDOM.createRoot(container);
 
 const renderApp = async () => {
-    HelperLoader();
+    const sac = window.sac;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).sac = { ...core, ...sac };
+
+    core.HelperLoader();
     await dataProvider.init();
 
-    const canvas: HTMLCanvasElement = document.querySelector('#egret_player_container canvas')!;
-    canvas.setAttribute('tabindex', '-1');
-    const { default: SaMain } = await import('./main');
+    const { default: SaMain } = await import('./App');
+
     root.render(
         <React.StrictMode>
             <SaMain />
@@ -46,4 +49,4 @@ fetch(`${wwwroot}app.js?t=${Date.now()}`)
 
 window.addEventListener('seerh5_assistant_ready', renderApp);
 
-CoreLoader();
+core.CoreLoader();

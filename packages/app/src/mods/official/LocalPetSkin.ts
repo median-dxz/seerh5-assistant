@@ -1,4 +1,4 @@
-import { BaseMod } from '@sa-app/mod-manager/mod-type';
+import { BaseMod } from '@sa-app/ModManager/mod-type';
 import { NULL, SaModuleLogger, Socket, createLocalStorageProxy, defaultStyle } from 'sa-core';
 const log = SaModuleLogger('LocalCloth', defaultStyle.mod);
 

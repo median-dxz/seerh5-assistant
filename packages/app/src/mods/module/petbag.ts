@@ -1,9 +1,9 @@
-import { ModuleMod } from '@sa-app/mod-manager/mod-type';
+import { ModuleMod } from '@sa-app/ModManager/mod-type';
 import { Pet, SAEventBus, debounce, getImageButtonListener, hookFn, hookPrototype } from 'sa-core';
 
 class LocalCloth extends ModuleMod<petBag.PetBag> {
     moduleName = 'petBag';
-    meta = { id: 'SA::ModuleMod::PetBag', description: '精灵背包模块注入' };
+    meta = { id: 'SA::Module::PetBag', description: '精灵背包模块注入' };
 
     eventBus = new SAEventBus();
 

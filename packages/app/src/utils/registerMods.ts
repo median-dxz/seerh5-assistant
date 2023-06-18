@@ -1,4 +1,4 @@
-import { Mods, register } from '@sa-app/mod-manager';
+import { Mods, register } from '@sa-app/ModManager';
 
 export const registerAllMod = async () => {
     const mods = await Promise.all([

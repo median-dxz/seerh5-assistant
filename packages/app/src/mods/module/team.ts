@@ -1,4 +1,4 @@
-import { ModuleMod } from '@sa-app/mod-manager/mod-type';
+import { ModuleMod } from '@sa-app/ModManager/mod-type';
 import { Socket } from 'sa-core';
 
 class TeamTechCenter extends ModuleMod<team.TeamTech> {

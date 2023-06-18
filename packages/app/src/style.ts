@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material';
+import { alpha, createTheme } from '@mui/material';
 
 declare module '@mui/material/styles' {
     interface Palette {
@@ -18,6 +18,12 @@ declare module '@mui/material/styles' {
     }
 }
 
+const colors = {
+    primary: '#b3e5fc',
+    text: '#e1f5fe',
+    paper: '#1e88e5',
+};
+
 export const saTheme = createTheme({
     boxShadow: `0 8px 16px rgba(0 0 0 / 24%)`,
     palette: {
@@ -26,18 +32,18 @@ export const saTheme = createTheme({
             main: '#ffeb3b',
         },
         primary: {
-            main: '#b3e5fc',
+            main: colors.primary,
         },
         secondary: {
             main: '#03a9f4',
         },
         text: {
-            primary: '#e1f5fe',
-            secondary: 'rgba(225, 245, 254, 0.75)',
+            primary: colors.text,
+            secondary: alpha(colors.text, 0.75),
         },
         background: {
-            default: 'rgba(30 136 224 / 25%)',
-            paper: 'rgb(30 136 224)',
+            default: alpha(colors.paper, 0.25),
+            paper: colors.paper,
         },
     },
     typography: {
@@ -45,6 +51,18 @@ export const saTheme = createTheme({
         fontFamily: `MFShangHei, Open Sans, Helvetica, Arial, sans-serif`,
     },
     components: {
+        MuiCssBaseline: {
+            styleOverrides: {
+                '::-webkit-scrollbar': {
+                    width: 8,
+                    height: 8,
+                },
+                '::-webkit-scrollbar-track': 'none',
+                '::-webkit-scrollbar-thumb': {
+                    backgroundColor: alpha(colors.primary, 0.5),
+                },
+            },
+        },
         MuiBackdrop: {
             styleOverrides: {
                 root: { backgroundColor: 'rgba(0, 0, 0, 0.2)' },
@@ -55,6 +73,13 @@ export const saTheme = createTheme({
                 tooltip: {
                     backgroundColor: 'rgba(33 150 243 / 45%)',
                     backdropFilter: 'blur(4px)',
+                },
+            },
+        },
+        MuiLinearProgress: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: alpha('#fff', 0.33),
                 },
             },
         },

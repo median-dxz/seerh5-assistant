@@ -9,7 +9,7 @@ import useSWR from 'swr';
 import React, { useState } from 'react';
 
 import { SaQuickAccess } from '@sa-app/components/styled/QuickAccess';
-import { Mods } from '@sa-app/mod-manager';
+import { Mods } from '@sa-app/ModManager';
 import { getAutoCureState, toggleAutoCure } from 'sa-core';
 
 const actions = [
@@ -52,8 +52,7 @@ export function QuickAccess() {
             sx={{
                 position: 'absolute',
                 bottom: '8vh',
-                left: '4vw',
-                zIndex: 2,
+                left: '4vw'
             }}
             FabProps={{
                 sx: {

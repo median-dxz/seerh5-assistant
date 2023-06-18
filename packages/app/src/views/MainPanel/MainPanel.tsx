@@ -1,7 +1,10 @@
+import { ElectricBolt } from '@mui/icons-material';
 import Lock from '@mui/icons-material/Lock';
 import { Backdrop, Box, Fade, Switch, SxProps, Tab, Tabs } from '@mui/material';
+import { HexagonalButton } from '@sa-app/components/styled/HexagonalButton';
+import { PanelStateContext } from '@sa-app/context/PanelState';
 import * as React from 'react';
-import { AutoBattle } from './AutoBattle';
+import { AutoBattle } from './AutoBattle/AutoBattle';
 import { CommonValue } from './CommonValue';
 import { GameController } from './GameController';
 import { PackageCapture } from './PackageCapture';
@@ -25,12 +28,6 @@ function TabPanel(props: TabPanelProps & { sx?: SxProps }) {
                 overflowY: 'auto',
                 overflowX: 'hidden',
                 marginRight: '-1px',
-                '&::-webkit-scrollbar': {
-                    width: 8,
-                    height: 8,
-                },
-                '&::-webkit-scrollbar-track': {},
-                '&::-webkit-scrollbar-thumb': {},
                 ...sx,
             }}
             role="tabpanel"
@@ -51,24 +48,21 @@ function a11yProps(index: number) {
     };
 }
 
-interface Props {
-    lock: boolean;
-    show: boolean;
-    setLock: (lock: boolean) => void;
-}
-
-export function MainPanel(props: Props) {
+export function MainPanel() {
     const [value, setValue] = React.useState(0);
+    const [open, setOpen] = React.useState(false);
+    const [lock, setLock] = React.useState(false);
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
 
     function dispatchClickEvent(e: React.TouchEvent | React.MouseEvent) {
-        if (!props.lock) {
+        if (!lock) {
             return;
         }
         const canvas: HTMLCanvasElement = document.querySelector('#egret_player_container canvas')!;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const eventProperty: any = {};
         for (const k in e.nativeEvent) {
             eventProperty[k] = e.nativeEvent[k as keyof typeof e.nativeEvent];
@@ -81,83 +75,101 @@ export function MainPanel(props: Props) {
     }
 
     return (
-        <Fade in={props.show}>
-            <Backdrop
-                sx={{ zIndex: 2, bgcolor: 'rgba(0, 0, 0, 0.75)' }}
-                open={props.show}
-                onTouchCancel={dispatchClickEvent}
-                onTouchStart={dispatchClickEvent}
-                onTouchEnd={dispatchClickEvent}
-                onMouseUp={dispatchClickEvent}
-                onMouseDown={dispatchClickEvent}
+        <PanelStateContext.Provider
+            value={{
+                open,
+                setOpen,
+                lock,
+                setLock,
+            }}
+        >
+            <HexagonalButton
+                baseSize={32}
+                sx={{ top: '10vh', left: '6vw', position: 'absolute', zIndex: (theme) => theme.zIndex.appBar }}
+                onClick={() => {
+                    setOpen((preState) => !preState);
+                }}
             >
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        display: 'flex',
-                        left: 'calc(30vw / 2)',
-                        width: '70vw',
-                        height: '100%',
-                        overflowY: 'scroll',
-                        overflowX: 'hidden',
-                    }}
-                    onClick={(e) => {
-                        e.nativeEvent.stopPropagation();
-                    }}
+                <ElectricBolt />
+            </HexagonalButton>
+            <Fade in={open}>
+                <Backdrop
+                    sx={{ bgcolor: 'rgba(0, 0, 0, 0.75)', zIndex: (theme) => theme.zIndex.appBar - 1 }}
+                    open={open}
+                    onTouchCancel={dispatchClickEvent}
+                    onTouchStart={dispatchClickEvent}
+                    onTouchEnd={dispatchClickEvent}
+                    onMouseUp={dispatchClickEvent}
+                    onMouseDown={dispatchClickEvent}
                 >
                     <Box
                         sx={{
-                            minWidth: '155px',
-                            borderRight: 1,
-                            borderColor: 'rgba(255 255 255 / 12%)',
-                            paddingBlockStart: '10%',
+                            position: 'absolute',
+                            display: 'flex',
+                            left: 'calc(30vw / 2)',
+                            width: '70vw',
+                            height: '100%',
+                            overflowY: 'scroll',
+                            overflowX: 'hidden',
+                        }}
+                        onClick={(e) => {
+                            e.nativeEvent.stopPropagation();
                         }}
                     >
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Lock />
-                            <Switch
-                                checked={props.lock}
-                                onChange={(e, newValue) => {
-                                    props.setLock(newValue);
-                                }}
-                            />
+                        <Box
+                            sx={{
+                                minWidth: '155px',
+                                borderRight: 1,
+                                borderColor: 'rgba(255 255 255 / 12%)',
+                                paddingBlockStart: '10%',
+                            }}
+                        >
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <Lock />
+                                <Switch
+                                    checked={lock}
+                                    onChange={(e, newValue) => {
+                                        setLock(newValue);
+                                    }}
+                                />
+                            </Box>
+
+                            <Tabs
+                                orientation="vertical"
+                                value={value}
+                                onChange={handleChange}
+                                aria-label="SA Main Panel Tabs"
+                            >
+                                <Tab label="精灵背包" {...a11yProps(0)} />
+                                <Tab label="一键日常" {...a11yProps(1)} />
+                                <Tab label="常用数据速览" {...a11yProps(2)} />
+                                <Tab label="自动战斗管理器" {...a11yProps(3)} />
+                                <Tab label="抓包调试" {...a11yProps(4)} />
+                                <Tab label="快捷命令组" {...a11yProps(5)} />
+                            </Tabs>
                         </Box>
 
-                        <Tabs
-                            orientation="vertical"
-                            value={value}
-                            onChange={handleChange}
-                            aria-label="SA Main Panel Tabs"
-                        >
-                            <Tab label="精灵背包" {...a11yProps(0)} />
-                            <Tab label="一键日常" {...a11yProps(1)} />
-                            <Tab label="常用数据速览" {...a11yProps(2)} />
-                            <Tab label="自动战斗管理器" {...a11yProps(3)} />
-                            <Tab label="抓包调试" {...a11yProps(4)} />
-                            <Tab label="快捷命令组" {...a11yProps(5)} />
-                        </Tabs>
+                        <TabPanel value={value} index={0}>
+                            <GameController />
+                        </TabPanel>
+                        <TabPanel value={value} index={1}>
+                            <Realm />
+                        </TabPanel>
+                        <TabPanel value={value} index={2}>
+                            <CommonValue />
+                        </TabPanel>
+                        <TabPanel value={value} index={3}>
+                            <AutoBattle />
+                        </TabPanel>
+                        <TabPanel value={value} index={4}>
+                            <PackageCapture />
+                        </TabPanel>
+                        <TabPanel value={value} index={5}>
+                            <QuickCommand />
+                        </TabPanel>
                     </Box>
-
-                    <TabPanel value={value} index={0}>
-                        <GameController />
-                    </TabPanel>
-                    <TabPanel value={value} index={1}>
-                        <Realm />
-                    </TabPanel>
-                    <TabPanel value={value} index={2}>
-                        <CommonValue />
-                    </TabPanel>
-                    <TabPanel value={value} index={3}>
-                        <AutoBattle />
-                    </TabPanel>
-                    <TabPanel value={value} index={4}>
-                        <PackageCapture />
-                    </TabPanel>
-                    <TabPanel value={value} index={5}>
-                        <QuickCommand />
-                    </TabPanel>
-                </Box>
-            </Backdrop>
-        </Fade>
+                </Backdrop>
+            </Fade>
+        </PanelStateContext.Provider>
     );
 }

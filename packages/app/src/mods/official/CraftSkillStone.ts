@@ -1,4 +1,4 @@
-import { BaseMod } from '@sa-app/mod-manager/mod-type';
+import { BaseMod } from '@sa-app/ModManager/mod-type';
 import { Socket } from 'sa-core';
 
 const rate = [

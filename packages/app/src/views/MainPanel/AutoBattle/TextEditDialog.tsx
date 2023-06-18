@@ -1,22 +1,18 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
 
 import React from 'react';
+import { TextContext } from './AutoBattle';
 
 export interface TextEditDialogProps {
     open: boolean;
-    initialValue: string;
     onClose: (value: string) => void;
 }
 
-export function TextEditDialog({ open, initialValue, onClose }: TextEditDialogProps) {
-    const [value, setValue] = React.useState('');
+export function TextEditDialog({ open, onClose }: TextEditDialogProps) {
+    const { text, setText } = React.useContext(TextContext);
 
-    React.useEffect(() => {
-        setValue(initialValue);
-    }, [open, initialValue]);
-
-    const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValue(event.target.value);
+    const handleTextChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+        setText(event.target.value);
     };
 
     return (
@@ -24,14 +20,15 @@ export function TextEditDialog({ open, initialValue, onClose }: TextEditDialogPr
             open={open}
             onClose={(ev, reason) => {
                 if (reason === 'backdropClick') {
+                    setText('');
                     onClose('');
                 } else {
-                    onClose(value);
+                    onClose(text);
                 }
             }}
         >
             <DialogTitle>编辑</DialogTitle>
-            <DialogContent>
+            <DialogContent sx={{ minWidth: '25vw' }}>
                 <DialogContentText>以英文逗号分隔</DialogContentText>
                 <TextField
                     autoFocus
@@ -40,17 +37,11 @@ export function TextEditDialog({ open, initialValue, onClose }: TextEditDialogPr
                     fullWidth
                     variant="standard"
                     onChange={handleTextChange}
-                    value={value}
+                    value={text}
                 />
             </DialogContent>
             <DialogActions>
-                <Button
-                    onClick={() => {
-                        onClose(value);
-                    }}
-                >
-                    保存
-                </Button>
+                <Button onClick={() => onClose(text)}>保存</Button>
             </DialogActions>
         </Dialog>
     );

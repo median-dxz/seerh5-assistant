@@ -1,9 +1,10 @@
+import type { Dispatch, SetStateAction } from 'react';
 import React from 'react';
 export interface PanelState {
     open: boolean;
-    setOpen: (newValue: boolean) => void;
+    setOpen: Dispatch<SetStateAction<boolean>>;
     lock: boolean;
-    setLock: (newValue: boolean) => void;
+    setLock: Dispatch<SetStateAction<boolean>>;
 }
 
 export const PanelStateContext = React.createContext({} as PanelState);

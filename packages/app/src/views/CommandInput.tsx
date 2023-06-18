@@ -1,4 +1,4 @@
-import { Mods } from '@sa-app/mod-manager';
+import { Mods } from '@sa-app/ModManager';
 import React, { useEffect, useState } from 'react';
 import { SaAutocomplete } from '../components/styled/Autocomplete';
 import { SaTextField } from '../components/styled/TextField';

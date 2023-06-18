@@ -43,7 +43,7 @@ export function CommonValue() {
     const renderColumn: PanelColumnRender<Item> = React.useCallback(
         (item) => ({
             id: item.id,
-            icon: <img crossOrigin="anonymous" src={getItemIcon(item.id)} alt={item.name} width={48} />,
+            icon: <img crossOrigin="anonymous" src={getItemIcon(item.id)} alt={item.name} width={36} />,
             name: item.name,
             amount: item.limit ? (
                 <LabeledLinearProgress
