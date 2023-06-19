@@ -1,9 +1,11 @@
 import ElectricBolt from '@mui/icons-material/ElectricBolt';
 import Lock from '@mui/icons-material/Lock';
-import { Backdrop, Box, Fade, Switch, SxProps, Tab, Tabs } from '@mui/material';
+import { Backdrop, Box, Fade, Slide, Switch, SxProps, Tab, Tabs, type TabProps } from '@mui/material';
 import { HexagonalButton } from '@sa-app/components/styled/HexagonalButton';
 import { PanelStateContext } from '@sa-app/context/PanelState';
+import { saTheme } from '@sa-app/style';
 import * as React from 'react';
+import { TransitionGroup } from 'react-transition-group';
 import { AutoBattle } from './AutoBattle/AutoBattle';
 import { CommonValue } from './CommonValue';
 import { GameController } from './GameController';
@@ -15,6 +17,12 @@ interface TabPanelProps {
     children?: React.ReactNode;
     index: number;
     value: number;
+    onClick?: React.MouseEventHandler<HTMLDivElement>;
+}
+
+enum TabLayer {
+    Main,
+    Level,
 }
 
 function TabPanel(props: TabPanelProps & { sx?: SxProps }) {
@@ -52,6 +60,8 @@ export function MainPanel() {
     const [value, setValue] = React.useState(0);
     const [open, setOpen] = React.useState(false);
     const [lock, setLock] = React.useState(false);
+    const containerRef = React.useRef<HTMLDivElement>(null);
+    const [layer, setLayer] = React.useState(TabLayer.Main);
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
@@ -72,6 +82,71 @@ export function MainPanel() {
         } else if (e.nativeEvent instanceof TouchEvent) {
             canvas.dispatchEvent(new TouchEvent(e.type, eventProperty));
         }
+    }
+
+    let tabGroup: React.ReactElement<TabProps> = <Tabs />;
+
+    const panelLayer = {
+        [TabLayer.Main]: [
+            <GameController />,
+            undefined,
+            <CommonValue />,
+            <PackageCapture />,
+            <AutoBattle />,
+            <QuickCommand />,
+        ],
+        [TabLayer.Level]: [undefined, <Realm />, <Realm />, <Realm />],
+    };
+
+    switch (layer) {
+        case TabLayer.Main:
+            tabGroup = (
+                <Tabs
+                    orientation="vertical"
+                    sx={{ position: 'absolute', left: 0, top: 0, minWidth: '100%' }}
+                    value={value}
+                    onChange={handleChange}
+                >
+                    <Tab label="精灵背包" {...a11yProps(0)} />
+                    <Tab
+                        label="一键日常"
+                        {...a11yProps(1)}
+                        onClick={() => {
+                            setLayer(TabLayer.Level);
+                            setValue(1);
+                        }}
+                    />
+                    <Tab label="常用数据速览" {...a11yProps(2)} />
+                    <Tab label="自动战斗管理器" {...a11yProps(3)} />
+                    <Tab label="抓包调试" {...a11yProps(4)} />
+                    <Tab label="快捷命令组" {...a11yProps(5)} />
+                </Tabs>
+            );
+            break;
+        case TabLayer.Level:
+            tabGroup = (
+                <Tabs
+                    orientation="vertical"
+                    sx={{ position: 'absolute', left: 0, top: 0, minWidth: '100%' }}
+                    value={value}
+                    onChange={handleChange}
+                >
+                    <Tab
+                        label="返回"
+                        {...a11yProps(0)}
+                        onClick={() => {
+                            setLayer(TabLayer.Main);
+                            setValue(0);
+                        }}
+                    />
+                    <Tab label="日任" {...a11yProps(1)} />
+                    <Tab label="精灵因子" {...a11yProps(2)} />
+                    <Tab label="spt" {...a11yProps(3)} />
+                </Tabs>
+            );
+            break;
+        default:
+            break;
     }
 
     return (
@@ -118,11 +193,15 @@ export function MainPanel() {
                     >
                         <Box
                             sx={{
+                                width: '155px',
                                 minWidth: '155px',
                                 borderRight: 1,
                                 borderColor: 'rgba(255 255 255 / 12%)',
                                 paddingBlockStart: '10%',
+                                display: 'flex',
+                                flexDirection: 'column',
                             }}
+                            ref={containerRef}
                         >
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 <Lock />
@@ -133,40 +212,38 @@ export function MainPanel() {
                                     }}
                                 />
                             </Box>
-
-                            <Tabs
-                                orientation="vertical"
-                                value={value}
-                                onChange={handleChange}
-                                aria-label="SA Main Panel Tabs"
+                            <Box
+                                id="tabs-group"
+                                sx={{
+                                    overflowX: 'hidden',
+                                    position: 'relative',
+                                    height: '100%',
+                                    width: '100%',
+                                }}
                             >
-                                <Tab label="精灵背包" {...a11yProps(0)} />
-                                <Tab label="一键日常" {...a11yProps(1)} />
-                                <Tab label="常用数据速览" {...a11yProps(2)} />
-                                <Tab label="自动战斗管理器" {...a11yProps(3)} />
-                                <Tab label="抓包调试" {...a11yProps(4)} />
-                                <Tab label="快捷命令组" {...a11yProps(5)} />
-                            </Tabs>
+                                <TransitionGroup component={null}>
+                                    <Slide
+                                        timeout={600}
+                                        container={containerRef.current}
+                                        direction={layer === TabLayer.Main ? 'left' : 'right'}
+                                        appear={false}
+                                        easing={{
+                                            enter: saTheme.transitions.easing.easeOut,
+                                            exit: saTheme.transitions.easing.easeIn,
+                                        }}
+                                        key={layer}
+                                    >
+                                        {tabGroup}
+                                    </Slide>
+                                </TransitionGroup>
+                            </Box>
                         </Box>
 
-                        <TabPanel value={value} index={0}>
-                            <GameController />
-                        </TabPanel>
-                        <TabPanel value={value} index={1}>
-                            <Realm />
-                        </TabPanel>
-                        <TabPanel value={value} index={2}>
-                            <CommonValue />
-                        </TabPanel>
-                        <TabPanel value={value} index={3}>
-                            <AutoBattle />
-                        </TabPanel>
-                        <TabPanel value={value} index={4}>
-                            <PackageCapture />
-                        </TabPanel>
-                        <TabPanel value={value} index={5}>
-                            <QuickCommand />
-                        </TabPanel>
+                        {panelLayer[layer].map((panel, index) => (
+                            <TabPanel key={`${layer}-${index}`} value={value} index={index}>
+                                {panel}
+                            </TabPanel>
+                        ))}
                     </Box>
                 </Backdrop>
             </Fade>
