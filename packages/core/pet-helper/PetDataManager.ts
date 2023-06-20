@@ -70,17 +70,15 @@ class DataManager {
             SocketListener.on({
                 cmd: CommandID.PET_RELEASE,
                 req: (bytes) => {
-                    this.cache.delete(bytes[0] as number);
+                    const [ct, _opt] = bytes as [number, number];
+                    this.cache.delete(ct);
                     this.miniInfo.deactivate();
                     this.bag.deactivate();
                 },
                 res: (data) => {
-                    if (data.flag) {
-                        PetManager.setDefault(data.firstPetTime);
-                        this.defaultCt = data.firstPetTime;
-                    } else {
-                        this.defaultCt = -1;
-                    }
+                    // flag: 为假代表从背包移仓库, 仅此而已
+                    PetManager._setDefault(data.firstPetTime);
+                    this.defaultCt = data.firstPetTime;
                 },
             });
 
@@ -167,7 +165,7 @@ export class ProxyPet extends Pet {
     async location(): Promise<SAPetLocation> {
         const allInfo = await ins.miniInfo.get();
         const bagPet = await ins.bag.get();
-        if (this.catchTime === ins.defaultCt) {
+        if (this.catchTime === ins.defaultCt && bagPet[0].length > 0) {
             return SAPetLocation.Default;
         }
         if (bagPet[0].find((pet) => pet.catchTime === this.catchTime)) {

@@ -65,16 +65,16 @@ export const SocketListener = {
         });
     },
 
-    onRes(cmd: number, bytes?: egret.ByteArray) {
+    onRes(cmd: number, resBytes?: egret.ByteArray) {
         if (!this.handlers.has(cmd)) {
             return;
         }
 
         let data: unknown = null;
 
-        if (this.builders.has(cmd) && bytes) {
+        if (this.builders.has(cmd) && resBytes) {
             const builder = this.builders.get(cmd)!;
-            const buf = bytes.rawBuffer;
+            const buf = resBytes.rawBuffer;
 
             data = builder(buf);
         }

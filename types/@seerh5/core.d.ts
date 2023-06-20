@@ -289,6 +289,7 @@ declare class PetManager {
     static addLovePet(arg0: number, catchTime: number, arg2: number): void;
     static noAlarmCureAll(): void;
     static setDefault(catchTime: number): void;
+    static _setDefault(catchTime: number): void;
     static equipSkin(catchTime: number, skinId: number, callback: Callback): PromiseLike<void>;
     static dispatchEvent(e: PetEvent): void;
     static isBagFull: boolean;
