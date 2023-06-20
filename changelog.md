@@ -87,7 +87,9 @@ Backend:
 
 Core:
 
-v0.4.6: 修复`PetDataManager`中不正确的缓存逻辑
+v0.4.6: 
+- fix: `PetDataManager`: 不正确的缓存逻辑
+- fix: `PetDataManager`: 不正确的首发位置判断
 
 App:
 
