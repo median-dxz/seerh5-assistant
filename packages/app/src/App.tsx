@@ -9,13 +9,14 @@ import * as SALocalStorage from '@sa-app/utils/hooks/SALocalStorage';
 
 import { saTheme } from '@sa-app/style';
 
-import { CommandBar } from './views/CommandBar';
+import { CommandBar } from './CommandBar';
 import { MainPanel } from './views/MainPanel';
 
 import { Hook, NULL, resolveStrategy } from 'sa-core';
 import { SAEventBus } from 'sa-core/event-bus';
 
-import { QuickAccess } from './views/QuickAccess';
+import { SAModManager } from './ModManager';
+import { QuickAccess } from './QuickAccess';
 
 const battleStrategyStorage = SALocalStorage.BattleStrategy;
 const eventBus = new SAEventBus();
@@ -61,10 +62,23 @@ export default function SaApp() {
             toggleFighting(false);
         });
 
-        return () => {
-            document.body.removeEventListener('keydown', handleShortCut);
+        let active = true;
+        SAModManager.fetchMods().then((mods) => {
+            if (active) {
+                SAModManager.setup(mods);
+            }
+        });
+
+        const clean = () => {
+            active = false;
+            SAModManager.teardown();
             eventBus.unmount();
+            document.body.removeEventListener('keydown', handleShortCut);
         };
+
+        window.addEventListener('unload', clean);
+
+        return clean;
     }, [handleBattleRoundEnd]);
 
     return (

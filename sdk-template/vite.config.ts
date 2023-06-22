@@ -5,12 +5,19 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
     build: {
+        sourcemap: true,
         lib: {
             // Could also be a dictionary or array of multiple entry points
-            entry: resolve(__dirname, 'src/index.ts'),
+            entry: [
+                resolve(__dirname, 'src/module/PetBag.ts'),
+                resolve(__dirname, 'src/module/TeamTechCenter.ts'),
+                resolve(__dirname, 'src/sign/sign.ts'),
+                resolve(__dirname, 'src/LocalPetSkin.ts'),
+            ],
             formats: ['es'],
-            // the proper extensions will be added
-            fileName: 'my-lib',
+            fileName: (format, entry) => {
+                return entry + '.js';
+            },
         },
         rollupOptions: {
             external: ['sa-core'],

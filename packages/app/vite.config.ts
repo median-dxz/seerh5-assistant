@@ -20,6 +20,11 @@ export default defineConfig(({ command, mode }) => {
                 ignored: ['!**/node_modules/sa-core/**'],
             },
         },
+        build: {
+            dynamicImportVarsOptions: {
+                exclude: ['src/ModManager/*'],
+            },
+        },
         optimizeDeps: {
             exclude: ['sa-core'],
         },

@@ -1,0 +1,1 @@
+cp -r dist/* ../packages/app/backend/mods/official_presets/

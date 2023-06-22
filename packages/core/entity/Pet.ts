@@ -19,6 +19,7 @@ export class Pet extends EntityBase implements IPetObject {
     static readonly instanceKey = 'catchTime';
     readonly skills: Skill[];
     readonly catchTime: number;
+    readonly level: number;
     readonly dv: number;
     readonly element: PetElement;
     readonly nature: number;
@@ -31,12 +32,13 @@ export class Pet extends EntityBase implements IPetObject {
     constructor(obj: SAType.PetLike) {
         super();
         this.__type = 'Pet';
-        
+
         if (testPetInfoType(obj)) {
             [
                 this.id,
                 this.name,
                 this.catchTime,
+                this.level,
                 this.dv,
                 this.element,
                 this.nature,
@@ -48,6 +50,7 @@ export class Pet extends EntityBase implements IPetObject {
                 obj.id,
                 obj.name,
                 obj.catchTime,
+                obj.level,
                 obj.dv,
                 PetElement.formatById(PetXMLInfo.getType(obj.id)),
                 obj.nature,

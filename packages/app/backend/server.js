@@ -2,13 +2,19 @@ import express from 'express';
 import path from 'path';
 
 import { fileURLToPath } from 'url';
+
+import bodyParser from 'body-parser';
+
 import { saDataProvider } from './sa.dataProvider.js';
+import { saModsProvider } from './sa.modsProvider.js';
 import { saProxyAssets, saProxyLogin } from './sa.proxy.js';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function createServer() {
     const app = express();
+
+    app.use(bodyParser.json());
 
     app.use((req, res, next) => {
         console.log(`[info]: sa-app: ${req.url}`);
@@ -17,7 +23,6 @@ async function createServer() {
     });
 
     app.use('/worker', express.static(path.join(dirname, 'worker'), { cacheControl: false }));
-    app.use('/strategy', express.static(path.join(dirname, 'data/strategy'), { cacheControl: false }));
 
     app.use(['/seerh5.61.com', '/resource'], saProxyAssets);
 
@@ -50,6 +55,8 @@ async function createServer() {
     app.use('/api/login', saProxyLogin);
 
     app.use('/api/data', saDataProvider);
+    app.use('/api/mods', saModsProvider);
+    app.use('/api/mods', express.static(path.join(dirname, 'mods'), { cacheControl: false }));
 
     app.get('/api/14year', (req, res) => {
         const PHPSESSID = req.query['PHPSESSID'];

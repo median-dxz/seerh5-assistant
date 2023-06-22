@@ -67,6 +67,7 @@ declare class PetInfo {
     id: number;
     name: string;
     catchTime: number;
+    level: number;
     dv: number;
     nature: number;
     hideSKill: PetSkillInfo;

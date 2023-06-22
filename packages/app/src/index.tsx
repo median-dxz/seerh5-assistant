@@ -2,8 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import * as core from 'sa-core';
 import './index.css';
-import { registerAllMod } from './utils/registerMods';
-import { dataProvider } from './utils/saDataProvider';
+import { dataProvider } from './utils/SADataProvider';
 
 const container = document.getElementById('sa-app')!;
 const root = ReactDOM.createRoot(container);
@@ -23,8 +22,6 @@ const renderApp = async () => {
             <SaMain />
         </React.StrictMode>
     );
-
-    await registerAllMod();
 };
 
 if ('serviceWorker' in navigator) {
