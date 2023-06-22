@@ -298,25 +298,6 @@ const options: Option[] = [
             battleStrategy['潘蒂表必先'],
         ],
     },
-    {
-        difficulty: Difficulty.Ease,
-        sweep: false,
-        id: 79,
-        strategy: [
-            battleStrategy['圣谱单挑'],
-            battleStrategy['圣谱单挑'],
-            battleStrategy['圣谱单挑'],
-            battleStrategy['圣谱单挑'],
-            battleStrategy['潘蒂表必先'],
-        ],
-    },
-    // 卡莎
-    {
-        difficulty: Difficulty.Normal,
-        sweep: true,
-        id: 90,
-        strategy: [],
-    },
     // 格斯塔斯
     {
         difficulty: Difficulty.Ease,
