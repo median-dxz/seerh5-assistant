@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import * as core from 'sa-core';
 import './index.css';
+import { dataProvider } from './utils/SADataProvider';
 import { registerAllMod } from './utils/registerMods';
-import { dataProvider } from './utils/saDataProvider';
 
 const container = document.getElementById('sa-app')!;
 const root = ReactDOM.createRoot(container);
