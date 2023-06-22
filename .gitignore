@@ -1,15 +1,8 @@
 node_modules
 dist
-archive
 .tsbuildinfo/
 .vscode/
 
 .env.local
 
 docs/**
-
-packages/app/dev-dist/
-
-**/backend/data/*.json
-**/backend/entry/official.js
-!**/backend/data/example.json

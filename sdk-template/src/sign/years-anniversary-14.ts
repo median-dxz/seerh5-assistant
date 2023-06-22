@@ -16,6 +16,10 @@ class YearsAnniversary14 implements SAMod.ISignMod<Config> {
         description: '14周年庆签到',
     };
 
+    defaultConfig?: Config = {
+        signCookie: '',
+        userId: '',
+    };
     config?: Config;
 
     subDaysWY = dayjs().diff(dayjs('2023-06-01'), 'd');

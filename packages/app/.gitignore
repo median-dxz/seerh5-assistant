@@ -1,0 +1,6 @@
+dev-dist
+
+backend/mods/**/*
+backend/data/*.json
+backend/entry/official.js
+!backend/data/example.json
