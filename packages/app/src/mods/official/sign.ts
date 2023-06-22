@@ -1,5 +1,5 @@
 import { BaseMod } from '@sa-app/ModManager/mod-type';
-import { intervalToDuration } from 'date-fns';
+import dayjs from 'dayjs';
 import {
     ItemId,
     PetPosition,
@@ -128,11 +128,8 @@ class sign extends BaseMod {
         log(await rText.json());
 
         {
-            const interval = intervalToDuration({
-                start: new Date(2023, 5, 1),
-                end: Date.now(),
-            });
-            const subDays = interval.days!;
+            const interval = dayjs().diff('2023-06-01', 'd');
+            const subDays = interval;
             const signBits = await Socket.multiValue(121581, 121582);
             if (subDays >= 32) {
                 curTimes = signBits[1] & (1 << (subDays - 32));
@@ -145,11 +142,8 @@ class sign extends BaseMod {
         }
 
         {
-            const interval = intervalToDuration({
-                start: new Date(2023, 5, 8),
-                end: Date.now(),
-            });
-            const subDays = interval.days!;
+            const interval = dayjs().diff('2023-06-08', 'd');
+            const subDays = interval;
             const signBits = await Socket.multiValue(121583);
             if (subDays >= 32) {
                 curTimes = signBits[1] & (1 << (subDays - 32));
