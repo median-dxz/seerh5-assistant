@@ -1,7 +1,7 @@
 import { injectModConfig } from '@sa-app/utils/SADataProvider';
 import { SaModuleLogger, defaultStyle } from 'sa-core';
 import { GameModuleListener } from 'sa-core/event-bus';
-import { BaseMod, ModuleMod, SAModType } from './type';
+import { BaseMod, ModuleMod, SAModType, SignModExport } from './type';
 
 const log = SaModuleLogger('SAModManager', defaultStyle.mod);
 
@@ -56,8 +56,18 @@ export const SAModManager = {
                     }
                     break;
                 case SAModType.SIGN_MOD:
-                    if (mod.defaultConfig) {
-                        mod.config = injectModConfig(modNamespace, mod.defaultConfig);
+                    {
+                        const signMod = mod as BaseMod & { export: Record<string, SignModExport> };
+                        if (signMod.defaultConfig) {
+                            signMod.config = injectModConfig(modNamespace, signMod.defaultConfig);
+                        }
+                        // 对导出进行this绑定
+                        Object.entries(signMod.export).forEach(([key, { run, check }]) => {
+                            signMod.export[key] = {
+                                check: check.bind(signMod),
+                                run: run.bind(signMod),
+                            };
+                        });
                     }
                     break;
                 case SAModType.LEVEL_MOD:
@@ -70,6 +80,7 @@ export const SAModManager = {
                     break;
             }
             mod.logger = SaModuleLogger(modNamespace, defaultStyle.mod);
+            mod.namespace = modNamespace;
 
             ModStore.set(modNamespace, mod);
 

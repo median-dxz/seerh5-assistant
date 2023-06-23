@@ -52,6 +52,8 @@ createLocalStorageProxy api进入废弃倒计时
 issues:
 
 - [ ] 关闭面板导致的看板娘消失问题
+  - [ ] 注意到新技能面板同样会导致使用物品界面的立绘消失
+  - [ ] 猜测是新技能面板的style设置不正确
 - [x] 战队派遣模块的bug(重复刷新)
 - [x] 更新背包精灵发包后无响应的bug(cache await update一直不resolve)(hmr?)
   - 在两个缓存逻辑修复之后暂未发生过

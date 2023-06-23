@@ -9,7 +9,7 @@ const MULTI_QUERY = {
     许愿签到: 201345,
 } as const;
 
-class Daily implements SAMod.ISignMod<null> {
+class Daily implements SAMod.ISignMod {
     declare logger: typeof console.log;
 
     meta: SAMod.MetaData = {
@@ -21,14 +21,14 @@ class Daily implements SAMod.ISignMod<null> {
 
     export: Record<string, SAMod.SignModExport> = {
         刻印抽奖: {
-            check: async () => {
+            async check() {
                 const times = (await Socket.multiValue(MULTI_QUERY.刻印抽奖次数))[0];
                 return Number(!times);
             },
             run: () => Socket.sendByQueue(46301, [1, 0]),
         },
         许愿: {
-            check: async () => {
+            async check() {
                 let times = (await Socket.multiValue(MULTI_QUERY.登录时长))[0];
                 times =
                     times +
@@ -66,13 +66,13 @@ class Daily implements SAMod.ISignMod<null> {
             run: () => Socket.sendByQueue(45801, [2, 1]),
         },
         许愿签到: {
-            check: async () => {
+            async check() {
                 const times = (await Socket.multiValue(MULTI_QUERY.许愿签到))[0];
                 return Number(!times);
             },
-            run: async () => {
+            async run() {
                 const day = (await Socket.multiValue(MULTI_QUERY.许愿签到天数))[0];
-                Socket.sendByQueue(45801, [day, 1]);
+                Socket.sendByQueue(45801, [day + 1, 1]);
             },
         },
     };

@@ -1,4 +1,4 @@
-import { AnyFunction, type GameModuleEventHandler } from 'sa-core';
+import { type GameModuleEventHandler } from 'sa-core';
 
 export enum SAModType {
     BASE_MOD = 'base',
@@ -7,7 +7,7 @@ export enum SAModType {
     LEVEL_MOD = 'level',
     BATTLE_MOD = 'battle',
     STRATEGY = 'strategy',
-    QUICK_ACCESS_PLUGIN = 'quick_access_plugin',
+    QUICK_ACCESS_PLUGIN = 'quick-access-plugin',
 }
 
 export type MetaData = {
@@ -19,12 +19,13 @@ export type MetaData = {
 
 export class BaseMod {
     meta: MetaData;
+    namespace: string;
     defaultConfig?: unknown;
     config?: unknown;
     logger: typeof console.log;
     activate?(): void;
     deactivate?(): void;
-    export?: Record<string, AnyFunction>;
+    export?: Record<string, unknown>;
 }
 
 export class ModuleMod extends BaseMod {
@@ -47,4 +48,18 @@ export class ModuleMod extends BaseMod {
     deactivate() {
         // inject by ModManager
     }
+}
+
+export interface SignModExport {
+    check(): Promise<number>;
+    run(): void;
+}
+
+export class QuickAccessPlugin extends BaseMod {
+    icon: string;
+    click(): void {
+        // for declare
+    }
+    show?(): string;
+    showAsync?(): Promise<string>;
 }

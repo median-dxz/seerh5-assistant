@@ -1,10 +1,14 @@
-import { Operator } from 'sa-core/battle';
+import Icon from './all_inclusive.svg';
 
-export default {
-    run() {
-        FightManager.fightNoMapBoss(2237);
-    },
-    lower() {
-        return Operator.auto();
-    },
-};
+export default class FightPuni implements SAMod.IQuickAccessPlugin {
+    logger: typeof console.log;
+    meta: SAMod.MetaData = {
+        id: '对战谱尼',
+        author: 'median',
+        type: 'quick-access-plugin',
+    };
+    icon = Icon;
+    click() {
+        FightManager.fightNoMapBoss(6730);
+    }
+}

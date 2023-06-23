@@ -18,10 +18,10 @@ class TeamDispatch implements SAMod.ISignMod<Config> {
     defaultConfig: Config = { ignorePets: [] };
     config: Config;
 
-    export: Record<string, SAMod.SignModExport> = {
+    export: Record<string, SAMod.SignModExport<typeof this>> = {
         战队派遣: {
             check: () => Promise.resolve(1),
-            run: async () => {
+            async run() {
                 await Socket.sendByQueue(45809, [0]).catch(() => this.logger('没有可收取的派遣'));
                 const ignorePetNames = new Set(this.config.ignorePets);
                 const PosType = PetPosition;

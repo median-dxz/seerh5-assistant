@@ -1,9 +1,9 @@
 // @ts-check
+/// <reference types="vite/client" />
+
 type SALevelInfo = import('sa-core').SALevelInfo;
 type SALevelData = import('sa-core').SALevelData;
-
 type ILevelRunner<D extends SALevelData, I extends SALevelInfo> = import('sa-core').ILevelRunner<D, I>;
-
 type MoveStrategy = import('sa-core').MoveStrategy;
 
 declare namespace SAMod {
@@ -27,15 +27,15 @@ declare namespace SAMod {
         deactivate?(): void;
     }
 
-    interface SignModExport {
-        check: () => Promise<number>;
-        run: () => void;
+    interface SignModExport<T = undefined> {
+        check: (this: T) => Promise<number>;
+        run: (this: T) => void;
     }
 
-    interface ISignMod<T> extends Mod {
+    interface ISignMod<T = undefined> extends Mod {
         defaultConfig?: T;
         config?: T;
-        export: Record<string, SignModExport>;
+        export: Record<string, SignModExport<typeof this>>;
     }
 
     interface ILevelMod<TOption extends object, TData extends SALevelData, TInfo extends SALevelInfo>

@@ -27,7 +27,7 @@ class Team implements SAMod.ISignMod<Config> {
     defaultConfig: Config = { exchangeId: EXCHANGE_LIST.战队道具.不灭能量珠 };
     config: Config;
 
-    export: Record<string, SAMod.SignModExport> = {
+    export: Record<string, SAMod.SignModExport<typeof this>> = {
         生产资源: {
             check: async () => {
                 const times = (await Socket.multiValue(MULTI_QUERY.资源生产次数))[0];

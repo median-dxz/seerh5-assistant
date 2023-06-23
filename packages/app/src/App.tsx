@@ -25,6 +25,7 @@ export default function SaApp() {
     const [isCommandBarOpen, toggleCommandBar] = useState(false);
     const [isFighting, toggleFighting] = useState(false);
     const [battleAuto, setBattleAuto] = useState(false);
+    const [isSetup, setSetup] = useState(false);
 
     const handleShortCut = (e: KeyboardEvent) => {
         if (e.key === 'p' && e.ctrlKey) {
@@ -66,6 +67,7 @@ export default function SaApp() {
         SAModManager.fetchMods().then((mods) => {
             if (active) {
                 SAModManager.setup(mods);
+                setSetup(true);
             }
         });
 
@@ -93,7 +95,7 @@ export default function SaApp() {
             >
                 <CssBaseline />
 
-                {!isFighting && <QuickAccess />}
+                {!isFighting && isSetup && <QuickAccess />}
                 <CommandBar open={isCommandBarOpen} />
                 <MainPanel />
             </SAContext.Provider>
