@@ -1,7 +1,7 @@
 import { injectModConfig } from '@sa-app/utils/SADataProvider';
 import { SaModuleLogger, defaultStyle } from 'sa-core';
 import { GameModuleListener } from 'sa-core/event-bus';
-import { BaseMod, ModuleMod, SAModType, SignModExport } from './type';
+import { BaseMod, ModuleMod, QuickAccessPlugin, SAModType, SignModExport } from './type';
 
 const log = SaModuleLogger('SAModManager', defaultStyle.mod);
 
@@ -77,6 +77,13 @@ export const SAModManager = {
                 case SAModType.STRATEGY:
                     break;
                 case SAModType.QUICK_ACCESS_PLUGIN:
+                    {
+                        // this 绑定
+                        const plugin = mod as QuickAccessPlugin;
+                        plugin.click = plugin.click.bind(plugin);
+                        plugin.show && (plugin.show = plugin.show.bind(plugin));
+                        plugin.showAsync && (plugin.showAsync = plugin.showAsync.bind(plugin));
+                    }
                     break;
             }
             mod.logger = SaModuleLogger(modNamespace, defaultStyle.mod);

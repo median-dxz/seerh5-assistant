@@ -12,7 +12,7 @@ export default defineConfig({
                 resolve(__dirname, 'src/module/PetBag.ts'),
                 resolve(__dirname, 'src/module/TeamTechCenter.ts'),
                 resolve(__dirname, 'src/quick-access-plugin/FightPuni.ts'),
-                // resolve(__dirname, 'src/quick-access-plugin/ToggleAutoCure.ts'),
+                resolve(__dirname, 'src/quick-access-plugin/ToggleAutoCure.ts'),
                 resolve(__dirname, 'src/sign/sign.ts'),
                 resolve(__dirname, 'src/LocalPetSkin.ts'),
             ],

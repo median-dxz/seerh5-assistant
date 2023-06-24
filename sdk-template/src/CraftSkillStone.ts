@@ -12,14 +12,7 @@ function calcProbability(level: number, targetLevel: number) {
     return rate[level][targetLevel];
 }
 
-class CraftSkillStone extends BaseMod {
-    stones: {
-        name: string;
-        level: number;
-        id: number;
-        num: number;
-    }[] = [];
-
+class CraftSkillStone implements SAMod.IBaseMod {
     craftDreamGem(id: number, left: number) {
         const total = ItemManager.getNumByID(id);
         const { 低阶梦幻宝石, 中阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石, 高阶梦幻宝石 } = ItemId;
@@ -49,25 +42,31 @@ class CraftSkillStone extends BaseMod {
             }
         }
     }
-    async init() {
+
+    async craftOne() {
+        let stones: {
+            name: string;
+            level: number;
+            id: number;
+            num: number;
+        };
+        [] = [];
         await Socket.sendWithReceivedPromise(4475, () => {
             ItemManager.getSkillStone();
         });
         const stoneInfos = ItemManager.getSkillStoneInfos();
-        this.stones = [];
+        stones = [];
         stoneInfos.forEach((stone) => {
             const stoneName = ItemXMLInfo.getName(stone.itemID);
-            this.stones.push({
+            stones.push({
                 name: stoneName.replace('系技能', ''),
                 level: ItemXMLInfo.getSkillStoneRank(stone.itemID) - 1,
                 id: stone.itemID,
                 num: stone.itemNum,
             });
         });
-        this.stones.sort((a, b) => a.level - b.level);
-    }
+        stones.sort((a, b) => a.level - b.level);
 
-    async craftOne() {
         const toCraft: {
             name: string;
             level: number;
@@ -81,8 +80,8 @@ class CraftSkillStone extends BaseMod {
             return Math.min(baseRate + 10, 100);
         };
 
-        for (let i = 0; i < this.stones.length && toCraft.length < 4; i++) {
-            const stone = this.stones[i];
+        for (let i = 0; i < stones.length && toCraft.length < 4; i++) {
+            const stone = stones[i];
             if (stone.num > 2 || stone.level > 0) {
                 toCraft.push(stone);
             }
@@ -95,7 +94,7 @@ class CraftSkillStone extends BaseMod {
             CommandID.SKILL_STONE_COMPOSE_ITEM,
             toCraft.map((v) => v.id)
         );
-        await this.init();
+        // await this.init();
     }
 
     meta = { description: '', id: 'CraftSkillStone' };
