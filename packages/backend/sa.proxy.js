@@ -17,7 +17,6 @@ export const saProxyAssets = createProxyMiddleware({
         proxyRes: (proxyRes, req, res) => {
             /** @type {Buffer[]} */
             const chunks = [];
-            res.setHeader('Date', new Date().toUTCString());
             proxyRes.on('data', (chunk) => chunks.push(chunk));
             proxyRes.on('end', async () => {
                 const rawBuf = Buffer.concat(chunks);
@@ -31,7 +30,7 @@ export const saProxyAssets = createProxyMiddleware({
                     res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
                     res.end('var Sentry = {init: ()=>{}, configureScope: ()=>{}}');
                 } else {
-                    res.writeHead(proxyRes.statusCode, proxyRes.headers);
+                    res.writeHead(proxyRes.statusCode, { ...proxyRes.headers, date: new Date().toUTCString() });
                     res.end(rawBuf);
                 }
             });
