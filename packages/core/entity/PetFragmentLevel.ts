@@ -24,11 +24,11 @@ export interface IPetFragmentLevelObject {
         progress: number;
     };
 
-    pieces: {
-        ease: number;
-        normal: number;
-        hard: number;
-    };
+    // pieces: {
+    //     ease: number;
+    //     normal: number;
+    //     hard: number;
+    // };
 }
 
 export class PetFragmentLevel extends EntityBase implements IPetFragmentLevelObject {
@@ -45,17 +45,19 @@ export class PetFragmentLevel extends EntityBase implements IPetFragmentLevelObj
         progress: number;
     };
     level: { ease: IPFLevelBoss[]; normal: IPFLevelBoss[]; hard: IPFLevelBoss[] };
-    pieces: {
+
+    // TODO: 还未实现查询关卡获取的因子数量
+    pieces?: {
         ease: number;
         normal: number;
         hard: number;
     };
 
-    isChallenge: boolean;
-    curDifficulty: PetFragmentLevelDifficulty;
-    leftChallengeTimes: number;
-    failedTimes: number;
-    curPosition: number;
+    isChallenge?: boolean;
+    curDifficulty?: PetFragmentLevelDifficulty;
+    leftChallengeTimes?: number;
+    failedTimes?: number;
+    curPosition?: number;
 
     constructor(obj: SAType.PetFragmentLevelObj) {
         super();

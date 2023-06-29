@@ -13,22 +13,22 @@ export const saProxyAssets = createProxyMiddleware({
     headers: {
         Referer: 'http://seerh5.61.com/',
     },
-    pathRewrite: function (path, req) {
-        return path.replace('/seerh5.61.com', '/');
-    },
     on: {
         proxyRes: (proxyRes, req, res) => {
             /** @type {Buffer[]} */
             const chunks = [];
+            res.setHeader('Date', new Date().toUTCString());
             proxyRes.on('data', (chunk) => chunks.push(chunk));
             proxyRes.on('end', async () => {
                 const rawBuf = Buffer.concat(chunks);
                 if (req.url.includes('resource/app/entry/entry.js')) {
+                    res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
                     const body = zlib.gunzipSync(rawBuf);
                     writeFileSync(path.join(dirname, 'entry', 'official.js'), body.toString());
                     const data = readFileSync(path.join(dirname, 'entry', 'assistant.js'));
                     res.end(data);
                 } else if (req.url.includes('sentry.js')) {
+                    res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
                     res.end('var Sentry = {init: ()=>{}, configureScope: ()=>{}}');
                 } else {
                     res.writeHead(proxyRes.statusCode, proxyRes.headers);

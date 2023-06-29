@@ -1,0 +1,25 @@
+{
+    "name": "seerh5-assistant-backend",
+    "private": true,
+    "type": "module",
+    "version": "0.5.1",
+    "license": "AGPL-3.0-or-later",
+    "main": "./index.js",
+    "scripts": {
+        "serve": "nodemon ./index.js"
+    },
+    "dependencies": {
+        "body-parser": "^1.20.2",
+        "express": "^4.18.2",
+        "http-proxy-middleware": "^3.0.0-beta.1"
+    },
+    "devDependencies": {
+        "@types/express": "^4.17.17",
+        "nodemon": "^2.0.22"
+    },
+    "nodemonConfig": {
+        "watch": [
+            "backend/*.js"
+        ]
+    }
+}

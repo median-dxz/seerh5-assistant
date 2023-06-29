@@ -19,7 +19,7 @@ export class SALevelManager {
     }
 
     runner: ILevelRunner | null = null;
-    locker: Promise<boolean> | null;
+    locker: Promise<boolean> | null = null;
 
     get running() {
         return this.runner !== null;

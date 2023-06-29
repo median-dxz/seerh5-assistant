@@ -7,6 +7,8 @@ export async function CoreLoader() {
     return new Promise<boolean>((resolve) => {
         const sa_wait_login = () => {
             enableBasic();
+            // eslint-disable-next-line
+            Core.init();
             EventManager.addEventListener('event_first_show_main_panel', sa_core_init, null);
         };
 

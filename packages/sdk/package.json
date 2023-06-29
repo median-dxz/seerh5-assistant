@@ -1,5 +1,5 @@
 {
-    "name": "@sa-app-mod/presets-official",
+    "name": "@sa-mod/presets-official",
     "private": true,
     "type": "module",
     "version": "1.0.0",
@@ -8,7 +8,7 @@
         ".": "./dist/index.js"
     },
     "scripts": {
-        "build": "vite build",
+        "build": "vite build && copy.sh",
         "watch:tsc": "tsc --watch --noEmit"
     },
     "devDependencies": {

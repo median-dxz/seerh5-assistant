@@ -12,8 +12,8 @@ export default defineConfig(({ command, mode }) => {
         server: {
             port: 1234,
             proxy: {
-                '/resource': `http://localhost:${env['VITE_BACKEND_PORT']}/resource`,
-                '/seerh5.61.com': `http://localhost:${env['VITE_BACKEND_PORT']}/seerh5.61.com`,
+                '/resource': `http://localhost:${env['VITE_BACKEND_PORT']}`,
+                '/seerh5.61.com': `http://localhost:${env['VITE_BACKEND_PORT']}`,
                 '/api': `http://localhost:${env['VITE_BACKEND_PORT']}`,
             },
             watch: {
@@ -46,7 +46,6 @@ export default defineConfig(({ command, mode }) => {
                     globIgnores: ['**/*'],
                     globPatterns: [],
                     navigateFallback: null,
-                    importScripts: [`http://localhost:${env['VITE_BACKEND_PORT']}/worker/iframe-cookie.js`],
                     runtimeCaching: [
                         {
                             urlPattern: /(seerh5\.61\.com\/resource\/assets)|(fonts\.gstatic\.com)/,
@@ -65,7 +64,7 @@ export default defineConfig(({ command, mode }) => {
         resolve: {
             alias: {
                 '@sa-app': path.resolve(dirname, 'src'),
-                '@mui/styled-engine': path.resolve('../../node_modules', '@mui/styled-engine-sc'),
+                '@mui/styled-engine': path.resolve(path.resolve(dirname, 'node_modules'), '@mui/styled-engine-sc'),
             },
         },
     };

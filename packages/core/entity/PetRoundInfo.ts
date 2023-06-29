@@ -24,6 +24,7 @@ export class PetRoundInfo extends EntityBase {
     sideEffects: number[];
     constructor(attackValue: AttackValue) {
         super();
+        this.isFirstMove = false;
         this.__type = 'PetRoundInfo';
         [
             this.round,

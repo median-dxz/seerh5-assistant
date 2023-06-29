@@ -3,7 +3,7 @@
   "description": "SeerH5-Assistant核心库",
   "private": true,
   "type": "module",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "license": "MPL-2.0",
   "exports": {
     ".": "./dist/index.js",

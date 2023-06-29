@@ -1,5 +1,5 @@
-import ButtonUnstyled from '@mui/base/Button';
 import type { ButtonBaseProps } from '@mui/material';
+import ButtonBase from '@mui/material/ButtonBase';
 import { styled } from '@mui/system';
 import { saTheme } from '@sa-app/style';
 import * as React from 'react';
@@ -101,5 +101,5 @@ export const HexagonalButton = forwardRef(function (
     props: ButtonBaseProps & { baseSize: number },
     ref: ForwardedRef<HTMLButtonElement>
 ) {
-    return <ButtonUnstyled {...props} slots={{ root: StyledButtonRoot }} ref={ref} />;
+    return <ButtonBase {...props} component={StyledButtonRoot} ref={ref} disableRipple />;
 });

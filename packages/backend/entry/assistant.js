@@ -210,10 +210,19 @@ var Driver = (function () {
                             }
                             data = data.replaceAll(/console\.log/g, 'logFilter');
                             data = data.replaceAll(/console\.warn/g, 'warnFilter');
-                            script.text = '//@ sourceURL=' + location.href + url + '\n' + data;
+                            script.text = '//@ sourceURL=http://seerh5.61.com/' + url + '\n' + data;
 
                             document.head.appendChild(script).parentNode.removeChild(script);
-                            config.action && config.action.length > 0 && eval(config.action + '()'), Driver.doAction();
+                            if (config.action === 'Core.init') {
+                                // dispatch event begin
+                                window.dispatchEvent(new CustomEvent('seerh5_load'));
+                                sac.SeerH5Ready = true;
+                                // dispatch event end
+                                Driver.doAction();
+                            } else {
+                                config.action && config.action.length > 0 && eval(config.action + '()'),
+                                    Driver.doAction();
+                            }
                             // loader modify end
                         },
                         this,
@@ -350,10 +359,6 @@ var Main = (function (e) {
             window.LevelManager.setup(this);
             window.MainManager.stage = this;
             window.ModuleManager.showModuleByID(140).then(() => {
-                // dispatch event begin
-                window.dispatchEvent(new CustomEvent('seerh5_load'));
-                sac.SeerH5Ready = true;
-                // dispatch event end
                 window.hideWebload && window.hideWebload();
             });
         }),
