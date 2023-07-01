@@ -1,4 +1,4 @@
-import { injectModConfig } from '@sa-app/utils/SADataProvider';
+import * as SAEndPoint from '@sa-app/service/endpoints';
 import { SaModuleLogger, defaultStyle } from 'sa-core';
 import { GameModuleListener } from 'sa-core/event-bus';
 import { BaseMod, ModuleMod, QuickAccessPlugin, SAModType, SignModExport } from './type';
@@ -7,14 +7,13 @@ const log = SaModuleLogger('SAModManager', defaultStyle.mod);
 
 export const ModStore = new Map<string, BaseMod>();
 
-type ModList = Array<{ path: string }>;
 type ModModuleExport = typeof BaseMod | Array<typeof BaseMod>;
 
 export const SAModManager = {
     async fetchMods() {
-        const modList: ModList = await fetch('/api/mods').then((res) => res.json());
-        const promises = modList.map((url) =>
-            import(/* @vite-ignore */ `/api/mods/${url}`)
+        const modList = await SAEndPoint.getAllMods();
+        const promises = modList.map(({ path }) =>
+            import(/* @vite-ignore */ `/mods/${path}`)
                 .then((module) => module.default as ModModuleExport)
                 .then((mod) => {
                     if (Array.isArray(mod)) {
@@ -58,9 +57,6 @@ export const SAModManager = {
                 case SAModType.SIGN_MOD:
                     {
                         const signMod = mod as BaseMod & { export: Record<string, SignModExport> };
-                        if (signMod.defaultConfig) {
-                            signMod.config = injectModConfig(modNamespace, signMod.defaultConfig);
-                        }
                         // 对导出进行this绑定
                         Object.entries(signMod.export).forEach(([key, { run, check }]) => {
                             signMod.export[key] = {
@@ -86,6 +82,7 @@ export const SAModManager = {
                     }
                     break;
             }
+            SAEndPoint.injectModConfig(mod);
             mod.logger = SaModuleLogger(modNamespace, defaultStyle.mod);
             mod.namespace = modNamespace;
 

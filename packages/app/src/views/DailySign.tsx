@@ -2,8 +2,8 @@ import { PanelColumnRender, PanelColumns, PanelTable } from '@sa-app/components/
 import React from 'react';
 
 import { Button, ButtonGroup, CircularProgress } from '@mui/material';
-import { ModStore } from '@sa-app/ModManager';
-import { BaseMod, SAModType, SignModExport } from '@sa-app/ModManager/type';
+import { ModStore } from '@sa-app/service/ModManager';
+import { BaseMod, SAModType, SignModExport } from '@sa-app/service/ModManager/type';
 
 import { delay } from 'sa-core';
 import useSWR from 'swr';

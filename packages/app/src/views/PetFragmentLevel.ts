@@ -1,4 +1,4 @@
-import { BaseMod } from '@sa-app/ModManager/type';
+import { BaseMod } from '@sa-app/service/ModManager/type';
 
 import {
     PetFragmentLevelDifficulty as Difficulty,

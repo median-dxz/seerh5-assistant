@@ -4,9 +4,9 @@ import useSWR from 'swr';
 
 import React, { useState } from 'react';
 
-import { ModStore } from '@sa-app/ModManager';
 import { SaQuickAccess } from '@sa-app/components/styled/QuickAccess';
-import { SAModType, type QuickAccessPlugin } from './ModManager/type';
+import { ModStore } from '@sa-app/service/ModManager';
+import { SAModType, type QuickAccessPlugin } from './service/ModManager/type';
 
 const SvgMaker = ({ url, ...rest }: React.SVGProps<SVGSVGElement> & { url: string }) => {
     const ref = React.useRef<SVGSVGElement>(null);

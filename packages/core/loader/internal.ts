@@ -28,12 +28,15 @@ export const InternalInitiator = {
 export function enableBasic() {
     enableMapSet();
 
-    // eslint-disable-next-line
     OnlineManager.prototype.setSentryScope = NOOP;
     ModuleManager.loadScript = loadScript;
-    SocketEncryptImpl.prototype.log = logSocket;
+    SocketEncryptImpl.prototype.log = socketLogger;
     GameInfo.token_url = 'account-co.61.com/v3/token/convert'; // http://account-co.61.com/v3/token/convert
     fixSoundLoad();
+
+    // eslint-disable-next-line
+    Core.init();
+
     enableBackgroundHeartBeatCheck();
 
     InternalInitiator.push(event, 0);
@@ -66,7 +69,7 @@ function loadScript(this: ModuleManager, scriptName: string) {
     });
 }
 
-function logSocket(this: SocketEncryptImpl, cmd: number, ...msg: string[]) {
+function socketLogger(this: SocketEncryptImpl, cmd: number, ...msg: string[]) {
     const logInfo = msg.join(' ').replace(/Socket\[[.0-9].*?\]/, '');
     this.openIDs && this.openIDs.flat();
     if (this._isShowLog) {

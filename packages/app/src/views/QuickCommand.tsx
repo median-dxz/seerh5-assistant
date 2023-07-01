@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 import { Box } from '@mui/system';
-import { dataProvider } from '@sa-app/utils/SADataProvider';
+import { dataProvider } from '@sa-app/service/SADataProvider';
 import React from 'react';
 import { PetDataManger, PetPosition } from 'sa-core';
 
@@ -41,7 +41,7 @@ export function QuickCommand() {
                         petMap[v.name] = v.catchTime;
                     };
                     Array.from(data1)
-                        .filter(([_, v]) => v.posi === PetPosition.elite || (v.level > 90 && v.id >= 3582))
+                        .filter(([_, v]) => v.posi === PetPosition.elite || (v.level === 100 && v.id >= 3582))
                         .map(([_, v]) => v)
                         .forEach(mapping);
                     data2[0].forEach(mapping);

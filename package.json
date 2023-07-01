@@ -6,7 +6,7 @@
   "license": "MPL-2.0",
   "packageManager": "pnpm@8.6.5",
   "scripts": {
-    "dev": "conc pnpm:backend:serve pnpm:core:watch pnpm:app:dev",
+    "dev": "conc pnpm:core:watch pnpm:app:dev",
     "backend:serve": "pnpm -C ./packages/backend run serve",
     "app:dev": "pnpm -C ./packages/app run dev",
     "core:build": "pnpm -F sa-core run build",
@@ -14,11 +14,11 @@
     "core:test": "pnpm -F sa-core run test"
   },
   "devDependencies": {
-    "@types/node": "^18.16.18",
+    "@types/node": "^18.16.19",
     "@typescript-eslint/eslint-plugin": "^5.60.1",
     "@typescript-eslint/parser": "^5.60.1",
     "concurrently": "^8.2.0",
-    "eslint": "^8.43.0",
+    "eslint": "^8.44.0",
     "rimraf": "^5.0.1",
     "typescript": "^5.1.6",
     "vite": "^4.3.9"

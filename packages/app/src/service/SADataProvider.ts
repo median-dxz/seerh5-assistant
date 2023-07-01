@@ -30,19 +30,3 @@ export const dataProvider = {
         });
     },
 };
-
-// 配置注入，如果不存在则创建并传入默认项
-export const injectModConfig = (id: string, defaultConfig: object) => {
-    if (!dataProvider.data.mods?.[id]) {
-        Object.assign(dataProvider.data.mods, { [id]: defaultConfig });
-        fetch(`/api/data?mod=${id}`, {
-            method: 'POST',
-            body: JSON.stringify(defaultConfig),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-    }
-
-    return dataProvider.data.mods[id];
-};

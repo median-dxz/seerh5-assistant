@@ -15,8 +15,8 @@ import { MainPanel } from './views/MainPanel';
 import { Hook, NOOP, resolveStrategy } from 'sa-core';
 import { SAEventBus } from 'sa-core/event-bus';
 
-import { SAModManager } from './ModManager';
 import { QuickAccess } from './QuickAccess';
+import { SAModManager } from './service/ModManager';
 
 const battleStrategyStorage = SALocalStorage.BattleStrategy;
 const eventBus = new SAEventBus();

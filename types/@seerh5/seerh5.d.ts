@@ -160,8 +160,9 @@ declare class WebSoundManager {
     loadFightMusic(url: string): Promise<void>;
 }
 
-// sa-loader
-declare var OnlineManager: any;
+declare class OnlineManager {
+    setSentryScope: () => void;
+}
 
 // init/helper
 declare var Alarm: any;
