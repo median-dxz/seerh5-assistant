@@ -2,17 +2,11 @@
 
 import fs, { writeFileSync } from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import { base } from '../base.js';
 
-const dirname = path.dirname(fileURLToPath(import.meta.url));
-const dataFile = path.resolve(dirname, 'data', 'data.json');
+const dataFile = path.resolve(base, 'data', 'data.json');
 const data = JSON.parse(fs.readFileSync(dataFile).toString('utf8'));
 
-/**
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @param {import('express').NextFunction} next
- */
 export const saDataProvider = (req, res, next) => {
     res.setHeader('Cache-Control', 'no-cache');
     switch (req.method) {

@@ -1,4 +1,4 @@
-import { CacheData, NULL, SAEventTarget, SaModuleLogger, defaultStyle, delay } from '../common/utils.js';
+import { CacheData, NOOP, SAEventTarget, SaModuleLogger, defaultStyle, delay } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
 import { findObject } from '../engine/index.js';
 import { PetRoundInfo } from '../entity/index.js';
@@ -8,7 +8,7 @@ import { Provider } from './provider.js';
 
 const log = SaModuleLogger('SABattleManager', defaultStyle.core);
 
-export const cachedRoundInfo = new CacheData<[PetRoundInfo, PetRoundInfo] | null>(null, NULL);
+export const cachedRoundInfo = new CacheData<[PetRoundInfo, PetRoundInfo] | null>(null, NOOP);
 
 export default () => {
     /** better switch pet handler */

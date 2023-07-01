@@ -1,4 +1,4 @@
-import { NULL, Socket, createLocalStorageProxy } from 'sa-core';
+import { NOOP, Socket, createLocalStorageProxy } from 'sa-core';
 
 const StorageKey = 'LocalSkin';
 
@@ -76,7 +76,7 @@ class LocalPetSkin implements SAMod.IBaseMod {
             },
         });
 
-        PetManager.equipSkin = async (catchTime, skinId = 0, callback = NULL) => {
+        PetManager.equipSkin = async (catchTime, skinId = 0, callback = NOOP) => {
             const petInfo = PetManager.getPetInfo(catchTime);
             this.logger('new skin id:', skinId, 'previous skin id:', petInfo.skinId);
             if (skinId === 0 || PetSkinController.instance.haveSkin(skinId)) {

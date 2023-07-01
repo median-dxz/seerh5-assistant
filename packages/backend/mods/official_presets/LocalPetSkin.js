@@ -47,7 +47,7 @@ class g {
       get: function() {
         return a.changed.has(this.id) ? a.changed.get(this.id).skinId : this._skinId ?? 0;
       }
-    }), PetManager.equipSkin = async (t, e = 0, i = sac.NULL) => {
+    }), PetManager.equipSkin = async (t, e = 0, i = sac.NOOP) => {
       const n = PetManager.getPetInfo(t);
       this.logger("new skin id:", e, "previous skin id:", n.skinId), e === 0 || PetSkinController.instance.haveSkin(e) ? (a.original.get(n.id) !== e ? await sac.Socket.sendByQueue(47310, [t, e]) : a.use(({ original: s }) => {
         s.delete(n.id);

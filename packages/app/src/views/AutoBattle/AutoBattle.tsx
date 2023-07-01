@@ -6,7 +6,7 @@ import { PanelTable } from '@sa-app/components/PanelTable/PanelTable';
 import { SAContext } from '@sa-app/context/SAContext';
 import * as SALocalStorage from '@sa-app/utils/hooks/SALocalStorage';
 import { TextEditDialog } from '@sa-app/views/AutoBattle/TextEditDialog';
-import { NULL } from 'sa-core';
+import { NOOP } from 'sa-core';
 import * as SABattle from 'sa-core/battle';
 
 const handleAdd = (arr: unknown[], value: string) => {
@@ -39,7 +39,7 @@ export function AutoBattle() {
 
     const [open, setOpen] = useState(false);
     const [text, setText] = useState('');
-    const [onClose, setOnClose] = useState<(value: string) => void>(() => NULL);
+    const [onClose, setOnClose] = useState<(value: string) => void>(() => NOOP);
 
     const openDialog = (callback: (value: string) => void, value = '') => {
         setOpen(true);

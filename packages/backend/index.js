@@ -1,114 +1,55 @@
-import express from 'express';
 import path from 'path';
+import { base } from './base.js';
 
-import { fileURLToPath } from 'url';
+import Router from '@koa/router';
+import Koa from 'koa';
 
-import bodyParser from 'body-parser';
+// koa middlewares
+import c2k from 'koa-connect';
+import logger from 'koa-logger';
+import serve from 'koa-static';
+// import { koaBody } from 'koa-body';
 
-import { saDataProvider } from './sa.dataProvider.js';
-import { saModsProvider } from './sa.modsProvider.js';
-import { saProxyAssets, saProxyLogin } from './sa.proxy.js';
+// sa middlewares
+import { saAppJsProxy } from './middlewares/appJsProxy.js';
+import { saAssetsProxy } from './middlewares/assetsProxy.js';
+import { saLoginProxy } from './middlewares/loginProxy.js';
 
-const dirname = path.dirname(fileURLToPath(import.meta.url));
+const app = new Koa();
+const router = new Router();
 
 async function createServer() {
-    const app = express();
-
-    app.use(bodyParser.json());
-
-    app.use((req, res, next) => {
-        console.log(`[info]: sa-app: ${req.url}`);
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        next();
+    router.use(logger(), (ctx, next) => {
+        ctx.set('access-control-allow-origin', '*');
+        return next();
     });
 
-    app.use(['/seerh5.61.com'], saProxyAssets);
-
-    app.get('/api/js/seerh5.61.com/app.js', (req, res) => {
-        fetch(`https://seerh5.61.com/app.js?t=${Date.now()}`)
-            .then((r) => {
-                res.status(r.status);
-                for (const [header, value] of r.headers.entries()) {
-                    if (!['cache-control', 'content-encoding'].includes(header)) {
-                        res.header(header, value);
-                    }
-                }
-                res.header('cache-control', 'no-store, no-cache');
-                return r.text();
-            })
-            .then((appJs) => {
-                while (appJs.startsWith('eval')) {
-                    appJs = eval(appJs.match(/eval([^)].*)/)[1]);
-                }
-                appJs = `//@ sourceURL=http://seerh5.61.com/app.js\n${appJs}`;
-                appJs = appJs
-                    .replace(`= window["wwwroot"] || "";`, `= '/seerh5.61.com/';`)
-                    .replace(/loadSingleScript\("https:\/\/hm\.baidu\.com\/hm\.js\?[a-z0-9].*"\);/, '')
-                    .replace(`web_sdk_js_url`, `'/api/js/opensdk.61.com/taomeesdk.js'`);
-                return appJs;
-            })
-            .then((r) => res.end(r));
+    router.get('/seerh5.61.com/(.*)', async (ctx, next) => {
+        ctx.path = '/' + ctx.params[0];
+        return c2k(saAssetsProxy)(ctx, next);
     });
 
-    app.get('/api/js/opensdk.61.com/taomeesdk.js', (req, res) => {
-        res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-        delete req.headers.host;
-        fetch(`https://opensdk.61.com/v1/js/taomeesdk.1.1.1.js`, {
-            headers: req.headers,
-            referrer: 'http://seerh5.61.com/',
-            cache: 'no-cache',
-            method: 'GET',
-        })
-            .then((r) => {
-                res.writeHead(r.status, r.headers);
-                return r.text();
-            })
-            .then((r) =>
-                (`//@ sourceURL=https://opensdk.61.com/v1/js/taomeesdk.1.1.1.js\n` + r)
-                    .replace('window.location.protocol+"//account-co.61.com/', `window.location.href+"api/login/`)
-                    .replace(`t&&t[0]===i.a`, `((t && t[0] === i.a) || (i.a === 'localhost'))`)
-                    .replace(
-                        `this._app.formatUrl("?r=authorization/success")`,
-                        `this._app.formatUrl("?r=authorization/success").replace(window.location.host+'/api/login','account-co.61.com')`
-                    )
-                    .replace(`//support-res.61.com/gather/gather.js`, `api/js/support-res.61.com/gather.js`)
-            )
-            .then((r) => {
-                res.end(r);
-            });
+    router.all('/account-co.61.com/(.*)', async (ctx, next) => {
+        ctx.path = '/' + ctx.params[0];
+        return c2k(saLoginProxy)(ctx, next);
     });
 
-    app.get('/api/js/support-res.61.com/gather.js', (req, res) => {
-        res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-        delete req.headers.host;
-        fetch(`https://support-res.61.com/gather/gather.js`, {
-            headers: req.headers,
-            referrer: 'http://seerh5.61.com/',
-            cache: 'no-cache',
-            method: 'GET',
-        })
-            .then((r) => {
-                res.writeHead(r.status, r.headers);
-                return r.text();
-            })
-            .then((r) => {
-                return (`//@ sourceURL=https://support-res.61.com/gather/gather.js\n` + r)
-                    .replaceAll(/document.referrer/g, `'http://seerh5.61.com/'`)
-                    .replaceAll(/document.location.href/g, `'http://seerh5.61.com/'`);
-            })
-            .then((r) => {
-                res.end(r);
-            });
+    router.get('/api/js/:domain/(.*)', saAppJsProxy);
+
+    router.get('/mods/(.*)', async (ctx, next) => {
+        ctx.path = ctx.params[0];
+        return serve(path.resolve(base, 'mods'), { index: false })(ctx, next);
     });
 
-    app.use('/api/login', saProxyLogin);
-
-    app.use('/api/data', saDataProvider);
-    app.use('/api/mods', saModsProvider);
-    app.use('/api/mods', express.static(path.join(dirname, 'mods'), { cacheControl: false }));
-
-    app.get('*', (req, res) => {
-        res.status(200).send('这里什么也没有~');
+    app.use(router.routes()).use(router.allowedMethods());
+    app.use(async (ctx, next) => {
+        await next();
+        if (!ctx.headerSent) {
+            ctx.response.status = 404;
+            ctx.response.body = {
+                msg: '这里什么也没有~',
+            };
+        }
     });
 
     const server = app.listen(2147);

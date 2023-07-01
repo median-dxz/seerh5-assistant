@@ -13,6 +13,8 @@ export default defineConfig(({ command, mode }) => {
             proxy: {
                 '/api': `http://localhost:${env['VITE_BACKEND_PORT']}`,
                 '/seerh5.61.com': `http://localhost:${env['VITE_BACKEND_PORT']}`,
+                '/account-co.61.com': `http://localhost:${env['VITE_BACKEND_PORT']}`,
+                '/mods': `http://localhost:${env['VITE_BACKEND_PORT']}`,
             },
         },
     };

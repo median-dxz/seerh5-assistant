@@ -4,7 +4,7 @@ import {
     PetFragmentLevelDifficulty as Difficulty,
     ILevelBattleStrategy,
     ILevelRunner,
-    NULL,
+    NOOP,
     Potion,
     SALevelManager,
     SALevelState,
@@ -156,7 +156,7 @@ const strategies: { [name: string]: SABattle.MoveStrategy } = {
             const r = skills.find((skill) => skill.name === ['光荣之梦', '神灵救世光'][round.round % 2]);
             return SABattle.Operator.useSkill(r?.id);
         },
-        resolveNoBlood: NULL,
+        resolveNoBlood: NOOP,
     },
     王哈单挑: {
         resolveMove: (round, skills) => {
@@ -166,7 +166,7 @@ const strategies: { [name: string]: SABattle.MoveStrategy } = {
             }
             return SABattle.Operator.useSkill(r?.id);
         },
-        resolveNoBlood: NULL,
+        resolveNoBlood: NOOP,
     },
     蒂朵单挑: {
         resolveMove: (round, skills) => {
@@ -178,7 +178,7 @@ const strategies: { [name: string]: SABattle.MoveStrategy } = {
             }
             return SABattle.Operator.useSkill(r?.id);
         },
-        resolveNoBlood: NULL,
+        resolveNoBlood: NOOP,
     },
     潘朵必先: SABattle.generateStrategy(
         ['鬼焰·焚身术', '幻梦芳逝', '诸界混一击', '梦境残缺', '月下华尔兹'],
@@ -203,7 +203,7 @@ const strategies: { [name: string]: SABattle.MoveStrategy } = {
         },
     },
     千裳单挑: {
-        resolveNoBlood: NULL,
+        resolveNoBlood: NOOP,
         resolveMove: (round, skills, _) => {
             let r: Skill | undefined = undefined;
             const { round: t } = round;

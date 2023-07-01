@@ -12,7 +12,7 @@ import { saTheme } from '@sa-app/style';
 import { CommandBar } from './CommandBar';
 import { MainPanel } from './views/MainPanel';
 
-import { Hook, NULL, resolveStrategy } from 'sa-core';
+import { Hook, NOOP, resolveStrategy } from 'sa-core';
 import { SAEventBus } from 'sa-core/event-bus';
 
 import { SAModManager } from './ModManager';
@@ -42,7 +42,7 @@ export default function SaApp() {
                 // fallback: autoStrategy,
                 fallback: {
                     resolveMove: async () => true,
-                    resolveNoBlood: NULL,
+                    resolveNoBlood: NOOP,
                 },
             });
         }

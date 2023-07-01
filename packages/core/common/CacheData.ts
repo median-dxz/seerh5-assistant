@@ -1,4 +1,4 @@
-import { NULL } from './utils.js';
+import { NOOP } from './utils.js';
 
 export class CacheData<T> {
     private data: T;
@@ -9,7 +9,7 @@ export class CacheData<T> {
 
     constructor(data: T, updater: () => void) {
         this.updater = updater;
-        this.updateResolve = NULL;
+        this.updateResolve = NOOP;
         this.updatePromise = Promise.resolve();
         this.data = data;
         this.available = true;

@@ -1,7 +1,7 @@
 import { enableMapSet } from 'immer';
 
 import type { AnyFunction } from '../common/utils.js';
-import { NULL, SAEventTarget, hookPrototype } from '../common/utils.js';
+import { NOOP, SAEventTarget, hookPrototype } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
 
 import battle from '../battle/internal.js';
@@ -29,11 +29,10 @@ export function enableBasic() {
     enableMapSet();
 
     // eslint-disable-next-line
-    OnlineManager.prototype.setSentryScope = NULL;
+    OnlineManager.prototype.setSentryScope = NOOP;
     ModuleManager.loadScript = loadScript;
-    UIUtils = null;
     SocketEncryptImpl.prototype.log = logSocket;
-    GameInfo.token_url = 'api/login/v3/token/convert'; // http://account-co.61.com/api/login/v3/token/convert
+    GameInfo.token_url = 'account-co.61.com/v3/token/convert'; // http://account-co.61.com/v3/token/convert
     fixSoundLoad();
     enableBackgroundHeartBeatCheck();
 

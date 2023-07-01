@@ -6,11 +6,12 @@
   "license": "MPL-2.0",
   "packageManager": "pnpm@8.6.5",
   "scripts": {
-    "dev": "pnpm backend:serve",
+    "dev": "conc pnpm:backend:serve pnpm:core:watch pnpm:app:dev",
     "backend:serve": "pnpm -C ./packages/backend run serve",
     "app:dev": "pnpm -C ./packages/app run dev",
-    "core:build": "pnpm -C ./packages/core run build",
-    "core:test": "pnpm -C ./packages/core run test"
+    "core:build": "pnpm -F sa-core run build",
+    "core:watch": "pnpm -F sa-core run watch",
+    "core:test": "pnpm -F sa-core run test"
   },
   "devDependencies": {
     "@types/node": "^18.16.18",
