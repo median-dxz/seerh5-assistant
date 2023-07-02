@@ -1,3 +1,5 @@
+import { NOOP } from './utils.js';
+
 export class CacheData<T> {
     private data: T;
     private available: boolean;
@@ -7,8 +9,10 @@ export class CacheData<T> {
 
     constructor(data: T, updater: () => void) {
         this.updater = updater;
-        this.deactivate();
-        this.update(data);
+        this.updateResolve = NOOP;
+        this.updatePromise = Promise.resolve();
+        this.data = data;
+        this.available = true;
     }
 
     deactivate() {

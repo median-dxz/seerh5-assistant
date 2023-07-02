@@ -1,0 +1,5 @@
+packages:
+  - 'packages/core'
+  - 'packages/app'
+  - 'packages/sdk-template'
+  - 'packages/backend'

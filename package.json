@@ -4,24 +4,26 @@
   "type": "module",
   "version": "0.5.0",
   "license": "MPL-2.0",
-  "workspaces": [
-    "./packages/core",
-    "./packages/app"
-  ],
+  "packageManager": "pnpm@8.6.5",
   "scripts": {
-    "start": "npm run dev:app",
-    "dev:core": "npm run dev --workspace=sa-core",
-    "dev:app": "npm run dev --workspace=seerh5-assistant-app",
-    "build:core": "npm run build --workspace=sa-core",
-    "build:app": "npm run build --workspace=seerh5-assistant-app"
+    "dev": "conc pnpm:core:watch pnpm:app:dev",
+    "backend:serve": "pnpm -C ./packages/backend run serve",
+    "app:dev": "pnpm -C ./packages/app run dev",
+    "core:build": "pnpm -F sa-core run build",
+    "core:watch": "pnpm -F sa-core run watch",
+    "core:test": "pnpm -F sa-core run test"
   },
   "devDependencies": {
-    "@types/node": "^18.12.0",
-    "@typescript-eslint/eslint-plugin": "^5.59.8",
-    "@typescript-eslint/parser": "^5.59.8",
-    "eslint": "^8.41.0",
+    "@types/node": "^18.16.19",
+    "@typescript-eslint/eslint-plugin": "^5.60.1",
+    "@typescript-eslint/parser": "^5.60.1",
+    "concurrently": "^8.2.0",
+    "eslint": "^8.44.0",
     "rimraf": "^5.0.1",
-    "typescript": "^5.0.4",
+    "typescript": "^5.1.6",
     "vite": "^4.3.9"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }

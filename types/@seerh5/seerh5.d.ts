@@ -146,11 +146,23 @@ declare interface AppDoStyle {
 
 declare const AppDoStyle: AppDoStyle;
 
-//common
 declare var EventManager: egret.EventDispatcher;
+declare var Core: any;
+declare var SeerVersionController: {
+    getVersionUrl(url: string): string;
+};
+declare var GameInfo: {
+    token_url: string;
+};
 
-// sa-loader
-declare var OnlineManager: any;
+declare class WebSoundManager {
+    loadSound(url: string): Promise<void>;
+    loadFightMusic(url: string): Promise<void>;
+}
+
+declare class OnlineManager {
+    setSentryScope: () => void;
+}
 
 // init/helper
 declare var Alarm: any;

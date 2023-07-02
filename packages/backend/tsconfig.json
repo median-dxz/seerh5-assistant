@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "module": "ES2022",
+        "moduleResolution": "nodenext",
+        "target": "ES2022",
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "allowSyntheticDefaultImports": true,
+        "checkJs": true,
+        "allowJs": true,
+        "noEmit": true
+    },
+    "exclude": [
+        "node_modules",
+        "mods",
+        "entry",
+        "config"
+    ]
+}

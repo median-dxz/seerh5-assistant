@@ -1,4 +1,4 @@
-import { CacheData, NULL, SAEventTarget, SaModuleLogger, defaultStyle, delay } from '../common/utils.js';
+import { CacheData, NOOP, SAEventTarget, SaModuleLogger, defaultStyle, delay } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
 import { findObject } from '../engine/index.js';
 import { PetRoundInfo } from '../entity/index.js';
@@ -8,9 +8,24 @@ import { Provider } from './provider.js';
 
 const log = SaModuleLogger('SABattleManager', defaultStyle.core);
 
-export const cachedRoundInfo = new CacheData<[PetRoundInfo, PetRoundInfo] | null>(null, NULL);
+export const cachedRoundInfo = new CacheData<[PetRoundInfo, PetRoundInfo] | null>(null, NOOP);
 
 export default () => {
+    /** better switch pet handler */
+    PetBtnView.prototype.autoUse = function () {
+        this.getMC().selected = !0;
+        if (this.locked) throw new Error('该精灵已被放逐，无法出战');
+        if (this.mc.selected) {
+            if (this.hp <= 0) throw new Error('该精灵已阵亡');
+            if (this.info.catchTime == FighterModelFactory.playerMode?.info.catchTime)
+                throw new Error('该精灵已经出战');
+            this.dispatchEvent(new PetFightEvent(PetFightEvent.CHANGE_PET, this.catchTime));
+        } else if (!this.mc.selected) {
+            this.dispatchEvent(new PetFightEvent('selectPet', this.catchTime));
+        }
+        this.getMC().selected = !1;
+    };
+
     SAEventTarget.on(Hook.BattlePanel.panelReady, () => {
         cachedRoundInfo.deactivate();
         if (FightManager.fightAnimateMode === 1) {

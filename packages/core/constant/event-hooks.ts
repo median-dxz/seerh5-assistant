@@ -31,7 +31,7 @@ export type SAHookData = {
     sa_module_open_main_panel: { module: string; panel: string };
     sa_module_construct: string;
     sa_module_destroy: string;
-    sa_award_receive: { items: Array<{ id: number; count: number }> };
+    sa_award_receive: { items?: Array<{ id: number; count: number }> };
     sa_socket_send: { cmd: number; data: SAType.SocketRequestData };
     sa_socket_receive: { cmd: number; buffer: egret.ByteArray | undefined };
     sa_pet_bag_update: [Pet[], Pet[]];

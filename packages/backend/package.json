@@ -1,0 +1,35 @@
+{
+    "name": "seerh5-assistant-backend",
+    "private": true,
+    "type": "module",
+    "version": "0.5.1",
+    "license": "AGPL-3.0-or-later",
+    "main": "./index.js",
+    "scripts": {
+        "serve": "nodemon ./index.js"
+    },
+    "dependencies": {
+        "@koa/router": "^12.0.0",
+        "http-proxy-middleware": "3.0.0-beta.1",
+        "koa": "^2.14.2",
+        "koa-body": "^6.0.1",
+        "koa-connect": "^2.1.0",
+        "koa-logger": "^3.2.1",
+        "koa-static": "^5.0.0",
+        "smol-toml": "^1.1.0"
+    },
+    "devDependencies": {
+        "@types/koa": "^2.13.6",
+        "@types/koa-logger": "^3.1.2",
+        "@types/koa-static": "^4.0.2",
+        "@types/koa__router": "^12.0.0",
+        "nodemon": "^2.0.22"
+    },
+    "nodemonConfig": {
+        "watch": [
+            "backend/*.js",
+            "backend/middlewares/*.js",
+            "backend/routers/*.js"
+        ]
+    }
+}

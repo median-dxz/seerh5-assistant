@@ -17,6 +17,7 @@ export default () => {
     };
 
     type withClass<T> = T & { __class__: string };
+    
     ModuleManager.beginShow = wrapperAsync(ModuleManager.beginShow, undefined, function (_, moduleName: string) {
         SAEventTarget.emit(Hook.Module.construct, moduleName);
         const curModule = ModuleManager.currModule as withClass<typeof ModuleManager.currModule>;
@@ -34,6 +35,7 @@ export default () => {
                 break;
         }
     });
+
     ModuleManager.removeModuleInstance = function (module) {
         const key = Object.keys(this._modules).find((key) => this._modules[key] === module);
         if (key) {

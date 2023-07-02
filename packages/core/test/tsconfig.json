@@ -15,7 +15,7 @@
     "include": [
         "suites/**/*",
         "env/**/*",
-        "../../../types",
+        "../../../types", "../../../sdk-template/src/mod.d.ts",
     ],
     "references": [
         {

@@ -7,7 +7,6 @@
     "main": "./src/index.tsx",
     "scripts": {
         "dev": "vite --open",
-        "serve": "node ./backend/server.js",
         "watch:tsc": "tsc --watch",
         "build": "tsc && vite build",
         "preview": "vite preview",
@@ -17,28 +16,25 @@
     },
     "dependencies": {
         "@mui/icons-material": "^5.11.16",
-        "@mui/material": "^5.13.3",
+        "@mui/material": "^5.13.6",
         "@mui/styled-engine-sc": "^5.12.0",
-        "@mui/system": "^5.13.2",
-        "dayjs": "^1.11.8",
-        "express": "^4.18.2",
-        "http-proxy-middleware": "^3.0.0-beta.1",
+        "@mui/system": "^5.13.6",
         "immer": "^10.0.2",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
-        "sa-core": "^0.4.0",
+        "react-transition-group": "^4.4.5",
+        "sa-core": "workspace:*",
         "styled-components": "^5.3.11",
-        "swr": "^2.1.5"
+        "swr": "^2.2.0"
     },
     "devDependencies": {
-        "@types/express": "^4.17.17",
-        "@types/react": "^18.2.7",
-        "@types/react-dom": "^18.2.4",
-        "@vitejs/plugin-react": "^4.0.0",
+        "@types/react": "^18.2.14",
+        "@types/react-dom": "^18.2.6",
+        "@types/react-transition-group": "^4.4.6",
+        "@vitejs/plugin-react": "^4.0.1",
         "eslint-plugin-react-hooks": "^4.6.0",
         "eslint-plugin-react-refresh": "^0.4.1",
-        "gsap": "^3.11.5",
-        "vite-plugin-pwa": "^0.16.1"
+        "vite-plugin-pwa": "^0.16.4"
     },
     "alias": {
         "@mui/styled-engine": "@mui/styled-engine-sc"

@@ -12,12 +12,18 @@ export default defineConfig(({ command, mode }) => {
         server: {
             port: 1234,
             proxy: {
-                '/resource': `http://localhost:${env['VITE_BACKEND_PORT']}/resource`,
-                '/seerh5.61.com': `http://localhost:${env['VITE_BACKEND_PORT']}/seerh5.61.com`,
                 '/api': `http://localhost:${env['VITE_BACKEND_PORT']}`,
+                '/seerh5.61.com': `http://localhost:${env['VITE_BACKEND_PORT']}`,
+                '/account-co.61.com': `http://localhost:${env['VITE_BACKEND_PORT']}`,
+                '/mods': `http://localhost:${env['VITE_BACKEND_PORT']}`,
             },
             watch: {
                 ignored: ['!**/node_modules/sa-core/**'],
+            },
+        },
+        build: {
+            dynamicImportVarsOptions: {
+                exclude: ['src/service/ModManager/*'],
             },
         },
         optimizeDeps: {
@@ -41,7 +47,6 @@ export default defineConfig(({ command, mode }) => {
                     globIgnores: ['**/*'],
                     globPatterns: [],
                     navigateFallback: null,
-                    importScripts: [`http://localhost:${env['VITE_BACKEND_PORT']}/worker/iframe-cookie.js`],
                     runtimeCaching: [
                         {
                             urlPattern: /(seerh5\.61\.com\/resource\/assets)|(fonts\.gstatic\.com)/,
@@ -60,7 +65,7 @@ export default defineConfig(({ command, mode }) => {
         resolve: {
             alias: {
                 '@sa-app': path.resolve(dirname, 'src'),
-                '@mui/styled-engine': path.resolve('../../node_modules', '@mui/styled-engine-sc'),
+                '@mui/styled-engine': path.resolve(path.resolve(dirname, 'node_modules'), '@mui/styled-engine-sc'),
             },
         },
     };

@@ -7,8 +7,6 @@
         "noEmit": true
     },
     "include": [
-        "vite.config.ts",
-        "backend/**/*.js",
-        "backend/env.d.ts"
+        "vite.config.ts"
     ]
 }

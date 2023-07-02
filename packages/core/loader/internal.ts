@@ -1,7 +1,7 @@
 import { enableMapSet } from 'immer';
 
 import type { AnyFunction } from '../common/utils.js';
-import { NULL, SAEventTarget } from '../common/utils.js';
+import { NOOP, SAEventTarget, hookPrototype } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
 
 import battle from '../battle/internal.js';
@@ -28,13 +28,16 @@ export const InternalInitiator = {
 export function enableBasic() {
     enableMapSet();
 
-    // eslint-disable-next-line
-    OnlineManager.prototype.setSentryScope = NULL;
+    OnlineManager.prototype.setSentryScope = NOOP;
     ModuleManager.loadScript = loadScript;
-    UIUtils = null;
-    SocketEncryptImpl.prototype.log = logSocket;
+    SocketEncryptImpl.prototype.log = socketLogger;
+    GameInfo.token_url = 'account-co.61.com/v3/token/convert'; // http://account-co.61.com/v3/token/convert
+    fixSoundLoad();
+
+    // eslint-disable-next-line
+    Core.init();
+
     enableBackgroundHeartBeatCheck();
-    betterSwitchPet();
 
     InternalInitiator.push(event, 0);
     InternalInitiator.push(eventBus, 1);
@@ -55,7 +58,7 @@ function loadScript(this: ModuleManager, scriptName: string) {
                 }
                 script = script.replaceAll(/console\.log/g, 'logFilter');
                 script = script.replaceAll(/console\.warn/g, 'warnFilter');
-                o.text = `//@ sourceURL=${location.href + url + '\n'}${script}`;
+                o.text = `//@ sourceURL=http://seerh5.61.com/${url + '\n'}${script}`;
                 document.head.appendChild(o).parentNode!.removeChild(o);
                 SAEventTarget.emit(Hook.Module.loadScript, scriptName);
                 resolve();
@@ -66,7 +69,7 @@ function loadScript(this: ModuleManager, scriptName: string) {
     });
 }
 
-function logSocket(this: SocketEncryptImpl, cmd: number, ...msg: string[]) {
+function socketLogger(this: SocketEncryptImpl, cmd: number, ...msg: string[]) {
     const logInfo = msg.join(' ').replace(/Socket\[[.0-9].*?\]/, '');
     this.openIDs && this.openIDs.flat();
     if (this._isShowLog) {
@@ -94,19 +97,13 @@ function enableBackgroundHeartBeatCheck() {
     };
 }
 
-/** better switch pet handler */
-function betterSwitchPet() {
-    PetBtnView.prototype.autoUse = function () {
-        this.getMC().selected = !0;
-        if (this.locked) throw new Error('该精灵已被放逐，无法出战');
-        if (this.mc.selected) {
-            if (this.hp <= 0) throw new Error('该精灵已阵亡');
-            if (this.info.catchTime == FighterModelFactory.playerMode?.info.catchTime)
-                throw new Error('该精灵已经出战');
-            this.dispatchEvent(new PetFightEvent(PetFightEvent.CHANGE_PET, this.catchTime));
-        } else if (!this.mc.selected) {
-            this.dispatchEvent(new PetFightEvent('selectPet', this.catchTime));
-        }
-        this.getMC().selected = !1;
-    };
+function fixSoundLoad() {
+    hookPrototype(WebSoundManager, 'loadFightMusic', function (f, url) {
+        url = SeerVersionController.getVersionUrl(url);
+        return f.call(this, url);
+    });
+    hookPrototype(WebSoundManager, 'loadSound', function (f, url) {
+        url = SeerVersionController.getVersionUrl(url);
+        return f.call(this, url);
+    });
 }

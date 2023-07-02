@@ -19,10 +19,10 @@ export class SALevelManager {
     }
 
     runner: ILevelRunner | null = null;
-    locker: Promise<boolean> | null;
+    locker: Promise<boolean> | null = null;
 
     get running() {
-        return this.runner !== null;
+        return this.runner != null;
     }
 
     getRunner<TRunner extends ILevelRunner>(): TRunner | null {
@@ -55,7 +55,7 @@ export class SALevelManager {
                 switch (state) {
                     case SALevelState.BATTLE:
                         {
-                            const { strategy: moveModule, pets, beforeBattle } = runner.selectStrategy();
+                            const { strategy: moveModule, pets, beforeBattle } = runner.selectBattle();
 
                             logger('切换背包');
                             await switchBag(pets);

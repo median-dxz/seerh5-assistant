@@ -96,7 +96,7 @@ export const extractObjectId = <T extends { [key in K]: number }, K extends stri
     }
 };
 
-export const NULL = () => {};
+export const NOOP = () => {};
 
 export { createLocalStorageProxy, type LocalStorageProxy } from './LocalStorage.js';
 

@@ -1,4 +1,4 @@
-import { CacheData, extractObjectId } from '../common/utils.js';
+import { CacheData, NOOP, extractObjectId } from '../common/utils.js';
 import { Socket } from '../engine/index.js';
 import { Item, Pet } from '../entity/index.js';
 import { SocketListener } from '../event-bus/index.js';
@@ -15,8 +15,11 @@ class DataManager {
     private queryQueue = new Map<CatchTime, Array<(value: ProxyPet) => void>>();
 
     defaultCt: CatchTime = -1;
-    bag: CacheData<[ProxyPet[], ProxyPet[]]>;
-    miniInfo: CacheData<Map<CatchTime, PetStorage2015PetInfo>>;
+    bag: CacheData<[ProxyPet[], ProxyPet[]]> = new CacheData([[], []], NOOP);
+    miniInfo: CacheData<Map<CatchTime, PetStorage2015PetInfo>> = new CacheData(
+        new Map<CatchTime, PetStorage2015PetInfo>(),
+        NOOP
+    );
 
     cache = new Map<CatchTime, ProxyPet>();
 

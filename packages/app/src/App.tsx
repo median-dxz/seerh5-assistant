@@ -9,13 +9,14 @@ import * as SALocalStorage from '@sa-app/utils/hooks/SALocalStorage';
 
 import { saTheme } from '@sa-app/style';
 
-import { CommandBar } from './views/CommandBar';
+import { CommandBar } from './CommandBar';
 import { MainPanel } from './views/MainPanel';
 
-import { Hook, NULL, resolveStrategy } from 'sa-core';
+import { Hook, NOOP, resolveStrategy } from 'sa-core';
 import { SAEventBus } from 'sa-core/event-bus';
 
-import { QuickAccess } from './views/QuickAccess';
+import { QuickAccess } from './QuickAccess';
+import { SAModManager } from './service/ModManager';
 
 const battleStrategyStorage = SALocalStorage.BattleStrategy;
 const eventBus = new SAEventBus();
@@ -24,6 +25,7 @@ export default function SaApp() {
     const [isCommandBarOpen, toggleCommandBar] = useState(false);
     const [isFighting, toggleFighting] = useState(false);
     const [battleAuto, setBattleAuto] = useState(false);
+    const [isSetup, setSetup] = useState(false);
 
     const handleShortCut = (e: KeyboardEvent) => {
         if (e.key === 'p' && e.ctrlKey) {
@@ -40,7 +42,7 @@ export default function SaApp() {
                 // fallback: autoStrategy,
                 fallback: {
                     resolveMove: async () => true,
-                    resolveNoBlood: NULL,
+                    resolveNoBlood: NOOP,
                 },
             });
         }
@@ -61,10 +63,24 @@ export default function SaApp() {
             toggleFighting(false);
         });
 
-        return () => {
-            document.body.removeEventListener('keydown', handleShortCut);
+        let active = true;
+        SAModManager.fetchMods().then((mods) => {
+            if (active) {
+                SAModManager.setup(mods);
+                setSetup(true);
+            }
+        });
+
+        const clean = () => {
+            active = false;
+            SAModManager.teardown();
             eventBus.unmount();
+            document.body.removeEventListener('keydown', handleShortCut);
         };
+
+        window.addEventListener('unload', clean);
+
+        return clean;
     }, [handleBattleRoundEnd]);
 
     return (
@@ -79,7 +95,7 @@ export default function SaApp() {
             >
                 <CssBaseline />
 
-                {!isFighting && <QuickAccess />}
+                {!isFighting && isSetup && <QuickAccess />}
                 <CommandBar open={isCommandBarOpen} />
                 <MainPanel />
             </SAContext.Provider>

@@ -15,22 +15,25 @@ export interface SALevelData {
     state: SALevelState;
 }
 
-export interface SALevelConfig {
+export interface SALevelInfo {
     name: string;
     maxTimes: number;
 }
 
 // 关卡配置
-export interface ILevelRunner<TData extends SALevelData = SALevelData, TConfig extends SALevelConfig = SALevelConfig> {
+export interface ILevelRunner<TData extends SALevelData = SALevelData, TInfo extends SALevelInfo = SALevelInfo> {
+    // 关卡的动态数据
     data: TData;
-    config: TConfig;
+    // 关卡的静态数据
+    info: TInfo;
+    // 玩家可选的关卡的配置数据
     option: object;
 
-    actions: Record<string, (this: ILevelRunner<TData, TConfig>) => Promise<void>>;
+    actions: Record<string, (this: ILevelRunner<TData, TInfo>) => Promise<void>>;
 
-    logger: (msg: string) => void;
+    logger: typeof console.log;
     updater(): Promise<SALevelState>;
-    selectStrategy(): ILevelBattleStrategy;
+    selectBattle(): ILevelBattleStrategy;
 
     beforeAll?: () => Promise<void>;
     afterAll?: () => Promise<void>;

@@ -11,7 +11,7 @@ export class Item extends EntityBase implements IItemObject {
     static readonly instanceKey = 'id';
     declare readonly __type: EntityType;
     limit?: number;
-    amount: number;
+    amount?: number;
 
     constructor(obj: SAType.ItemObj) {
         super();
