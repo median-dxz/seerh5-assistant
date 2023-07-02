@@ -16,7 +16,7 @@ class Vip implements SAMod.ISignMod<Config> {
 
     meta: SAMod.MetaData = {
         id: 'Vip',
-        author: 'median',
+        scope: 'median',
         type: 'sign',
         description: 'vip签到',
     };

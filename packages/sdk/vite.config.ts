@@ -33,7 +33,7 @@ export default defineConfig({
                 }
                 return undefined as unknown as string;
             },
-            { include: ['**/sdk-template/src/**'] }
+            { include: ['src/**/*'] }
         ),
     ],
 });

@@ -9,7 +9,7 @@ type MoveStrategy = import('sa-core').MoveStrategy;
 declare namespace SAMod {
     type MetaData = {
         id: string;
-        author: string;
+        scope: string;
         type: 'base' | 'module' | 'sign' | 'level' | 'battle' | 'strategy' | 'quick-access-plugin';
         description?: string;
     };

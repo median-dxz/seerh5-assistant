@@ -23,7 +23,7 @@ export default defineConfig(({ command, mode }) => {
         },
         build: {
             dynamicImportVarsOptions: {
-                exclude: ['src/ModManager/*'],
+                exclude: ['src/service/ModManager/*'],
             },
         },
         optimizeDeps: {

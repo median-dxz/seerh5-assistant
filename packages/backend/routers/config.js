@@ -4,6 +4,41 @@ import * as toml from 'smol-toml';
 
 import { base } from '../base.js';
 
+export const PetCache = {
+    configPath: path.join(base, 'config', 'sa-pet.toml'),
+    catchTimeMap: new Map(),
+    load() {
+        if (!fs.existsSync(this.configPath)) {
+            fs.writeFileSync(this.configPath, '');
+        }
+        const content = fs.readFileSync(this.configPath, 'utf-8');
+        /** @type {any} */
+        const config = toml.parse(content);
+        Object.keys(config).forEach((key) => this.catchTimeMap.set(key, config[key]));
+    },
+    /**
+     * @param {string} name
+     */
+    query(name) {
+        return this.catchTimeMap.get(name);
+    },
+    /**
+     * @param {Map<string, number>} newData
+     */
+    update(newData) {
+        this.catchTimeMap = newData;
+        /** @type {Record<string, number>} */
+        const cacheObj = {};
+        for (const [key, value] of newData.entries()) {
+            cacheObj[key] = value;
+        }
+        const content = toml.stringify(cacheObj);
+        fs.writeFileSync(this.configPath, content);
+    },
+};
+
+PetCache.load();
+
 export class ModConfig {
     /** @type { Record<string, Record<string, object>> | undefined } */
     data;

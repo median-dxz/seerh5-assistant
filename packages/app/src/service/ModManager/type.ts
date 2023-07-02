@@ -1,4 +1,4 @@
-import { type GameModuleEventHandler } from 'sa-core';
+import { MoveStrategy, type GameModuleEventHandler } from 'sa-core';
 
 export enum SAModType {
     BASE_MOD = 'base',
@@ -12,7 +12,7 @@ export enum SAModType {
 
 export type MetaData = {
     id: string;
-    author: string;
+    scope: string;
     type: SAModType;
     description?: string;
 };
@@ -25,7 +25,7 @@ export class BaseMod {
     logger: typeof console.log;
     activate?(): void;
     deactivate?(): void;
-    export?: Record<string, unknown>;
+    export?: unknown;
 }
 
 export class ModuleMod extends BaseMod {
@@ -62,4 +62,19 @@ export class QuickAccessPlugin extends BaseMod {
     }
     show?(): string;
     showAsync?(): Promise<string>;
+}
+
+export class StrategyMod extends BaseMod {
+    export: MoveStrategy;
+}
+
+export interface BattleModExport {
+    pets: string[];
+    beforeBattle?: () => Promise<void>;
+    strategy: string;
+}
+
+export class BattleMod extends BaseMod {
+    ct: (...pets: string[]) => number[];
+    export: BattleModExport;
 }

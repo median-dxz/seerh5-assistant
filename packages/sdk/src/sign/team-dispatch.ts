@@ -10,7 +10,7 @@ class TeamDispatch implements SAMod.ISignMod<Config> {
 
     meta: SAMod.MetaData = {
         id: 'teamDispatch',
-        author: 'median',
+        scope: 'median',
         type: 'sign',
         description: '战队派遣',
     };

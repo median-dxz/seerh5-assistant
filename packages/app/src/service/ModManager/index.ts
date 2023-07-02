@@ -1,7 +1,17 @@
+import { ct } from '@sa-app/context/ct';
 import * as SAEndPoint from '@sa-app/service/endpoints';
-import { SaModuleLogger, defaultStyle } from 'sa-core';
+import { ILevelBattleStrategy, MoveStrategy, SaModuleLogger, defaultStyle } from 'sa-core';
 import { GameModuleListener } from 'sa-core/event-bus';
-import { BaseMod, ModuleMod, QuickAccessPlugin, SAModType, SignModExport } from './type';
+import {
+    BaseMod,
+    BattleMod,
+    BattleModExport,
+    ModuleMod,
+    QuickAccessPlugin,
+    SAModType,
+    SignModExport,
+    StrategyMod,
+} from './type';
 
 const log = SaModuleLogger('SAModManager', defaultStyle.mod);
 
@@ -13,7 +23,7 @@ export const SAModManager = {
     async fetchMods() {
         const modList = await SAEndPoint.getAllMods();
         const promises = modList.map(({ path }) =>
-            import(/* @vite-ignore */ `/mods/${path}`)
+            import(/* @vite-ignore */ `/mods/${path}?r=${Math.random()}`)
                 .then((module) => module.default as ModModuleExport)
                 .then((mod) => {
                     if (Array.isArray(mod)) {
@@ -23,13 +33,47 @@ export const SAModManager = {
                     }
                 })
         );
+        // builtin strategy
+        promises.push(
+            import('@sa-app/builtin/strategy')
+                .then((s) => s.default as Array<{ id: string; strategy: MoveStrategy }>)
+                .then((s) => {
+                    return s.map(({ id, strategy }) => {
+                        const mod = new BaseMod();
+                        mod.meta = {
+                            id,
+                            scope: 'sa',
+                            type: SAModType.STRATEGY,
+                        };
+                        mod.export = strategy;
+                        return mod;
+                    });
+                })
+        );
+        // builtin battle
+        promises.push(
+            import('@sa-app/builtin/battle')
+                .then((s) => s.default as Array<{ id: string; battle: BattleModExport }>)
+                .then((s) => {
+                    return s.map(({ id, battle }) => {
+                        const mod = new BaseMod();
+                        mod.meta = {
+                            id,
+                            scope: 'sa',
+                            type: SAModType.BATTLE_MOD,
+                        };
+                        mod.export = battle;
+                        return mod;
+                    });
+                })
+        );
         return Promise.all(promises).then((mods) => mods.flat());
     },
 
     setup(mods: BaseMod[]) {
         mods.forEach((mod) => {
             const { meta } = mod;
-            const modNamespace = `${meta.type}::${meta.author}::${meta.id}`;
+            const modNamespace = `${meta.type}::${meta.scope}::${meta.id}`;
 
             switch (meta.type) {
                 case SAModType.BASE_MOD:
@@ -117,4 +161,32 @@ export const SAModManager = {
         });
         ModStore.clear();
     },
+};
+
+export const loadStrategy = (id: string, scope = 'sa') => {
+    const strategyConfig = ModStore.get(`${SAModType.STRATEGY}::${scope}::${id}`);
+    if (!strategyConfig) {
+        throw new Error('未找到STRATEGY');
+    }
+    if (strategyConfig.meta.type !== SAModType.STRATEGY) {
+        throw new Error('该Mod不是STRATEGY类型');
+    }
+    const strategy = (strategyConfig as StrategyMod).export;
+    return strategy;
+};
+
+export const loadBattle = async (id: string, scope = 'sa') => {
+    const BattleConfig = ModStore.get(`${SAModType.BATTLE_MOD}::${scope}::${id}`);
+    if (!BattleConfig) {
+        throw new Error('未找到BATTLE');
+    }
+    if (BattleConfig.meta.type !== SAModType.BATTLE_MOD) {
+        throw new Error('该Mod不是BATTLE类型');
+    }
+    const battleExport = (BattleConfig as BattleMod).export;
+    return {
+        beforeBattle: battleExport.beforeBattle,
+        pets: await ct(...battleExport.pets),
+        strategy: loadStrategy(battleExport.strategy, scope),
+    } satisfies ILevelBattleStrategy;
 };

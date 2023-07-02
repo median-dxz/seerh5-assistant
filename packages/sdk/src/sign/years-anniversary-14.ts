@@ -11,7 +11,7 @@ class YearsAnniversary14 implements SAMod.ISignMod<Config> {
 
     meta: SAMod.MetaData = {
         id: '14YearsAnniversary',
-        author: 'median',
+        scope: 'median',
         type: 'sign',
         description: '14周年庆签到',
     };

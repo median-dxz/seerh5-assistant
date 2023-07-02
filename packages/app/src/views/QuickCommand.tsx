@@ -1,6 +1,7 @@
 import { Button } from '@mui/material';
 import { Box } from '@mui/system';
-import { dataProvider } from '@sa-app/service/SADataProvider';
+import { SAModManager, loadBattle } from '@sa-app/service/ModManager';
+import * as SAEndpoint from '@sa-app/service/endpoints';
 import React from 'react';
 import { PetDataManger, PetPosition } from 'sa-core';
 
@@ -36,9 +37,9 @@ export function QuickCommand() {
                 onClick={async () => {
                     const data1 = await PetDataManger.miniInfo.get();
                     const data2 = await PetDataManger.bag.get();
-                    const petMap: Record<string, number> = {};
+                    const petMap = new Map<string, number>();
                     const mapping = (v: { name: string; catchTime: number; id: number; level: number }) => {
-                        petMap[v.name] = v.catchTime;
+                        petMap.set(v.name, v.catchTime);
                     };
                     Array.from(data1)
                         .filter(([_, v]) => v.posi === PetPosition.elite || (v.level === 100 && v.id >= 3582))
@@ -46,10 +47,26 @@ export function QuickCommand() {
                         .forEach(mapping);
                     data2[0].forEach(mapping);
                     data2[1].forEach(mapping);
-                    dataProvider.update('pets', petMap);
+                    SAEndpoint.cacheCatchTime(petMap);
                 }}
             >
                 dump ct(实验性功能)
+            </Button>
+            <Button
+                onClick={async () => {
+                    SAModManager.teardown();
+                    SAModManager.setup(await SAModManager.fetchMods());
+                }}
+            >
+                重载所有模组(开发者功能)
+            </Button>
+            <Button
+                onClick={async () => {
+                    const r = await loadBattle('索强攻');
+                    console.log(r);
+                }}
+            >
+                测试专用
             </Button>
         </Box>
     );

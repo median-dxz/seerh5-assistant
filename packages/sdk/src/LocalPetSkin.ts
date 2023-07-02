@@ -28,7 +28,7 @@ class LocalPetSkin implements SAMod.IBaseMod {
 
     meta: SAMod.MetaData = {
         id: 'LocalPetSkin',
-        author: 'median',
+        scope: 'median',
         type: 'base',
         description: '本地全皮肤解锁',
     };

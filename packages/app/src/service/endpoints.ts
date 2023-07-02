@@ -26,7 +26,7 @@ const setModConfig = async (namespace: string, config: unknown) => {
 
 export const injectModConfig = async (mod: BaseMod) => {
     const { meta } = mod;
-    const namespace = `${meta.type}::${meta.author}::${meta.id}`;
+    const namespace = `${meta.type}::${meta.scope}::${meta.id}`;
     if (mod.defaultConfig) {
         const { config } = await getModConfig(namespace);
         if (config) {
@@ -36,4 +36,35 @@ export const injectModConfig = async (mod: BaseMod) => {
             mod.config = mod.defaultConfig;
         }
     }
+};
+
+type CatchTime = (name?: string) => Promise<Array<[string, number]>>;
+export const queryCatchTime: CatchTime = async (name) => {
+    if (name) {
+        return fetch(`/api/pet?name=${name}`).then((r) => r.json());
+    } else {
+        return fetch(`/api/pet`).then((r) => r.json());
+    }
+};
+
+export const cacheCatchTime = async (data: Map<string, number>) => {
+    return fetch(`/api/pet`, {
+        method: 'POST',
+        body: JSON.stringify([...data]),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+};
+
+export interface PetFragmentOption {
+    id: number;
+    difficulty: number;
+    sweep: boolean;
+    battle: string[];
+}
+
+type PetFragmentConfig = () => Promise<PetFragmentOption[]>;
+export const getPetFragmentConfig: PetFragmentConfig = async () => {
+    return fetch(`/api/petFragmentLevel`).then((r) => r.json());
 };

@@ -20,7 +20,7 @@ class g {
   constructor() {
     d(this, "meta", {
       id: "LocalPetSkin",
-      author: "median",
+      scope: "median",
       type: "base",
       description: "本地全皮肤解锁"
     });

@@ -5,7 +5,7 @@ class PetBag implements SAMod.IModuleMod<petBag.PetBag> {
 
     meta: SAMod.MetaData = {
         id: 'petBag',
-        author: 'median',
+        scope: 'median',
         type: 'module',
         description: '精灵背包模块注入, 提供UI同步和本地皮肤功能的UI支持',
     };

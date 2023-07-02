@@ -10,8 +10,9 @@ import { AutoBattle } from './AutoBattle/AutoBattle';
 import { CommonValue } from './CommonValue';
 import { DailySign } from './DailySign';
 import { GameController } from './GameController';
-import { QuickCommand } from './QuickCommand';
 import { PackageCapture } from './PackageCapture';
+import { PetFragmentLevelPanel } from './PetFragmentLevel';
+import { QuickCommand } from './QuickCommand';
 import { Realm } from './Realm';
 
 interface TabPanelProps {
@@ -96,7 +97,7 @@ export function MainPanel() {
             <AutoBattle />,
             <QuickCommand />,
         ],
-        [TabLayer.Level]: [undefined, <DailySign />, <Realm />, <Realm />, <Realm />],
+        [TabLayer.Level]: [undefined, <DailySign />, <Realm />, <PetFragmentLevelPanel />, <Realm />],
     };
 
     switch (layer) {

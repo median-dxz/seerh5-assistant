@@ -1,1 +1,1 @@
-cp -r dist/* ../packages/app/backend/mods/official_presets/
+cp -r dist/* ../backend/mods/official_presets/

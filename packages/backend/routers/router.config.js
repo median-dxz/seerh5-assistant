@@ -1,54 +1,55 @@
+import fs from 'fs';
+import path from 'path';
 
+import * as toml from 'smol-toml';
 
-export function queryPets(arg0, queryPets) {
-    throw new Error('Function not implemented.');
+import { base } from '../base.js';
+import { PetCache } from './config.js';
+
+// ===== middlewares =====
+
+/**
+ * @type {import('@koa/router').Middleware}
+ */
+export function queryPets(ctx) {
+    const { name } = ctx.query;
+    if (typeof name === 'string') {
+        ctx.body = [name, PetCache.query(name)];
+    } else {
+        ctx.body = Array.from(PetCache.catchTimeMap.entries());
+    }
 }
 
-
-export function petFragmentLevel(arg0, petFragmentLevel) {
-    throw new Error('Function not implemented.');
+/**
+ * @type {import('@koa/router').Middleware}
+ */
+export function cachePets(ctx) {
+    /** @type {Array<[string, number]>} */
+    const pets = ctx.request.body;
+    const newPetCache = new Map(pets);
+    PetCache.update(newPetCache);
+    ctx.body = {
+        success: true,
+    };
 }
 
-
-export function realm(arg0, realm) {
-    throw new Error('Function not implemented.');
+/**
+ * @type {import('@koa/router').Middleware}
+ */
+export function petFragmentLevel(ctx) {
+    const configPath = path.join(base, 'config', 'sa-petFragmentLevel.toml');
+    if (!fs.existsSync(configPath)) {
+        fs.writeFileSync(configPath, '');
+    }
+    const content = fs.readFileSync(configPath, 'utf-8');
+    /** @type {any} */
+    const config = toml.parse(content);
+    ctx.body = config['PetFragmentLevel'];
 }
 
-
-export function cachePets(arg0, cachePets) {
+/**
+ * @type {import('@koa/router').Middleware}
+ */
+export function realm(ctx) {
     throw new Error('Function not implemented.');
 }
-// const dataFile = path.resolve(base, 'data', 'data.json');
-// const data = JSON.parse(fs.readFileSync(dataFile).toString('utf8'));
-
-// export const saDataProvider = (req, res, next) => {
-//     res.setHeader('Cache-Control', 'no-cache');
-//     switch (req.method) {
-//         case 'GET':
-//             res.status(200).json(data);
-//             break;
-//         case 'POST':
-//             // 获取payload
-//             const payload = req.body;
-
-//             if (req.query.mod) {
-//                 const mod = req.query.mod.toString();
-//                 data.mods[mod] = payload;
-//             } else {
-//                 data[payload.key] = payload.value;
-//             }
-
-//             writeFileSync(dataFile, JSON.stringify(data, null, 4));
-
-//             res.status(200)
-//                 .json({
-//                     code: 200,
-//                     ok: true,
-//                 })
-//                 .end();
-//             break;
-//         default:
-//             next();
-//             break;
-//     }
-// };

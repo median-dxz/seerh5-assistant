@@ -33,7 +33,7 @@ export interface ILevelRunner<TData extends SALevelData = SALevelData, TInfo ext
 
     logger: typeof console.log;
     updater(): Promise<SALevelState>;
-    selectStrategy(): ILevelBattleStrategy;
+    selectBattle(): ILevelBattleStrategy;
 
     beforeAll?: () => Promise<void>;
     afterAll?: () => Promise<void>;

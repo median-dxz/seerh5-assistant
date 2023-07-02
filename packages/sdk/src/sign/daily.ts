@@ -14,7 +14,7 @@ class Daily implements SAMod.ISignMod {
 
     meta: SAMod.MetaData = {
         id: 'daily',
-        author: 'median',
+        scope: 'median',
         type: 'sign',
         description: '日常签到',
     };

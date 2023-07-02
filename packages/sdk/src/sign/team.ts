@@ -19,7 +19,7 @@ class Team implements SAMod.ISignMod<Config> {
 
     meta: SAMod.MetaData = {
         id: 'Team',
-        author: 'median',
+        scope: 'median',
         type: 'sign',
         description: '战队签到',
     };

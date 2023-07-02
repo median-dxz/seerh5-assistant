@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import * as core from 'sa-core';
+import { loadAllCt } from './context/ct';
 import './index.css';
-import { dataProvider } from './service/SADataProvider';
 
 const container = document.getElementById('sa-app')!;
 const root = ReactDOM.createRoot(container);
@@ -11,9 +11,9 @@ const renderApp = async () => {
     const sac = window.sac;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).sac = { ...core, ...sac };
+    await loadAllCt();
 
     core.HelperLoader();
-    await dataProvider.init();
 
     const { default: SaMain } = await import('./App');
 

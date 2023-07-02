@@ -4,7 +4,7 @@ import Icon from './local_hospital.svg';
 export default class FightPuni implements SAMod.IQuickAccessPlugin {
     logger: typeof console.log;
     meta: SAMod.MetaData = {
-        author: 'median',
+        scope: 'median',
         id: 'toggleAutoCure',
         type: 'quick-access-plugin',
     };

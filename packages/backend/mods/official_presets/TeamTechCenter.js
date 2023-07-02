@@ -5,7 +5,7 @@ class c {
   constructor() {
     n(this, "meta", {
       id: "teamTechCenter",
-      author: "median",
+      scope: "median",
       type: "module",
       description: "精灵科技中心模块注入, 提供一键强化到满级功能"
     });

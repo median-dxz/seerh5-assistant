@@ -1,6 +1,6 @@
 var K = Object.defineProperty;
-var tt = (y, s, u) => s in y ? K(y, s, { enumerable: !0, configurable: !0, writable: !0, value: u }) : y[s] = u;
-var l = (y, s, u) => (tt(y, typeof s != "symbol" ? s + "" : s, u), u);
+var tt = (y, s, c) => s in y ? K(y, s, { enumerable: !0, configurable: !0, writable: !0, value: c }) : y[s] = c;
+var l = (y, s, c) => (tt(y, typeof s != "symbol" ? s + "" : s, c), c);
 const L = {
   刻印抽奖次数: 16577,
   登录时长: 12462,
@@ -12,7 +12,7 @@ class et {
   constructor() {
     l(this, "meta", {
       id: "daily",
-      author: "median",
+      scope: "median",
       type: "sign",
       description: "日常签到"
     });
@@ -27,30 +27,30 @@ class et {
         async check() {
           let s = (await sac.Socket.multiValue(L.登录时长))[0];
           s = s + Math.floor(SystemTimerManager.sysBJDate.getTime() / 1e3) - MainManager.actorInfo.logintimeThisTime, s = Math.floor(s / 60);
-          let u = 0;
+          let c = 0;
           switch (!0) {
             case s >= 120:
-              u = 10;
+              c = 10;
               break;
             case s >= 90:
-              u = 7;
+              c = 7;
               break;
             case s >= 60:
-              u = 5;
+              c = 5;
               break;
             case s >= 30:
-              u = 3;
+              c = 3;
               break;
             case s >= 15:
-              u = 2;
+              c = 2;
               break;
             case s >= 5:
-              u = 1;
+              c = 1;
               break;
             default:
-              u = 0;
+              c = 0;
           }
-          return u -= (await sac.Socket.multiValue(L.已许愿次数))[0], u;
+          return c -= (await sac.Socket.multiValue(L.已许愿次数))[0], c;
         },
         run: () => sac.Socket.sendByQueue(45801, [2, 1])
       },
@@ -70,7 +70,7 @@ class nt {
   constructor() {
     l(this, "meta", {
       id: "teamDispatch",
-      author: "median",
+      scope: "median",
       type: "sign",
       description: "战队派遣"
     });
@@ -81,11 +81,11 @@ class nt {
         check: () => Promise.resolve(1),
         async run() {
           await sac.Socket.sendByQueue(45809, [0]).catch(() => this.logger("没有可收取的派遣"));
-          const s = new Set(this.config.ignorePets), u = sac.PetPosition;
+          const s = new Set(this.config.ignorePets), c = sac.PetPosition;
           let k = !1;
           for (let D = 16; D > 0; D--) {
             D === 5 && (D = 1);
-            const B = await sac.getBagPets(u.bag1);
+            const B = await sac.getBagPets(c.bag1);
             if (!k)
               for (const d of B)
                 await d.popFromBag();
@@ -124,7 +124,7 @@ class at {
   constructor() {
     l(this, "meta", {
       id: "Team",
-      author: "median",
+      scope: "median",
       type: "sign",
       description: "战队签到"
     });
@@ -160,7 +160,7 @@ class ot {
   constructor() {
     l(this, "meta", {
       id: "Vip",
-      author: "median",
+      scope: "median",
       type: "sign",
       description: "vip签到"
     });
@@ -184,16 +184,16 @@ class ot {
     });
   }
 }
-var ut = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {};
-function ct(y) {
+var ct = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {};
+function ut(y) {
   return y && y.__esModule && Object.prototype.hasOwnProperty.call(y, "default") ? y.default : y;
 }
 var G = { exports: {} };
 (function(y, s) {
-  (function(u, k) {
+  (function(c, k) {
     y.exports = k();
-  })(ut, function() {
-    var u = 1e3, k = 6e4, D = 36e5, B = "millisecond", v = "second", _ = "minute", g = "hour", w = "day", d = "week", S = "month", X = "quarter", I = "year", Y = "date", j = "Invalid Date", J = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/, Z = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g, z = { name: "en", weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"), months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_"), ordinal: function(i) {
+  })(ct, function() {
+    var c = 1e3, k = 6e4, D = 36e5, B = "millisecond", v = "second", _ = "minute", g = "hour", w = "day", d = "week", S = "month", X = "quarter", I = "year", Y = "date", j = "Invalid Date", J = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/, Z = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g, z = { name: "en", weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"), months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_"), ordinal: function(i) {
       var n = ["th", "st", "nd", "rd"], t = i % 100;
       return "[" + i + (n[(t - 20) % 10] || n[t] || n[0]) + "]";
     } }, H = function(i, n, t) {
@@ -232,14 +232,14 @@ var G = { exports: {} };
         T[h] = n, e = h;
       }
       return !a && e && (P = e), e || !a && P;
-    }, $ = function(i, n) {
+    }, p = function(i, n) {
       if (Q(i))
         return i.clone();
       var t = typeof n == "object" ? n : {};
       return t.date = i, t.args = arguments, new E(t);
-    }, c = q;
-    c.l = V, c.i = Q, c.w = function(i, n) {
-      return $(i, { locale: n.$L, utc: n.$u, x: n.$x, $offset: n.$offset });
+    }, u = q;
+    u.l = V, u.i = Q, u.w = function(i, n) {
+      return p(i, { locale: n.$L, utc: n.$u, x: n.$x, $offset: n.$offset });
     };
     var E = function() {
       function i(t) {
@@ -251,7 +251,7 @@ var G = { exports: {} };
           var e = a.date, o = a.utc;
           if (e === null)
             return /* @__PURE__ */ new Date(NaN);
-          if (c.u(e))
+          if (u.u(e))
             return /* @__PURE__ */ new Date();
           if (e instanceof Date)
             return new Date(e);
@@ -268,37 +268,37 @@ var G = { exports: {} };
         var t = this.$d;
         this.$y = t.getFullYear(), this.$M = t.getMonth(), this.$D = t.getDate(), this.$W = t.getDay(), this.$H = t.getHours(), this.$m = t.getMinutes(), this.$s = t.getSeconds(), this.$ms = t.getMilliseconds();
       }, n.$utils = function() {
-        return c;
+        return u;
       }, n.isValid = function() {
         return this.$d.toString() !== j;
       }, n.isSame = function(t, a) {
-        var e = $(t);
+        var e = p(t);
         return this.startOf(a) <= e && e <= this.endOf(a);
       }, n.isAfter = function(t, a) {
-        return $(t) < this.startOf(a);
+        return p(t) < this.startOf(a);
       }, n.isBefore = function(t, a) {
-        return this.endOf(a) < $(t);
+        return this.endOf(a) < p(t);
       }, n.$g = function(t, a, e) {
-        return c.u(t) ? this[a] : this.set(e, t);
+        return u.u(t) ? this[a] : this.set(e, t);
       }, n.unix = function() {
         return Math.floor(this.valueOf() / 1e3);
       }, n.valueOf = function() {
         return this.$d.getTime();
       }, n.startOf = function(t, a) {
-        var e = this, o = !!c.u(a) || a, r = c.p(t), h = function(x, M) {
-          var C = c.w(e.$u ? Date.UTC(e.$y, M, x) : new Date(e.$y, M, x), e);
+        var e = this, o = !!u.u(a) || a, r = u.p(t), h = function(x, M) {
+          var C = u.w(e.$u ? Date.UTC(e.$y, M, x) : new Date(e.$y, M, x), e);
           return o ? C : C.endOf(w);
         }, m = function(x, M) {
-          return c.w(e.toDate()[x].apply(e.toDate("s"), (o ? [0, 0, 0, 0] : [23, 59, 59, 999]).slice(M)), e);
-        }, f = this.$W, p = this.$M, O = this.$D, b = "set" + (this.$u ? "UTC" : "");
+          return u.w(e.toDate()[x].apply(e.toDate("s"), (o ? [0, 0, 0, 0] : [23, 59, 59, 999]).slice(M)), e);
+        }, f = this.$W, $ = this.$M, O = this.$D, b = "set" + (this.$u ? "UTC" : "");
         switch (r) {
           case I:
             return o ? h(1, 0) : h(31, 11);
           case S:
-            return o ? h(1, p) : h(0, p + 1);
+            return o ? h(1, $) : h(0, $ + 1);
           case d:
             var N = this.$locale().weekStart || 0, W = (f < N ? f + 7 : f) - N;
-            return h(o ? O - W : O + (6 - W), p);
+            return h(o ? O - W : O + (6 - W), $);
           case w:
           case Y:
             return m(b + "Hours", 0);
@@ -314,7 +314,7 @@ var G = { exports: {} };
       }, n.endOf = function(t) {
         return this.startOf(t, !1);
       }, n.$set = function(t, a) {
-        var e, o = c.p(t), r = "set" + (this.$u ? "UTC" : ""), h = (e = {}, e[w] = r + "Date", e[Y] = r + "Date", e[S] = r + "Month", e[I] = r + "FullYear", e[g] = r + "Hours", e[_] = r + "Minutes", e[v] = r + "Seconds", e[B] = r + "Milliseconds", e)[o], m = o === w ? this.$D + (a - this.$W) : a;
+        var e, o = u.p(t), r = "set" + (this.$u ? "UTC" : ""), h = (e = {}, e[w] = r + "Date", e[Y] = r + "Date", e[S] = r + "Month", e[I] = r + "FullYear", e[g] = r + "Hours", e[_] = r + "Minutes", e[v] = r + "Seconds", e[B] = r + "Milliseconds", e)[o], m = o === w ? this.$D + (a - this.$W) : a;
         if (o === S || o === I) {
           var f = this.clone().set(Y, 1);
           f.$d[h](m), f.init(), this.$d = f.set(Y, Math.min(this.$D, f.daysInMonth())).$d;
@@ -324,13 +324,13 @@ var G = { exports: {} };
       }, n.set = function(t, a) {
         return this.clone().$set(t, a);
       }, n.get = function(t) {
-        return this[c.p(t)]();
+        return this[u.p(t)]();
       }, n.add = function(t, a) {
         var e, o = this;
         t = Number(t);
-        var r = c.p(a), h = function(p) {
-          var O = $(o);
-          return c.w(O.date(O.date() + Math.round(p * t)), o);
+        var r = u.p(a), h = function($) {
+          var O = p(o);
+          return u.w(O.date(O.date() + Math.round($ * t)), o);
         };
         if (r === S)
           return this.set(S, this.$M + t);
@@ -340,30 +340,30 @@ var G = { exports: {} };
           return h(1);
         if (r === d)
           return h(7);
-        var m = (e = {}, e[_] = k, e[g] = D, e[v] = u, e)[r] || 1, f = this.$d.getTime() + t * m;
-        return c.w(f, this);
+        var m = (e = {}, e[_] = k, e[g] = D, e[v] = c, e)[r] || 1, f = this.$d.getTime() + t * m;
+        return u.w(f, this);
       }, n.subtract = function(t, a) {
         return this.add(-1 * t, a);
       }, n.format = function(t) {
         var a = this, e = this.$locale();
         if (!this.isValid())
           return e.invalidDate || j;
-        var o = t || "YYYY-MM-DDTHH:mm:ssZ", r = c.z(this), h = this.$H, m = this.$m, f = this.$M, p = e.weekdays, O = e.months, b = function(M, C, R, U) {
+        var o = t || "YYYY-MM-DDTHH:mm:ssZ", r = u.z(this), h = this.$H, m = this.$m, f = this.$M, $ = e.weekdays, O = e.months, b = function(M, C, R, U) {
           return M && (M[C] || M(a, o)) || R[C].slice(0, U);
         }, N = function(M) {
-          return c.s(h % 12 || 12, M, "0");
+          return u.s(h % 12 || 12, M, "0");
         }, W = e.meridiem || function(M, C, R) {
           var U = M < 12 ? "AM" : "PM";
           return R ? U.toLowerCase() : U;
-        }, x = { YY: String(this.$y).slice(-2), YYYY: c.s(this.$y, 4, "0"), M: f + 1, MM: c.s(f + 1, 2, "0"), MMM: b(e.monthsShort, f, O, 3), MMMM: b(O, f), D: this.$D, DD: c.s(this.$D, 2, "0"), d: String(this.$W), dd: b(e.weekdaysMin, this.$W, p, 2), ddd: b(e.weekdaysShort, this.$W, p, 3), dddd: p[this.$W], H: String(h), HH: c.s(h, 2, "0"), h: N(1), hh: N(2), a: W(h, m, !0), A: W(h, m, !1), m: String(m), mm: c.s(m, 2, "0"), s: String(this.$s), ss: c.s(this.$s, 2, "0"), SSS: c.s(this.$ms, 3, "0"), Z: r };
+        }, x = { YY: String(this.$y).slice(-2), YYYY: u.s(this.$y, 4, "0"), M: f + 1, MM: u.s(f + 1, 2, "0"), MMM: b(e.monthsShort, f, O, 3), MMMM: b(O, f), D: this.$D, DD: u.s(this.$D, 2, "0"), d: String(this.$W), dd: b(e.weekdaysMin, this.$W, $, 2), ddd: b(e.weekdaysShort, this.$W, $, 3), dddd: $[this.$W], H: String(h), HH: u.s(h, 2, "0"), h: N(1), hh: N(2), a: W(h, m, !0), A: W(h, m, !1), m: String(m), mm: u.s(m, 2, "0"), s: String(this.$s), ss: u.s(this.$s, 2, "0"), SSS: u.s(this.$ms, 3, "0"), Z: r };
         return o.replace(Z, function(M, C) {
           return C || x[M] || r.replace(":", "");
         });
       }, n.utcOffset = function() {
         return 15 * -Math.round(this.$d.getTimezoneOffset() / 15);
       }, n.diff = function(t, a, e) {
-        var o, r = c.p(a), h = $(t), m = (h.utcOffset() - this.utcOffset()) * k, f = this - h, p = c.m(this, h);
-        return p = (o = {}, o[I] = p / 12, o[S] = p, o[X] = p / 3, o[d] = (f - m) / 6048e5, o[w] = (f - m) / 864e5, o[g] = f / D, o[_] = f / k, o[v] = f / u, o)[r] || f, e ? p : c.a(p);
+        var o, r = u.p(a), h = p(t), m = (h.utcOffset() - this.utcOffset()) * k, f = this - h, $ = u.m(this, h);
+        return $ = (o = {}, o[I] = $ / 12, o[S] = $, o[X] = $ / 3, o[d] = (f - m) / 6048e5, o[w] = (f - m) / 864e5, o[g] = f / D, o[_] = f / k, o[v] = f / c, o)[r] || f, e ? $ : u.a($);
       }, n.daysInMonth = function() {
         return this.endOf(S).$D;
       }, n.$locale = function() {
@@ -374,7 +374,7 @@ var G = { exports: {} };
         var e = this.clone(), o = V(t, a, !0);
         return o && (e.$L = o), e;
       }, n.clone = function() {
-        return c.w(this.$d, this);
+        return u.w(this.$d, this);
       }, n.toDate = function() {
         return new Date(this.valueOf());
       }, n.toJSON = function() {
@@ -385,24 +385,24 @@ var G = { exports: {} };
         return this.$d.toUTCString();
       }, i;
     }(), F = E.prototype;
-    return $.prototype = F, [["$ms", B], ["$s", v], ["$m", _], ["$H", g], ["$W", w], ["$M", S], ["$y", I], ["$D", Y]].forEach(function(i) {
+    return p.prototype = F, [["$ms", B], ["$s", v], ["$m", _], ["$H", g], ["$W", w], ["$M", S], ["$y", I], ["$D", Y]].forEach(function(i) {
       F[i[1]] = function(n) {
         return this.$g(n, i[0], i[1]);
       };
-    }), $.extend = function(i, n) {
-      return i.$i || (i(n, E, $), i.$i = !0), $;
-    }, $.locale = V, $.isDayjs = Q, $.unix = function(i) {
-      return $(1e3 * i);
-    }, $.en = T[P], $.Ls = T, $.p = {}, $;
+    }), p.extend = function(i, n) {
+      return i.$i || (i(n, E, p), i.$i = !0), p;
+    }, p.locale = V, p.isDayjs = Q, p.unix = function(i) {
+      return p(1e3 * i);
+    }, p.en = T[P], p.Ls = T, p.p = {}, p;
   });
 })(G);
 var ht = G.exports;
-const A = /* @__PURE__ */ ct(ht);
+const A = /* @__PURE__ */ ut(ht);
 class ft {
   constructor() {
     l(this, "meta", {
       id: "14YearsAnniversary",
-      author: "median",
+      scope: "median",
       type: "sign",
       description: "14周年庆签到"
     });
@@ -420,15 +420,15 @@ class ft {
           const s = new URLSearchParams({
             PHPSESSID: this.config.signCookie,
             cookie_login_uid: this.config.userId
-          }), u = await fetch(`/api/14year/?${s.toString()}`);
-          this.logger("签到结果: ", await u.json());
+          }), c = await fetch(`/api/14year/?${s.toString()}`);
+          this.logger("签到结果: ", await c.json());
         }
       },
       领取卫岳因子: {
         check: async () => {
           let s;
-          const u = await sac.Socket.multiValue(121581, 121582);
-          return this.subDaysWY >= 32 ? s = u[1] & 1 << this.subDaysWY - 32 : s = u[0] & 1 << this.subDaysWY - 1, +!s;
+          const c = await sac.Socket.multiValue(121581, 121582);
+          return this.subDaysWY >= 32 ? s = c[1] & 1 << this.subDaysWY - 32 : s = c[0] & 1 << this.subDaysWY - 1, +!s;
         },
         run: () => {
           sac.Socket.sendByQueue(41388, [64, this.subDaysWY]);
@@ -437,8 +437,8 @@ class ft {
       领取武心婵因子: {
         check: async () => {
           let s;
-          const u = await sac.Socket.multiValue(121583);
-          return this.subDaysWXC >= 32 ? s = u[1] & 1 << this.subDaysWXC - 32 : s = u[0] & 1 << this.subDaysWXC - 1, +!s;
+          const c = await sac.Socket.multiValue(121583);
+          return this.subDaysWXC >= 32 ? s = c[1] & 1 << this.subDaysWXC - 32 : s = c[0] & 1 << this.subDaysWXC - 1, +!s;
         },
         run: () => {
           sac.Socket.sendByQueue(41388, [65, this.subDaysWXC]);

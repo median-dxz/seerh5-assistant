@@ -5,7 +5,7 @@ class TeamTechCenter implements SAMod.IModuleMod<team.TeamTech> {
 
     meta: SAMod.MetaData = {
         id: 'teamTechCenter',
-        author: 'median',
+        scope: 'median',
         type: 'module' as const,
         description: '精灵科技中心模块注入, 提供一键强化到满级功能',
     };

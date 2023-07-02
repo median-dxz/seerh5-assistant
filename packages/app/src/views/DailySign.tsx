@@ -47,7 +47,7 @@ export function DailySign() {
         return {
             name: meta.id,
             description: meta.description,
-            author: meta.author,
+            author: meta.scope,
             state: <SignState namespace={namespace} checkers={exports} />,
             execute: (
                 <ButtonGroup>
