@@ -9,10 +9,10 @@ export const SaTableRow = styled(TableRow)`
         border: 0;
     }
     &.Mui-selected {
-        background-color: ${alpha(saTheme.palette.emphases.main, 0.18)};
+        background-color: ${alpha(saTheme.palette.emphases.main, 0.12)};
     }
     &:hover,
     &.Mui-selected:hover {
-        background-color: ${alpha(saTheme.palette.emphases.main, 0.4)};
+        background-color: ${alpha(saTheme.palette.emphases.main, 0.18)};
     }
 ` as typeof TableRow;

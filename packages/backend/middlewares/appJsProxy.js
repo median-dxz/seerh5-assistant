@@ -3,7 +3,7 @@ export const saAppJsProxy = async (ctx, next) => {
     const { 0: path, domain } = ctx.params;
 
     const url = new URL(ctx.URL);
-    url.protocol = 'https';
+    url.protocol = 'http';
     url.host = domain;
     url.port = '';
     url.pathname = path;
