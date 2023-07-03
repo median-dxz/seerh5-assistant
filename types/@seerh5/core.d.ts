@@ -200,6 +200,7 @@ declare class MainManager {
         clothIDs: number[];
         curTitle: number;
         vipScore: number;
+        readonly vipScoreMax: number;
         readonly coins: number;
         readonly logintimeThisTime: number;
         readonly timeToday: number;
