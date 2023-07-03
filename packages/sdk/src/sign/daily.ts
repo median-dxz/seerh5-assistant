@@ -72,7 +72,7 @@ class Daily implements SAMod.ISignMod {
             },
             async run() {
                 const day = (await Socket.multiValue(MULTI_QUERY.许愿签到天数))[0];
-                Socket.sendByQueue(45801, [day + 1, 1]);
+                Socket.sendByQueue(45801, [1, day + 1]);
             },
         },
     };

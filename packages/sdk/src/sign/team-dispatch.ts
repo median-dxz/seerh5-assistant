@@ -20,14 +20,31 @@ class TeamDispatch implements SAMod.ISignMod<Config> {
 
     export: Record<string, SAMod.SignModExport<typeof this>> = {
         战队派遣: {
-            check: () => Promise.resolve(1),
+            check: async () => {
+                const times = await Socket.sendByQueue(45807).then((r) => new DataView(r).getUint32(0));
+                return 12 - times;
+            },
             async run() {
+                const hasDispatched = [];
+
                 await Socket.sendByQueue(45809, [0]).catch(() => this.logger('没有可收取的派遣'));
+                await Socket.sendByQueue(45807).then((r) => {
+                    const bytes = new DataView(r);
+                    let offset = 12;
+                    for (let i = 0; i < bytes.getUint32(8); i++) {
+                        const id = bytes.getUint32(offset);
+                        const timestamp = bytes.getUint32(offset + 24);
+                        if (timestamp > 0) hasDispatched.push(id);
+                        offset += 40;
+                    }
+                });
+
                 const ignorePetNames = new Set(this.config.ignorePets);
                 const PosType = PetPosition;
                 let reSelect = false;
                 for (let tid = 16; tid > 0; tid--) {
                     if (tid === 5) tid = 1;
+                    if (hasDispatched.includes(tid)) continue;
                     const pets = await getBagPets(PosType.bag1);
                     if (!reSelect) {
                         // 清空背包
