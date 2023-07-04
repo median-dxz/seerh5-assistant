@@ -29,6 +29,13 @@ export class Pet extends EntityBase implements IPetObject {
     readonly baseCurHp: number;
     readonly baseMaxHp: number;
 
+    readonly unwrapped_effect?: Array<PetEffectInfo>;
+    readonly hideSkillActivated?: boolean;
+
+    get hasEffect(): boolean {
+        return Boolean(EffectIconControl._hashMapByPetId.getValue(this.id));
+    }
+
     constructor(obj: PetInfo) {
         super();
         this.__type = 'Pet';
@@ -64,6 +71,14 @@ export class Pet extends EntityBase implements IPetObject {
             o.pp = v.pp;
             return o;
         });
+
+        if (SkillXMLInfo.hideMovesMap[this.id]) {
+            this.hideSkillActivated = Boolean(obj.hideSKill);
+        }
+
+        if (obj.effectList && obj.effectList.length > 0) {
+            this.unwrapped_effect = obj.effectList;
+        }
     }
 
     static from(obj: SAType.PetLike) {

@@ -1,7 +1,8 @@
 import { Button } from '@mui/material';
 import { Box } from '@mui/system';
-import { SAModManager, loadBattle } from '@sa-app/service/ModManager';
+import { SAModManager } from '@sa-app/service/ModManager';
 import * as SAEndpoint from '@sa-app/service/endpoints';
+import { findPetById } from '@sa-app/utils/findPetById';
 import React from 'react';
 import { PetDataManger, PetPosition } from 'sa-core';
 
@@ -62,7 +63,7 @@ export function QuickCommand() {
             </Button>
             <Button
                 onClick={async () => {
-                    const r = await loadBattle('索强攻');
+                    const r = await findPetById(3567);
                     console.log(r);
                 }}
             >

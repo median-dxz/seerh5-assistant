@@ -6,6 +6,7 @@ declare namespace SAType {
 
     class HashMap<T extends object> {
         containsKey(key: any): boolean;
+        getValue(key: any): T;
         getValues(): Array<T>;
         private _length: number;
         private _content: Dict<T>;

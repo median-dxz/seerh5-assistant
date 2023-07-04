@@ -72,15 +72,21 @@ declare class PetInfo {
     nature: number;
     hideSKill: PetSkillInfo;
     skillArray: Array<PetSkillInfo>;
+    effectList: Array<PetEffectInfo>;
     isDefault: boolean;
-    _skinId: number;
     base_hp_total: number;
     base_curHp: number;
+    _skinId: number;
     get hp(): number;
     get maxHp(): number;
     get skinId(): number;
     set skinId(id: number);
     getTeamTechAdd(index: number): number[];
+}
+
+declare class PetEffectInfo {
+    effectID: number;
+    args: string;
 }
 
 declare class PetSkillInfo {
@@ -293,6 +299,7 @@ declare class PetManager {
     static setDefault(catchTime: number): void;
     static _setDefault(catchTime: number): void;
     static equipSkin(catchTime: number, skinId: number, callback: Callback): PromiseLike<void>;
+    static checkPetInfoEffect(pet: Pick<PetInfo, 'id' | 'effectList'>, callback: (activated: boolean) => void): void;
     static dispatchEvent(e: PetEvent): void;
     static isBagFull: boolean;
     static isSecondBagFull: boolean;
@@ -327,6 +334,10 @@ declare class CountermarkController {
     static getAllUniversalMark(): Array<CountermarkInfo>;
 }
 
+declare class EffectIconControl {
+    static _hashMapByPetId: SAType.HashMap<Array<{ Id: number }>>;
+}
+
 declare class AchieveXMLInfo {
     static titleRules: Dict<SAType.TitleObj>;
     static isAbilityTitle(id: number): boolean;
@@ -355,6 +366,7 @@ declare class SkillXMLInfo {
     };
     static movesMap: Dict<SAType.MoveObj>;
     static moveStoneMap: Dict<SAType.MoveObj>;
+    static hideMovesMap: Record<number, Array<{ o: number; id: number }>>;
     static typeMap: {
         [Property: string]: SAType.ElementObj;
     };

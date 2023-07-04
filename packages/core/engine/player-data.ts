@@ -1,5 +1,5 @@
 import { extractObjectId } from '../common/utils.js';
-import type { IItemObject } from '../entity/index.js';
+import type { IItemObject, Pet } from '../entity/index.js';
 import { Item } from '../entity/index.js';
 import * as Socket from './socket.js';
 
@@ -7,6 +7,14 @@ export async function getItemNum(item: number | IItemObject) {
     const id = extractObjectId(item, Item.instanceKey);
     await new Promise((res) => ItemManager.updateItems([id], res));
     return ItemManager.getNumByID(id);
+}
+
+export async function isPetEffectActivated(pet: Pet): Promise<boolean> {
+    if (!(pet.hasEffect && pet.unwrapped_effect)) return false;
+
+    return new Promise((resolve) => {
+        PetManager.checkPetInfoEffect({ id: pet.id, effectList: pet.unwrapped_effect! }, resolve);
+    });
 }
 
 /**
