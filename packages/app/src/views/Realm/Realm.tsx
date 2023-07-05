@@ -1,7 +1,13 @@
 import { Button, Dialog, DialogActions, Divider, Typography, alpha } from '@mui/material';
 import { SAContext } from '@sa-app/context/SAContext';
 import React, { useCallback } from 'react';
-import { PanelColumnRender, PanelColumns, PanelTable } from '../../components/PanelTable/PanelTable';
+import {
+    PanelField,
+    PanelTable,
+    useIndex,
+    useRowData,
+    type PanelColumns,
+} from '../../components/PanelTable';
 import { LevelCourageTower } from './LevelCourageTower';
 import { LevelElfKingsTrial } from './LevelElfKingsTrial';
 import { LevelExpTraining } from './LevelExpTraining';
@@ -9,7 +15,7 @@ import { LevelStudyTraining } from './LevelStudyTraining';
 import { LevelTitanHole } from './LevelTitanHole';
 import { LevelXTeamRoom } from './LevelXTeamRoom';
 
-import { saTheme } from '@sa-app/style';
+import { SaTableRow } from '@sa-app/components/styled/TableRow';
 import { produce } from 'immer';
 import * as SABattle from 'sa-core/battle';
 import * as SAEngine from 'sa-core/engine';
@@ -125,49 +131,6 @@ export function Realm() {
         taskModuleComponent = rows[taskModule].module!;
     }
 
-    const render: PanelColumnRender<Level> = useCallback(
-        (row, index) => ({
-            name: row.name,
-            state: (
-                <Typography color={taskCompleted[index] ? '#eeff41' : 'inherited'}>
-                    {taskCompleted[index] ? '已完成' : '未完成'}
-                </Typography>
-            ),
-            action: (
-                <>
-                    {row.module && (
-                        <Button
-                            onClick={() => {
-                                setTaskModule(index);
-                                setOpen(true);
-                            }}
-                        >
-                            启动
-                        </Button>
-                    )}
-                    {row.sweep && (
-                        <Button
-                            onClick={() => {
-                                row.sweep!()
-                                    .then(() => row.getState())
-                                    .then((r) => {
-                                        setTaskCompleted(
-                                            produce((draft) => {
-                                                draft[index] = r;
-                                            })
-                                        );
-                                    });
-                            }}
-                        >
-                            扫荡
-                        </Button>
-                    )}
-                </>
-            ),
-        }),
-        [taskCompleted]
-    );
-
     const col: PanelColumns = React.useMemo(
         () => [
             {
@@ -192,20 +155,33 @@ export function Realm() {
 
     const toRowKey = useCallback((row: Level) => row.name, []);
 
-    const rowProps = useCallback(
-        (row: Level, index: number) => ({
-            sx: {
-                backgroundColor: taskCompleted[index] ? `${alpha(saTheme.palette.primary.main, 0.18)}` : 'transparent',
-            },
-        }),
-        [taskCompleted]
-    );
-
     return (
         <>
             <Button>一键日任</Button>
             <Divider />
-            <PanelTable data={rows} toRowKey={toRowKey} columns={col} columnRender={render} rowProps={rowProps} />
+            <PanelTable
+                data={rows}
+                toRowKey={toRowKey}
+                columns={col}
+                rowElement={
+                    <PanelRow
+                        taskCompleted={taskCompleted}
+                        openTask={(index) => {
+                            setOpen(true);
+                            setTaskModule(index);
+                        }}
+                        sweepTask={(index) => {
+                            rows[index].getState().then((r) =>
+                                setTaskCompleted(
+                                    produce((draft) => {
+                                        draft[index] = r;
+                                    })
+                                )
+                            );
+                        }}
+                    />
+                }
+            />
             <Dialog
                 open={open}
                 sx={{
@@ -226,3 +202,48 @@ export function Realm() {
         </>
     );
 }
+
+interface PanelRowProps {
+    taskCompleted: boolean[];
+    openTask: (index: number) => void;
+    sweepTask: (index: number) => void;
+}
+
+const PanelRow = ({ taskCompleted, openTask, sweepTask }: PanelRowProps) => {
+    const row = useRowData<Level>();
+    const index = useIndex();
+    const completed = taskCompleted[index];
+
+    return (
+        <SaTableRow
+            sx={{
+                backgroundColor: (theme) => (completed ? `${alpha(theme.palette.primary.main, 0.18)}` : 'transparent'),
+            }}
+        >
+            <PanelField field="name">{row.name}</PanelField>
+            <PanelField field="state">
+                <Typography color={completed ? '#eeff41' : 'inherited'}>{completed ? '已完成' : '未完成'}</Typography>
+            </PanelField>
+            <PanelField field="action" sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                {row.module && (
+                    <Button
+                        onClick={() => {
+                            openTask(index);
+                        }}
+                    >
+                        启动
+                    </Button>
+                )}
+                {row.sweep && (
+                    <Button
+                        onClick={() => {
+                            row.sweep!().then(() => sweepTask(index));
+                        }}
+                    >
+                        扫荡
+                    </Button>
+                )}
+            </PanelField>
+        </SaTableRow>
+    );
+};

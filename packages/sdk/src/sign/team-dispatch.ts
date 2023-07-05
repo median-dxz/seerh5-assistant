@@ -22,7 +22,7 @@ class TeamDispatch implements SAMod.ISignMod<Config> {
         战队派遣: {
             check: async () => {
                 const times = await Socket.sendByQueue(45807).then((r) => new DataView(r).getUint32(0));
-                return 12 - times;
+                return Number(12 - times > 0);
             },
             async run() {
                 const hasDispatched = [];

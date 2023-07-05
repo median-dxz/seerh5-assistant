@@ -1,8 +1,10 @@
 import { Button, Divider, FormControlLabel, Switch } from '@mui/material';
 
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 
-import { PanelTable } from '@sa-app/components/PanelTable/PanelTable';
+import { PanelField, PanelTable, useRowData } from '@sa-app/components/PanelTable';
+import { useIndex } from '@sa-app/components/PanelTable/usePanelTableData';
+import { SaTableRow } from '@sa-app/components/styled/TableRow';
 import { SAContext } from '@sa-app/context/SAContext';
 import * as SALocalStorage from '@sa-app/utils/hooks/SALocalStorage';
 import { TextEditDialog } from '@sa-app/views/AutoBattle/TextEditDialog';
@@ -51,6 +53,95 @@ export function AutoBattle() {
                 callback(value);
             };
         });
+    };
+
+    const skillRow: PanelRowChildren<string[][]> = (data, index) => {
+        return (
+            <>
+                <PanelField field="priority">{index + 1}</PanelField>
+                <PanelField field="skillGroup">{data.join(', ')}</PanelField>
+                <PanelField field="operation">
+                    <Button
+                        onClick={() => {
+                            strategyStorage.use((strategy) => {
+                                handleMoveToTop(strategy.snm, index);
+                            });
+                            setStrategy(strategyStorage.ref);
+                        }}
+                    >
+                        置顶
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            strategyStorage.use((strategy) => {
+                                handleDelete(strategy.snm, index);
+                            });
+                            setStrategy(strategyStorage.ref);
+                        }}
+                    >
+                        删除
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            openDialog((value) => {
+                                if (value) {
+                                    strategyStorage.use((strategy) => {
+                                        handleUpdated(strategy.snm, index, value);
+                                    });
+                                    setStrategy(strategyStorage.ref);
+                                }
+                            }, data.join(', '));
+                        }}
+                    >
+                        编辑
+                    </Button>
+                </PanelField>
+            </>
+        );
+    };
+    const petRow: PanelRowChildren<string[][]> = (data, index) => {
+        return (
+            <>
+                <PanelField field="priority">{index + 1}</PanelField>
+                <PanelField field="skillGroup">{data.join(', ')}</PanelField>
+                <PanelField field="operation">
+                    <Button
+                        onClick={() => {
+                            strategyStorage.use((strategy) => {
+                                handleMoveToTop(strategy.dsl, index);
+                            });
+                            setStrategy(strategyStorage.ref);
+                        }}
+                    >
+                        置顶
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            strategyStorage.use((strategy) => {
+                                handleDelete(strategy.dsl, index);
+                            });
+                            setStrategy(strategyStorage.ref);
+                        }}
+                    >
+                        删除
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            openDialog((value) => {
+                                if (value) {
+                                    strategyStorage.use((strategy) => {
+                                        handleUpdated(strategy.dsl, index, value);
+                                    });
+                                    setStrategy(strategyStorage.ref);
+                                }
+                            }, data.join(', '));
+                        }}
+                    >
+                        编辑
+                    </Button>
+                </PanelField>
+            </>
+        );
     };
 
     return (
@@ -109,48 +200,8 @@ export function AutoBattle() {
                     },
                 ]}
                 data={strategy.snm}
-                columnRender={(row, index) => ({
-                    priority: index + 1,
-                    skillGroup: row.join(', '),
-                    operation: (
-                        <>
-                            <Button
-                                onClick={() => {
-                                    strategyStorage.use((strategy) => {
-                                        handleMoveToTop(strategy.snm, index);
-                                    });
-                                    setStrategy(strategyStorage.ref);
-                                }}
-                            >
-                                置顶
-                            </Button>
-                            <Button
-                                onClick={() => {
-                                    strategyStorage.use((strategy) => {
-                                        handleDelete(strategy.snm, index);
-                                    });
-                                    setStrategy(strategyStorage.ref);
-                                }}
-                            >
-                                删除
-                            </Button>
-                            <Button
-                                onClick={() => {
-                                    openDialog((value) => {
-                                        if (value) {
-                                            strategyStorage.use((strategy) => {
-                                                handleUpdated(strategy.snm, index, value);
-                                            });
-                                            setStrategy(strategyStorage.ref);
-                                        }
-                                    }, row.join(', '));
-                                }}
-                            >
-                                编辑
-                            </Button>
-                        </>
-                    ),
-                })}
+                rowElement={<PanelRow>{skillRow}</PanelRow>}
+                toRowKey={(data) => data.join(',')}
             />
 
             <Divider />
@@ -185,49 +236,17 @@ export function AutoBattle() {
                         columnName: '操作',
                     },
                 ]}
-                columnRender={(row, index) => ({
-                    priority: index + 1,
-                    petLink: row.join(', '),
-                    operation: (
-                        <>
-                            <Button
-                                onClick={() => {
-                                    strategyStorage.use((strategy) => {
-                                        handleMoveToTop(strategy.dsl, index);
-                                    });
-                                    setStrategy(strategyStorage.ref);
-                                }}
-                            >
-                                置顶
-                            </Button>
-                            <Button
-                                onClick={() => {
-                                    strategyStorage.use((strategy) => {
-                                        handleDelete(strategy.dsl, index);
-                                    });
-                                    setStrategy(strategyStorage.ref);
-                                }}
-                            >
-                                删除
-                            </Button>
-                            <Button
-                                onClick={() => {
-                                    openDialog((value) => {
-                                        if (value) {
-                                            strategyStorage.use((strategy) => {
-                                                handleUpdated(strategy.dsl, index, value);
-                                            });
-                                            setStrategy(strategyStorage.ref);
-                                        }
-                                    }, row.join(', '));
-                                }}
-                            >
-                                编辑
-                            </Button>
-                        </>
-                    ),
-                })}
+                rowElement={<PanelRow>{petRow}</PanelRow>}
+                toRowKey={(data) => data.join(',')}
             />
         </>
     );
 }
+
+type PanelRowChildren<TData> = (data: TData, index: number) => ReactNode;
+
+const PanelRow = React.memo(function PanelRow({ children }: { children: PanelRowChildren<never> }) {
+    const data = useRowData<never>();
+    const index = useIndex();
+    return <SaTableRow>{children(data, index)}</SaTableRow>;
+});

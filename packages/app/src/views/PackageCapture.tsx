@@ -1,5 +1,7 @@
 import { Button, Toolbar } from '@mui/material';
-import { PanelColumnRender, PanelColumns, PanelTable } from '@sa-app/components/PanelTable/PanelTable';
+import { PanelField, PanelTable, useRowData, type PanelColumns } from '@sa-app/components/PanelTable';
+
+import { SaTableRow } from '@sa-app/components/styled/TableRow';
 import { produce } from 'immer';
 import * as React from 'react';
 import type { AnyFunction, SAHookData } from 'sa-core';
@@ -116,39 +118,6 @@ export function PackageCapture() {
         ],
         []
     );
-
-    const render: PanelColumnRender<CapturedPackage> = React.useCallback(
-        (row) => ({
-            ...row,
-            time: timeFormat.format(row.time),
-            data: (
-                <>
-                    <Button
-                        onClick={() => {
-                            console.log(row);
-                        }}
-                    >
-                        dump
-                    </Button>
-                    <Button
-                        onClick={() => {
-                            if (row.type === 'Send') {
-                                const data = row.data as Array<number | DataView>;
-                                SocketConnection.mainSocket.send(
-                                    row.cmd,
-                                    data.map((v) => (typeof v === 'object' ? new egret.ByteArray(v.buffer) : v))
-                                );
-                            }
-                        }}
-                    >
-                        重放
-                    </Button>
-                </>
-            ),
-        }),
-        []
-    );
-
     return (
         <>
             <Toolbar>
@@ -181,7 +150,41 @@ export function PackageCapture() {
                 </Button>
             </Toolbar>
 
-            <PanelTable data={capture} columns={cols} columnRender={render} />
+            <PanelTable data={capture} columns={cols} rowElement={<PanelRow />} />
         </>
     );
 }
+
+const PanelRow = React.memo(function PanelRow() {
+    const pkg = useRowData<CapturedPackage>();
+    return (
+        <SaTableRow>
+            <PanelField field="time">{timeFormat.format(pkg.time)}</PanelField>
+            <PanelField field="type">{pkg.type}</PanelField>
+            <PanelField field="cmd">{pkg.cmd}</PanelField>
+            <PanelField field="label">{pkg.label}</PanelField>
+            <PanelField field="data">
+                <Button
+                    onClick={() => {
+                        console.log(pkg);
+                    }}
+                >
+                    dump
+                </Button>
+                <Button
+                    onClick={() => {
+                        if (pkg.type === 'Send') {
+                            const data = pkg.data as Array<number | DataView>;
+                            SocketConnection.mainSocket.send(
+                                pkg.cmd,
+                                data.map((v) => (typeof v === 'object' ? new egret.ByteArray(v.buffer) : v))
+                            );
+                        }
+                    }}
+                >
+                    重放
+                </Button>
+            </PanelField>
+        </SaTableRow>
+    );
+});

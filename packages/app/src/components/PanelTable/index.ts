@@ -1,3 +1,5 @@
+export { PanelField } from './PanelField';
 export { PanelTable } from './PanelTable';
-export type { PanelColumnRender, PanelColumns } from './PanelTable';
+export type { PanelColumns } from './PanelTable';
+export { useIndex, useRowData } from './usePanelTableData';
 

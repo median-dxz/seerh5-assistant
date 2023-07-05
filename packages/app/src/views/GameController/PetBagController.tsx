@@ -7,8 +7,9 @@ import { Pet, SAPet, UIModuleHelper, delay, lowerBlood, switchBag } from 'sa-cor
 import { getPetHeadIcon } from '@sa-app/utils/egretRes';
 import { useBagPets } from '@sa-app/utils/hooks/useBagPets';
 
+import { PanelField, PanelTable, useIndex, useRowData, type PanelColumns } from '@sa-app/components/PanelTable';
 import { PopupMenuButton } from '@sa-app/components/PopupMenuButton';
-import { PanelColumnRender, PanelColumns, PanelTable } from '../../components/PanelTable/PanelTable';
+import { SaTableRow } from '@sa-app/components/styled/TableRow';
 
 const petGroupsStorage = SALocalStorage.PetGroups;
 
@@ -45,86 +46,19 @@ export function PetBagController() {
         setSelected([]);
     }, [pets]);
 
-    const handleOpenPetItemUseProp = React.useCallback(async (ct: number) => {
-        await ModuleManager.showModule('petBag');
-        const petBagModule = UIModuleHelper.currentModule<petBag.PetBag>();
-        await delay(300);
-        const petBagPanel = petBagModule.currentPanel!;
-        petBagPanel.onSelectPet({ data: PetManager.getPetInfo(ct) });
-        await delay(300);
-        petBagPanel.showDevelopBaseView();
-        petBagPanel.showDevelopView(9);
-    }, []);
-
     const cols: PanelColumns = React.useMemo(
         () => [
             { columnName: '', field: 'select' },
-            { columnName: 'id', field: 'id', sx: { userSelect: 'none', cursor: 'pointer' } },
-            { columnName: '', field: 'icon', sx: { userSelect: 'none' } },
-            { columnName: '名称', field: 'name', sx: { userSelect: 'none', cursor: 'pointer' } },
+            { columnName: 'id', field: 'id' },
+            { columnName: '', field: 'icon' },
+            { columnName: '名称', field: 'name' },
             { columnName: '血量', field: 'hp' },
             { columnName: '操作', field: 'action' },
         ],
         []
     );
 
-    const colRender: PanelColumnRender<Pet> = React.useCallback(
-        (pet, index) => ({
-            select: <Checkbox checked={selected.includes(pet.catchTime)} />,
-            id: pet.id,
-            icon: <img crossOrigin="anonymous" src={getPetHeadIcon(pet.id)} alt={pet.name} width={48} />,
-            name: pet.name,
-            hp: `${pet.baseCurHp}/${pet.baseMaxHp}`,
-            action: (
-                <ButtonGroup>
-                    {index !== 0 && (
-                        <Button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                SAPet.default(pet.catchTime);
-                            }}
-                        >
-                            首发
-                        </Button>
-                    )}
-                    <Button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            SAPet.cure(pet.catchTime);
-                        }}
-                    >
-                        治疗
-                    </Button>
-                    <Button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleOpenPetItemUseProp(pet.catchTime);
-                        }}
-                    >
-                        道具
-                    </Button>
-                </ButtonGroup>
-            ),
-        }),
-        [handleOpenPetItemUseProp, selected]
-    );
-
     const toRowKey = React.useCallback((pet: Pet) => pet.catchTime, []);
-
-    const rowProps = React.useCallback(
-        (pet: Pet) => ({
-            onClick: () => {
-                setSelected((selected) => {
-                    if (selected.includes(pet.catchTime)) {
-                        return selected.filter((ct) => ct !== pet.catchTime);
-                    } else {
-                        return [...selected, pet.catchTime];
-                    }
-                });
-            },
-        }),
-        []
-    );
 
     if (!pets) return <LinearProgress />;
 
@@ -199,12 +133,88 @@ export function PetBagController() {
                         minWidth: 'max-content',
                     }}
                     columns={cols}
-                    columnRender={colRender}
+                    rowElement={<PanelRow selected={selected} setSelected={setSelected} />}
                     data={pets}
                     toRowKey={toRowKey}
-                    rowProps={rowProps}
                 />
             </Box>
         </>
+    );
+}
+
+interface PanelRowProps {
+    selected: number[];
+    setSelected: React.Dispatch<React.SetStateAction<number[]>>;
+}
+
+function PanelRow({ selected, setSelected }: PanelRowProps) {
+    const pet = useRowData<Pet>();
+    const index = useIndex();
+
+    const handleOpenPetItemUseProp = React.useCallback(async (ct: number) => {
+        await ModuleManager.showModule('petBag');
+        const petBagModule = UIModuleHelper.currentModule<petBag.PetBag>();
+        await delay(300);
+        const petBagPanel = petBagModule.currentPanel!;
+        petBagPanel.onSelectPet({ data: PetManager.getPetInfo(ct) });
+        await delay(300);
+        petBagPanel.showDevelopBaseView();
+        petBagPanel.showDevelopView(9);
+    }, []);
+
+    return (
+        <SaTableRow
+            onClick={() => {
+                setSelected((selected) => {
+                    if (selected.includes(pet.catchTime)) {
+                        return selected.filter((ct) => ct !== pet.catchTime);
+                    } else {
+                        return [...selected, pet.catchTime];
+                    }
+                });
+            }}
+        >
+            <PanelField field="select">
+                <Checkbox checked={selected.includes(pet.catchTime)} />
+            </PanelField>
+            <PanelField field="id" sx={{ userSelect: 'none', cursor: 'pointer' }}>
+                {pet.id}
+            </PanelField>
+            <PanelField field="icon" sx={{ userSelect: 'none' }}>
+                <img crossOrigin="anonymous" src={getPetHeadIcon(pet.id)} alt={pet.name} width={48} />
+            </PanelField>
+            <PanelField field="name">{pet.name}</PanelField>
+            <PanelField field="hp">{`${pet.baseCurHp}/${pet.baseMaxHp}`}</PanelField>
+            <PanelField field="action">
+                <ButtonGroup>
+                    {index !== 0 && (
+                        <Button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                SAPet.default(pet.catchTime);
+                            }}
+                        >
+                            首发
+                        </Button>
+                    )}
+                    <Button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            SAPet.cure(pet.catchTime);
+                        }}
+                    >
+                        治疗
+                    </Button>
+                    <Button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenPetItemUseProp(pet.catchTime);
+                        }}
+                    >
+                        道具
+                    </Button>
+                </ButtonGroup>
+            </PanelField>
+        </SaTableRow>
     );
 }

@@ -5,10 +5,11 @@ import { Item, updateItems } from 'sa-core';
 import { Button, Typography } from '@mui/material';
 
 import { LabeledLinearProgress } from '@sa-app/components/LabeledProgress';
-import { PanelColumnRender, PanelColumns, PanelTable } from '@sa-app/components/PanelTable';
+import { PanelField, PanelTable, useRowData, type PanelColumns } from '@sa-app/components/PanelTable';
 import { PanelStateContext } from '@sa-app/context/PanelState';
 import { getItemIcon } from '@sa-app/utils/egretRes';
 
+import { SaTableRow } from '@sa-app/components/styled/TableRow';
 import { idList, openModuleList } from './data';
 
 const convertUnit = (count: number) => {
@@ -30,7 +31,6 @@ const columns: PanelColumns = [
 const rows = idList.map((key) => ItemXMLInfo.getItemObj(key)!).map((obj) => new Item(obj));
 
 export function CommonValue() {
-    const panelState = React.useContext(PanelStateContext);
     const [items, setItems] = useState(rows);
 
     useEffect(() => {
@@ -41,33 +41,46 @@ export function CommonValue() {
         });
     }, []);
 
-    const renderColumn: PanelColumnRender<Item> = React.useCallback(
-        (item) => ({
-            id: item.id,
-            icon: <img crossOrigin="anonymous" src={getItemIcon(item.id)} alt={item.name} width={36} />,
-            name: item.name,
-            amount: item.limit ? (
-                <LabeledLinearProgress
-                    progress={item.amount}
-                    total={item.limit}
-                    overridePrompt={`${convertUnit(item.amount)}/${convertUnit(item.limit)}`}
-                />
-            ) : (
-                <Typography>{convertUnit(item.amount)}</Typography>
-            ),
-            exchange: openModuleList[item.id] ? (
-                <Button
-                    onClick={() => {
-                        openModuleList[item.id]();
-                        panelState.setOpen(false);
-                    }}
-                >
-                    兑换
-                </Button>
-            ) : undefined,
-        }),
-        [panelState]
-    );
-
-    return <PanelTable columns={columns} columnRender={renderColumn} data={items} toRowKey={(item) => item.id} />;
+    return <PanelTable columns={columns} rowElement={<PanelRow />} data={items} toRowKey={(item) => item.id} />;
 }
+
+const PanelRow: React.FC = () => {
+    const item = useRowData<Item>();
+    const panelState = React.useContext(PanelStateContext);
+
+    let amountRender = undefined;
+    if (item.amount) {
+        amountRender = item.limit ? (
+            <LabeledLinearProgress
+                progress={item.amount}
+                total={item.limit}
+                overridePrompt={`${convertUnit(item.amount)}/${convertUnit(item.limit)}`}
+            />
+        ) : (
+            <Typography>{convertUnit(item.amount)}</Typography>
+        );
+    }
+
+    return (
+        <SaTableRow>
+            <PanelField field="id">{item.id}</PanelField>
+            <PanelField field="icon">
+                <img crossOrigin="anonymous" src={getItemIcon(item.id)} alt={item.name} width={36} />
+            </PanelField>
+            <PanelField field="name">{item.name}</PanelField>
+            <PanelField field="amount">{amountRender}</PanelField>
+            <PanelField field="exchange">
+                {openModuleList[item.id] ? (
+                    <Button
+                        onClick={() => {
+                            openModuleList[item.id]();
+                            panelState.setOpen(false);
+                        }}
+                    >
+                        兑换
+                    </Button>
+                ) : undefined}
+            </PanelField>
+        </SaTableRow>
+    );
+};

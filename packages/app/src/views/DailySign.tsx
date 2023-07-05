@@ -1,10 +1,16 @@
-import { PanelColumnRender, PanelColumns, PanelTable } from '@sa-app/components/PanelTable';
+import {
+    PanelColumns,
+    PanelField,
+    PanelTable,
+    useRowData
+} from '@sa-app/components/PanelTable';
 import React from 'react';
 
 import { Button, ButtonGroup, CircularProgress } from '@mui/material';
 import { ModStore } from '@sa-app/service/ModManager';
 import { BaseMod, SAModType, SignModExport } from '@sa-app/service/ModManager/type';
 
+import { SaTableRow } from '@sa-app/components/styled/TableRow';
 import { delay } from 'sa-core';
 import useSWR from 'swr';
 
@@ -26,8 +32,8 @@ export function DailySign() {
                 columnName: '描述',
             },
             {
-                field: 'author',
-                columnName: '作者',
+                field: 'scope',
+                columnName: 'Scope',
             },
             {
                 field: 'state',
@@ -40,36 +46,6 @@ export function DailySign() {
         ],
         []
     );
-
-    const render: PanelColumnRender<BaseMod> = React.useCallback((ins) => {
-        const exports = ins.export as Record<string, SignModExport>;
-        const { meta, namespace } = ins;
-        return {
-            name: meta.id,
-            description: meta.description,
-            author: meta.scope,
-            state: <SignState namespace={namespace} checkers={exports} />,
-            execute: (
-                <ButtonGroup>
-                    <Button
-                        onClick={async () => {
-                            for (const [name, { check, run }] of Object.entries(exports)) {
-                                console.log(`正在执行${name}`);
-                                let r = await check();
-                                while (r--) {
-                                    run();
-                                    await delay(50);
-                                }
-                            }
-                        }}
-                    >
-                        执行
-                    </Button>
-                    <Button>查看详情</Button>
-                </ButtonGroup>
-            ),
-        };
-    }, []);
 
     const handleRunAllSign = async () => {
         for (const mod of data) {
@@ -88,7 +64,7 @@ export function DailySign() {
     return (
         <>
             <Button onClick={handleRunAllSign}>一键执行</Button>
-            <PanelTable data={data} columns={columns} columnRender={render} toRowKey={(mod) => mod.namespace} />
+            <PanelTable data={data} columns={columns} rowElement={<PanelRow />} toRowKey={(mod) => mod.namespace} />
         </>
     );
 }
@@ -110,4 +86,40 @@ const SignState: React.FC<SignStateProps> = ({ namespace, checkers }) => {
     });
 
     return !states ? <CircularProgress /> : `已完成: ${states.filter((n) => n === 0).length} / ${states.length}`;
+};
+
+const PanelRow = () => {
+    const ins = useRowData<BaseMod>();
+    const exports = ins.export as Record<string, SignModExport>;
+    const { meta, namespace } = ins;
+
+    return (
+        <SaTableRow>
+            <PanelField field="name">{meta.id}</PanelField>
+            <PanelField field="description">{meta.description}</PanelField>
+            <PanelField field="scope">{meta.scope}</PanelField>
+            <PanelField field="state">
+                <SignState namespace={namespace} checkers={exports} />
+            </PanelField>
+            <PanelField field="execute">
+                <ButtonGroup>
+                    <Button
+                        onClick={async () => {
+                            for (const [name, { check, run }] of Object.entries(exports)) {
+                                console.log(`正在执行${name}`);
+                                let r = await check();
+                                while (r--) {
+                                    run();
+                                    await delay(50);
+                                }
+                            }
+                        }}
+                    >
+                        执行
+                    </Button>
+                    <Button>查看详情</Button>
+                </ButtonGroup>
+            </PanelField>
+        </SaTableRow>
+    );
 };

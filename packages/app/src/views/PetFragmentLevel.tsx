@@ -7,7 +7,7 @@ import {
     delay,
 } from 'sa-core';
 
-import { Box, Button, CircularProgress, Dialog, DialogActions, Divider, Typography, alpha } from '@mui/material';
+import { Button, CircularProgress, Dialog, DialogActions, Divider, Typography, alpha } from '@mui/material';
 import { SAContext } from '@sa-app/context/SAContext';
 import type { PetFragmentOption } from '@sa-app/service/endpoints';
 import React, { useCallback, useState } from 'react';
@@ -15,7 +15,7 @@ import * as SABattle from 'sa-core/battle';
 import * as SAEngine from 'sa-core/engine';
 import { IPFLevelBoss, IPetFragmentLevelObject, PetFragmentLevel } from 'sa-core/entity';
 import type { ILevelRunner, SALevelData, SALevelInfo } from 'sa-core/level';
-import { PanelColumnRender, PanelColumns, PanelTable } from '../components/PanelTable/PanelTable';
+import { PanelColumns, PanelTable } from '../components/PanelTable/PanelTable';
 
 import { loadBattle } from '@sa-app/service/ModManager';
 import { saTheme } from '@sa-app/style';
@@ -167,6 +167,8 @@ function getCurPanelInfo() {
     log((pvePetYinzi.DataManager as any)._instance.curYinziData);
 }
 
+import { PanelField, useIndex, useRowData } from '@sa-app/components/PanelTable';
+import { SaTableRow } from '@sa-app/components/styled/TableRow';
 import * as SAEndpoint from '@sa-app/service/endpoints';
 import useSWR from 'swr';
 import { LevelBaseNew } from './LevelBaseNew';
@@ -201,30 +203,6 @@ export function PetFragmentLevelPanel() {
         });
     }, [rows]);
 
-    const render: PanelColumnRender<PetFragmentRunner> = useCallback(
-        (row, index) => ({
-            name: row.info.name,
-            state: (
-                <Typography color={taskCompleted[index] ? '#eeff41' : 'inherited'}>
-                    {taskCompleted[index] ? '已完成' : '未完成'}
-                </Typography>
-            ),
-            action: (
-                <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <Typography>扫荡: {row.option.sweep ? '开启' : '关闭'}</Typography>
-                    <Button
-                        onClick={() => {
-                            setRunner(row);
-                        }}
-                    >
-                        启动
-                    </Button>
-                </Box>
-            ),
-        }),
-        [taskCompleted]
-    );
-
     const col: PanelColumns = React.useMemo(
         () => [
             {
@@ -249,15 +227,6 @@ export function PetFragmentLevelPanel() {
 
     const toRowKey = useCallback((row: PetFragmentRunner) => row.info.name, []);
 
-    const rowProps = useCallback(
-        (row: PetFragmentRunner, index: number) => ({
-            sx: {
-                backgroundColor: taskCompleted[index] ? `${alpha(saTheme.palette.primary.main, 0.18)}` : 'transparent',
-            },
-        }),
-        [taskCompleted]
-    );
-
     if (!levelRunners)
         return (
             <Typography>
@@ -270,7 +239,12 @@ export function PetFragmentLevelPanel() {
         <>
             <Button>一键日任</Button>
             <Divider />
-            <PanelTable data={rows} toRowKey={toRowKey} columns={col} columnRender={render} rowProps={rowProps} />
+            <PanelTable
+                data={rows}
+                toRowKey={toRowKey}
+                columns={col}
+                rowElement={<PanelRow taskCompleted={taskCompleted} setRunner={setRunner} />}
+            />
             <Dialog
                 open={open}
                 sx={{
@@ -291,3 +265,37 @@ export function PetFragmentLevelPanel() {
         </>
     );
 }
+
+interface PanelRowProps {
+    taskCompleted: boolean[];
+    setRunner: React.Dispatch<React.SetStateAction<PetFragmentRunner | null>>;
+}
+
+const PanelRow = React.memo(({ taskCompleted, setRunner }: PanelRowProps) => {
+    const runner = useRowData<PetFragmentRunner>();
+    const index = useIndex();
+    const completed = taskCompleted[index];
+
+    return (
+        <SaTableRow
+            sx={{
+                backgroundColor: completed ? `${alpha(saTheme.palette.primary.main, 0.18)}` : 'transparent',
+            }}
+        >
+            <PanelField field="name">{runner.info.name}</PanelField>
+            <PanelField field="state">
+                <Typography color={completed ? '#eeff41' : 'inherited'}>{completed ? '已完成' : '未完成'}</Typography>
+            </PanelField>
+            <PanelField field="action" sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                <Typography>扫荡: {runner.option.sweep ? '开启' : '关闭'}</Typography>
+                <Button
+                    onClick={() => {
+                        setRunner(runner);
+                    }}
+                >
+                    启动
+                </Button>
+            </PanelField>
+        </SaTableRow>
+    );
+});

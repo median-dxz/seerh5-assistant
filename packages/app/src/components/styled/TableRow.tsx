@@ -1,7 +1,6 @@
 import { TableRow, alpha, styled } from '@mui/material';
 import { saTheme } from '@sa-app/style';
 
-
 export const SaTableRow = styled(TableRow)`
     transition: ${saTheme.transitions.create(['background-color'])};
     &:last-child td,
