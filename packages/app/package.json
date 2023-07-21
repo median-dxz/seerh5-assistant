@@ -15,10 +15,10 @@
         "clean": "rimrf ./dist && rimrf ./build && rimraf ../../.tsbuildinfo/app.tsbuildinfo"
     },
     "dependencies": {
-        "@mui/icons-material": "^5.11.16",
-        "@mui/material": "^5.13.6",
+        "@mui/icons-material": "^5.13.7",
+        "@mui/material": "^5.13.7",
         "@mui/styled-engine-sc": "^5.12.0",
-        "@mui/system": "^5.13.6",
+        "@mui/system": "^5.13.7",
         "immer": "^10.0.2",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",

@@ -7,7 +7,7 @@ interface Config {
 const EXCHANGE_LIST = {
     vip点数: {
         特性重组剂: 1,
-        体力上限药: 2,
+        体力上限药: 3,
         上等体力药剂: 4,
     },
 };

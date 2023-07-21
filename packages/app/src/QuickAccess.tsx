@@ -8,24 +8,28 @@ import { SaQuickAccess } from '@sa-app/components/styled/QuickAccess';
 import { ModStore } from '@sa-app/service/ModManager';
 import { SAModType, type QuickAccessPlugin } from './service/ModManager/type';
 
-const SvgMaker = ({ url, ...rest }: React.SVGProps<SVGSVGElement> & { url: string }) => {
-    const ref = React.useRef<SVGSVGElement>(null);
-    React.useEffect(() => {
-        if (!url.startsWith('data:image/svg+xml;')) {
-            throw new Error('不是有效的svg信息');
-        }
-        const svg = url.slice('data:image/svg+xml;'.length);
-        // 删除base64头
-        const base64 = svg.slice(svg.indexOf(',') + 1);
-        const svgXml = atob(base64);
-        // 解析里面的path
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(svgXml, 'image/svg+xml');
-        if (ref.current) {
-            ref.current.innerHTML = doc.getElementsByTagName('svg').item(0)!.innerHTML;
-        }
-    }, [url]);
-    return <svg ref={ref} xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" {...rest}></svg>;
+const SvgMaker = ({ url, children: _, ...rest }: React.SVGProps<SVGSVGElement> & { url: string }) => {
+    if (!url.startsWith('data:image/svg+xml;')) {
+        throw new Error('不是有效的svg信息');
+    }
+    const svg = url.slice('data:image/svg+xml;'.length);
+    // 删除base64头
+    const base64 = svg.slice(svg.indexOf(',') + 1);
+    const svgXml = atob(base64);
+    // 解析里面的path
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(svgXml, 'image/svg+xml');
+    const svgPaths = doc.getElementsByTagName('svg').item(0)!.innerHTML;
+    // console.log(`[QuickAccessPlugin]: 请检查svg信息: ${svgPaths}`);
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="1em"
+            height="1em"
+            dangerouslySetInnerHTML={{ __html: svgPaths }}
+            {...rest}
+        />
+    );
 };
 
 const SvgWrapper = (url: string) => {

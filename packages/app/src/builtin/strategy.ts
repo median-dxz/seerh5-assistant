@@ -13,6 +13,16 @@ export default [
         },
     },
     {
+        id: '圣谱先手',
+        strategy: {
+            resolveMove: (round, skills) => {
+                const r = skills.find((skill) => skill.name === ['光荣之梦', '神灵之触'][round.round % 2]);
+                return SABattle.Operator.useSkill(r?.id);
+            },
+            resolveNoBlood: NOOP,
+        },
+    },
+    {
         id: '王哈单挑',
         strategy: {
             resolveMove: (round, skills) => {

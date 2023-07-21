@@ -20,7 +20,13 @@ export default [
             strategy: '圣谱单挑',
         },
     },
-
+    {
+        id: '圣谱先手',
+        battle: {
+            pets: ['圣灵谱尼'],
+            strategy: '圣谱先手',
+        },
+    },
     {
         id: '王哈单挑',
         battle: {

@@ -47,6 +47,38 @@ class ItemWareHouse implements SAMod.IModuleMod<itemWarehouse.ItemWarehouse> {
     moduleName = 'itemWarehouse';
 
     load() {
+        // hookPrototype(itemWarehouse.ItemWarehouse, '', function () {
+        //     t = [];
+        //     e = PetFragmentXMLInfo.GetShowArrInfos(1);
+        //     i = function (t) {
+        //         var e = t.Rarity;
+        //         return o._curRarity.indexOf(e) > -1;
+        //     };
+        //     n = [];
+        //     r = [];
+        //     s = [];
+        //     e.filter(function (t) {
+        //         var e = t,
+        //             a = e.MonsterID,
+        //             u = +PetXMLInfo.getType(a),
+        //             _ = i(e),
+        //             h = ItemManager.checkPetFactorRedFlag(t.ID, e),
+        //             c = ItemManager.getInfo(t.ID);
+
+        //         let l;
+        //         if (1 == o.allType) {
+        //             l = true;
+        //         } else if (2 == o.allType) {
+        //             l = h;
+        //         } else {
+        //             l = !c;
+        //         }
+
+        //         g = (o._currentAttributeID.indexOf(u) > -1 || !o._currentAttributeID.length) && l && _;
+        //         return g && (h ? n.push(t) : c ? r.push(t) : s.push(t)), g;
+        //     });
+        //     return (this.currList = n.concat(r, s));
+        // });
         hookPrototype(itemWarehouse.ItemWarehouse, 'onShowPetFactorInfo', async function (fn) {
             fn();
             const data: PetFragment = this._list.selectedItem;
