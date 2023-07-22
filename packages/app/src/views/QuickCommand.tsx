@@ -1,8 +1,8 @@
 import { Button } from '@mui/material';
 import { Box } from '@mui/system';
+import { ct } from '@sa-app/context/ct';
 import { SAModManager } from '@sa-app/service/ModManager';
 import * as SAEndpoint from '@sa-app/service/endpoints';
-import { findPetById } from '@sa-app/utils/findPetById';
 import React from 'react';
 import { PetDataManger, PetPosition } from 'sa-core';
 
@@ -63,7 +63,7 @@ export function QuickCommand() {
             </Button>
             <Button
                 onClick={async () => {
-                    const r = await findPetById(3567);
+                    const r = await ct('艾莫莉萨');
                     console.log(r);
                 }}
             >

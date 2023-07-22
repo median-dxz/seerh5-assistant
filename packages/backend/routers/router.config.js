@@ -14,7 +14,7 @@ import { PetCache } from './config.js';
 export function queryPets(ctx) {
     const { name } = ctx.query;
     if (typeof name === 'string') {
-        ctx.body = [name, PetCache.query(name)];
+        ctx.body = [[name, PetCache.query(name)]];
     } else {
         ctx.body = Array.from(PetCache.catchTimeMap.entries());
     }

@@ -173,6 +173,8 @@ import * as SAEndpoint from '@sa-app/service/endpoints';
 import useSWR from 'swr';
 import { LevelBaseNew } from './LevelBaseNew';
 
+import { LevelDaSheng } from './LevelDaSheng';
+
 export function PetFragmentLevelPanel() {
     const [runner, setRunner] = useState<null | PetFragmentRunner>(null);
     const [taskCompleted, setTaskCompleted] = React.useState<Array<boolean>>([]);
@@ -192,7 +194,7 @@ export function PetFragmentLevelPanel() {
     const { data: levelRunners } = useSWR('ds://sa/level/petFragment', async () => {
         const allConfig = await SAEndpoint.getPetFragmentConfig();
         const options = await Promise.all(allConfig.map(loadOption));
-        return options.map((option) => new PetFragmentRunner(option));
+        return options.map((option) => new PetFragmentRunner(option)).concat(new LevelDaSheng());
     });
 
     const rows: Array<PetFragmentRunner> = React.useMemo(() => levelRunners ?? [], [levelRunners]);
