@@ -172,8 +172,7 @@ import { SaTableRow } from '@sa-app/components/styled/TableRow';
 import * as SAEndpoint from '@sa-app/service/endpoints';
 import useSWR from 'swr';
 import { LevelBaseNew } from './LevelBaseNew';
-
-import { LevelDaSheng } from './LevelDaSheng';
+import { LevelCourageTowerNew } from './Realm/LevelCourageTowerNew';
 
 export function PetFragmentLevelPanel() {
     const [runner, setRunner] = useState<null | PetFragmentRunner>(null);
@@ -194,7 +193,9 @@ export function PetFragmentLevelPanel() {
     const { data: levelRunners } = useSWR('ds://sa/level/petFragment', async () => {
         const allConfig = await SAEndpoint.getPetFragmentConfig();
         const options = await Promise.all(allConfig.map(loadOption));
-        return options.map((option) => new PetFragmentRunner(option)).concat(new LevelDaSheng());
+        return options
+            .map((option) => new PetFragmentRunner(option))
+            .concat(new LevelCourageTowerNew({ stimulation: false, sweep: false }) as unknown as PetFragmentRunner);
     });
 
     const rows: Array<PetFragmentRunner> = React.useMemo(() => levelRunners ?? [], [levelRunners]);

@@ -8,7 +8,6 @@ import {
     useRowData,
     type PanelColumns,
 } from '../../components/PanelTable';
-import { LevelCourageTower } from './LevelCourageTower';
 import { LevelElfKingsTrial } from './LevelElfKingsTrial';
 import { LevelExpTraining } from './LevelExpTraining';
 import { LevelStudyTraining } from './LevelStudyTraining';
@@ -61,13 +60,6 @@ export function Realm() {
                 module: <LevelStudyTraining setRunning={setRunning} running={running} />,
                 async getState() {
                     return (await SAEngine.Socket.bitSet(1000572))[0];
-                },
-            },
-            {
-                name: '勇者之塔',
-                module: <LevelCourageTower setRunning={setRunning} running={running} />,
-                async getState() {
-                    return (await SAEngine.Socket.bitSet(1000577))[0];
                 },
             },
             {
