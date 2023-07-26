@@ -7,7 +7,7 @@ import {
     delay,
 } from 'sa-core';
 
-import { Button, CircularProgress, Dialog, DialogActions, Divider, Typography, alpha } from '@mui/material';
+import { Box, Button, CircularProgress, Dialog, DialogActions, Divider, Typography, alpha } from '@mui/material';
 import { SAContext } from '@sa-app/context/SAContext';
 import type { PetFragmentOption } from '@sa-app/service/endpoints';
 import React, { useCallback, useState } from 'react';
@@ -170,9 +170,11 @@ function getCurPanelInfo() {
 import { PanelField, useIndex, useRowData } from '@sa-app/components/PanelTable';
 import { SaTableRow } from '@sa-app/components/styled/TableRow';
 import * as SAEndpoint from '@sa-app/service/endpoints';
+import { produce } from 'immer';
 import useSWR from 'swr';
 import { LevelBaseNew } from './LevelBaseNew';
-import { LevelCourageTowerNew } from './Realm/LevelCourageTowerNew';
+import { LevelCourageTower } from './Realm/LevelCourageTower';
+import { LevelExpTraining } from './Realm/LevelExpTraining';
 
 export function PetFragmentLevelPanel() {
     const [runner, setRunner] = useState<null | PetFragmentRunner>(null);
@@ -190,20 +192,30 @@ export function PetFragmentLevelPanel() {
         setRunner(null);
     };
 
-    const { data: levelRunners } = useSWR('ds://sa/level/petFragment', async () => {
+    const { data: rows = [] } = useSWR('ds://sa/level/petFragment', async () => {
         const allConfig = await SAEndpoint.getPetFragmentConfig();
         const options = await Promise.all(allConfig.map(loadOption));
         return options
             .map((option) => new PetFragmentRunner(option))
-            .concat(new LevelCourageTowerNew({ stimulation: false, sweep: false }) as unknown as PetFragmentRunner);
+            .concat(new LevelCourageTower({ stimulation: false, sweep: false }) as unknown as PetFragmentRunner)
+            .concat(new LevelExpTraining({ stimulation: false, sweep: false }) as unknown as PetFragmentRunner);
     });
 
-    const rows: Array<PetFragmentRunner> = React.useMemo(() => levelRunners ?? [], [levelRunners]);
+    rows.forEach((runner, index) => {
+        const levelUpdater = runner.updater.bind(runner);
+        runner.updater = async () => {
+            const r = await levelUpdater();
+            setTaskCompleted(
+                produce((draft) => {
+                    draft[index] = r === SALevelState.STOP;
+                })
+            );
+            return r;
+        };
+    });
 
     React.useEffect(() => {
-        Promise.all(rows.map((level) => level.updater())).then((r) => {
-            setTaskCompleted(r.map((state) => Boolean(SALevelState.STOP === state)));
-        });
+        rows.forEach((level) => level.updater());
     }, [rows]);
 
     const col: PanelColumns = React.useMemo(
@@ -230,12 +242,12 @@ export function PetFragmentLevelPanel() {
 
     const toRowKey = useCallback((row: PetFragmentRunner) => row.info.name, []);
 
-    if (!levelRunners)
+    if (!rows.length)
         return (
-            <Typography>
-                加载数据中
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography sx={{ mx: 2 }}>加载数据中</Typography>
                 <CircularProgress />
-            </Typography>
+            </Box>
         );
 
     return (

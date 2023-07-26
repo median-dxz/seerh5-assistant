@@ -63,7 +63,7 @@ export function QuickCommand() {
             </Button>
             <Button
                 onClick={async () => {
-                    const r = await ct('艾莫莉萨');
+                    const r = await ct('魔钰');
                     console.log(r);
                 }}
             >

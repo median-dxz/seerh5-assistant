@@ -1,15 +1,8 @@
 import { Button, Dialog, DialogActions, Divider, Typography, alpha } from '@mui/material';
 import { SAContext } from '@sa-app/context/SAContext';
 import React, { useCallback } from 'react';
-import {
-    PanelField,
-    PanelTable,
-    useIndex,
-    useRowData,
-    type PanelColumns,
-} from '../../components/PanelTable';
+import { PanelField, PanelTable, useIndex, useRowData, type PanelColumns } from '@sa-app/components/PanelTable';
 import { LevelElfKingsTrial } from './LevelElfKingsTrial';
-import { LevelExpTraining } from './LevelExpTraining';
 import { LevelStudyTraining } from './LevelStudyTraining';
 import { LevelTitanHole } from './LevelTitanHole';
 import { LevelXTeamRoom } from './LevelXTeamRoom';
@@ -48,13 +41,6 @@ export function Realm() {
 
     const rows: Array<Level> = React.useMemo(
         () => [
-            {
-                name: '经验训练场',
-                module: <LevelExpTraining setRunning={setRunning} running={running} />,
-                async getState() {
-                    return (await SAEngine.Socket.bitSet(1000571))[0];
-                },
-            },
             {
                 name: '学习力训练场',
                 module: <LevelStudyTraining setRunning={setRunning} running={running} />,
