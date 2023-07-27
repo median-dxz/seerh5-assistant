@@ -175,6 +175,7 @@ import useSWR from 'swr';
 import { LevelBaseNew } from './LevelBaseNew';
 import { LevelCourageTower } from './Realm/LevelCourageTower';
 import { LevelExpTraining } from './Realm/LevelExpTraining';
+import { LevelStudyTraining } from './Realm/LevelStudyTraining';
 
 export function PetFragmentLevelPanel() {
     const [runner, setRunner] = useState<null | PetFragmentRunner>(null);
@@ -198,7 +199,8 @@ export function PetFragmentLevelPanel() {
         return options
             .map((option) => new PetFragmentRunner(option))
             .concat(new LevelCourageTower({ stimulation: false, sweep: false }) as unknown as PetFragmentRunner)
-            .concat(new LevelExpTraining({ stimulation: false, sweep: false }) as unknown as PetFragmentRunner);
+            .concat(new LevelExpTraining({ stimulation: false, sweep: false }) as unknown as PetFragmentRunner)
+            .concat(new LevelStudyTraining({ stimulation: false, sweep: false }) as unknown as PetFragmentRunner);
     });
 
     rows.forEach((runner, index) => {
