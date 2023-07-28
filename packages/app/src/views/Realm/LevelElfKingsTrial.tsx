@@ -1,14 +1,12 @@
-import { Typography } from '@mui/material';
-import React from 'react';
-import { cureAllPet, delay, switchBag } from 'sa-core';
-import * as SABattle from 'sa-core/battle';
-import * as SAEngine from 'sa-core/engine';
+import { SALevelState, SaModuleLogger, Socket, defaultStyle } from 'sa-core';
 
-import { LabeledLinearProgress } from '@sa-app/components/LabeledProgress';
-import { LevelBase, LevelExtendsProps } from './LevelBase';
+import type { ILevelBattleStrategy, ILevelRunner, SALevelData, SALevelInfo } from 'sa-core';
+
 import dataProvider from './data';
 
-const ElfKingsId = {
+const customData = dataProvider['LevelElfKingsTrial'];
+
+export const ElfKingsId = {
     光王斯嘉丽: 2,
     水王沧岚: 8,
     自然王莫妮卡: 17,
@@ -21,121 +19,101 @@ const ElfKingsId = {
     秘王: 7,
 } as const;
 
-interface LevelData {
+interface LevelData extends SALevelData {
     stimulation: boolean;
     unlockHard: boolean;
-    canRewardReceive: boolean;
+    canReceiveReward: boolean;
     weeklyChallengeCount: number;
-    challengeCount: number;
+}
+
+interface LevelOption {
+    stimulation: boolean;
+    sweep: boolean;
     elfId: (typeof ElfKingsId)[keyof typeof ElfKingsId];
 }
 
-const RealmName = '精灵王的试炼';
-const customData = dataProvider['LevelElfKingsTrial'];
-const maxDailyChallengeTimes = 6;
-
-const updateLevelData = async () => {
-    const data = {} as LevelData;
-    const bits = await SAEngine.Socket.bitSet(8832, 2000037);
-    const values = await SAEngine.Socket.multiValue(108105, 108106, 18745, 20134);
-
-    data.elfId = ElfKingsId.战王;
-
-    data.stimulation = bits[0];
-    data.canRewardReceive = !bits[1];
-
-    const levelStage = data.elfId <= 10 ? values[0] : values[1];
-    const stageElfId = ((data.elfId - 1) % 9) * 3;
-    data.unlockHard = Boolean(levelStage & (1 << (stageElfId + 2)));
-
-    data.challengeCount = values[2];
-    data.weeklyChallengeCount = values[3];
-    return data;
-};
-
-export function LevelElfKingsTrial(props: LevelExtendsProps) {
-    const { running, setRunning } = props;
-    const [hint, setHint] = React.useState<JSX.Element | string>('');
-    const [step, setStep] = React.useState(0);
-    const levelData = React.useRef({ elfId: ElfKingsId.草王茉蕊儿 } as LevelData);
-    const currentRunning = React.useRef(false);
-    currentRunning.current = running;
-
-    const effect = async () => {
-        switch (step) {
-            case 0: //init
-                setRunning(true);
-                setHint('正在查询关卡状态');
-                levelData.current = await updateLevelData();
-                console.log(levelData.current);
-                if (!levelData.current.unlockHard) {
-                    setStep(-2);
-                    break;
-                }
-
-                if (levelData.current.challengeCount < maxDailyChallengeTimes) {
-                    setStep(1);
-                } else {
-                    setStep(2);
-                }
-
-                break;
-            case 1: //daily challenge
-                setHint('正在准备背包');
-                await switchBag(customData.cts);
-                PetManager.setDefault(customData.cts[0]);
-                setHint('准备背包完成');
-                await delay(300);
-
-                while (levelData.current.challengeCount < maxDailyChallengeTimes && currentRunning.current) {
-                    cureAllPet();
-                    await delay(200);
-                    await SABattle.Manager.runOnce(() => {
-                        setHint(
-                            <>
-                                <Typography component={'div'}>正在进行对战...</Typography>
-                                <LabeledLinearProgress
-                                    prompt={'当前次数'}
-                                    progress={levelData.current.challengeCount}
-                                    total={6}
-                                />
-                            </>
-                        );
-                        SAEngine.Socket.sendByQueue(42396, [106, levelData.current.elfId, 2]);
-                    }, customData.strategy);
-                    levelData.current = await updateLevelData();
-                }
-                setStep(0);
-                break;
-            case 2: //try get daily reward
-                setHint('正在查询每周奖励领取状态');
-                if (levelData.current.weeklyChallengeCount >= 100 && levelData.current.canRewardReceive) {
-                    try {
-                        await SAEngine.Socket.sendByQueue(42395, [106, 3, 0, 0]);
-                    } catch (error) {
-                        setStep(-1);
-                    }
-                }
-
-                await delay(500);
-                setStep(3);
-                break;
-            case -1:
-                setHint('领取奖励出错');
-                setRunning(false);
-                break;
-            case -2:
-                setHint('未解锁困难难度');
-                setRunning(false);
-                break;
-            default:
-                setHint(RealmName + '日任完成');
-                setRunning(false);
-                break;
-        }
+export class LevelElfKingsTrial implements ILevelRunner<LevelData, SALevelInfo> {
+    data: LevelData = {
+        leftTimes: 0,
+        state: SALevelState.STOP,
+        success: false,
+        stimulation: false,
+        unlockHard: false,
+        canReceiveReward: false,
+        weeklyChallengeCount: 0,
     };
-    React.useEffect(() => {
-        effect();
-    }, [step, running]);
-    return <LevelBase title={RealmName} hint={hint}></LevelBase>;
+
+    readonly info = {
+        name: '精灵王的试炼',
+        maxTimes: 6,
+    };
+
+    option: LevelOption;
+
+    logger = SaModuleLogger('精灵王的试炼', defaultStyle.core);
+
+    constructor(option: LevelOption) {
+        this.option = option;
+    }
+
+    async updater() {
+        const bits = (await Socket.bitSet(8832, 2000037)).map(Boolean);
+        const values = await Socket.multiValue(108105, 108106, 18745, 20134);
+
+        this.data.stimulation = bits[0];
+        this.data.canReceiveReward = !bits[1];
+
+        const { elfId } = this.option;
+        const levelStage = elfId <= 10 ? values[0] : values[1];
+        const stageElfId = ((elfId - 1) % 9) * 3;
+
+        this.data.unlockHard = Boolean(levelStage & (1 << (stageElfId + 2)));
+        this.data.leftTimes = this.info.maxTimes - values[2];
+        this.data.weeklyChallengeCount = values[3];
+
+        console.log(this.data);
+
+        if (this.data.state === ('award_error' as SALevelState)) {
+            this.logger(`${this.info.name}: 领取奖励出错`);
+            return SALevelState.STOP;
+        }
+
+        if (!this.data.unlockHard) {
+            this.logger(`${this.info.name}: 未解锁困难难度`);
+            this.data.success = true;
+            return SALevelState.STOP;
+        } else if (this.data.leftTimes > 0) {
+            this.logger(`${this.info.name}: 进入关卡`);
+            return SALevelState.BATTLE;
+        } else {
+            this.data.success = !this.data.canReceiveReward;
+            if (this.data.weeklyChallengeCount >= 30 && this.data.canReceiveReward) {
+                this.logger(`${this.info.name}: 领取奖励`);
+                return SALevelState.AWARD;
+            }
+            return SALevelState.STOP;
+        }
+    }
+
+    selectBattle() {
+        return {
+            pets: customData.cts,
+            strategy: customData.strategy,
+        } as ILevelBattleStrategy;
+    }
+
+    readonly actions: Record<string, () => Promise<void>> = {
+        battle: async () => {
+            Socket.sendByQueue(42396, [106, this.option.elfId, 2]);
+        },
+
+        award: async () => {
+            try {
+                await Socket.sendByQueue(42395, [106, 3, 0, 0]);
+            } catch (error) {
+                this.logger(error);
+                this.data.state = 'award_error' as SALevelState;
+            }
+        },
+    };
 }

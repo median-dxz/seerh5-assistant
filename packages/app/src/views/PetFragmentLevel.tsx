@@ -174,6 +174,7 @@ import { produce } from 'immer';
 import useSWR from 'swr';
 import { LevelBaseNew } from './LevelBaseNew';
 import { LevelCourageTower } from './Realm/LevelCourageTower';
+import { ElfKingsId, LevelElfKingsTrial } from './Realm/LevelElfKingsTrial';
 import { LevelExpTraining } from './Realm/LevelExpTraining';
 import { LevelStudyTraining } from './Realm/LevelStudyTraining';
 
@@ -200,7 +201,14 @@ export function PetFragmentLevelPanel() {
             .map((option) => new PetFragmentRunner(option))
             .concat(new LevelCourageTower({ stimulation: false, sweep: false }) as unknown as PetFragmentRunner)
             .concat(new LevelExpTraining({ stimulation: false, sweep: false }) as unknown as PetFragmentRunner)
-            .concat(new LevelStudyTraining({ stimulation: false, sweep: false }) as unknown as PetFragmentRunner);
+            .concat(new LevelStudyTraining({ stimulation: false, sweep: false }) as unknown as PetFragmentRunner)
+            .concat(
+                new LevelElfKingsTrial({
+                    stimulation: false,
+                    sweep: false,
+                    elfId: ElfKingsId.战王,
+                }) as unknown as PetFragmentRunner
+            );
     });
 
     rows.forEach((runner, index) => {

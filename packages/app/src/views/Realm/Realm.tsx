@@ -2,7 +2,6 @@ import { Button, Dialog, DialogActions, Divider, Typography, alpha } from '@mui/
 import { PanelField, PanelTable, useIndex, useRowData, type PanelColumns } from '@sa-app/components/PanelTable';
 import { SAContext } from '@sa-app/context/SAContext';
 import React, { useCallback } from 'react';
-import { LevelElfKingsTrial } from './LevelElfKingsTrial';
 import { LevelTitanHole } from './LevelTitanHole';
 import { LevelXTeamRoom } from './LevelXTeamRoom';
 
@@ -49,15 +48,6 @@ export function Realm() {
                 async getState() {
                     const [count, step] = await SAEngine.Socket.multiValue(18724, 18725);
                     return count === 2 && step === 0;
-                },
-            },
-            {
-                name: '精灵王试炼',
-                module: <LevelElfKingsTrial setRunning={setRunning} running={running} />,
-                async getState() {
-                    const [count, weeklyCount] = await SAEngine.Socket.multiValue(18745, 20134);
-                    const [rewardClosed] = await SAEngine.Socket.bitSet(2000037);
-                    return count === 6 || (weeklyCount >= 30 && rewardClosed);
                 },
             },
             {
