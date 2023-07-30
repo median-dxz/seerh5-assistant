@@ -1,116 +1,127 @@
-import React from 'react';
-import { cureAllPet, delay, switchBag } from 'sa-core';
-import * as SABattle from 'sa-core/battle';
-import * as SAEngine from 'sa-core/engine';
-import { LevelBase, LevelExtendsProps } from './LevelBase';
+import { SALevelState, SaModuleLogger, Socket, defaultStyle } from 'sa-core';
+
+import type { ILevelBattleStrategy, ILevelRunner, SALevelData, SALevelInfo } from 'sa-core';
+
 import dataProvider from './data';
 
-interface LevelData {
+const customData = dataProvider['LevelXTeamRoom'];
+
+interface LevelData extends SALevelData {
     open: boolean;
-    dailyChallengeCount: number;
     dailyMinRound: number;
     dailyRewardReceived: boolean;
     weeklyRewardReceived: boolean;
     weeklyCompletedCount: number;
 }
 
-const RealmName = 'X战队密室';
-const customData = dataProvider['LevelXTeamRoom'];
-const maxDailyChallengeTimes = 3;
-
-const updateLevelData = async () => {
-    const data = {} as LevelData;
-    const bits = await SAEngine.Socket.bitSet(1000585, 2000036);
-    const values = await SAEngine.Socket.multiValue(12769, 12774, 20133);
-    const pInfos = await SAEngine.Socket.playerInfo(1197);
-
-    data.dailyRewardReceived = bits[0];
-    data.weeklyRewardReceived = bits[1];
-
-    data.open = Boolean(pInfos[0]);
-    data.dailyChallengeCount = values[0];
-    data.dailyMinRound = values[1];
-    data.weeklyCompletedCount = values[2];
-
-    return data;
-};
-
-export function LevelXTeamRoom(props: LevelExtendsProps) {
-    const { running: _, setRunning } = props;
-    const [hint, setHint] = React.useState<string | JSX.Element>('');
-    const [step, setStep] = React.useState(0);
-    const levelData = React.useRef({} as LevelData);
-
-    const effect = async () => {
-        switch (step) {
-            case 0: //init
-                setRunning(true);
-                setHint('正在查询关卡状态');
-                levelData.current = await updateLevelData();
-                console.log(levelData.current);
-                if (!levelData.current.weeklyRewardReceived) {
-                    if (!levelData.current.dailyRewardReceived) {
-                        if (
-                            (levelData.current.dailyMinRound === 0 &&
-                                levelData.current.dailyChallengeCount < maxDailyChallengeTimes) ||
-                            levelData.current.open
-                        ) {
-                            setStep(1);
-                        } else {
-                            setStep(2);
-                        }
-                    } else {
-                        setStep(3);
-                    }
-                } else {
-                    setStep(4);
-                }
-                break;
-            case 1: //daily challenge
-                setHint('正在准备背包');
-                await switchBag(customData.cts);
-                cureAllPet();
-                PetManager.setDefault(customData.cts[0]);
-                setHint('准备背包完成');
-                await delay(500);
-
-                setHint('正在开启关卡');
-                await SAEngine.Socket.sendByQueue(42395, [105, 1, 1, 0]);
-                await delay(500);
-
-                await SABattle.Manager.runOnce(() => {
-                    setHint(`正在进行对战...`);
-                    SAEngine.Socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [105, 7, 0]);
-                }, customData.strategy);
-                setStep(0);
-
-                break;
-            case 2: //try get daily reward
-                setHint('正在查询每日奖励领取状态');
-                if (!levelData.current.dailyRewardReceived && levelData.current.dailyMinRound > 0) {
-                    await SAEngine.Socket.sendByQueue(42395, [105, 2, 0, 0]);
-                }
-
-                await delay(500);
-                setStep(3);
-                break;
-            case 3: //try get weekly reward
-                setHint('正在查询每周奖励领取状态');
-                if (!levelData.current.weeklyRewardReceived && levelData.current.weeklyCompletedCount >= 5) {
-                    await SAEngine.Socket.sendByQueue(42395, [105, 3, 0, 0]);
-                }
-
-                await delay(500);
-                setStep(4);
-                break;
-            default:
-                setHint(RealmName + '日任完成');
-                setRunning(false);
-                break;
-        }
+export class LevelXTeamRoom implements ILevelRunner<LevelData, SALevelInfo> {
+    data: LevelData = {
+        leftTimes: 0,
+        state: SALevelState.STOP,
+        success: false,
+        open: false,
+        dailyMinRound: 0,
+        dailyRewardReceived: false,
+        weeklyRewardReceived: false,
+        weeklyCompletedCount: 0,
     };
-    React.useEffect(() => {
-        effect();
-    }, [step]);
-    return <LevelBase title={RealmName} hint={hint}></LevelBase>;
+
+    readonly info = {
+        name: 'X战队密室',
+        maxTimes: 3,
+    };
+
+    option = { sweep: false };
+
+    logger = SaModuleLogger('X战队密室', defaultStyle.core);
+
+    async updater() {
+        this.logger(`${this.info.name}: 更新关卡信息...`);
+        const bits = await Socket.bitSet(1000585, 2000036);
+        const values = await Socket.multiValue(12769, 12774, 20133);
+        const pInfos = await Socket.playerInfo(1197);
+
+        this.data.dailyRewardReceived = bits[0];
+        this.data.weeklyRewardReceived = bits[1];
+
+        this.data.open = Boolean(pInfos[0]);
+        this.data.leftTimes = this.info.maxTimes - values[0];
+        this.data.dailyMinRound = values[1];
+        this.data.weeklyCompletedCount = values[2];
+
+        if (this.data.state === ('award_error' as SALevelState)) {
+            this.data.success = false;
+            return SALevelState.STOP;
+        }
+
+        if (this.data.weeklyRewardReceived) {
+            this.logger(`${this.info.name}: 日任完成`);
+            this.data.success = true;
+            return SALevelState.STOP;
+        }
+
+        if (!this.data.weeklyRewardReceived && this.data.weeklyCompletedCount >= 5) {
+            this.logger(`${this.info.name}: 领取每周奖励`);
+            return 'award_weekly' as unknown as SALevelState;
+        }
+
+        if (this.data.dailyRewardReceived) {
+            this.logger(`${this.info.name}: 日任完成`);
+            this.data.success = true;
+            return SALevelState.STOP;
+        }
+
+        if (!this.data.dailyRewardReceived && this.data.dailyMinRound > 0) {
+            this.logger(`${this.info.name}: 领取每日奖励`);
+            return SALevelState.AWARD;
+        }
+
+        if (this.data.dailyMinRound === 0 && (this.data.leftTimes > 0 || this.data.open)) {
+            this.logger(`${this.info.name}: 进入战斗`);
+            if (this.data.open) {
+                return SALevelState.BATTLE;
+            } else {
+                return 'open_level' as unknown as SALevelState;
+            }
+        }
+
+        this.logger(`${this.info.name}: 日任失败`);
+        this.data.success = false;
+        return SALevelState.STOP;
+    }
+
+    selectBattle() {
+        return {
+            pets: customData.cts,
+            strategy: customData.strategy,
+        } as ILevelBattleStrategy;
+    }
+
+    readonly actions: Record<string, () => Promise<void>> = {
+        open_level: async () => {
+            await Socket.sendByQueue(42395, [105, 1, 1, 0]);
+        },
+
+        battle: async () => {
+            Socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [105, 7, 0]);
+        },
+
+        award: async () => {
+            try {
+                await Socket.sendByQueue(42395, [105, 2, 0, 0]);
+            } catch (error) {
+                this.logger(error);
+                this.data.state = 'award_error' as SALevelState;
+            }
+        },
+
+        award_weekly: async () => {
+            try {
+                await Socket.sendByQueue(42395, [105, 3, 0, 0]);
+            } catch (error) {
+                this.logger(error);
+                this.data.state = 'award_error' as SALevelState;
+            }
+        },
+    };
 }

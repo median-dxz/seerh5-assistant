@@ -3,7 +3,6 @@ import { PanelField, PanelTable, useIndex, useRowData, type PanelColumns } from 
 import { SAContext } from '@sa-app/context/SAContext';
 import React, { useCallback } from 'react';
 import { LevelTitanHole } from './LevelTitanHole';
-import { LevelXTeamRoom } from './LevelXTeamRoom';
 
 import { SaTableRow } from '@sa-app/components/styled/TableRow';
 import { produce } from 'immer';
@@ -48,13 +47,6 @@ export function Realm() {
                 async getState() {
                     const [count, step] = await SAEngine.Socket.multiValue(18724, 18725);
                     return count === 2 && step === 0;
-                },
-            },
-            {
-                name: 'x战队密室',
-                module: <LevelXTeamRoom setRunning={setRunning} running={running} />,
-                async getState() {
-                    return (await SAEngine.Socket.bitSet(1000585, 2000036)).some(Boolean);
                 },
             },
             // { name: '作战实验室'

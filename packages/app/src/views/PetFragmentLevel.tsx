@@ -177,6 +177,7 @@ import { LevelCourageTower } from './Realm/LevelCourageTower';
 import { ElfKingsId, LevelElfKingsTrial } from './Realm/LevelElfKingsTrial';
 import { LevelExpTraining } from './Realm/LevelExpTraining';
 import { LevelStudyTraining } from './Realm/LevelStudyTraining';
+import { LevelXTeamRoom } from './Realm/LevelXTeamRoom';
 
 export function PetFragmentLevelPanel() {
     const [runner, setRunner] = useState<null | PetFragmentRunner>(null);
@@ -208,7 +209,8 @@ export function PetFragmentLevelPanel() {
                     sweep: false,
                     elfId: ElfKingsId.战王,
                 }) as unknown as PetFragmentRunner
-            );
+            )
+            .concat(new LevelXTeamRoom() as unknown as PetFragmentRunner);
     });
 
     rows.forEach((runner, index) => {
