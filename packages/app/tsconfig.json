@@ -3,6 +3,7 @@
     "compilerOptions": {
         "tsBuildInfoFile": "../../.tsbuildinfo/app.tsbuildinfo",
         "moduleResolution": "bundler",
+        "module": "ES2022",
         "allowImportingTsExtensions": true,
         "isolatedModules": true,
         "resolveJsonModule": true,
