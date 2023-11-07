@@ -417,34 +417,10 @@ Socket.sendByQueue(cmd: number, data?: number[]): Promise<ArrayBuffer>
 
 # 路线图 (Road Map)
 
-- [x] v0.1.8 - v0.1.10
-  - [x] 整体重构为**TypeScript** 
-- [x] v0.2.x
-  - [x] 添加初步的UI界面和功能支持
-  - [x] 和模组交互的命令框
-  - [x] 提供快捷功能访问的快捷栏
-  - [x] 主操作面板
-  - [x] 手动添加官方客户端的dts定义
-  - [x] 添加egret引擎的dts定义
-  - [x] 重构`BattleManager`模块
-- [x] v0.3.x
-  - [x] 清日任功能
-  - [x] 事件钩子全面优化
-  - [x] 基于LocalStorage的配置储存
-- [x] v0.4.x 版本进行了非常大的重构和更改，主要包括：
-  - [x] core与app分离，项目变为monorepo
-  - [x] core的api以及内部实现几乎全部重新设计
-  - [x] 为编写pve关卡提供了高级抽象的level模块
-  - [x] 迁移webpack到vite
-  - [x] 添加service worker
-  - [x] 从开发服务器分离独立后端
-  - [x] core模块的单元测试支持
-
-分离之后，两个模块的路线图：
-
 ## Core:
 
-- [ ] --> 0.5.x 重构`Battle`下的策略(Strategy)与行动(Move)，将概念和接口优化，降低代码复杂度和思维复杂度
+- [ ] --> 0.5.x 架构更新，完成其作为一个库的职能，提供对外定义，扩展支持，解耦登录器特定逻辑以及非核心功能
+- [ ] 0.6.x 重构`Battle`下的策略(Strategy)与行动(Move)，将概念和接口优化，降低代码复杂度和思维复杂度
 - [ ] Release: 1.0.0 整合`Function`功能，重构组织形式，表现为内置模组，要求可以方便对接到app
 
 ## App:
@@ -456,6 +432,5 @@ Socket.sendByQueue(cmd: number, data?: number[]): Promise<ArrayBuffer>
 # 开源协议
 
 **MPL-2.0**
-
 
 并确保您遵守了 **eula** 中的开发者条款

@@ -4,7 +4,7 @@
   "type": "module",
   "version": "0.5.0",
   "license": "MPL-2.0",
-  "packageManager": "pnpm@8.7.6",
+  "packageManager": "pnpm@8.10.2",
   "scripts": {
     "dev": "conc pnpm:core:watch pnpm:app:dev",
     "backend:serve": "pnpm -C ./packages/backend run serve",
@@ -14,14 +14,14 @@
     "core:test": "pnpm -F sa-core run test"
   },
   "devDependencies": {
-    "@types/node": "^18.17.17",
-    "@typescript-eslint/eslint-plugin": "^6.7.2",
-    "@typescript-eslint/parser": "^6.7.2",
-    "concurrently": "^8.2.1",
-    "eslint": "^8.49.0",
-    "rimraf": "^5.0.1",
+    "@types/node": "^20.8.10",
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.53.0",
+    "rimraf": "^5.0.5",
     "typescript": "^5.2.2",
-    "vite": "^4.4.9"
+    "vite": "^4.5.0"
   },
   "engines": {
     "node": ">=16.0.0"

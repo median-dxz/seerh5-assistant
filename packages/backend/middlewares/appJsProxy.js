@@ -32,7 +32,7 @@ export const saAppJsProxy = async (ctx, next) => {
             url.search = new URLSearchParams({ v: '1' }).toString();
             await fetcher(ctx, url, (script) => {
                 return script
-                    .replace(`window.location.protocol+i.b`, `window.location.href+i.b.replace("//","")`)
+                    .replace(`window.location.protocol+u.b`, `window.location.href+u.b.replace("//","")`)
                     .replace(`t&&t[0]===i.a`, `((t && t[0] === i.a) || (i.a === 'localhost'))`)
                     .replace(`//support-res.61.com`, `api/js/support-res.61.com`);
             });
