@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { SaModuleLogger, defaultStyle, hookPrototype } from '../common/utils.js';
-const log = SaModuleLogger('SAHelper', defaultStyle.core);
+import { hookPrototype } from '../common/utils.js';
 
 export function HelperLoader() {
     config.xml.load('new_super_design');
@@ -91,7 +90,7 @@ function enableCancelAlertForUsePetItem() {
 /** take over the alarm dialog */
 function enableBetterAlarm() {
     Alarm.show = function (text: string, callback: () => void) {
-        log(`接管确认信息: ${text}`);
+        console.log(`[info] 接管确认信息: ${text}`);
         BubblerManager.getInstance().showText(text, true);
         callback && callback();
     };

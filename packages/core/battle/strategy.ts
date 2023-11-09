@@ -1,11 +1,9 @@
-import { SaModuleLogger, defaultStyle, delay } from '../common/utils.js';
+import { delay } from '../common/utils.js';
 import type { Pet, Skill } from '../entity/index.js';
 import type { MoveStrategy } from './manager.js';
 import { Manager } from './manager.js';
 import { Operator } from './operator.js';
 import { Provider } from './provider.js';
-
-const log = SaModuleLogger('BattleModuleManager', defaultStyle.core);
 
 export class SkillNameMatch {
     skillNames: string[] = [];
@@ -84,8 +82,7 @@ export interface GeneralStrategy {
 
 export async function resolveStrategy(strategy: GeneralStrategy) {
     if (FighterModelFactory.playerMode == null) {
-        log(`执行策略失败: 当前playerMode为空`);
-        return;
+        throw `[error] 执行策略失败: 当前playerMode为空`;
     }
 
     if (Manager.hasSetStrategy()) {
@@ -104,7 +101,6 @@ export async function resolveStrategy(strategy: GeneralStrategy) {
             const index = matcher.match(pets, info.self.catchtime);
             success = await Operator.switchPet(index);
             if (success) {
-                log(`精灵索引 ${index} 匹配成功: 死切链: [${petNames.join('|')}]`);
                 break;
             }
         }
@@ -114,7 +110,6 @@ export async function resolveStrategy(strategy: GeneralStrategy) {
             if (index) {
                 (await Operator.switchPet(index)) || Operator.auto();
             }
-            log('执行默认死切策略');
         }
 
         await delay(300);
@@ -129,13 +124,11 @@ export async function resolveStrategy(strategy: GeneralStrategy) {
         const skillId = matcher.match(skills);
         success = await Operator.useSkill(skillId);
         if (success) {
-            log(`技能 ${skillId} 匹配成功: 技能组: [${skillNames.join('|')}]`);
             break;
         }
     }
 
     if (!success) {
         strategy.fallback.resolveMove(info, skills, pets);
-        log('执行默认技能使用策略');
     }
 }

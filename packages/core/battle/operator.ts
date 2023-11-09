@@ -1,6 +1,6 @@
-import { SaModuleLogger, defaultStyle, delay } from '../common/utils.js';
+import { CoreModuleWarning, delay } from '../common/utils.js';
 import { Socket } from '../engine/index.js';
-const log = SaModuleLogger('BattleOperator', defaultStyle.core);
+const warn = CoreModuleWarning('BattleOperator');
 
 export const Operator = {
     auto: () => {
@@ -14,10 +14,9 @@ export const Operator = {
         controlPanelObserver.showFight();
         await delay(300);
         if (skillId <= 0) {
-            // log('非法的skillId');
+            warn('非法的skillId');
             return false;
         } else {
-            log(`${FighterModelFactory.playerMode.info.petName} 使用技能: ${SkillXMLInfo.getName(skillId)}`);
             await Socket.sendByQueue(CommandID.USE_SKILL, [skillId]);
         }
         return true;
@@ -45,7 +44,7 @@ export const Operator = {
             return false;
         }
         if (index == undefined || index < 0) {
-            // log('非法的petIndex');
+            warn('非法的petIndex');
             return false;
         }
         const controlPanelObserver = FighterModelFactory.playerMode.subject.array[1];
@@ -57,10 +56,9 @@ export const Operator = {
         const petBtn = controlPanelObserver.petPanel._petsArray[index];
         try {
             petBtn.autoUse();
-            log(`切换精灵: ${index} ${petBtn.info.name}`);
             return true;
         } catch (error) {
-            error instanceof Error && log(`切换精灵失败: ${index} ${petBtn.info.name} ${error.message}`);
+            error instanceof Error && warn(`切换精灵失败: ${index} ${petBtn.info.name} ${error.message}`);
             return false;
         }
     },

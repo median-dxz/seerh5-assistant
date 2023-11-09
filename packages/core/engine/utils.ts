@@ -1,7 +1,4 @@
 import type { Constructor } from '../common/utils.js';
-import { SaModuleLogger, defaultStyle } from '../common/utils.js';
-
-const log = SaModuleLogger('SAEngine-UI', defaultStyle.core);
 
 export const UIModuleHelper = {
     currentModule<T extends BaseModule>() {
@@ -36,10 +33,6 @@ export function findObject<T extends Constructor<T>>(
     }
 
     return find(root);
-}
-
-export function getClickTarget() {
-    LevelManager.stage.once(egret.TouchEvent.TOUCH_BEGIN, (e: egret.TouchEvent) => log(e.target), null);
 }
 
 export function getImageButtonListener(button: eui.UIComponent) {

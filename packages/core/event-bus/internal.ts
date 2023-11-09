@@ -2,22 +2,11 @@ import { Hook } from '../constant/index.js';
 
 import { GameModuleListener } from './module.js';
 
-import { SAEventTarget, SaModuleLogger, defaultStyle } from '../common/utils.js';
+import { SAEventTarget } from '../common/utils.js';
 import { SocketListener } from './socket.js';
 
-const log = SaModuleLogger('SAHookListener', defaultStyle.core);
-
 export default () => {
-    SAEventTarget.on(Hook.Award.receive, (data) => {
-        log(`获得物品:`);
-        const logStr = Array.isArray(data.items)
-            ? data.items.map((v) => `${ItemXMLInfo.getName(v.id)} ${v.count}`)
-            : undefined;
-        logStr && log(logStr.join('\r\n'));
-    });
-
     SAEventTarget.on(Hook.Module.loadScript, (name) => {
-        log(`检测到新模块加载: ${name}`);
         GameModuleListener.emit(name, 'load');
     });
 
@@ -25,8 +14,7 @@ export default () => {
         GameModuleListener.emit(name, 'show');
     });
 
-    SAEventTarget.on(Hook.Module.openMainPanel, ({ module, panel }) => {
-        log(`${module}创建主面板: ${panel}`);
+    SAEventTarget.on(Hook.Module.openMainPanel, ({ module }) => {
         GameModuleListener.emit(module, 'mainPanel');
     });
 

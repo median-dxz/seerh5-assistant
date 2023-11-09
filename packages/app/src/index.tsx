@@ -8,6 +8,8 @@ const container = document.getElementById('sa-app')!;
 const root = ReactDOM.createRoot(container);
 
 const renderApp = async () => {
+    console.info(`[info] SeerH5-Assistant Core Loaded Successfully!`);
+    
     const sac = window.sac;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).sac = { ...core, ...sac };

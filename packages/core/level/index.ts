@@ -31,11 +31,14 @@ export class SALevelManager {
 
     async stop() {
         if (!this.runner) return;
+
+        this.runner.
+
         this.runner = null;
         try {
             await this.locker;
         } catch (e) {
-            console.log(`关卡运行失败: ${e as string}`);
+            throw `关卡运行失败: ${e as string}`;
         }
         this.locker = null;
     }

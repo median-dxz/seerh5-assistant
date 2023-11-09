@@ -8,9 +8,9 @@ describe('PetHelper', function () {
     /** @type {typeof window.sac} */
     let core;
 
-    before(() => {
+    before(async () => {
         core = window.sac;
-        core.toggleAutoCure(false);
+        await core.toggleAutoCure(false);
         core.HelperLoader();
     });
 
@@ -97,6 +97,7 @@ describe('PetHelper', function () {
 
     it('should lower pet hp', async function () {
         const { catchTime } = env.测试精灵1;
+        await core.SAPet.cure(catchTime);
 
         await core.lowerBlood([catchTime]);
 
@@ -111,7 +112,19 @@ describe('PetHelper', function () {
         expect(ModuleManager.currModule).instanceOf(mainPanel.MainPanel);
     });
 
-    after(function () {
-        core.toggleAutoCure(true);
+    it('should toggle auto cure function', async function () {
+        let state;
+
+        await core.toggleAutoCure(false);
+        state = await core.getAutoCureState();
+        expect(state).is.false;
+
+        await core.toggleAutoCure(true);
+        state = await core.getAutoCureState();
+        expect(state).is.true;
+    });
+
+    after(async () => {
+        await core.toggleAutoCure(true);
     });
 });

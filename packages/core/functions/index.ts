@@ -1,10 +1,9 @@
 import * as Battle from '../battle/index.js';
-import { SaModuleLogger, defaultStyle, delay } from '../common/utils.js';
+import { delay } from '../common/utils.js';
 import { PetPosition, Potion } from '../constant/index.js';
 import { Socket, buyPetItem, toggleAutoCure } from '../engine/index.js';
 import { PetElement } from '../entity/index.js';
 import { PetDataManger, SAPet, SAPetLocation, getBagPets } from '../pet-helper/index.js';
-const log = SaModuleLogger('SAFunctions', defaultStyle.mod);
 
 type PotionId = (typeof Potion)[keyof typeof Potion];
 /**
@@ -32,13 +31,11 @@ export async function lowerBlood(
         if (location !== SAPetLocation.Bag && location !== SAPetLocation.Default) {
             if (PetManager.isBagFull) {
                 const replacePet = replacePets.pop()!;
-                log(`压血 -> 将 ${replacePet.name} 放入仓库`);
                 await replacePet.popFromBag();
             }
             await SAPet.setLocation(ct, SAPetLocation.Bag);
         }
     }
-    log(`压血 -> 背包处理完成`);
     await getBagPets();
 
     const hpChecker = () => cts.filter((ct) => SAPet(ct).hp >= hpLimit);
@@ -69,7 +66,6 @@ export async function lowerBlood(
 
     const strategy: Battle.MoveStrategy = {
         resolveMove(battleState, skills, battlePets) {
-            log('move', battleState.round, battleState.self?.hp.remain);
             if (battleState.self.hp.remain < hpLimit || !cts.includes(battleState.self.catchtime)) {
                 const nextPet = this.resolveNoBlood(battleState, skills, battlePets) ?? -1;
                 if (nextPet === -1) {
@@ -112,13 +108,10 @@ export async function switchBag(cts: number[]) {
     for (const v of await getBagPets(PetPosition.bag1)) {
         if (!cts.includes(v.catchTime)) {
             await SAPet.popFromBag(v);
-            log(`SwitchBag -> 将 ${v.name} 放入仓库`);
         }
     }
     for (const v of cts) {
-        const { name } = await SAPet.get(v);
-        await SAPet(v).setLocation(SAPetLocation.Bag);
-        log(`SwitchBag -> 将 ${name} 放入背包`);
+        await SAPet.setLocation(v, SAPetLocation.Bag);
     }
 }
 
@@ -183,6 +176,10 @@ export function updateBatteryTime() {
         (MainManager.actorInfo.timeToday + Math.floor(Date.now() / 1000 - MainManager.actorInfo.logintimeThisTime));
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     BatteryController.Instance._leftTime = Math.max(0, leftTime);
+}
+
+export function getClickTarget() {
+    LevelManager.stage.once(egret.TouchEvent.TOUCH_BEGIN, (e: egret.TouchEvent) => console.log(e.target), null);
 }
 
 export { HelperLoader } from './helper.js';

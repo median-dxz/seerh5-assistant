@@ -86,7 +86,8 @@ export function hookPrototype<T extends HasPrototype, K extends keyof T['prototy
     proto && hookFn(proto, funcName, hookedFunc);
 }
 
-export const checkEnv = () => typeof window !== 'undefined' && window.sac != undefined && window.sac?.SacReady && window.sac?.SeerH5Ready;
+export const checkEnv = () =>
+    typeof window !== 'undefined' && window.sac != undefined && window.sac?.SacReady && window.sac?.SeerH5Ready;
 
 export const extractObjectId = <T extends { [key in K]: number }, K extends string>(obj: T | number, key: K) => {
     if (typeof obj === 'number') {
@@ -111,16 +112,6 @@ export function tryGet<TKey, TValue>(map: Map<TKey, Set<TValue>>, key: TKey) {
     return map.get(key)!;
 }
 
-import chalk, { ChalkInstance } from 'chalk';
-
-chalk.level = 3;
-
-export const defaultStyle = {
-    mod: chalk.hex('#fc9667'),
-    core: chalk.hex('#e067fc'),
-    none: chalk.bgHex('#eff1f3'),
-} as const;
-
-export const SaModuleLogger = (module: string, fontStyle: ChalkInstance = defaultStyle.none): typeof console.log => {
-    return console.log.bind(console, fontStyle('[%s]:'), module);
+export const CoreModuleWarning = (module: string): typeof console.warn => {
+    return console.warn.bind(console, '[%s]:', module);
 };

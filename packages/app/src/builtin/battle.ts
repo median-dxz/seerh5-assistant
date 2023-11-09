@@ -8,7 +8,7 @@ export default [
         battle: {
             pets: ['潘克多斯', '蒂朵', '帝皇之御', '魔钰', '月照星魂', '时空界皇'],
             beforeBattle: async () => {
-                await lowerBlood(await ct('潘克多斯', '蒂朵', '帝皇之御', '魔钰', '月照星魂', '时空界皇'));
+                return lowerBlood(await ct('潘克多斯', '蒂朵', '帝皇之御', '魔钰', '月照星魂', '时空界皇'));
             },
             strategy: '潘蒂表必先',
         },

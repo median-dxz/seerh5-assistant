@@ -1,7 +1,4 @@
-import { SaModuleLogger, defaultStyle } from '../common/utils.js';
 import { InternalInitiator, enableBasic } from './internal.js';
-
-const log = SaModuleLogger('SALoader', defaultStyle.core);
 
 export async function CoreLoader() {
     return new Promise<boolean>((resolve) => {
@@ -20,7 +17,6 @@ export async function CoreLoader() {
             window.sac.SacReady = true;
 
             window.dispatchEvent(new CustomEvent('seerh5_assistant_ready'));
-            log(`SeerH5-Assistant Core Loaded Successfully!`);
         };
 
         const { sac } = window;
