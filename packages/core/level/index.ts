@@ -31,9 +31,6 @@ export class SALevelManager {
 
     async stop() {
         if (!this.runner) return;
-
-        this.runner.
-
         this.runner = null;
         try {
             await this.locker;
@@ -52,41 +49,46 @@ export class SALevelManager {
         const lockFn = async () => {
             logger('预处理');
             await beforeAll?.();
+
+            const battle = async () => {
+                const { strategy, pets, beforeBattle } = runner.selectBattle();
+
+                logger('切换背包');
+                await switchBag(pets);
+
+                toggleAutoCure(false);
+                cureAllPet();
+
+                await delay(100);
+
+                logger('执行战斗前预处理');
+                await beforeBattle?.();
+                await SAPet.default(pets[0]);
+
+                logger('进入战斗');
+                try {
+                    if (!this.runner) throw '关卡已停止运行';
+
+                    await Manager.run(() => {
+                        runner.actions['battle'].call(runner);
+                    }, strategy);
+                } catch (error) {
+                    this.runner = null;
+                    logger(`战斗进入错误: ${error as string}`);
+                    return;
+                }
+
+                await toggleAutoCure(true);
+                Manager.clear();
+                logger('战斗完成');
+            };
+
             while (this.runner) {
                 logger('更新关卡信息');
                 const state = await runner.updater();
                 switch (state) {
                     case SALevelState.BATTLE:
-                        {
-                            const { strategy: moveModule, pets, beforeBattle } = runner.selectBattle();
-
-                            logger('切换背包');
-                            await switchBag(pets);
-
-                            toggleAutoCure(false);
-                            cureAllPet();
-
-                            await delay(100);
-
-                            logger('执行战斗前预处理');
-                            await beforeBattle?.();
-                            await SAPet.default(pets[0]);
-
-                            logger('进入战斗');
-                            try {
-                                await Manager.runOnce(() => {
-                                    runner.actions['battle'].call(runner);
-                                }, moveModule);
-                            } catch (error) {
-                                this.runner = null;
-                                logger(`战斗进入错误: ${error as string}`);
-                                break;
-                            }
-
-                            await toggleAutoCure(true);
-                            Manager.clear();
-                            logger('战斗完成');
-                        }
+                        battle();
                         break;
                     case SALevelState.STOP:
                         this.runner = null;

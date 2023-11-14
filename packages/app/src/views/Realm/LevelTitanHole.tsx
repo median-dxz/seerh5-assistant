@@ -75,7 +75,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 break;
             case 1:
                 await delay(500);
-                await SABattle.Manager.runOnce(() => {
+                await SABattle.Manager.run(() => {
                     setHint(
                         <LabeledLinearProgress
                             prompt={'正在进行泰坦矿洞'}
@@ -98,7 +98,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 PetManager.setDefault(pet.catchTime);
                 await delay(500);
                 while (levelData.current.step2Count < 6) {
-                    await SABattle.Manager.runOnce(() => {
+                    await SABattle.Manager.run(() => {
                         setHint(
                             <>
                                 <LabeledLinearProgress
@@ -165,7 +165,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 }
                 PetManager.setDefault(pet.catchTime);
                 await delay(500);
-                await SABattle.Manager.runOnce(() => {
+                await SABattle.Manager.run(() => {
                     setHint(
                         <LabeledLinearProgress
                             prompt={'正在进行泰坦矿洞'}

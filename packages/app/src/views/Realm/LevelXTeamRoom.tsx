@@ -1,7 +1,8 @@
-import { SALevelState, SaModuleLogger, Socket, defaultStyle } from 'sa-core';
+import { SALevelState, Socket } from 'sa-core';
 
 import type { ILevelBattleStrategy, ILevelRunner, SALevelData, SALevelInfo } from 'sa-core';
 
+import { SaModuleLogger } from '@sa-app/utils/logger';
 import dataProvider from './data';
 
 const customData = dataProvider['LevelXTeamRoom'];
@@ -33,7 +34,7 @@ export class LevelXTeamRoom implements ILevelRunner<LevelData, SALevelInfo> {
 
     option = { sweep: false };
 
-    logger = SaModuleLogger('X战队密室', defaultStyle.core);
+    logger = SaModuleLogger('X战队密室', "info");
 
     async updater() {
         this.logger(`${this.info.name}: 更新关卡信息...`);

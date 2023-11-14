@@ -82,7 +82,7 @@ export async function lowerBlood(
             ),
     };
 
-    await Battle.Manager.runOnce(() => {
+    await Battle.Manager.run(() => {
         FightManager.fightNoMapBoss(6730);
     }, strategy);
 

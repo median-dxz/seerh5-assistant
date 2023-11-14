@@ -1,7 +1,8 @@
-import { SALevelState, SaModuleLogger, Socket, defaultStyle } from 'sa-core';
+import { SALevelState, Socket } from 'sa-core';
 
 import type { ILevelBattleStrategy, ILevelRunner, SALevelData, SALevelInfo } from 'sa-core';
 
+import { SaModuleLogger } from '@sa-app/utils/logger';
 import dataProvider from './data';
 
 const customData = dataProvider['LevelElfKingsTrial'];
@@ -50,7 +51,7 @@ export class LevelElfKingsTrial implements ILevelRunner<LevelData, SALevelInfo> 
 
     option: LevelOption;
 
-    logger = SaModuleLogger('精灵王的试炼', defaultStyle.core);
+    logger = SaModuleLogger('精灵王的试炼', 'info');
 
     constructor(option: LevelOption) {
         this.option = option;

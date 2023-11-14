@@ -17,7 +17,7 @@ let triggerLocker: undefined | ((value: boolean | PromiseLike<boolean>) => void)
 
 export const Manager = {
     delayTimeout: undefined as undefined | Promise<void>,
-    runOnce(trigger: Trigger, _strategy: MoveStrategy): Promise<boolean> {
+    run(trigger: Trigger, _strategy: MoveStrategy): Promise<boolean> {
         if (triggerLocker == undefined) {
             try {
                 trigger();
@@ -60,3 +60,14 @@ export const Manager = {
         triggerLocker = undefined;
     },
 };
+
+// todo
+// 单独导出resolveStrategy
+// 处理resolve逻辑
+// Strategy专注于提供基础模型
+// Manager职责类似Level
+// 接管的战斗 -> 设置的strategy
+// 没接管的 / 没设置st -> 检查是否传入st
+// 没传入 -> 默认(什么也不做)
+// 至于传入st是auto还是其他什么->app层决定
+// 同时接管的战斗具体使用什么->是调用者的职责

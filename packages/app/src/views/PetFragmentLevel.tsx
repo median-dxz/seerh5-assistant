@@ -1,11 +1,4 @@
-import {
-    PetFragmentLevelDifficulty as Difficulty,
-    ILevelBattleStrategy,
-    SALevelState,
-    SaModuleLogger,
-    defaultStyle,
-    delay,
-} from 'sa-core';
+import { PetFragmentLevelDifficulty as Difficulty, ILevelBattleStrategy, SALevelState, delay } from 'sa-core';
 
 import { Box, Button, CircularProgress, Dialog, DialogActions, Divider, Typography, alpha } from '@mui/material';
 import { SAContext } from '@sa-app/context/SAContext';
@@ -19,8 +12,6 @@ import { PanelColumns, PanelTable } from '../components/PanelTable/PanelTable';
 
 import { loadBattle } from '@sa-app/service/ModManager';
 import { saTheme } from '@sa-app/style';
-
-const log = SaModuleLogger('精灵因子', defaultStyle.mod);
 
 declare namespace pvePetYinzi {
     const DataManager: unknown;
@@ -79,7 +70,7 @@ export class PetFragmentRunner implements ILevelRunner<LevelData, LevelInfo> {
         };
         this.data = { success: false } as LevelData;
 
-        this.logger = SaModuleLogger(`精灵因子-${this.info.name}`, defaultStyle.mod);
+        this.logger = SaModuleLogger(`精灵因子-${this.info.name}`, 'info');
     }
 
     selectBattle() {
@@ -159,17 +150,18 @@ function logDataByName(factorName: string) {
         .getAnyRes('new_super_design')
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .Root.Design.find((r: any) => (r.Desc as string).match(factorName));
-    log(data);
+    console.log(data);
 }
 
 function getCurPanelInfo() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    log((pvePetYinzi.DataManager as any)._instance.curYinziData);
+    console.log((pvePetYinzi.DataManager as any)._instance.curYinziData);
 }
 
 import { PanelField, useIndex, useRowData } from '@sa-app/components/PanelTable';
 import { SaTableRow } from '@sa-app/components/styled/TableRow';
 import * as SAEndpoint from '@sa-app/service/endpoints';
+import { SaModuleLogger } from '@sa-app/utils/logger';
 import { produce } from 'immer';
 import useSWR from 'swr';
 import { LevelBaseNew } from './LevelBaseNew';

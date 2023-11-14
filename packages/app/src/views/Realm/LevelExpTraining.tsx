@@ -1,7 +1,8 @@
-import { SALevelState, SaModuleLogger, Socket, defaultStyle } from 'sa-core';
+import { SALevelState, Socket } from 'sa-core';
 
 import type { ILevelBattleStrategy, ILevelRunner, SALevelData, SALevelInfo } from 'sa-core';
 
+import { SaModuleLogger } from '@sa-app/utils/logger';
 import dataProvider from './data';
 
 const customData = dataProvider['LevelExpTraining'];
@@ -32,7 +33,7 @@ export class LevelExpTraining implements ILevelRunner<LevelData, SALevelInfo> {
 
     option: LevelOption;
 
-    logger = SaModuleLogger('经验训练场', defaultStyle.core);
+    logger = SaModuleLogger('经验训练场', 'info');
 
     constructor(option: LevelOption) {
         this.option = option;

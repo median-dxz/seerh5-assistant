@@ -1,6 +1,7 @@
 import { ct } from '@sa-app/context/ct';
 import * as SAEndPoint from '@sa-app/service/endpoints';
-import { ILevelBattleStrategy, MoveStrategy, SaModuleLogger, defaultStyle } from 'sa-core';
+import { SaModuleLogger } from '@sa-app/utils/logger';
+import { ILevelBattleStrategy, MoveStrategy } from 'sa-core';
 import { GameModuleListener } from 'sa-core/event-bus';
 import {
     BaseMod,
@@ -13,7 +14,7 @@ import {
     StrategyMod,
 } from './type';
 
-const log = SaModuleLogger('SAModManager', defaultStyle.mod);
+const log = SaModuleLogger('SAModManager', 'info');
 
 export const ModStore = new Map<string, BaseMod>();
 
@@ -127,7 +128,7 @@ export const SAModManager = {
                     break;
             }
             SAEndPoint.injectModConfig(mod);
-            mod.logger = SaModuleLogger(modNamespace, defaultStyle.mod);
+            mod.logger = SaModuleLogger(modNamespace, 'info');
             mod.namespace = modNamespace;
 
             ModStore.set(modNamespace, mod);
