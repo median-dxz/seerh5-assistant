@@ -6,7 +6,7 @@ declare namespace petBag {
         onSelectPet(event: Pick<egret.Event, 'data'>): void;
         showDevelopBaseView(): void;
         showDevelopView(view: number): void;
-        initBagView(): void;
+        updateBagView(): void;
         checkChangePosition(): Promise<void>;
         beginPetInfo: PetInfo | null;
         endPetInfo: PetInfo | null;

@@ -31,9 +31,7 @@ class PetBag implements SEAMod.IModuleMod<petBag.PetBag> {
             f.call(listener);
             panel.beginPetInfo = null;
         });
-        const initBagView = debounce(() => {
-            panel.initBagView();
-        }, 600);
+        const initBagView = debounce(() => PetManager.updateBagInfo(() => panel.updateBagView()), 600);
         const refresh = () => {
             // 非ui操作, 是直接发包
             if (panel.beginPetInfo == null && !petBag.ChangePetPop.changeFlag) {
