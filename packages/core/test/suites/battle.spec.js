@@ -35,17 +35,8 @@ describe('BattleManager', function () {
         const skn = matchSkillName(env.skill.map((v) => v.name));
         const nbc = matchNoBloodChain([env.测试精灵1.name, env.测试精灵3.name]);
 
-        const resolve = async () => {
-            try {
-                await Manager.resolveStrategy();
-            } catch (error) {
-                expect(error).to.match(/死切/);
-                Operator.escape();
-            }
-        };
-
-        bus.hook(Hook.Battle.battleStart, resolve);
-        bus.hook(Hook.Battle.roundEnd, resolve);
+        bus.hook(Hook.Battle.battleStart, Manager.resolveStrategy);
+        bus.hook(Hook.Battle.roundEnd, Manager.resolveStrategy);
 
         await Manager.takeover(startBattle, {
             async resolveMove(state, skills, _) {
@@ -63,22 +54,34 @@ describe('BattleManager', function () {
             async resolveNoBlood(state, _, pets) {
                 const next = nbc(pets, state.self.catchtime);
                 if (state.self.catchtime === env.测试精灵1.catchTime) {
-                    expect(next).equal(1);
+                    expect(next).equal(2);
                 }
                 if (state.self.catchtime === env.测试精灵3.catchTime) {
                     expect(next).equal(-1);
+                }
+                if (next === -1) {
+                    return Operator.escape();
                 }
                 return Operator.switchPet(next);
             },
         });
     });
 
-    it('should exit when battle is end after execute operation in NoBlood', async function () {
+    it('should exit when current battle ends after executing the operation in NoBlood', async function () {
         this.timeout('10s');
         let noBlood = false;
 
-        bus.hook(Hook.Battle.battleStart, Manager.resolveStrategy);
-        bus.hook(Hook.Battle.roundEnd, Manager.resolveStrategy);
+        const resolve = async () => {
+            try {
+                await Manager.resolveStrategy();
+            } catch (error) {
+                expect(error).to.match(/死切/);
+                Operator.escape();
+            }
+        };
+
+        bus.hook(Hook.Battle.battleStart, resolve);
+        bus.hook(Hook.Battle.roundEnd, resolve);
 
         await Manager.takeover(startBattle, {
             async resolveMove() {

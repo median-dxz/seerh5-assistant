@@ -23,13 +23,13 @@ export default defineConfig({
             },
         },
         rollupOptions: {
-            external: ['sa-core'],
+            external: ['sea-core'],
         },
     },
     plugins: [
         externalGlobals(
             (id) => {
-                if (id.match(/sa-core/)) {
+                if (id.match(/sea-core/)) {
                     return 'sac';
                 }
                 return undefined as unknown as string;

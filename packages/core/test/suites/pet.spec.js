@@ -1,3 +1,17 @@
+import {
+    HelperLoader,
+    Hook,
+    Manager,
+    SAEventBus,
+    SAPet,
+    SAPetLocation,
+    delay,
+    getAutoCureState,
+    getBagPets,
+    lowerBlood,
+    switchBag,
+    toggleAutoCure,
+} from '../../dist/index.js';
 import env from '../env/pet.json';
 
 var expect = chai.expect;
@@ -5,18 +19,16 @@ var expect = chai.expect;
 describe('PetHelper', function () {
     this.timeout('15s');
 
-    /** @type {typeof window.sac} */
-    let core;
+    /** @type {SAEventBus} */
     let bus;
 
     before(async () => {
-        core = window.sac;
-        await core.toggleAutoCure(false);
-        core.HelperLoader();
+        await toggleAutoCure(false);
+        HelperLoader();
 
-        bus = new core.SAEventBus();
-        bus.hook(core.Hook.Battle.battleStart, core.Manager.resolveStrategy);
-        bus.hook(core.Hook.Battle.roundEnd, core.Manager.resolveStrategy);
+        bus = new SAEventBus();
+        bus.hook(Hook.Battle.battleStart, Manager.resolveStrategy);
+        bus.hook(Hook.Battle.roundEnd, Manager.resolveStrategy);
     });
 
     beforeEach(async function () {
@@ -25,13 +37,13 @@ describe('PetHelper', function () {
 
     afterEach(async function () {
         console.log(`${this.currentTest.title}: end`);
-        await core.delay(1000);
+        await delay(1000);
     });
 
     it('should get a pet', async function () {
         const { catchTime, name } = env.测试精灵1;
 
-        const pet = await core.SAPet.get(catchTime);
+        const pet = await SAPet.get(catchTime);
 
         expect(pet).to.be.an('object').that.has.property('__type', 'Pet');
         expect(pet.catchTime).equal(catchTime);
@@ -41,27 +53,27 @@ describe('PetHelper', function () {
     it('should clear main bag', async function () {
         const { catchTime, name } = env.测试精灵1;
 
-        await core.switchBag([catchTime]);
-        await core.switchBag([]);
+        await switchBag([catchTime]);
+        await switchBag([]);
 
-        const pets = await core.getBagPets(1);
+        const pets = await getBagPets(1);
         expect(pets).to.be.an('array').that.is.empty;
     });
 
     it('should set pet in main bag and let it default', async function () {
         const { catchTime } = env.测试精灵1;
 
-        await core.SAPet.setLocation(catchTime, core.SAPetLocation.Bag);
-        const loc = await core.SAPet.location(catchTime);
+        await SAPet.setLocation(catchTime, SAPetLocation.Bag);
+        const loc = await SAPet.location(catchTime);
 
-        expect(loc).to.be.an('string').equal(core.SAPetLocation.Default);
+        expect(loc).to.be.an('string').equal(SAPetLocation.Default);
     });
 
     it('should cure pet', async function () {
         const { catchTime } = env.测试精灵1;
 
-        await core.SAPet.cure(catchTime);
-        const pet = await core.SAPet.get(catchTime);
+        await SAPet.cure(catchTime);
+        const pet = await SAPet.get(catchTime);
 
         expect(pet.hp).equal(pet.maxHp);
     });
@@ -69,51 +81,51 @@ describe('PetHelper', function () {
     it('should set pet in elite', async function () {
         const { catchTime } = env.测试精灵1;
 
-        await core.SAPet.popFromBag(catchTime);
-        const loc = await core.SAPet.location(catchTime);
+        await SAPet.popFromBag(catchTime);
+        const loc = await SAPet.location(catchTime);
 
-        expect(loc).to.be.an('string').equal(core.SAPetLocation.Elite);
+        expect(loc).to.be.an('string').equal(SAPetLocation.Elite);
     });
 
     it('should get correct default', async function () {
         // *回归测试样例*
         const cts = [env.测试精灵1, env.测试精灵2].map((v) => v.catchTime);
 
-        await core.switchBag(cts);
-        await core.SAPet.popFromBag(cts[1]);
+        await switchBag(cts);
+        await SAPet.popFromBag(cts[1]);
 
-        let loc = await core.SAPet.location(cts[0]);
-        expect(loc).to.be.an('string').equal(core.SAPetLocation.Default);
+        let loc = await SAPet.location(cts[0]);
+        expect(loc).to.be.an('string').equal(SAPetLocation.Default);
         console.log(`loc1: ${loc} -> default`);
 
-        await core.switchBag(cts);
-        await core.SAPet.popFromBag(cts[0]);
+        await switchBag(cts);
+        await SAPet.popFromBag(cts[0]);
 
-        loc = await core.SAPet.location(cts[1]);
-        expect(loc).to.be.an('string').equal(core.SAPetLocation.Default);
+        loc = await SAPet.location(cts[1]);
+        expect(loc).to.be.an('string').equal(SAPetLocation.Default);
         console.log(`loc2: ${loc} -> default`);
 
-        await core.SAPet.popFromBag(cts[1]);
+        await SAPet.popFromBag(cts[1]);
 
-        loc = await core.SAPet.location(cts[1]);
-        expect(loc).to.be.an('string').not.equal(core.SAPetLocation.Default).and.not.equal(core.SAPetLocation.Bag);
+        loc = await SAPet.location(cts[1]);
+        expect(loc).to.be.an('string').not.equal(SAPetLocation.Default).and.not.equal(SAPetLocation.Bag);
         console.log(`loc3: ${loc} -> elite/storage`);
     });
 
     it('should lower pet hp', async function () {
         const { catchTime } = env.测试精灵1;
 
-        await core.switchBag([catchTime]);
-        await core.SAPet.cure(catchTime);
-        await core.SAPet.popFromBag(catchTime);
+        await switchBag([catchTime]);
+        await SAPet.cure(catchTime);
+        await SAPet.popFromBag(catchTime);
 
-        await core.lowerBlood([catchTime]);
+        await lowerBlood([catchTime]);
 
-        const pet = await core.SAPet.get(catchTime);
+        const pet = await SAPet.get(catchTime);
         const loc = await pet.location();
 
         expect(pet.hp).equal(50);
-        expect(loc).to.be.an('string').equal(core.SAPetLocation.Default);
+        expect(loc).to.be.an('string').equal(SAPetLocation.Default);
     });
 
     it('should close the BattleEnd panel', async function () {
@@ -123,17 +135,17 @@ describe('PetHelper', function () {
     it('should toggle auto cure function', async function () {
         let state;
 
-        await core.toggleAutoCure(false);
-        state = await core.getAutoCureState();
+        await toggleAutoCure(false);
+        state = await getAutoCureState();
         expect(state).is.false;
 
-        await core.toggleAutoCure(true);
-        state = await core.getAutoCureState();
+        await toggleAutoCure(true);
+        state = await getAutoCureState();
         expect(state).is.true;
     });
 
     after(async () => {
         bus.unmount();
-        await core.toggleAutoCure(true);
+        await toggleAutoCure(true);
     });
 });

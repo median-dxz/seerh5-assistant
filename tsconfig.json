@@ -15,7 +15,7 @@
     "include": [],
     "references": [
         {
-            "path": "packages/app/tsconfig.json"
+            "path": "packages/launcher/tsconfig.json"
         },
         {
             "path": "packages/core/tsconfig.json"

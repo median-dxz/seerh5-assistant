@@ -1,6 +1,6 @@
 {
-  "name": "sa-core",
-  "description": "SeerH5-Assistant核心库",
+  "name": "sea-core",
+  "description": "SeerH5-Assistant SEA 核心库",
   "private": true,
   "type": "module",
   "version": "0.5.0",
