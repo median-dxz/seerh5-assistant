@@ -3,21 +3,13 @@ import { SAEventTarget, delay, hookPrototype, wrapper, wrapperAsync } from '../c
 import { CmdMask, Hook } from '../constant/index.js';
 
 export default () => {
-    // (moduleName) => {
-    //     if (ModuleManager.appJs[moduleName] === false) {
-    //         SAEventTarget.emit(hook.Module.loadScript, moduleName);
-    //     }
-    // },
-
-    // EventManager.dispatchEvent(new egret.Event(ModuleEvent.OPEN_MODULE,!1,!1,n))
-
     BasicMultPanelModule.prototype.onShowMainPanel = async function () {
         await this.openPanel(this._mainPanelName);
         SAEventTarget.emit(Hook.Module.openMainPanel, { module: this.moduleName, panel: this._mainPanelName });
     };
 
     type withClass<T> = T & { __class__: string };
-    
+
     ModuleManager.beginShow = wrapperAsync(ModuleManager.beginShow, undefined, function (_, moduleName: string) {
         SAEventTarget.emit(Hook.Module.construct, moduleName);
         const curModule = ModuleManager.currModule as withClass<typeof ModuleManager.currModule>;
@@ -28,7 +20,7 @@ export default () => {
                     moduleClass === 'battleResultPanel.BattleResultPanel' ||
                     moduleClass === 'battleResultPanel.BattleFailPanel'
                 ) {
-                    SAEventTarget.emit(Hook.BattlePanel.endPropShown);
+                    SAEventTarget.emit(Hook.Battle.endPropShown);
                 }
                 break;
             default:
@@ -60,7 +52,6 @@ export default () => {
     });
 
     PetFightController.onStartFight = wrapper(PetFightController.onStartFight, undefined, function () {
-        SAEventTarget.emit(Hook.BattlePanel.panelReady);
         const { enemyMode, playerMode } = FighterModelFactory;
         if (!enemyMode || !playerMode) return;
         enemyMode.setHpView(true);
@@ -68,15 +59,22 @@ export default () => {
             this.propView.isShowFtHp = true;
         };
         playerMode.nextRound = wrapper(playerMode.nextRound.bind(playerMode), undefined, () => {
-            SAEventTarget.emit(Hook.BattlePanel.roundEnd);
+            SAEventTarget.emit(Hook.Battle.roundEnd);
         });
     });
 
-    EventManager.addEventListener(
-        PetFightEvent.ALARM_CLICK,
-        () => SAEventTarget.emit(Hook.BattlePanel.battleEnd),
-        null
+    // 因为这个Socket监听注册发生在Battle模块初始化的时候, 在这边Hook会滞后, 要重新注册
+    SocketConnection.removeCmdListener(
+        CommandID.NOTE_START_FIGHT,
+        FightNoteCmdListener.startFight,
+        FightNoteCmdListener
     );
+    FightNoteCmdListener.startFight = wrapper(FightNoteCmdListener.startFight, undefined, function () {
+        SAEventTarget.emit(Hook.Battle.battleStart);
+    });
+    SocketConnection.addCmdListener(CommandID.NOTE_START_FIGHT, FightNoteCmdListener.startFight, FightNoteCmdListener);
+
+    EventManager.addEventListener(PetFightEvent.ALARM_CLICK, () => SAEventTarget.emit(Hook.Battle.battleEnd), null);
 
     SocketConnection.mainSocket.send = wrapper(SocketConnection.mainSocket.send, (cmd, data) => {
         if (!CmdMask.includes(cmd)) {

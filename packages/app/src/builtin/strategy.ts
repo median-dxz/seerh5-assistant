@@ -52,21 +52,21 @@ export default [
     },
     {
         id: '潘蒂表必先',
-        strategy: SABattle.generateStrategy(
+        strategy: SABattle.generateStrategyByName(
             ['鬼焰·焚身术', '幻梦芳逝', '诸界混一击', '梦境残缺', '月下华尔兹', '守御八方'],
             ['潘克多斯', '蒂朵', '帝皇之御', '魔钰', '月照星魂', '时空界皇']
         ),
     },
     {
         id: '克朵补刀',
-        strategy: SABattle.generateStrategy(
+        strategy: SABattle.generateStrategyByName(
             ['诸界混一击', '剑挥四方', '守御八方', '破寂同灾'],
             ['帝皇之御', '六界帝神', '时空界皇', '深渊狱神·哈迪斯']
         ),
     },
     {
         id: '索强攻',
-        strategy: SABattle.generateStrategy(['烈火净世击'], ['鲁肃', '芳馨·茉蕊儿', '混沌魔君索伦森']),
+        strategy: SABattle.generateStrategyByName(['烈火净世击'], ['鲁肃', '芳馨·茉蕊儿', '混沌魔君索伦森']),
     },
     {
         id: '千裳单挑',

@@ -5,6 +5,11 @@ const warn = CoreModuleWarning('BattleOperator');
 export const Operator = {
     auto: () => {
         TimerManager.countDownOverHandler();
+        // if (!FighterModelFactory.playerMode) {
+        //     return;
+        // }
+        // const {skillPanel} = FighterModelFactory.playerMode.subject.array[1];
+        // skillPanel.auto();
     },
     useSkill: async (skillId?: number) => {
         if (!FighterModelFactory.playerMode || !skillId) {

@@ -3,7 +3,6 @@ import * as lib from '../dist/index.js';
 mocha.setup('bdd');
 
 document.querySelector('#test-run').addEventListener('click', () => {
-    window.sac = { ...window.sac, ...lib };
     mocha.run();
 });
 
@@ -14,3 +13,4 @@ document.querySelector('#test-page').addEventListener('click', () => {
 });
 
 await lib.CoreLoader();
+window.sac = { ...window.sac, ...lib };

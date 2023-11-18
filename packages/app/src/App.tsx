@@ -62,20 +62,20 @@ export default function SaApp() {
 
         document.body.addEventListener('keydown', handleShortCut);
 
-        eventBus.hook(Hook.BattlePanel.panelReady, () => {
+        eventBus.hook(Hook.Battle.battleStart, () => {
             toggleFighting(true);
         });
-        eventBus.hook(Hook.BattlePanel.panelReady, handleBattleRoundEnd);
-        eventBus.hook(Hook.BattlePanel.roundEnd, handleBattleRoundEnd);
-        eventBus.hook(Hook.BattlePanel.battleEnd, () => {
+        eventBus.hook(Hook.Battle.battleStart, handleBattleRoundEnd);
+        eventBus.hook(Hook.Battle.roundEnd, handleBattleRoundEnd);
+        eventBus.hook(Hook.Battle.battleEnd, () => {
             toggleFighting(false);
         });
 
-        eventBus.hook(Hook.BattlePanel.panelReady, () => {
+        eventBus.hook(Hook.Battle.battleStart, () => {
             Logger.BattleManager.info(`检测到对战开始`);
         });
 
-        eventBus.hook(Hook.BattlePanel.battleEnd, () => {
+        eventBus.hook(Hook.Battle.battleEnd, () => {
             const win = Boolean(FightManager.isWin);
             Logger.BattleManager.info(`检测到对战结束 对战胜利: ${win}`);
         });

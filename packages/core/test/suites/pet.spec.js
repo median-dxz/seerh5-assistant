@@ -7,11 +7,16 @@ describe('PetHelper', function () {
 
     /** @type {typeof window.sac} */
     let core;
+    let bus;
 
     before(async () => {
         core = window.sac;
         await core.toggleAutoCure(false);
         core.HelperLoader();
+
+        bus = new core.SAEventBus();
+        bus.hook(core.Hook.Battle.battleStart, core.Manager.resolveStrategy);
+        bus.hook(core.Hook.Battle.roundEnd, core.Manager.resolveStrategy);
     });
 
     beforeEach(async function () {
@@ -97,7 +102,10 @@ describe('PetHelper', function () {
 
     it('should lower pet hp', async function () {
         const { catchTime } = env.测试精灵1;
+
+        await core.switchBag([catchTime]);
         await core.SAPet.cure(catchTime);
+        await core.SAPet.popFromBag(catchTime);
 
         await core.lowerBlood([catchTime]);
 
@@ -125,6 +133,7 @@ describe('PetHelper', function () {
     });
 
     after(async () => {
+        bus.unmount();
         await core.toggleAutoCure(true);
     });
 });

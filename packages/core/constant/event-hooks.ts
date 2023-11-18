@@ -7,8 +7,8 @@ export const Hook = {
         openMainPanel: 'sa_module_open_main_panel',
         destroy: 'sa_module_destroy',
     },
-    BattlePanel: {
-        panelReady: 'sa_battle_start',
+    Battle: {
+        battleStart: 'sa_battle_start',
         roundEnd: 'sa_battle_roundEnd',
         endPropShown: 'sa_battle_resultPanel_show',
         battleEnd: 'sa_battle_end',

@@ -1,4 +1,4 @@
-# seerh5-assistant
+# Seerh5 Assistant
 
 赛尔号 H5 端登陆器 && api 封装接口
 

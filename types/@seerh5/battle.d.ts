@@ -9,6 +9,11 @@ declare class FightOverController {
     static destroy(): void;
 }
 
+declare class FightNoteCmdListener {
+    static isInFightModule: boolean;
+    static startFight(evt: PetFightEvent): void;
+}
+
 declare class TimerManager {
     static countDownOverHandler(): void;
 }

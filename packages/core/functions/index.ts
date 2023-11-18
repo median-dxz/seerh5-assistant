@@ -2,7 +2,7 @@ import * as Battle from '../battle/index.js';
 import { delay } from '../common/utils.js';
 import { PetPosition, Potion } from '../constant/index.js';
 import { Socket, buyPetItem, toggleAutoCure } from '../engine/index.js';
-import { PetElement } from '../entity/index.js';
+import { PetElement, type Pet } from '../entity/index.js';
 import { PetDataManger, SAPet, SAPetLocation, getBagPets } from '../pet-helper/index.js';
 
 type PotionId = (typeof Potion)[keyof typeof Potion];
@@ -64,25 +64,29 @@ export async function lowerBlood(
 
     const { Manager, Operator } = Battle;
 
+    const checkNextPet = (battleState: Battle.RoundData, pets: Pet[]) =>
+        pets.findIndex(
+            (v) => cts.includes(v.catchTime) && v.hp >= hpLimit && v.catchTime !== battleState.self.catchtime
+        );
+
     const strategy: Battle.MoveStrategy = {
-        resolveMove(battleState, skills, battlePets) {
+        resolveMove(battleState, skills, pets) {
             if (battleState.self.hp.remain < hpLimit || !cts.includes(battleState.self.catchtime)) {
-                const nextPet = this.resolveNoBlood(battleState, skills, battlePets) ?? -1;
-                if (nextPet === -1) {
-                    return Operator.escape();
-                }
-                return Operator.switchPet(nextPet);
+                return this.resolveNoBlood(battleState, skills, pets);
             } else {
                 return Operator.useSkill(skills.find((v) => v.category !== 4)!.id);
             }
         },
-        resolveNoBlood: (battleState, skills, battlePets) =>
-            battlePets.findIndex(
-                (v) => cts.includes(v.catchTime) && v.hp >= hpLimit && v.catchTime !== battleState.self.catchtime
-            ),
+        resolveNoBlood: (battleState, _, pets) => {
+            const nextPet = checkNextPet(battleState, pets);
+            if (nextPet === -1) {
+                return Operator.escape();
+            }
+            return Operator.switchPet(nextPet);
+        },
     };
 
-    await Battle.Manager.run(() => {
+    await Battle.Manager.takeover(() => {
         FightManager.fightNoMapBoss(6730);
     }, strategy);
 

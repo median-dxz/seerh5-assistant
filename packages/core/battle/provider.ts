@@ -1,15 +1,21 @@
-import type { PetRoundInfo} from '../entity/index.js';
+import { CacheData, NOOP } from '../common/utils.js';
+import type { PetRoundInfo } from '../entity/index.js';
 import { Pet, Skill } from '../entity/index.js';
-import { cachedRoundInfo } from './internal.js';
 
-export interface RoundInfo {
+export interface RoundData {
     self: PetRoundInfo;
     other: PetRoundInfo;
     round: number;
     isSwitchNoBlood: boolean;
 }
 
+export const cachedRoundInfo = new CacheData<[PetRoundInfo, PetRoundInfo] | null>(null, NOOP);
+
 export const Provider = {
+    isInBattle() {
+        return FightNoteCmdListener.isInFightModule;
+    },
+
     getCurRoundInfo() {
         if (!FighterModelFactory.playerMode || !FighterModelFactory.enemyMode) return null;
         const result = {
@@ -54,7 +60,7 @@ export const Provider = {
             catchtime: FighterModelFactory.enemyMode.info.catchTime,
         });
 
-        return { ...result, self: roundInfo[0], other: roundInfo[1] } as RoundInfo;
+        return { ...result, self: roundInfo[0], other: roundInfo[1] } as RoundData;
     },
 
     getCurSkills(): null | Skill[] {

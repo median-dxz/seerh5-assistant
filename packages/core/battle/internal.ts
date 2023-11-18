@@ -1,12 +1,10 @@
-import { CacheData, NOOP, SAEventTarget, delay } from '../common/utils.js';
+import { SAEventTarget, delay } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
 import { findObject } from '../engine/index.js';
 import { PetRoundInfo } from '../entity/index.js';
 import { SocketListener } from '../event-bus/index.js';
-import { Manager } from './manager.js';
-import { Provider } from './provider.js';
-
-export const cachedRoundInfo = new CacheData<[PetRoundInfo, PetRoundInfo] | null>(null, NOOP);
+import * as Manager from './manager.js';
+import { Provider, cachedRoundInfo } from './provider.js';
 
 export default () => {
     /** better switch pet handler */
@@ -24,14 +22,14 @@ export default () => {
         this.getMC().selected = !1;
     };
 
-    SAEventTarget.on(Hook.BattlePanel.panelReady, () => {
+    SAEventTarget.on(Hook.Battle.battleStart, () => {
         cachedRoundInfo.deactivate();
         if (FightManager.fightAnimateMode === 1) {
             TimeScaleManager.setBattleAnimateSpeed(10);
         }
     });
 
-    SAEventTarget.on(Hook.BattlePanel.endPropShown, () => {
+    SAEventTarget.on(Hook.Battle.endPropShown, () => {
         if (FightManager.fightAnimateMode === 1) {
             TimeScaleManager.setBattleAnimateSpeed(1);
         }
@@ -49,26 +47,19 @@ export default () => {
 
     const onRoundStart = () => {
         const info = Provider.getCurRoundInfo()!;
-        const skills = Provider.getCurSkills()!;
-        const pets = Provider.getPets()!;
-
-        if (Manager.hasSetStrategy()) {
-            Manager.resolveStrategy(info, skills, pets);
-        }
-
         if (info.round <= 0) {
-            Manager.delayTimeout = delay(5000);
+            Manager.context.delayTimeout = delay(5000);
         }
     };
 
-    SAEventTarget.on(Hook.BattlePanel.panelReady, onRoundStart);
-    SAEventTarget.on(Hook.BattlePanel.roundEnd, onRoundStart);
-    SAEventTarget.on(Hook.BattlePanel.battleEnd, () => {
+    SAEventTarget.on(Hook.Battle.battleStart, onRoundStart);
+    SAEventTarget.on(Hook.Battle.roundEnd, onRoundStart);
+    SAEventTarget.on(Hook.Battle.battleEnd, () => {
         const isWin = Boolean(FightManager.isWin);
-        if (Manager.hasSetStrategy()) {
-            Promise.all([Manager.delayTimeout, delay(1000)])
+        if (Manager.context.strategy) {
+            Promise.all([Manager.context.delayTimeout, delay(1000)])
                 .then(() => {
-                    Manager.unlockTrigger(isWin);
+                    Manager.context.triggerLocker?.(isWin);
                     Manager.clear();
                 })
                 .catch((e) => {

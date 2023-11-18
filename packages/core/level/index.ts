@@ -69,7 +69,7 @@ export class SALevelManager {
                 try {
                     if (!this.runner) throw '关卡已停止运行';
 
-                    await Manager.run(() => {
+                    await Manager.takeover(() => {
                         runner.actions['battle'].call(runner);
                     }, strategy);
                 } catch (error) {

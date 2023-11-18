@@ -1,79 +1,112 @@
+import {
+    HelperLoader,
+    Hook,
+    Manager,
+    Operator,
+    SAEventBus,
+    cureAllPet,
+    delay,
+    matchNoBloodChain,
+    matchSkillName,
+    switchBag,
+    toggleAutoCure,
+} from '../../dist/index.js';
+import env from '../env/pet.json';
+
 var expect = chai.expect;
 
+const startBattle = () => {
+    FightManager.fightNoMapBoss(6730);
+};
+
 describe('BattleManager', function () {
-    this.timeout('60s');
+    /** @type {SAEventBus} */
+    let bus;
 
-    /** @type {typeof window.sac} */
-    let core;
+    before(async () => {
+        HelperLoader();
+        bus = new SAEventBus();
+        await toggleAutoCure(true);
+    });
 
-    before(() => {
-        core = window.sac;
-        core.HelperLoader();
+    it('test preset strategy function', async function () {
+        this.timeout('10s');
+
+        const skn = matchSkillName(env.skill.map((v) => v.name));
+        const nbc = matchNoBloodChain([env.测试精灵1.name, env.测试精灵3.name]);
+
+        const resolve = async () => {
+            try {
+                await Manager.resolveStrategy();
+            } catch (error) {
+                expect(error).to.match(/死切/);
+                Operator.escape();
+            }
+        };
+
+        bus.hook(Hook.Battle.battleStart, resolve);
+        bus.hook(Hook.Battle.roundEnd, resolve);
+
+        await Manager.takeover(startBattle, {
+            async resolveMove(state, skills, _) {
+                const skillId = skn(skills);
+                if (state.self.catchtime === env.测试精灵1.catchTime) {
+                    expect(skillId).equal(env.skill[0].id);
+                }
+                if (state.self.catchtime === env.测试精灵3.catchTime) {
+                    expect(skillId).equal(env.skill[1].id);
+                }
+                const r = await Operator.useSkill(skillId);
+                expect(r).to.be.true;
+                return r;
+            },
+            async resolveNoBlood(state, _, pets) {
+                const next = nbc(pets, state.self.catchtime);
+                if (state.self.catchtime === env.测试精灵1.catchTime) {
+                    expect(next).equal(1);
+                }
+                if (state.self.catchtime === env.测试精灵3.catchTime) {
+                    expect(next).equal(-1);
+                }
+                return Operator.switchPet(next);
+            },
+        });
+    });
+
+    it('should exit when battle is end after execute operation in NoBlood', async function () {
+        this.timeout('10s');
+        let noBlood = false;
+
+        bus.hook(Hook.Battle.battleStart, Manager.resolveStrategy);
+        bus.hook(Hook.Battle.roundEnd, Manager.resolveStrategy);
+
+        await Manager.takeover(startBattle, {
+            async resolveMove() {
+                Operator.auto();
+                expect(noBlood).to.be.false;
+                return true;
+            },
+            async resolveNoBlood() {
+                noBlood = true;
+                return Operator.escape();
+            },
+        });
     });
 
     beforeEach(async function () {
+        const cts = [env.测试精灵1, env.测试精灵2, env.测试精灵3].map((v) => v.catchTime);
+        await switchBag(cts);
+        cureAllPet();
+
+        await delay(200);
         console.log(`${this.currentTest.title}: start`);
     });
 
     afterEach(async function () {
+        bus.unmount();
+        cureAllPet();
+
+        await delay(1000);
         console.log(`${this.currentTest.title}: end`);
-        await core.delay(1000);
     });
 });
-
-/*
-    if (FighterModelFactory.playerMode == null) {
-        throw `[error] 执行策略失败: 当前playerMode为空`;
-    }
-
-    if (Manager.hasSetStrategy()) {
-        return;
-    }
-
-    await delay(300);
-    let info = Provider.getCurRoundInfo()!;
-    let skills = Provider.getCurSkills()!;
-    const pets = Provider.getPets()!;
-
-    let success = false;
-    if (info.isSwitchNoBlood) {
-        for (const petNames of strategy.dsl) {
-            const matcher = new NoBloodSwitchLink(petNames);
-            const index = matcher.match(pets, info.self.catchtime);
-            success = await Operator.switchPet(index);
-            if (success) {
-                // log(`精灵索引 ${index} 匹配成功: 死切链: [${petNames.join('|')}]`);
-                break;
-            }
-        }
-
-        if (!success) {
-            const index = strategy.fallback.resolveNoBlood(info, skills, pets);
-            if (index) {
-                (await Operator.switchPet(index)) || Operator.auto();
-            }
-            // log('执行默认死切策略');
-        }
-
-        await delay(300);
-        skills = Provider.getCurSkills()!;
-        info = Provider.getCurRoundInfo()!;
-    }
-
-    success = false;
-
-    for (const skillNames of strategy.snm) {
-        const matcher = new SkillNameMatch(skillNames);
-        const skillId = matcher.match(skills);
-        success = await Operator.useSkill(skillId);
-        if (success) {
-            // log(`技能 ${skillId} 匹配成功: 技能组: [${skillNames.join('|')}]`);
-            break;
-        }
-    }
-
-    if (!success) {
-        strategy.fallback.resolveMove(info, skills, pets);
-        // log('执行默认技能使用策略');
-    }
-*/
