@@ -7,11 +7,11 @@ export interface IPetObject {
     name: string;
 }
 
-const testPetObjectType = (o: SAType.PetLike): o is SAType.PetObj => Object.hasOwn(o, 'ID');
+const testPetObjectType = (o: SEAType.PetLike): o is SEAType.PetObj => Object.hasOwn(o, 'ID');
 
-const testPetInfoType = (o: SAType.PetLike): o is PetInfo => Object.hasOwn(o, 'nature');
+const testPetInfoType = (o: SEAType.PetLike): o is PetInfo => Object.hasOwn(o, 'nature');
 
-const testPetStorage2015PetInfoType = (o: SAType.PetLike): o is PetStorage2015PetInfo => Object.hasOwn(o, 'posi');
+const testPetStorage2015PetInfoType = (o: SEAType.PetLike): o is PetStorage2015PetInfo => Object.hasOwn(o, 'posi');
 
 export class Pet extends EntityBase implements IPetObject {
     readonly __type: EntityType;
@@ -81,7 +81,7 @@ export class Pet extends EntityBase implements IPetObject {
         }
     }
 
-    static from(obj: SAType.PetLike) {
+    static from(obj: SEAType.PetLike) {
         if (testPetInfoType(obj)) {
             return new Pet(obj);
         } else if (testPetObjectType(obj)) {

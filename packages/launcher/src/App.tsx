@@ -3,33 +3,33 @@ import React, { useEffect, useState } from 'react';
 import { CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@mui/system';
 
-import { SAContext } from '@sea-launcher/context/SAContext';
+import { SEAContext } from '@sea-launcher/context/SAContext';
 
-import * as SALocalStorage from '@sea-launcher/utils/hooks/SALocalStorage';
-import { SaModuleLogger } from '@sea-launcher/utils/logger';
+import * as SEALocalStorage from '@sea-launcher/utils/hooks/SALocalStorage';
+import { SeaModuleLogger } from '@sea-launcher/utils/logger';
 
 import { saTheme } from '@sea-launcher/style';
 
 import { CommandBar } from './CommandBar';
 import { MainPanel } from './views/MainPanel';
 
-import { Hook, type PetRoundInfo } from 'sea-core';
+import { Hook } from 'sea-core';
 import { Manager as BattleManager, autoStrategy } from 'sea-core/battle';
-import { SAEventBus } from 'sea-core/event-bus';
+import { SEAEventBus, SocketEventHandler, SocketListener } from 'sea-core/event-bus';
 
 import { QuickAccess } from './QuickAccess';
-import { SAModManager } from './service/ModManager';
+import { SEAModManager } from './service/ModManager';
 
-const battleStrategyStorage = SALocalStorage.BattleStrategy;
-const eventBus = new SAEventBus();
+const battleStrategyStorage = SEALocalStorage.BattleStrategy;
+const eventBus = new SEAEventBus();
 
 const Logger = {
-    BattleManager: { info: SaModuleLogger('BattleManager', 'info') },
-    AwardManager: { info: SaModuleLogger('AwardManager', 'info') },
-    ModuleManger: { info: SaModuleLogger('ModuleManger', 'info') },
+    BattleManager: { info: SeaModuleLogger('BattleManager', 'info') },
+    AwardManager: { info: SeaModuleLogger('AwardManager', 'info') },
+    ModuleManger: { info: SeaModuleLogger('ModuleManger', 'info') },
 };
 
-export default function SaApp() {
+export default function SeaLauncher() {
     const [isCommandBarOpen, toggleCommandBar] = useState(false);
     const [isFighting, toggleFighting] = useState(false);
     const [battleAuto, setBattleAuto] = useState(false);
@@ -46,6 +46,8 @@ export default function SaApp() {
         if (battleAuto) {
             Logger.BattleManager.info('执行自定义行动策略');
             BattleManager.resolveStrategy(autoStrategy);
+        } else {
+            BattleManager.resolveStrategy();
         }
     }, [battleAuto]);
 
@@ -89,9 +91,11 @@ export default function SaApp() {
             Logger.ModuleManger.info(`${module}创建主面板: ${panel}`);
         });
 
-        eventBus.socket(CommandID.NOTE_USE_SKILL, (data: readonly [PetRoundInfo, PetRoundInfo]) => {
-            const [fi, si] = data;
-            Logger.BattleManager.info(`对局信息更新:
+        const noteUseSkillHandler: SocketEventHandler<typeof CommandID.NOTE_USE_SKILL> = {
+            cmd: CommandID.NOTE_USE_SKILL,
+            res(data) {
+                const [fi, si] = data;
+                Logger.BattleManager.info(`对局信息更新:
                 先手方:${fi.userId}
                 hp: ${fi.hp.remain} / ${fi.hp.max}
                 造成伤害: ${fi.damage}
@@ -103,24 +107,35 @@ export default function SaApp() {
                 造成伤害: ${si.damage}
                 是否暴击:${si.isCrit}
                 使用技能: ${SkillXMLInfo.getName(si.skillId)}`);
-        });
+            },
+        };
 
-        eventBus.socket(CommandID.USE_SKILL, (data: unknown) => {
-            // log(`${FighterModelFactory.playerMode.info.petName} 使用技能: ${SkillXMLInfo.getName(skillId)}`);
-            Logger.BattleManager.info(data);
-        });
+        const useSkillHandler: SocketEventHandler<typeof CommandID.USE_SKILL> = {
+            cmd: CommandID.USE_SKILL,
+            req(data) {
+                const [skillId] = data as [number];
+                Logger.BattleManager.info(
+                    `${FighterModelFactory.playerMode?.info.petName} 使用技能: ${SkillXMLInfo.getName(skillId)}`
+                );
+            },
+        };
+
+        SocketListener.on(noteUseSkillHandler);
+        SocketListener.on(useSkillHandler);
 
         let active = true;
-        SAModManager.fetchMods().then((mods) => {
+        SEAModManager.fetchMods().then((mods) => {
             if (active) {
-                SAModManager.setup(mods);
+                SEAModManager.setup(mods);
                 setSetup(true);
             }
         });
 
         const clean = () => {
             active = false;
-            SAModManager.teardown();
+            SocketListener.off(noteUseSkillHandler);
+            SocketListener.off(useSkillHandler);
+            SEAModManager.teardown();
             eventBus.unmount();
             document.body.removeEventListener('keydown', handleShortCut);
         };
@@ -132,7 +147,7 @@ export default function SaApp() {
 
     return (
         <ThemeProvider theme={saTheme}>
-            <SAContext.Provider
+            <SEAContext.Provider
                 value={{
                     Battle: {
                         enableAuto: battleAuto,
@@ -145,7 +160,7 @@ export default function SaApp() {
                 {!isFighting && isSetup && <QuickAccess />}
                 <CommandBar open={isCommandBarOpen} />
                 <MainPanel />
-            </SAContext.Provider>
+            </SEAContext.Provider>
         </ThemeProvider>
     );
 }

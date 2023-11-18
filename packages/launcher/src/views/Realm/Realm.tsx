@@ -1,13 +1,13 @@
 import { Button, Dialog, DialogActions, Divider, Typography, alpha } from '@mui/material';
 import { PanelField, PanelTable, useIndex, useRowData, type PanelColumns } from '@sea-launcher/components/PanelTable';
-import { SAContext } from '@sea-launcher/context/SAContext';
+import { SEAContext } from '@sea-launcher/context/SAContext';
 import React, { useCallback } from 'react';
 import { LevelTitanHole } from './LevelTitanHole';
 
-import { SaTableRow } from '@sea-launcher/components/styled/TableRow';
+import { SeaTableRow } from '@sea-launcher/components/styled/TableRow';
 import { produce } from 'immer';
-import * as SABattle from 'sea-core/battle';
-import * as SAEngine from 'sea-core/engine';
+import * as Battle from 'sea-core/battle';
+import * as Engine from 'sea-core/engine';
 
 interface Level {
     name: string;
@@ -22,14 +22,14 @@ export function Realm() {
     const [taskModule, setTaskModule] = React.useState<null | number>(null);
     const [taskCompleted, setTaskCompleted] = React.useState<Array<boolean>>([]);
 
-    const { Battle: battleContext } = React.useContext(SAContext);
+    const { Battle: battleContext } = React.useContext(SEAContext);
     const [battleAuto, setBattleAuto] = [battleContext.enableAuto, battleContext.updateAuto];
 
     let taskModuleComponent = <></>;
 
     const closeHandler = () => {
         if (battleContext.enableAuto) {
-            SABattle.Manager.clear();
+            Battle.Manager.clear();
             setBattleAuto(false);
         }
         setRunning(false);
@@ -42,10 +42,10 @@ export function Realm() {
                 name: '泰坦矿洞',
                 module: <LevelTitanHole setRunning={setRunning} running={running} />,
                 async sweep() {
-                    await SAEngine.Socket.sendByQueue(42395, [104, 6, 3, 0]);
+                    await Engine.Socket.sendByQueue(42395, [104, 6, 3, 0]);
                 },
                 async getState() {
-                    const [count, step] = await SAEngine.Socket.multiValue(18724, 18725);
+                    const [count, step] = await Engine.Socket.multiValue(18724, 18725);
                     return count === 2 && step === 0;
                 },
             },
@@ -53,12 +53,12 @@ export function Realm() {
             {
                 name: '六界神王殿',
                 async sweep() {
-                    await SAEngine.Socket.sendByQueue(45767, [38, 3]);
+                    await Engine.Socket.sendByQueue(45767, [38, 3]);
                     return;
                 },
                 async getState() {
                     let state = true;
-                    const values = await SAEngine.Socket.multiValue(11411, 11412, 11413, 11414);
+                    const values = await Engine.Socket.multiValue(11411, 11412, 11413, 11414);
                     for (let i = 1; i <= 7; i++) {
                         const group = Math.trunc((i - 1) / 2);
                         const v = [values[group] & ((1 << 16) - 1), values[group] >> 16];
@@ -167,7 +167,7 @@ const PanelRow = ({ taskCompleted, openTask, sweepTask }: PanelRowProps) => {
     const completed = taskCompleted[index];
 
     return (
-        <SaTableRow
+        <SeaTableRow
             sx={{
                 backgroundColor: (theme) => (completed ? `${alpha(theme.palette.primary.main, 0.18)}` : 'transparent'),
             }}
@@ -196,6 +196,6 @@ const PanelRow = ({ taskCompleted, openTask, sweepTask }: PanelRowProps) => {
                     </Button>
                 )}
             </PanelField>
-        </SaTableRow>
+        </SeaTableRow>
     );
 };

@@ -36,6 +36,6 @@ export function matchName(_name: string) {
 }
 
 export { PetDataManger } from './PetDataManager.js';
-export { SAPetLocation } from './PetLocation.js';
-export { SAPet } from './SAPet.js';
+export { SEAPetLocation } from './PetLocation.js';
+export { SEAPet } from './SEAPet.js';
 

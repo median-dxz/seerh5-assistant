@@ -3,7 +3,7 @@ import {
     Hook,
     Manager,
     Operator,
-    SAEventBus,
+    SEAEventBus,
     cureAllPet,
     delay,
     matchNoBloodChain,
@@ -20,12 +20,12 @@ const startBattle = () => {
 };
 
 describe('BattleManager', function () {
-    /** @type {SAEventBus} */
+    /** @type {SEAEventBus} */
     let bus;
 
     before(async () => {
         HelperLoader();
-        bus = new SAEventBus();
+        bus = new SEAEventBus();
         await toggleAutoCure(true);
     });
 

@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { SAEventTarget, delay, hookPrototype, wrapper, wrapperAsync } from '../common/utils.js';
+import { SEAEventTarget, delay, hookPrototype, wrapper, wrapperAsync } from '../common/utils.js';
 import { CmdMask, Hook } from '../constant/index.js';
 
 export default () => {
     BasicMultPanelModule.prototype.onShowMainPanel = async function () {
         await this.openPanel(this._mainPanelName);
-        SAEventTarget.emit(Hook.Module.openMainPanel, { module: this.moduleName, panel: this._mainPanelName });
+        SEAEventTarget.emit(Hook.Module.openMainPanel, { module: this.moduleName, panel: this._mainPanelName });
     };
 
     type withClass<T> = T & { __class__: string };
 
     ModuleManager.beginShow = wrapperAsync(ModuleManager.beginShow, undefined, function (_, moduleName: string) {
-        SAEventTarget.emit(Hook.Module.construct, moduleName);
+        SEAEventTarget.emit(Hook.Module.construct, moduleName);
         const curModule = ModuleManager.currModule as withClass<typeof ModuleManager.currModule>;
         const moduleClass = curModule.__class__;
         switch (moduleName) {
@@ -20,7 +20,7 @@ export default () => {
                     moduleClass === 'battleResultPanel.BattleResultPanel' ||
                     moduleClass === 'battleResultPanel.BattleFailPanel'
                 ) {
-                    SAEventTarget.emit(Hook.Battle.endPropShown);
+                    SEAEventTarget.emit(Hook.Battle.endPropShown);
                 }
                 break;
             default:
@@ -32,7 +32,7 @@ export default () => {
         const key = Object.keys(this._modules).find((key) => this._modules[key] === module);
         if (key) {
             // console.log(module);
-            SAEventTarget.emit(Hook.Module.destroy, module.moduleName);
+            SEAEventTarget.emit(Hook.Module.destroy, module.moduleName);
             const config = module.getModuleConfig();
             this._addModuleToFreeRes(module.moduleName, module.resList, module.resEffectList, config);
             delete this._modules[key];
@@ -41,14 +41,14 @@ export default () => {
 
     hookPrototype(AwardItemDialog, 'startEvent', async function (originalFunc, ...args) {
         originalFunc.apply(this, args);
-        SAEventTarget.emit(Hook.Award.show);
+        SEAEventTarget.emit(Hook.Award.show);
         LevelManager.stage.removeEventListener(egret.TouchEvent.TOUCH_TAP, this.startRemoveDialog, this);
         await delay(500);
         this.destroy();
     });
 
     AwardManager.showDialog = wrapper(AwardManager.showDialog, undefined, function (_, _dialog, items) {
-        SAEventTarget.emit(Hook.Award.receive, { items });
+        SEAEventTarget.emit(Hook.Award.receive, { items });
     });
 
     PetFightController.onStartFight = wrapper(PetFightController.onStartFight, undefined, function () {
@@ -59,7 +59,7 @@ export default () => {
             this.propView.isShowFtHp = true;
         };
         playerMode.nextRound = wrapper(playerMode.nextRound.bind(playerMode), undefined, () => {
-            SAEventTarget.emit(Hook.Battle.roundEnd);
+            SEAEventTarget.emit(Hook.Battle.roundEnd);
         });
     });
 
@@ -70,21 +70,21 @@ export default () => {
         FightNoteCmdListener
     );
     FightNoteCmdListener.startFight = wrapper(FightNoteCmdListener.startFight, undefined, function () {
-        SAEventTarget.emit(Hook.Battle.battleStart);
+        SEAEventTarget.emit(Hook.Battle.battleStart);
     });
     SocketConnection.addCmdListener(CommandID.NOTE_START_FIGHT, FightNoteCmdListener.startFight, FightNoteCmdListener);
 
-    EventManager.addEventListener(PetFightEvent.ALARM_CLICK, () => SAEventTarget.emit(Hook.Battle.battleEnd), null);
+    EventManager.addEventListener(PetFightEvent.ALARM_CLICK, () => SEAEventTarget.emit(Hook.Battle.battleEnd), null);
 
     SocketConnection.mainSocket.send = wrapper(SocketConnection.mainSocket.send, (cmd, data) => {
         if (!CmdMask.includes(cmd)) {
-            SAEventTarget.emit(Hook.Socket.send, { cmd, data });
+            SEAEventTarget.emit(Hook.Socket.send, { cmd, data });
         }
     });
 
     SocketConnection.mainSocket.dispatchCmd = wrapper(SocketConnection.mainSocket.dispatchCmd, (cmd, head, buffer) => {
         if (!CmdMask.includes(cmd)) {
-            SAEventTarget.emit(Hook.Socket.receive, { cmd, buffer });
+            SEAEventTarget.emit(Hook.Socket.receive, { cmd, buffer });
         }
     });
 };

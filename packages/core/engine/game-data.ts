@@ -4,7 +4,7 @@ type PredicateFn<T> = (value: T) => boolean;
 
 const Iterator = <T extends keyof GameDataType>(type: T) => {
     let index = 0;
-    let objectArray: Array<SAType.BaseObj>;
+    let objectArray: Array<SEAType.BaseObj>;
     switch (type) {
         case 'item':
             objectArray = Object.values(ItemXMLInfo._itemDict);
@@ -40,7 +40,7 @@ const Iterator = <T extends keyof GameDataType>(type: T) => {
     };
 };
 
-const getObjProperty = (obj: SAType.BaseObj, propertyTags: string[]) => {
+const getObjProperty = (obj: SEAType.BaseObj, propertyTags: string[]) => {
     for (const property of propertyTags) {
         if (Object.hasOwn(obj, property)) {
             return obj[property];
@@ -49,9 +49,9 @@ const getObjProperty = (obj: SAType.BaseObj, propertyTags: string[]) => {
     return undefined;
 };
 
-const getObjectId = (obj: SAType.BaseObj) => getObjProperty(obj, ['SpeNameBonus', 'id', 'ID']) as number;
+const getObjectId = (obj: SEAType.BaseObj) => getObjProperty(obj, ['SpeNameBonus', 'id', 'ID']) as number;
 
-const getObjectName = (obj: SAType.BaseObj) => getObjProperty(obj, ['title', 'cn', 'name', 'DefName', 'Name']) as string;
+const getObjectName = (obj: SEAType.BaseObj) => getObjProperty(obj, ['title', 'cn', 'name', 'DefName', 'Name']) as string;
 
 export function find<T extends keyof GameDataType>(type: T, predicate: PredicateFn<GameDataType[T]>) {
     for (const obj of Iterator<T>(type)) {

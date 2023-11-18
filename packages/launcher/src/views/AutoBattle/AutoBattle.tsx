@@ -4,12 +4,12 @@ import React, { ReactNode, useState } from 'react';
 
 import { PanelField, PanelTable, useRowData } from '@sea-launcher/components/PanelTable';
 import { useIndex } from '@sea-launcher/components/PanelTable/usePanelTableData';
-import { SaTableRow } from '@sea-launcher/components/styled/TableRow';
-import { SAContext } from '@sea-launcher/context/SAContext';
+import { SeaTableRow } from '@sea-launcher/components/styled/TableRow';
+import { SEAContext } from '@sea-launcher/context/SAContext';
 import * as SALocalStorage from '@sea-launcher/utils/hooks/SALocalStorage';
 import { TextEditDialog } from '@sea-launcher/views/AutoBattle/TextEditDialog';
 import { NOOP } from 'sea-core';
-import * as SABattle from 'sea-core/battle';
+import * as Battle from 'sea-core/battle';
 
 const handleAdd = (arr: unknown[], value: string) => {
     arr.push(value.split(',').map((s) => s.trim()));
@@ -35,7 +35,7 @@ export const TextContext = React.createContext(
 );
 
 export function AutoBattle() {
-    const { Battle: battleContext } = React.useContext(SAContext);
+    const { Battle: battleContext } = React.useContext(SEAContext);
     const { enableAuto: auto, updateAuto } = battleContext;
     const [strategy, setStrategy] = useState(strategyStorage.ref);
 
@@ -163,7 +163,7 @@ export function AutoBattle() {
             />
             <Button
                 onClick={() => {
-                    SABattle.Manager.clear();
+                    Battle.Manager.clear();
                 }}
             >
                 一键复位
@@ -248,5 +248,5 @@ type PanelRowChildren<TData> = (data: TData, index: number) => ReactNode;
 const PanelRow = React.memo(function PanelRow({ children }: { children: PanelRowChildren<never> }) {
     const data = useRowData<never>();
     const index = useIndex();
-    return <SaTableRow>{children(data, index)}</SaTableRow>;
+    return <SeaTableRow>{children(data, index)}</SeaTableRow>;
 });

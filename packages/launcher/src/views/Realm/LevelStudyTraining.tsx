@@ -1,13 +1,13 @@
-import { SALevelState, Socket } from 'sea-core';
+import { SEALevelState, Socket } from 'sea-core';
 
-import type { ILevelBattleStrategy, ILevelRunner, SALevelData, SALevelInfo } from 'sea-core';
+import type { ILevelBattleStrategy, ILevelRunner, SEALevelData, SEALevelInfo } from 'sea-core';
 
-import { SaModuleLogger } from '@sea-launcher/utils/logger';
+import { SeaModuleLogger } from '@sea-launcher/utils/logger';
 import dataProvider from './data';
 
 const customData = dataProvider['LevelStudyTraining'];
 
-interface LevelData extends SALevelData {
+interface LevelData extends SEALevelData {
     stimulation: boolean;
     rewardReceived: boolean;
 }
@@ -17,10 +17,10 @@ interface LevelOption {
     sweep: boolean;
 }
 
-export class LevelStudyTraining implements ILevelRunner<LevelData, SALevelInfo> {
+export class LevelStudyTraining implements ILevelRunner<LevelData, SEALevelInfo> {
     data: LevelData = {
         leftTimes: 0,
-        state: SALevelState.STOP,
+        state: SEALevelState.STOP,
         success: false,
         rewardReceived: false,
         stimulation: false,
@@ -33,7 +33,7 @@ export class LevelStudyTraining implements ILevelRunner<LevelData, SALevelInfo> 
 
     option: LevelOption;
 
-    logger = SaModuleLogger('经验训练场', 'info');
+    logger = SeaModuleLogger('经验训练场', 'info');
 
     constructor(option: LevelOption) {
         this.option = option;
@@ -52,21 +52,21 @@ export class LevelStudyTraining implements ILevelRunner<LevelData, SALevelInfo> 
         this.data.success = this.data.rewardReceived;
 
         if (!this.data.rewardReceived) {
-            if (this.data.state === ('award_error' as SALevelState)) {
-                return SALevelState.STOP;
+            if (this.data.state === ('award_error' as SEALevelState)) {
+                return SEALevelState.STOP;
             }
 
             if (this.data.leftTimes > 0) {
                 this.logger(`${this.info.name}: 进入关卡`);
-                return SALevelState.BATTLE;
+                return SEALevelState.BATTLE;
             } else {
                 this.logger(`${this.info.name}: 领取奖励`);
-                return SALevelState.AWARD;
+                return SEALevelState.AWARD;
             }
         } else {
             this.logger(`${this.info.name}日任完成`);
             this.data.success = true;
-            return SALevelState.STOP;
+            return SEALevelState.STOP;
         }
     }
 
@@ -87,7 +87,7 @@ export class LevelStudyTraining implements ILevelRunner<LevelData, SALevelInfo> 
                 await Socket.sendByQueue(42395, [115, 3, 0, 0]);
             } catch (error) {
                 this.logger(error);
-                this.data.state = 'award_error' as SALevelState;
+                this.data.state = 'award_error' as SEALevelState;
             }
         },
     };

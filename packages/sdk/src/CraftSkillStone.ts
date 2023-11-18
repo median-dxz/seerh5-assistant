@@ -1,5 +1,5 @@
 import { log } from 'console';
-import { ItemId, SAPet, Socket, delay } from 'sa-core';
+import { ItemId, SEAPet, Socket, delay } from 'sea-core';
 
 const rate = [
     [0, 24, 5.8, 1.4, 0.3],
@@ -12,7 +12,9 @@ function calcProbability(level: number, targetLevel: number) {
     return rate[level][targetLevel];
 }
 
-class CraftSkillStone implements SAMod.IBaseMod {
+class CraftSkillStone implements SEAMod.IBaseMod {
+    logger = console.log;
+
     craftDreamGem(id: number, left: number) {
         const total = ItemManager.getNumByID(id);
         const { 低阶梦幻宝石, 中阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石, 高阶梦幻宝石 } = ItemId;
@@ -24,7 +26,7 @@ class CraftSkillStone implements SAMod.IBaseMod {
 
     async resetNature(ct: number, nature: number) {
         for (; ; await delay(200)) {
-            await SAPet.get(ct).then((pet) => pet.useItem(300070));
+            await SEAPet.get(ct).then((pet) => pet.useItem(300070));
             const info = await PetManager.UpdateBagPetInfoAsynce(ct);
 
             log(`刷性格: 当前性格: ${NatureXMLInfo.getName(info.nature)}`);
@@ -44,13 +46,12 @@ class CraftSkillStone implements SAMod.IBaseMod {
     }
 
     async craftOne() {
-        let stones: {
+        let stones: Array<{
             name: string;
             level: number;
             id: number;
             num: number;
-        };
-        [] = [];
+        }> = [];
         await Socket.sendWithReceivedPromise(4475, () => {
             ItemManager.getSkillStone();
         });
@@ -97,7 +98,7 @@ class CraftSkillStone implements SAMod.IBaseMod {
         // await this.init();
     }
 
-    meta = { description: '', id: 'CraftSkillStone' };
+    meta: SEAMod.MetaData = { description: '', id: 'CraftSkillStone', scope: 'median', type: 'base' };
 }
 
 export default CraftSkillStone;

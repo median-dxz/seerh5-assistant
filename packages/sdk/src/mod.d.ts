@@ -1,12 +1,12 @@
 // @ts-check
 /// <reference types="vite/client" />
 
-type SALevelInfo = import('sa-core').SALevelInfo;
-type SALevelData = import('sa-core').SALevelData;
-type ILevelRunner<D extends SALevelData, I extends SALevelInfo> = import('sa-core').ILevelRunner<D, I>;
-type MoveStrategy = import('sa-core').MoveStrategy;
+type SEALevelInfo = import('sea-core').SEALevelInfo;
+type SEALevelData = import('sea-core').SEALevelData;
+type ILevelRunner<D extends SEALevelData, I extends SEALevelInfo> = import('sea-core').ILevelRunner<D, I>;
+type MoveStrategy = import('sea-core').MoveStrategy;
 
-declare namespace SAMod {
+declare namespace SEAMod {
     type MetaData = {
         id: string;
         scope: string;
@@ -22,7 +22,7 @@ declare namespace SAMod {
     interface IBaseMod extends Mod {
         defaultConfig?: T;
         config?: T;
-        exports?: Record<string, import('sa-core').AnyFunction>;
+        exports?: Record<string, import('sea-core').AnyFunction>;
         activate?(): void;
         deactivate?(): void;
     }
@@ -38,7 +38,7 @@ declare namespace SAMod {
         export: Record<string, SignModExport<typeof this>>;
     }
 
-    interface ILevelMod<TOption extends object, TData extends SALevelData, TInfo extends SALevelInfo>
+    interface ILevelMod<TOption extends object, TData extends SEALevelData, TInfo extends SEALevelInfo>
         extends ILevelRunner<TData, TInfo>,
             Mod {
         defaultConfig?: TOption;

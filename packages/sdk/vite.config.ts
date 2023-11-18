@@ -30,7 +30,7 @@ export default defineConfig({
         externalGlobals(
             (id) => {
                 if (id.match(/sea-core/)) {
-                    return 'sac';
+                    return 'sea';
                 }
                 return undefined as unknown as string;
             },

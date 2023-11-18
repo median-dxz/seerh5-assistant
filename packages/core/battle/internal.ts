@@ -1,4 +1,4 @@
-import { SAEventTarget, delay } from '../common/utils.js';
+import { SEAEventTarget, delay } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
 import { findObject } from '../engine/index.js';
 import { PetRoundInfo } from '../entity/index.js';
@@ -22,14 +22,14 @@ export default () => {
         this.getMC().selected = !1;
     };
 
-    SAEventTarget.on(Hook.Battle.battleStart, () => {
+    SEAEventTarget.on(Hook.Battle.battleStart, () => {
         cachedRoundInfo.deactivate();
         if (FightManager.fightAnimateMode === 1) {
             TimeScaleManager.setBattleAnimateSpeed(10);
         }
     });
 
-    SAEventTarget.on(Hook.Battle.endPropShown, () => {
+    SEAEventTarget.on(Hook.Battle.endPropShown, () => {
         if (FightManager.fightAnimateMode === 1) {
             TimeScaleManager.setBattleAnimateSpeed(1);
         }
@@ -52,9 +52,9 @@ export default () => {
         }
     };
 
-    SAEventTarget.on(Hook.Battle.battleStart, onRoundStart);
-    SAEventTarget.on(Hook.Battle.roundEnd, onRoundStart);
-    SAEventTarget.on(Hook.Battle.battleEnd, () => {
+    SEAEventTarget.on(Hook.Battle.battleStart, onRoundStart);
+    SEAEventTarget.on(Hook.Battle.roundEnd, onRoundStart);
+    SEAEventTarget.on(Hook.Battle.battleEnd, () => {
         const isWin = Boolean(FightManager.isWin);
         if (Manager.context.strategy) {
             Promise.all([Manager.context.delayTimeout, delay(1000)])

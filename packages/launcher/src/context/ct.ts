@@ -1,5 +1,5 @@
 import { PetDataManger } from 'sea-core';
-import * as SAEndpoint from '../service/endpoints';
+import * as Endpoints from '../service/endpoints';
 
 export let CatchTimeStore = new Map<string, number>();
 
@@ -8,11 +8,11 @@ export const ct = async (...pets: string[]) => {
     if (!r.every(Boolean)) {
         r.map(async (r, index) => {
             if (r === 0) {
-                const res = await SAEndpoint.queryCatchTime(pets[index]);
+                const res = await Endpoints.queryCatchTime(pets[index]);
                 r = res[0][1];
                 if (!r) {
                     await loadAllCtFromGame();
-                    SAEndpoint.cacheCatchTime(CatchTimeStore);
+                    Endpoints.cacheCatchTime(CatchTimeStore);
                     r = CatchTimeStore.get(pets[index])!;
                 }
             }
@@ -23,7 +23,7 @@ export const ct = async (...pets: string[]) => {
 };
 
 export const loadAllCt = async () => {
-    const data = await SAEndpoint.queryCatchTime();
+    const data = await Endpoints.queryCatchTime();
     CatchTimeStore.clear();
     CatchTimeStore = new Map(data);
 };

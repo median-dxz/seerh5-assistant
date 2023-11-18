@@ -1,13 +1,13 @@
-import { PetFragmentLevelDifficulty as Difficulty, ILevelBattleStrategy, SALevelState, delay } from 'sea-core';
+import { PetFragmentLevelDifficulty as Difficulty, ILevelBattleStrategy, SEALevelState, delay } from 'sea-core';
 
 import { Box, Button, CircularProgress, Dialog, DialogActions, Divider, Typography, alpha } from '@mui/material';
-import { SAContext } from '@sea-launcher/context/SAContext';
+import { SEAContext } from '@sea-launcher/context/SAContext';
 import type { PetFragmentOption } from '@sea-launcher/service/endpoints';
 import React, { useCallback, useState } from 'react';
-import * as SABattle from 'sea-core/battle';
-import * as SAEngine from 'sea-core/engine';
+import * as Battle from 'sea-core/battle';
+import * as Engine from 'sea-core/engine';
 import { IPFLevelBoss, IPetFragmentLevelObject, PetFragmentLevel } from 'sea-core/entity';
-import type { ILevelRunner, SALevelData, SALevelInfo } from 'sea-core/level';
+import type { ILevelRunner, SEALevelData, SEALevelInfo } from 'sea-core/level';
 import { PanelColumns, PanelTable } from '../components/PanelTable/PanelTable';
 
 import { loadBattle } from '@sea-launcher/service/ModManager';
@@ -17,11 +17,11 @@ declare namespace pvePetYinzi {
     const DataManager: unknown;
 }
 
-interface LevelInfo extends SALevelInfo, IPetFragmentLevelObject {
+interface LevelInfo extends SEALevelInfo, IPetFragmentLevelObject {
     designId: number;
 }
 
-interface LevelData extends SALevelData {
+interface LevelData extends SEALevelData {
     pieces: number;
     failedTimes: number;
     curDifficulty: Difficulty;
@@ -57,9 +57,9 @@ export class PetFragmentRunner implements ILevelRunner<LevelData, LevelInfo> {
             return { ...strategy, beforeBattle };
         });
 
-        const LevelObj: SAType.PetFragmentLevelObj = config.xml
+        const LevelObj: SEAType.PetFragmentLevelObj = config.xml
             .getAnyRes('new_super_design')
-            .Root.Design.find((r: SAType.PetFragmentLevelObj) => r.ID === option.id);
+            .Root.Design.find((r: SEAType.PetFragmentLevelObj) => r.ID === option.id);
 
         const level = new PetFragmentLevel(LevelObj);
 
@@ -70,7 +70,7 @@ export class PetFragmentRunner implements ILevelRunner<LevelData, LevelInfo> {
         };
         this.data = { success: false } as LevelData;
 
-        this.logger = SaModuleLogger(`精灵因子-${this.info.name}`, 'info');
+        this.logger = SeaModuleLogger(`精灵因子-${this.info.name}`, 'info');
     }
 
     selectBattle() {
@@ -79,13 +79,13 @@ export class PetFragmentRunner implements ILevelRunner<LevelData, LevelInfo> {
 
     async updater() {
         const { info: config, data } = this;
-        const values = await SAEngine.Socket.multiValue(
+        const values = await Engine.Socket.multiValue(
             config.values.openTimes,
             config.values.failTimes,
             config.values.progress
         );
 
-        data.pieces = await SAEngine.getItemNum(this.info.petFragmentItem);
+        data.pieces = await Engine.getItemNum(this.info.petFragmentItem);
 
         data.leftTimes = this.info.maxTimes - values[0];
         data.failedTimes = values[1];
@@ -112,26 +112,26 @@ export class PetFragmentRunner implements ILevelRunner<LevelData, LevelInfo> {
 
         if (data.isChallenge || data.leftTimes > 0) {
             if (this.option.sweep) {
-                return 'sweep' as unknown as SALevelState;
+                return 'sweep' as unknown as SEALevelState;
             } else {
-                return SALevelState.BATTLE;
+                return SEALevelState.BATTLE;
             }
         } else {
             this.data.success = true;
-            return SALevelState.STOP;
+            return SEALevelState.STOP;
         }
     }
 
     readonly actions: Record<string, () => Promise<void>> = {
         sweep: async () => {
-            await SAEngine.Socket.sendByQueue(41283, [this.info.designId, 4 + this.data.curDifficulty]);
+            await Engine.Socket.sendByQueue(41283, [this.info.designId, 4 + this.data.curDifficulty]);
             this.logger('执行一次扫荡');
         },
         battle: async () => {
-            const checkData = await SAEngine.Socket.sendByQueue(41284, [this.info.designId, this.data.curDifficulty]);
+            const checkData = await Engine.Socket.sendByQueue(41284, [this.info.designId, this.data.curDifficulty]);
             const check = new DataView(checkData!).getUint32(0);
             if (check === 0) {
-                SAEngine.Socket.sendByQueue(41282, [this.info.designId, this.data.curDifficulty]);
+                Engine.Socket.sendByQueue(41282, [this.info.designId, this.data.curDifficulty]);
             } else {
                 const err = `出战情况不合法: ${check}`;
                 BubblerManager.getInstance().showText(err);
@@ -159,9 +159,9 @@ function getCurPanelInfo() {
 }
 
 import { PanelField, useIndex, useRowData } from '@sea-launcher/components/PanelTable';
-import { SaTableRow } from '@sea-launcher/components/styled/TableRow';
-import * as SAEndpoint from '@sea-launcher/service/endpoints';
-import { SaModuleLogger } from '@sea-launcher/utils/logger';
+import { SeaTableRow } from '@sea-launcher/components/styled/TableRow';
+import * as Endpoints from '@sea-launcher/service/endpoints';
+import { SeaModuleLogger } from '@sea-launcher/utils/logger';
 import { produce } from 'immer';
 import useSWR from 'swr';
 import { LevelBaseNew } from './LevelBaseNew';
@@ -175,20 +175,20 @@ export function PetFragmentLevelPanel() {
     const [runner, setRunner] = useState<null | PetFragmentRunner>(null);
     const [taskCompleted, setTaskCompleted] = React.useState<Array<boolean>>([]);
 
-    const { Battle: battleContext } = React.useContext(SAContext);
+    const { Battle: battleContext } = React.useContext(SEAContext);
     const [battleAuto, setBattleAuto] = [battleContext.enableAuto, battleContext.updateAuto];
     const open = Boolean(runner);
 
     const closeHandler = () => {
         if (battleContext.enableAuto) {
-            SABattle.Manager.clear();
+            Battle.Manager.clear();
             setBattleAuto(false);
         }
         setRunner(null);
     };
 
     const { data: rows = [] } = useSWR('ds://sa/level/petFragment', async () => {
-        const allConfig = await SAEndpoint.getPetFragmentConfig();
+        const allConfig = await Endpoints.getPetFragmentConfig();
         const options = await Promise.all(allConfig.map(loadOption));
         return options
             .map((option) => new PetFragmentRunner(option))
@@ -211,7 +211,7 @@ export function PetFragmentLevelPanel() {
             const r = await levelUpdater();
             setTaskCompleted(
                 produce((draft) => {
-                    draft[index] = r === SALevelState.STOP;
+                    draft[index] = r === SEALevelState.STOP;
                 })
             );
             return r;
@@ -296,7 +296,7 @@ const PanelRow = React.memo(({ taskCompleted, setRunner }: PanelRowProps) => {
     const completed = taskCompleted[index];
 
     return (
-        <SaTableRow
+        <SeaTableRow
             sx={{
                 backgroundColor: completed ? `${alpha(saTheme.palette.primary.main, 0.18)}` : 'transparent',
             }}
@@ -315,6 +315,6 @@ const PanelRow = React.memo(({ taskCompleted, setRunner }: PanelRowProps) => {
                     启动
                 </Button>
             </PanelField>
-        </SaTableRow>
+        </SeaTableRow>
     );
 });

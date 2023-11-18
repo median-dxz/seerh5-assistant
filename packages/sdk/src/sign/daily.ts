@@ -1,4 +1,4 @@
-import { Socket } from 'sa-core/engine';
+import { Socket } from 'sea-core/engine';
 
 const MULTI_QUERY = {
     刻印抽奖次数: 16577,
@@ -9,17 +9,17 @@ const MULTI_QUERY = {
     许愿签到: 201345,
 } as const;
 
-class Daily implements SAMod.ISignMod {
+class Daily implements SEAMod.ISignMod {
     declare logger: typeof console.log;
 
-    meta: SAMod.MetaData = {
+    meta: SEAMod.MetaData = {
         id: 'daily',
         scope: 'median',
         type: 'sign',
         description: '日常签到',
     };
 
-    export: Record<string, SAMod.SignModExport> = {
+    export: Record<string, SEAMod.SignModExport> = {
         刻印抽奖: {
             async check() {
                 const times = (await Socket.multiValue(MULTI_QUERY.刻印抽奖次数))[0];

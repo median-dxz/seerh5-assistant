@@ -1,8 +1,8 @@
 import Icon from './all_inclusive.svg';
 
-export default class FightPuni implements SAMod.IQuickAccessPlugin {
+export default class FightPuni implements SEAMod.IQuickAccessPlugin {
     logger: typeof console.log;
-    meta: SAMod.MetaData = {
+    meta: SEAMod.MetaData = {
         id: '对战谱尼',
         scope: 'median',
         type: 'quick-access-plugin',

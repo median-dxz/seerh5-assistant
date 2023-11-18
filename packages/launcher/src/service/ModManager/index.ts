@@ -1,6 +1,6 @@
 import { ct } from '@sea-launcher/context/ct';
-import * as SAEndPoint from '@sea-launcher/service/endpoints';
-import { SaModuleLogger } from '@sea-launcher/utils/logger';
+import * as EndPoints from '@sea-launcher/service/endpoints';
+import { SeaModuleLogger } from '@sea-launcher/utils/logger';
 import { ILevelBattleStrategy, MoveStrategy } from 'sea-core';
 import { GameModuleListener } from 'sea-core/event-bus';
 import {
@@ -9,20 +9,20 @@ import {
     BattleModExport,
     ModuleMod,
     QuickAccessPlugin,
-    SAModType,
+    SEAModType,
     SignModExport,
     StrategyMod,
 } from './type';
 
-const log = SaModuleLogger('SAModManager', 'info');
+const log = SeaModuleLogger('SEAModManager', 'info');
 
 export const ModStore = new Map<string, BaseMod>();
 
 type ModModuleExport = typeof BaseMod | Array<typeof BaseMod>;
 
-export const SAModManager = {
+export const SEAModManager = {
     async fetchMods() {
-        const modList = await SAEndPoint.getAllMods();
+        const modList = await EndPoints.getAllMods();
         const promises = modList.map(({ path }) =>
             import(/* @vite-ignore */ `/mods/${path}?r=${Math.random()}`)
                 .then((module) => module.default as ModModuleExport)
@@ -44,7 +44,7 @@ export const SAModManager = {
                         mod.meta = {
                             id,
                             scope: 'sa',
-                            type: SAModType.STRATEGY,
+                            type: SEAModType.STRATEGY,
                         };
                         mod.export = strategy;
                         return mod;
@@ -61,7 +61,7 @@ export const SAModManager = {
                         mod.meta = {
                             id,
                             scope: 'sa',
-                            type: SAModType.BATTLE_MOD,
+                            type: SEAModType.BATTLE_MOD,
                         };
                         mod.export = battle;
                         return mod;
@@ -77,9 +77,9 @@ export const SAModManager = {
             const modNamespace = `${meta.type}::${meta.scope}::${meta.id}`;
 
             switch (meta.type) {
-                case SAModType.BASE_MOD:
+                case SEAModType.BASE_MOD:
                     break;
-                case SAModType.MODULE_MOD:
+                case SEAModType.MODULE_MOD:
                     {
                         const moduleMod = mod as ModuleMod;
                         moduleMod.activate = function () {
@@ -99,7 +99,7 @@ export const SAModManager = {
                         };
                     }
                     break;
-                case SAModType.SIGN_MOD:
+                case SEAModType.SIGN_MOD:
                     {
                         const signMod = mod as BaseMod & { export: Record<string, SignModExport> };
                         // 对导出进行this绑定
@@ -111,13 +111,13 @@ export const SAModManager = {
                         });
                     }
                     break;
-                case SAModType.LEVEL_MOD:
+                case SEAModType.LEVEL_MOD:
                     break;
-                case SAModType.BATTLE_MOD:
+                case SEAModType.BATTLE_MOD:
                     break;
-                case SAModType.STRATEGY:
+                case SEAModType.STRATEGY:
                     break;
-                case SAModType.QUICK_ACCESS_PLUGIN:
+                case SEAModType.QUICK_ACCESS_PLUGIN:
                     {
                         // this 绑定
                         const plugin = mod as QuickAccessPlugin;
@@ -127,8 +127,8 @@ export const SAModManager = {
                     }
                     break;
             }
-            SAEndPoint.injectModConfig(mod);
-            mod.logger = SaModuleLogger(modNamespace, 'info');
+            EndPoints.injectModConfig(mod);
+            mod.logger = SeaModuleLogger(modNamespace, 'info');
             mod.namespace = modNamespace;
 
             ModStore.set(modNamespace, mod);
@@ -141,20 +141,20 @@ export const SAModManager = {
     teardown() {
         ModStore.forEach((mod) => {
             switch (mod.meta.type) {
-                case SAModType.BASE_MOD:
+                case SEAModType.BASE_MOD:
                     break;
-                case SAModType.MODULE_MOD:
+                case SEAModType.MODULE_MOD:
                     (mod as ModuleMod).destroy?.();
                     break;
-                case SAModType.SIGN_MOD:
+                case SEAModType.SIGN_MOD:
                     break;
-                case SAModType.LEVEL_MOD:
+                case SEAModType.LEVEL_MOD:
                     break;
-                case SAModType.BATTLE_MOD:
+                case SEAModType.BATTLE_MOD:
                     break;
-                case SAModType.STRATEGY:
+                case SEAModType.STRATEGY:
                     break;
-                case SAModType.QUICK_ACCESS_PLUGIN:
+                case SEAModType.QUICK_ACCESS_PLUGIN:
                     break;
             }
             mod.deactivate?.();
@@ -165,11 +165,11 @@ export const SAModManager = {
 };
 
 export const loadStrategy = (id: string, scope = 'sa') => {
-    const strategyConfig = ModStore.get(`${SAModType.STRATEGY}::${scope}::${id}`);
+    const strategyConfig = ModStore.get(`${SEAModType.STRATEGY}::${scope}::${id}`);
     if (!strategyConfig) {
         throw new Error('未找到STRATEGY');
     }
-    if (strategyConfig.meta.type !== SAModType.STRATEGY) {
+    if (strategyConfig.meta.type !== SEAModType.STRATEGY) {
         throw new Error('该Mod不是STRATEGY类型');
     }
     const strategy = (strategyConfig as StrategyMod).export;
@@ -177,11 +177,11 @@ export const loadStrategy = (id: string, scope = 'sa') => {
 };
 
 export const loadBattle = async (id: string, scope = 'sa') => {
-    const BattleConfig = ModStore.get(`${SAModType.BATTLE_MOD}::${scope}::${id}`);
+    const BattleConfig = ModStore.get(`${SEAModType.BATTLE_MOD}::${scope}::${id}`);
     if (!BattleConfig) {
         throw new Error('未找到BATTLE');
     }
-    if (BattleConfig.meta.type !== SAModType.BATTLE_MOD) {
+    if (BattleConfig.meta.type !== SEAModType.BATTLE_MOD) {
         throw new Error('该Mod不是BATTLE类型');
     }
     const battleExport = (BattleConfig as BattleMod).export;

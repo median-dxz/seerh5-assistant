@@ -1,17 +1,17 @@
 import type { AnyFunction } from '../common/utils.js';
-import { SAEventTarget } from '../common/utils.js';
+import { SEAEventTarget } from '../common/utils.js';
 
 export * from './module.js';
 export * from './socket.js';
 
-export class SAEventBus {
+export class SEAEventBus {
     private cleanFn: AnyFunction[] = [];
 
-    hook<TEvent extends string>(...args: Parameters<typeof SAEventTarget.on<TEvent>>) {
+    hook<TEvent extends string>(...args: Parameters<typeof SEAEventTarget.on<TEvent>>) {
         this.cleanFn.push(() => {
-            SAEventTarget.off(...args);
+            SEAEventTarget.off(...args);
         });
-        return SAEventTarget.on(...args);
+        return SEAEventTarget.on(...args);
     }
 
     socket<This>(...args: Parameters<typeof SocketConnection.addCmdListener<This>>) {

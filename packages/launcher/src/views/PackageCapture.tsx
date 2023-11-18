@@ -1,11 +1,11 @@
 import { Button, Toolbar } from '@mui/material';
 import { PanelField, PanelTable, useRowData, type PanelColumns } from '@sea-launcher/components/PanelTable';
 
-import { SaTableRow } from '@sea-launcher/components/styled/TableRow';
+import { SeaTableRow } from '@sea-launcher/components/styled/TableRow';
 import { produce } from 'immer';
 import * as React from 'react';
-import type { AnyFunction, SAHookData } from 'sea-core';
-import { CmdMask, Hook, SAEventTarget, hookFn } from 'sea-core';
+import type { AnyFunction, SEAHookData } from 'sea-core';
+import { CmdMask, Hook, SEAEventTarget, hookFn } from 'sea-core';
 
 interface CapturedPackage {
     type: 'RemoveListener' | 'AddListener' | 'Received' | 'Send';
@@ -79,12 +79,12 @@ export function PackageCapture() {
         //     capturedPkgFactory(setCapture, { cmd, type: 'RemoveListener', data: callback });
         // });
 
-        const onReceive = ({ buffer, cmd }: SAHookData['sa_socket_receive']) => {
+        const onReceive = ({ buffer, cmd }: SEAHookData['sa_socket_receive']) => {
             if (state !== 'capturing' || CmdMask.includes(cmd)) return;
             capturedPkgFactory(setCapture, { cmd, data: buffer?.dataView, type: 'Received' });
         };
 
-        const onSend = ({ cmd, data }: SAHookData['sa_socket_send']) => {
+        const onSend = ({ cmd, data }: SEAHookData['sa_socket_send']) => {
             if (state !== 'capturing' || CmdMask.includes(cmd)) return;
             capturedPkgFactory(setCapture, {
                 cmd,
@@ -93,14 +93,14 @@ export function PackageCapture() {
             });
         };
 
-        SAEventTarget.on(Hook.Socket.receive, onReceive);
-        SAEventTarget.on(Hook.Socket.send, onSend);
+        SEAEventTarget.on(Hook.Socket.receive, onReceive);
+        SEAEventTarget.on(Hook.Socket.send, onSend);
 
         return () => {
             hookFn(SocketConnection.mainSocket, 'addCmdListener');
             hookFn(SocketConnection.mainSocket, 'removeCmdListener');
-            SAEventTarget.off(Hook.Socket.send, onSend);
-            SAEventTarget.off(Hook.Socket.receive, onReceive);
+            SEAEventTarget.off(Hook.Socket.send, onSend);
+            SEAEventTarget.off(Hook.Socket.receive, onReceive);
         };
     }, [state, capture]);
 
@@ -158,7 +158,7 @@ export function PackageCapture() {
 const PanelRow = React.memo(function PanelRow() {
     const pkg = useRowData<CapturedPackage>();
     return (
-        <SaTableRow>
+        <SeaTableRow>
             <PanelField field="time">{timeFormat.format(pkg.time)}</PanelField>
             <PanelField field="type">{pkg.type}</PanelField>
             <PanelField field="cmd">{pkg.cmd}</PanelField>
@@ -185,6 +185,6 @@ const PanelRow = React.memo(function PanelRow() {
                     重放
                 </Button>
             </PanelField>
-        </SaTableRow>
+        </SeaTableRow>
     );
 });

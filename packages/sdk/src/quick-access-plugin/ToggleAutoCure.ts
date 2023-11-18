@@ -1,9 +1,9 @@
-import { getAutoCureState, toggleAutoCure } from 'sa-core';
+import { getAutoCureState, toggleAutoCure } from 'sea-core';
 import Icon from './local_hospital.svg';
 
-export default class FightPuni implements SAMod.IQuickAccessPlugin {
+export default class FightPuni implements SEAMod.IQuickAccessPlugin {
     logger: typeof console.log;
-    meta: SAMod.MetaData = {
+    meta: SEAMod.MetaData = {
         scope: 'median',
         id: 'toggleAutoCure',
         type: 'quick-access-plugin',

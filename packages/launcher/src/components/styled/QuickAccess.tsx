@@ -3,7 +3,7 @@ import { alpha } from '@mui/material/styles';
 import { styled } from '@mui/system';
 import { saTheme } from '@sea-launcher/style';
 
-export const SaQuickAccess = styled(MuiSpeedDial)`
+export const SeaQuickAccess = styled(MuiSpeedDial)`
     & .MuiSpeedDial-actions {
         margin-left: 0;
         padding-left: 0;

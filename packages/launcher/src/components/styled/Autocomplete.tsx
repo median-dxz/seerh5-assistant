@@ -3,7 +3,7 @@ import { styled } from '@mui/system';
 import { saTheme } from '@sea-launcher/style';
 import React from 'react';
 
-export const SaAutocomplete = styled<typeof MuiAutocomplete>(({ className, ...props }) => (
+export const SeaAutocomplete = styled<typeof MuiAutocomplete>(({ className, ...props }) => (
     <MuiAutocomplete {...props} classes={{ popper: className }} />
 ))`
     & .MuiAutocomplete-paper {

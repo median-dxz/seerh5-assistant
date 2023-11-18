@@ -1,6 +1,6 @@
 import { MoveStrategy, Operator, generateStrategyByName, matchNoBloodChain, matchSkillName } from 'sea-core';
 import * as Battle from 'sea-core/battle';
-import * as SAEntity from 'sea-core/entity';
+import * as SEAEntity from 'sea-core/entity';
 
 interface LevelPetsData {
     [levelName: string]: {
@@ -19,7 +19,7 @@ const data: LevelPetsData = {
         strategy: {
             async resolveMove(round, skills, _pets) {
                 const selfPetName = round.self!.name;
-                let r: SAEntity.Skill | undefined;
+                let r: SEAEntity.Skill | undefined;
                 if (selfPetName === '圣灵谱尼') {
                     r = skills.find((skill) => skill.name === ['光荣之梦', '神灵救世光'][round.round % 2]);
                 } else if (selfPetName === '蒂朵') {

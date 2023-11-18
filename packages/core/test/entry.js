@@ -13,4 +13,4 @@ document.querySelector('#test-page').addEventListener('click', () => {
 });
 
 await lib.CoreLoader();
-window.sac = { ...window.sac, ...lib };
+window.sea = { ...window.sea, ...lib };

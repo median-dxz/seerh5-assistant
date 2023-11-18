@@ -1,7 +1,7 @@
 import { Button, Divider, Typography } from '@mui/material';
 
-import { SAConfig, cureAllPet } from 'sea-core';
-import * as SAEngine from 'sea-core/engine';
+import { SEAConfig, cureAllPet } from 'sea-core';
+import * as Engine from 'sea-core/engine';
 
 import { PanelStateContext } from '@sea-launcher/context/PanelState';
 
@@ -12,29 +12,29 @@ import { AnimationMode } from './AnimationMode';
 import { BattleFireInfo } from './BattleFireInfo';
 import { PetBagController } from './PetBagController';
 
-const titleName = SAConfig.getName.bind(null, 'title');
-const suitName = SAConfig.getName.bind(null, 'suit');
+const titleName = SEAConfig.getName.bind(null, 'title');
+const suitName = SEAConfig.getName.bind(null, 'suit');
 
 export function GameController() {
-    const [userTitle, setUserTitle] = React.useState(SAEngine.getUserTitle());
-    const [userSuit, setUserSuit] = React.useState(SAEngine.getUserSuit());
+    const [userTitle, setUserTitle] = React.useState(Engine.getUserTitle());
+    const [userSuit, setUserSuit] = React.useState(Engine.getUserSuit());
 
-    const suits = SAEngine.getUserAbilitySuits();
+    const suits = Engine.getUserAbilitySuits();
     const changeSuit = React.useCallback(
         (suit: number) => {
             if (suit !== userSuit) {
-                SAEngine.changeSuit(suit);
+                Engine.changeSuit(suit);
                 setUserSuit(suit);
             }
         },
         [userSuit]
     );
 
-    const { data: titles } = useSWR('ds://PlayerData/title', SAEngine.getUserAbilityTitles);
+    const { data: titles } = useSWR('ds://PlayerData/title', Engine.getUserAbilityTitles);
     const changeTitle = React.useCallback(
         (title: number) => {
             if (title !== userTitle) {
-                SAEngine.changeTitle(title);
+                Engine.changeTitle(title);
                 setUserTitle(title);
             }
         },
@@ -72,7 +72,7 @@ export function GameController() {
                     renderItem={suitName}
                     onSelectItem={changeSuit}
                 >
-                    {SAConfig.getName('suit', userSuit)}
+                    {SEAConfig.getName('suit', userSuit)}
                 </PopupMenuButton>
                 <Typography>{`效果: ${ItemSeXMLInfo.getSuitEff(userSuit)}`}</Typography>
             </Typography>
@@ -86,9 +86,9 @@ export function GameController() {
                     renderItem={titleName}
                     onSelectItem={changeTitle}
                 >
-                    {SAConfig.getName('title', userTitle)}
+                    {SEAConfig.getName('title', userTitle)}
                 </PopupMenuButton>
-                <Typography>{`效果: ${SAConfig.get('title', userTitle)?.abtext}`}</Typography>
+                <Typography>{`效果: ${SEAConfig.get('title', userTitle)?.abtext}`}</Typography>
             </Typography>
 
             <Divider />

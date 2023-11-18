@@ -8,16 +8,16 @@ import React from 'react';
 
 import { Button, ButtonGroup, CircularProgress } from '@mui/material';
 import { ModStore } from '@sea-launcher/service/ModManager';
-import { BaseMod, SAModType, SignModExport } from '@sea-launcher/service/ModManager/type';
+import { BaseMod, SEAModType, SignModExport } from '@sea-launcher/service/ModManager/type';
 
-import { SaTableRow } from '@sea-launcher/components/styled/TableRow';
+import { SeaTableRow } from '@sea-launcher/components/styled/TableRow';
 import { delay } from 'sea-core';
 import useSWR from 'swr';
 
 export function DailySign() {
     const data = Array.from(ModStore)
         .filter(([_, mod]) => {
-            return mod.meta.type === SAModType.SIGN_MOD;
+            return mod.meta.type === SEAModType.SIGN_MOD;
         })
         .map(([_, mod]) => mod);
 
@@ -94,7 +94,7 @@ const PanelRow = () => {
     const { meta, namespace } = ins;
 
     return (
-        <SaTableRow>
+        <SeaTableRow>
             <PanelField field="name">{meta.id}</PanelField>
             <PanelField field="description">{meta.description}</PanelField>
             <PanelField field="scope">{meta.scope}</PanelField>
@@ -120,6 +120,6 @@ const PanelRow = () => {
                     <Button>查看详情</Button>
                 </ButtonGroup>
             </PanelField>
-        </SaTableRow>
+        </SeaTableRow>
     );
 };

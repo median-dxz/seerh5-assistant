@@ -1,14 +1,14 @@
-import { PetPosition, SAPet, SAPetLocation, getBagPets } from 'sa-core';
-import { Socket } from 'sa-core/engine';
+import { PetPosition, SEAPet, SEAPetLocation, getBagPets } from 'sea-core';
+import { Socket } from 'sea-core/engine';
 
 interface Config {
     ignorePets: string[];
 }
 
-class TeamDispatch implements SAMod.ISignMod<Config> {
+class TeamDispatch implements SEAMod.ISignMod<Config> {
     declare logger: typeof console.log;
 
-    meta: SAMod.MetaData = {
+    meta: SEAMod.MetaData = {
         id: 'teamDispatch',
         scope: 'median',
         type: 'sign',
@@ -18,7 +18,7 @@ class TeamDispatch implements SAMod.ISignMod<Config> {
     defaultConfig: Config = { ignorePets: [] };
     config: Config;
 
-    export: Record<string, SAMod.SignModExport<typeof this>> = {
+    export: Record<string, SEAMod.SignModExport<typeof this>> = {
         战队派遣: {
             check: async () => {
                 const times = await Socket.sendByQueue(45807).then((r) => new DataView(r).getUint32(0));
@@ -80,7 +80,7 @@ class TeamDispatch implements SAMod.ISignMod<Config> {
                     for (const pid of e.petIds) {
                         const petName = PetXMLInfo.getName(pid);
                         if (ignorePetNames.has(petName)) {
-                            await SAPet.setLocation(e.cts[index], SAPetLocation.Bag);
+                            await SEAPet.setLocation(e.cts[index], SEAPetLocation.Bag);
                             this.logger(`取出非派遣精灵: ${petName}`);
                         }
                         index++;

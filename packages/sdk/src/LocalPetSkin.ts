@@ -1,4 +1,4 @@
-import { NOOP, Socket, createLocalStorageProxy } from 'sa-core';
+import { NOOP, Socket, createLocalStorageProxy } from 'sea-core';
 
 const StorageKey = 'LocalSkin';
 
@@ -23,10 +23,10 @@ const cloth = createLocalStorageProxy<{ changed: Map<number, SkinInfo>; original
     }
 );
 
-class LocalPetSkin implements SAMod.IBaseMod {
+class LocalPetSkin implements SEAMod.IBaseMod {
     declare logger: typeof console.log;
 
-    meta: SAMod.MetaData = {
+    meta: SEAMod.MetaData = {
         id: 'LocalPetSkin',
         scope: 'median',
         type: 'base',

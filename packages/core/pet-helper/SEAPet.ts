@@ -4,7 +4,7 @@ import { Pet } from '../entity/index.js';
 
 import type { ProxyPet } from './PetDataManager.js';
 import { PetDataManger as ins } from './PetDataManager.js';
-import type { SAPetLocation } from './PetLocation.js';
+import type { SEAPetLocation } from './PetLocation.js';
 
 export type CatchTime = number;
 
@@ -29,7 +29,7 @@ const PetHandlerStatic = {
         const r = await this.get(pet);
         return r.location();
     },
-    async setLocation(pet: CatchTime | Pet, newLocation: SAPetLocation) {
+    async setLocation(pet: CatchTime | Pet, newLocation: SEAPetLocation) {
         const r = await this.get(pet);
         return r.setLocation(newLocation);
     },
@@ -50,15 +50,15 @@ const PetHandlerStatic = {
         return r.usePotion(potion);
     },
 };
-type SAPetHandler = typeof PetHandlerStatic & { (pet: CatchTime | Pet): ProxyPet };
+type SEAPetHandler = typeof PetHandlerStatic & { (pet: CatchTime | Pet): ProxyPet };
 const PetHandlerFunc = function () {
     // let object callable
-} as unknown as SAPetHandler;
+} as unknown as SEAPetHandler;
 Object.entries(PetHandlerStatic).forEach(([_p, _f]) => {
     (PetHandlerFunc as any)[_p] = _f; // eslint-disable-line
 });
 
-export const SAPet: SAPetHandler = new Proxy(PetHandlerFunc, {
+export const SEAPet: SEAPetHandler = new Proxy(PetHandlerFunc, {
     apply: (target, thisArg, argArray: [CatchTime | Pet]) => {
         const ct = extractObjectId(argArray[0], Pet.instanceKey);
         return ins.cache.get(ct);

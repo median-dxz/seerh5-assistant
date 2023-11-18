@@ -1,17 +1,17 @@
 import { Box, Button, ButtonGroup, Checkbox, CircularProgress, LinearProgress, Typography } from '@mui/material';
 
-import * as SALocalStorage from '@sea-launcher/utils/hooks/SALocalStorage';
+import * as SEALocalStorage from '@sea-launcher/utils/hooks/SALocalStorage';
 import React from 'react';
-import { Pet, SAPet, UIModuleHelper, delay, lowerBlood, switchBag } from 'sea-core';
+import { Pet, SEAPet, UIModuleHelper, delay, lowerBlood, switchBag } from 'sea-core';
 
 import { getPetHeadIcon } from '@sea-launcher/utils/egretRes';
 import { useBagPets } from '@sea-launcher/utils/hooks/useBagPets';
 
 import { PanelField, PanelTable, useIndex, useRowData, type PanelColumns } from '@sea-launcher/components/PanelTable';
 import { PopupMenuButton } from '@sea-launcher/components/PopupMenuButton';
-import { SaTableRow } from '@sea-launcher/components/styled/TableRow';
+import { SeaTableRow } from '@sea-launcher/components/styled/TableRow';
 
-const petGroupsStorage = SALocalStorage.PetGroups;
+const petGroupsStorage = SEALocalStorage.PetGroups;
 
 type BasePetInfo = Pick<Pet, 'catchTime' | 'id' | 'name'>;
 
@@ -23,7 +23,7 @@ function usePetPatternInfos() {
         setLoading(true);
         const promises = petGroupsStorage.ref
             .flat()
-            .map((ct) => SAPet.get(ct).then((pet) => ({ catchTime: ct, id: pet.id, name: pet.name })));
+            .map((ct) => SEAPet.get(ct).then((pet) => ({ catchTime: ct, id: pet.id, name: pet.name })));
 
         const r = await Promise.all(promises);
 
@@ -68,7 +68,7 @@ export function PetBagController() {
 
     const handleCurePets = () => {
         for (const cureCt of selected) {
-            SAPet.cure(cureCt);
+            SEAPet.cure(cureCt);
         }
     };
 
@@ -163,7 +163,7 @@ function PanelRow({ selected, setSelected }: PanelRowProps) {
     }, []);
 
     return (
-        <SaTableRow
+        <SeaTableRow
             onClick={() => {
                 setSelected((selected) => {
                     if (selected.includes(pet.catchTime)) {
@@ -191,7 +191,7 @@ function PanelRow({ selected, setSelected }: PanelRowProps) {
                         <Button
                             onClick={(e) => {
                                 e.stopPropagation();
-                                SAPet.default(pet.catchTime);
+                                SEAPet.default(pet.catchTime);
                             }}
                         >
                             首发
@@ -200,7 +200,7 @@ function PanelRow({ selected, setSelected }: PanelRowProps) {
                     <Button
                         onClick={(e) => {
                             e.stopPropagation();
-                            SAPet.cure(pet.catchTime);
+                            SEAPet.cure(pet.catchTime);
                         }}
                     >
                         治疗
@@ -215,6 +215,6 @@ function PanelRow({ selected, setSelected }: PanelRowProps) {
                     </Button>
                 </ButtonGroup>
             </PanelField>
-        </SaTableRow>
+        </SeaTableRow>
     );
 }

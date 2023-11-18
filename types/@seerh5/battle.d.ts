@@ -40,7 +40,7 @@ declare class PlayerModel extends BaseFighterModel {
 declare class BaseFighterModel extends egret.EventDispatcher {
     setHpView: (show: boolean) => void;
     skillBtnViews: Array<SkillBtnView>;
-    subject: SAType.ObserverList<ToolBtnPanelObserver>;
+    subject: SEAType.ObserverList<ToolBtnPanelObserver>;
     get info(): FightPetInfo;
     get propView(): BaseFighterPropView;
 }

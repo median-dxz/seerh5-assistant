@@ -1,5 +1,5 @@
-import type { Pet } from 'sa-core';
-import { PetDataManger, SAPet, hookPrototype, isPetEffectActivated } from 'sa-core';
+import type { Pet } from 'sea-core';
+import { PetDataManger, SEAPet, hookPrototype, isPetEffectActivated } from 'sea-core';
 
 interface PetFragment {
     EffectMsglog: number;
@@ -28,16 +28,16 @@ export async function findPetById(id: number): Promise<Pet | null> {
     const data2 = Array.from(await PetDataManger.miniInfo.get()).map(([_, pet]) => pet);
     const r = [...data1, ...data2].find((pet) => pet.id === id);
     if (r) {
-        return SAPet.get(r.catchTime);
+        return SEAPet.get(r.catchTime);
     } else {
         return null;
     }
 }
 
-class ItemWareHouse implements SAMod.IModuleMod<itemWarehouse.ItemWarehouse> {
+class ItemWareHouse implements SEAMod.IModuleMod<itemWarehouse.ItemWarehouse> {
     declare logger: typeof console.log;
 
-    meta: SAMod.MetaData = {
+    meta: SEAMod.MetaData = {
         id: 'itemWarehouse',
         scope: 'median',
         type: 'module',

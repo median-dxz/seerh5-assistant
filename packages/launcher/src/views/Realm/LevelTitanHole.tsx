@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { PetPosition, cureAllPet, delay, getBagPets, switchBag } from 'sea-core';
-import * as SABattle from 'sea-core/battle';
-import * as SAEngine from 'sea-core/engine';
-import * as SAEntity from 'sea-core/entity';
+import * as Battle from 'sea-core/battle';
+import * as Engine from 'sea-core/engine';
+import * as Entity from 'sea-core/entity';
 
 import { Typography } from '@mui/material';
 
@@ -27,8 +27,8 @@ const maxDailyChallengeTimes = 2;
 
 const updateLevelData = async () => {
     const data = {} as LevelData;
-    const bits = await SAEngine.Socket.bitSet(640);
-    const values = await SAEngine.Socket.multiValue(18724, 18725, 18726, 18727);
+    const bits = await Engine.Socket.bitSet(640);
+    const values = await Engine.Socket.multiValue(18724, 18725, 18726, 18727);
 
     data.stimulation = bits[0];
 
@@ -48,8 +48,8 @@ export function LevelTitanHole(props: LevelExtendsProps) {
     const levelData = React.useRef({} as LevelData);
 
     const effect = async () => {
-        let pets: SAEntity.Pet[];
-        let pet: undefined | SAEntity.Pet;
+        let pets: Entity.Pet[];
+        let pet: undefined | Entity.Pet;
         switch (step) {
             case 0: //init
                 setRunning(true);
@@ -64,7 +64,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                     PetManager.setDefault(customData.cts[0]);
                     setHint('准备背包完成');
                     if (!levelData.current.levelOpen) {
-                        await SAEngine.Socket.sendByQueue(42395, [104, 1, 3, 0]);
+                        await Engine.Socket.sendByQueue(42395, [104, 1, 3, 0]);
                         setStep(1);
                     } else {
                         setStep(levelData.current.step);
@@ -75,7 +75,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 break;
             case 1:
                 await delay(500);
-                await SABattle.Manager.takeover(() => {
+                await Battle.Manager.takeover(() => {
                     setHint(
                         <LabeledLinearProgress
                             prompt={'正在进行泰坦矿洞'}
@@ -83,7 +83,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                             total={4}
                         />
                     );
-                    SAEngine.Socket.sendByQueue(42396, [104, 3, 1]);
+                    Engine.Socket.sendByQueue(42396, [104, 3, 1]);
                 }, customData.strategy);
                 levelData.current = await updateLevelData();
                 setStep(0);
@@ -98,7 +98,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 PetManager.setDefault(pet.catchTime);
                 await delay(500);
                 while (levelData.current.step2Count < 6) {
-                    await SABattle.Manager.takeover(() => {
+                    await Battle.Manager.takeover(() => {
                         setHint(
                             <>
                                 <LabeledLinearProgress
@@ -113,7 +113,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                                 />
                             </>
                         );
-                        SAEngine.Socket.sendByQueue(42396, [104, 3, 2]);
+                        Engine.Socket.sendByQueue(42396, [104, 3, 2]);
                     }, customData.strategy);
 
                     levelData.current = await updateLevelData();
@@ -145,7 +145,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                     console.log('dig', row, col, row * 11 + col);
 
                     try {
-                        await SAEngine.Socket.sendByQueue(42395, [104, 2, row * 11 + col, 0]);
+                        await Engine.Socket.sendByQueue(42395, [104, 2, row * 11 + col, 0]);
                     } catch (error) {
                         setStep(-2);
                         break;
@@ -165,7 +165,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 }
                 PetManager.setDefault(pet.catchTime);
                 await delay(500);
-                await SABattle.Manager.takeover(() => {
+                await Battle.Manager.takeover(() => {
                     setHint(
                         <LabeledLinearProgress
                             prompt={'正在进行泰坦矿洞'}
@@ -173,7 +173,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                             total={4}
                         />
                     );
-                    SAEngine.Socket.sendByQueue(42396, [104, 3, 4]);
+                    Engine.Socket.sendByQueue(42396, [104, 3, 4]);
                 }, customData.strategy);
                 levelData.current = await updateLevelData();
                 setStep(5);
@@ -182,7 +182,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 try {
                     setHint('正在领取奖励');
                     await delay(500);
-                    await SAEngine.Socket.sendByQueue(42395, [104, 5, 0, 0]);
+                    await Engine.Socket.sendByQueue(42395, [104, 5, 0, 0]);
                 } catch (err) {
                     setStep(-1);
                 }

@@ -2,7 +2,7 @@ import { DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { LabeledLinearProgress } from '@sea-launcher/components/LabeledProgress';
 import React from 'react';
 
-import { ILevelRunner, SALevelManager } from 'sea-core';
+import { ILevelRunner, SEALevelManager } from 'sea-core';
 
 interface LevelProps {
     runner: ILevelRunner | null;
@@ -13,16 +13,16 @@ function useLevelRunner(runner: ILevelRunner | null) {
     React.useEffect(() => {
         let active = true;
         (async () => {
-            await SALevelManager.ins.stop();
+            await SEALevelManager.ins.stop();
             if (runner) {
                 runner.logger = setState;
-                active && SALevelManager.ins.run(runner);
+                active && SEALevelManager.ins.run(runner);
             }
         })();
 
         return () => {
             active = false;
-            SALevelManager.ins.stop();
+            SEALevelManager.ins.stop();
         };
     }, [runner]);
     return state;

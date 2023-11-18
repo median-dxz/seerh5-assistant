@@ -1,13 +1,13 @@
-import { SALevelState, Socket } from 'sea-core';
+import { SEALevelState, Socket } from 'sea-core';
 
-import type { ILevelBattleStrategy, ILevelRunner, SALevelData, SALevelInfo } from 'sea-core';
+import type { ILevelBattleStrategy, ILevelRunner, SEALevelData, SEALevelInfo } from 'sea-core';
 
-import { SaModuleLogger } from '@sea-launcher/utils/logger';
+import { SeaModuleLogger } from '@sea-launcher/utils/logger';
 import dataProvider from './data';
 
 const customData = dataProvider['LevelXTeamRoom'];
 
-interface LevelData extends SALevelData {
+interface LevelData extends SEALevelData {
     open: boolean;
     dailyMinRound: number;
     dailyRewardReceived: boolean;
@@ -15,10 +15,10 @@ interface LevelData extends SALevelData {
     weeklyCompletedCount: number;
 }
 
-export class LevelXTeamRoom implements ILevelRunner<LevelData, SALevelInfo> {
+export class LevelXTeamRoom implements ILevelRunner<LevelData, SEALevelInfo> {
     data: LevelData = {
         leftTimes: 0,
-        state: SALevelState.STOP,
+        state: SEALevelState.STOP,
         success: false,
         open: false,
         dailyMinRound: 0,
@@ -34,7 +34,7 @@ export class LevelXTeamRoom implements ILevelRunner<LevelData, SALevelInfo> {
 
     option = { sweep: false };
 
-    logger = SaModuleLogger('X战队密室', "info");
+    logger = SeaModuleLogger('X战队密室', "info");
 
     async updater() {
         this.logger(`${this.info.name}: 更新关卡信息...`);
@@ -50,45 +50,45 @@ export class LevelXTeamRoom implements ILevelRunner<LevelData, SALevelInfo> {
         this.data.dailyMinRound = values[1];
         this.data.weeklyCompletedCount = values[2];
 
-        if (this.data.state === ('award_error' as SALevelState)) {
+        if (this.data.state === ('award_error' as SEALevelState)) {
             this.data.success = false;
-            return SALevelState.STOP;
+            return SEALevelState.STOP;
         }
 
         if (this.data.weeklyRewardReceived) {
             this.logger(`${this.info.name}: 日任完成`);
             this.data.success = true;
-            return SALevelState.STOP;
+            return SEALevelState.STOP;
         }
 
         if (!this.data.weeklyRewardReceived && this.data.weeklyCompletedCount >= 5) {
             this.logger(`${this.info.name}: 领取每周奖励`);
-            return 'award_weekly' as unknown as SALevelState;
+            return 'award_weekly' as unknown as SEALevelState;
         }
 
         if (this.data.dailyRewardReceived) {
             this.logger(`${this.info.name}: 日任完成`);
             this.data.success = true;
-            return SALevelState.STOP;
+            return SEALevelState.STOP;
         }
 
         if (!this.data.dailyRewardReceived && this.data.dailyMinRound > 0) {
             this.logger(`${this.info.name}: 领取每日奖励`);
-            return SALevelState.AWARD;
+            return SEALevelState.AWARD;
         }
 
         if (this.data.dailyMinRound === 0 && (this.data.leftTimes > 0 || this.data.open)) {
             this.logger(`${this.info.name}: 进入战斗`);
             if (this.data.open) {
-                return SALevelState.BATTLE;
+                return SEALevelState.BATTLE;
             } else {
-                return 'open_level' as unknown as SALevelState;
+                return 'open_level' as unknown as SEALevelState;
             }
         }
 
         this.logger(`${this.info.name}: 日任失败`);
         this.data.success = false;
-        return SALevelState.STOP;
+        return SEALevelState.STOP;
     }
 
     selectBattle() {
@@ -112,7 +112,7 @@ export class LevelXTeamRoom implements ILevelRunner<LevelData, SALevelInfo> {
                 await Socket.sendByQueue(42395, [105, 2, 0, 0]);
             } catch (error) {
                 this.logger(error);
-                this.data.state = 'award_error' as SALevelState;
+                this.data.state = 'award_error' as SEALevelState;
             }
         },
 
@@ -121,7 +121,7 @@ export class LevelXTeamRoom implements ILevelRunner<LevelData, SALevelInfo> {
                 await Socket.sendByQueue(42395, [105, 3, 0, 0]);
             } catch (error) {
                 this.logger(error);
-                this.data.state = 'award_error' as SALevelState;
+                this.data.state = 'award_error' as SEALevelState;
             }
         },
     };

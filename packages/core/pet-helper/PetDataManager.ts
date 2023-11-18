@@ -3,7 +3,7 @@ import { Socket } from '../engine/index.js';
 import { Item, Pet } from '../entity/index.js';
 import { SocketListener } from '../event-bus/index.js';
 
-import { SAPetLocation, setLocationTable } from './PetLocation.js';
+import { SEAPetLocation, setLocationTable } from './PetLocation.js';
 
 export type CatchTime = number;
 
@@ -162,42 +162,42 @@ export class ProxyPet extends Pet {
     }
 
     default() {
-        return this.setLocation(SAPetLocation.Default);
+        return this.setLocation(SEAPetLocation.Default);
     }
 
-    async location(): Promise<SAPetLocation> {
+    async location(): Promise<SEAPetLocation> {
         const allInfo = await ins.miniInfo.get();
         const bagPet = await ins.bag.get();
         if (this.catchTime === ins.defaultCt && bagPet[0].length > 0) {
-            return SAPetLocation.Default;
+            return SEAPetLocation.Default;
         }
         if (bagPet[0].find((pet) => pet.catchTime === this.catchTime)) {
-            return SAPetLocation.Bag;
+            return SEAPetLocation.Bag;
         }
         if (bagPet[1].find((pet) => pet.catchTime === this.catchTime)) {
-            return SAPetLocation.SecondBag;
+            return SEAPetLocation.SecondBag;
         }
         if (allInfo.has(this.catchTime)) {
             const pet = allInfo.get(this.catchTime)!;
-            let pos = SAPetLocation.Unknown;
+            let pos = SEAPetLocation.Unknown;
             switch (pet.posi) {
                 case 0:
-                    pos = SAPetLocation.Storage;
+                    pos = SEAPetLocation.Storage;
                     break;
                 case 4:
-                    pos = SAPetLocation.Elite;
+                    pos = SEAPetLocation.Elite;
                     break;
                 case 14:
-                    pos = SAPetLocation.OnDispatching;
+                    pos = SEAPetLocation.OnDispatching;
                     break;
                 default:
             }
             return pos;
         }
-        return SAPetLocation.Unknown;
+        return SEAPetLocation.Unknown;
     }
 
-    async setLocation(newLocation: SAPetLocation) {
+    async setLocation(newLocation: SEAPetLocation) {
         const oldLocation = await this.location();
         if (newLocation === oldLocation) {
             return false;
@@ -213,8 +213,8 @@ export class ProxyPet extends Pet {
 
     async popFromBag() {
         const local = await this.location();
-        if (local === SAPetLocation.Bag || local === SAPetLocation.SecondBag || local === SAPetLocation.Default) {
-            await this.setLocation(SAPetLocation.Storage);
+        if (local === SEAPetLocation.Bag || local === SEAPetLocation.SecondBag || local === SEAPetLocation.Default) {
+            await this.setLocation(SEAPetLocation.Storage);
         }
         return;
     }

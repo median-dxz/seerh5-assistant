@@ -4,9 +4,9 @@ import useSWR from 'swr';
 
 import React, { useState } from 'react';
 
-import { SaQuickAccess } from '@sea-launcher/components/styled/QuickAccess';
+import { SeaQuickAccess } from '@sea-launcher/components/styled/QuickAccess';
 import { ModStore } from '@sea-launcher/service/ModManager';
-import { SAModType, type QuickAccessPlugin } from './service/ModManager/type';
+import { SEAModType, type QuickAccessPlugin } from './service/ModManager/type';
 
 const SvgMaker = ({ url, children: _, ...rest }: React.SVGProps<SVGSVGElement> & { url: string }) => {
     if (!url.startsWith('data:image/svg+xml;')) {
@@ -75,14 +75,14 @@ const QuickAccessPluginAction: React.FC<
 export function QuickAccess() {
     const plugins = Array.from(ModStore)
         .filter(([_, mod]) => {
-            return mod.meta.type === SAModType.QUICK_ACCESS_PLUGIN;
+            return mod.meta.type === SEAModType.QUICK_ACCESS_PLUGIN;
         })
         .map(([_, mod]) => mod as QuickAccessPlugin);
 
     const [open, setOpen] = useState(false);
 
     return (
-        <SaQuickAccess
+        <SeaQuickAccess
             ariaLabel="Seerh5 Assistant Quick Access"
             icon={<MenuOpen />}
             direction="right"
@@ -109,6 +109,6 @@ export function QuickAccess() {
             {plugins.map((plugin) => (
                 <QuickAccessPluginAction key={plugin.namespace} plugin={plugin} setOpen={setOpen} />
             ))}
-        </SaQuickAccess>
+        </SeaQuickAccess>
     );
 }

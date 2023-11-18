@@ -303,8 +303,8 @@ declare class PetManager {
     static dispatchEvent(e: PetEvent): void;
     static isBagFull: boolean;
     static isSecondBagFull: boolean;
-    static _bagMap: SAType.HashMap<PetInfo>;
-    static _secondBagMap: SAType.HashMap<PetInfo>;
+    static _bagMap: SEAType.HashMap<PetInfo>;
+    static _secondBagMap: SEAType.HashMap<PetInfo>;
     static infos: PetInfo[];
     static secondInfos: PetInfo[];
     static secondBagTotalLength: number;
@@ -335,11 +335,11 @@ declare class CountermarkController {
 }
 
 declare class EffectIconControl {
-    static _hashMapByPetId: SAType.HashMap<Array<{ Id: number }>>;
+    static _hashMapByPetId: SEAType.HashMap<Array<{ Id: number }>>;
 }
 
 declare class AchieveXMLInfo {
-    static titleRules: Dict<SAType.TitleObj>;
+    static titleRules: Dict<SEAType.TitleObj>;
     static isAbilityTitle(id: number): boolean;
     static getTitle(id: number): string;
     static getTitleDesc(id: number): string;
@@ -347,9 +347,9 @@ declare class AchieveXMLInfo {
 }
 
 declare class ItemXMLInfo {
-    static _itemDict: Dict<SAType.ItemObj>;
+    static _itemDict: Dict<SEAType.ItemObj>;
     static getName(id: number): string;
-    static getItemObj(id: number): SAType.ItemObj | undefined;
+    static getItemObj(id: number): SEAType.ItemObj | undefined;
     static getSkillStoneRank(id: number): number;
 }
 
@@ -361,40 +361,40 @@ declare class ItemSeXMLInfo {
 
 declare class SkillXMLInfo {
     static SKILL_OBJ: {
-        Moves: { Move: Array<SAType.MoveObj> };
-        SideEffects: { SideEffect: Array<SAType.SideEffectObj>; _text: Array<string> };
+        Moves: { Move: Array<SEAType.MoveObj> };
+        SideEffects: { SideEffect: Array<SEAType.SideEffectObj>; _text: Array<string> };
     };
-    static movesMap: Dict<SAType.MoveObj>;
-    static moveStoneMap: Dict<SAType.MoveObj>;
+    static movesMap: Dict<SEAType.MoveObj>;
+    static moveStoneMap: Dict<SEAType.MoveObj>;
     static hideMovesMap: Record<number, Array<{ o: number; id: number }>>;
     static typeMap: {
-        [Property: string]: SAType.ElementObj;
+        [Property: string]: SEAType.ElementObj;
     };
     static getName(id: number): string;
     static getTypeID(id: number): number;
     static getCategory(id: number): number;
     static getCategoryName(id: number): string;
     static getHideSkillId(petId: number): number;
-    static getSkillObj(id: number): SAType.MoveObj | undefined;
+    static getSkillObj(id: number): SEAType.MoveObj | undefined;
     static getStoneBySkill(id: number): number | undefined;
 }
 
 declare class SuitXMLInfo {
-    static _dataMap: SAType.HashMap<SAType.SuitObj>;
+    static _dataMap: SEAType.HashMap<SEAType.SuitObj>;
     static getName(id: number): string;
     static getIsElite(id: number): boolean;
     static getSuitID(clothIds: number[]): number;
 }
 
 declare class PetXMLInfo {
-    static _dataMap: Dict<SAType.PetObj>;
+    static _dataMap: Dict<SEAType.PetObj>;
     static getType(id: number): number;
     static getName(id: number): string;
 }
 
 declare class PetStatusEffectConfig {
     static xml: {
-        BattleEffect: [{ Name: string; SubEffect: SAType.StatusEffectObj[] }];
+        BattleEffect: [{ Name: string; SubEffect: SEAType.StatusEffectObj[] }];
     };
 }
 

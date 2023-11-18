@@ -7,7 +7,7 @@
   "packageManager": "pnpm@8.10.2",
   "scripts": {
     "dev": "conc pnpm:core:watch pnpm:launcher:dev",
-    "server:start": "pnpm -C ./packages/backend run start",
+    "server:run": "pnpm -C ./packages/server run start",
     "launcher:dev": "pnpm -C ./packages/launcher run dev",
     "core:build": "pnpm -F sea-core run build",
     "core:watch": "pnpm -F sea-core run watch",

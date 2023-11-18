@@ -1,4 +1,4 @@
-import { Socket } from 'sa-core/engine';
+import { Socket } from 'sea-core/engine';
 
 interface Config {
     exchangeId: number;
@@ -21,10 +21,10 @@ const EXCHANGE_LIST = {
     },
 };
 
-class Team implements SAMod.ISignMod<Config> {
+class Team implements SEAMod.ISignMod<Config> {
     declare logger: typeof console.log;
 
-    meta: SAMod.MetaData = {
+    meta: SEAMod.MetaData = {
         id: 'Team',
         scope: 'median',
         type: 'sign',
@@ -34,7 +34,7 @@ class Team implements SAMod.ISignMod<Config> {
     defaultConfig: Config = { exchangeId: EXCHANGE_LIST.战队道具.不灭能量珠 };
     config: Config;
 
-    export: Record<string, SAMod.SignModExport<typeof this>> = {
+    export: Record<string, SEAMod.SignModExport<typeof this>> = {
         生产资源: {
             check: async () => {
                 const times = (await Socket.multiValue(MULTI_QUERY.资源生产次数))[0];

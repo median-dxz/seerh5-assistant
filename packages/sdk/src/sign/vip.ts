@@ -1,4 +1,4 @@
-import { Socket } from 'sa-core/engine';
+import { Socket } from 'sea-core/engine';
 
 interface Config {
     exchangeId: number;
@@ -12,10 +12,10 @@ const EXCHANGE_LIST = {
     },
 };
 
-class Vip implements SAMod.ISignMod<Config> {
+class Vip implements SEAMod.ISignMod<Config> {
     declare logger: typeof console.log;
 
-    meta: SAMod.MetaData = {
+    meta: SEAMod.MetaData = {
         id: 'Vip',
         scope: 'median',
         type: 'sign',
@@ -25,7 +25,7 @@ class Vip implements SAMod.ISignMod<Config> {
     defaultConfig: Config = { exchangeId: EXCHANGE_LIST.vip点数.体力上限药 };
     config: Config;
 
-    export: Record<string, SAMod.SignModExport> = {
+    export: Record<string, SEAMod.SignModExport> = {
         领取vip每日箱子: {
             check: async () => {
                 const times = (await Socket.multiValue(11516))[0];

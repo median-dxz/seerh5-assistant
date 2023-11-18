@@ -3,10 +3,10 @@ import type { PetRoundInfo } from '../entity/index.js';
 import type { ProxyPet } from '../pet-helper/PetDataManager.js';
 
 type DataBuilder<T> = (data: ArrayBuffer) => T;
-type OnReqHandler = (bytes: SAType.SocketRequestData) => void;
+type OnReqHandler = (bytes: SEAType.SocketRequestData) => void;
 type OnResHandler<TCmd extends number> = (data: SocketData<TCmd>) => void;
 
-type SocketData<TCmd extends number> = TCmd extends keyof SASocketData ? SASocketData[TCmd] : unknown;
+type SocketData<TCmd extends number> = TCmd extends keyof SEASocketData ? SEASocketData[TCmd] : unknown;
 
 export interface SocketEventHandler<TCmd extends number> {
     cmd: TCmd;
@@ -55,7 +55,7 @@ export const SocketListener = {
         SocketListener.on(warpHandler);
     },
 
-    onReq(cmd: number, bytes: SAType.SocketRequestData) {
+    onReq(cmd: number, bytes: SEAType.SocketRequestData) {
         if (!this.handlers.has(cmd)) {
             return;
         }
@@ -86,7 +86,7 @@ export const SocketListener = {
     },
 };
 
-export type SASocketData = {
+export type SEASocketData = {
     2505: readonly [PetRoundInfo, PetRoundInfo]; // NOTE_USE_SKILL
     2301: ProxyPet; // GET_PET_INFO
     2304: PetTakeOutInfo; // PET_RELEASE

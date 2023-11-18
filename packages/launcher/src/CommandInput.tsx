@@ -1,7 +1,7 @@
 import { ModStore } from '@sea-launcher/service/ModManager';
 import React, { useEffect, useState } from 'react';
-import { SaAutocomplete } from './components/styled/Autocomplete';
-import { SaTextField } from './components/styled/TextField';
+import { SeaAutocomplete } from './components/styled/Autocomplete';
+import { SeaTextField } from './components/styled/TextField';
 
 // const AutocompleteWrapped: typeof MuiAutocomplete = ({ className, ...props }) => (
 //     <MuiAutocomplete {...props} classes={{ popper: className }} />
@@ -43,7 +43,7 @@ export function CommandInput() {
     };
 
     return (
-        <SaAutocomplete
+        <SeaAutocomplete
             id="command-input"
             sx={{
                 width: '100%',
@@ -91,7 +91,7 @@ export function CommandInput() {
                 return value === option || value === '' || value === null;
             }}
             renderInput={(params) => (
-                <SaTextField
+                <SeaTextField
                     {...params}
                     label={modName ? `应用 ${modName}:` : '选择以应用模组...'}
                     autoFocus

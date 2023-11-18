@@ -3,7 +3,7 @@ import { delay } from '../common/utils.js';
 import { PetPosition, Potion } from '../constant/index.js';
 import { Socket, buyPetItem, toggleAutoCure } from '../engine/index.js';
 import { PetElement, type Pet } from '../entity/index.js';
-import { PetDataManger, SAPet, SAPetLocation, getBagPets } from '../pet-helper/index.js';
+import { PetDataManger, SEAPet, SEAPetLocation, getBagPets } from '../pet-helper/index.js';
 
 type PotionId = (typeof Potion)[keyof typeof Potion];
 /**
@@ -27,21 +27,21 @@ export async function lowerBlood(
     const replacePets = curPets.filter((p) => !cts.includes(p.catchTime));
 
     for (const ct of cts) {
-        const location = await SAPet.location(ct);
-        if (location !== SAPetLocation.Bag && location !== SAPetLocation.Default) {
+        const location = await SEAPet.location(ct);
+        if (location !== SEAPetLocation.Bag && location !== SEAPetLocation.Default) {
             if (PetManager.isBagFull) {
                 const replacePet = replacePets.pop()!;
                 await replacePet.popFromBag();
             }
-            await SAPet.setLocation(ct, SAPetLocation.Bag);
+            await SEAPet.setLocation(ct, SEAPetLocation.Bag);
         }
     }
     await getBagPets();
 
-    const hpChecker = () => cts.filter((ct) => SAPet(ct).hp >= hpLimit);
+    const hpChecker = () => cts.filter((ct) => SEAPet(ct).hp >= hpLimit);
 
     const usePotion = async (ct: number) => {
-        let pet = await SAPet.get(ct);
+        let pet = await SEAPet.get(ct);
         if (pet.hp == 0) {
             pet = await pet.usePotion(healPotionId);
         }
@@ -58,7 +58,7 @@ export async function lowerBlood(
 
     buyPetItem(Potion.中级活力药剂, cts.length);
     buyPetItem(healPotionId, cts.length);
-    await SAPet.default(cts[0]);
+    await SEAPet.default(cts[0]);
     await toggleAutoCure(false);
     await delay(300);
 
@@ -111,11 +111,11 @@ export async function switchBag(cts: number[]) {
     // 清空现有背包
     for (const v of await getBagPets(PetPosition.bag1)) {
         if (!cts.includes(v.catchTime)) {
-            await SAPet.popFromBag(v);
+            await SEAPet.popFromBag(v);
         }
     }
     for (const v of cts) {
-        await SAPet.setLocation(v, SAPetLocation.Bag);
+        await SEAPet.setLocation(v, SEAPetLocation.Bag);
     }
 }
 

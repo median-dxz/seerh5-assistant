@@ -2,7 +2,7 @@ import { TextField as MuiTextField } from '@mui/material';
 import { styled } from '@mui/system';
 import { saTheme } from '@sea-launcher/style';
 
-export const SaTextField: typeof MuiTextField = styled(MuiTextField)`
+export const SeaTextField: typeof MuiTextField = styled(MuiTextField)`
     & .MuiFormLabel-root {
         top: initial;
         left: initial;

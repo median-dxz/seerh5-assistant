@@ -4,24 +4,24 @@ import * as core from 'sea-core';
 import { loadAllCt } from './context/ct';
 import './index.css';
 
-const container = document.getElementById('sa-app')!;
+const container = document.getElementById('sea-launcher')!;
 const root = ReactDOM.createRoot(container);
 
 const renderApp = async () => {
     console.info(`[info] SeerH5-Assistant Core Loaded Successfully!`);
     
-    const sac = window.sac;
+    const sea = window.sea;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window as any).sac = { ...core, ...sac };
+    (window as any).sea = { ...core, ...sea };
     await loadAllCt();
 
     core.HelperLoader();
 
-    const { default: SaMain } = await import('./App');
+    const { default: LauncherMain } = await import('./App');
 
     root.render(
         <React.StrictMode>
-            <SaMain />
+            <LauncherMain />
         </React.StrictMode>
     );
 };

@@ -1,7 +1,7 @@
 import { TableRow, alpha, styled } from '@mui/material';
 import { saTheme } from '@sea-launcher/style';
 
-export const SaTableRow = styled(TableRow)`
+export const SeaTableRow = styled(TableRow)`
     transition: ${saTheme.transitions.create(['background-color'])};
     &:last-child td,
     &:last-child th {

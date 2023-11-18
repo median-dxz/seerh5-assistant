@@ -9,7 +9,7 @@ chalk.level = 3;
 //     none: chalk.bgHex('#eff1f3'),
 // } as const;
 
-export const SaModuleLogger = (module: string, level: 'debug' | 'info', cond?: boolean | null): typeof console.log => {
+export const SeaModuleLogger = (module: string, level: 'debug' | 'info', cond?: boolean | null): typeof console.log => {
     if (cond) {
         return NOOP;
     }

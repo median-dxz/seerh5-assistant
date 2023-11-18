@@ -13,7 +13,7 @@ export class Item extends EntityBase implements IItemObject {
     limit?: number;
     amount?: number;
 
-    constructor(obj: SAType.ItemObj) {
+    constructor(obj: SEAType.ItemObj) {
         super();
         this.__type = 'Item';
         [this.id, this.name, this.limit] = [obj.ID, obj.Name, obj.Max];

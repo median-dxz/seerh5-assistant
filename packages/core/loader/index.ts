@@ -14,15 +14,15 @@ export async function CoreLoader() {
 
             resolve(true);
 
-            window.sac.SacReady = true;
+            window.sea.CoreReady = true;
 
             window.dispatchEvent(new CustomEvent('seerh5_assistant_ready'));
         };
 
-        const { sac } = window;
+        const { sea } = window;
 
-        if (typeof sac !== 'undefined' && sac.SeerH5Ready) {
-            if (sac.SacReady) {
+        if (typeof sea !== 'undefined' && sea.SeerH5Ready) {
+            if (sea.CoreReady) {
                 resolve(true);
             } else {
                 sa_core_init();

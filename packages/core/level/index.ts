@@ -2,17 +2,17 @@ import { Manager } from '../battle/index.js';
 import { delay } from '../common/utils.js';
 import { toggleAutoCure } from '../engine/index.js';
 import { switchBag } from '../functions/index.js';
-import { SAPet, cureAllPet } from '../pet-helper/index.js';
+import { SEAPet, cureAllPet } from '../pet-helper/index.js';
 import type { ILevelRunner } from './type.js';
-import { SALevelState } from './type.js';
+import { SEALevelState } from './type.js';
 
 export * from './type.js';
 
-export class SALevelManager {
+export class SEALevelManager {
     // 单例模式
-    private static _instance: SALevelManager;
+    private static _instance: SEALevelManager;
     public static get ins() {
-        return this._instance || (this._instance = new SALevelManager());
+        return this._instance || (this._instance = new SEALevelManager());
     }
     private constructor() {
         // constructor
@@ -63,7 +63,7 @@ export class SALevelManager {
 
                 logger('执行战斗前预处理');
                 await beforeBattle?.();
-                await SAPet.default(pets[0]);
+                await SEAPet.default(pets[0]);
 
                 logger('进入战斗');
                 try {
@@ -87,10 +87,10 @@ export class SALevelManager {
                 logger('更新关卡信息');
                 const state = await runner.updater();
                 switch (state) {
-                    case SALevelState.BATTLE:
-                        battle();
+                    case SEALevelState.BATTLE:
+                        await battle();
                         break;
-                    case SALevelState.STOP:
+                    case SEALevelState.STOP:
                         this.runner = null;
                         break;
                     default:

@@ -87,7 +87,7 @@ export function hookPrototype<T extends HasPrototype, K extends keyof T['prototy
 }
 
 export const checkEnv = () =>
-    typeof window !== 'undefined' && window.sac != undefined && window.sac?.SacReady && window.sac?.SeerH5Ready;
+    typeof window !== 'undefined' && window.sea != undefined && window.sea?.CoreReady && window.sea?.SeerH5Ready;
 
 export const extractObjectId = <T extends { [key in K]: number }, K extends string>(obj: T | number, key: K) => {
     if (typeof obj === 'number') {
@@ -101,7 +101,7 @@ export const NOOP = () => {};
 
 export { createLocalStorageProxy, type LocalStorageProxy } from './LocalStorage.js';
 
-export { SAEventTarget } from './SAEventTarget.js';
+export { SEAEventTarget } from './EventTarget.js';
 
 export { CacheData } from './CacheData.js';
 

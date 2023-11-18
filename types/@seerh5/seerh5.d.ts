@@ -1,7 +1,7 @@
 declare type Dict<T extends object> = Record<string | number, T>;
 declare type Callback<T = unknown> = (this: T, ...args: any[]) => void;
 
-declare namespace SAType {
+declare namespace SEAType {
     type EventHandler<E extends egret.EventDispatcher> = (event?: E) => void;
 
     class HashMap<T extends object> {
@@ -119,15 +119,15 @@ declare namespace SAType {
     type SocketRequestData = (egret.ByteArray | number)[];
 }
 
-/** `sac`全局变量使用的额外命名空间 */
+/** `sea`全局变量使用的额外命名空间 */
 declare interface Window {
-    sac: {
+    sea: {
         /** 原生客户端`console.log`的正则过滤列表 */
         filterLogText: RegExp[];
         /** 原生客户端`console.warn`的正则过滤列表 */
         filterWarnText: RegExp[];
         SeerH5Ready: boolean;
-        SacReady: boolean;
+        CoreReady: boolean;
     };
 }
 

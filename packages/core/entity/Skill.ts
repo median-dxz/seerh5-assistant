@@ -31,7 +31,7 @@ export class Skill extends EntityBase implements ISkillObject {
     stoneSkillId?: number;
     stoneItemId?: number;
 
-    constructor(obj: SAType.MoveObj) {
+    constructor(obj: SEAType.MoveObj) {
         super();
         this.__type = 'Skill';
         let tempEffects: [SkillEffectArgs, SkillEffectArgs];

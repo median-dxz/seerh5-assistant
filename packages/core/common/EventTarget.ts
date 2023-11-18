@@ -1,11 +1,11 @@
-import type { SAHookData } from '../constant/index.js';
+import type { SEAHookData } from '../constant/index.js';
 
 type Listener<T> = (data: T) => void;
 type EventData<Type extends string, TEvents extends Record<string, unknown>> = Type extends keyof TEvents
     ? TEvents[Type]
     : undefined;
 
-interface SAEventTarget<TEvents extends Record<string, unknown>> {
+interface SEAEventTarget<TEvents extends Record<string, unknown>> {
     on<T extends string>(type: T, listener: Listener<EventData<T, TEvents>>): void;
     once<T extends string>(type: T, listener: Listener<EventData<T, TEvents>>): void;
     off<T extends string>(type: T, listener: Listener<EventData<T, TEvents>>): void;
@@ -16,13 +16,13 @@ const et = new EventTarget();
 
 const listenerMap = new Map<Listener<never>, EventListener>();
 
-export const SAEventTarget: SAEventTarget<SAHookData> = {
+export const SEAEventTarget: SEAEventTarget<SEAHookData> = {
     on(type, listener) {
         let wrappedListener = listenerMap.get(listener);
         if (wrappedListener == undefined) {
             wrappedListener = (e: Event) => {
                 if (e instanceof CustomEvent) {
-                    listener(e.detail as EventData<typeof type, SAHookData>);
+                    listener(e.detail as EventData<typeof type, SEAHookData>);
                 }
             };
             listenerMap.set(listener, wrappedListener);
@@ -33,7 +33,7 @@ export const SAEventTarget: SAEventTarget<SAHookData> = {
     once(type, listener) {
         et.addEventListener(
             type,
-            (e: Event) => listener((e as CustomEvent).detail as EventData<typeof type, SAHookData>),
+            (e: Event) => listener((e as CustomEvent).detail as EventData<typeof type, SEAHookData>),
             { once: true }
         );
     },

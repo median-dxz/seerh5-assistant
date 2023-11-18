@@ -2,9 +2,9 @@ import {
     HelperLoader,
     Hook,
     Manager,
-    SAEventBus,
-    SAPet,
-    SAPetLocation,
+    SEAEventBus,
+    SEAPet,
+    SEAPetLocation,
     delay,
     getAutoCureState,
     getBagPets,
@@ -19,14 +19,14 @@ var expect = chai.expect;
 describe('PetHelper', function () {
     this.timeout('15s');
 
-    /** @type {SAEventBus} */
+    /** @type {SEAEventBus} */
     let bus;
 
     before(async () => {
         await toggleAutoCure(false);
         HelperLoader();
 
-        bus = new SAEventBus();
+        bus = new SEAEventBus();
         bus.hook(Hook.Battle.battleStart, Manager.resolveStrategy);
         bus.hook(Hook.Battle.roundEnd, Manager.resolveStrategy);
     });
@@ -43,7 +43,7 @@ describe('PetHelper', function () {
     it('should get a pet', async function () {
         const { catchTime, name } = env.测试精灵1;
 
-        const pet = await SAPet.get(catchTime);
+        const pet = await SEAPet.get(catchTime);
 
         expect(pet).to.be.an('object').that.has.property('__type', 'Pet');
         expect(pet.catchTime).equal(catchTime);
@@ -63,17 +63,17 @@ describe('PetHelper', function () {
     it('should set pet in main bag and let it default', async function () {
         const { catchTime } = env.测试精灵1;
 
-        await SAPet.setLocation(catchTime, SAPetLocation.Bag);
-        const loc = await SAPet.location(catchTime);
+        await SEAPet.setLocation(catchTime, SEAPetLocation.Bag);
+        const loc = await SEAPet.location(catchTime);
 
-        expect(loc).to.be.an('string').equal(SAPetLocation.Default);
+        expect(loc).to.be.an('string').equal(SEAPetLocation.Default);
     });
 
     it('should cure pet', async function () {
         const { catchTime } = env.测试精灵1;
 
-        await SAPet.cure(catchTime);
-        const pet = await SAPet.get(catchTime);
+        await SEAPet.cure(catchTime);
+        const pet = await SEAPet.get(catchTime);
 
         expect(pet.hp).equal(pet.maxHp);
     });
@@ -81,10 +81,10 @@ describe('PetHelper', function () {
     it('should set pet in elite', async function () {
         const { catchTime } = env.测试精灵1;
 
-        await SAPet.popFromBag(catchTime);
-        const loc = await SAPet.location(catchTime);
+        await SEAPet.popFromBag(catchTime);
+        const loc = await SEAPet.location(catchTime);
 
-        expect(loc).to.be.an('string').equal(SAPetLocation.Elite);
+        expect(loc).to.be.an('string').equal(SEAPetLocation.Elite);
     });
 
     it('should get correct default', async function () {
@@ -92,23 +92,23 @@ describe('PetHelper', function () {
         const cts = [env.测试精灵1, env.测试精灵2].map((v) => v.catchTime);
 
         await switchBag(cts);
-        await SAPet.popFromBag(cts[1]);
+        await SEAPet.popFromBag(cts[1]);
 
-        let loc = await SAPet.location(cts[0]);
-        expect(loc).to.be.an('string').equal(SAPetLocation.Default);
+        let loc = await SEAPet.location(cts[0]);
+        expect(loc).to.be.an('string').equal(SEAPetLocation.Default);
         console.log(`loc1: ${loc} -> default`);
 
         await switchBag(cts);
-        await SAPet.popFromBag(cts[0]);
+        await SEAPet.popFromBag(cts[0]);
 
-        loc = await SAPet.location(cts[1]);
-        expect(loc).to.be.an('string').equal(SAPetLocation.Default);
+        loc = await SEAPet.location(cts[1]);
+        expect(loc).to.be.an('string').equal(SEAPetLocation.Default);
         console.log(`loc2: ${loc} -> default`);
 
-        await SAPet.popFromBag(cts[1]);
+        await SEAPet.popFromBag(cts[1]);
 
-        loc = await SAPet.location(cts[1]);
-        expect(loc).to.be.an('string').not.equal(SAPetLocation.Default).and.not.equal(SAPetLocation.Bag);
+        loc = await SEAPet.location(cts[1]);
+        expect(loc).to.be.an('string').not.equal(SEAPetLocation.Default).and.not.equal(SEAPetLocation.Bag);
         console.log(`loc3: ${loc} -> elite/storage`);
     });
 
@@ -116,16 +116,16 @@ describe('PetHelper', function () {
         const { catchTime } = env.测试精灵1;
 
         await switchBag([catchTime]);
-        await SAPet.cure(catchTime);
-        await SAPet.popFromBag(catchTime);
+        await SEAPet.cure(catchTime);
+        await SEAPet.popFromBag(catchTime);
 
         await lowerBlood([catchTime]);
 
-        const pet = await SAPet.get(catchTime);
+        const pet = await SEAPet.get(catchTime);
         const loc = await pet.location();
 
         expect(pet.hp).equal(50);
-        expect(loc).to.be.an('string').equal(SAPetLocation.Default);
+        expect(loc).to.be.an('string').equal(SEAPetLocation.Default);
     });
 
     it('should close the BattleEnd panel', async function () {

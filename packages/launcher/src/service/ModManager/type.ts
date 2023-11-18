@@ -1,6 +1,6 @@
 import { MoveStrategy, type GameModuleEventHandler } from 'sea-core';
 
-export enum SAModType {
+export enum SEAModType {
     BASE_MOD = 'base',
     MODULE_MOD = 'module',
     SIGN_MOD = 'sign',
@@ -13,7 +13,7 @@ export enum SAModType {
 export type MetaData = {
     id: string;
     scope: string;
-    type: SAModType;
+    type: SEAModType;
     description?: string;
 };
 

@@ -7,4 +7,4 @@ export interface ISAContext {
     };
 }
 
-export const SAContext = React.createContext({} as ISAContext);
+export const SEAContext = React.createContext({} as ISAContext);

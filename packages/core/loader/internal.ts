@@ -1,7 +1,7 @@
 import { enableMapSet } from 'immer';
 
 import type { AnyFunction } from '../common/utils.js';
-import { NOOP, SAEventTarget, hookPrototype } from '../common/utils.js';
+import { NOOP, SEAEventTarget, hookPrototype } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
 
 import battle from '../battle/internal.js';
@@ -60,7 +60,7 @@ function loadScript(this: ModuleManager, scriptName: string) {
                 script = script.replaceAll(/console\.warn/g, 'warnFilter');
                 o.text = `//@ sourceURL=http://seerh5.61.com/${url + '\n'}${script}`;
                 document.head.appendChild(o).parentNode!.removeChild(o);
-                SAEventTarget.emit(Hook.Module.loadScript, scriptName);
+                SEAEventTarget.emit(Hook.Module.loadScript, scriptName);
                 resolve();
             },
             this,

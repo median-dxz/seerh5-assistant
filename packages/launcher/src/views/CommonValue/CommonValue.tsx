@@ -9,7 +9,7 @@ import { PanelField, PanelTable, useRowData, type PanelColumns } from '@sea-laun
 import { PanelStateContext } from '@sea-launcher/context/PanelState';
 import { getItemIcon } from '@sea-launcher/utils/egretRes';
 
-import { SaTableRow } from '@sea-launcher/components/styled/TableRow';
+import { SeaTableRow } from '@sea-launcher/components/styled/TableRow';
 import { idList, openModuleList } from './data';
 
 const convertUnit = (count: number) => {
@@ -62,7 +62,7 @@ const PanelRow: React.FC = () => {
     }
 
     return (
-        <SaTableRow>
+        <SeaTableRow>
             <PanelField field="id">{item.id}</PanelField>
             <PanelField field="icon">
                 <img crossOrigin="anonymous" src={getItemIcon(item.id)} alt={item.name} width={36} />
@@ -81,6 +81,6 @@ const PanelRow: React.FC = () => {
                     </Button>
                 ) : undefined}
             </PanelField>
-        </SaTableRow>
+        </SeaTableRow>
     );
 };

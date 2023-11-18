@@ -1,9 +1,9 @@
-import { Socket } from 'sa-core';
+import { Socket } from 'sea-core';
 
-class TeamTechCenter implements SAMod.IModuleMod<team.TeamTech> {
+class TeamTechCenter implements SEAMod.IModuleMod<team.TeamTech> {
     declare logger: typeof console.log;
 
-    meta: SAMod.MetaData = {
+    meta: SEAMod.MetaData = {
         id: 'teamTechCenter',
         scope: 'median',
         type: 'module' as const,
