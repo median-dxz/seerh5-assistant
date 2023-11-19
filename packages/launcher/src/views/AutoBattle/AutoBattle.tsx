@@ -1,6 +1,6 @@
 import { Button, Divider, FormControlLabel, Switch } from '@mui/material';
 
-import React, { ReactNode, useState } from 'react';
+import React, { useState, type ReactNode } from 'react';
 
 import { PanelField, PanelTable, useRowData } from '@sea-launcher/components/PanelTable';
 import { useIndex } from '@sea-launcher/components/PanelTable/usePanelTableData';

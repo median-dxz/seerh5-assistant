@@ -1,17 +1,17 @@
 import { ct } from '@sea-launcher/context/ct';
 import * as EndPoints from '@sea-launcher/service/endpoints';
 import { SeaModuleLogger } from '@sea-launcher/utils/logger';
-import { ILevelBattleStrategy, MoveStrategy } from 'sea-core';
+import type { ILevelBattleStrategy, MoveStrategy } from 'sea-core';
 import { GameModuleListener } from 'sea-core/event-bus';
 import {
     BaseMod,
     BattleMod,
-    BattleModExport,
     ModuleMod,
     QuickAccessPlugin,
     SEAModType,
-    SignModExport,
     StrategyMod,
+    type BattleModExport,
+    type SignModExport,
 } from './type';
 
 const log = SeaModuleLogger('SEAModManager', 'info');

@@ -2,7 +2,7 @@ import { DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { LabeledLinearProgress } from '@sea-launcher/components/LabeledProgress';
 import React from 'react';
 
-import { ILevelRunner, SEALevelManager } from 'sea-core';
+import { SEALevelManager, type ILevelRunner } from 'sea-core';
 
 interface LevelProps {
     runner: ILevelRunner | null;

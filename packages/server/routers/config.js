@@ -5,7 +5,7 @@ import * as toml from 'smol-toml';
 import { base } from '../base.js';
 
 export const PetCache = {
-    configPath: path.join(base, 'config', 'sa-pet.toml'),
+    configPath: path.join(base, 'config', 'sea-pet.toml'),
     catchTimeMap: new Map(),
     load() {
         if (!fs.existsSync(this.configPath)) {

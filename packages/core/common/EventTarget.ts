@@ -1,4 +1,4 @@
-import type { SEAHookData } from '../constant/index.js';
+import { type SEAHookDataMap } from '../constant/index.js';
 
 type Listener<T> = (data: T) => void;
 type EventData<Type extends string, TEvents extends Record<string, unknown>> = Type extends keyof TEvents
@@ -16,13 +16,13 @@ const et = new EventTarget();
 
 const listenerMap = new Map<Listener<never>, EventListener>();
 
-export const SEAEventTarget: SEAEventTarget<SEAHookData> = {
+export const SEAEventTarget: SEAEventTarget<SEAHookDataMap> = {
     on(type, listener) {
         let wrappedListener = listenerMap.get(listener);
         if (wrappedListener == undefined) {
             wrappedListener = (e: Event) => {
                 if (e instanceof CustomEvent) {
-                    listener(e.detail as EventData<typeof type, SEAHookData>);
+                    listener(e.detail as EventData<typeof type, SEAHookDataMap>);
                 }
             };
             listenerMap.set(listener, wrappedListener);
@@ -33,7 +33,7 @@ export const SEAEventTarget: SEAEventTarget<SEAHookData> = {
     once(type, listener) {
         et.addEventListener(
             type,
-            (e: Event) => listener((e as CustomEvent).detail as EventData<typeof type, SEAHookData>),
+            (e: Event) => listener((e as CustomEvent).detail as EventData<typeof type, SEAHookDataMap>),
             { once: true }
         );
     },
@@ -41,6 +41,7 @@ export const SEAEventTarget: SEAEventTarget<SEAHookData> = {
     off(type, listener) {
         if (listenerMap.has(listener)) {
             et.removeEventListener(type, listenerMap.get(listener)!);
+            listenerMap.delete(listener);
         }
     },
 

@@ -1,14 +1,9 @@
-import {
-    PanelColumns,
-    PanelField,
-    PanelTable,
-    useRowData
-} from '@sea-launcher/components/PanelTable';
+import { PanelField, PanelTable, useRowData, type PanelColumns } from '@sea-launcher/components/PanelTable';
 import React from 'react';
 
 import { Button, ButtonGroup, CircularProgress } from '@mui/material';
 import { ModStore } from '@sea-launcher/service/ModManager';
-import { BaseMod, SEAModType, SignModExport } from '@sea-launcher/service/ModManager/type';
+import { BaseMod, SEAModType, type SignModExport } from '@sea-launcher/service/ModManager/type';
 
 import { SeaTableRow } from '@sea-launcher/components/styled/TableRow';
 import { delay } from 'sea-core';

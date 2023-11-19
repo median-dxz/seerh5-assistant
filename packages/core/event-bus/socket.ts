@@ -6,7 +6,7 @@ type DataBuilder<T> = (data: ArrayBuffer) => T;
 type OnReqHandler = (bytes: SEAType.SocketRequestData) => void;
 type OnResHandler<TCmd extends number> = (data: SocketData<TCmd>) => void;
 
-type SocketData<TCmd extends number> = TCmd extends keyof SEASocketData ? SEASocketData[TCmd] : unknown;
+type SocketData<TCmd extends number> = TCmd extends keyof SEASocketDataMap ? SEASocketDataMap[TCmd] : unknown;
 
 export interface SocketEventHandler<TCmd extends number> {
     cmd: TCmd;
@@ -86,7 +86,7 @@ export const SocketListener = {
     },
 };
 
-export type SEASocketData = {
+export type SEASocketDataMap = {
     2505: readonly [PetRoundInfo, PetRoundInfo]; // NOTE_USE_SKILL
     2301: ProxyPet; // GET_PET_INFO
     2304: PetTakeOutInfo; // PET_RELEASE

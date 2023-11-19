@@ -37,7 +37,7 @@ export function cachePets(ctx) {
  * @type {import('@koa/router').Middleware}
  */
 export function petFragmentLevel(ctx) {
-    const configPath = path.join(base, 'config', 'sa-petFragmentLevel.toml');
+    const configPath = path.join(base, 'config', 'sea-petFragmentLevel.toml');
     if (!fs.existsSync(configPath)) {
         fs.writeFileSync(configPath, '');
     }

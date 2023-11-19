@@ -4,7 +4,7 @@ import { PanelField, PanelTable, useRowData, type PanelColumns } from '@sea-laun
 import { SeaTableRow } from '@sea-launcher/components/styled/TableRow';
 import { produce } from 'immer';
 import * as React from 'react';
-import type { AnyFunction, SEAHookData } from 'sea-core';
+import type { AnyFunction, SEAHookDataMap } from 'sea-core';
 import { CmdMask, Hook, SEAEventTarget, hookFn } from 'sea-core';
 
 interface CapturedPackage {
@@ -79,12 +79,12 @@ export function PackageCapture() {
         //     capturedPkgFactory(setCapture, { cmd, type: 'RemoveListener', data: callback });
         // });
 
-        const onReceive = ({ buffer, cmd }: SEAHookData['sa_socket_receive']) => {
+        const onReceive = ({ buffer, cmd }: SEAHookDataMap['socket_receive']) => {
             if (state !== 'capturing' || CmdMask.includes(cmd)) return;
             capturedPkgFactory(setCapture, { cmd, data: buffer?.dataView, type: 'Received' });
         };
 
-        const onSend = ({ cmd, data }: SEAHookData['sa_socket_send']) => {
+        const onSend = ({ cmd, data }: SEAHookDataMap['socket_send']) => {
             if (state !== 'capturing' || CmdMask.includes(cmd)) return;
             capturedPkgFactory(setCapture, {
                 cmd,

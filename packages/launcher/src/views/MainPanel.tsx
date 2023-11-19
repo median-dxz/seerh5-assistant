@@ -1,6 +1,6 @@
 import ElectricBolt from '@mui/icons-material/ElectricBolt';
 import Lock from '@mui/icons-material/Lock';
-import { Backdrop, Box, Fade, Slide, Switch, SxProps, Tab, Tabs, type TabProps } from '@mui/material';
+import { Backdrop, Box, Fade, Slide, Switch, Tab, Tabs, type SxProps, type TabProps } from '@mui/material';
 import { HexagonalButton } from '@sea-launcher/components/styled/HexagonalButton';
 import { PanelStateContext } from '@sea-launcher/context/PanelState';
 import { saTheme } from '@sea-launcher/style';

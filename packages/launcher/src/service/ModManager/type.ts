@@ -1,4 +1,4 @@
-import { MoveStrategy, type GameModuleEventHandler } from 'sea-core';
+import type { GameModuleEventHandler, MoveStrategy } from 'sea-core';
 
 export enum SEAModType {
     BASE_MOD = 'base',

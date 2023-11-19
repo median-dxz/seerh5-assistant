@@ -1,7 +1,6 @@
 {
     "compilerOptions": {
-        "module": "ESNext",
-        "moduleResolution": "node",
+        "module": "NodeNext",
         "allowSyntheticDefaultImports": true,
         "checkJs": true,
         "noEmit": true

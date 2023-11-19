@@ -2,11 +2,12 @@
     "extends": "../../tsconfig.json",
     "compilerOptions": {
         "module": "NodeNext",
-        "moduleResolution": "nodenext",
+        "target": "es2022",
         "outDir": "dist",
         "rootDir": ".",
         "baseUrl": ".",
         "tsBuildInfoFile": "../../.tsbuildinfo/core.tsbuildinfo",
+        "declaration": true,
         "inlineSourceMap": true,
         "declarationMap": true,
         "incremental": true,

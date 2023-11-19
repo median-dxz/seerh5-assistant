@@ -3,7 +3,7 @@ import ButtonBase from '@mui/material/ButtonBase';
 import { styled } from '@mui/system';
 import { saTheme } from '@sea-launcher/style';
 import * as React from 'react';
-import { ForwardedRef, PropsWithChildren, forwardRef } from 'react';
+import { forwardRef, type ForwardedRef, type PropsWithChildren } from 'react';
 
 const HexagonalButtonRoot = forwardRef(function (
     props: PropsWithChildren<object> & { baseSize: number },

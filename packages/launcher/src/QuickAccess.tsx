@@ -1,5 +1,5 @@
 import MenuOpen from '@mui/icons-material/MenuOpen';
-import { SpeedDialAction, SpeedDialActionProps, SvgIcon } from '@mui/material';
+import { SpeedDialAction, type SpeedDialActionProps, SvgIcon } from '@mui/material';
 import useSWR from 'swr';
 
 import React, { useState } from 'react';

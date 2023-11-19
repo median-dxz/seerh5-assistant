@@ -1,11 +1,11 @@
 {
     "compilerOptions": {
-        "target": "ES2022",
+        "target": "es2022",
         "strict": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
-        "allowSyntheticDefaultImports": true,
         "skipLibCheck": true,
+        "verbatimModuleSyntax": true,
         "forceConsistentCasingInFileNames": true,
         "lib": [
             "esnext",
@@ -14,6 +14,9 @@
     },
     "include": [],
     "references": [
+        {
+            "path": "packages/server/tsconfig.json"
+        },
         {
             "path": "packages/launcher/tsconfig.json"
         },

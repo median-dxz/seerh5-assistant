@@ -1,4 +1,4 @@
-import { MoveStrategy, Potion, Skill } from 'sea-core';
+import { Potion, Skill, type MoveStrategy } from 'sea-core';
 import * as Battle from 'sea-core/battle';
 
 export default [

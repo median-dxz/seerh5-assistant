@@ -1,14 +1,12 @@
 {
     "compilerOptions": {
         "module": "NodeNext",
-        "moduleResolution": "nodenext",
-        "target": "ES2022",
-        "strict": true,
-        "forceConsistentCasingInFileNames": true,
-        "allowSyntheticDefaultImports": true,
+        "target": "es2022",
+        "tsBuildInfoFile": "../../.tsbuildinfo/server.tsbuildinfo",
         "checkJs": true,
         "allowJs": true,
-        "noEmit": true
+        "noEmit": true,
+        "composite": true
     },
     "exclude": [
         "node_modules",

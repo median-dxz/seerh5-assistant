@@ -1,4 +1,4 @@
-import { PetFragmentLevelDifficulty as Difficulty, ILevelBattleStrategy, SEALevelState, delay } from 'sea-core';
+import { PetFragmentLevelDifficulty as Difficulty, PetFragmentLevel, SEALevelState, delay } from 'sea-core';
 
 import { Box, Button, CircularProgress, Dialog, DialogActions, Divider, Typography, alpha } from '@mui/material';
 import { SEAContext } from '@sea-launcher/context/SAContext';
@@ -6,9 +6,9 @@ import type { PetFragmentOption } from '@sea-launcher/service/endpoints';
 import React, { useCallback, useState } from 'react';
 import * as Battle from 'sea-core/battle';
 import * as Engine from 'sea-core/engine';
-import { IPFLevelBoss, IPetFragmentLevelObject, PetFragmentLevel } from 'sea-core/entity';
-import type { ILevelRunner, SEALevelData, SEALevelInfo } from 'sea-core/level';
-import { PanelColumns, PanelTable } from '../components/PanelTable/PanelTable';
+import type { IPFLevelBoss, IPetFragmentLevelObject } from 'sea-core/entity';
+import type { ILevelBattleStrategy, ILevelRunner, SEALevelData, SEALevelInfo } from 'sea-core/level';
+import { PanelTable, type PanelColumns } from '../components/PanelTable/PanelTable';
 
 import { loadBattle } from '@sea-launcher/service/ModManager';
 import { saTheme } from '@sea-launcher/style';

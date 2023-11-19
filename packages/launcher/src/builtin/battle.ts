@@ -1,5 +1,5 @@
 import { ct } from '@sea-launcher/context/ct';
-import { BattleModExport } from '@sea-launcher/service/ModManager/type';
+import type { BattleModExport } from '@sea-launcher/service/ModManager/type';
 import { lowerBlood } from 'sea-core';
 
 export default [

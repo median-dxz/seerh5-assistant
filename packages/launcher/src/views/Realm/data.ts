@@ -1,4 +1,5 @@
-import { MoveStrategy, Operator, generateStrategyByName, matchNoBloodChain, matchSkillName } from 'sea-core';
+import type { MoveStrategy } from 'sea-core';
+import { Operator, generateStrategyByName, matchNoBloodChain, matchSkillName } from 'sea-core';
 import * as Battle from 'sea-core/battle';
 import * as SEAEntity from 'sea-core/entity';
 
