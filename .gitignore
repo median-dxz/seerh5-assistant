@@ -5,4 +5,5 @@ dist
 
 .env.local
 
-docs/**
+/docs/**
+/release/**

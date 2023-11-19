@@ -7,14 +7,20 @@
         "verbatimModuleSyntax": true,
         "target": "es2022",
         "outDir": "./dist",
+        "skipLibCheck": true,
         "noEmit": true,
         "strict": true,
         "lib": [
             "esnext",
             "dom"
         ],
+        "types": [
+            "sea-core/types/seerh5",
+            "sea-core/types/egret"
+        ]
     },
     "include": [
-        "./src"
+        "./src",
+        "lib/mod.d.ts"
     ]
 }

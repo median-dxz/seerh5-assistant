@@ -1,5 +1,3 @@
-/// <reference types="sea-core" />
-
 declare namespace SEAMod {
     type MetaData = {
         id: string;

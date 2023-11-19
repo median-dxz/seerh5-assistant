@@ -15,6 +15,6 @@ module.exports = {
         ],
     },
     plugins: ['@typescript-eslint'],
-    ignorePatterns: ['types', 'sdk', 'packages/core/test', '.*rc.cjs'],
+    ignorePatterns: ['types', 'packages/core/test', '.*rc.cjs', '/scripts', '/sdk'],
     root: true,
 };

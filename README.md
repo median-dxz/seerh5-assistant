@@ -4,7 +4,7 @@
 
 ![license](https://img.shields.io/github/license/median-dxz/seerh5-assistant)
 ![core version](https://img.shields.io/github/package-json/v/median-dxz/seerh5-assistant?filename=packages%2Fcore%2Fpackage.json&label=core%20version)
-![launcher version](https://img.shields.io/github/package-json/v/median-dxz/seerh5-assistant?filename=packages%2Fapp%2Fpackage.json&label=app%20version)
+![launcher version](https://img.shields.io/github/package-json/v/median-dxz/seerh5-assistant?filename=packages%2Flauncher%2Fpackage.json&label=launcher%20version)
 ![last commit](https://img.shields.io/github/last-commit/median-dxz/seerh5-assistant)
 
 目前处于**alpha**阶段，整体架构和api随时可能有**大型更改和重构**。
