@@ -9,7 +9,7 @@ RoadMap: **见Readme**
 
 - [ ] 项目更名为SEA(Seerh5 Assistant Project), 启动器部分名称更改为SEAL(Seerh5 Assistant Launcher)
 
-# Core 当前版本 v0.6.0
+# Core 当前版本 v0.6.1
 
 - [ ] 整合官方的一个module显示log
   - [ ] 屏蔽官方实现
@@ -17,12 +17,14 @@ RoadMap: **见Readme**
 - [ ] 统一监听器接口, SEAEventTarget作为基类, Socket和GameModule去继承, 最后暴露EventBus统合
   - [ ] Socket的res监听fallback到SocketConnection
   - [ ] GameModule支持类型Map推导
+- [ ] 重构GameConfig查询模块, 采用接口+注册制, 配合typeMap, 添加可扩展性
 - [ ] 移出注册事件时的无关逻辑到`event-bus`的`internal`
 - [ ] SAType从DTS中移动到`core`下
 - [ ] 属性攻击/特攻/物攻的枚举
 - [ ] 涉及缩写sa的字符串部分用常量代替（缩写未来将要更改为sea）
 - [ ] 通过declare module和内建命名空间支持等方式，使得sa-core支持扩展，类似d3和jq的插件
   - [ ] 添加hook的扩展点
+  - [ ] 添加查询项目的扩展点
 - [ ] 将type作为打包输出的一部分而是在monorepo内共享
 - [ ] 分离开发调试用的模块到专门的开发包
 - [ ] 生产开发环境判断

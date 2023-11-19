@@ -3,7 +3,7 @@ import { delay } from '../common/utils.js';
 import { PetPosition, Potion } from '../constant/index.js';
 import { Socket, buyPetItem, toggleAutoCure } from '../engine/index.js';
 import { PetElement, type Pet } from '../entity/index.js';
-import { PetDataManger, SEAPet, SEAPetLocation, getBagPets } from '../pet-helper/index.js';
+import { PetDataManger, PetLocation, SEAPet, getBagPets } from '../pet-helper/index.js';
 
 type PotionId = (typeof Potion)[keyof typeof Potion];
 /**
@@ -28,12 +28,12 @@ export async function lowerBlood(
 
     for (const ct of cts) {
         const location = await SEAPet.location(ct);
-        if (location !== SEAPetLocation.Bag && location !== SEAPetLocation.Default) {
+        if (location !== PetLocation.Bag && location !== PetLocation.Default) {
             if (PetManager.isBagFull) {
                 const replacePet = replacePets.pop()!;
                 await replacePet.popFromBag();
             }
-            await SEAPet.setLocation(ct, SEAPetLocation.Bag);
+            await SEAPet.setLocation(ct, PetLocation.Bag);
         }
     }
     await getBagPets();
@@ -115,7 +115,7 @@ export async function switchBag(cts: number[]) {
         }
     }
     for (const v of cts) {
-        await SEAPet.setLocation(v, SEAPetLocation.Bag);
+        await SEAPet.setLocation(v, PetLocation.Bag);
     }
 }
 

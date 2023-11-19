@@ -1,4 +1,4 @@
-import { PetFragmentLevelDifficulty as Difficulty, PetFragmentLevel, SEALevelState, delay } from 'sea-core';
+import { PetFragmentLevelDifficulty as Difficulty, LevelState, PetFragmentLevel, delay } from 'sea-core';
 
 import { Box, Button, CircularProgress, Dialog, DialogActions, Divider, Typography, alpha } from '@mui/material';
 import { SEAContext } from '@sea-launcher/context/SAContext';
@@ -7,7 +7,7 @@ import React, { useCallback, useState } from 'react';
 import * as Battle from 'sea-core/battle';
 import * as Engine from 'sea-core/engine';
 import type { IPFLevelBoss, IPetFragmentLevelObject } from 'sea-core/entity';
-import type { ILevelBattleStrategy, ILevelRunner, SEALevelData, SEALevelInfo } from 'sea-core/level';
+import type { ILevelBattleStrategy, ILevelRunner, LevelData as SEALevelData, LevelInfo as SEALevelInfo } from 'sea-core/level';
 import { PanelTable, type PanelColumns } from '../components/PanelTable/PanelTable';
 
 import { loadBattle } from '@sea-launcher/service/ModManager';
@@ -112,13 +112,13 @@ export class PetFragmentRunner implements ILevelRunner<LevelData, LevelInfo> {
 
         if (data.isChallenge || data.leftTimes > 0) {
             if (this.option.sweep) {
-                return 'sweep' as unknown as SEALevelState;
+                return 'sweep' as unknown as LevelState;
             } else {
-                return SEALevelState.BATTLE;
+                return LevelState.BATTLE;
             }
         } else {
             this.data.success = true;
-            return SEALevelState.STOP;
+            return LevelState.STOP;
         }
     }
 
@@ -211,7 +211,7 @@ export function PetFragmentLevelPanel() {
             const r = await levelUpdater();
             setTaskCompleted(
                 produce((draft) => {
-                    draft[index] = r === SEALevelState.STOP;
+                    draft[index] = r === LevelState.STOP;
                 })
             );
             return r;

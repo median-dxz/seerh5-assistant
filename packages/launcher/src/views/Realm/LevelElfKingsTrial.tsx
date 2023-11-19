@@ -1,6 +1,6 @@
-import { SEALevelState, Socket } from 'sea-core';
+import { LevelState, Socket } from 'sea-core';
 
-import type { ILevelBattleStrategy, ILevelRunner, SEALevelData, SEALevelInfo } from 'sea-core';
+import type { ILevelBattleStrategy, ILevelRunner, LevelData as SEALevelData, LevelInfo as SEALevelInfo } from 'sea-core';
 
 import { SeaModuleLogger } from '@sea-launcher/utils/logger';
 import dataProvider from './data';
@@ -36,7 +36,7 @@ interface LevelOption {
 export class LevelElfKingsTrial implements ILevelRunner<LevelData, SEALevelInfo> {
     data: LevelData = {
         leftTimes: 0,
-        state: SEALevelState.STOP,
+        state: LevelState.STOP,
         success: false,
         stimulation: false,
         unlockHard: false,
@@ -74,25 +74,25 @@ export class LevelElfKingsTrial implements ILevelRunner<LevelData, SEALevelInfo>
 
         console.log(this.data);
 
-        if (this.data.state === ('award_error' as SEALevelState)) {
+        if (this.data.state === ('award_error' as LevelState)) {
             this.logger(`${this.info.name}: 领取奖励出错`);
-            return SEALevelState.STOP;
+            return LevelState.STOP;
         }
 
         if (!this.data.unlockHard) {
             this.logger(`${this.info.name}: 未解锁困难难度`);
             this.data.success = true;
-            return SEALevelState.STOP;
+            return LevelState.STOP;
         } else if (this.data.leftTimes > 0) {
             this.logger(`${this.info.name}: 进入关卡`);
-            return SEALevelState.BATTLE;
+            return LevelState.BATTLE;
         } else {
             this.data.success = !this.data.canReceiveReward;
             if (this.data.weeklyChallengeCount >= 30 && this.data.canReceiveReward) {
                 this.logger(`${this.info.name}: 领取奖励`);
-                return SEALevelState.AWARD;
+                return LevelState.AWARD;
             }
-            return SEALevelState.STOP;
+            return LevelState.STOP;
         }
     }
 
@@ -113,7 +113,7 @@ export class LevelElfKingsTrial implements ILevelRunner<LevelData, SEALevelInfo>
                 await Socket.sendByQueue(42395, [106, 3, 0, 0]);
             } catch (error) {
                 this.logger(error);
-                this.data.state = 'award_error' as SEALevelState;
+                this.data.state = 'award_error' as LevelState;
             }
         },
     };

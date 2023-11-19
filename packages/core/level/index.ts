@@ -4,15 +4,15 @@ import { toggleAutoCure } from '../engine/index.js';
 import { switchBag } from '../functions/index.js';
 import { SEAPet, cureAllPet } from '../pet-helper/index.js';
 import type { ILevelRunner } from './type.js';
-import { SEALevelState } from './type.js';
+import { LevelState } from './type.js';
 
 export * from './type.js';
 
-export class SEALevelManager {
+export class LevelManager {
     // 单例模式
-    private static _instance: SEALevelManager;
+    private static _instance: LevelManager;
     public static get ins() {
-        return this._instance || (this._instance = new SEALevelManager());
+        return this._instance || (this._instance = new LevelManager());
     }
     private constructor() {
         // constructor
@@ -87,10 +87,10 @@ export class SEALevelManager {
                 logger('更新关卡信息');
                 const state = await runner.updater();
                 switch (state) {
-                    case SEALevelState.BATTLE:
+                    case LevelState.BATTLE:
                         await battle();
                         break;
-                    case SEALevelState.STOP:
+                    case LevelState.STOP:
                         this.runner = null;
                         break;
                     default:

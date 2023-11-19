@@ -1,6 +1,6 @@
 import { Button, Divider, Typography } from '@mui/material';
 
-import { SEAConfig, cureAllPet } from 'sea-core';
+import { GameConfig, cureAllPet } from 'sea-core';
 import * as Engine from 'sea-core/engine';
 
 import { PanelStateContext } from '@sea-launcher/context/PanelState';
@@ -12,8 +12,8 @@ import { AnimationMode } from './AnimationMode';
 import { BattleFireInfo } from './BattleFireInfo';
 import { PetBagController } from './PetBagController';
 
-const titleName = SEAConfig.getName.bind(null, 'title');
-const suitName = SEAConfig.getName.bind(null, 'suit');
+const titleName = GameConfig.getName.bind(null, 'title');
+const suitName = GameConfig.getName.bind(null, 'suit');
 
 export function GameController() {
     const [userTitle, setUserTitle] = React.useState(Engine.getUserTitle());
@@ -72,7 +72,7 @@ export function GameController() {
                     renderItem={suitName}
                     onSelectItem={changeSuit}
                 >
-                    {SEAConfig.getName('suit', userSuit)}
+                    {GameConfig.getName('suit', userSuit)}
                 </PopupMenuButton>
                 <Typography>{`效果: ${ItemSeXMLInfo.getSuitEff(userSuit)}`}</Typography>
             </Typography>
@@ -86,9 +86,9 @@ export function GameController() {
                     renderItem={titleName}
                     onSelectItem={changeTitle}
                 >
-                    {SEAConfig.getName('title', userTitle)}
+                    {GameConfig.getName('title', userTitle)}
                 </PopupMenuButton>
-                <Typography>{`效果: ${SEAConfig.get('title', userTitle)?.abtext}`}</Typography>
+                <Typography>{`效果: ${GameConfig.get('title', userTitle)?.abtext}`}</Typography>
             </Typography>
 
             <Divider />

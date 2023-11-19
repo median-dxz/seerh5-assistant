@@ -4,7 +4,7 @@ import { SEAEventTarget } from '../common/utils.js';
 export * from './module.js';
 export * from './socket.js';
 
-export class SEAEventBus {
+export class EventBus {
     private cleanFn: AnyFunction[] = [];
 
     hook<TEvent extends string>(...args: Parameters<typeof SEAEventTarget.on<TEvent>>) {

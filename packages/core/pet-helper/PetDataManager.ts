@@ -3,11 +3,11 @@ import { Socket } from '../engine/index.js';
 import { Item, Pet } from '../entity/index.js';
 import { SocketListener } from '../event-bus/index.js';
 
-import { SEAPetLocation, setLocationTable } from './PetLocation.js';
+import { PetLocation, setLocationTable } from './PetLocation.js';
 
 export type CatchTime = number;
 
-class DataManager {
+class PetDataManager {
     private readonly CacheSize = 50;
     private cacheTimestamp = new Map<CatchTime, number>();
     private hasInit = false;
@@ -148,7 +148,7 @@ class DataManager {
     }
 }
 
-const ins = new DataManager();
+const ins = new PetDataManager();
 
 export { ins as PetDataManger };
 
@@ -162,42 +162,42 @@ export class ProxyPet extends Pet {
     }
 
     default() {
-        return this.setLocation(SEAPetLocation.Default);
+        return this.setLocation(PetLocation.Default);
     }
 
-    async location(): Promise<SEAPetLocation> {
+    async location(): Promise<PetLocation> {
         const allInfo = await ins.miniInfo.get();
         const bagPet = await ins.bag.get();
         if (this.catchTime === ins.defaultCt && bagPet[0].length > 0) {
-            return SEAPetLocation.Default;
+            return PetLocation.Default;
         }
         if (bagPet[0].find((pet) => pet.catchTime === this.catchTime)) {
-            return SEAPetLocation.Bag;
+            return PetLocation.Bag;
         }
         if (bagPet[1].find((pet) => pet.catchTime === this.catchTime)) {
-            return SEAPetLocation.SecondBag;
+            return PetLocation.SecondBag;
         }
         if (allInfo.has(this.catchTime)) {
             const pet = allInfo.get(this.catchTime)!;
-            let pos = SEAPetLocation.Unknown;
+            let pos = PetLocation.Unknown;
             switch (pet.posi) {
                 case 0:
-                    pos = SEAPetLocation.Storage;
+                    pos = PetLocation.Storage;
                     break;
                 case 4:
-                    pos = SEAPetLocation.Elite;
+                    pos = PetLocation.Elite;
                     break;
                 case 14:
-                    pos = SEAPetLocation.OnDispatching;
+                    pos = PetLocation.OnDispatching;
                     break;
                 default:
             }
             return pos;
         }
-        return SEAPetLocation.Unknown;
+        return PetLocation.Unknown;
     }
 
-    async setLocation(newLocation: SEAPetLocation) {
+    async setLocation(newLocation: PetLocation) {
         const oldLocation = await this.location();
         if (newLocation === oldLocation) {
             return false;
@@ -213,8 +213,8 @@ export class ProxyPet extends Pet {
 
     async popFromBag() {
         const local = await this.location();
-        if (local === SEAPetLocation.Bag || local === SEAPetLocation.SecondBag || local === SEAPetLocation.Default) {
-            await this.setLocation(SEAPetLocation.Storage);
+        if (local === PetLocation.Bag || local === PetLocation.SecondBag || local === PetLocation.Default) {
+            await this.setLocation(PetLocation.Storage);
         }
         return;
     }

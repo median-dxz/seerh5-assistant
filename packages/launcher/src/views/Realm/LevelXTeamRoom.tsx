@@ -1,6 +1,6 @@
-import { SEALevelState, Socket } from 'sea-core';
+import { LevelState, Socket } from 'sea-core';
 
-import type { ILevelBattleStrategy, ILevelRunner, SEALevelData, SEALevelInfo } from 'sea-core';
+import type { ILevelBattleStrategy, ILevelRunner, LevelData as SEALevelData, LevelInfo as SEALevelInfo } from 'sea-core';
 
 import { SeaModuleLogger } from '@sea-launcher/utils/logger';
 import dataProvider from './data';
@@ -18,7 +18,7 @@ interface LevelData extends SEALevelData {
 export class LevelXTeamRoom implements ILevelRunner<LevelData, SEALevelInfo> {
     data: LevelData = {
         leftTimes: 0,
-        state: SEALevelState.STOP,
+        state: LevelState.STOP,
         success: false,
         open: false,
         dailyMinRound: 0,
@@ -50,45 +50,45 @@ export class LevelXTeamRoom implements ILevelRunner<LevelData, SEALevelInfo> {
         this.data.dailyMinRound = values[1];
         this.data.weeklyCompletedCount = values[2];
 
-        if (this.data.state === ('award_error' as SEALevelState)) {
+        if (this.data.state === ('award_error' as LevelState)) {
             this.data.success = false;
-            return SEALevelState.STOP;
+            return LevelState.STOP;
         }
 
         if (this.data.weeklyRewardReceived) {
             this.logger(`${this.info.name}: 日任完成`);
             this.data.success = true;
-            return SEALevelState.STOP;
+            return LevelState.STOP;
         }
 
         if (!this.data.weeklyRewardReceived && this.data.weeklyCompletedCount >= 5) {
             this.logger(`${this.info.name}: 领取每周奖励`);
-            return 'award_weekly' as unknown as SEALevelState;
+            return 'award_weekly' as unknown as LevelState;
         }
 
         if (this.data.dailyRewardReceived) {
             this.logger(`${this.info.name}: 日任完成`);
             this.data.success = true;
-            return SEALevelState.STOP;
+            return LevelState.STOP;
         }
 
         if (!this.data.dailyRewardReceived && this.data.dailyMinRound > 0) {
             this.logger(`${this.info.name}: 领取每日奖励`);
-            return SEALevelState.AWARD;
+            return LevelState.AWARD;
         }
 
         if (this.data.dailyMinRound === 0 && (this.data.leftTimes > 0 || this.data.open)) {
             this.logger(`${this.info.name}: 进入战斗`);
             if (this.data.open) {
-                return SEALevelState.BATTLE;
+                return LevelState.BATTLE;
             } else {
-                return 'open_level' as unknown as SEALevelState;
+                return 'open_level' as unknown as LevelState;
             }
         }
 
         this.logger(`${this.info.name}: 日任失败`);
         this.data.success = false;
-        return SEALevelState.STOP;
+        return LevelState.STOP;
     }
 
     selectBattle() {
@@ -112,7 +112,7 @@ export class LevelXTeamRoom implements ILevelRunner<LevelData, SEALevelInfo> {
                 await Socket.sendByQueue(42395, [105, 2, 0, 0]);
             } catch (error) {
                 this.logger(error);
-                this.data.state = 'award_error' as SEALevelState;
+                this.data.state = 'award_error' as LevelState;
             }
         },
 
@@ -121,7 +121,7 @@ export class LevelXTeamRoom implements ILevelRunner<LevelData, SEALevelInfo> {
                 await Socket.sendByQueue(42395, [105, 3, 0, 0]);
             } catch (error) {
                 this.logger(error);
-                this.data.state = 'award_error' as SEALevelState;
+                this.data.state = 'award_error' as LevelState;
             }
         },
     };

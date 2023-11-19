@@ -15,13 +15,15 @@ import { MainPanel } from './views/MainPanel';
 
 import { Hook } from 'sea-core';
 import { Manager as BattleManager, autoStrategy } from 'sea-core/battle';
-import { SEAEventBus, SocketListener, type SocketEventHandler } from 'sea-core/event-bus';
+import { EventBus, SocketListener, type SocketEventHandler } from 'sea-core/event-bus';
 
 import { QuickAccess } from './QuickAccess';
 import { SEAModManager } from './service/ModManager';
 
 const battleStrategyStorage = SEALocalStorage.BattleStrategy;
-const eventBus = new SEAEventBus();
+const eventBus = new EventBus();
+
+// console.log(import.meta.env.DEV);
 
 const Logger = {
     BattleManager: { info: SeaModuleLogger('BattleManager', 'info') },

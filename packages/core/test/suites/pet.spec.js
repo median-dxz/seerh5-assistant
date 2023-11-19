@@ -1,10 +1,10 @@
 import {
+    EventBus,
     HelperLoader,
     Hook,
     Manager,
-    SEAEventBus,
+    PetLocation,
     SEAPet,
-    SEAPetLocation,
     delay,
     getAutoCureState,
     getBagPets,
@@ -19,14 +19,14 @@ var expect = chai.expect;
 describe('PetHelper', function () {
     this.timeout('15s');
 
-    /** @type {SEAEventBus} */
+    /** @type {EventBus} */
     let bus;
 
     before(async () => {
         await toggleAutoCure(false);
         HelperLoader();
 
-        bus = new SEAEventBus();
+        bus = new EventBus();
         bus.hook(Hook.Battle.battleStart, Manager.resolveStrategy);
         bus.hook(Hook.Battle.roundEnd, Manager.resolveStrategy);
     });
@@ -63,10 +63,10 @@ describe('PetHelper', function () {
     it('should set pet in main bag and let it default', async function () {
         const { catchTime } = env.测试精灵1;
 
-        await SEAPet.setLocation(catchTime, SEAPetLocation.Bag);
+        await SEAPet.setLocation(catchTime, PetLocation.Bag);
         const loc = await SEAPet.location(catchTime);
 
-        expect(loc).to.be.an('string').equal(SEAPetLocation.Default);
+        expect(loc).to.be.an('string').equal(PetLocation.Default);
     });
 
     it('should cure pet', async function () {
@@ -84,7 +84,7 @@ describe('PetHelper', function () {
         await SEAPet.popFromBag(catchTime);
         const loc = await SEAPet.location(catchTime);
 
-        expect(loc).to.be.an('string').equal(SEAPetLocation.Elite);
+        expect(loc).to.be.an('string').equal(PetLocation.Elite);
     });
 
     it('should get correct default', async function () {
@@ -95,20 +95,20 @@ describe('PetHelper', function () {
         await SEAPet.popFromBag(cts[1]);
 
         let loc = await SEAPet.location(cts[0]);
-        expect(loc).to.be.an('string').equal(SEAPetLocation.Default);
+        expect(loc).to.be.an('string').equal(PetLocation.Default);
         console.log(`loc1: ${loc} -> default`);
 
         await switchBag(cts);
         await SEAPet.popFromBag(cts[0]);
 
         loc = await SEAPet.location(cts[1]);
-        expect(loc).to.be.an('string').equal(SEAPetLocation.Default);
+        expect(loc).to.be.an('string').equal(PetLocation.Default);
         console.log(`loc2: ${loc} -> default`);
 
         await SEAPet.popFromBag(cts[1]);
 
         loc = await SEAPet.location(cts[1]);
-        expect(loc).to.be.an('string').not.equal(SEAPetLocation.Default).and.not.equal(SEAPetLocation.Bag);
+        expect(loc).to.be.an('string').not.equal(PetLocation.Default).and.not.equal(PetLocation.Bag);
         console.log(`loc3: ${loc} -> elite/storage`);
     });
 
@@ -125,7 +125,7 @@ describe('PetHelper', function () {
         const loc = await pet.location();
 
         expect(pet.hp).equal(50);
-        expect(loc).to.be.an('string').equal(SEAPetLocation.Default);
+        expect(loc).to.be.an('string').equal(PetLocation.Default);
     });
 
     it('should close the BattleEnd panel', async function () {

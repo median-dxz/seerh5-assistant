@@ -1,27 +1,27 @@
 import type { MoveStrategy } from '../battle/index.js';
 
-export enum SEALevelState {
+export enum LevelState {
     BATTLE = 'battle',
     AWARD = 'award',
     DO_ACTION = 'do_action',
     STOP = 'stop',
 }
 
-export type SEALevelAction = Record<SEALevelState, () => Promise<void>>;
+export type LevelAction = Record<LevelState, () => Promise<void>>;
 
-export interface SEALevelData {
+export interface LevelData {
     leftTimes: number;
     success: boolean;
-    state: SEALevelState;
+    state: LevelState;
 }
 
-export interface SEALevelInfo {
+export interface LevelInfo {
     name: string;
     maxTimes: number;
 }
 
 // 关卡配置
-export interface ILevelRunner<TData extends SEALevelData = SEALevelData, TInfo extends SEALevelInfo = SEALevelInfo> {
+export interface ILevelRunner<TData extends LevelData = LevelData, TInfo extends LevelInfo = LevelInfo> {
     // 关卡的动态数据
     data: TData;
     // 关卡的静态数据
@@ -32,7 +32,7 @@ export interface ILevelRunner<TData extends SEALevelData = SEALevelData, TInfo e
     actions: Record<string, (this: ILevelRunner<TData, TInfo>) => Promise<void>>;
 
     logger: typeof console.log;
-    updater(): Promise<SEALevelState>;
+    updater(): Promise<LevelState>;
     selectBattle(): ILevelBattleStrategy;
 
     beforeAll?: () => Promise<void>;

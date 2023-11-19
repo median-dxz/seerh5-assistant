@@ -1,6 +1,6 @@
-import { SEALevelState, Socket } from 'sea-core';
+import { LevelState, Socket } from 'sea-core';
 
-import type { ILevelBattleStrategy, ILevelRunner, SEALevelData, SEALevelInfo } from 'sea-core';
+import type { ILevelBattleStrategy, ILevelRunner, LevelData as SEALevelData, LevelInfo as SEALevelInfo } from 'sea-core';
 
 import { SeaModuleLogger } from '@sea-launcher/utils/logger';
 import dataProvider from './data';
@@ -20,7 +20,7 @@ interface LevelOption {
 export class LevelExpTraining implements ILevelRunner<LevelData, SEALevelInfo> {
     data: LevelData = {
         leftTimes: 0,
-        state: SEALevelState.STOP,
+        state: LevelState.STOP,
         success: false,
         rewardReceived: false,
         stimulation: false,
@@ -52,21 +52,21 @@ export class LevelExpTraining implements ILevelRunner<LevelData, SEALevelInfo> {
         this.data.success = this.data.rewardReceived;
 
         if (!this.data.rewardReceived) {
-            if (this.data.state === ('award_error' as SEALevelState)) {
-                return SEALevelState.STOP;
+            if (this.data.state === ('award_error' as LevelState)) {
+                return LevelState.STOP;
             }
 
             if (this.data.leftTimes > 0) {
                 this.logger(`${this.info.name}: 进入关卡`);
-                return SEALevelState.BATTLE;
+                return LevelState.BATTLE;
             } else {
                 this.logger(`${this.info.name}: 领取奖励`);
-                return SEALevelState.AWARD;
+                return LevelState.AWARD;
             }
         } else {
             this.logger(`${this.info.name}日任完成`);
             this.data.success = true;
-            return SEALevelState.STOP;
+            return LevelState.STOP;
         }
     }
 
@@ -87,7 +87,7 @@ export class LevelExpTraining implements ILevelRunner<LevelData, SEALevelInfo> {
                 await Socket.sendByQueue(42395, [116, 3, 0, 0]);
             } catch (error) {
                 this.logger(error);
-                this.data.state = 'award_error' as SEALevelState;
+                this.data.state = 'award_error' as LevelState;
             }
         },
     };

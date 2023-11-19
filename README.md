@@ -30,6 +30,8 @@
 
 关于近期的更新计划和正在进行的进度，请参阅：[SEA-Project](https://github.com/users/median-dxz/projects/2)
 
+项目简称: SEA，登录器简称：SEAL
+
 # 快速入门
 
 首先clone整个仓库，然后安装依赖：

@@ -1,7 +1,7 @@
 import { PetPosition } from '../constant/index.js';
 import { Socket } from '../engine/index.js';
 
-export enum SEAPetLocation {
+export enum PetLocation {
     Default = 'Default',
     Bag = 'Bag',
     SecondBag = 'SecondBag',
@@ -12,7 +12,7 @@ export enum SEAPetLocation {
 }
 
 export const setLocationTable: {
-    [loc in keyof typeof SEAPetLocation]: { [loc in keyof typeof SEAPetLocation]?: (ct: number) => Promise<boolean> };
+    [loc in keyof typeof PetLocation]: { [loc in keyof typeof PetLocation]?: (ct: number) => Promise<boolean> };
 } = {
     Default: {
         async SecondBag(ct) {
