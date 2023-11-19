@@ -180,9 +180,6 @@ declare var CountermarkEvent: any;
 declare var EffectInfoManager: any;
 declare var CountExpPanelManager: any;
 
-// popViewManager
-declare class PopView extends eui.Component {}
-
 // mods
 declare var GuideManager: any;
 declare var SystemTimerManager: any;

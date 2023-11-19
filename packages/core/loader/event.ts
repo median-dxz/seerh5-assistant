@@ -10,23 +10,31 @@ export default () => {
 
     type withClass<T> = T & { __class__: string };
 
-    ModuleManager.beginShow = wrapperAsync(ModuleManager.beginShow, undefined, function (_, moduleName: string) {
-        SEAEventTarget.emit(Hook.Module.construct, moduleName);
-        const curModule = ModuleManager.currModule as withClass<typeof ModuleManager.currModule>;
-        const moduleClass = curModule.__class__;
-        switch (moduleName) {
-            case 'battleResultPanel':
-                if (
-                    moduleClass === 'battleResultPanel.BattleResultPanel' ||
-                    moduleClass === 'battleResultPanel.BattleFailPanel'
-                ) {
-                    SEAEventTarget.emit(Hook.Battle.endPropShown);
-                }
-                break;
-            default:
-                break;
+    ModuleManager.beginShow = wrapperAsync(
+        ModuleManager.beginShow,
+        undefined,
+        function (_r, module, _1, _2, _3, _4, config) {
+            let id;
+            if (config) {
+                id = (config as { id: number; moduleName: string }).id;
+            }
+            SEAEventTarget.emit(Hook.Module.construct, { module, id });
+            const curModule = ModuleManager.currModule as withClass<typeof ModuleManager.currModule>;
+            const moduleClass = curModule.__class__;
+            switch (module) {
+                case 'battleResultPanel':
+                    if (
+                        moduleClass === 'battleResultPanel.BattleResultPanel' ||
+                        moduleClass === 'battleResultPanel.BattleFailPanel'
+                    ) {
+                        SEAEventTarget.emit(Hook.Battle.endPropShown);
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
-    });
+    );
 
     ModuleManager.removeModuleInstance = function (module) {
         const key = Object.keys(this._modules).find((key) => this._modules[key] === module);
@@ -38,6 +46,22 @@ export default () => {
             delete this._modules[key];
         }
     };
+
+    hookPrototype(PopViewManager, 'openView', function (originalFunc, r, ...args) {
+        originalFunc(r, ...args);
+        SEAEventTarget.emit(Hook.PopView.open, (Object.getPrototypeOf(r) as withClass<PopView>).__class__);
+    });
+
+    hookPrototype(PopViewManager, 'hideView', function (originalFunc, id, ...args) {
+        originalFunc(id, ...args);
+        if (typeof id !== 'number') {
+            id = id.hashCode;
+        }
+        const popView = this.__viewMap__['key_' + id];
+        if (popView) {
+            SEAEventTarget.emit(Hook.PopView.close, (Object.getPrototypeOf(popView) as withClass<PopView>).__class__);
+        }
+    });
 
     hookPrototype(AwardItemDialog, 'startEvent', async function (originalFunc, ...args) {
         originalFunc.apply(this, args);

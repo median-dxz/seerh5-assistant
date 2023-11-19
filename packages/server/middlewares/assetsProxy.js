@@ -29,7 +29,7 @@ export const saAssetsProxy = createProxyMiddleware({
                 if (url.includes('entry/entry.js')) {
                     const body = zlib.gunzipSync(rawBuf);
                     writeFileSync(path.resolve(base, 'entry', 'official.js'), body.toString());
-                    const data = readFileSync(path.resolve(base, 'entry', 'assistant.js'));
+                    const data = readFileSync(path.resolve(base, 'entry', 'injected.js'));
                     respBuf = zlib.gzipSync(data);
                 } else if (url.includes('sentry.js')) {
                     respBuf = zlib.gzipSync('var Sentry = {init: ()=>{}, configureScope: ()=>{}}');

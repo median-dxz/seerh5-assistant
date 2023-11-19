@@ -10,8 +10,8 @@ export default () => {
         GameModuleListener.emit(name, 'load');
     });
 
-    SEAEventTarget.on(Hook.Module.construct, (name) => {
-        GameModuleListener.emit(name, 'show');
+    SEAEventTarget.on(Hook.Module.construct, ({ module }) => {
+        GameModuleListener.emit(module, 'show');
     });
 
     SEAEventTarget.on(Hook.Module.openMainPanel, ({ module }) => {

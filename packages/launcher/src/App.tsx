@@ -31,7 +31,7 @@ const Logger = {
     ModuleManger: { info: SeaModuleLogger('ModuleManger', 'info') },
 };
 
-export default function SeaLauncher() {
+export default function App() {
     const [isCommandBarOpen, toggleCommandBar] = useState(false);
     const [isFighting, toggleFighting] = useState(false);
     const [battleAuto, setBattleAuto] = useState(false);

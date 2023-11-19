@@ -1,4 +1,4 @@
-import { Pet, SEAEventBus, debounce, getImageButtonListener, hookFn, hookPrototype } from 'sea-core';
+import { EventBus, Pet, debounce, getImageButtonListener, hookFn, hookPrototype } from 'sea-core';
 
 class PetBag implements SEAMod.IModuleMod<petBag.PetBag> {
     declare logger: typeof console.log;
@@ -11,7 +11,7 @@ class PetBag implements SEAMod.IModuleMod<petBag.PetBag> {
     };
 
     moduleName = 'petBag';
-    eventBus = new SEAEventBus();
+    eventBus = new EventBus();
     load() {
         // 开启本地换肤按钮
         hookPrototype(petBag.SkinView, 'onChooseSkin', function (f, ...args) {

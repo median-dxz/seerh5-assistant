@@ -216,8 +216,14 @@ declare class MainManager {
 }
 
 declare class ModuleManager {
-    static beginShow(moduleName: string): Promise<void>;
-    static _openModelCompete(): void;
+    static beginShow(
+        moduleName: string,
+        n?: string[],
+        o?: string,
+        r?: unknown,
+        i?: number,
+        moduleConfig: object | null
+    ): Promise<void>;
     static _addModuleToFreeRes(moduleName: string, resList: unknown[], resEffectList: unknown[], config: unknown): void;
     static loadScript(scriptName: string): Promise<void>;
     static hasmodule(moduleName: string): boolean;

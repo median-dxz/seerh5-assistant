@@ -4,6 +4,7 @@ import {
     Hook,
     Manager,
     Operator,
+    SEAEventTarget,
     cureAllPet,
     delay,
     matchNoBloodChain,
@@ -27,6 +28,10 @@ describe('BattleManager', function () {
         HelperLoader();
         bus = new EventBus();
         await toggleAutoCure(true);
+
+        SEAEventTarget.on(Hook.Socket.send, (data) => {
+            console.log(data);
+        });
     });
 
     it('test preset strategy function', async function () {
@@ -91,7 +96,7 @@ describe('BattleManager', function () {
             },
             async resolveNoBlood() {
                 noBlood = true;
-                return Operator.escape();
+                return false;
             },
         });
     });

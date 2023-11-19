@@ -1,0 +1,15 @@
+{
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+    ],
+    "rules": {},
+    "reportUnusedDisableDirectives": true,
+    "ignorePatterns": [
+        "/mods",
+        "/node_modules",
+        "/entry",
+        "/config"
+    ]
+}

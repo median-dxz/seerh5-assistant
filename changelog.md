@@ -7,31 +7,34 @@ RoadMap: **见Readme**
 
 **todo已经迁移至issue/project**
 
-- [ ] 项目更名为SEA(Seerh5 Assistant Project), 启动器部分名称更改为SEAL(Seerh5 Assistant Launcher)
+- [x] 项目更名为SEA(Seerh5 Assistant Project), 启动器部分名称更改为SEAL(Seerh5 Assistant Launcher)
+> 其实名称没变，变的是缩写
 
 # Core 当前版本 v0.6.1
 
-- [ ] 整合官方的一个module显示log
-  - [ ] 屏蔽官方实现
-  - [ ] 更新hook位置
+- [x] 整合官方的module加载调试输出
+  - [x] 屏蔽官方实现
+  - [x] 更新hook位置
 - [ ] 统一监听器接口, SEAEventTarget作为基类, Socket和GameModule去继承, 最后暴露EventBus统合
   - [ ] Socket的res监听fallback到SocketConnection
   - [ ] GameModule支持类型Map推导
-- [ ] 重构GameConfig查询模块, 采用接口+注册制, 配合typeMap, 添加可扩展性
+- [ ] 重构GameConfig查询模块, 采用接口+注册制, 配合TypeMap, 添加可扩展性
+- [ ] 统一组织所有的TypeMap到`constant`下
 - [ ] 移出注册事件时的无关逻辑到`event-bus`的`internal`
-- [ ] SAType从DTS中移动到`core`下
+- [ ] SAType从DTS中移动到`core/constant/type.ts`下
 - [ ] 属性攻击/特攻/物攻的枚举
-- [ ] 涉及缩写sa的字符串部分用常量代替（缩写未来将要更改为sea）
-- [ ] 通过declare module和内建命名空间支持等方式，使得sa-core支持扩展，类似d3和jq的插件
-  - [ ] 添加hook的扩展点
-  - [ ] 添加查询项目的扩展点
+- [ ] 通过declare module和内建命名空间支持等方式，使得Core支持扩展，类似d3和jq的插件
+  - [ ] 添加Loader的扩展点
+  - [ ] 添加GameConfig的扩展点
 - [ ] 将type作为打包输出的一部分而是在monorepo内共享
-- [ ] 分离开发调试用的模块到专门的开发包
-- [ ] 生产开发环境判断
 - [ ] 解耦登录器/后端特定逻辑
-- [ ] 解耦非核心功能
+- [ ] 解耦非核心功能, 全部移动到登录器下的`features`包下
   - [ ] 取代原functions子包
-  - [ ] script通过语法树进行高级反混淆，作为开发插件包提供，同时生产环境下禁用script解密
+  - [ ] script解密
+  - [ ] 对战显血
+  - [ ] 自动关弹窗
+  - [ ] logFilter
+  - [ ] script通过语法树进行高级反混淆, 主要目标是升级语法
 
 # Core v0.5.0
 
@@ -44,3 +47,5 @@ RoadMap: **见Readme**
 - [x] 添加战斗单元测试
 
 # App 当前版本 v0.5.1
+
+- [ ] 生产开发环境判断
