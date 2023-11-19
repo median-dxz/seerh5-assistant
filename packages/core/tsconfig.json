@@ -14,7 +14,7 @@
         "composite": true
     },
     "include": [
-        "../../types",
+        "./types",
         "./battle",
         "./common",
         "./constant",
@@ -25,6 +25,6 @@
         "./loader",
         "./pet-helper",
         "./level",
-        "./index.ts"
+        "index.ts"
     ],
 }

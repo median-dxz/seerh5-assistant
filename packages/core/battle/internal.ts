@@ -6,6 +6,9 @@ import { SocketListener } from '../event-bus/index.js';
 import * as Manager from './manager.js';
 import { Provider, cachedRoundInfo } from './provider.js';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const CountExpPanelManager: any;
+
 export default () => {
     /** better switch pet handler */
     PetBtnView.prototype.autoUse = function () {

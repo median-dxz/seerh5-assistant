@@ -1,10 +1,4 @@
-// @ts-check
-/// <reference types="vite/client" />
-
-type SEALevelInfo = import('sea-core').SEALevelInfo;
-type SEALevelData = import('sea-core').SEALevelData;
-type ILevelRunner<D extends SEALevelData, I extends SEALevelInfo> = import('sea-core').ILevelRunner<D, I>;
-type MoveStrategy = import('sea-core').MoveStrategy;
+/// <reference types="sea-core" />
 
 declare namespace SEAMod {
     type MetaData = {
@@ -65,7 +59,7 @@ declare namespace SEAMod {
     interface IQuickAccessPlugin extends Mod {
         icon: string;
         click(): void;
-        show?(): string; // 用以显示提示量，两个只能启用一个
+        show?(): string; // 显示提示，两个只能启用一个
         showAsync?(): Promise<string>;
     }
 }

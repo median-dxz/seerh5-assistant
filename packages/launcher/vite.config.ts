@@ -16,10 +16,7 @@ export default defineConfig(({ command, mode }) => {
                 '/seerh5.61.com': `http://localhost:${env['VITE_BACKEND_PORT']}`,
                 '/account-co.61.com': `http://localhost:${env['VITE_BACKEND_PORT']}`,
                 '/mods': `http://localhost:${env['VITE_BACKEND_PORT']}`,
-            },
-            watch: {
-                ignored: ['!**/node_modules/sea-core/**'],
-            },
+            }
         },
         build: {
             dynamicImportVarsOptions: {

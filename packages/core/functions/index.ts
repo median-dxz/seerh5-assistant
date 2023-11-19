@@ -178,7 +178,6 @@ export function updateBatteryTime() {
     const leftTime =
         MainManager.actorInfo.timeLimit -
         (MainManager.actorInfo.timeToday + Math.floor(Date.now() / 1000 - MainManager.actorInfo.logintimeThisTime));
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     BatteryController.Instance._leftTime = Math.max(0, leftTime);
 }
 

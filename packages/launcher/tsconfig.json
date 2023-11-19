@@ -21,12 +21,13 @@
             ],
         },
         "types": [
-            "vite/client"
+            "vite/client",
+            "sea-core/types/seerh5",
+            "sea-core/types/egret"
         ]
     },
     "include": [
-        "./src",
-        "../../types"
+        "./src"
     ],
     "references": [
         {

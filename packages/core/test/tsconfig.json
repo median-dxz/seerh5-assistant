@@ -10,12 +10,15 @@
         "allowUmdGlobalAccess": true,
         "resolveJsonModule": true,
         "checkJs": true,
-        "noEmit": true
+        "noEmit": true,
+        "typeRoots": [
+            "../node_modules/@types",
+            "../types"
+        ]
     },
     "include": [
         "suites/**/*",
         "env/**/*",
-        "../../../types", "../../../sdk-template/src/mod.d.ts",
     ],
     "references": [
         {

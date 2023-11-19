@@ -5,7 +5,6 @@ import { ThemeProvider } from '@mui/system';
 
 import { SEAContext } from '@sea-launcher/context/SAContext';
 
-import * as SEALocalStorage from '@sea-launcher/utils/hooks/SALocalStorage';
 import { SeaModuleLogger } from '@sea-launcher/utils/logger';
 
 import { saTheme } from '@sea-launcher/style';
@@ -20,7 +19,6 @@ import { EventBus, SocketListener, type SocketEventHandler } from 'sea-core/even
 import { QuickAccess } from './QuickAccess';
 import { SEAModManager } from './service/ModManager';
 
-const battleStrategyStorage = SEALocalStorage.BattleStrategy;
 const eventBus = new EventBus();
 
 // console.log(import.meta.env.DEV);

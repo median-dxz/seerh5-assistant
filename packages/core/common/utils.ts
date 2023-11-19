@@ -99,8 +99,6 @@ export const extractObjectId = <T extends { [key in K]: number }, K extends stri
 
 export const NOOP = () => {};
 
-export { createLocalStorageProxy, type LocalStorageProxy } from './LocalStorage.js';
-
 export { SEAEventTarget } from './EventTarget.js';
 
 export { CacheData } from './CacheData.js';

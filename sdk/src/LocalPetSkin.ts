@@ -1,4 +1,4 @@
-import { NOOP, Socket, createLocalStorageProxy } from 'sea-core';
+import { NOOP, Socket } from 'sea-core';
 
 const StorageKey = 'LocalSkin';
 

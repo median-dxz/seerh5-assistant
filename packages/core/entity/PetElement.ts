@@ -9,7 +9,7 @@ export class PetElement extends EntityBase {
     identifier: string;
     attr?: [number, number];
 
-    constructor(obj: SEAType.ElementObj) {
+    constructor(obj: seerh5.ElementObj) {
         super();
         this.__type = 'PetElement';
 

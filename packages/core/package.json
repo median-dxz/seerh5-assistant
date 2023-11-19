@@ -1,10 +1,17 @@
 {
-  "name": "sea-core",
+  "name": "@median-dxz/sea-core",
   "description": "SeerH5-Assistant SEA 核心库",
   "private": true,
   "type": "module",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "license": "MPL-2.0",
+  "repository": {
+    "url": "https://github.com/median-dxz/seerh5-assistant"
+  },
+  "author": {
+    "name": "median-dxz",
+    "url": "https://median-dxz.xyz/"
+  },
   "exports": {
     ".": "./dist/index.js",
     "./battle": "./dist/battle/index.js",
@@ -15,10 +22,20 @@
     "./entity": "./dist/entity/index.js",
     "./functions": "./dist/functions/index.js",
     "./pet-helper": "./dist/pet-helper/index.js",
-    "./level": "./dist/level/index.js"
+    "./level": "./dist/level/index.js",
+    "./types/seerh5": {
+      "types": "./types/@seerh5/index.d.ts"
+    },
+    "./types/egret": {
+      "types": "./types/@egret/index.d.ts"
+    }
   },
   "browser": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "types"
+  ],
   "scripts": {
     "build": "tsc --build",
     "watch": "tsc --watch",

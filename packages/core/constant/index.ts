@@ -21,13 +21,13 @@ export enum PetFragmentLevelDifficulty {
 }
 
 export type GameDataType = {
-    item: SEAType.ItemObj;
-    suit: SEAType.SuitObj;
-    title: SEAType.TitleObj;
-    element: SEAType.ElementObj;
-    skill: SEAType.MoveObj;
-    pet: SEAType.PetObj;
-    statusEffect: SEAType.StatusEffectObj;
+    item: seerh5.ItemObj;
+    suit: seerh5.SuitObj;
+    title: seerh5.TitleObj;
+    element: seerh5.ElementObj;
+    skill: seerh5.MoveObj;
+    pet: seerh5.PetObj;
+    statusEffect: seerh5.StatusEffectObj;
 };
 
 export const CmdMask = [

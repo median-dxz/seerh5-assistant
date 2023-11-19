@@ -1,7 +1,19 @@
-declare type Dict<T extends object> = Record<string | number, T>;
-declare type Callback<T = unknown> = (this: T, ...args: any[]) => void;
+/// <reference path="battle.d.ts" />
+/// <reference path="core.d.ts" />
+/// <reference path="common.d.ts" />
+/// <reference path="popViewManager.d.ts" />
+/// <reference path="socket.d.ts" />
 
-declare namespace SEAType {
+/// <reference path="modules/battleResultPanel.d.ts" />
+/// <reference path="modules/itemWarehouse.d.ts" />
+/// <reference path="modules/mainPanel.d.ts" />
+/// <reference path="modules/petBag.d.ts" />
+/// <reference path="modules/petNewSkillPanel.d.ts" />
+/// <reference path="modules/team.d.ts" />
+
+declare namespace seerh5 {
+    type Dict<T extends object> = Record<string | number, T>;
+    type Callback<T = unknown> = (this: T, ...args: any[]) => void;
     type EventHandler<E extends egret.EventDispatcher> = (event?: E) => void;
 
     class HashMap<T extends object> {
@@ -9,7 +21,7 @@ declare namespace SEAType {
         getValue(key: any): T;
         getValues(): Array<T>;
         private _length: number;
-        private _content: Dict<T>;
+        private _content: seerh5.Dict<T>;
         get length(): number;
     }
 
@@ -119,27 +131,15 @@ declare namespace SEAType {
     type SocketRequestData = (egret.ByteArray | number)[];
 }
 
-/** `sea`全局变量使用的额外命名空间 */
-declare interface Window {
-    sea: {
-        /** 原生客户端`console.log`的正则过滤列表 */
-        filterLogText: RegExp[];
-        /** 原生客户端`console.warn`的正则过滤列表 */
-        filterWarnText: RegExp[];
-        SeerH5Ready: boolean;
-        CoreReady: boolean;
-    };
-}
-
 declare namespace RES {
     function getVirtualUrl(url: string): string;
     function getResByUrl(url: string): Promise<egret.HashObject>;
 }
 
 declare interface AppDoStyle {
-    '0': 'DESTROY';
-    '1': 'HIDEN';
-    '2': 'NULL';
+    "0": "DESTROY";
+    "1": "HIDEN";
+    "2": "NULL";
     DESTROY: 0;
     HIDEN: 1;
     NULL: 2;
@@ -149,6 +149,10 @@ declare const AppDoStyle: AppDoStyle;
 
 declare var EventManager: egret.EventDispatcher;
 declare var Core: any;
+declare var config: {
+    xml: any;
+    Brave_lv: any;
+};
 declare var SeerVersionController: {
     getVersionUrl(url: string): string;
 };
@@ -165,34 +169,6 @@ declare class OnlineManager {
     setSentryScope: () => void;
 }
 
-// init/helper
-declare var Alarm: any;
-declare var Alert: any;
-declare var BatteryController: any;
-
-// init/module
-declare var UIUtils: null;
-
-// utils/sa-utils
-declare var CountermarkEvent: any;
-
-// entities
-declare var EffectInfoManager: any;
-declare var CountExpPanelManager: any;
-
-// mods
-declare var GuideManager: any;
-declare var SystemTimerManager: any;
-declare var markCenter: any;
-declare var PetSkinController: any;
-declare var PetSkinXMLInfo: any;
-declare var ClientConfig: any;
-declare var config: any;
-
-declare var PetFightSkinSkillReplaceXMLInfo: any;
-declare var PetIdTransform: any;
-declare var NatureXMLInfo: any;
-
 declare class SocketEvent extends egret.Event {
     data?: egret.ByteArray;
 }
@@ -204,9 +180,9 @@ declare class PetEvent extends egret.Event {
 }
 
 declare class PetFightEvent extends egret.Event {
-    static readonly ALARM_CLICK: 'fight_alarmClick';
-    static readonly ON_USE_PET_ITEM: 'onUsePetItem';
-    static readonly CHANGE_PET: 'changePet';
+    static readonly ALARM_CLICK: "fight_alarmClick";
+    static readonly ON_USE_PET_ITEM: "onUsePetItem";
+    static readonly CHANGE_PET: "changePet";
     constructor(type: string, obj?: any);
 }
 

@@ -3,7 +3,7 @@ import type { PetRoundInfo } from '../entity/index.js';
 import type { ProxyPet } from '../pet-helper/PetDataManager.js';
 
 type DataBuilder<T> = (data: ArrayBuffer) => T;
-type OnReqHandler = (bytes: SEAType.SocketRequestData) => void;
+type OnReqHandler = (bytes: seerh5.SocketRequestData) => void;
 type OnResHandler<TCmd extends number> = (data: SocketData<TCmd>) => void;
 
 type SocketData<TCmd extends number> = TCmd extends keyof SEASocketDataMap ? SEASocketDataMap[TCmd] : unknown;
@@ -55,7 +55,7 @@ export const SocketListener = {
         SocketListener.on(warpHandler);
     },
 
-    onReq(cmd: number, bytes: SEAType.SocketRequestData) {
+    onReq(cmd: number, bytes: seerh5.SocketRequestData) {
         if (!this.handlers.has(cmd)) {
             return;
         }

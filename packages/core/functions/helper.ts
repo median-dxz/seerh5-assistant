@@ -66,6 +66,10 @@ function enableFastStaticAnimation() {
     };
 }
 
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const Alert: any;
+
 /** cancel alert before use item for pet */
 function enableCancelAlertForUsePetItem() {
     ItemUseManager.prototype.useItem = function (t, e) {
@@ -86,6 +90,9 @@ function enableCancelAlertForUsePetItem() {
         }
     };
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const Alarm: any;
 
 /** take over the alarm dialog */
 function enableBetterAlarm() {

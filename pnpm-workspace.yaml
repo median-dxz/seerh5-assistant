@@ -1,5 +1,4 @@
 packages:
   - 'packages/core'
   - 'packages/launcher'
-  - 'packages/sdk'
   - 'packages/server'

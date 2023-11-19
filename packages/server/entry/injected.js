@@ -35,6 +35,7 @@ var sea = {
     ],
     filterWarnText: [
         /开始执行战斗动画/,
+        /PetID:.*offset/,
         /=.*?onUseSkill=.*=/,
         />.*?>面板.*?还没有.*$/,
         /battleResultPanel/,

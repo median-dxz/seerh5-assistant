@@ -1,3 +1,5 @@
+type Callback = seerh5.Callback;
+
 declare class AwardBaseDialog extends eui.Component {
     startEvent(): void;
     destroy(): void;
@@ -60,6 +62,11 @@ declare class CountermarkInfo {
     get markID(): number;
     get level(): number;
     get catchTime(): number;
+}
+
+declare class EffectInfo {
+    argsNum: number;
+    getInfo(effects: number[]): string;
 }
 
 declare class PetInfo {
@@ -246,6 +253,15 @@ declare class ModuleManager {
     static currModule: BaseModule;
 }
 
+declare class BatteryController {
+    static Instance: BatteryController;
+    _leftTime: number;
+}
+
+declare class EffectInfoManager {
+    static getEffect(id: number): EffectInfo;
+}
+
 declare class FightManager {
     static isWin: boolean | undefined;
     static fightAnimateMode: number;
@@ -309,8 +325,8 @@ declare class PetManager {
     static dispatchEvent(e: PetEvent): void;
     static isBagFull: boolean;
     static isSecondBagFull: boolean;
-    static _bagMap: SEAType.HashMap<PetInfo>;
-    static _secondBagMap: SEAType.HashMap<PetInfo>;
+    static _bagMap: seerh5.HashMap<PetInfo>;
+    static _secondBagMap: seerh5.HashMap<PetInfo>;
     static infos: PetInfo[];
     static secondInfos: PetInfo[];
     static secondBagTotalLength: number;
@@ -341,11 +357,11 @@ declare class CountermarkController {
 }
 
 declare class EffectIconControl {
-    static _hashMapByPetId: SEAType.HashMap<Array<{ Id: number }>>;
+    static _hashMapByPetId: seerh5.HashMap<Array<{ Id: number }>>;
 }
 
 declare class AchieveXMLInfo {
-    static titleRules: Dict<SEAType.TitleObj>;
+    static titleRules: seerh5.Dict<seerh5.TitleObj>;
     static isAbilityTitle(id: number): boolean;
     static getTitle(id: number): string;
     static getTitleDesc(id: number): string;
@@ -353,9 +369,9 @@ declare class AchieveXMLInfo {
 }
 
 declare class ItemXMLInfo {
-    static _itemDict: Dict<SEAType.ItemObj>;
+    static _itemDict: seerh5.Dict<seerh5.ItemObj>;
     static getName(id: number): string;
-    static getItemObj(id: number): SEAType.ItemObj | undefined;
+    static getItemObj(id: number): seerh5.ItemObj | undefined;
     static getSkillStoneRank(id: number): number;
 }
 
@@ -367,40 +383,40 @@ declare class ItemSeXMLInfo {
 
 declare class SkillXMLInfo {
     static SKILL_OBJ: {
-        Moves: { Move: Array<SEAType.MoveObj> };
-        SideEffects: { SideEffect: Array<SEAType.SideEffectObj>; _text: Array<string> };
+        Moves: { Move: Array<seerh5.MoveObj> };
+        SideEffects: { SideEffect: Array<seerh5.SideEffectObj>; _text: Array<string> };
     };
-    static movesMap: Dict<SEAType.MoveObj>;
-    static moveStoneMap: Dict<SEAType.MoveObj>;
+    static movesMap: seerh5.Dict<seerh5.MoveObj>;
+    static moveStoneMap: seerh5.Dict<seerh5.MoveObj>;
     static hideMovesMap: Record<number, Array<{ o: number; id: number }>>;
     static typeMap: {
-        [Property: string]: SEAType.ElementObj;
+        [Property: string]: seerh5.ElementObj;
     };
     static getName(id: number): string;
     static getTypeID(id: number): number;
     static getCategory(id: number): number;
     static getCategoryName(id: number): string;
     static getHideSkillId(petId: number): number;
-    static getSkillObj(id: number): SEAType.MoveObj | undefined;
+    static getSkillObj(id: number): seerh5.MoveObj | undefined;
     static getStoneBySkill(id: number): number | undefined;
 }
 
 declare class SuitXMLInfo {
-    static _dataMap: SEAType.HashMap<SEAType.SuitObj>;
+    static _dataMap: seerh5.HashMap<seerh5.SuitObj>;
     static getName(id: number): string;
     static getIsElite(id: number): boolean;
     static getSuitID(clothIds: number[]): number;
 }
 
 declare class PetXMLInfo {
-    static _dataMap: Dict<SEAType.PetObj>;
+    static _dataMap: seerh5.Dict<seerh5.PetObj>;
     static getType(id: number): number;
     static getName(id: number): string;
 }
 
 declare class PetStatusEffectConfig {
     static xml: {
-        BattleEffect: [{ Name: string; SubEffect: SEAType.StatusEffectObj[] }];
+        BattleEffect: [{ Name: string; SubEffect: seerh5.StatusEffectObj[] }];
     };
 }
 

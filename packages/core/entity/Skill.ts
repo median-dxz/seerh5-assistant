@@ -31,7 +31,7 @@ export class Skill extends EntityBase implements ISkillObject {
     stoneSkillId?: number;
     stoneItemId?: number;
 
-    constructor(obj: SEAType.MoveObj) {
+    constructor(obj: seerh5.MoveObj) {
         super();
         this.__type = 'Skill';
         let tempEffects: [SkillEffectArgs, SkillEffectArgs];
@@ -95,10 +95,8 @@ export class Skill extends EntityBase implements ISkillObject {
 
     get describe() {
         return this.effects[0].reduce((pre, v) => {
-            /* eslint-disable */
             const effect = EffectInfoManager.getEffect(v);
             pre += effect.getInfo(this.effects[1].splice(0, effect.argsNum)) + '\n';
-            /* eslint-enable */
             return pre;
         }, '');
     }

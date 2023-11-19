@@ -59,7 +59,7 @@ export class PetFragmentLevel extends EntityBase implements IPetFragmentLevelObj
     failedTimes?: number;
     curPosition?: number;
 
-    constructor(obj: SEAType.PetFragmentLevelObj) {
+    constructor(obj: seerh5.PetFragmentLevelObj) {
         super();
         this.__type = 'PetFragmentLevel';
 

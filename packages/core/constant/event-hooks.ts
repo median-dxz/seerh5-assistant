@@ -39,7 +39,7 @@ export type SEAHookDataMap = {
     popview_open: string;
     popview_close: string;
     award_receive: { items?: Array<{ id: number; count: number }> };
-    socket_send: { cmd: number; data: SEAType.SocketRequestData };
+    socket_send: { cmd: number; data: seerh5.SocketRequestData };
     socket_receive: { cmd: number; buffer: egret.ByteArray | undefined };
     petbag_update: [Pet[], Pet[]];
 };

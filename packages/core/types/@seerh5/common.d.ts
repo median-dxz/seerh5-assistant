@@ -1,5 +1,5 @@
 declare class ImageButtonUtil {
-    static imgs: Dict<{
+    static imgs: seerh5.Dict<{
         callback: Callback<unknown>;
     }>;
 }
