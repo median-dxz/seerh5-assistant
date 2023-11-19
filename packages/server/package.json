@@ -3,7 +3,6 @@
     "private": true,
     "type": "module",
     "version": "0.5.1",
-    "license": "AGPL-3.0-or-later",
     "main": "./index.js",
     "scripts": {
         "start": "nodemon ./index.js"
