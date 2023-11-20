@@ -23,6 +23,7 @@ var warnFilter = new Proxy(console.warn, {
 var sea = {
     SeerH5Ready: false,
     CoreReady: false,
+    EVENT_SEER_READY: 'seerh5_load',
     filterLogText: [
         /=.*?lifecycle.on.*=.*?$/,
         /(M|m)usic/,
@@ -214,7 +215,7 @@ var Driver = (function () {
                             document.head.appendChild(script).parentNode.removeChild(script);
                             if (config.action === 'Core.init') {
                                 // dispatch event begin
-                                window.dispatchEvent(new CustomEvent('seerh5_load'));
+                                window.dispatchEvent(new CustomEvent(sea.EVENT_SEER_READY));
                                 sea.SeerH5Ready = true;
                                 // dispatch event end
                                 Driver.doAction();

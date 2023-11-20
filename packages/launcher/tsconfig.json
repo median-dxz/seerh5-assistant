@@ -4,6 +4,7 @@
         "tsBuildInfoFile": "../../.tsbuildinfo/app.tsbuildinfo",
         "moduleResolution": "bundler",
         "module": "esnext",
+        "isolatedModules": true,
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         "allowArbitraryExtensions": true,

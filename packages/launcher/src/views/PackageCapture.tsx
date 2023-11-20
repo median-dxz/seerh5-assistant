@@ -4,8 +4,8 @@ import { PanelField, PanelTable, useRowData, type PanelColumns } from '@sea-laun
 import { SeaTableRow } from '@sea-launcher/components/styled/TableRow';
 import { produce } from 'immer';
 import * as React from 'react';
-import type { AnyFunction, SEAHookDataMap } from 'sea-core';
-import { CmdMask, Hook, SEAEventTarget, hookFn } from 'sea-core';
+import type { AnyFunction, HookDataMap } from 'sea-core';
+import { Hook, SEAHookDispatcher, hookFn } from 'sea-core';
 
 interface CapturedPackage {
     type: 'RemoveListener' | 'AddListener' | 'Received' | 'Send';
@@ -44,6 +44,16 @@ const capturedPkgFactory = (
 };
 
 // SocketConnection.mainSocket.filterCMDLog(1001, 1002, 1016, 2001, 2002, 2441, 9019, 41228, 42387);
+const CmdMask = [
+    1002, // SYSTEM_TIME
+    2001, // ENTER_MAP
+    2002, // LEAVE_MAP
+    2004, // MAP_OGRE_LIST
+    2441, // LOAD_PERCENT
+    9019, // NONO_FOLLOW_OR_HOOM
+    9274, //PET_GET_LEVEL_UP_EXP
+    41228, // SYSTEM_TIME_CHECK
+];
 
 // clear() {
 //     this.captureList.splice(0);
@@ -79,12 +89,12 @@ export function PackageCapture() {
         //     capturedPkgFactory(setCapture, { cmd, type: 'RemoveListener', data: callback });
         // });
 
-        const onReceive = ({ buffer, cmd }: SEAHookDataMap['socket_receive']) => {
+        const onReceive = ({ buffer, cmd }: HookDataMap['socket_receive']) => {
             if (state !== 'capturing' || CmdMask.includes(cmd)) return;
             capturedPkgFactory(setCapture, { cmd, data: buffer?.dataView, type: 'Received' });
         };
 
-        const onSend = ({ cmd, data }: SEAHookDataMap['socket_send']) => {
+        const onSend = ({ cmd, data }: HookDataMap['socket_send']) => {
             if (state !== 'capturing' || CmdMask.includes(cmd)) return;
             capturedPkgFactory(setCapture, {
                 cmd,
@@ -93,14 +103,14 @@ export function PackageCapture() {
             });
         };
 
-        SEAEventTarget.on(Hook.Socket.receive, onReceive);
-        SEAEventTarget.on(Hook.Socket.send, onSend);
+        SEAHookDispatcher.on(Hook.Socket.receive, onReceive);
+        SEAHookDispatcher.on(Hook.Socket.send, onSend);
 
         return () => {
             hookFn(SocketConnection.mainSocket, 'addCmdListener');
             hookFn(SocketConnection.mainSocket, 'removeCmdListener');
-            SEAEventTarget.off(Hook.Socket.send, onSend);
-            SEAEventTarget.off(Hook.Socket.receive, onReceive);
+            SEAHookDispatcher.off(Hook.Socket.send, onSend);
+            SEAHookDispatcher.off(Hook.Socket.receive, onReceive);
         };
     }, [state, capture]);
 

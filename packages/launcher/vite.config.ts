@@ -23,9 +23,6 @@ export default defineConfig(({ command, mode }) => {
                 exclude: ['src/service/ModManager/*'],
             },
         },
-        optimizeDeps: {
-            exclude: ['sea-core'],
-        },
         preview: {
             port: 1234,
         },

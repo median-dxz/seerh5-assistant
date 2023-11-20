@@ -50,6 +50,37 @@ export function petFragmentLevel(ctx) {
 /**
  * @type {import('@koa/router').Middleware}
  */
+export function launcherConfig(ctx) {
+    // 判断是get还是post
+    if (ctx.method === 'GET') {
+        const configPath = path.join(base, 'config', 'sea-launcher.toml');
+        if (!fs.existsSync(configPath)) {
+            fs.writeFileSync(configPath, '');
+        }
+        const content = fs.readFileSync(configPath, 'utf-8');
+        /** @type {any} */
+        const config = toml.parse(content);
+        ctx.body = config['Launcher'];
+    } else if (ctx.method === 'POST') {
+        const configPath = path.join(base, 'config', 'sea-launcher.toml');
+        if (!fs.existsSync(configPath)) {
+            fs.writeFileSync(configPath, '');
+        }
+        const content = fs.readFileSync(configPath, 'utf-8');
+        /** @type {any} */
+        const config = toml.parse(content);
+        const newConfig = ctx.request.body;
+        config['Launcher'] = newConfig;
+        fs.writeFileSync(configPath, toml.stringify(config));
+        ctx.body = {
+            success: true,
+        };
+    }
+}
+
+/**
+ * @type {import('@koa/router').Middleware}
+ */
 export function realm(ctx) {
     throw new Error('Function not implemented.');
 }

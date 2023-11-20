@@ -1,7 +1,5 @@
-import { enableMapSet } from 'immer';
-
 import type { AnyFunction } from '../common/utils.js';
-import { NOOP, SEAEventTarget, hookPrototype } from '../common/utils.js';
+import { NOOP, SEAHookDispatcher, hookPrototype } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
 
 import battle from '../battle/internal.js';
@@ -26,8 +24,6 @@ export const InternalInitiator = {
 };
 
 export function enableBasic() {
-    enableMapSet();
-
     OnlineManager.prototype.setSentryScope = NOOP;
     ModuleManager.loadScript = loadScript;
     SocketEncryptImpl.prototype.log = socketLogger;
@@ -60,7 +56,7 @@ function loadScript(this: ModuleManager, scriptName: string) {
                 script = script.replaceAll(/console\.warn/g, 'warnFilter');
                 o.text = `//@ sourceURL=http://seerh5.61.com/${url + '\n'}${script}`;
                 document.head.appendChild(o).parentNode!.removeChild(o);
-                SEAEventTarget.emit(Hook.Module.loadScript, scriptName);
+                SEAHookDispatcher.emit(Hook.Module.loadScript, scriptName);
                 resolve();
             },
             this,

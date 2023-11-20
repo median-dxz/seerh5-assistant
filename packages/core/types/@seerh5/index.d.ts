@@ -124,6 +124,8 @@ declare namespace seerh5 {
         abtext?: string;
     }
 
+    interface SideEffectObj extends BaseObj {}
+
     interface ObserverList<T> {
         array: Array<T>;
     }
@@ -131,15 +133,31 @@ declare namespace seerh5 {
     type SocketRequestData = (egret.ByteArray | number)[];
 }
 
+declare const CommandID: {
+    [commandID: string]: number;
+    GET_PET_INFO: 2301;
+    PET_RELEASE: 2304;
+    PET_CURE: 2306;
+    PET_DEFAULT: 2308;
+    PET_ONE_CURE: 2310;
+    USE_PET_ITEM_OUT_OF_FIGHT: 2326;
+    ADD_LOVE_PET: 2362;
+    DEL_LOVE_PET: 2363;
+
+    NOTE_USE_SKILL: 2505;
+
+    GET_PET_INFO_BY_ONCE: 43706;
+};
+
 declare namespace RES {
     function getVirtualUrl(url: string): string;
     function getResByUrl(url: string): Promise<egret.HashObject>;
 }
 
 declare interface AppDoStyle {
-    "0": "DESTROY";
-    "1": "HIDEN";
-    "2": "NULL";
+    '0': 'DESTROY';
+    '1': 'HIDEN';
+    '2': 'NULL';
     DESTROY: 0;
     HIDEN: 1;
     NULL: 2;
@@ -170,7 +188,7 @@ declare class OnlineManager {
 }
 
 declare class SocketEvent extends egret.Event {
-    data?: egret.ByteArray;
+    data: egret.ByteArray | undefined;
 }
 declare class SocketErrorEvent extends egret.Event {}
 
@@ -180,9 +198,9 @@ declare class PetEvent extends egret.Event {
 }
 
 declare class PetFightEvent extends egret.Event {
-    static readonly ALARM_CLICK: "fight_alarmClick";
-    static readonly ON_USE_PET_ITEM: "onUsePetItem";
-    static readonly CHANGE_PET: "changePet";
+    static readonly ALARM_CLICK: 'fight_alarmClick';
+    static readonly ON_USE_PET_ITEM: 'onUsePetItem';
+    static readonly CHANGE_PET: 'changePet';
     constructor(type: string, obj?: any);
 }
 

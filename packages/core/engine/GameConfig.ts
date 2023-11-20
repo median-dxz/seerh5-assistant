@@ -1,8 +1,8 @@
-import type { GameDataType } from '../constant/index.js';
+import type { GameConfigMap } from 'constant/type.js';
 
 type PredicateFn<T> = (value: T) => boolean;
 
-const Iterator = <T extends keyof GameDataType>(type: T) => {
+const Iterator = <T extends keyof GameConfigMap>(type: T) => {
     let index = 0;
     let objectArray: Array<seerh5.BaseObj>;
     switch (type) {
@@ -32,7 +32,7 @@ const Iterator = <T extends keyof GameDataType>(type: T) => {
     }
     return {
         next() {
-            return { done: index >= objectArray.length, value: objectArray[index++] as GameDataType[T] };
+            return { done: index >= objectArray.length, value: objectArray[index++] as GameConfigMap[T] };
         },
         [Symbol.iterator]() {
             return this;
@@ -53,7 +53,7 @@ const getObjectId = (obj: seerh5.BaseObj) => getObjProperty(obj, ['SpeNameBonus'
 
 const getObjectName = (obj: seerh5.BaseObj) => getObjProperty(obj, ['title', 'cn', 'name', 'DefName', 'Name']) as string;
 
-export function find<T extends keyof GameDataType>(type: T, predicate: PredicateFn<GameDataType[T]>) {
+export function find<T extends keyof GameConfigMap>(type: T, predicate: PredicateFn<GameConfigMap[T]>) {
     for (const obj of Iterator<T>(type)) {
         if (predicate(obj)) {
             return obj;
@@ -61,7 +61,7 @@ export function find<T extends keyof GameDataType>(type: T, predicate: Predicate
     }
 }
 
-export function filter<T extends keyof GameDataType>(type: T, predicate: PredicateFn<GameDataType[T]>) {
+export function filter<T extends keyof GameConfigMap>(type: T, predicate: PredicateFn<GameConfigMap[T]>) {
     const r = [];
     for (const obj of Iterator<T>(type)) {
         if (predicate(obj)) {
@@ -71,19 +71,19 @@ export function filter<T extends keyof GameDataType>(type: T, predicate: Predica
     return r;
 }
 
-export function get<T extends keyof GameDataType>(type: T, id: number) {
+export function get<T extends keyof GameConfigMap>(type: T, id: number) {
     return find(type, (v) => getObjectId(v) === id);
 }
 
-export function findByName<T extends keyof GameDataType>(type: T, name: string) {
+export function findByName<T extends keyof GameConfigMap>(type: T, name: string) {
     return find(type, (v) => getObjectName(v) === name);
 }
 
-export function filterByName<T extends keyof GameDataType>(type: T, name: string | RegExp) {
+export function filterByName<T extends keyof GameConfigMap>(type: T, name: string | RegExp) {
     return filter(type, (v) => Boolean(getObjectName(v).match(name)));
 }
 
-export function getName<T extends keyof GameDataType>(type: T, id: number) {
+export function getName<T extends keyof GameConfigMap>(type: T, id: number) {
     const o = find(type, (v) => getObjectId(v) === id);
     return o && getObjectName(o);
 }

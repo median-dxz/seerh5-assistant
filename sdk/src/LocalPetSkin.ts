@@ -1,3 +1,5 @@
+import type { SEAMod } from '../lib/mod';
+
 import { NOOP, Socket } from 'sea-core';
 
 const StorageKey = 'LocalSkin';
@@ -7,23 +9,25 @@ interface SkinInfo {
     petSkinId: number;
 }
 
-const cloth = createLocalStorageProxy<{ changed: Map<number, SkinInfo>; original: Map<number, number> }>(
-    StorageKey,
-    { changed: new Map(), original: new Map() },
-    (data) => {
-        const clothData = {
-            changed: Array.from(data.changed.entries()),
-            original: Array.from(data.original.entries()),
-        };
-        return JSON.stringify(clothData);
-    },
-    (serialized) => {
-        const { changed, original } = JSON.parse(serialized);
-        return { changed: new Map(changed), original: new Map(original) };
-    }
-);
+const cloth = { changed: new Map(), original: new Map() };
 
-class LocalPetSkin implements SEAMod.IBaseMod {
+// const cloth = createLocalStorageProxy<{ changed: Map<number, SkinInfo>; original: Map<number, number> }>(
+//     StorageKey,
+//     { changed: new Map(), original: new Map() },
+//     (data) => {
+//         const clothData = {
+//             changed: Array.from(data.changed.entries()),
+//             original: Array.from(data.original.entries()),
+//         };
+//         return JSON.stringify(clothData);
+//     },
+//     (serialized) => {
+//         const { changed, original } = JSON.parse(serialized);
+//         return { changed: new Map(changed), original: new Map(original) };
+//     }
+// );
+
+class LocalPetSkin implements SEAMod.IBaseMod<{ changed: Map<number, number>; original: Map<number, number> }> {
     declare logger: typeof console.log;
 
     meta: SEAMod.MetaData = {
@@ -83,22 +87,31 @@ class LocalPetSkin implements SEAMod.IBaseMod {
                 if (cloth.original.get(petInfo.id) !== skinId) {
                     await Socket.sendByQueue(47310, [catchTime, skinId]);
                 } else {
-                    cloth.use(({ original }) => {
-                        original.delete(petInfo.id);
-                    });
+                    // cloth.use(({ original }) => {
+                    //     original.delete(petInfo.id);
+                    // });
+                    cloth.original.delete(petInfo.id);
                 }
-                cloth.use(({ changed }) => {
-                    changed.delete(petInfo.id);
-                });
+                // cloth.use(({ changed }) => {
+                //     changed.delete(petInfo.id);
+                // });
+                cloth.changed.delete(petInfo.id);
             } else {
-                cloth.use(({ original, changed }) => {
-                    if (!original.has(petInfo.id)) {
-                        original.set(petInfo.id, petInfo.skinId);
-                    }
-                    changed.set(petInfo.id, {
-                        skinId: skinId,
-                        petSkinId: PetSkinXMLInfo.getSkinPetId(skinId, petInfo.id),
-                    });
+                // cloth.use(({ original, changed }) => {
+                //     if (!original.has(petInfo.id)) {
+                //         original.set(petInfo.id, petInfo.skinId);
+                //     }
+                //     changed.set(petInfo.id, {
+                //         skinId: skinId,
+                //         petSkinId: PetSkinXMLInfo.getSkinPetId(skinId, petInfo.id),
+                //     });
+                // });
+                if (!cloth.original.has(petInfo.id)) {
+                    cloth.original.set(petInfo.id, petInfo.skinId);
+                }
+                cloth.changed.set(petInfo.id, {
+                    skinId: skinId,
+                    petSkinId: PetSkinXMLInfo.getSkinPetId(skinId, petInfo.id),
                 });
             }
             PetManager.dispatchEvent(new PetEvent(PetEvent.EQUIP_SKIN, catchTime, skinId));

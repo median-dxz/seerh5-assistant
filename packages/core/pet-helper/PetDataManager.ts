@@ -25,64 +25,46 @@ class PetDataManager {
 
     init() {
         if (!this.hasInit) {
-            SocketListener.on({
-                cmd: CommandID.GET_PET_INFO_BY_ONCE,
-                res: (pets) => {
-                    this.bag.update([...pets]);
-                    pets[0].concat(pets[1]).forEach((pet) => {
-                        this.cachePet(pet);
-                    });
-                },
-            });
-
-            SocketListener.on({
-                cmd: CommandID.GET_PET_INFO,
-                res: (pet) => {
+            SocketListener.on(CommandID.GET_PET_INFO_BY_ONCE, 'receive', (pets) => {
+                this.bag.update([...pets]);
+                pets[0].concat(pets[1]).forEach((pet) => {
                     this.cachePet(pet);
-                    this.bag.deactivate();
-                },
+                });
             });
 
-            SocketListener.on({
-                cmd: CommandID.PET_DEFAULT,
-                req: (bytes) => {
-                    this.defaultCt = bytes[0] as number;
-                    this.bag.deactivate();
-                },
+            SocketListener.on(CommandID.GET_PET_INFO, 'receive', (pet) => {
+                this.cachePet(pet);
+                this.bag.deactivate();
             });
 
-            SocketListener.on({
-                cmd: CommandID.ADD_LOVE_PET,
-                req: () => this.miniInfo.deactivate(),
+            SocketListener.on(CommandID.PET_DEFAULT, 'send', (bytes) => {
+                this.defaultCt = bytes[0] as number;
+                this.bag.deactivate();
             });
 
-            SocketListener.on({
-                cmd: CommandID.DEL_LOVE_PET,
-                req: () => {
-                    this.miniInfo.deactivate();
-                },
+            SocketListener.on(CommandID.ADD_LOVE_PET, 'receive', () => {
+                this.miniInfo.deactivate();
             });
 
-            SocketListener.on({
-                cmd: CommandID.PET_CURE,
-                res: () => {
-                    this.bag.deactivate();
-                },
+            SocketListener.on(CommandID.DEL_LOVE_PET, 'receive', () => {
+                this.miniInfo.deactivate();
             });
 
-            SocketListener.on({
-                cmd: CommandID.PET_RELEASE,
-                req: (bytes) => {
-                    const [ct, _opt] = bytes as [number, number];
-                    this.cache.delete(ct);
-                    this.miniInfo.deactivate();
-                    this.bag.deactivate();
-                },
-                res: (data) => {
-                    // flag: 为假代表从背包移仓库, 仅此而已
-                    PetManager._setDefault(data.firstPetTime);
-                    this.defaultCt = data.firstPetTime;
-                },
+            SocketListener.on(CommandID.PET_CURE, 'receive', () => {
+                this.bag.deactivate();
+            });
+
+            SocketListener.on(CommandID.PET_RELEASE, 'send', (bytes) => {
+                const [ct, _opt] = bytes as [number, number];
+                this.cache.delete(ct);
+                this.miniInfo.deactivate();
+                this.bag.deactivate();
+            });
+
+            SocketListener.on(CommandID.PET_RELEASE, 'receive', (data) => {
+                // flag: 为假代表从背包移仓库, 仅此而已
+                PetManager._setDefault(data.firstPetTime);
+                this.defaultCt = data.firstPetTime;
             });
 
             this.bag = new CacheData(

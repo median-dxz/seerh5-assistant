@@ -16,7 +16,7 @@
     "server:run": "pnpm -C ./packages/server run start",
     "launcher:dev": "pnpm -C ./packages/launcher run dev",
     "core:build": "pnpm -F sea-core run build",
-    "release": "./scripts/release.js"
+    "release": "node ./scripts/release.js"
   },
   "devDependencies": {
     "@types/node": "^20.9.2",

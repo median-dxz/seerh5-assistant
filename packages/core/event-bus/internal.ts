@@ -2,31 +2,31 @@ import { Hook } from '../constant/index.js';
 
 import { GameModuleListener } from './module.js';
 
-import { SEAEventTarget } from '../common/utils.js';
+import { SEAHookDispatcher } from '../common/utils.js';
 import { SocketListener } from './socket.js';
 
 export default () => {
-    SEAEventTarget.on(Hook.Module.loadScript, (name) => {
+    SEAHookDispatcher.on(Hook.Module.loadScript, (name) => {
         GameModuleListener.emit(name, 'load');
     });
 
-    SEAEventTarget.on(Hook.Module.construct, ({ module }) => {
+    SEAHookDispatcher.on(Hook.Module.construct, ({ module }) => {
         GameModuleListener.emit(module, 'show');
     });
 
-    SEAEventTarget.on(Hook.Module.openMainPanel, ({ module }) => {
+    SEAHookDispatcher.on(Hook.Module.openMainPanel, ({ module }) => {
         GameModuleListener.emit(module, 'mainPanel');
     });
 
-    SEAEventTarget.on(Hook.Module.destroy, (name) => {
+    SEAHookDispatcher.on(Hook.Module.destroy, (name) => {
         GameModuleListener.emit(name, 'destroy');
     });
 
-    SEAEventTarget.on(Hook.Socket.send, ({ cmd, data }) => {
-        SocketListener.onReq(cmd, data);
+    SEAHookDispatcher.on(Hook.Socket.send, ({ cmd, data }) => {
+        SocketListener.dispatchSend(cmd, data);
     });
 
-    SEAEventTarget.on(Hook.Socket.receive, ({ cmd, buffer }) => {
-        SocketListener.onRes(cmd, buffer);
+    SEAHookDispatcher.on(Hook.Socket.receive, ({ cmd, buffer }) => {
+        SocketListener.dispatchReceive(cmd, buffer);
     });
 };

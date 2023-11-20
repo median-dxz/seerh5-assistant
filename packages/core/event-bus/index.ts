@@ -1,5 +1,5 @@
 import type { AnyFunction } from '../common/utils.js';
-import { SEAEventTarget } from '../common/utils.js';
+import { SEAHookDispatcher } from '../common/utils.js';
 
 export * from './module.js';
 export * from './socket.js';
@@ -7,11 +7,11 @@ export * from './socket.js';
 export class EventBus {
     private cleanFn: AnyFunction[] = [];
 
-    hook<TEvent extends string>(...args: Parameters<typeof SEAEventTarget.on<TEvent>>) {
+    hook<TEvent extends string>(...args: Parameters<typeof SEAHookDispatcher.on<TEvent>>) {
         this.cleanFn.push(() => {
-            SEAEventTarget.off(...args);
+            SEAHookDispatcher.off(...args);
         });
-        return SEAEventTarget.on(...args);
+        return SEAHookDispatcher.on(...args);
     }
 
     socket<This>(...args: Parameters<typeof SocketConnection.addCmdListener<This>>) {

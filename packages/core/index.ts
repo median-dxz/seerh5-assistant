@@ -16,8 +16,6 @@ declare global {
     interface Window {
         /** 额外全局命名空间, 用以跨模块交互 */
         sea: {
-            /** 正则过滤列表 */
-            logRegexFilter: { log: RegExp[]; warn: RegExp[] };
             /** 游戏客户端就绪标志 */
             SeerH5Ready: boolean;
             /** SEA Core就绪标志 */

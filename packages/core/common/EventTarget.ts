@@ -1,51 +1,50 @@
-import { type SEAHookDataMap } from '../constant/index.js';
+import type { HookDataMap } from '../constant/index.js';
 
-type Listener<T> = (data: T) => void;
-type EventData<Type extends string, TEvents extends Record<string, unknown>> = Type extends keyof TEvents
-    ? TEvents[Type]
-    : undefined;
+type EventKey = number | string;
+export type Handler<T> = (data: T) => void;
+export type EventData<
+    Type extends EventKey,
+    TEvents extends Record<EventKey, unknown>,
+    TDefaultValue
+> = Type extends keyof TEvents ? TEvents[Type] : TDefaultValue;
 
-interface SEAEventTarget<TEvents extends Record<string, unknown>> {
-    on<T extends string>(type: T, listener: Listener<EventData<T, TEvents>>): void;
-    once<T extends string>(type: T, listener: Listener<EventData<T, TEvents>>): void;
-    off<T extends string>(type: T, listener: Listener<EventData<T, TEvents>>): void;
-    emit<T extends string>(type: T, data?: EventData<T, TEvents>): boolean;
-}
+export class SEAEventTarget<TEvents extends Record<EventKey, unknown>, TDefaultValue = unknown> {
+    private et = new EventTarget();
+    handlers = new Map<Handler<never>, EventListenerOrEventListenerObject>();
 
-const et = new EventTarget();
-
-const listenerMap = new Map<Listener<never>, EventListener>();
-
-export const SEAEventTarget: SEAEventTarget<SEAHookDataMap> = {
-    on(type, listener) {
-        let wrappedListener = listenerMap.get(listener);
-        if (wrappedListener == undefined) {
-            wrappedListener = (e: Event) => {
+    on<T extends EventKey>(type: T | keyof TEvents, handler: Handler<EventData<T, TEvents, TDefaultValue>>) {
+        let wrappedHandler = this.handlers.get(handler);
+        if (wrappedHandler == undefined) {
+            wrappedHandler = (e: Event) => {
                 if (e instanceof CustomEvent) {
-                    listener(e.detail as EventData<typeof type, SEAHookDataMap>);
+                    handler(e.detail as EventData<T, TEvents, TDefaultValue>);
                 }
             };
-            listenerMap.set(listener, wrappedListener);
+            this.handlers.set(handler, wrappedHandler);
         }
-        et.addEventListener(type, wrappedListener);
-    },
+        this.et.addEventListener(String(type), wrappedHandler);
+    }
 
-    once(type, listener) {
-        et.addEventListener(
-            type,
-            (e: Event) => listener((e as CustomEvent).detail as EventData<typeof type, SEAHookDataMap>),
-            { once: true }
+    once<T extends EventKey>(type: T | keyof TEvents, handler: Handler<EventData<T, TEvents, TDefaultValue>>) {
+        this.et.addEventListener(
+            String(type),
+            (e: Event) => handler((e as CustomEvent).detail as EventData<T, TEvents, TDefaultValue>),
+            {
+                once: true,
+            }
         );
-    },
+    }
 
-    off(type, listener) {
-        if (listenerMap.has(listener)) {
-            et.removeEventListener(type, listenerMap.get(listener)!);
-            listenerMap.delete(listener);
+    off<T extends EventKey>(type: T | keyof TEvents, handler: Handler<EventData<T, TEvents, TDefaultValue>>) {
+        if (this.handlers.has(handler)) {
+            this.et.removeEventListener(String(type), this.handlers.get(handler)!);
+            this.handlers.delete(handler);
         }
-    },
+    }
 
-    emit(type, data?) {
-        return et.dispatchEvent(new CustomEvent(type, { detail: data }));
-    },
-};
+    emit<T extends EventKey>(type: T | keyof TEvents, data?: EventData<T, TEvents, TDefaultValue>) {
+        return this.et.dispatchEvent(new CustomEvent(String(type), { detail: data }));
+    }
+}
+
+export const SEAHookDispatcher = new SEAEventTarget<HookDataMap, undefined>();

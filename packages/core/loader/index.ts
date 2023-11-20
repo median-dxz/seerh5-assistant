@@ -1,6 +1,6 @@
 import { InternalInitiator, enableBasic } from './internal.js';
 
-export async function CoreLoader() {
+export async function CoreLoader(readyEvent: string) {
     return new Promise<boolean>((resolve) => {
         const sa_wait_login = () => {
             enableBasic();
@@ -9,14 +9,10 @@ export async function CoreLoader() {
 
         const sa_core_init = () => {
             EventManager.removeEventListener('event_first_show_main_panel', sa_core_init, null);
-
             InternalInitiator.load();
 
             resolve(true);
-
             window.sea.CoreReady = true;
-
-            window.dispatchEvent(new CustomEvent('seerh5_assistant_ready'));
         };
 
         const { sea } = window;
@@ -28,7 +24,7 @@ export async function CoreLoader() {
                 sa_core_init();
             }
         } else {
-            window.addEventListener('seerh5_load', sa_wait_login, { once: true });
+            window.addEventListener(readyEvent, sa_wait_login, { once: true });
         }
     });
 }

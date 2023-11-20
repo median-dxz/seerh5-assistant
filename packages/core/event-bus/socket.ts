@@ -1,24 +1,31 @@
-import { tryGet } from '../common/utils.js';
-import type { PetRoundInfo } from '../entity/index.js';
-import type { ProxyPet } from '../pet-helper/PetDataManager.js';
+import type { EventData, Handler } from '../common/EventTarget.js';
+import { SEAEventTarget } from '../common/EventTarget.js';
+import type { SocketResponseMap } from '../constant/type.js';
+
+type SocketData<TCmd extends number> = EventData<TCmd, SocketResponseMap, undefined>;
 
 type DataBuilder<T> = (data: ArrayBuffer) => T;
-type OnReqHandler = (bytes: seerh5.SocketRequestData) => void;
-type OnResHandler<TCmd extends number> = (data: SocketData<TCmd>) => void;
+export type SocketSendHandler = Handler<seerh5.SocketRequestData>;
+export type SocketReceiveHandler<TCmd extends number> = Handler<SocketData<TCmd>>;
 
-type SocketData<TCmd extends number> = TCmd extends keyof SEASocketDataMap ? SEASocketDataMap[TCmd] : unknown;
+export type SocketEvent = 'send' | 'receive';
 
-export interface SocketEventHandler<TCmd extends number> {
-    cmd: TCmd;
-    req?: OnReqHandler;
-    res?: OnResHandler<TCmd>;
-}
+type HandlerType<TCmd extends number> = {
+    send: SocketSendHandler;
+    receive: SocketReceiveHandler<TCmd>;
+};
+
+type GetHandlerType<E extends SocketEvent, TCmd extends number> = HandlerType<TCmd>[E];
 
 export const SocketListener = {
-    handlers: new Map<number, Set<SocketEventHandler<number>>>(),
-    builders: new Map<number, DataBuilder<SocketData<number>>>(),
+    builders: new Map<number, DataBuilder<unknown>>(),
+    eventTarget: {
+        send: new SEAEventTarget(),
+        receive: new SEAEventTarget<SocketResponseMap>(),
+    },
 
-    subscribe<TCmd extends number>(cmd: TCmd, builder?: DataBuilder<SocketData<TCmd>>) {
+    /** 订阅一个cmd并添加builder, 注意该操作会取消之前的builder以及所有订阅 */
+    subscribe<TCmd extends number>(cmd: TCmd | keyof SocketResponseMap, builder?: DataBuilder<SocketData<TCmd>>) {
         if (this.builders.has(cmd)) this.unsubscribe(cmd);
         if (builder) {
             this.builders.set(cmd, builder);
@@ -28,67 +35,57 @@ export const SocketListener = {
     unsubscribe(cmd: number) {
         if (this.builders.has(cmd)) {
             this.builders.delete(cmd);
-            this.handlers.delete(cmd);
+
+            const { send: req, receive: res } = this.eventTarget;
+
+            [...req.handlers].forEach(([handler]) => {
+                req.off(cmd, handler as Handler<unknown>);
+            });
+
+            [...res.handlers].forEach(([handler]) => {
+                res.off(cmd, handler as Handler<unknown>);
+            });
         }
     },
 
-    on<TCmd extends number>(handler: SocketEventHandler<TCmd>) {
-        const { cmd } = handler;
-        tryGet(this.handlers, cmd).add(handler as unknown as SocketEventHandler<number>);
+    dispatchSend(cmd: number, bytes: seerh5.SocketRequestData) {
+        const { send: et } = this.eventTarget;
+        et.emit(cmd, bytes);
     },
 
-    off<TCmd extends number>(handler: SocketEventHandler<TCmd>) {
-        const { cmd } = handler;
-        if (this.handlers.has(cmd)) {
-            tryGet(this.handlers, cmd).delete(handler as unknown as SocketEventHandler<number>);
-        }
-    },
-
-    once<TCmd extends number>(handler: SocketEventHandler<TCmd>) {
-        const warpHandler: SocketEventHandler<TCmd> = {
-            ...handler,
-            res: (data) => {
-                handler.res?.(data);
-                SocketListener.off(warpHandler);
-            },
-        };
-        SocketListener.on(warpHandler);
-    },
-
-    onReq(cmd: number, bytes: seerh5.SocketRequestData) {
-        if (!this.handlers.has(cmd)) {
-            return;
-        }
-        const handlers = this.handlers.get(cmd)!;
-        handlers.forEach((handler) => {
-            handler.req?.(bytes);
-        });
-    },
-
-    onRes(cmd: number, resBytes?: egret.ByteArray) {
-        if (!this.handlers.has(cmd)) {
-            return;
-        }
-
-        let data: unknown = null;
-
+    dispatchReceive<TCmd extends number>(cmd: TCmd | keyof SocketResponseMap, resBytes?: egret.ByteArray) {
+        const { receive: et } = this.eventTarget;
         if (this.builders.has(cmd) && resBytes) {
-            const builder = this.builders.get(cmd)!;
+            const builder = this.builders.get(cmd) as DataBuilder<SocketData<TCmd>>;
             const buf = resBytes.rawBuffer;
 
-            data = builder(buf);
+            et.emit(cmd, builder(buf));
+        } else {
+            et.emit(cmd);
         }
-
-        const handlers = this.handlers.get(cmd)!;
-        handlers.forEach((handler) => {
-            handler.res?.(data);
-        });
     },
-};
 
-export type SEASocketDataMap = {
-    2505: readonly [PetRoundInfo, PetRoundInfo]; // NOTE_USE_SKILL
-    2301: ProxyPet; // GET_PET_INFO
-    2304: PetTakeOutInfo; // PET_RELEASE
-    43706: readonly [ProxyPet[], ProxyPet[]]; // GET_PET_INFO_BY_ONCE
+    on<TCmd extends number, TEvent extends SocketEvent>(
+        cmd: TCmd | keyof SocketResponseMap,
+        type: TEvent,
+        handler: GetHandlerType<TEvent, TCmd>
+    ) {
+        this.eventTarget[type].on(cmd, handler as Handler<unknown>);
+    },
+
+    off<TCmd extends number, TEvent extends SocketEvent>(
+        cmd: TCmd | keyof SocketResponseMap,
+        type: TEvent,
+        handler: GetHandlerType<TEvent, TCmd>
+    ) {
+        this.eventTarget[type].off(cmd, handler as Handler<unknown>);
+    },
+
+    once<TCmd extends number, TEvent extends SocketEvent>(
+        cmd: TCmd | keyof SocketResponseMap,
+        type: TEvent,
+        handler: GetHandlerType<TEvent, TCmd>
+    ) {
+        this.eventTarget[type].once(cmd, handler as Handler<unknown>);
+    },
 };

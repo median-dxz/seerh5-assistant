@@ -14,7 +14,7 @@ import { MainPanel } from './views/MainPanel';
 
 import { Hook } from 'sea-core';
 import { Manager as BattleManager, autoStrategy } from 'sea-core/battle';
-import { EventBus, SocketListener, type SocketEventHandler } from 'sea-core/event-bus';
+import { EventBus, SocketListener, type SocketReceiveHandler, type SocketSendHandler } from 'sea-core/event-bus';
 
 import { QuickAccess } from './QuickAccess';
 import { SEAModManager } from './service/ModManager';
@@ -91,11 +91,9 @@ export default function App() {
             Logger.ModuleManger.info(`${module}创建主面板: ${panel}`);
         });
 
-        const noteUseSkillHandler: SocketEventHandler<typeof CommandID.NOTE_USE_SKILL> = {
-            cmd: CommandID.NOTE_USE_SKILL,
-            res(data) {
-                const [fi, si] = data;
-                Logger.BattleManager.info(`对局信息更新:
+        const noteUseSkillHandler: SocketReceiveHandler<typeof CommandID.NOTE_USE_SKILL> = (data) => {
+            const [fi, si] = data;
+            Logger.BattleManager.info(`对局信息更新:
                 先手方:${fi.userId}
                 hp: ${fi.hp.remain} / ${fi.hp.max}
                 造成伤害: ${fi.damage}
@@ -107,21 +105,17 @@ export default function App() {
                 造成伤害: ${si.damage}
                 是否暴击:${si.isCrit}
                 使用技能: ${SkillXMLInfo.getName(si.skillId)}`);
-            },
         };
 
-        const useSkillHandler: SocketEventHandler<typeof CommandID.USE_SKILL> = {
-            cmd: CommandID.USE_SKILL,
-            req(data) {
-                const [skillId] = data as [number];
-                Logger.BattleManager.info(
-                    `${FighterModelFactory.playerMode?.info.petName} 使用技能: ${SkillXMLInfo.getName(skillId)}`
-                );
-            },
+        const useSkillHandler: SocketSendHandler = (data) => {
+            const [skillId] = data as [number];
+            Logger.BattleManager.info(
+                `${FighterModelFactory.playerMode?.info.petName} 使用技能: ${SkillXMLInfo.getName(skillId)}`
+            );
         };
 
-        SocketListener.on(noteUseSkillHandler);
-        SocketListener.on(useSkillHandler);
+        SocketListener.on(CommandID.NOTE_USE_SKILL, 'receive', noteUseSkillHandler);
+        SocketListener.on(CommandID.USE_SKILL, 'send', useSkillHandler);
 
         let active = true;
         SEAModManager.fetchMods().then((mods) => {
@@ -133,8 +127,8 @@ export default function App() {
 
         const clean = () => {
             active = false;
-            SocketListener.off(noteUseSkillHandler);
-            SocketListener.off(useSkillHandler);
+            SocketListener.off(CommandID.NOTE_USE_SKILL, 'receive', noteUseSkillHandler);
+            SocketListener.off(CommandID.USE_SKILL, 'send', useSkillHandler);
             SEAModManager.teardown();
             eventBus.unmount();
             document.body.removeEventListener('keydown', handleShortCut);

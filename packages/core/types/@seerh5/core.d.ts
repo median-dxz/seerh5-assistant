@@ -151,7 +151,7 @@ declare class AttackValue {
     get gainHP(): number;
     get lostHP(): number;
     get maxHp(): number;
-    _maxHP;
+    private _maxHP: number;
     get remainHP(): number;
     get isCrit(): number;
     get priority(): number;
@@ -167,22 +167,6 @@ declare class UseSkillInfo {
     get firstAttackInfo(): AttackValue;
     get secondAttackInfo(): AttackValue;
 }
-
-declare const CommandID: {
-    [commandID: string]: number;
-    GET_PET_INFO: 2301;
-    PET_RELEASE: 2304;
-    PET_CURE: 2306;
-    PET_DEFAULT: 2308;
-    PET_ONE_CURE: 2310;
-    USE_PET_ITEM_OUT_OF_FIGHT: 2326;
-    ADD_LOVE_PET: 2362;
-    DEL_LOVE_PET: 2363;
-
-    NOTE_USE_SKILL: 2505;
-
-    GET_PET_INFO_BY_ONCE: 43706;
-};
 
 declare class AwardManager {
     static resume(): void;
@@ -229,7 +213,7 @@ declare class ModuleManager {
         o?: string,
         r?: unknown,
         i?: number,
-        moduleConfig: object | null
+        moduleConfig?: object | null
     ): Promise<void>;
     static _addModuleToFreeRes(moduleName: string, resList: unknown[], resEffectList: unknown[], config: unknown): void;
     static loadScript(scriptName: string): Promise<void>;
@@ -303,7 +287,7 @@ declare class ItemUseManager {
 declare class PetManager {
     static getPetInfo(catchTime: number): PetInfo;
     static UpdateBagPetInfoAsynce(catchtime: number): PromiseLike<PetInfo>;
-    static upDateBagPetInfo(catchtime: number, callback: (info: PetInfo) => any);
+    static upDateBagPetInfo(catchtime: number, callback: (info: PetInfo) => any): void;
     static updateBagInfo(callback?: Callback): void;
     static getLovePetList(): void;
 
@@ -335,7 +319,10 @@ declare class PetManager {
 }
 
 declare class PetStorage2015InfoManager {
-    static getMiniInfo(callback: Callback, page: number = 0): void;
+    /**
+     * @param {number} page 默认为0
+     */
+    static getMiniInfo(callback: Callback, page?: number): void;
     static getTotalInfo(callback: Callback): void;
     static getInfoByType(arg1: number, arg2: number): PetStorage2015PetInfo[];
     static changePetPosi(catchTime: number, location: number): void;

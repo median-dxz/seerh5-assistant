@@ -43,7 +43,9 @@ async function createServer() {
     router.get('/api/pet', apiRouter.config.queryPets);
     router.get('/api/petFragmentLevel', apiRouter.config.petFragmentLevel);
     router.get('/api/realm', apiRouter.config.realm);
+    router.get('/api/launcher/config', apiRouter.config.launcherConfig);
 
+    router.post('/api/launcher/config', koaBody(), apiRouter.config.launcherConfig);
     router.post('/api/mods/:namespace/config', koaBody(), apiRouter.mod.setConfig);
     router.post('/api/pet', koaBody(), apiRouter.config.cachePets);
 

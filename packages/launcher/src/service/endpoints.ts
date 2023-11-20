@@ -24,6 +24,22 @@ const setModConfig = async (namespace: string, config: unknown) => {
     });
 };
 
+export const setConfig = async (key: string, value: unknown) => {
+    return fetch(`/api/launcher/config?key=${key}`, {
+        method: 'POST',
+        body: JSON.stringify(config),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+};
+
+export const getConfig = async (key: string) => {
+    return fetch(`/api/launcher/config?key=${key}`)
+        .then((res) => res.json())
+        .then((data) => JSON.parse(data));
+};
+
 export const injectModConfig = async (mod: BaseMod) => {
     const { meta } = mod;
     const namespace = `${meta.type}::${meta.scope}::${meta.id}`;

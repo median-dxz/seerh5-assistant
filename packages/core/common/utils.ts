@@ -99,7 +99,7 @@ export const extractObjectId = <T extends { [key in K]: number }, K extends stri
 
 export const NOOP = () => {};
 
-export { SEAEventTarget } from './EventTarget.js';
+export { SEAHookDispatcher } from './EventTarget.js';
 
 export { CacheData } from './CacheData.js';
 

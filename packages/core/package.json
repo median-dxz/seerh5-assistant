@@ -2,7 +2,7 @@
   "name": "sea-core",
   "description": "SeerH5-Assistant SEA 核心库",
   "type": "module",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "license": "MPL-2.0",
   "private": true,
   "exports": {
@@ -35,9 +35,6 @@
     "clean": "rimraf ./dist && rimraf ../../.tsbuildinfo/core.tsbuildinfo",
     "lint": "eslint --fix . && tsc --noEmit",
     "test": "vite --config ./test/vite.config.ts"
-  },
-  "dependencies": {
-    "immer": "^10.0.2"
   },
   "devDependencies": {
     "@types/chai": "^4.3.5",

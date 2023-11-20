@@ -1,4 +1,6 @@
-declare namespace SEAMod {
+import type { AnyFunction, ILevelRunner, MoveStrategy, LevelData as SEALevelData, LevelInfo as SEALevelInfo } from 'sea-core';
+
+export namespace SEAMod {
     type MetaData = {
         id: string;
         scope: string;
@@ -11,10 +13,10 @@ declare namespace SEAMod {
         logger: typeof console.log;
     }
 
-    interface IBaseMod extends Mod {
+    interface IBaseMod<T = undefined> extends Mod {
         defaultConfig?: T;
         config?: T;
-        exports?: Record<string, import('sea-core').AnyFunction>;
+        exports?: Record<string, AnyFunction>;
         activate?(): void;
         deactivate?(): void;
     }
@@ -61,3 +63,6 @@ declare namespace SEAMod {
         showAsync?(): Promise<string>;
     }
 }
+
+export { };
+

@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { SEAEventTarget, delay, hookPrototype, wrapper, wrapperAsync } from '../common/utils.js';
-import { CmdMask, Hook } from '../constant/index.js';
+import { SEAHookDispatcher, delay, hookPrototype, wrapper, wrapperAsync } from '../common/utils.js';
+import { Hook } from '../constant/index.js';
 
 export default () => {
     BasicMultPanelModule.prototype.onShowMainPanel = async function () {
         await this.openPanel(this._mainPanelName);
-        SEAEventTarget.emit(Hook.Module.openMainPanel, { module: this.moduleName, panel: this._mainPanelName });
+        SEAHookDispatcher.emit(Hook.Module.openMainPanel, { module: this.moduleName, panel: this._mainPanelName });
     };
 
     type withClass<T> = T & { __class__: string };
@@ -18,7 +18,7 @@ export default () => {
             if (config) {
                 id = (config as { id: number; moduleName: string }).id;
             }
-            SEAEventTarget.emit(Hook.Module.construct, { module, id });
+            SEAHookDispatcher.emit(Hook.Module.construct, { module, id });
             const curModule = ModuleManager.currModule as withClass<typeof ModuleManager.currModule>;
             const moduleClass = curModule.__class__;
             switch (module) {
@@ -27,7 +27,7 @@ export default () => {
                         moduleClass === 'battleResultPanel.BattleResultPanel' ||
                         moduleClass === 'battleResultPanel.BattleFailPanel'
                     ) {
-                        SEAEventTarget.emit(Hook.Battle.endPropShown);
+                        SEAHookDispatcher.emit(Hook.Battle.endPropShown);
                     }
                     break;
                 default:
@@ -40,7 +40,7 @@ export default () => {
         const key = Object.keys(this._modules).find((key) => this._modules[key] === module);
         if (key) {
             // console.log(module);
-            SEAEventTarget.emit(Hook.Module.destroy, module.moduleName);
+            SEAHookDispatcher.emit(Hook.Module.destroy, module.moduleName);
             const config = module.getModuleConfig();
             this._addModuleToFreeRes(module.moduleName, module.resList, module.resEffectList, config);
             delete this._modules[key];
@@ -49,7 +49,7 @@ export default () => {
 
     hookPrototype(PopViewManager, 'openView', function (originalFunc, r, ...args) {
         originalFunc(r, ...args);
-        SEAEventTarget.emit(Hook.PopView.open, (Object.getPrototypeOf(r) as withClass<PopView>).__class__);
+        SEAHookDispatcher.emit(Hook.PopView.open, (Object.getPrototypeOf(r) as withClass<PopView>).__class__);
     });
 
     hookPrototype(PopViewManager, 'hideView', function (originalFunc, id, ...args) {
@@ -59,20 +59,20 @@ export default () => {
         }
         const popView = this.__viewMap__['key_' + id];
         if (popView) {
-            SEAEventTarget.emit(Hook.PopView.close, (Object.getPrototypeOf(popView) as withClass<PopView>).__class__);
+            SEAHookDispatcher.emit(Hook.PopView.close, (Object.getPrototypeOf(popView) as withClass<PopView>).__class__);
         }
     });
 
     hookPrototype(AwardItemDialog, 'startEvent', async function (originalFunc, ...args) {
         originalFunc.apply(this, args);
-        SEAEventTarget.emit(Hook.Award.show);
+        SEAHookDispatcher.emit(Hook.Award.show);
         LevelManager.stage.removeEventListener(egret.TouchEvent.TOUCH_TAP, this.startRemoveDialog, this);
         await delay(500);
         this.destroy();
     });
 
     AwardManager.showDialog = wrapper(AwardManager.showDialog, undefined, function (_, _dialog, items) {
-        SEAEventTarget.emit(Hook.Award.receive, { items });
+        SEAHookDispatcher.emit(Hook.Award.receive, { items });
     });
 
     PetFightController.onStartFight = wrapper(PetFightController.onStartFight, undefined, function () {
@@ -83,7 +83,7 @@ export default () => {
             this.propView.isShowFtHp = true;
         };
         playerMode.nextRound = wrapper(playerMode.nextRound.bind(playerMode), undefined, () => {
-            SEAEventTarget.emit(Hook.Battle.roundEnd);
+            SEAHookDispatcher.emit(Hook.Battle.roundEnd);
         });
     });
 
@@ -94,21 +94,32 @@ export default () => {
         FightNoteCmdListener
     );
     FightNoteCmdListener.startFight = wrapper(FightNoteCmdListener.startFight, undefined, function () {
-        SEAEventTarget.emit(Hook.Battle.battleStart);
+        SEAHookDispatcher.emit(Hook.Battle.battleStart);
     });
     SocketConnection.addCmdListener(CommandID.NOTE_START_FIGHT, FightNoteCmdListener.startFight, FightNoteCmdListener);
 
-    EventManager.addEventListener(PetFightEvent.ALARM_CLICK, () => SEAEventTarget.emit(Hook.Battle.battleEnd), null);
+    EventManager.addEventListener(PetFightEvent.ALARM_CLICK, () => SEAHookDispatcher.emit(Hook.Battle.battleEnd), null);
+
+    const CmdMask = [
+        1002, // SYSTEM_TIME
+        2001, // ENTER_MAP
+        2002, // LEAVE_MAP
+        2004, // MAP_OGRE_LIST
+        2441, // LOAD_PERCENT
+        9019, // NONO_FOLLOW_OR_HOOM
+        9274, //PET_GET_LEVEL_UP_EXP
+        41228, // SYSTEM_TIME_CHECK
+    ];
 
     SocketConnection.mainSocket.send = wrapper(SocketConnection.mainSocket.send, (cmd, data) => {
         if (!CmdMask.includes(cmd)) {
-            SEAEventTarget.emit(Hook.Socket.send, { cmd, data });
+            SEAHookDispatcher.emit(Hook.Socket.send, { cmd, data });
         }
     });
 
     SocketConnection.mainSocket.dispatchCmd = wrapper(SocketConnection.mainSocket.dispatchCmd, (cmd, head, buffer) => {
         if (!CmdMask.includes(cmd)) {
-            SEAEventTarget.emit(Hook.Socket.receive, { cmd, buffer });
+            SEAHookDispatcher.emit(Hook.Socket.receive, { cmd, buffer });
         }
     });
 };

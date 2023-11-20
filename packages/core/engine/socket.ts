@@ -22,7 +22,7 @@ export async function sendWithReceivedPromise(cmd: number, fn: AnyFunction) {
     if (!fn) return;
 
     return new Promise<unknown>((resolve) => {
-        SocketListener.once({ cmd, res: resolve });
+        SocketListener.once(cmd, 'receive', resolve);
         fn();
     });
 }

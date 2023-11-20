@@ -1,5 +1,6 @@
-export * from './event-hooks.js';
-export * from './item-id.js';
+export * from './EventHooks.js';
+export * from './ItemId.js';
+export * from "./type.js";
 
 export const PetPosition = {
     bag1: 1,
@@ -20,23 +21,9 @@ export enum PetFragmentLevelDifficulty {
     Hard = 3,
 }
 
-export type GameDataType = {
-    item: seerh5.ItemObj;
-    suit: seerh5.SuitObj;
-    title: seerh5.TitleObj;
-    element: seerh5.ElementObj;
-    skill: seerh5.MoveObj;
-    pet: seerh5.PetObj;
-    statusEffect: seerh5.StatusEffectObj;
-};
-
-export const CmdMask = [
-    1002, // SYSTEM_TIME
-    2001, // ENTER_MAP
-    2002, // LEAVE_MAP
-    2004, // MAP_OGRE_LIST
-    2441, // LOAD_PERCENT
-    9019, // NONO_FOLLOW_OR_HOOM
-    9274, //PET_GET_LEVEL_UP_EXP
-    41228, // SYSTEM_TIME_CHECK
-];
+// todo: 给出具体的枚举值
+export enum SkillType {
+    特殊攻击,
+    物理攻击,
+    属性攻击,
+}

@@ -1,4 +1,4 @@
-import { SEAEventTarget, delay } from '../common/utils.js';
+import { SEAHookDispatcher, delay } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
 import { findObject } from '../engine/index.js';
 import { PetRoundInfo } from '../entity/index.js';
@@ -25,14 +25,14 @@ export default () => {
         this.getMC().selected = !1;
     };
 
-    SEAEventTarget.on(Hook.Battle.battleStart, () => {
+    SEAHookDispatcher.on(Hook.Battle.battleStart, () => {
         cachedRoundInfo.deactivate();
         if (FightManager.fightAnimateMode === 1) {
             TimeScaleManager.setBattleAnimateSpeed(10);
         }
     });
 
-    SEAEventTarget.on(Hook.Battle.endPropShown, () => {
+    SEAHookDispatcher.on(Hook.Battle.endPropShown, () => {
         if (FightManager.fightAnimateMode === 1) {
             TimeScaleManager.setBattleAnimateSpeed(1);
         }
@@ -55,9 +55,9 @@ export default () => {
         }
     };
 
-    SEAEventTarget.on(Hook.Battle.battleStart, onRoundStart);
-    SEAEventTarget.on(Hook.Battle.roundEnd, onRoundStart);
-    SEAEventTarget.on(Hook.Battle.battleEnd, () => {
+    SEAHookDispatcher.on(Hook.Battle.battleStart, onRoundStart);
+    SEAHookDispatcher.on(Hook.Battle.roundEnd, onRoundStart);
+    SEAHookDispatcher.on(Hook.Battle.battleEnd, () => {
         const isWin = Boolean(FightManager.isWin);
         if (Manager.context.strategy) {
             Promise.all([Manager.context.delayTimeout, delay(1000)])
@@ -78,10 +78,7 @@ export default () => {
         return [fi, si] as const;
     });
 
-    SocketListener.on({
-        cmd: CommandID.NOTE_USE_SKILL,
-        res(data) {
-            cachedRoundInfo.update([...data]);
-        },
+    SocketListener.on(CommandID.NOTE_USE_SKILL, 'receive', (data) => {
+        cachedRoundInfo.update([...data]);
     });
 };

@@ -1,5 +1,3 @@
-import type { Pet } from '../entity/index.js';
-
 export const Hook = {
     Module: {
         loadScript: 'module_loadScript',
@@ -30,16 +28,3 @@ export const Hook = {
         deactivate: 'petbag_deactivate',
     },
 } as const;
-
-export type SEAHookDataMap = {
-    module_openMainPanel: { module: string; panel: string };
-    module_construct: { module: string; id?: number };
-    module_destroy: string;
-    module_loadScript: string;
-    popview_open: string;
-    popview_close: string;
-    award_receive: { items?: Array<{ id: number; count: number }> };
-    socket_send: { cmd: number; data: seerh5.SocketRequestData };
-    socket_receive: { cmd: number; buffer: egret.ByteArray | undefined };
-    petbag_update: [Pet[], Pet[]];
-};
