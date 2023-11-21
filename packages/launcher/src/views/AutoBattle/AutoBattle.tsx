@@ -6,7 +6,7 @@ import { PanelField, PanelTable, useRowData } from '@sea-launcher/components/Pan
 import { useIndex } from '@sea-launcher/components/PanelTable/usePanelTableData';
 import { SeaTableRow } from '@sea-launcher/components/styled/TableRow';
 import { SEAContext } from '@sea-launcher/context/SAContext';
-import * as SALocalStorage from '@sea-launcher/utils/hooks/SALocalStorage';
+import * as SALocalStorage from '@sea-launcher/utils/LocalStorage';
 import { TextEditDialog } from '@sea-launcher/views/AutoBattle/TextEditDialog';
 import { NOOP } from 'sea-core';
 import * as Battle from 'sea-core/battle';

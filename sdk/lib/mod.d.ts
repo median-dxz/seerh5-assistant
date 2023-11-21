@@ -1,4 +1,10 @@
-import type { AnyFunction, ILevelRunner, MoveStrategy, LevelData as SEALevelData, LevelInfo as SEALevelInfo } from 'sea-core';
+import type {
+    AnyFunction,
+    ILevelRunner,
+    MoveStrategy,
+    LevelData as SEALevelData,
+    LevelInfo as SEALevelInfo,
+} from 'sea-core';
 
 export namespace SEAMod {
     type MetaData = {
@@ -16,6 +22,8 @@ export namespace SEAMod {
     interface IBaseMod<T = undefined> extends Mod {
         defaultConfig?: T;
         config?: T;
+        serializeConfig?(data: T): string;
+        praseConfig?(serialized: unknown): T;
         exports?: Record<string, AnyFunction>;
         activate?(): void;
         deactivate?(): void;

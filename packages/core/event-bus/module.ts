@@ -1,5 +1,24 @@
-import { tryGet } from '../common/utils.js';
+import { SEAEventTarget, type EventData, type Handler } from '../common/EventTarget.js';
+import type { GameModuleMap } from '../constant/type.js';
 import { UIModuleHelper } from '../engine/index.js';
+
+type GameModuleInstance<TModule extends string> = EventData<TModule, GameModuleMap, BaseModule>;
+
+export type GameModuleLoadHandler = () => void;
+export type GameModuleShowHandler<TModule extends string> = (ctx: GameModuleInstance<TModule>) => void;
+export type GameModuleMainPanelHandler<TModule extends string> = (ctx: GameModuleInstance<TModule>) => void;
+export type GameModuleDestroyHandler = () => void;
+
+type ModuleEvent = 'load' | 'show' | 'mainPanel' | 'destroy';
+
+type HandlerType<TModule extends string> = {
+    load: GameModuleLoadHandler;
+    show: GameModuleShowHandler<TModule>;
+    mainPanel: GameModuleMainPanelHandler<TModule>;
+    destroy: GameModuleDestroyHandler;
+};
+
+type GetHandlerType<E extends ModuleEvent, TModule extends string> = HandlerType<TModule>[E];
 
 export interface GameModuleEventHandler<T extends BaseModule = BaseModule> {
     moduleName: string;
@@ -9,40 +28,44 @@ export interface GameModuleEventHandler<T extends BaseModule = BaseModule> {
     destroy?(): void;
 }
 
-type ModuleState = 'load' | 'show' | 'mainPanel' | 'destroy';
-
 export const GameModuleListener = {
-    handlers: new Map<string, Set<GameModuleEventHandler>>(),
-
-    on(subscriber: GameModuleEventHandler) {
-        const { moduleName } = subscriber;
-        const subject = tryGet(this.handlers, moduleName);
-        subject.add(subscriber);
+    eventTarget: {
+        load: new SEAEventTarget(),
+        show: new SEAEventTarget(),
+        mainPanel: new SEAEventTarget(),
+        destroy: new SEAEventTarget(),
     },
 
-    off(subscriber: GameModuleEventHandler) {
-        const { moduleName } = subscriber;
-        if (this.handlers.has(moduleName)) {
-            const subject = tryGet(this.handlers, moduleName);
-            subject.delete(subscriber);
-        }
+    on<TModule extends string, TEvent extends ModuleEvent>(
+        module: TModule,
+        type: TEvent,
+        handler: GetHandlerType<TEvent, TModule>
+    ) {
+        this.eventTarget[type].on(module, handler as Handler<unknown>);
     },
 
-    emit(moduleName: string, hook: ModuleState) {
-        if (!this.handlers.has(moduleName)) {
-            return;
-        }
-        const subject = tryGet(this.handlers, moduleName);
+    off<TModule extends string, TEvent extends ModuleEvent>(
+        module: TModule,
+        type: TEvent,
+        handler: GetHandlerType<TEvent, TModule>
+    ) {
+        this.eventTarget[type].off(module, handler as Handler<unknown>);
+    },
 
+    once<TModule extends string, TEvent extends ModuleEvent>(
+        module: TModule,
+        type: TEvent,
+        handler: GetHandlerType<TEvent, TModule>
+    ) {
+        this.eventTarget[type].once(module, handler as Handler<unknown>);
+    },
+
+    emit(module: string, hook: ModuleEvent) {
         if (hook === 'show' || hook === 'mainPanel') {
-            const module = UIModuleHelper.currentModule();
-            subject.forEach((handler) => {
-                handler[hook]?.(module);
-            });
+            const moduleInstance = UIModuleHelper.currentModule();
+            this.eventTarget[hook].emit(module, moduleInstance);
         } else {
-            subject.forEach((handler) => {
-                handler[hook]?.();
-            });
+            this.eventTarget[hook].emit(module);
         }
     },
 };

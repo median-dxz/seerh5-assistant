@@ -1,5 +1,3 @@
-import { BaseMod } from './ModManager/type';
-
 type ModPathList = Array<{ path: string }>;
 
 type AllMods = () => Promise<ModPathList>;
@@ -8,16 +6,16 @@ export const getAllMods: AllMods = async () => {
 };
 
 type ModConfig = (ns: string) => Promise<{ config?: unknown }>;
-const getModConfig: ModConfig = async (ns: string) => {
+export const getModConfig: ModConfig = async (ns: string) => {
     return fetch(`/api/mods/${ns}/config`).then((res) => {
         return res.json();
     });
 };
 
-const setModConfig = async (namespace: string, config: unknown) => {
+export const setModConfig = async (namespace: string, config: string) => {
     return fetch(`/api/mods/${namespace}/config`, {
         method: 'POST',
-        body: JSON.stringify(config),
+        body: config,
         headers: {
             'Content-Type': 'application/json',
         },
@@ -27,7 +25,7 @@ const setModConfig = async (namespace: string, config: unknown) => {
 export const setConfig = async (key: string, value: unknown) => {
     return fetch(`/api/launcher/config?key=${key}`, {
         method: 'POST',
-        body: JSON.stringify(config),
+        body: JSON.stringify(value),
         headers: {
             'Content-Type': 'application/json',
         },
@@ -37,21 +35,13 @@ export const setConfig = async (key: string, value: unknown) => {
 export const getConfig = async (key: string) => {
     return fetch(`/api/launcher/config?key=${key}`)
         .then((res) => res.json())
-        .then((data) => JSON.parse(data));
-};
-
-export const injectModConfig = async (mod: BaseMod) => {
-    const { meta } = mod;
-    const namespace = `${meta.type}::${meta.scope}::${meta.id}`;
-    if (mod.defaultConfig) {
-        const { config } = await getModConfig(namespace);
-        if (config) {
-            mod.config = config;
-        } else {
-            setModConfig(namespace, mod.defaultConfig);
-            mod.config = mod.defaultConfig;
-        }
-    }
+        .then((data) => {
+            if (JSON.stringify(data) === '{}') {
+                return null;
+            } else {
+                return data;
+            }
+        });
 };
 
 type CatchTime = (name?: string) => Promise<Array<[string, number]>>;

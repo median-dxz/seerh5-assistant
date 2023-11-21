@@ -3,6 +3,7 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig, loadEnv } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import importMap from './vite-plugin/vite-plugin-import-map';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -16,11 +17,20 @@ export default defineConfig(({ command, mode }) => {
                 '/seerh5.61.com': `http://localhost:${env['VITE_BACKEND_PORT']}`,
                 '/account-co.61.com': `http://localhost:${env['VITE_BACKEND_PORT']}`,
                 '/mods': `http://localhost:${env['VITE_BACKEND_PORT']}`,
-            }
+            },
         },
         build: {
+            target: 'esnext',
             dynamicImportVarsOptions: {
                 exclude: ['src/service/ModManager/*'],
+            },
+            rollupOptions: {
+                output: {
+                    manualChunks: {
+                        'sea-core': ['sea-core'],
+                    },
+                    minifyInternalExports: false,
+                },
             },
         },
         preview: {
@@ -55,6 +65,7 @@ export default defineConfig(({ command, mode }) => {
                     ],
                 },
             }),
+            importMap(),
         ],
         resolve: {
             alias: {

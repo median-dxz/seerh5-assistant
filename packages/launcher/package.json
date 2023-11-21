@@ -11,7 +11,7 @@
         "preview": "vite preview",
         "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
         "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
-        "clean": "rimrf ./dist && rimrf ./build && rimraf ../../.tsbuildinfo/launcher.tsbuildinfo"
+        "clean": "rimraf ./dist && rimraf ./build && rimraf ../../.tsbuildinfo/launcher.tsbuildinfo"
     },
     "dependencies": {
         "@mui/icons-material": "^5.13.7",

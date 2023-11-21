@@ -12,7 +12,7 @@ export function QuickCommand() {
             <Button
                 variant="outlined"
                 onClick={() => {
-                    eval('ModuleManager.currModule.hide()');
+                    ModuleManager.currModule.hide();
                 }}
             >
                 关闭主页(挂机模式)
@@ -20,7 +20,7 @@ export function QuickCommand() {
             <Button
                 variant="outlined"
                 onClick={() => {
-                    eval('ModuleManager.currModule.show()');
+                    ModuleManager.currModule.show();
                 }}
             >
                 开启主页(恢复)
@@ -28,7 +28,7 @@ export function QuickCommand() {
             <Button
                 variant="outlined"
                 onClick={() => {
-                    eval('ModuleManager.CloseAll()');
+                    ModuleManager.CloseAll();
                 }}
             >
                 返回主页(关闭所有模块)

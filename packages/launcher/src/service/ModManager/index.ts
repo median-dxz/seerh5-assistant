@@ -1,7 +1,7 @@
 import { ct } from '@sea-launcher/context/ct';
 import * as EndPoints from '@sea-launcher/service/endpoints';
 import { SeaModuleLogger } from '@sea-launcher/utils/logger';
-import type { ILevelBattleStrategy, MoveStrategy } from 'sea-core';
+import type { AnyFunction, ILevelBattleStrategy, MoveStrategy } from 'sea-core';
 import { GameModuleListener } from 'sea-core/event-bus';
 import {
     BaseMod,
@@ -68,7 +68,12 @@ export const SEAModManager = {
                     });
                 })
         );
-        return Promise.all(promises).then((mods) => mods.flat());
+        return Promise.all(promises)
+            .then((mods) => mods.flat())
+            .then(async (mods) => {
+                await Promise.all(mods.map((mod) => injectModConfig(mod)));
+                return mods;
+            });
     },
 
     setup(mods: BaseMod[]) {
@@ -82,20 +87,40 @@ export const SEAModManager = {
                 case SEAModType.MODULE_MOD:
                     {
                         const moduleMod = mod as ModuleMod;
-                        moduleMod.activate = function () {
-                            this.subscriber = {
-                                moduleName: this.moduleName,
-                                load: this.load?.bind(this),
-                                show: this.show?.bind(this),
-                                mainPanel: this.mainPanel?.bind(this),
-                                destroy: this.destroy?.bind(this),
-                            };
+                        const listeners = {
+                            load: moduleMod.load?.bind(mod),
+                            show: moduleMod.show?.bind(mod),
+                            mainPanel: moduleMod.mainPanel?.bind(mod),
+                            destroy: moduleMod.destroy?.bind(mod),
+                        };
 
-                            GameModuleListener.on(this.subscriber);
+                        const clearFn: AnyFunction[] = [];
+
+                        moduleMod.activate = function () {
+                            if (listeners.load) {
+                                const onload = listeners.load;
+                                GameModuleListener.on(this.moduleName, 'load', onload);
+                                clearFn.push(() => GameModuleListener.off(this.moduleName, 'show', onload));
+                            }
+                            if (listeners.show) {
+                                const onshow = listeners.show;
+                                GameModuleListener.on(this.moduleName, 'show', onshow);
+                                clearFn.push(() => GameModuleListener.off(this.moduleName, 'show', onshow));
+                            }
+                            if (listeners.mainPanel) {
+                                const onMainPanel = listeners.mainPanel;
+                                GameModuleListener.on(this.moduleName, 'mainPanel', onMainPanel);
+                                clearFn.push(() => GameModuleListener.off(this.moduleName, 'mainPanel', onMainPanel));
+                            }
+                            if (listeners.destroy) {
+                                const ondestroy = listeners.destroy;
+                                GameModuleListener.on(this.moduleName, 'destroy', ondestroy);
+                                clearFn.push(() => GameModuleListener.off(this.moduleName, 'destroy', ondestroy));
+                            }
                         };
 
                         moduleMod.deactivate = function () {
-                            GameModuleListener.off(this.subscriber);
+                            clearFn.forEach((fn) => fn());
                         };
                     }
                     break;
@@ -127,7 +152,7 @@ export const SEAModManager = {
                     }
                     break;
             }
-            EndPoints.injectModConfig(mod);
+
             mod.logger = SeaModuleLogger(modNamespace, 'info');
             mod.namespace = modNamespace;
 
@@ -190,4 +215,29 @@ export const loadBattle = async (id: string, scope = 'sa') => {
         pets: await ct(...battleExport.pets),
         strategy: loadStrategy(battleExport.strategy, scope),
     } satisfies ILevelBattleStrategy;
+};
+
+import { createLocalStorageProxy } from '@sea-launcher/utils/LocalStorage';
+export const injectModConfig = async (mod: BaseMod) => {
+    const { meta } = mod;
+    const namespace = `${meta.type}::${meta.scope}::${meta.id}`;
+    if (mod.defaultConfig) {
+        const serializeConfig = mod.serializeConfig ?? JSON.stringify;
+        const { config } = await EndPoints.getModConfig(namespace);
+        if (config) {
+            const praseConfig = mod.praseConfig;
+            mod.config = await createLocalStorageProxy(
+                namespace,
+                (praseConfig ? praseConfig(config) : config) as object,
+                (value) => {
+                    EndPoints.setModConfig(namespace, serializeConfig(value));
+                }
+            );
+        } else {
+            EndPoints.setModConfig(namespace, serializeConfig(mod.defaultConfig));
+            mod.config = await createLocalStorageProxy(namespace, { ...mod.defaultConfig }, (value) => {
+                EndPoints.setModConfig(namespace, serializeConfig(value));
+            });
+        }
+    }
 };

@@ -1,6 +1,6 @@
 import { Box, Button, ButtonGroup, Checkbox, CircularProgress, LinearProgress, Typography } from '@mui/material';
 
-import * as SEALocalStorage from '@sea-launcher/utils/hooks/SALocalStorage';
+import * as SEALocalStorage from '@sea-launcher/utils/LocalStorage';
 import React from 'react';
 import { Pet, SEAPet, UIModuleHelper, delay, lowerBlood, switchBag } from 'sea-core';
 

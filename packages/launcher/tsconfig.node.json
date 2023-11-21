@@ -6,6 +6,7 @@
         "noEmit": true
     },
     "include": [
-        "vite.config.ts"
+        "vite.config.ts",
+        "./vite-plugin/vite-plugin-importmap.ts"
     ]
 }

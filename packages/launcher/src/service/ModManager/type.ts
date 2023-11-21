@@ -1,4 +1,4 @@
-import type { GameModuleEventHandler, MoveStrategy } from 'sea-core';
+import type { MoveStrategy } from 'sea-core';
 
 export enum SEAModType {
     BASE_MOD = 'base',
@@ -22,6 +22,8 @@ export class BaseMod {
     namespace: string;
     defaultConfig?: unknown;
     config?: unknown;
+    serializeConfig?(data: unknown): string;
+    praseConfig?(serialized: unknown): unknown;
     logger: typeof console.log;
     activate?(): void;
     deactivate?(): void;
@@ -39,8 +41,6 @@ export class ModuleMod extends BaseMod {
     show?(ctx: BaseModule): void;
     mainPanel?(ctx: BaseModule): void;
     destroy?(): void;
-
-    subscriber: GameModuleEventHandler<BaseModule>;
 
     activate() {
         // inject by ModManager

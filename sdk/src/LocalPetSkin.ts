@@ -2,32 +2,17 @@ import type { SEAMod } from '../lib/mod';
 
 import { NOOP, Socket } from 'sea-core';
 
-const StorageKey = 'LocalSkin';
-
 interface SkinInfo {
     skinId: number;
     petSkinId: number;
 }
 
-const cloth = { changed: new Map(), original: new Map() };
+interface Config {
+    changed: Map<number, SkinInfo>;
+    original: Map<number, number>;
+}
 
-// const cloth = createLocalStorageProxy<{ changed: Map<number, SkinInfo>; original: Map<number, number> }>(
-//     StorageKey,
-//     { changed: new Map(), original: new Map() },
-//     (data) => {
-//         const clothData = {
-//             changed: Array.from(data.changed.entries()),
-//             original: Array.from(data.original.entries()),
-//         };
-//         return JSON.stringify(clothData);
-//     },
-//     (serialized) => {
-//         const { changed, original } = JSON.parse(serialized);
-//         return { changed: new Map(changed), original: new Map(original) };
-//     }
-// );
-
-class LocalPetSkin implements SEAMod.IBaseMod<{ changed: Map<number, number>; original: Map<number, number> }> {
+class LocalPetSkin implements SEAMod.IBaseMod<Config> {
     declare logger: typeof console.log;
 
     meta: SEAMod.MetaData = {
@@ -37,7 +22,25 @@ class LocalPetSkin implements SEAMod.IBaseMod<{ changed: Map<number, number>; or
         description: '本地全皮肤解锁',
     };
 
+    defaultConfig = { changed: new Map<number, SkinInfo>(), original: new Map<number, number>() };
+    config: Config;
+
+    serializeConfig(data: Config) {
+        const clothData = {
+            changed: Array.from(data.changed.entries()),
+            original: Array.from(data.original.entries()),
+        };
+        return JSON.stringify(clothData);
+    }
+
+    praseConfig(serialized: unknown) {
+        const { changed, original } = serialized;
+        return { changed: new Map(changed), original: new Map(original) } as Config;
+    }
+
     activate() {
+        const cloth = this.config;
+
         Object.defineProperty(FighterUserInfo.prototype, 'petInfoArr', {
             set: function (t) {
                 const skinId = (r: PetInfo) => (this.id == MainManager.actorID ? r.skinId : r._skinId ?? 0);
@@ -87,25 +90,10 @@ class LocalPetSkin implements SEAMod.IBaseMod<{ changed: Map<number, number>; or
                 if (cloth.original.get(petInfo.id) !== skinId) {
                     await Socket.sendByQueue(47310, [catchTime, skinId]);
                 } else {
-                    // cloth.use(({ original }) => {
-                    //     original.delete(petInfo.id);
-                    // });
                     cloth.original.delete(petInfo.id);
                 }
-                // cloth.use(({ changed }) => {
-                //     changed.delete(petInfo.id);
-                // });
                 cloth.changed.delete(petInfo.id);
             } else {
-                // cloth.use(({ original, changed }) => {
-                //     if (!original.has(petInfo.id)) {
-                //         original.set(petInfo.id, petInfo.skinId);
-                //     }
-                //     changed.set(petInfo.id, {
-                //         skinId: skinId,
-                //         petSkinId: PetSkinXMLInfo.getSkinPetId(skinId, petInfo.id),
-                //     });
-                // });
                 if (!cloth.original.has(petInfo.id)) {
                     cloth.original.set(petInfo.id, petInfo.skinId);
                 }
@@ -114,6 +102,7 @@ class LocalPetSkin implements SEAMod.IBaseMod<{ changed: Map<number, number>; or
                     petSkinId: PetSkinXMLInfo.getSkinPetId(skinId, petInfo.id),
                 });
             }
+            this.config.update();
             PetManager.dispatchEvent(new PetEvent(PetEvent.EQUIP_SKIN, catchTime, skinId));
             callback();
         };

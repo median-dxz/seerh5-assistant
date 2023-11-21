@@ -8,7 +8,7 @@ type DataBuilder<T> = (data: ArrayBuffer) => T;
 export type SocketSendHandler = Handler<seerh5.SocketRequestData>;
 export type SocketReceiveHandler<TCmd extends number> = Handler<SocketData<TCmd>>;
 
-export type SocketEvent = 'send' | 'receive';
+type SocketEvent = 'send' | 'receive';
 
 type HandlerType<TCmd extends number> = {
     send: SocketSendHandler;

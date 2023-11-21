@@ -51,6 +51,7 @@ export function petFragmentLevel(ctx) {
  * @type {import('@koa/router').Middleware}
  */
 export function launcherConfig(ctx) {
+    const key = ctx.query['key'];
     // 判断是get还是post
     if (ctx.method === 'GET') {
         const configPath = path.join(base, 'config', 'sea-launcher.toml');
@@ -60,7 +61,7 @@ export function launcherConfig(ctx) {
         const content = fs.readFileSync(configPath, 'utf-8');
         /** @type {any} */
         const config = toml.parse(content);
-        ctx.body = config['Launcher'];
+        ctx.body = config[key] ?? {};
     } else if (ctx.method === 'POST') {
         const configPath = path.join(base, 'config', 'sea-launcher.toml');
         if (!fs.existsSync(configPath)) {
@@ -70,7 +71,7 @@ export function launcherConfig(ctx) {
         /** @type {any} */
         const config = toml.parse(content);
         const newConfig = ctx.request.body;
-        config['Launcher'] = newConfig;
+        config[key] = newConfig ?? {};
         fs.writeFileSync(configPath, toml.stringify(config));
         ctx.body = {
             success: true,

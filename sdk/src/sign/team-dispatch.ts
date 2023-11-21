@@ -1,5 +1,6 @@
-import { PetPosition, SEAPet, SEAPetLocation, getBagPets } from 'sea-core';
+import { PetPosition, SEAPet, PetLocation as SEAPetLocation, getBagPets } from 'sea-core';
 import { Socket } from 'sea-core/engine';
+import type { SEAMod } from '../../lib/mod';
 
 interface Config {
     ignorePets: string[];
@@ -21,8 +22,12 @@ class TeamDispatch implements SEAMod.ISignMod<Config> {
     export: Record<string, SEAMod.SignModExport<typeof this>> = {
         战队派遣: {
             check: async () => {
-                const times = await Socket.sendByQueue(45807).then((r) => new DataView(r).getUint32(0));
-                return Number(12 - times > 0);
+                if (MainManager.actorInfo.teamInfo && MainManager.actorInfo.teamInfo.id > 0) {
+                    const times = await Socket.sendByQueue(45807).then((r) => new DataView(r).getUint32(0));
+                    return Number(12 - times > 0);
+                } else {
+                    return 0;
+                }
             },
             async run() {
                 const hasDispatched = [];

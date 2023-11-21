@@ -72,7 +72,7 @@ class Vip implements SEAMod.ISignMod<Config> {
             },
             run: () =>
                 Socket.sendByQueue(CommandID.VIP_SCORE_EXCHANGE, [this.config.exchangeId]).then(() =>
-                    Socket.sendByQueue(CommandID.SEER_VIP_DAILY_CHECK, [1])
+                    EventManager.dispatchEventWith('vipRewardBuyOrGetItem')
                 ),
         },
     };

@@ -30,3 +30,5 @@ export type GameConfigMap = {
     pet: seerh5.PetObj;
     statusEffect: seerh5.StatusEffectObj;
 };
+
+export type GameModuleMap = {};

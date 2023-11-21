@@ -57,9 +57,9 @@ export class PetFragmentRunner implements ILevelRunner<LevelData, LevelInfo> {
             return { ...strategy, beforeBattle };
         });
 
-        const LevelObj: SEA.PetFragmentLevelObj = config.xml
+        const LevelObj: seerh5.PetFragmentLevelObj = config.xml
             .getAnyRes('new_super_design')
-            .Root.Design.find((r: SEA.PetFragmentLevelObj) => r.ID === option.id);
+            .Root.Design.find((r: seerh5.PetFragmentLevelObj) => r.ID === option.id);
 
         const level = new PetFragmentLevel(LevelObj);
 

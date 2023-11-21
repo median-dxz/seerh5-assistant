@@ -10,20 +10,26 @@ RoadMap: **见Readme**
 - [x] 项目更名为SEA(Seerh5 Assistant Project), 启动器部分名称更改为SEAL(Seerh5 Assistant Launcher)
 > 其实名称没变，变的是缩写
 
-# Core 当前版本 v0.6.3
+- [ ] 使用import map, 在全局共享`sea-core`ES模块实例, 使插件捆绑后以原生esm方式即可使用core
+  - [ ] 编写vite插件和引入jspm, 使launcher在开发环境下将`sea-core`外部化, 由插件注入本地工作区包的importmap
+  - [ ] 同样由vite插件和jspm, 在生产环境下将`sea-core`捆绑为单独的chunk并保留导出签名, 由插件注入chunk的importmap(额外步骤：将分包解析映射到总包)
+  - [ ] sdk中不用额外插件，仅做外部化配置
+  - [ ] 完善动态import加载插件的机制，在devtools中获取更好的显示
+
+# Core 当前版本 v0.6.4
 
 - [x] 整合官方的module加载调试输出
   - [x] 屏蔽官方实现
   - [x] 更新hook位置
 - [x] SAType从DTS中移动到`core/constant/type.ts`下
 - [x] 将type作为打包输出的一部分
-
-- [ ] 统一监听器接口, SEAEventTarget作为基类, Socket和GameModule去继承, 最后暴露EventBus统合
-  - [ ] Socket的res监听fallback到SocketConnection
-  - [ ] GameModule支持类型Map推导
+- [x] 统一组织所有的TypeMap到`constant`下
+- [x] 弃用LocalStorage作为配置存储, 进行初步持久化
+- [x] 统一监听器接口, SEAEventTarget作为基类, Socket和GameModule去继承, 最后暴露EventBus统合
+  - [x] Socket的res监听fallback到SocketConnection
+  - [x] GameModule支持类型Map推导
 
 - [ ] 重构GameConfig查询模块, 采用接口+注册制, 配合TypeMap, 添加可扩展性
-- [ ] 统一组织所有的TypeMap到`constant`下
 
 - [ ] 属性攻击/特攻/物攻的枚举
 

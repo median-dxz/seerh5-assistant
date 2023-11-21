@@ -1,15 +1,22 @@
 import * as Endpoints from '@sea-launcher/service/endpoints';
-import { produce, type Draft } from 'immer';
+import { enableMapSet, produce, type Draft } from 'immer';
 
-async function createLocalStorageProxy<T extends object>(key: string, initValue: T) {
-    let data: T = await Endpoints.getConfig(key);
-    if (data == undefined) data = initValue;
+enableMapSet();
+
+export async function createLocalStorageProxy<T extends object>(
+    key: string,
+    initValue: T,
+    mutation: (value: T) => void
+) {
     const observable = {
-        ref: data,
+        ref: initValue,
         use(producer) {
             this.ref = produce(this.ref, producer);
         },
-    } as T & { use(producer: (draft: Draft<T>) => void): void; ref: T };
+        update() {
+            this.use(() => {});
+        },
+    } as T & { use(producer: (draft: Draft<T>) => void): void; ref: T; update(): void };
 
     const proxy = new Proxy(observable, {
         get(target, prop, receiver) {
@@ -21,7 +28,7 @@ async function createLocalStorageProxy<T extends object>(key: string, initValue:
         },
         set(target, prop, value, receiver) {
             if (prop === 'ref') {
-                Endpoints.setConfig(key, value);
+                mutation(value);
                 return Reflect.set(target, prop, value, receiver);
             } else {
                 target.use((draft) => {
@@ -35,9 +42,15 @@ async function createLocalStorageProxy<T extends object>(key: string, initValue:
     return proxy;
 }
 
-export const BattleStrategy = createLocalStorageProxy<{
+let data = (await Endpoints.getConfig('BattleStrategy')) ?? { dsl: [], snm: [] };
+export const BattleStrategy = await createLocalStorageProxy<{
     dsl: string[][];
     snm: string[][];
-}>('BattleStrategy', { dsl: [], snm: [] });
+}>('BattleStrategy', data, Endpoints.setConfig.bind(null, 'BattleStrategy'));
 
-export const PetGroups = createLocalStorageProxy<Array<number[]>>('PetGroups', Array(6).fill((() => [])()));
+data = (await Endpoints.getConfig('PetGroups')) ?? Array(6).fill((() => [])());
+export const PetGroups = await createLocalStorageProxy<Array<number[]>>(
+    'PetGroups',
+    data,
+    Endpoints.setConfig.bind(null, 'PetGroups')
+);
