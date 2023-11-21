@@ -12,16 +12,16 @@ export interface GameConfigQuery<T extends GameConfigMap[keyof GameConfigMap]> {
     get(id: number): T;
     find(predicate: PredicateFn<T>): T;
     filter(predicate: PredicateFn<T>): T[];
+    getName(id: number): string;
     findByName(name: string): T;
     filterByName(name: string | RegExp): T[];
-    getName(id: number): string;
 }
 
 const gameConfigRegistryEntityMap = new Map<string, GameConfigQuery<GameConfigMap[keyof GameConfigMap]>>();
 
 export const GameConfigRegistry = {
     getQuery<T extends keyof GameConfigMap>(type: T) {
-        const entity = gameConfigRegistryEntityMap.get(type) as GameConfigRegistryEntity<GameConfigMap[T]> | undefined;
+        const entity = gameConfigRegistryEntityMap.get(type) as GameConfigQuery<GameConfigMap[T]> | undefined;
 
         if (entity == undefined) {
             throw `不支持的查询集合`;

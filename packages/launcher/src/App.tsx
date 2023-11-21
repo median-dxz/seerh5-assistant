@@ -12,9 +12,9 @@ import { saTheme } from '@sea-launcher/style';
 import { CommandBar } from './CommandBar';
 import { MainPanel } from './views/MainPanel';
 
-import { Hook, SEAHookDispatcher as HookDispatcher } from 'sea-core';
+import { Hook, SEAHookEmitter as HookDispatcher } from 'sea-core';
 import { Manager as BattleManager, autoStrategy } from 'sea-core/battle';
-import { EventBus, SocketEventEmitter } from '../../core/dist/emitter';
+import { EventBus, SocketEventEmitter } from 'sea-core/emitter';
 
 import { QuickAccess } from './QuickAccess';
 import { SEAModManager } from './service/ModManager';
@@ -129,6 +129,7 @@ export default function App() {
         const clean = () => {
             active = false;
             SEAModManager.teardown();
+            debugger;
             eventBus.unmount();
             document.body.removeEventListener('keydown', handleShortCut);
         };

@@ -47,4 +47,4 @@ export class SEAEventTarget<TEvents extends Record<EventKey, unknown>, TDefaultV
     }
 }
 
-export const SEAHookDispatcher = new SEAEventTarget<HookDataMap, undefined>();
+export const SEAHookEmitter = new SEAEventTarget<HookDataMap, undefined>();

@@ -5,7 +5,7 @@ import { SeaTableRow } from '@sea-launcher/components/styled/TableRow';
 import { produce } from 'immer';
 import * as React from 'react';
 import type { AnyFunction, HookDataMap } from 'sea-core';
-import { Hook, SEAHookDispatcher, hookFn } from 'sea-core';
+import { Hook, SEAHookEmitter, hookFn } from 'sea-core';
 
 interface CapturedPackage {
     type: 'RemoveListener' | 'AddListener' | 'Received' | 'Send';
@@ -103,14 +103,14 @@ export function PackageCapture() {
             });
         };
 
-        SEAHookDispatcher.on(Hook.Socket.receive, onReceive);
-        SEAHookDispatcher.on(Hook.Socket.send, onSend);
+        SEAHookEmitter.on(Hook.Socket.receive, onReceive);
+        SEAHookEmitter.on(Hook.Socket.send, onSend);
 
         return () => {
             hookFn(SocketConnection.mainSocket, 'addCmdListener');
             hookFn(SocketConnection.mainSocket, 'removeCmdListener');
-            SEAHookDispatcher.off(Hook.Socket.send, onSend);
-            SEAHookDispatcher.off(Hook.Socket.receive, onReceive);
+            SEAHookEmitter.off(Hook.Socket.send, onSend);
+            SEAHookEmitter.off(Hook.Socket.receive, onReceive);
         };
     }, [state, capture]);
 

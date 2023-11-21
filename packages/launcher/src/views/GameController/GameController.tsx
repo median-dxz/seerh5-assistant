@@ -1,6 +1,6 @@
 import { Button, Divider, Typography } from '@mui/material';
 
-import { createGameConfigQuery, cureAllPet } from 'sea-core';
+import { GameConfigRegistry, cureAllPet } from 'sea-core';
 import * as Engine from 'sea-core/engine';
 
 import { PanelStateContext } from '@sea-launcher/context/PanelState';
@@ -12,8 +12,8 @@ import { AnimationMode } from './AnimationMode';
 import { BattleFireInfo } from './BattleFireInfo';
 import { PetBagController } from './PetBagController';
 
-const titleName = createGameConfigQuery('title').getName;
-const suitName = createGameConfigQuery('suit').getName;
+const titleQuery = GameConfigRegistry.getQuery('title');
+const suitQuery = GameConfigRegistry.getQuery('suit');
 
 export function GameController() {
     const [userTitle, setUserTitle] = React.useState(Engine.getUserTitle());
@@ -69,10 +69,10 @@ export function GameController() {
                     id="change-suit"
                     buttonProps={{ sx: { m: 1 }, variant: 'outlined' }}
                     data={suits}
-                    renderItem={suitName}
+                    renderItem={suitQuery.getName}
                     onSelectItem={changeSuit}
                 >
-                    {GameConfig.getName('suit', userSuit)}
+                    {suitQuery.getName(userSuit)}
                 </PopupMenuButton>
                 <Typography>{`效果: ${ItemSeXMLInfo.getSuitEff(userSuit)}`}</Typography>
             </Typography>
@@ -83,12 +83,12 @@ export function GameController() {
                     id="change-title"
                     buttonProps={{ sx: { m: 1 }, variant: 'outlined' }}
                     data={titles}
-                    renderItem={titleName}
+                    renderItem={titleQuery.getName}
                     onSelectItem={changeTitle}
                 >
-                    {GameConfig.getName('title', userTitle)}
+                    {titleQuery.getName(userTitle)}
                 </PopupMenuButton>
-                <Typography>{`效果: ${GameConfig.get('title', userTitle)?.abtext}`}</Typography>
+                <Typography>{`效果: ${titleQuery.get(userTitle)?.abtext}`}</Typography>
             </Typography>
 
             <Divider />

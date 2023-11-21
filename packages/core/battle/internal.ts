@@ -1,4 +1,4 @@
-import { SEAHookDispatcher, delay } from '../common/utils.js';
+import { SEAHookEmitter, delay } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
 import { SocketEventEmitter } from '../emitter/index.js';
 import { findObject } from '../engine/index.js';
@@ -25,14 +25,14 @@ export default () => {
         this.getMC().selected = !1;
     };
 
-    SEAHookDispatcher.on(Hook.Battle.battleStart, () => {
+    SEAHookEmitter.on(Hook.Battle.battleStart, () => {
         cachedRoundInfo.deactivate();
         if (FightManager.fightAnimateMode === 1) {
             TimeScaleManager.setBattleAnimateSpeed(10);
         }
     });
 
-    SEAHookDispatcher.on(Hook.Battle.endPropShown, () => {
+    SEAHookEmitter.on(Hook.Battle.endPropShown, () => {
         if (FightManager.fightAnimateMode === 1) {
             TimeScaleManager.setBattleAnimateSpeed(1);
         }
@@ -55,9 +55,9 @@ export default () => {
         }
     };
 
-    SEAHookDispatcher.on(Hook.Battle.battleStart, onRoundStart);
-    SEAHookDispatcher.on(Hook.Battle.roundEnd, onRoundStart);
-    SEAHookDispatcher.on(Hook.Battle.battleEnd, () => {
+    SEAHookEmitter.on(Hook.Battle.battleStart, onRoundStart);
+    SEAHookEmitter.on(Hook.Battle.roundEnd, onRoundStart);
+    SEAHookEmitter.on(Hook.Battle.battleEnd, () => {
         const isWin = Boolean(FightManager.isWin);
         if (Manager.context.strategy) {
             Promise.all([Manager.context.delayTimeout, delay(1000)])

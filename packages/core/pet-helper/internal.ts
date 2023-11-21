@@ -1,4 +1,4 @@
-import { SEAHookDispatcher } from '../common/utils.js';
+import { SEAHookEmitter } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
 import { SocketEventEmitter } from '../emitter/index.js';
 import { PetDataManger, ProxyPet } from './PetDataManager.js';
@@ -41,7 +41,7 @@ export default () => {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     PetDataManger.bag.deactivate = new Proxy(PetDataManger.bag.deactivate, {
         apply: (target, thisArg, argArray) => {
-            SEAHookDispatcher.emit(Hook.PetBag.deactivate);
+            SEAHookEmitter.emit(Hook.PetBag.deactivate);
             Reflect.apply(target, thisArg, argArray);
             return;
         },
@@ -50,7 +50,7 @@ export default () => {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     PetDataManger.bag.update = new Proxy(PetDataManger.bag.update, {
         apply: (target, thisArg, argArray: [[ProxyPet[], ProxyPet[]]]) => {
-            SEAHookDispatcher.emit(Hook.PetBag.update, ...argArray);
+            SEAHookEmitter.emit(Hook.PetBag.update, ...argArray);
             Reflect.apply(target, thisArg, argArray);
             return;
         },
