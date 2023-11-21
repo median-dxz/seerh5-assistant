@@ -81,7 +81,7 @@ declare namespace seerh5 {
 
     interface StatusEffectObj extends BaseObj {
         ID: number;
-        Name: number;
+        Name: string;
         Efftype: 0 | 1;
     }
 
@@ -117,9 +117,13 @@ declare namespace seerh5 {
         suitdes: string;
     }
 
-    interface TitleObj extends BaseObj {
+    interface AchieveObj extends BaseObj {
         ID: number;
         Desc: string;
+    }
+
+    interface TitleObj extends AchieveObj {
+        SpeNameBonus: number;
         title: string;
         abtext?: string;
     }

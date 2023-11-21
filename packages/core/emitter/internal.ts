@@ -1,25 +1,25 @@
 import { Hook } from '../constant/index.js';
 
-import { GameModuleListener } from './module.js';
+import { GameModuleEventEmitter } from './GameModule.js';
 
 import { SEAHookEmitter } from '../common/utils.js';
 import { SocketEventEmitter } from './socket.js';
 
 export default () => {
     SEAHookEmitter.on(Hook.Module.loadScript, (name) => {
-        GameModuleListener.emit(name, 'load');
+        GameModuleEventEmitter.emit(name, 'load');
     });
 
     SEAHookEmitter.on(Hook.Module.construct, ({ module }) => {
-        GameModuleListener.emit(module, 'show');
+        GameModuleEventEmitter.emit(module, 'show');
     });
 
     SEAHookEmitter.on(Hook.Module.openMainPanel, ({ module }) => {
-        GameModuleListener.emit(module, 'mainPanel');
+        GameModuleEventEmitter.emit(module, 'mainPanel');
     });
 
     SEAHookEmitter.on(Hook.Module.destroy, (name) => {
-        GameModuleListener.emit(name, 'destroy');
+        GameModuleEventEmitter.emit(name, 'destroy');
     });
 
     SEAHookEmitter.on(Hook.Socket.send, ({ cmd, data }) => {

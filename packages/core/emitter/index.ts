@@ -1,8 +1,8 @@
-export * from './eventBus.js';
-export * from './module.js';
+export * from './EventBus.js';
+export * from './GameModule.js';
 export * from './socket.js';
 
-import type { DelegateEventEmitter } from './eventBus.js';
+import type { DelegateEventEmitter } from './EventBus.js';
 
 export const GameNativeEmitter = {
     socket: {

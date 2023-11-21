@@ -28,7 +28,7 @@ export interface GameModuleEventHandler<T extends BaseModule = BaseModule> {
     destroy?(): void;
 }
 
-export const GameModuleListener = {
+export const GameModuleEventEmitter = {
     eventTarget: {
         load: new SEAEventTarget(),
         show: new SEAEventTarget(),

@@ -5,7 +5,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
     build: {
-        sourcemap: "inline",
+        sourcemap: true,
         lib: {
             // Could also be a dictionary or array of multiple entry points
             entry: [
@@ -16,6 +16,7 @@ export default defineConfig({
                 resolve(__dirname, 'src/quick-access-plugin/ToggleAutoCure.ts'),
                 resolve(__dirname, 'src/sign/sign.ts'),
                 resolve(__dirname, 'src/LocalPetSkin.ts'),
+                resolve(__dirname, 'src/CraftSkillStone.ts'),
             ],
             formats: ['es'],
             fileName: (format, entry) => {

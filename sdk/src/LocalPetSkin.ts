@@ -23,7 +23,7 @@ class LocalPetSkin implements SEAMod.IBaseMod<Config> {
     };
 
     defaultConfig = { changed: new Map<number, SkinInfo>(), original: new Map<number, number>() };
-    config: Config;
+    config: Config & { use(producer: (draft: Config) => void): void };
 
     serializeConfig(data: Config) {
         const clothData = {
@@ -86,23 +86,32 @@ class LocalPetSkin implements SEAMod.IBaseMod<Config> {
         PetManager.equipSkin = async (catchTime, skinId = 0, callback = NOOP) => {
             const petInfo = PetManager.getPetInfo(catchTime);
             this.logger('new skin id:', skinId, 'previous skin id:', petInfo.skinId);
+
             if (skinId === 0 || PetSkinController.instance.haveSkin(skinId)) {
                 if (cloth.original.get(petInfo.id) !== skinId) {
                     await Socket.sendByQueue(47310, [catchTime, skinId]);
                 } else {
-                    cloth.original.delete(petInfo.id);
+                    cloth.use(({ original }) => {
+                        original.delete(petInfo.id);
+                    });
                 }
-                cloth.changed.delete(petInfo.id);
+                cloth.use(({ changed }) => {
+                    changed.delete(petInfo.id);
+                });
             } else {
                 if (!cloth.original.has(petInfo.id)) {
-                    cloth.original.set(petInfo.id, petInfo.skinId);
+                    cloth.use(({ original }) => {
+                        original.set(petInfo.id, petInfo.skinId);
+                    });
                 }
-                cloth.changed.set(petInfo.id, {
-                    skinId: skinId,
-                    petSkinId: PetSkinXMLInfo.getSkinPetId(skinId, petInfo.id),
+                cloth.use(({ changed }) => {
+                    changed.set(petInfo.id, {
+                        skinId: skinId,
+                        petSkinId: PetSkinXMLInfo.getSkinPetId(skinId, petInfo.id),
+                    });
                 });
             }
-            this.config.update();
+
             PetManager.dispatchEvent(new PetEvent(PetEvent.EQUIP_SKIN, catchTime, skinId));
             callback();
         };

@@ -38,7 +38,7 @@ RoadMap: **见Readme**
 
 - [ ] 通过declare module和内建命名空间支持等方式，使得Core支持扩展，类似d3和jq的插件
   - [ ] 添加Loader的扩展点
-  - [ ] 添加GameConfig的扩展点
+  - [x] 添加GameConfig的扩展点
 
 - [ ] 解耦登录器/后端特定逻辑
 - [ ] 解耦非核心功能, 全部移动到登录器下的`features`包下, 由登录器提供扩展定义

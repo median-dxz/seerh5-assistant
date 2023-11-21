@@ -1,11 +1,11 @@
-import type { GameConfigMap } from 'constant/type.js';
+import type { GameConfigMap } from '../constant/type.js';
 
 type PredicateFn<T> = (value: T) => boolean;
 
 export interface GameConfigRegistryEntity<T extends object> {
     objectName: (obj: T) => string;
     objectId: (obj: T) => number;
-    iterator: IterableIterator<T>;
+    iterator: Iterable<T>;
 }
 
 export interface GameConfigQuery<T extends GameConfigMap[keyof GameConfigMap]> {
@@ -69,7 +69,7 @@ export const GameConfigRegistry = {
             return o && objectName(o);
         }
 
-        return gameConfigRegistryEntityMap.set(type, {
+        gameConfigRegistryEntityMap.set(type, {
             get,
             getName,
             filter,
@@ -77,5 +77,9 @@ export const GameConfigRegistry = {
             find,
             findByName,
         } as GameConfigQuery<GameConfigMap[T]>);
+    },
+
+    unregister<T extends keyof GameConfigMap>(type: T) {
+        return gameConfigRegistryEntityMap.delete(type);
     },
 };

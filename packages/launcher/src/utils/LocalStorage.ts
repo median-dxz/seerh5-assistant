@@ -12,10 +12,7 @@ export async function createLocalStorageProxy<T extends object>(
         ref: initValue,
         use(producer) {
             this.ref = produce(this.ref, producer);
-        },
-        update() {
-            this.use(() => {});
-        },
+        }
     } as T & { use(producer: (draft: Draft<T>) => void): void; ref: T; update(): void };
 
     const proxy = new Proxy(observable, {

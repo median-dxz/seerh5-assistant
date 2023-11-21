@@ -21,7 +21,7 @@ export namespace SEAMod {
 
     interface IBaseMod<T = undefined> extends Mod {
         defaultConfig?: T;
-        config?: T;
+        config?: T & { use: (draft: T) => void };
         serializeConfig?(data: T): string;
         praseConfig?(serialized: unknown): T;
         exports?: Record<string, AnyFunction>;

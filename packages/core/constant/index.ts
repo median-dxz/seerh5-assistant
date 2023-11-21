@@ -1,6 +1,6 @@
 export * from './EventHooks.js';
 export * from './ItemId.js';
-export * from "./type.js";
+export * from './type.js';
 
 export const PetPosition = {
     bag1: 1,

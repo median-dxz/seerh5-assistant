@@ -1,4 +1,5 @@
-import { EventBus, Pet, debounce, getImageButtonListener, hookFn, hookPrototype } from 'sea-core';
+import { EventBus, GameNativeEmitter, Pet, debounce, getImageButtonListener, hookFn, hookPrototype } from 'sea-core';
+import type { SEAMod } from '../../lib/mod';
 
 class PetBag implements SEAMod.IModuleMod<petBag.PetBag> {
     declare logger: typeof console.log;
@@ -42,9 +43,11 @@ class PetBag implements SEAMod.IModuleMod<petBag.PetBag> {
             const { petInfo } = e.data as { petInfo: PetInfo };
             petInfo && this.logger(new Pet(petInfo));
         };
-        this.eventBus.socket(CommandID.PET_DEFAULT, refresh);
-        this.eventBus.socket(CommandID.PET_RELEASE, refresh);
-        this.eventBus.egret('petBag.MainPanelTouchPetItemEnd', printTappingPetInfo);
+        const socketEmitter = this.eventBus.proxy(GameNativeEmitter.socket);
+        const egretEmitter = this.eventBus.proxy(GameNativeEmitter.egret);
+        socketEmitter.on(CommandID.PET_DEFAULT, refresh);
+        socketEmitter.on(CommandID.PET_RELEASE, refresh);
+        egretEmitter.on('petBag.MainPanelTouchPetItemEnd', printTappingPetInfo);
     }
     destroy() {
         this.eventBus.unmount();

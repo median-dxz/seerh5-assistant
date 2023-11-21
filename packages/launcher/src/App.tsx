@@ -129,7 +129,6 @@ export default function App() {
         const clean = () => {
             active = false;
             SEAModManager.teardown();
-            debugger;
             eventBus.unmount();
             document.body.removeEventListener('keydown', handleShortCut);
         };

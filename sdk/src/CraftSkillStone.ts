@@ -1,5 +1,20 @@
-import { ItemId, SEAPet, Socket, delay } from 'sea-core';
+import { GameConfigRegistry, ItemId, SEAPet, Socket, delay } from 'sea-core';
 import type { SEAMod } from '../lib/mod';
+
+interface NatureObj extends seerh5.BaseObj {
+    id: number;
+    name: string;
+}
+
+declare class NatureXMLInfo {
+    static _dataMap: seerh5.Dict<NatureObj>;
+}
+
+declare module 'sea-core' {
+    export interface GameConfigMap {
+        nature: NatureObj;
+    }
+}
 
 const rate = [
     [0, 24, 5.8, 1.4, 0.3],
@@ -13,7 +28,14 @@ function calcProbability(level: number, targetLevel: number) {
 }
 
 class CraftSkillStone implements SEAMod.IBaseMod {
-    logger = console.log;
+    declare logger: typeof console.log;
+
+    meta: SEAMod.MetaData = {
+        id: 'CraftSkillStone',
+        scope: 'median',
+        type: 'base',
+        description: '',
+    };
 
     craftDreamGem(id: number, left: number) {
         const total = ItemManager.getNumByID(id);
@@ -43,6 +65,25 @@ class CraftSkillStone implements SEAMod.IBaseMod {
                 break;
             }
         }
+    }
+
+    activate() {
+        GameConfigRegistry.register('nature', {
+            iterator: {
+                *[Symbol.iterator]() {
+                    const arr = Object.values(NatureXMLInfo._dataMap);
+                    for (const obj of arr) {
+                        yield obj;
+                    }
+                },
+            },
+            objectId: (obj) => obj.id,
+            objectName: (obj) => obj.name,
+        });
+    }
+
+    deactivate() {
+        GameConfigRegistry.unregister('nature');
     }
 
     async craftOne() {
@@ -97,8 +138,6 @@ class CraftSkillStone implements SEAMod.IBaseMod {
         );
         // await this.init();
     }
-
-    meta: SEAMod.MetaData = { description: '', id: 'CraftSkillStone', scope: 'median', type: 'base' };
 }
 
 export default CraftSkillStone;

@@ -152,8 +152,8 @@ importers:
         specifier: ^1.11.8
         version: 1.11.10
       sea-core:
-        specifier: file:lib\sea-core-0.6.3.tgz
-        version: file:sdk/lib/sea-core-0.6.3.tgz
+        specifier: file:lib\sea-core-0.6.4.tgz
+        version: file:sdk/lib/sea-core-0.6.4.tgz
     devDependencies:
       rollup-plugin-external-globals:
         specifier: ^0.8.0
@@ -5545,8 +5545,8 @@ packages:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
     dev: false
 
-  file:sdk/lib/sea-core-0.6.3.tgz:
-    resolution: {integrity: sha512-EltGeIlLmyDRUgK+LA1YQpHnkLi5u87S9LWxsJeN3UNqbtSE/x3kRzuzsOBjVJdDeJX9ugJAago2nXc/sioz2A==, tarball: file:sdk/lib/sea-core-0.6.3.tgz}
+  file:sdk/lib/sea-core-0.6.4.tgz:
+    resolution: {integrity: sha512-D62tkZbrkwep3Gdr+3A4evYLP+2Jv/mkE3wHASgFpS9FyFH5yEp5Vt4GomG0nyqUp1NAVk4BrhdxUFm45mQupQ==, tarball: file:sdk/lib/sea-core-0.6.4.tgz}
     name: sea-core
-    version: 0.6.3
+    version: 0.6.4
     dev: false

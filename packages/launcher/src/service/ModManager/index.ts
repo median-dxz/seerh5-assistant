@@ -1,8 +1,8 @@
 import { ct } from '@sea-launcher/context/ct';
 import * as EndPoints from '@sea-launcher/service/endpoints';
 import { SEAModuleLogger } from '@sea-launcher/utils/logger';
-import type { AnyFunction, ILevelBattleStrategy, MoveStrategy } from 'sea-core';
-import { GameModuleListener } from '../../../../core/emitter';
+import type { ILevelBattleStrategy, MoveStrategy } from 'sea-core';
+import { EventBus, GameModuleEventEmitter } from 'sea-core/emitter';
 import {
     BaseMod,
     BattleMod,
@@ -87,40 +87,26 @@ export const SEAModManager = {
                 case SEAModType.MODULE_MOD:
                     {
                         const moduleMod = mod as ModuleMod;
-                        const listeners = {
-                            load: moduleMod.load?.bind(mod),
-                            show: moduleMod.show?.bind(mod),
-                            mainPanel: moduleMod.mainPanel?.bind(mod),
-                            destroy: moduleMod.destroy?.bind(mod),
-                        };
 
-                        const clearFn: AnyFunction[] = [];
-
+                        const eventBus = new EventBus();
+                        const gameModuleEmitter = eventBus.proxy(GameModuleEventEmitter);
                         moduleMod.activate = function () {
-                            if (listeners.load) {
-                                const onload = listeners.load;
-                                GameModuleListener.on(this.moduleName, 'load', onload);
-                                clearFn.push(() => GameModuleListener.off(this.moduleName, 'show', onload));
+                            if (this.load) {
+                                gameModuleEmitter.on(this.moduleName, 'load', this.load.bind(this));
                             }
-                            if (listeners.show) {
-                                const onshow = listeners.show;
-                                GameModuleListener.on(this.moduleName, 'show', onshow);
-                                clearFn.push(() => GameModuleListener.off(this.moduleName, 'show', onshow));
+                            if (this.show) {
+                                gameModuleEmitter.on(this.moduleName, 'show', this.show.bind(this));
                             }
-                            if (listeners.mainPanel) {
-                                const onMainPanel = listeners.mainPanel;
-                                GameModuleListener.on(this.moduleName, 'mainPanel', onMainPanel);
-                                clearFn.push(() => GameModuleListener.off(this.moduleName, 'mainPanel', onMainPanel));
+                            if (this.mainPanel) {
+                                gameModuleEmitter.on(this.moduleName, 'mainPanel', this.mainPanel.bind(this));
                             }
-                            if (listeners.destroy) {
-                                const ondestroy = listeners.destroy;
-                                GameModuleListener.on(this.moduleName, 'destroy', ondestroy);
-                                clearFn.push(() => GameModuleListener.off(this.moduleName, 'destroy', ondestroy));
+                            if (this.destroy) {
+                                gameModuleEmitter.on(this.moduleName, 'destroy', this.destroy.bind(this));
                             }
                         };
 
                         moduleMod.deactivate = function () {
-                            clearFn.forEach((fn) => fn());
+                            eventBus.unmount();
                         };
                     }
                     break;

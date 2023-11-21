@@ -4,11 +4,11 @@ type EventKey = number | string;
 export type Handler<T> = (data: T) => void;
 export type EventData<
     Type extends EventKey,
-    TEvents extends Record<EventKey, unknown>,
+    TEvents extends object,
     TDefaultValue
 > = Type extends keyof TEvents ? TEvents[Type] : TDefaultValue;
 
-export class SEAEventTarget<TEvents extends Record<EventKey, unknown>, TDefaultValue = unknown> {
+export class SEAEventTarget<TEvents extends object, TDefaultValue = unknown> {
     private et = new EventTarget();
     handlers = new Map<Handler<never>, EventListenerOrEventListenerObject>();
 
