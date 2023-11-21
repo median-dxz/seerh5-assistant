@@ -70,7 +70,7 @@ export class PetFragmentRunner implements ILevelRunner<LevelData, LevelInfo> {
         };
         this.data = { success: false } as LevelData;
 
-        this.logger = SeaModuleLogger(`精灵因子-${this.info.name}`, 'info');
+        this.logger = SEAModuleLogger(`精灵因子-${this.info.name}`, 'info');
     }
 
     selectBattle() {
@@ -161,7 +161,7 @@ function getCurPanelInfo() {
 import { PanelField, useIndex, useRowData } from '@sea-launcher/components/PanelTable';
 import { SeaTableRow } from '@sea-launcher/components/styled/TableRow';
 import * as Endpoints from '@sea-launcher/service/endpoints';
-import { SeaModuleLogger } from '@sea-launcher/utils/logger';
+import { SEAModuleLogger } from '@sea-launcher/utils/logger';
 import { produce } from 'immer';
 import useSWR from 'swr';
 import { LevelBaseNew } from './LevelBaseNew';

@@ -1,4 +1,5 @@
 import { Socket } from 'sea-core/engine';
+import type { SEAMod } from '../../lib/mod';
 
 interface Config {
     exchangeId: number;

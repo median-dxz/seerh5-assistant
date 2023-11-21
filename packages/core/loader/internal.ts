@@ -2,10 +2,11 @@ import type { AnyFunction } from '../common/utils.js';
 import { NOOP, SEAHookDispatcher, hookPrototype } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
 
-import battle from '../battle/internal.js';
-import eventBus from '../event-bus/internal.js';
-import pet from '../pet-helper/internal.js';
-import event from './event.js';
+import battleInit from '../battle/internal.js';
+import registerListeners from '../emitter/internal.js';
+import registerEngine from '../engine/internal.js';
+import petInit from '../pet-helper/internal.js';
+import registerHooks from './registerHooks.js';
 
 export const InternalInitiator = {
     loaders: [] as { loader: AnyFunction; priority: number }[],
@@ -35,10 +36,11 @@ export function enableBasic() {
 
     enableBackgroundHeartBeatCheck();
 
-    InternalInitiator.push(event, 0);
-    InternalInitiator.push(eventBus, 1);
-    InternalInitiator.push(pet, 2);
-    InternalInitiator.push(battle, 2);
+    InternalInitiator.push(registerHooks, 0);
+    InternalInitiator.push(registerListeners, 1);
+    InternalInitiator.push(petInit, 2);
+    InternalInitiator.push(battleInit, 2);
+    InternalInitiator.push(registerEngine, 3);
 }
 
 function loadScript(this: ModuleManager, scriptName: string) {

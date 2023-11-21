@@ -1,8 +1,8 @@
 import { ct } from '@sea-launcher/context/ct';
 import * as EndPoints from '@sea-launcher/service/endpoints';
-import { SeaModuleLogger } from '@sea-launcher/utils/logger';
+import { SEAModuleLogger } from '@sea-launcher/utils/logger';
 import type { AnyFunction, ILevelBattleStrategy, MoveStrategy } from 'sea-core';
-import { GameModuleListener } from 'sea-core/event-bus';
+import { GameModuleListener } from '../../../../core/emitter';
 import {
     BaseMod,
     BattleMod,
@@ -14,7 +14,7 @@ import {
     type SignModExport,
 } from './type';
 
-const log = SeaModuleLogger('SEAModManager', 'info');
+const log = SEAModuleLogger('SEAModManager', 'info');
 
 export const ModStore = new Map<string, BaseMod>();
 
@@ -153,7 +153,7 @@ export const SEAModManager = {
                     break;
             }
 
-            mod.logger = SeaModuleLogger(modNamespace, 'info');
+            mod.logger = SEAModuleLogger(modNamespace, 'info');
             mod.namespace = modNamespace;
 
             ModStore.set(modNamespace, mod);

@@ -5546,7 +5546,7 @@ packages:
     dev: false
 
   file:sdk/lib/sea-core-0.6.3.tgz:
-    resolution: {integrity: sha512-GTtKFAx2EjzFQj35Jo4+vbIhk3MkG0l6+NWbJCG5oSghcYFsvMPuNs75e1QWKpsO6co1fmoScz16LgTqFxhTpg==, tarball: file:sdk/lib/sea-core-0.6.3.tgz}
+    resolution: {integrity: sha512-EltGeIlLmyDRUgK+LA1YQpHnkLi5u87S9LWxsJeN3UNqbtSE/x3kRzuzsOBjVJdDeJX9ugJAago2nXc/sioz2A==, tarball: file:sdk/lib/sea-core-0.6.3.tgz}
     name: sea-core
     version: 0.6.3
     dev: false

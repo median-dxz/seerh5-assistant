@@ -1,10 +1,10 @@
 import { SEAHookDispatcher } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
-import { SocketListener } from '../event-bus/index.js';
+import { SocketEventEmitter } from '../emitter/index.js';
 import { PetDataManger, ProxyPet } from './PetDataManager.js';
 
 export default () => {
-    SocketListener.subscribe(CommandID.GET_PET_INFO_BY_ONCE, (data) => {
+    SocketEventEmitter.subscribe(CommandID.GET_PET_INFO_BY_ONCE, (data) => {
         const bytes = new egret.ByteArray(data);
         let size = bytes.readUnsignedInt();
         const r1 = [];
@@ -21,20 +21,20 @@ export default () => {
         return [r1, r2] as const;
     });
 
-    SocketListener.subscribe(CommandID.GET_PET_INFO, (data) => {
+    SocketEventEmitter.subscribe(CommandID.GET_PET_INFO, (data) => {
         const bytes = new egret.ByteArray(data);
         return new ProxyPet(new PetInfo(bytes));
     });
 
-    SocketListener.subscribe(CommandID.PET_DEFAULT);
-    SocketListener.subscribe(CommandID.PET_RELEASE, (data) => {
+    SocketEventEmitter.subscribe(CommandID.PET_DEFAULT);
+    SocketEventEmitter.subscribe(CommandID.PET_RELEASE, (data) => {
         const bytes = new egret.ByteArray(data);
         return new PetTakeOutInfo(bytes);
     });
 
-    SocketListener.subscribe(CommandID.ADD_LOVE_PET);
-    SocketListener.subscribe(CommandID.DEL_LOVE_PET);
-    SocketListener.subscribe(CommandID.PET_CURE);
+    SocketEventEmitter.subscribe(CommandID.ADD_LOVE_PET);
+    SocketEventEmitter.subscribe(CommandID.DEL_LOVE_PET);
+    SocketEventEmitter.subscribe(CommandID.PET_CURE);
 
     PetDataManger.init();
 

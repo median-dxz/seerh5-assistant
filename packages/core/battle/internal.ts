@@ -1,8 +1,8 @@
 import { SEAHookDispatcher, delay } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
+import { SocketEventEmitter } from '../emitter/index.js';
 import { findObject } from '../engine/index.js';
 import { PetRoundInfo } from '../entity/index.js';
-import { SocketListener } from '../event-bus/index.js';
 import * as Manager from './manager.js';
 import { Provider, cachedRoundInfo } from './provider.js';
 
@@ -71,14 +71,14 @@ export default () => {
         }
     });
 
-    SocketListener.subscribe(CommandID.NOTE_USE_SKILL, (buffer) => {
+    SocketEventEmitter.subscribe(CommandID.NOTE_USE_SKILL, (buffer) => {
         const roundInfo = new UseSkillInfo(new egret.ByteArray(buffer));
         const fi = new PetRoundInfo(roundInfo.firstAttackInfo);
         const si = new PetRoundInfo(roundInfo.secondAttackInfo);
         return [fi, si] as const;
     });
 
-    SocketListener.on(CommandID.NOTE_USE_SKILL, 'receive', (data) => {
+    SocketEventEmitter.on(CommandID.NOTE_USE_SKILL, 'receive', (data) => {
         cachedRoundInfo.update([...data]);
     });
 };

@@ -3,7 +3,7 @@ import { Hook } from '../constant/index.js';
 import { GameModuleListener } from './module.js';
 
 import { SEAHookDispatcher } from '../common/utils.js';
-import { SocketListener } from './socket.js';
+import { SocketEventEmitter } from './socket.js';
 
 export default () => {
     SEAHookDispatcher.on(Hook.Module.loadScript, (name) => {
@@ -23,10 +23,10 @@ export default () => {
     });
 
     SEAHookDispatcher.on(Hook.Socket.send, ({ cmd, data }) => {
-        SocketListener.dispatchSend(cmd, data);
+        SocketEventEmitter.dispatchSend(cmd, data);
     });
 
     SEAHookDispatcher.on(Hook.Socket.receive, ({ cmd, buffer }) => {
-        SocketListener.dispatchReceive(cmd, buffer);
+        SocketEventEmitter.dispatchReceive(cmd, buffer);
     });
 };

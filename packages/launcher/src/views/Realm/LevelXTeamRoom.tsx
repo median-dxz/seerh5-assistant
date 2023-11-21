@@ -2,7 +2,7 @@ import { LevelState, Socket } from 'sea-core';
 
 import type { ILevelBattleStrategy, ILevelRunner, LevelData as SEALevelData, LevelInfo as SEALevelInfo } from 'sea-core';
 
-import { SeaModuleLogger } from '@sea-launcher/utils/logger';
+import { SEAModuleLogger } from '@sea-launcher/utils/logger';
 import dataProvider from './data';
 
 const customData = dataProvider['LevelXTeamRoom'];
@@ -34,7 +34,7 @@ export class LevelXTeamRoom implements ILevelRunner<LevelData, SEALevelInfo> {
 
     option = { sweep: false };
 
-    logger = SeaModuleLogger('X战队密室', "info");
+    logger = SEAModuleLogger('X战队密室', "info");
 
     async updater() {
         this.logger(`${this.info.name}: 更新关卡信息...`);

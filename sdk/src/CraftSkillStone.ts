@@ -1,5 +1,5 @@
-import { log } from 'console';
 import { ItemId, SEAPet, Socket, delay } from 'sea-core';
+import type { SEAMod } from '../lib/mod';
 
 const rate = [
     [0, 24, 5.8, 1.4, 0.3],
@@ -29,7 +29,7 @@ class CraftSkillStone implements SEAMod.IBaseMod {
             await SEAPet.get(ct).then((pet) => pet.useItem(300070));
             const info = await PetManager.UpdateBagPetInfoAsynce(ct);
 
-            log(`刷性格: 当前性格: ${NatureXMLInfo.getName(info.nature)}`);
+            this.logger(`刷性格: 当前性格: ${NatureXMLInfo.getName(info.nature)}`);
             if (info.nature === nature) {
                 break;
             }
@@ -38,7 +38,7 @@ class CraftSkillStone implements SEAMod.IBaseMod {
             });
             await delay(200);
             const num = ItemManager.getNumByID(300070);
-            log(`刷性格: 剩余胶囊数: ${num}`);
+            this.logger(`刷性格: 剩余胶囊数: ${num}`);
             if (num < 20) {
                 break;
             }

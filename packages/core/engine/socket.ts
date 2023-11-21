@@ -1,5 +1,5 @@
 import type { AnyFunction } from '../common/utils.js';
-import { SocketListener } from '../event-bus/index.js';
+import { SocketEventEmitter } from '../emitter/index.js';
 
 /**
  * @description 将数据包加到待发送队列
@@ -22,7 +22,7 @@ export async function sendWithReceivedPromise(cmd: number, fn: AnyFunction) {
     if (!fn) return;
 
     return new Promise<unknown>((resolve) => {
-        SocketListener.once(cmd, 'receive', resolve);
+        SocketEventEmitter.once(cmd, 'receive', resolve);
         fn();
     });
 }

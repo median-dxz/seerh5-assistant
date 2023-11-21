@@ -31,4 +31,58 @@ export type GameConfigMap = {
     statusEffect: seerh5.StatusEffectObj;
 };
 
-export type GameModuleMap = {};
+export type GameModuleMap = {
+    [module: string]: BaseModule;
+};
+
+// const Iterator = <T extends keyof GameConfigMap>(type: T) => {
+//     let index = 0;
+//     let objectArray: Array<seerh5.BaseObj>;
+//     switch (type) {
+//         case 'item':
+//             objectArray = Object.values(ItemXMLInfo._itemDict);
+//             break;
+//         case 'element':
+//             objectArray = Object.values(SkillXMLInfo.typeMap);
+//             break;
+//         case 'skill':
+//             objectArray = Object.values(SkillXMLInfo.SKILL_OBJ.Moves.Move);
+//             break;
+//         case 'pet':
+//             objectArray = Object.values(PetXMLInfo._dataMap);
+//             break;
+//         case 'suit':
+//             objectArray = SuitXMLInfo._dataMap.getValues();
+//             break;
+//         case 'title':
+//             objectArray = Object.values(AchieveXMLInfo.titleRules);
+//             break;
+//         case 'statusEffect':
+//             objectArray = PetStatusEffectConfig.xml.BattleEffect[0].SubEffect;
+//             break;
+//         default:
+//             throw new Error('不支持的查询集合');
+//     }
+//     return {
+//         next() {
+//             return { done: index >= objectArray.length, value: objectArray[index++] as GameConfigMap[T] };
+//         },
+//         [Symbol.iterator]() {
+//             return this;
+//         },
+//     };
+// };
+
+// const getObjProperty = (obj: seerh5.BaseObj, propertyTags: string[]) => {
+//     for (const property of propertyTags) {
+//         if (Object.hasOwn(obj, property)) {
+//             return obj[property];
+//         }
+//     }
+//     return undefined;
+// };
+
+// const getObjectId = (obj: seerh5.BaseObj) => getObjProperty(obj, ['SpeNameBonus', 'id', 'ID']) as number;
+
+// const getObjectName = (obj: seerh5.BaseObj) =>
+//     getObjProperty(obj, ['title', 'cn', 'name', 'DefName', 'Name']) as string;

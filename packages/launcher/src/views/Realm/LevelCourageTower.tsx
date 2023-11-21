@@ -2,7 +2,7 @@ import { LevelState, Socket } from 'sea-core';
 
 import type { ILevelBattleStrategy, ILevelRunner, LevelData as SEALevelData, LevelInfo as SEALevelInfo } from 'sea-core';
 
-import { SeaModuleLogger } from '@sea-launcher/utils/logger';
+import { SEAModuleLogger } from '@sea-launcher/utils/logger';
 import dataProvider from './data';
 
 const customData = dataProvider['LevelCourageTower'];
@@ -33,7 +33,7 @@ export class LevelCourageTower implements ILevelRunner<LevelData, SEALevelInfo> 
 
     option: LevelOption;
 
-    logger = SeaModuleLogger('勇者之塔', 'info');
+    logger = SEAModuleLogger('勇者之塔', 'info');
 
     constructor(option: LevelOption) {
         this.option = option;

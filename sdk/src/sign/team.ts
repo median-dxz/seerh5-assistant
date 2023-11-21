@@ -52,7 +52,7 @@ class Team implements SEAMod.ISignMod<Config> {
                 if (MainManager.actorInfo.teamInfo && MainManager.actorInfo.teamInfo.id > 0) {
                     const times = (await Socket.multiValue(MULTI_QUERY.道具兑换次数))[0];
                     const open = await Socket.sendByQueue(CommandID.GET_TEAM_DEVICE_STATUS, [1, 2]).then((buf) => {
-                        const bytes = new DataView(buf);
+                        const bytes = new DataView(buf as ArrayBuffer);
                         return Boolean(bytes.getUint32(4));
                     });
                     return open ? 3 - times : 0;

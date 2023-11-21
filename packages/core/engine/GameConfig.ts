@@ -2,88 +2,80 @@ import type { GameConfigMap } from 'constant/type.js';
 
 type PredicateFn<T> = (value: T) => boolean;
 
-const Iterator = <T extends keyof GameConfigMap>(type: T) => {
-    let index = 0;
-    let objectArray: Array<seerh5.BaseObj>;
-    switch (type) {
-        case 'item':
-            objectArray = Object.values(ItemXMLInfo._itemDict);
-            break;
-        case 'element':
-            objectArray = Object.values(SkillXMLInfo.typeMap);
-            break;
-        case 'skill':
-            objectArray = Object.values(SkillXMLInfo.SKILL_OBJ.Moves.Move);
-            break;
-        case 'pet':
-            objectArray = Object.values(PetXMLInfo._dataMap);
-            break;
-        case 'suit':
-            objectArray = SuitXMLInfo._dataMap.getValues();
-            break;
-        case 'title':
-            objectArray = Object.values(AchieveXMLInfo.titleRules);
-            break;
-        case 'statusEffect':
-            objectArray = PetStatusEffectConfig.xml.BattleEffect[0].SubEffect;
-            break;
-        default:
-            throw new Error('不支持的查询集合');
-    }
-    return {
-        next() {
-            return { done: index >= objectArray.length, value: objectArray[index++] as GameConfigMap[T] };
-        },
-        [Symbol.iterator]() {
-            return this;
-        },
-    };
+export interface GameConfigRegistryEntity<T extends object> {
+    objectName: (obj: T) => string;
+    objectId: (obj: T) => number;
+    iterator: IterableIterator<T>;
+}
+
+export interface GameConfigQuery<T extends GameConfigMap[keyof GameConfigMap]> {
+    get(id: number): T;
+    find(predicate: PredicateFn<T>): T;
+    filter(predicate: PredicateFn<T>): T[];
+    findByName(name: string): T;
+    filterByName(name: string | RegExp): T[];
+    getName(id: number): string;
+}
+
+const gameConfigRegistryEntityMap = new Map<string, GameConfigQuery<GameConfigMap[keyof GameConfigMap]>>();
+
+export const GameConfigRegistry = {
+    getQuery<T extends keyof GameConfigMap>(type: T) {
+        const entity = gameConfigRegistryEntityMap.get(type) as GameConfigRegistryEntity<GameConfigMap[T]> | undefined;
+
+        if (entity == undefined) {
+            throw `不支持的查询集合`;
+        }
+
+        return entity;
+    },
+
+    register<T extends keyof GameConfigMap>(type: T, entity: GameConfigRegistryEntity<GameConfigMap[T]>) {
+        const { iterator, objectName, objectId } = entity;
+
+        function find(predicate: PredicateFn<GameConfigMap[T]>) {
+            for (const obj of iterator) {
+                if (predicate(obj)) {
+                    return obj;
+                }
+            }
+            return undefined;
+        }
+
+        function filter(predicate: PredicateFn<GameConfigMap[T]>) {
+            const r = [];
+            for (const obj of iterator) {
+                if (predicate(obj)) {
+                    r.push(obj);
+                }
+            }
+            return r;
+        }
+
+        function get(id: number) {
+            return find((v) => objectId(v) === id);
+        }
+
+        function findByName(name: string) {
+            return find((v) => objectName(v) === name);
+        }
+
+        function filterByName(name: string | RegExp) {
+            return filter((v) => Boolean(objectName(v).match(name)));
+        }
+
+        function getName(id: number) {
+            const o = find((v) => objectId(v) === id);
+            return o && objectName(o);
+        }
+
+        return gameConfigRegistryEntityMap.set(type, {
+            get,
+            getName,
+            filter,
+            filterByName,
+            find,
+            findByName,
+        } as GameConfigQuery<GameConfigMap[T]>);
+    },
 };
-
-const getObjProperty = (obj: seerh5.BaseObj, propertyTags: string[]) => {
-    for (const property of propertyTags) {
-        if (Object.hasOwn(obj, property)) {
-            return obj[property];
-        }
-    }
-    return undefined;
-};
-
-const getObjectId = (obj: seerh5.BaseObj) => getObjProperty(obj, ['SpeNameBonus', 'id', 'ID']) as number;
-
-const getObjectName = (obj: seerh5.BaseObj) => getObjProperty(obj, ['title', 'cn', 'name', 'DefName', 'Name']) as string;
-
-export function find<T extends keyof GameConfigMap>(type: T, predicate: PredicateFn<GameConfigMap[T]>) {
-    for (const obj of Iterator<T>(type)) {
-        if (predicate(obj)) {
-            return obj;
-        }
-    }
-}
-
-export function filter<T extends keyof GameConfigMap>(type: T, predicate: PredicateFn<GameConfigMap[T]>) {
-    const r = [];
-    for (const obj of Iterator<T>(type)) {
-        if (predicate(obj)) {
-            r.push(obj);
-        }
-    }
-    return r;
-}
-
-export function get<T extends keyof GameConfigMap>(type: T, id: number) {
-    return find(type, (v) => getObjectId(v) === id);
-}
-
-export function findByName<T extends keyof GameConfigMap>(type: T, name: string) {
-    return find(type, (v) => getObjectName(v) === name);
-}
-
-export function filterByName<T extends keyof GameConfigMap>(type: T, name: string | RegExp) {
-    return filter(type, (v) => Boolean(getObjectName(v).match(name)));
-}
-
-export function getName<T extends keyof GameConfigMap>(type: T, id: number) {
-    const o = find(type, (v) => getObjectId(v) === id);
-    return o && getObjectName(o);
-}

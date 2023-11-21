@@ -1,7 +1,7 @@
 import { CacheData, NOOP, extractObjectId } from '../common/utils.js';
+import { SocketEventEmitter } from '../emitter/index.js';
 import { Socket } from '../engine/index.js';
 import { Item, Pet } from '../entity/index.js';
-import { SocketListener } from '../event-bus/index.js';
 
 import { PetLocation, setLocationTable } from './PetLocation.js';
 
@@ -25,43 +25,43 @@ class PetDataManager {
 
     init() {
         if (!this.hasInit) {
-            SocketListener.on(CommandID.GET_PET_INFO_BY_ONCE, 'receive', (pets) => {
+            SocketEventEmitter.on(CommandID.GET_PET_INFO_BY_ONCE, 'receive', (pets) => {
                 this.bag.update([...pets]);
                 pets[0].concat(pets[1]).forEach((pet) => {
                     this.cachePet(pet);
                 });
             });
 
-            SocketListener.on(CommandID.GET_PET_INFO, 'receive', (pet) => {
+            SocketEventEmitter.on(CommandID.GET_PET_INFO, 'receive', (pet) => {
                 this.cachePet(pet);
                 this.bag.deactivate();
             });
 
-            SocketListener.on(CommandID.PET_DEFAULT, 'send', (bytes) => {
+            SocketEventEmitter.on(CommandID.PET_DEFAULT, 'send', (bytes) => {
                 this.defaultCt = bytes[0] as number;
                 this.bag.deactivate();
             });
 
-            SocketListener.on(CommandID.ADD_LOVE_PET, 'receive', () => {
+            SocketEventEmitter.on(CommandID.ADD_LOVE_PET, 'receive', () => {
                 this.miniInfo.deactivate();
             });
 
-            SocketListener.on(CommandID.DEL_LOVE_PET, 'receive', () => {
+            SocketEventEmitter.on(CommandID.DEL_LOVE_PET, 'receive', () => {
                 this.miniInfo.deactivate();
             });
 
-            SocketListener.on(CommandID.PET_CURE, 'receive', () => {
+            SocketEventEmitter.on(CommandID.PET_CURE, 'receive', () => {
                 this.bag.deactivate();
             });
 
-            SocketListener.on(CommandID.PET_RELEASE, 'send', (bytes) => {
+            SocketEventEmitter.on(CommandID.PET_RELEASE, 'send', (bytes) => {
                 const [ct, _opt] = bytes as [number, number];
                 this.cache.delete(ct);
                 this.miniInfo.deactivate();
                 this.bag.deactivate();
             });
 
-            SocketListener.on(CommandID.PET_RELEASE, 'receive', (data) => {
+            SocketEventEmitter.on(CommandID.PET_RELEASE, 'receive', (data) => {
                 // flag: 为假代表从背包移仓库, 仅此而已
                 PetManager._setDefault(data.firstPetTime);
                 this.defaultCt = data.firstPetTime;

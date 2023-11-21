@@ -17,7 +17,7 @@ type HandlerType<TCmd extends number> = {
 
 type GetHandlerType<E extends SocketEvent, TCmd extends number> = HandlerType<TCmd>[E];
 
-export const SocketListener = {
+export const SocketEventEmitter = {
     builders: new Map<number, DataBuilder<unknown>>(),
     eventTarget: {
         send: new SEAEventTarget(),

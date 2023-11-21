@@ -1,6 +1,6 @@
 import { Button, Divider, Typography } from '@mui/material';
 
-import { GameConfig, cureAllPet } from 'sea-core';
+import { createGameConfigQuery, cureAllPet } from 'sea-core';
 import * as Engine from 'sea-core/engine';
 
 import { PanelStateContext } from '@sea-launcher/context/PanelState';
@@ -12,8 +12,8 @@ import { AnimationMode } from './AnimationMode';
 import { BattleFireInfo } from './BattleFireInfo';
 import { PetBagController } from './PetBagController';
 
-const titleName = GameConfig.getName.bind(null, 'title');
-const suitName = GameConfig.getName.bind(null, 'suit');
+const titleName = createGameConfigQuery('title').getName;
+const suitName = createGameConfigQuery('suit').getName;
 
 export function GameController() {
     const [userTitle, setUserTitle] = React.useState(Engine.getUserTitle());

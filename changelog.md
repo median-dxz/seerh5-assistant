@@ -28,8 +28,11 @@ RoadMap: **见Readme**
 - [x] 统一监听器接口, SEAEventTarget作为基类, Socket和GameModule去继承, 最后暴露EventBus统合
   - [x] Socket的res监听fallback到SocketConnection
   - [x] GameModule支持类型Map推导
-
-- [ ] 重构GameConfig查询模块, 采用接口+注册制, 配合TypeMap, 添加可扩展性
+  - [x] `event-bus`模块更名`emitter`模块, 模块现在导出之前`EventBus`封装的`SocketConnection`以及`EventManger`
+  - [x] `EventBus`的全新职能是代理符合接口的EventEmitter, 方便`dispose`
+- [x] 重构GameConfig查询模块, 采用注册接口架构, 配合TypeMap, 添加可扩展性
+  - [x] 通过模块声明合并以及全新的`GameConfigRegistry`注册可查询的`GameConfig`
+  - [x] 通过`GameConfigRegistry`获得`GameConfigQuery`对象用以查询数据
 
 - [ ] 属性攻击/特攻/物攻的枚举
 
