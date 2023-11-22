@@ -8,7 +8,7 @@ export type DelegateEventEmitter = {
 export class EventBus {
     private cleanFn: AnyFunction[] = [];
 
-    proxy<TEventEmitter extends DelegateEventEmitter>(eventEmitter: TEventEmitter) {
+    delegate<TEventEmitter extends DelegateEventEmitter>(eventEmitter: TEventEmitter) {
         const proxyOn = (...args: unknown[]) => {
             eventEmitter.on(...args);
             this.cleanFn.push(() => eventEmitter.off(...args));
@@ -24,7 +24,7 @@ export class EventBus {
         });
     }
 
-    unmount() {
+    dispose() {
         this.cleanFn.forEach((fn) => fn());
         this.cleanFn = [];
     }

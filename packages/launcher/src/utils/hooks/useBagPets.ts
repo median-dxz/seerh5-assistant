@@ -10,15 +10,15 @@ export function useBagPets() {
         React.useCallback((_, { next }: SWRSubscriptionOptions<Pet[], Error>) => {
             getBagPets(PetPosition.bag1).then((pets) => next(null, pets));
             const eventBus = new EventBus();
-            const HookDispatcher = eventBus.proxy(SEAHookEmitter);
-            HookDispatcher.on(Hook.PetBag.deactivate, debounce(getBagPets, 100));
-            HookDispatcher.on(
+            const HookEmitter = eventBus.delegate(SEAHookEmitter);
+            HookEmitter.on(Hook.PetBag.deactivate, debounce(getBagPets, 100));
+            HookEmitter.on(
                 Hook.PetBag.update,
                 debounce((pets) => {
                     next(null, pets[0]);
                 }, 100)
             );
-            return eventBus.unmount.bind(eventBus);
+            return eventBus.dispose.bind(eventBus);
         }, []),
         {
             fallbackData: null,

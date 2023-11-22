@@ -1,4 +1,5 @@
 {
+    "extends": "../../tsconfig.json",
     "compilerOptions": {
         "module": "NodeNext",
         "target": "es2022",
@@ -8,6 +9,10 @@
         "noEmit": true,
         "composite": true
     },
+    "include": [
+        "./*.js",
+        "./**/*.js"
+    ],
     "exclude": [
         "node_modules",
         "mods",

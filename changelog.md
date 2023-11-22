@@ -36,7 +36,7 @@ RoadMap: **见Readme**
 
 - [ ] 属性攻击/特攻/物攻的枚举
 
-- [ ] 通过declare module和内建命名空间支持等方式，使得Core支持扩展，类似d3和jq的插件
+- [ ] 通过declare module方式并设计相关接口，使得Core支持扩展，类似d3和jq的插件
   - [ ] 添加Loader的扩展点
   - [x] 添加GameConfig的扩展点
 

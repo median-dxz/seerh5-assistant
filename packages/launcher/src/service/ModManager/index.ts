@@ -89,7 +89,7 @@ export const SEAModManager = {
                         const moduleMod = mod as ModuleMod;
 
                         const eventBus = new EventBus();
-                        const gameModuleEmitter = eventBus.proxy(GameModuleEventEmitter);
+                        const gameModuleEmitter = eventBus.delegate(GameModuleEventEmitter);
                         moduleMod.activate = function () {
                             if (this.load) {
                                 gameModuleEmitter.on(this.moduleName, 'load', this.load.bind(this));
@@ -106,7 +106,7 @@ export const SEAModManager = {
                         };
 
                         moduleMod.deactivate = function () {
-                            eventBus.unmount();
+                            eventBus.dispose();
                         };
                     }
                     break;
