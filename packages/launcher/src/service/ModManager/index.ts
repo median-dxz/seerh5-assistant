@@ -168,8 +168,12 @@ export const SEAModManager = {
                 case SEAModType.QUICK_ACCESS_PLUGIN:
                     break;
             }
-            mod.deactivate?.();
-            log(`卸载模组: ${mod.meta.id}`);
+            try {
+                mod.deactivate?.();
+                log(`卸载模组: ${mod.meta.id}`);
+            } catch (error) {
+                console.error(`卸载模组失败: ${mod.meta.id}`, error);
+            }
         });
         ModStore.clear();
     },

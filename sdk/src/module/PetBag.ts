@@ -43,14 +43,14 @@ class PetBag implements SEAMod.IModuleMod<petBag.PetBag> {
             const { petInfo } = e.data as { petInfo: PetInfo };
             petInfo && this.logger(new Pet(petInfo));
         };
-        const socketEmitter = this.eventBus.proxy(GameNativeEmitter.socket);
-        const egretEmitter = this.eventBus.proxy(GameNativeEmitter.egret);
+        const socketEmitter = this.eventBus.delegate(GameNativeEmitter.socket);
+        const egretEmitter = this.eventBus.delegate(GameNativeEmitter.egret);
         socketEmitter.on(CommandID.PET_DEFAULT, refresh);
         socketEmitter.on(CommandID.PET_RELEASE, refresh);
         egretEmitter.on('petBag.MainPanelTouchPetItemEnd', printTappingPetInfo);
     }
     destroy() {
-        this.eventBus.unmount();
+        this.eventBus.dispose();
     }
 }
 

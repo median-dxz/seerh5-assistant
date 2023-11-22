@@ -4,6 +4,7 @@ import {
     Hook,
     Manager,
     PetLocation,
+    SEAHookEmitter,
     SEAPet,
     delay,
     getAutoCureState,
@@ -27,8 +28,9 @@ describe('PetHelper', function () {
         HelperLoader();
 
         bus = new EventBus();
-        bus.hook(Hook.Battle.battleStart, Manager.resolveStrategy);
-        bus.hook(Hook.Battle.roundEnd, Manager.resolveStrategy);
+        const HookEmitter = bus.delegate(SEAHookEmitter);
+        HookEmitter.on(Hook.Battle.battleStart, Manager.resolveStrategy);
+        HookEmitter.on(Hook.Battle.roundEnd, Manager.resolveStrategy);
     });
 
     beforeEach(async function () {
@@ -145,7 +147,7 @@ describe('PetHelper', function () {
     });
 
     after(async () => {
-        bus.unmount();
+        bus.dispose();
         await toggleAutoCure(true);
     });
 });
