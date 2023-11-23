@@ -2,7 +2,7 @@ import { ct } from '@sea-launcher/context/ct';
 import * as EndPoints from '@sea-launcher/service/endpoints';
 import { SEAModuleLogger } from '@sea-launcher/utils/logger';
 import type { ILevelBattleStrategy, MoveStrategy } from 'sea-core';
-import { EventBus, GameModuleEventEmitter } from 'sea-core/emitter';
+import { EventBus, GameModuleEventEmitter } from 'sea-core/emitters';
 import {
     BaseMod,
     BattleMod,

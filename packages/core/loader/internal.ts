@@ -1,9 +1,8 @@
 import type { AnyFunction } from '../common/utils.js';
-import { NOOP, SEAHookEmitter, hookPrototype } from '../common/utils.js';
-import { Hook } from '../constant/index.js';
+import { NOOP, hookPrototype } from '../common/utils.js';
 
 import battleInit from '../battle/internal.js';
-import registerListeners from '../emitter/internal.js';
+import registerListeners from '../emitters/internal.js';
 import registerEngine from '../engine/internal.js';
 import petInit from '../pet-helper/internal.js';
 import registerHooks from './registerHooks.js';
@@ -58,7 +57,6 @@ function loadScript(this: ModuleManager, scriptName: string) {
                 script = script.replaceAll(/console\.warn/g, 'warnFilter');
                 o.text = `//@ sourceURL=http://seerh5.61.com/${url + '\n'}${script}`;
                 document.head.appendChild(o).parentNode!.removeChild(o);
-                SEAHookEmitter.emit(Hook.Module.loadScript, scriptName);
                 resolve();
             },
             this,

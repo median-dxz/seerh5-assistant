@@ -73,6 +73,16 @@ export function hookFn<T extends object, K extends keyof T>(target: T, funcName:
     (target[funcName] as any).rawFunction = originalFunc;
 }
 
+export function restoreHookedFn<T extends object, K extends keyof T>(target: T, funcName: K) {
+    let fn = target[funcName] as AnyFunction;
+    if (typeof fn !== 'function') return;
+
+    while (Object.hasOwn(fn, 'rawFunction')) {
+        fn = (fn as any).rawFunction;
+    }
+    (target[funcName] as any) = fn;
+}
+
 interface HasPrototype {
     prototype: object;
 }
@@ -98,8 +108,6 @@ export const extractObjectId = <T extends { [key in K]: number }, K extends stri
 };
 
 export const NOOP = () => {};
-
-export { SEAHookEventTarget as SEAHookEmitter } from './EventTarget.js';
 
 export { CacheData } from './CacheData.js';
 

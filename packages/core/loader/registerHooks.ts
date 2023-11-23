@@ -1,8 +1,24 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { SEAHookEmitter, delay, hookPrototype, wrapper, wrapperAsync } from '../common/utils.js';
+import {
+    delay,
+    hookFn,
+    hookPrototype,
+    restoreHookedFn,
+    wrapper,
+    wrapperAsync,
+} from '../common/utils.js';
 import { Hook } from '../constant/index.js';
+import { HookRegistry } from '../emitters/index.js';
 
 export default () => {
+    HookRegistry.register(Hook.Module.loadScript, (resolve) => {
+        hookFn(ModuleManager, 'loadScript', async function (originalFunc, scriptName) {
+            await originalFunc(scriptName);
+            resolve(scriptName);
+        });
+        return () => restoreHookedFn(ModuleManager, 'loadScript');
+    });
+
     BasicMultPanelModule.prototype.onShowMainPanel = async function () {
         await this.openPanel(this._mainPanelName);
         SEAHookEmitter.emit(Hook.Module.openMainPanel, { module: this.moduleName, panel: this._mainPanelName });

@@ -14,7 +14,7 @@ let tarball;
 try {
     var { stdout } = await exec('pnpm clean', { cwd: coreDir });
     console.log(`core: clean dist dir`);
-    var { stdout } = await exec('pnpm build:release', { cwd: coreDir });
+    var { stdout } = await exec('pnpm build', { cwd: coreDir });
     console.log(`core: build: ${stdout}`);
     var { stdout } = await exec('pnpm pack --pack-destination ../../release', { cwd: coreDir });
     tarball = stdout.trim();

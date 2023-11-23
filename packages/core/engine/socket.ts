@@ -1,5 +1,5 @@
 import type { AnyFunction } from '../common/utils.js';
-import { SocketEventEmitter } from '../emitter/index.js';
+import { SocketEventEmitter } from '../emitters/index.js';
 
 /**
  * @description 将数据包加到待发送队列

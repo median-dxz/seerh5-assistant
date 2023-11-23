@@ -1,5 +1,5 @@
 import { CacheData, NOOP, extractObjectId } from '../common/utils.js';
-import { SocketEventEmitter } from '../emitter/index.js';
+import { SocketEventEmitter } from '../emitters/index.js';
 import { Socket } from '../engine/index.js';
 import { Item, Pet } from '../entity/index.js';
 

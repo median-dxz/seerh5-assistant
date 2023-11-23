@@ -5548,7 +5548,9 @@ packages:
     dev: false
 
   file:sdk/lib/sea-core-0.6.4.tgz:
-    resolution: {integrity: sha512-D62tkZbrkwep3Gdr+3A4evYLP+2Jv/mkE3wHASgFpS9FyFH5yEp5Vt4GomG0nyqUp1NAVk4BrhdxUFm45mQupQ==, tarball: file:sdk/lib/sea-core-0.6.4.tgz}
+    resolution: {integrity: sha512-rtCOm/Xm2pfPgDRJ1norewVNRmXilWweOX9+Rc9GpCTPm324HpHt7XnQW1H/zvppdYAM2kHAvgFrVtwtwvgp+g==, tarball: file:sdk/lib/sea-core-0.6.4.tgz}
     name: sea-core
     version: 0.6.4
+    dependencies:
+      rxjs: 7.8.1
     dev: false

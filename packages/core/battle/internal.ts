@@ -1,6 +1,6 @@
 import { SEAHookEmitter, delay } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
-import { SocketEventEmitter } from '../emitter/index.js';
+import { SocketEventEmitter } from '../emitters/index.js';
 import { findObject } from '../engine/index.js';
 import { PetRoundInfo } from '../entity/index.js';
 import * as Manager from './manager.js';

@@ -2,6 +2,8 @@ export * from './EventBus.js';
 export * from './GameModule.js';
 export * from './socket.js';
 
+export * from "./hook.js";
+
 import type { DelegateEventEmitter } from './EventBus.js';
 
 export const GameNativeEmitter = {
@@ -22,3 +24,6 @@ export const GameNativeEmitter = {
         },
     } as DelegateEventEmitter,
 };
+
+export * from "./HookRegistry.js";
+

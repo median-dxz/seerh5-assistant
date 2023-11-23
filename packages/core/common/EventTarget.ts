@@ -2,11 +2,9 @@ import type { HookDataMap } from '../constant/index.js';
 
 type EventKey = number | string;
 export type Handler<T> = (data: T) => void;
-export type EventData<
-    Type extends EventKey,
-    TEvents extends object,
-    TDefaultValue
-> = Type extends keyof TEvents ? TEvents[Type] : TDefaultValue;
+export type EventData<Type extends EventKey, TEvents extends object, TDefaultValue> = Type extends keyof TEvents
+    ? TEvents[Type]
+    : TDefaultValue;
 
 export class SEAEventTarget<TEvents extends object, TDefaultValue = unknown> {
     private et = new EventTarget();
@@ -46,5 +44,3 @@ export class SEAEventTarget<TEvents extends object, TDefaultValue = unknown> {
         return this.et.dispatchEvent(new CustomEvent(String(type), { detail: data }));
     }
 }
-
-export const SEAHookEventTarget = new SEAEventTarget<HookDataMap, undefined>();

@@ -14,7 +14,7 @@ import { MainPanel } from './views/MainPanel';
 
 import { Hook, SEAHookEmitter } from 'sea-core';
 import { Manager as BattleManager, autoStrategy } from 'sea-core/battle';
-import { EventBus, SocketEventEmitter } from 'sea-core/emitter';
+import { EventBus, SocketEventEmitter } from 'sea-core/emitters';
 
 import { QuickAccess } from './QuickAccess';
 import { SEAModManager } from './service/ModManager';

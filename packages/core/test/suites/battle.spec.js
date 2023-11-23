@@ -4,7 +4,7 @@ import {
     Hook,
     Manager,
     Operator,
-    SEAEventTarget,
+    SEAHookEmitter,
     cureAllPet,
     delay,
     matchNoBloodChain,
@@ -23,13 +23,16 @@ const startBattle = () => {
 describe('BattleManager', function () {
     /** @type {EventBus} */
     let bus;
+    let HookEmitter;
 
     before(async () => {
         HelperLoader();
         bus = new EventBus();
         await toggleAutoCure(true);
 
-        SEAEventTarget.on(Hook.Socket.send, (data) => {
+        HookEmitter = bus.delegate(SEAHookEmitter);
+
+        SEAHookEmitter.on(Hook.Socket.send, (data) => {
             console.log(data);
         });
     });
@@ -40,8 +43,8 @@ describe('BattleManager', function () {
         const skn = matchSkillName(env.skill.map((v) => v.name));
         const nbc = matchNoBloodChain([env.测试精灵1.name, env.测试精灵3.name]);
 
-        bus.hook(Hook.Battle.battleStart, Manager.resolveStrategy);
-        bus.hook(Hook.Battle.roundEnd, Manager.resolveStrategy);
+        HookEmitter.on(Hook.Battle.battleStart, Manager.resolveStrategy);
+        HookEmitter.on(Hook.Battle.roundEnd, Manager.resolveStrategy);
 
         await Manager.takeover(startBattle, {
             async resolveMove(state, skills, _) {
@@ -85,8 +88,8 @@ describe('BattleManager', function () {
             }
         };
 
-        bus.hook(Hook.Battle.battleStart, resolve);
-        bus.hook(Hook.Battle.roundEnd, resolve);
+        HookEmitter.on(Hook.Battle.battleStart, resolve);
+        HookEmitter.on(Hook.Battle.roundEnd, resolve);
 
         await Manager.takeover(startBattle, {
             async resolveMove() {
@@ -111,7 +114,7 @@ describe('BattleManager', function () {
     });
 
     afterEach(async function () {
-        bus.unmount();
+        bus.dispose();
         cureAllPet();
 
         await delay(1000);

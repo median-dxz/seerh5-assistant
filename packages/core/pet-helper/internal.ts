@@ -1,6 +1,6 @@
 import { SEAHookEmitter } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
-import { SocketEventEmitter } from '../emitter/index.js';
+import { SocketEventEmitter } from '../emitters/index.js';
 import { PetDataManger, ProxyPet } from './PetDataManager.js';
 
 export default () => {

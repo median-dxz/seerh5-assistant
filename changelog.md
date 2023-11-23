@@ -16,7 +16,7 @@ RoadMap: **见Readme**
   - [ ] sdk中不用额外插件，仅做外部化配置
   - [ ] 完善动态import加载插件的机制，在devtools中获取更好的显示
 
-# Core 当前版本 v0.6.4
+# Core 当前版本 v0.6.5
 
 - [x] 整合官方的module加载调试输出
   - [x] 屏蔽官方实现
@@ -34,12 +34,13 @@ RoadMap: **见Readme**
   - [x] 通过模块声明合并以及全新的`GameConfigRegistry`注册可查询的`GameConfig`
   - [x] 通过`GameConfigRegistry`获得`GameConfigQuery`对象用以查询数据
 
-- [ ] 属性攻击/特攻/物攻的枚举
-
-- [ ] 通过declare module方式并设计相关接口，使得Core支持扩展，类似d3和jq的插件
+- [ ] 通过declare module方式并设计相关接口，使得Core支持扩展
   - [ ] 添加Loader的扩展点
+  - [ ] 添加Hook的扩展点
   - [x] 添加GameConfig的扩展点
 
+- [ ] 属性攻击/特攻/物攻的枚举
+- [ ] 对于部分错误, 封装错误类
 - [ ] 解耦登录器/后端特定逻辑
 - [ ] 解耦非核心功能, 全部移动到登录器下的`features`包下, 由登录器提供扩展定义
   - [ ] 取代原functions子包
