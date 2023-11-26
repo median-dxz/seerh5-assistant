@@ -14,27 +14,27 @@
         "clean": "rimraf ./dist && rimraf ./build && rimraf ../../.tsbuildinfo/launcher.tsbuildinfo"
     },
     "dependencies": {
-        "@mui/icons-material": "^5.13.7",
-        "@mui/material": "^5.13.7",
-        "@mui/styled-engine-sc": "^5.12.0",
-        "@mui/system": "^5.13.7",
+        "@mui/icons-material": "^5.14.18",
+        "@mui/material": "^5.14.18",
+        "@mui/styled-engine-sc": "^6.0.0-alpha.6",
+        "@mui/system": "^5.14.18",
         "chalk": "^5.3.0",
-        "immer": "^10.0.2",
+        "immer": "^10.0.3",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-transition-group": "^4.4.5",
         "sea-core": "workspace:*",
-        "styled-components": "^5.3.11",
-        "swr": "^2.2.0"
+        "styled-components": "^6.1.1",
+        "swr": "^2.2.4"
     },
     "devDependencies": {
-        "@types/react": "^18.2.14",
-        "@types/react-dom": "^18.2.6",
-        "@types/react-transition-group": "^4.4.6",
-        "@vitejs/plugin-react": "^4.0.1",
+        "@types/react": "^18.2.38",
+        "@types/react-dom": "^18.2.17",
+        "@types/react-transition-group": "^4.4.9",
+        "@vitejs/plugin-react": "^4.2.0",
         "eslint-plugin-react-hooks": "^4.6.0",
-        "eslint-plugin-react-refresh": "^0.4.1",
-        "vite-plugin-pwa": "^0.16.4"
+        "eslint-plugin-react-refresh": "^0.4.4",
+        "vite-plugin-pwa": "^0.17.2"
     },
     "alias": {
         "@mui/styled-engine": "@mui/styled-engine-sc"
