@@ -1,8 +1,8 @@
-import type { AnyFunction } from '../common/utils.js';
-import { SocketEventEmitter } from '../emitter/index.js';
-
 /**
  * @description 将数据包加到待发送队列
+ * 这个按序是对于每一个cmd来说的, 数据包没有标识来标记响应对应的请求, 所以要确保每一个cmd
+ * 都是按顺序发出的, 要等待上一个cmd发送完毕才能发送下一个
+ * 这里的resolve会在收包的时候resolve
  */
 export async function sendByQueue(cmd: number, data: number[] = []) {
     return new Promise<ArrayBuffer | undefined>((resolve, reject) => {
@@ -12,18 +12,6 @@ export async function sendByQueue(cmd: number, data: number[] = []) {
             (v: SocketEvent) => resolve(v.data?.buffer),
             (err: SocketErrorEvent) => reject(err.data)
         );
-    });
-}
-
-/**
- * @description 返回服务器响应cmd后才resolve的promise
- */
-export async function sendWithReceivedPromise(cmd: number, fn: AnyFunction) {
-    if (!fn) return;
-
-    return new Promise<unknown>((resolve) => {
-        SocketEventEmitter.once(cmd, 'receive', resolve);
-        fn();
     });
 }
 

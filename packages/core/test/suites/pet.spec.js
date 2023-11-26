@@ -1,11 +1,12 @@
 import {
-    EventBus,
+    DataSource,
     HelperLoader,
     Hook,
     Manager,
     PetLocation,
     SEAHookEmitter,
     SEAPet,
+    Subscription,
     delay,
     getAutoCureState,
     getBagPets,
@@ -16,21 +17,21 @@ import {
 import env from '../env/pet.json';
 
 var expect = chai.expect;
+const $hook = DataSource.hook;
 
 describe('PetHelper', function () {
     this.timeout('15s');
 
-    /** @type {EventBus} */
-    let bus;
+    /** @type {Subscription} */
+    let sub;
 
     before(async () => {
         await toggleAutoCure(false);
         HelperLoader();
 
-        bus = new EventBus();
-        const HookEmitter = bus.delegate(SEAHookEmitter);
-        HookEmitter.on(Hook.Battle.battleStart, Manager.resolveStrategy);
-        HookEmitter.on(Hook.Battle.roundEnd, Manager.resolveStrategy);
+        sub = new Subscription();
+        sub.on($hook(Hook.Battle.battleStart), Manager.resolveStrategy);
+        sub.on($hook(Hook.Battle.roundEnd), Manager.resolveStrategy);
     });
 
     beforeEach(async function () {
@@ -147,7 +148,7 @@ describe('PetHelper', function () {
     });
 
     after(async () => {
-        bus.dispose();
+        sub[Symbol.dispose]();
         await toggleAutoCure(true);
     });
 });

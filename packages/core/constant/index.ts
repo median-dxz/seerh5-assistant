@@ -1,4 +1,4 @@
-export * from './EventHooks.js';
+export * from './GameHooks.js';
 export * from './ItemId.js';
 export * from './type.js';
 

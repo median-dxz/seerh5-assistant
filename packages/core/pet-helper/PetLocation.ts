@@ -28,7 +28,7 @@ export const setLocationTable: {
     },
     Bag: {
         async Default(ct) {
-            await Socket.sendWithReceivedPromise(CommandID.PET_DEFAULT, () => PetManager.setDefault(ct));
+            await PetManager.setDefault(ct);
             return true;
         },
         async SecondBag(ct) {
@@ -46,7 +46,7 @@ export const setLocationTable: {
         async Default(ct) {
             if (PetManager.isBagFull) return false;
             return PetManager.secondBagToBag(ct)
-                .then(() => Socket.sendWithReceivedPromise(CommandID.PET_DEFAULT, () => PetManager.setDefault(ct)))
+                .then(() => PetManager.setDefault(ct))
                 .then(() => true);
         },
         async Bag(ct) {
@@ -64,7 +64,7 @@ export const setLocationTable: {
         async Default(ct) {
             if (PetManager.isBagFull) return false;
             return PetManager.loveToBag(ct)
-                .then(() => Socket.sendWithReceivedPromise(CommandID.PET_DEFAULT, () => PetManager.setDefault(ct)))
+                .then(() => PetManager.setDefault(ct))
                 .then(() => true);
         },
         async Bag(ct) {
@@ -76,7 +76,14 @@ export const setLocationTable: {
             return PetManager.storageToSecondBag(ct).then(() => true);
         },
         async Storage(ct) {
-            await Socket.sendWithReceivedPromise(CommandID.DEL_LOVE_PET, () => PetManager.delLovePet(0, ct, 0));
+            PetManager.curRetrieveLovePetInfo = {
+                catchTime: ct,
+            } as PetListInfo;
+
+            await Socket.sendByQueue(CommandID.DEL_LOVE_PET, [ct]).then(() => {
+                PetManager.onDelLovePetSuccessHandler(ct);
+                PetStorage2015InfoManager.changePetPosi(ct, PetPosition.elite);
+            });
             return true;
         },
     },
@@ -86,7 +93,7 @@ export const setLocationTable: {
             return new Promise((res) => {
                 PetManager.storageToBag(ct, res);
             })
-                .then(() => Socket.sendWithReceivedPromise(CommandID.PET_DEFAULT, () => PetManager.setDefault(ct)))
+                .then(() => PetManager.setDefault(ct))
                 .then(() => true);
         },
         async Bag(ct) {
@@ -100,8 +107,14 @@ export const setLocationTable: {
             return PetManager.storageToSecondBag(ct).then(() => true);
         },
         async Elite(ct) {
-            await Socket.sendWithReceivedPromise(CommandID.ADD_LOVE_PET, () => PetManager.addLovePet(0, ct, 0));
-            PetStorage2015InfoManager.changePetPosi(ct, PetPosition.elite);
+            PetManager.curLovePetInfo = {
+                catchTime: ct,
+            } as PetListInfo;
+
+            await Socket.sendByQueue(CommandID.ADD_LOVE_PET, [ct]).then(() => {
+                PetManager.onAddLovePetSuccessHandler(ct);
+                PetStorage2015InfoManager.changePetPosi(ct, PetPosition.elite);
+            });
             return true;
         },
     },

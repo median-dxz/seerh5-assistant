@@ -1,6 +1,9 @@
 /* eslint-disable */
 export type AnyFunction = (...args: any[]) => unknown;
 export type Constructor<T extends new (...args: any) => unknown> = { new (...args: any[]): InstanceType<T> };
+export type ValueOf<T> = T[keyof T];
+export type Handler<T> = (data: T) => void;
+export type withClass<T> = T & { __class__: string };
 
 export function delay(time: number): Promise<void> {
     return new Promise((resolver) => setTimeout(resolver, time));
@@ -16,61 +19,131 @@ export function debounce<F extends AnyFunction>(func: F, wait: number) {
     };
 }
 
-export function wrapperAsync<F extends (...args: any) => PromiseLike<R>, R>(
-    func: F,
-    beforeDecorator?: (...args: Parameters<F>) => void | Promise<void>,
-    afterDecorator?: (result: R, ...args: Parameters<F>) => void | Promise<void>
-) {
-    if (Object.hasOwn(func, 'rawFunction')) {
-        func = (func as any).rawFunction;
-    }
-    const wrappedFunc = async function (this: unknown, ...args: Parameters<F>): Promise<R> {
-        beforeDecorator && (await beforeDecorator.apply(this, args));
-        const r = await func.apply(this, args);
-        afterDecorator && (await afterDecorator.call(this, r, ...args));
-        return r;
-    };
-    (wrappedFunc as any).rawFunction = func;
-    return wrappedFunc;
+type InferPromiseResultType<T> = T extends PromiseLike<infer TResult> ? TResult : T;
+type ConvertVoid<T> = T extends void ? undefined : T;
+
+type BeforeDecorator<F extends AnyFunction> = (...args: Parameters<F>) => void;
+type AfterDecorator<F extends AnyFunction> = (
+    result: ConvertVoid<InferPromiseResultType<ReturnType<F>>>,
+    ...args: Parameters<F>
+) => void;
+
+interface HookedFunction<F extends AnyFunction> {
+    (...args: Parameters<F>): ReturnType<F>;
+    originalFunction: F;
 }
 
-export function wrapper<F extends (...args: any) => any>(
-    func: F,
-    beforeDecorator?: (...args: Parameters<F>) => void,
-    afterDecorator?: (result: ReturnType<F>, ...args: Parameters<F>) => void
-) {
-    if (Object.hasOwn(func, 'rawFunction')) {
-        func = (func as any).rawFunction;
-    }
-    const wrappedFunc = function (this: unknown, ...args: Parameters<F>): ReturnType<F> {
-        beforeDecorator && beforeDecorator.apply(this, args);
-        const r = func.apply(this, args);
-        afterDecorator && afterDecorator.call(this, r, ...args);
-        return r;
-    };
-    (wrappedFunc as any).rawFunction = func;
-    return wrappedFunc;
+interface WrappedFunction<F extends AnyFunction> extends HookedFunction<F> {
+    (...args: Parameters<F>): ReturnType<F>;
+    afterDecorators: AfterDecorator<F>[];
+    beforeDecorators: BeforeDecorator<F>[];
+    after(this: WrappedFunction<F>, decorator: AfterDecorator<F>): WrappedFunction<F>;
+    before(this: WrappedFunction<F>, decorator: BeforeDecorator<F>): WrappedFunction<F>;
 }
 
-type HookedFunction<T extends object, K extends keyof T> = T[K] extends (...args: infer P) => infer R
+export function assertIsHookedFunction<F extends AnyFunction>(func: F | HookedFunction<F>): func is HookedFunction<F> {
+    return 'originalFunction' in func;
+}
+
+export function assertIsWrappedFunction<F extends AnyFunction>(
+    func: F | WrappedFunction<F>
+): func is WrappedFunction<F> {
+    return 'afterDecorators' in func && 'beforeDecorators' in func && assertIsHookedFunction(func);
+}
+
+export function wrapper<F extends (...args: any) => any>(func: F | HookedFunction<F> | WrappedFunction<F>) {
+    if (typeof func !== 'function') return undefined as never;
+
+    let originalFunc;
+
+    if (assertIsWrappedFunction(func)) {
+        return func;
+    }
+
+    if (assertIsHookedFunction(func)) {
+        originalFunc = func.originalFunction;
+    } else {
+        originalFunc = func;
+    }
+
+    const createWrappedFunction = (
+        originalFunction: F,
+        beforeDecorators: BeforeDecorator<F>[],
+        afterDecorators: AfterDecorator<F>[]
+    ) => {
+        const wrapped = function (this: unknown, ...args: Parameters<F>): ReturnType<F> {
+            beforeDecorators.forEach((decorator) => {
+                decorator.apply(this, args);
+            });
+
+            const r = func.apply(this, args);
+
+            afterDecorators.forEach((decorator) => {
+                if (r instanceof Promise) {
+                    r.then((r) => decorator.call(this, r, ...args));
+                } else {
+                    decorator.call(this, r, ...args);
+                }
+            });
+            return r;
+        } as WrappedFunction<F>;
+
+        wrapped.originalFunction = originalFunction;
+        wrapped.afterDecorators = afterDecorators;
+        wrapped.beforeDecorators = beforeDecorators;
+
+        wrapped.before = function (this: WrappedFunction<F>, decorator: BeforeDecorator<F>) {
+            return createWrappedFunction(
+                this.originalFunction,
+                this.beforeDecorators.concat(decorator),
+                Array.from(this.afterDecorators)
+            );
+        }.bind(wrapped);
+
+        wrapped.after = function (this: WrappedFunction<F>, decorator: AfterDecorator<F>) {
+            return createWrappedFunction(
+                this.originalFunction,
+                Array.from(this.beforeDecorators),
+                this.afterDecorators.concat(decorator)
+            );
+        }.bind(wrapped);
+
+        return wrapped;
+    };
+
+    return createWrappedFunction(originalFunc, [], []);
+}
+
+type HookFunction<T extends object, K extends keyof T> = T[K] extends (...args: infer P) => infer R
     ? (this: T, originalFunc: (...args: P) => R, ...args: P) => R
     : never;
 
-export function hookFn<T extends object, K extends keyof T>(target: T, funcName: K, hookedFunc?: HookedFunction<T, K>) {
-    let originalFunc = target[funcName] as AnyFunction;
-    if (typeof originalFunc !== 'function') return;
+export function hookFn<T extends object, K extends keyof T>(target: T, funcName: K, hookedFunc?: HookFunction<T, K>) {
+    let func = target[funcName] as AnyFunction;
+    if (typeof func !== 'function') return;
 
-    if (Object.hasOwn(originalFunc, 'rawFunction')) {
-        originalFunc = (originalFunc as any).rawFunction;
+    if (Object.hasOwn(func, 'originalFunction')) {
+        func = (func as any).originalFunction;
     }
 
     if (hookedFunc == undefined) return;
 
     (target[funcName] as any) = function (this: T, ...args: any[]): any {
-        return hookedFunc.call(this, originalFunc.bind(this), ...args);
+        return hookedFunc.call(this, func.bind(this), ...args);
     };
 
-    (target[funcName] as any).rawFunction = originalFunc;
+    (target[funcName] as any).originalFunction = func;
+}
+
+export function restoreHookedFn<T extends object, K extends keyof T>(target: T, funcName: K) {
+    let func = target[funcName] as AnyFunction;
+    if (typeof func !== 'function') return;
+
+    while (Object.hasOwn(func, 'originalFunction')) {
+        func = (func as any).originalFunction;
+    }
+
+    (target[funcName] as any) = func;
 }
 
 interface HasPrototype {
@@ -80,7 +153,7 @@ interface HasPrototype {
 export function hookPrototype<T extends HasPrototype, K extends keyof T['prototype']>(
     target: T,
     funcName: K,
-    hookedFunc?: HookedFunction<T['prototype'], K>
+    hookedFunc?: HookFunction<T['prototype'], K>
 ) {
     const proto = target.prototype;
     proto && hookFn(proto, funcName, hookedFunc);
@@ -108,8 +181,6 @@ export const extractObjectId = <T extends { [key in K]: number }, K extends stri
 };
 
 export const NOOP = () => {};
-
-export { SEAHookEventTarget as SEAHookEmitter } from './EventTarget.js';
 
 export { CacheData } from './CacheData.js';
 

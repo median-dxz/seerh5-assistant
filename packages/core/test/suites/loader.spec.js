@@ -1,3 +1,5 @@
+import env from '../env/pet.json';
+
 var expect = chai.expect;
 
 describe('Loader', function () {
@@ -10,7 +12,7 @@ describe('Loader', function () {
 
     it('should return true immediately', function (done) {
         const core = window.sea;
-        core.CoreLoader().then((r) => {
+        core.CoreLoader(env.readyEvent).then((r) => {
             if (r) done();
             else done('load failed');
         });

@@ -1,4 +1,4 @@
-import { EventBus, GameNativeEmitter, Pet, debounce, getImageButtonListener, hookFn, hookPrototype } from 'sea-core';
+import { DataSource, Pet, Subscription, debounce, getImageButtonListener, hookFn, hookPrototype } from 'sea-core';
 import type { SEAMod } from '../../lib/mod';
 
 class PetBag implements SEAMod.IModuleMod<petBag.PetBag> {
@@ -12,7 +12,7 @@ class PetBag implements SEAMod.IModuleMod<petBag.PetBag> {
     };
 
     moduleName = 'petBag';
-    eventBus = new EventBus();
+    subscription = new Subscription();
     load() {
         // 开启本地换肤按钮
         hookPrototype(petBag.SkinView, 'onChooseSkin', function (f, ...args) {
@@ -43,14 +43,12 @@ class PetBag implements SEAMod.IModuleMod<petBag.PetBag> {
             const { petInfo } = e.data as { petInfo: PetInfo };
             petInfo && this.logger(new Pet(petInfo));
         };
-        const socketEmitter = this.eventBus.delegate(GameNativeEmitter.socket);
-        const egretEmitter = this.eventBus.delegate(GameNativeEmitter.egret);
-        socketEmitter.on(CommandID.PET_DEFAULT, refresh);
-        socketEmitter.on(CommandID.PET_RELEASE, refresh);
-        egretEmitter.on('petBag.MainPanelTouchPetItemEnd', printTappingPetInfo);
+        this.subscription.on(DataSource.socket(CommandID.PET_DEFAULT, 'receive'), refresh);
+        this.subscription.on(DataSource.socket(CommandID.PET_RELEASE, 'receive'), refresh);
+        this.subscription.on(DataSource.egret('petBag.MainPanelTouchPetItemEnd'), printTappingPetInfo);
     }
     destroy() {
-        this.eventBus.dispose();
+        this.subscription.dispose();
     }
 }
 

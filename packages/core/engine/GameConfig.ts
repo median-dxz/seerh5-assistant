@@ -31,6 +31,10 @@ export const GameConfigRegistry = {
     },
 
     register<T extends keyof GameConfigMap>(type: T, entity: GameConfigRegistryEntity<GameConfigMap[T]>) {
+        if(gameConfigRegistryEntityMap.has(type)) {
+            throw `[error]: 重复注册配置查询 ${type}`
+        }
+
         const { iterator, objectName, objectId } = entity;
 
         function find(predicate: PredicateFn<GameConfigMap[T]>) {

@@ -299,14 +299,20 @@ declare class PetManager {
     static storageToSecondBag(catchTime: number): Promise<void>;
     static loveToBag(catchTime: number): Promise<void>;
 
-    static delLovePet(arg0: number, catchTime: number, arg2: number): void;
-    static addLovePet(arg0: number, catchTime: number, arg2: number): void;
+    static delLovePet(id: number, catchTime: number, level: number): void;
+    static addLovePet(id: number, catchTime: number, level: number): void;
     static noAlarmCureAll(): void;
-    static setDefault(catchTime: number): void;
+    static setDefault(catchTime: number): Promise<void>;
     static _setDefault(catchTime: number): void;
     static equipSkin(catchTime: number, skinId: number, callback: Callback): PromiseLike<void>;
     static checkPetInfoEffect(pet: Pick<PetInfo, 'id' | 'effectList'>, callback: (activated: boolean) => void): void;
     static dispatchEvent(e: PetEvent): void;
+
+    static onDelLovePetSuccessHandler(catchTime: number): void;
+    static onAddLovePetSuccessHandler(catchTime: number): void;
+    static curRetrieveLovePetInfo: PetListInfo;
+    static curLovePetInfo: PetListInfo;
+
     static isBagFull: boolean;
     static isSecondBagFull: boolean;
     static _bagMap: seerh5.HashMap<PetInfo>;
