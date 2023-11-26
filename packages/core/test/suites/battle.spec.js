@@ -33,6 +33,7 @@ const filterCMD = [
 ];
 
 describe('BattleManager', function () {
+
     /** @type {Subscription} */
     let sub;
 

@@ -159,6 +159,16 @@ export function hookPrototype<T extends HasPrototype, K extends keyof T['prototy
     proto && hookFn(proto, funcName, hookedFunc);
 }
 
+export function restoreHookedFn<T extends object, K extends keyof T>(target: T, funcName: K) {
+    let fn = target[funcName] as AnyFunction;
+    if (typeof fn !== 'function') return;
+
+    while (Object.hasOwn(fn, 'rawFunction')) {
+        fn = (fn as any).rawFunction;
+    }
+    (target[funcName] as any) = fn;
+}
+
 export const checkEnv = () =>
     typeof window !== 'undefined' && window.sea != undefined && window.sea?.CoreReady && window.sea?.SeerH5Ready;
 

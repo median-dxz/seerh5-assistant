@@ -43,7 +43,6 @@ class PetBag implements SEAMod.IModuleMod<petBag.PetBag> {
             const { petInfo } = e.data as { petInfo: PetInfo };
             petInfo && this.logger(new Pet(petInfo));
         };
-
         this.subscription.on(DataSource.socket(CommandID.PET_DEFAULT, 'receive'), refresh);
         this.subscription.on(DataSource.socket(CommandID.PET_RELEASE, 'receive'), refresh);
         this.subscription.on(DataSource.egret('petBag.MainPanelTouchPetItemEnd'), printTappingPetInfo);

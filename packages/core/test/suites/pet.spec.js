@@ -4,6 +4,7 @@ import {
     Hook,
     Manager,
     PetLocation,
+    SEAHookEmitter,
     SEAPet,
     Subscription,
     delay,
