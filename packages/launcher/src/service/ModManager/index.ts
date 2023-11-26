@@ -2,7 +2,7 @@ import { ct } from '@sea-launcher/context/ct';
 import * as EndPoints from '@sea-launcher/service/endpoints';
 import { SEAModuleLogger } from '@sea-launcher/utils/logger';
 import type { ILevelBattleStrategy, MoveStrategy } from 'sea-core';
-import { EventBus, GameModuleEventEmitter } from 'sea-core/emitters';
+import { DataSource, Subscription } from 'sea-core/data-source';
 import {
     BaseMod,
     BattleMod,
@@ -88,25 +88,25 @@ export const SEAModManager = {
                     {
                         const moduleMod = mod as ModuleMod;
 
-                        const eventBus = new EventBus();
-                        const gameModuleEmitter = eventBus.delegate(GameModuleEventEmitter);
+                        const subscription = new Subscription();
+                        const $module = DataSource.gameModule;
+
                         moduleMod.activate = function () {
                             if (this.load) {
-                                gameModuleEmitter.on(this.moduleName, 'load', this.load.bind(this));
+                                subscription.on($module(this.moduleName, 'load'), this.load.bind(this));
                             }
                             if (this.show) {
-                                gameModuleEmitter.on(this.moduleName, 'show', this.show.bind(this));
+                                subscription.on($module(this.moduleName, 'show'), this.show.bind(this));
                             }
                             if (this.mainPanel) {
-                                gameModuleEmitter.on(this.moduleName, 'mainPanel', this.mainPanel.bind(this));
+                                subscription.on($module(this.moduleName, 'mainPanel'), this.mainPanel.bind(this));
                             }
                             if (this.destroy) {
-                                gameModuleEmitter.on(this.moduleName, 'destroy', this.destroy.bind(this));
+                                subscription.on($module(this.moduleName, 'destroy'), this.destroy.bind(this));
                             }
                         };
-
                         moduleMod.deactivate = function () {
-                            eventBus.dispose();
+                            subscription.dispose();
                         };
                     }
                     break;

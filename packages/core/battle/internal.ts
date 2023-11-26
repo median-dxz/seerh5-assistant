@@ -1,6 +1,6 @@
-import { SEAHookEmitter, delay } from '../common/utils.js';
+import { delay } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
-import { SocketEventEmitter } from '../emitters/index.js';
+import { DataSource, SocketBuilderRegistry } from '../data-source/index.js';
 import { findObject } from '../engine/index.js';
 import { PetRoundInfo } from '../entity/index.js';
 import * as Manager from './manager.js';
@@ -25,14 +25,14 @@ export default () => {
         this.getMC().selected = !1;
     };
 
-    SEAHookEmitter.on(Hook.Battle.battleStart, () => {
+    DataSource.hook(Hook.Battle.battleStart).on(() => {
         cachedRoundInfo.deactivate();
         if (FightManager.fightAnimateMode === 1) {
             TimeScaleManager.setBattleAnimateSpeed(10);
         }
     });
 
-    SEAHookEmitter.on(Hook.Battle.endPropShown, () => {
+    DataSource.hook(Hook.Battle.endPropShown).on(() => {
         if (FightManager.fightAnimateMode === 1) {
             TimeScaleManager.setBattleAnimateSpeed(1);
         }
@@ -55,9 +55,9 @@ export default () => {
         }
     };
 
-    SEAHookEmitter.on(Hook.Battle.battleStart, onRoundStart);
-    SEAHookEmitter.on(Hook.Battle.roundEnd, onRoundStart);
-    SEAHookEmitter.on(Hook.Battle.battleEnd, () => {
+    DataSource.hook(Hook.Battle.battleStart).on(onRoundStart);
+    DataSource.hook(Hook.Battle.roundEnd).on(onRoundStart);
+    DataSource.hook(Hook.Battle.battleEnd).on(() => {
         const isWin = Boolean(FightManager.isWin);
         if (Manager.context.strategy) {
             Promise.all([Manager.context.delayTimeout, delay(1000)])
@@ -71,14 +71,14 @@ export default () => {
         }
     });
 
-    SocketEventEmitter.subscribe(CommandID.NOTE_USE_SKILL, (buffer) => {
-        const roundInfo = new UseSkillInfo(new egret.ByteArray(buffer));
+    SocketBuilderRegistry.register(CommandID.NOTE_USE_SKILL, (data) => {
+        const roundInfo = new UseSkillInfo(new egret.ByteArray(data!.rawBuffer));
         const fi = new PetRoundInfo(roundInfo.firstAttackInfo);
         const si = new PetRoundInfo(roundInfo.secondAttackInfo);
         return [fi, si] as const;
     });
 
-    SocketEventEmitter.on(CommandID.NOTE_USE_SKILL, 'receive', (data) => {
+    DataSource.socket(CommandID.NOTE_USE_SKILL, 'receive').on((data) => {
         cachedRoundInfo.update([...data]);
     });
 };

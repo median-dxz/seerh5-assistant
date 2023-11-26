@@ -11,6 +11,7 @@ declare class SocketEncryptImpl extends egret.WebSocket {
     connected: boolean;
     openIDs: number[];
     closeIDs: number[];
+    reConnecting: boolean;
     addCmdListener<T>(cmd: number, callback: seerh5.Callback<T>, thisObj: T): void;
     removeCmdListener<T>(cmd: number, callback: seerh5.Callback<T>, thisObj: T): void;
     dispatchCmd(cmd: number, headInfo: HeadInfo, buf?: egret.ByteArray): void;

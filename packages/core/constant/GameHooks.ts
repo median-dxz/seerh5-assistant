@@ -1,7 +1,7 @@
 export const Hook = {
     Module: {
         loadScript: 'module_loadScript',
-        construct: 'module_construct',
+        show: 'module_show',
         openMainPanel: 'module_openMainPanel',
         destroy: 'module_destroy',
     },

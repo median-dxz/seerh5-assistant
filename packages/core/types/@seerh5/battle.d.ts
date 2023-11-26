@@ -1,7 +1,7 @@
 declare class PetFightController {
     static roundTimes: number;
     static GameSpeed: number;
-    static onStartFight(): void;
+    static onStartFight(t: unknown): void;
     static mvContainer: egret.DisplayObjectContainer;
 }
 

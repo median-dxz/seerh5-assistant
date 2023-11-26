@@ -2,7 +2,7 @@
   "name": "sea-core",
   "description": "SeerH5-Assistant SEA 核心库",
   "type": "module",
-  "version": "0.6.5",
+  "version": "0.6.6",
   "license": "MPL-2.0",
   "private": true,
   "exports": {
@@ -11,7 +11,7 @@
     "./common": "./dist/common/index.js",
     "./constant": "./dist/constant/index.js",
     "./engine": "./dist/engine/index.js",
-    "./emitters": "./dist/emitters/index.js",
+    "./data-source": "./dist/data-source/index.js",
     "./entity": "./dist/entity/index.js",
     "./functions": "./dist/functions/index.js",
     "./pet-helper": "./dist/pet-helper/index.js",
@@ -28,7 +28,15 @@
   "files": [
     "dist",
     "types",
-    "src"
+    "index.ts",
+    "battle",
+    "common",
+    "constant",
+    "engine",
+    "data-source",
+    "entity",
+    "pet-helper",
+    "level"
   ],
   "scripts": {
     "build": "tsc --build",

@@ -2,7 +2,7 @@ export * from './common/utils.js';
 export * from './constant/index.js';
 
 export * from './battle/index.js';
-export * from './emitters/index.js';
+export * from './data-source/index.js';
 export * from './engine/index.js';
 export * from './entity/index.js';
 export * from './level/index.js';

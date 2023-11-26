@@ -2,7 +2,6 @@ import type { AnyFunction } from '../common/utils.js';
 import { NOOP, hookPrototype } from '../common/utils.js';
 
 import battleInit from '../battle/internal.js';
-import registerListeners from '../emitters/internal.js';
 import registerEngine from '../engine/internal.js';
 import petInit from '../pet-helper/internal.js';
 import registerHooks from './registerHooks.js';
@@ -36,10 +35,9 @@ export function enableBasic() {
     enableBackgroundHeartBeatCheck();
 
     InternalInitiator.push(registerHooks, 0);
-    InternalInitiator.push(registerListeners, 1);
     InternalInitiator.push(petInit, 2);
     InternalInitiator.push(battleInit, 2);
-    InternalInitiator.push(registerEngine, 3);
+    InternalInitiator.push(registerEngine, 5);
 }
 
 function loadScript(this: ModuleManager, scriptName: string) {

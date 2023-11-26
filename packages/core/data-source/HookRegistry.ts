@@ -1,29 +1,37 @@
 import type { Subscription } from 'rxjs';
-import { Observable, Subject, filter, map } from 'rxjs';
-import type { AnyFunction } from '../common/utils.js';
+import { Observable, Subject } from 'rxjs';
+import type { AnyFunction, ValueOf } from '../common/utils.js';
 import type { HookDataMap } from '../constant/type.js';
 
-type ValueOf<T> = T[keyof T];
-type HookResolver<T extends ValueOf<HookDataMap>> = (resolve: (data: T) => void) => AnyFunction;
-type HookEventData = { type: keyof HookDataMap; data: ValueOf<HookDataMap> };
+type DataSteam<TEvents extends object> = {
+    type: keyof TEvents;
+    data: ValueOf<TEvents>;
+};
 
-const subject = new Subject<HookEventData>();
+type HookResolver<T extends ValueOf<HookDataMap>> = T extends undefined
+    ? (resolve: (data?: undefined) => void) => AnyFunction | void
+    : (resolve: (data: T) => void) => AnyFunction | void;
+
+type HookEventData = DataSteam<HookDataMap>;
+
 const hookDataSubscriptionMap = new Map<string, Subscription>();
 
 export const HookRegistry = {
+    subject$: new Subject<HookEventData>(),
+
     register<T extends keyof HookDataMap>(name: T, hookResolver: HookResolver<HookDataMap[T]>) {
         if (hookDataSubscriptionMap.has(name)) {
             throw `[error]: hook ${name} already registered`;
         }
 
         const hookData$ = new Observable<HookEventData>((subscriber) =>
-            // 返回了Dispose函数
+            // 如果返回了Dispose函数, 会在unsubscribe的时候自动调用
             hookResolver((data) => {
                 subscriber.next({ type: name, data });
             })
         );
 
-        hookDataSubscriptionMap.set(name, hookData$.subscribe(subject));
+        hookDataSubscriptionMap.set(name, hookData$.subscribe(this.subject$));
     },
 
     unregister<T extends keyof HookDataMap>(name: T) {
@@ -32,12 +40,5 @@ export const HookRegistry = {
             subscription.unsubscribe();
             hookDataSubscriptionMap.delete(name);
         }
-    },
-
-    $on<T extends keyof HookDataMap>(name: T) {
-        return subject.pipe(
-            filter((event) => event.type === name),
-            map((event) => event.data as HookDataMap[T])
-        );
     },
 };

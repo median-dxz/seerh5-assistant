@@ -20,7 +20,7 @@
         "./constant",
         "./engine",
         "./entity",
-        "./emitters",
+        "./data-source",
         "./functions",
         "./loader",
         "./pet-helper",

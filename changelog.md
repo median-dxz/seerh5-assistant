@@ -15,8 +15,9 @@ RoadMap: **见Readme**
   - [ ] 同样由vite插件和jspm, 在生产环境下将`sea-core`捆绑为单独的chunk并保留导出签名, 由插件注入chunk的importmap(额外步骤：将分包解析映射到总包)
   - [ ] sdk中不用额外插件，仅做外部化配置
   - [ ] 完善动态import加载插件的机制，在devtools中获取更好的显示
+- [ ] sdk中core版本兼容性检测
 
-# Core 当前版本 v0.6.5
+# Core 当前版本 v0.6.6
 
 - [x] 整合官方的module加载调试输出
   - [x] 屏蔽官方实现
@@ -33,10 +34,11 @@ RoadMap: **见Readme**
 - [x] 重构GameConfig查询模块, 采用注册接口架构, 配合TypeMap, 添加可扩展性
   - [x] 通过模块声明合并以及全新的`GameConfigRegistry`注册可查询的`GameConfig`
   - [x] 通过`GameConfigRegistry`获得`GameConfigQuery`对象用以查询数据
-
+- [x] 事件模块全部重构, 采用RxJS, 以响应式结构作为事件相关逻辑的组织方式
+- [x] `wrapper`api重构, 采用链式不可变结构
 - [ ] 通过declare module方式并设计相关接口，使得Core支持扩展
   - [ ] 添加Loader的扩展点
-  - [ ] 添加Hook的扩展点
+  - [x] 添加Hook的扩展点
   - [x] 添加GameConfig的扩展点
 
 - [ ] 属性攻击/特攻/物攻的枚举

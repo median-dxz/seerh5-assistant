@@ -1,4 +1,4 @@
-import { GameConfigRegistry, ItemId, SEAPet, Socket, delay } from 'sea-core';
+import { DataSource, GameConfigRegistry, ItemId, SEAPet, Socket, delay } from 'sea-core';
 import type { SEAMod } from '../lib/mod';
 
 interface NatureObj extends seerh5.BaseObj {
@@ -55,9 +55,12 @@ class CraftSkillStone implements SEAMod.IBaseMod {
             if (info.nature === nature) {
                 break;
             }
-            await Socket.sendWithReceivedPromise(CommandID.MULTI_ITEM_LIST, () => {
+
+            await new Promise((resolve) => {
+                DataSource.socket(CommandID.MULTI_ITEM_LIST, 'receive').once(resolve);
                 ItemManager.updateItemNum([300070], [true]);
             });
+
             await delay(200);
             const num = ItemManager.getNumByID(300070);
             this.logger(`刷性格: 剩余胶囊数: ${num}`);
@@ -93,9 +96,12 @@ class CraftSkillStone implements SEAMod.IBaseMod {
             id: number;
             num: number;
         }> = [];
-        await Socket.sendWithReceivedPromise(4475, () => {
+
+        await new Promise((resolve) => {
+            DataSource.socket(4475, 'receive').once(resolve);
             ItemManager.getSkillStone();
         });
+
         const stoneInfos = ItemManager.getSkillStoneInfos();
         stones = [];
         stoneInfos.forEach((stone) => {

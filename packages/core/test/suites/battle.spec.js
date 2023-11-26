@@ -1,10 +1,10 @@
 import {
-    EventBus,
+    DataSource,
     HelperLoader,
     Hook,
     Manager,
     Operator,
-    SEAHookEmitter,
+    Subscription,
     cureAllPet,
     delay,
     matchNoBloodChain,
@@ -20,19 +20,29 @@ const startBattle = () => {
     FightManager.fightNoMapBoss(6730);
 };
 
+const $hook = DataSource.hook;
+const filterCMD = [
+    1002, // SYSTEM_TIME
+    2001, // ENTER_MAP
+    2002, // LEAVE_MAP
+    2004, // MAP_OGRE_LIST
+    2441, // LOAD_PERCENT
+    9019, // NONO_FOLLOW_OR_HOOM
+    9274, //PET_GET_LEVEL_UP_EXP
+    41228, // SYSTEM_TIME_CHECK
+];
+
 describe('BattleManager', function () {
-    /** @type {EventBus} */
-    let bus;
-    let HookEmitter;
+    /** @type {Subscription} */
+    let sub;
 
     before(async () => {
         HelperLoader();
-        bus = new EventBus();
+        sub = new Subscription();
         await toggleAutoCure(true);
 
-        HookEmitter = bus.delegate(SEAHookEmitter);
-
-        SEAHookEmitter.on(Hook.Socket.send, (data) => {
+        $hook(Hook.Socket.send).on((data) => {
+            if (filterCMD.includes(data.cmd)) return;
             console.log(data);
         });
     });
@@ -43,8 +53,8 @@ describe('BattleManager', function () {
         const skn = matchSkillName(env.skill.map((v) => v.name));
         const nbc = matchNoBloodChain([env.测试精灵1.name, env.测试精灵3.name]);
 
-        HookEmitter.on(Hook.Battle.battleStart, Manager.resolveStrategy);
-        HookEmitter.on(Hook.Battle.roundEnd, Manager.resolveStrategy);
+        sub.on($hook(Hook.Battle.battleStart), Manager.resolveStrategy);
+        sub.on($hook(Hook.Battle.roundEnd), Manager.resolveStrategy);
 
         await Manager.takeover(startBattle, {
             async resolveMove(state, skills, _) {
@@ -88,8 +98,8 @@ describe('BattleManager', function () {
             }
         };
 
-        HookEmitter.on(Hook.Battle.battleStart, resolve);
-        HookEmitter.on(Hook.Battle.roundEnd, resolve);
+        sub.on($hook(Hook.Battle.battleStart), resolve);
+        sub.on($hook(Hook.Battle.roundEnd), resolve);
 
         await Manager.takeover(startBattle, {
             async resolveMove() {
@@ -114,7 +124,7 @@ describe('BattleManager', function () {
     });
 
     afterEach(async function () {
-        bus.dispose();
+        sub.dispose();
         cureAllPet();
 
         await delay(1000);

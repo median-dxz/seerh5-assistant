@@ -1,1 +1,0 @@
-export const SEAHookEmitter = new SEAEventTarget<HookDataMap, undefined>();
