@@ -3,7 +3,9 @@ dist
 .tsbuildinfo/
 .vscode/
 
-.env.local
+.env
+.env.*
+!env.example
 
 /docs/**
 /release/**

@@ -2,33 +2,39 @@
     "name": "seerh5-assistant-server",
     "private": true,
     "type": "module",
-    "version": "0.5.1",
-    "main": "./index.js",
+    "version": "0.6.0",
+    "main": "./src/index.js",
     "scripts": {
-        "start": "nodemon ./index.js"
+        "start": "nodemon ./src/index.ts",
+        "watch:tsc": "tsc -w"
     },
     "dependencies": {
-        "@koa/router": "^12.0.1",
+        "@fastify/env": "^4.3.0",
+        "@fastify/middie": "^8.3.0",
+        "@fastify/one-line-logger": "^1.2.0",
+        "@fastify/websocket": "^8.2.0",
+        "@trpc/server": "^10.44.1",
+        "close-with-grace": "^1.2.0",
+        "fastify": "^4.24.3",
         "http-proxy-middleware": "3.0.0-beta.1",
-        "koa": "^2.14.2",
-        "koa-body": "^6.0.1",
-        "koa-connect": "^2.1.0",
-        "koa-logger": "^3.2.1",
-        "koa-static": "^5.0.0",
-        "smol-toml": "^1.1.3"
+        "smol-toml": "^1.1.3",
+        "zod": "^3.22.4"
     },
     "devDependencies": {
-        "@types/koa": "^2.13.12",
-        "@types/koa-logger": "^3.1.5",
-        "@types/koa-static": "^4.0.4",
-        "@types/koa__router": "^12.0.4",
-        "nodemon": "^3.0.1"
+        "@swc/core": "^1.3.99",
+        "@types/connect": "^3.4.38",
+        "nodemon": "^3.0.1",
+        "ts-node": "^10.9.1"
     },
     "nodemonConfig": {
         "watch": [
-            "server/*.js",
-            "server/middlewares/*.js",
-            "server/routers/*.js"
-        ]
+            "./tsconfig.json",
+            "./src/**/*",
+            ".env"
+        ],
+        "ext": "ts,js",
+        "execMap": {
+            "ts": "node --import=./typescript-hooks.mjs"
+        }
     }
 }

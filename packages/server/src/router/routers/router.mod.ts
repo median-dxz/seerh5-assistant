@@ -1,8 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 
-import { base } from '../base.js';
-import { ModConfig } from './config.js';
+import type { Middleware } from '@koa/router';
+
+import { basePath } from '../../config.ts';
+import { ModConfig } from './config.ts';
 
 const MOD_DIRNAME = 'mods';
 
@@ -11,7 +13,7 @@ const findMods = (dir = MOD_DIRNAME) => {
     /**
      * @type { string[] }
      */
-    let r = [];
+    let r: string[] = [];
 
     const files = fs.readdirSync(dir);
     files.forEach((file) => {
@@ -20,35 +22,26 @@ const findMods = (dir = MOD_DIRNAME) => {
         if (stat.isDirectory()) {
             r = r.concat(findMods(filePath));
         } else if (stat.isFile() && isModFile(filePath)) {
-            r.push(path.relative(path.join(base, 'mods'), filePath));
+            r.push(path.relative(path.join(basePath, 'mods'), filePath));
         }
     });
 
     return r;
 };
 
-/**
- * @param {string} filePath
- */
-function isModFile(filePath) {
+function isModFile(filePath: string) {
     return path.extname(filePath) === '.js' || path.extname(filePath) === '.json';
 }
 
 // ===== middlewares =====
 
-/**
- * @type {import('@koa/router').Middleware}
- */
-export const getAllMods = (ctx) => {
+export const getAllMods: Middleware = (ctx) => {
     ctx.body = findMods().map((path) => {
         return { path };
     });
 };
 
-/**
- * @type {import('@koa/router').Middleware}
- */
-export function getConfig(ctx) {
+export const getConfig: Middleware = (ctx) => {
     const { namespace: ns } = ctx.params;
     const config = new ModConfig(ns).load();
     if (config) {
@@ -56,12 +49,9 @@ export function getConfig(ctx) {
     } else {
         ctx.body = { msg: '配置不存在' };
     }
-}
+};
 
-/**
- * @type {import('@koa/router').Middleware}
- */
-export function setConfig(ctx) {
+export const setConfig: Middleware = (ctx) => {
     const { namespace: ns } = ctx.params;
     const config = new ModConfig(ns);
     try {
@@ -75,4 +65,4 @@ export function setConfig(ctx) {
             msg: e,
         };
     }
-}
+};

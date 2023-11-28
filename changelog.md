@@ -45,6 +45,10 @@ RoadMap: **见Readme**
 - [ ] 属性攻击/特攻/物攻的枚举
 
 - [ ] 对于部分错误, 封装错误类
+- [ ] 额外允许一些模块打印关键日志, 通过`common`包下的`log`模块启用
+  - [ ] `Log.setLogger()`允许使用自定义logger, 默认启用console.log, 输出格式为`[sea-core][module name]:`
+  - [ ] 外部api为`Log.enable()`和`Log.disable()`, 通过传入模块名称来开启这一部分的输出
+  - [ ] 目前暂定支持的模块只有`Battle`, 开启后将输出Operator模块的入参
 - [ ] 解耦登录器/后端特定逻辑
 - [ ] 解耦非核心功能, 全部移动到登录器下的`features`包下, 由登录器提供扩展定义
   - [ ] 取代原functions子包

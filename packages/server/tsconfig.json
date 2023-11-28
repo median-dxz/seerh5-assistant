@@ -1,22 +1,33 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "module": "NodeNext",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
         "target": "es2022",
-        "tsBuildInfoFile": "../../.tsbuildinfo/server.tsbuildinfo",
-        "checkJs": true,
-        "allowJs": true,
+        "resolveJsonModule": true,
+        "allowImportingTsExtensions": true,
         "noEmit": true,
+        "tsBuildInfoFile": "../../.tsbuildinfo/server.tsbuildinfo",
         "composite": true
     },
     "include": [
-        "./*.js",
-        "./**/*.js"
+        "src",
     ],
     "exclude": [
-        "node_modules",
-        "mods",
-        "entry",
-        "config"
-    ]
+        "/mods/**",
+        "/entry/**",
+        "/config/**"
+    ],
+    "ts-node": {
+        // It is faster to skip typechecking.
+        // Remove if you want ts-node to do typechecking.
+        "transpileOnly": true,
+        "files": true,
+        "swc": true,
+        "esm": true,
+        "compilerOptions": {
+            "esModuleInterop": true,
+            "importsNotUsedAsValues": "error"
+        }
+    },
 }

@@ -5,16 +5,16 @@
         "plugin:@typescript-eslint/recommended-requiring-type-checking"
     ],
     "rules": {
-        "arrow-body-style": [
-            "error",
-            "as-needed"
-        ],
         "@typescript-eslint/no-unused-vars": [
             "error",
             {
                 "argsIgnorePattern": "^_",
                 "varsIgnorePattern": "_"
             }
+        ],
+        "arrow-body-style": [
+            "error",
+            "as-needed"
         ],
         "@typescript-eslint/no-non-null-assertion": "off",
         "@typescript-eslint/no-floating-promises": "off",

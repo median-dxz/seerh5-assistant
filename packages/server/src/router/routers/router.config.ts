@@ -1,75 +1,64 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import fs from 'fs';
 import path from 'path';
 
 import * as toml from 'smol-toml';
 
-import { base } from '../base.js';
-import { PetCache } from './config.js';
+import type { Middleware } from '@koa/router';
+import { basePath } from '../../config.ts';
+import { PetCache } from './config.ts';
 
 // ===== middlewares =====
 
-/**
- * @type {import('@koa/router').Middleware}
- */
-export function queryPets(ctx) {
+export const queryPets: Middleware = (ctx) => {
     const { name } = ctx.query;
     if (typeof name === 'string') {
         ctx.body = [[name, PetCache.query(name)]];
     } else {
         ctx.body = Array.from(PetCache.catchTimeMap.entries());
     }
-}
+};
 
-/**
- * @type {import('@koa/router').Middleware}
- */
-export function cachePets(ctx) {
+export const cachePets: Middleware = (ctx) => {
     /** @type {Array<[string, number]>} */
-    const pets = ctx.request.body;
+    const pets: Array<[string, number]> = ctx.request.body;
     const newPetCache = new Map(pets);
     PetCache.update(newPetCache);
     ctx.body = {
         success: true,
     };
-}
+};
 
-/**
- * @type {import('@koa/router').Middleware}
- */
-export function petFragmentLevel(ctx) {
-    const configPath = path.join(base, 'config', 'sea-petFragmentLevel.toml');
+export const petFragmentLevel: Middleware = (ctx) => {
+    const configPath = path.join(basePath, 'config', 'sea-petFragmentLevel.toml');
     if (!fs.existsSync(configPath)) {
         fs.writeFileSync(configPath, '');
     }
     const content = fs.readFileSync(configPath, 'utf-8');
-    /** @type {any} */
-    const config = toml.parse(content);
+    const config: any = toml.parse(content);
     ctx.body = config['PetFragmentLevel'];
-}
+};
 
-/**
- * @type {import('@koa/router').Middleware}
- */
-export function launcherConfig(ctx) {
-    const key = ctx.query['key'];
+export const launcherConfig: Middleware = (ctx) => {
+    const key = ctx.query['key'] as string;
     // 判断是get还是post
     if (ctx.method === 'GET') {
-        const configPath = path.join(base, 'config', 'sea-launcher.toml');
+        const configPath = path.join(basePath, 'config', 'sea-launcher.toml');
         if (!fs.existsSync(configPath)) {
             fs.writeFileSync(configPath, '');
         }
         const content = fs.readFileSync(configPath, 'utf-8');
-        /** @type {any} */
-        const config = toml.parse(content);
+        const config: any = toml.parse(content);
         ctx.body = config[key] ?? {};
     } else if (ctx.method === 'POST') {
-        const configPath = path.join(base, 'config', 'sea-launcher.toml');
+        const configPath = path.join(basePath, 'config', 'sea-launcher.toml');
         if (!fs.existsSync(configPath)) {
             fs.writeFileSync(configPath, '');
         }
         const content = fs.readFileSync(configPath, 'utf-8');
-        /** @type {any} */
-        const config = toml.parse(content);
+        const config: any = toml.parse(content);
         const newConfig = ctx.request.body;
         config[key] = newConfig ?? {};
         fs.writeFileSync(configPath, toml.stringify(config));
@@ -77,11 +66,8 @@ export function launcherConfig(ctx) {
             success: true,
         };
     }
-}
+};
 
-/**
- * @type {import('@koa/router').Middleware}
- */
-export function realm(ctx) {
+export const realm: Middleware = (ctx) => {
     throw new Error('Function not implemented.');
-}
+};
