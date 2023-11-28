@@ -204,6 +204,7 @@ var Driver = (function () {
                         function (data, url) {
                             var script = document.createElement('script');
                             script.type = 'text/javascript';
+                            // author: median
                             // loader modify begin
                             while (data.startsWith('eval')) {
                                 data = eval(data.match(/eval([^)].*)/)[1]);

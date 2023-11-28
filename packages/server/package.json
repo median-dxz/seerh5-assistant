@@ -9,6 +9,7 @@
         "watch:tsc": "tsc -w"
     },
     "dependencies": {
+        "@fastify/cors": "^8.4.1",
         "@fastify/env": "^4.3.0",
         "@fastify/middie": "^8.3.0",
         "@fastify/one-line-logger": "^1.2.0",
