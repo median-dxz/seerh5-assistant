@@ -57,9 +57,14 @@ export const saTheme = createTheme({
                     width: 8,
                     height: 8,
                 },
-                '::-webkit-scrollbar-track': 'none',
+                '::-webkit-scrollbar-track': {
+                    backgroundColor: alpha(colors.primary, 0.08),
+                },
                 '::-webkit-scrollbar-thumb': {
                     backgroundColor: alpha(colors.primary, 0.5),
+                },
+                '::-webkit-scrollbar-thumb:hover': {
+                    backgroundColor: colors.primary,
                 },
             },
         },

@@ -17,7 +17,7 @@ RoadMap: **见Readme**
 
 - [x] 后端使用typescript重构
 - [x] 迁移后端到fastify
-- [ ] 端点交互使用tRPC
+- [x] 端点交互使用tRPC
 
 - [ ] 使用import map, 在全局共享`sea-core`ES模块实例, 使插件捆绑后以原生esm方式即可使用core
   - [ ] 编写vite插件和引入jspm, 使launcher在开发环境下将`sea-core`外部化, 由插件注入本地工作区包的importmap
@@ -60,15 +60,19 @@ RoadMap: **见Readme**
   - [ ] 外部api为`Log.enable()`和`Log.disable()`, 通过传入模块名称来开启这一部分的输出
   - [ ] 目前暂定支持的模块只有`Battle`, 开启后将输出Operator模块的入参
 - [ ] 解耦登录器/后端特定逻辑
-- [ ] 解耦非核心功能, 部分移动到登录器下的`features`包下, 由登录器提供扩展定义, 部分合并到engine中
+- [ ] 解耦非核心功能, 部分移动到登录器下的`features`包下, 由登录器提供扩展定义, 部分合并到`engine`中
   - [ ] 取代原functions子包
   - [ ] script解密
   - [ ] 对战显血
   - [ ] 自动关弹窗
   - [ ] logFilter
-  - [ ] script通过语法树进行高级反混淆, 暂定主要目标是升级 async/await
 
 # App 当前版本 v0.5.1
 
 - [ ] 生产开发环境判断
 - [ ] 为模组注入配置持久化接口
+
+# 其他
+
+- [ ] script通过语法树进行高级反混淆, 暂定主要目标是升级 async/await
+- [ ] 心跳包逻辑有点问题, 会被主动断线

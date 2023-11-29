@@ -48,15 +48,15 @@ const StyledButtonRoot = styled(HexagonalButtonRoot)`
     );
     transition: ${saTheme.transitions.create(['all'], { duration: saTheme.transitions.duration.shortest })};
 
-    :focus {
+    &:focus {
         outline: none;
     }
 
-    :hover {
+    &:hover {
         cursor: pointer;
     }
 
-    :active {
+    &:active {
         transform: translateY(4px);
     }
 
@@ -78,7 +78,7 @@ const StyledButtonRoot = styled(HexagonalButtonRoot)`
         animation: breathe 2s linear infinite;
     }
 
-    :hover .content {
+    &:hover .content {
         filter: drop-shadow(0 0 4px ${saTheme.palette.emphases.main});
     }
 

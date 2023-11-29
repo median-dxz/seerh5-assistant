@@ -187,7 +187,6 @@ export function MainPanel() {
                             left: 'calc(30vw / 2)',
                             width: '70vw',
                             height: '100%',
-                            overflowY: 'scroll',
                             overflowX: 'hidden',
                         }}
                         onClick={(e) => {

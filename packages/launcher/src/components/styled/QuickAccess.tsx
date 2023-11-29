@@ -15,12 +15,12 @@ export const SeaQuickAccess = styled(MuiSpeedDial)`
         box-shadow: none;
         transition: all 0.2s ease-in-out !important;
         filter: drop-shadow(0 0 4px ${alpha(saTheme.palette.primary.main, 0.4)});
-        :hover {
+        &:hover {
             color: ${saTheme.palette.emphases.main};
         }
     }
 
-    ::after {
+    &::after {
         content: ' ';
         position: absolute;
         top: 0;
@@ -31,7 +31,7 @@ export const SeaQuickAccess = styled(MuiSpeedDial)`
         transition: ${saTheme.transitions.create(['width'])};
     }
 
-    ::before {
+    &::before {
         content: ' ';
         position: absolute;
         bottom: 0;
@@ -42,9 +42,9 @@ export const SeaQuickAccess = styled(MuiSpeedDial)`
         transition: ${saTheme.transitions.create(['width'])};
     }
 
-    :hover {
-        ::before,
-        ::after {
+    &:hover {
+        &::before,
+        &::after {
             width: 100%;
         }
     }

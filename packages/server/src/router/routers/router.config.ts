@@ -52,6 +52,7 @@ export const setLauncherConfig = (key: string, appRoot: string, newConfig: unkno
     }
     const content = fs.readFileSync(configPath, 'utf-8');
     const config = toml.parse(content);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
     config[key] = newConfig ?? ({} as any);
     fs.writeFileSync(configPath, toml.stringify(config));
     return {

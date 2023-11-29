@@ -12,7 +12,7 @@ import { saTheme } from '@sea-launcher/style';
 import { CommandBar } from './CommandBar';
 import { MainPanel } from './views/MainPanel';
 
-import { Hook } from 'sea-core';
+import { Hook, wrapper } from 'sea-core';
 import { Manager as BattleManager, autoStrategy } from 'sea-core/battle';
 import { DataSource, Subscription } from 'sea-core/data-source';
 
@@ -37,6 +37,10 @@ const CmdMask = [
     9274, //PET_GET_LEVEL_UP_EXP
     41228, // SYSTEM_TIME_CHECK
 ];
+
+SystemTimerManager.sockettimeout = wrapper(SystemTimerManager.sockettimeout).after(() => {
+    console.log('客户端主动关闭');
+});
 
 export default function App() {
     const [isCommandBarOpen, toggleCommandBar] = useState(false);
