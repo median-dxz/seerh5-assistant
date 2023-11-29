@@ -39,7 +39,9 @@ export const launcherConfig = (key: string, appRoot: string): unknown => {
     }
     const content = fs.readFileSync(configPath, 'utf-8');
     const config = toml.parse(content);
-
+    if (JSON.stringify(config[key]) === '{}') {
+        return null;
+    }
     return config[key] ?? null;
 };
 

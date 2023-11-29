@@ -42,7 +42,7 @@ try {
     await fs.copyFile(tarball, targetFile);
 
     targetFile = path.relative(sdkDir, targetFile);
-    const { stdout } = await exec(`pnpm add ${targetFile}`, { cwd: sdkDir });
+    const { stdout } = await exec(`pnpm add ${targetFile} -D`, { cwd: sdkDir });
 
     console.log(stdout);
 } catch (e) {

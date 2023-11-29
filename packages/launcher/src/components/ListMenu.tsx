@@ -32,10 +32,10 @@ export function ListMenu<T>(props: ListMenuProps<T>) {
 
     return (
         <Menu anchorEl={anchorEl} {...menuProps} open={open} onClose={handleCloseMenu}>
-            {data.map((item) => (
+            {data.map((item, index) => (
                 <MemoMenuItem
                     sx={{ maxWidth: '25vw' }}
-                    key={JSON.stringify(item)}
+                    key={index}
                     onClick={onClickRef.current.get(item)}
                 >
                     <Typography variant="inherit" noWrap>

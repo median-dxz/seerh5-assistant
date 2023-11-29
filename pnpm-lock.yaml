@@ -54,9 +54,9 @@ importers:
       '@mui/material':
         specifier: ^5.14.18
         version: 5.14.18(@types/react@18.2.38)(react-dom@18.2.0)(react@18.2.0)
-      '@mui/styled-engine-sc':
-        specifier: ^6.0.0-alpha.6
-        version: 6.0.0-alpha.6(styled-components@6.1.1)
+      '@mui/styled-engine':
+        specifier: npm:@mui/styled-engine-sc@latest
+        version: /@mui/styled-engine-sc@6.0.0-alpha.6(styled-components@6.1.1)
       '@mui/system':
         specifier: ^5.14.18
         version: 5.14.18(@types/react@18.2.38)(react@18.2.0)
@@ -173,25 +173,6 @@ importers:
       ts-node:
         specifier: ^10.9.1
         version: 10.9.1(@swc/core@1.3.99)(@types/node@20.10.0)(typescript@5.3.2)
-
-  sdk:
-    dependencies:
-      dayjs:
-        specifier: ^1.11.10
-        version: 1.11.10
-      sea-core:
-        specifier: file:lib\sea-core-0.6.6.tgz
-        version: file:sdk/lib/sea-core-0.6.6.tgz
-    devDependencies:
-      rollup-plugin-external-globals:
-        specifier: ^0.9.1
-        version: 0.9.1(rollup@4.5.2)
-      typescript:
-        specifier: ^5.3.2
-        version: 5.3.2
-      vite:
-        specifier: ^5.0.2
-        version: 5.0.2
 
 packages:
 
@@ -2149,21 +2130,6 @@ packages:
       rollup: 2.79.1
     dev: true
 
-  /@rollup/pluginutils@5.1.0(rollup@4.5.2):
-    resolution: {integrity: sha512-XTIWOPPcpvyKI6L1NHo0lFlCyznUEyPmPY1mc3KpPVDYulHSTvyeLNVW00QTLIAFNhR3kYnJTQHeGqU4M3n09g==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
-    peerDependenciesMeta:
-      rollup:
-        optional: true
-    dependencies:
-      '@types/estree': 1.0.5
-      estree-walker: 2.0.2
-      picomatch: 2.3.1
-      rollup: 4.5.2
-    dev: true
-
   /@rollup/rollup-android-arm-eabi@4.5.2:
     resolution: {integrity: sha512-ee7BudTwwrglFYSc3UnqInDDjCLWHKrFmGNi4aK7jlEyg4CyPa1DCMrZfsN1O13YT76UFEqXz2CoN7BCGpUlJw==}
     cpu: [arm]
@@ -2452,10 +2418,6 @@ packages:
 
   /@types/estree@0.0.39:
     resolution: {integrity: sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==}
-    dev: true
-
-  /@types/estree@1.0.5:
-    resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
     dev: true
 
   /@types/http-proxy@1.17.11:
@@ -3136,10 +3098,6 @@ packages:
     resolution: {integrity: sha512-2P0p0pFGzHS5EMnhdxQi7aJN+iMheud0UhG4dlE1DLAlvL8JHjJJTX/CSm4JXwV0Ka5nGk3zC5mcb5bUQUxxMA==}
     dev: false
 
-  /dayjs@1.11.10:
-    resolution: {integrity: sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==}
-    dev: false
-
   /debug@3.2.7(supports-color@5.5.0):
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
     peerDependencies:
@@ -3488,16 +3446,6 @@ packages:
 
   /estree-walker@1.0.1:
     resolution: {integrity: sha512-1fMXF3YP4pZZVozF8j/ZLfvnR8NSIljt56UhbZ5PeeDmmGHpgpdwQt7ITlGvYaQukCvuBRMLEiKiYC+oeIg4cg==}
-    dev: true
-
-  /estree-walker@2.0.2:
-    resolution: {integrity: sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==}
-    dev: true
-
-  /estree-walker@3.0.3:
-    resolution: {integrity: sha512-7RUKfXgSMMkzt6ZuXmqapOurLGPPfgj6l9uRZ7lRGolvk0y2yocc35LdcxKC5PQZdn2DMqioAQ2NoWcrTKmm6g==}
-    dependencies:
-      '@types/estree': 1.0.5
     dev: true
 
   /esutils@2.0.3:
@@ -4106,12 +4054,6 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
-  /is-reference@3.0.2:
-    resolution: {integrity: sha512-v3rht/LgVcsdZa3O2Nqs+NMowLOxeOm7Ay9+/ARQ2F+qEoANRcqrjAZKGN0v8ymUetZGgkp26LTnGT7H0Qo9Pg==}
-    dependencies:
-      '@types/estree': 0.0.39
-    dev: true
-
   /is-regex@1.1.4:
     resolution: {integrity: sha512-kvRdxDsxZjhzUX07ZnLydzS1TU/TJlTUHHY4YLL87e37oUA49DfkLqgy+VjFocowy29cKvcSiu+kIv728jTTVg==}
     engines: {node: '>= 0.4'}
@@ -4353,13 +4295,6 @@ packages:
     resolution: {integrity: sha512-RmF0AsMzgt25qzqqLc1+MbHmhdx0ojF2Fvs4XnOqz2ZOBXzzkEwc/dJQZCYHAn7v1jbVOjAZfK8msRn4BxO4VQ==}
     dependencies:
       sourcemap-codec: 1.4.8
-    dev: true
-
-  /magic-string@0.30.5:
-    resolution: {integrity: sha512-7xlpfBaQaP/T6Vh8MO/EqXSW5En6INHEvEXQiuff7Gku0PWjU3uf6w/j9o7O+SpB5fOAkrI5HeoNgwjEO0pFsA==}
-    engines: {node: '>=12'}
-    dependencies:
-      '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
   /make-error@1.3.6:
@@ -4890,18 +4825,6 @@ packages:
     hasBin: true
     dependencies:
       glob: 10.3.10
-    dev: true
-
-  /rollup-plugin-external-globals@0.9.1(rollup@4.5.2):
-    resolution: {integrity: sha512-A5bxaS1ZxswieycelVGdEjvV2FqA24IGY1ya17ZpshLoncDjyWR508hzUWOtGYIjr1t5PRu/zVRXmu1KBlJxlw==}
-    peerDependencies:
-      rollup: ^2.25.0 || ^3.3.0 || ^4.1.4
-    dependencies:
-      '@rollup/pluginutils': 5.1.0(rollup@4.5.2)
-      estree-walker: 3.0.3
-      is-reference: 3.0.2
-      magic-string: 0.30.5
-      rollup: 4.5.2
     dev: true
 
   /rollup-plugin-terser@7.0.2(rollup@2.79.1):
@@ -5593,41 +5516,6 @@ packages:
       - supports-color
     dev: true
 
-  /vite@5.0.2:
-    resolution: {integrity: sha512-6CCq1CAJCNM1ya2ZZA7+jS2KgnhbzvxakmlIjN24cF/PXhRMzpM/z8QgsVJA/Dm5fWUWnVEsmtBoMhmerPxT0g==}
-    engines: {node: ^18.0.0 || >=20.0.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': ^18.0.0 || >=20.0.0
-      less: '*'
-      lightningcss: ^1.21.0
-      sass: '*'
-      stylus: '*'
-      sugarss: '*'
-      terser: ^5.4.0
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      less:
-        optional: true
-      lightningcss:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-    dependencies:
-      esbuild: 0.19.7
-      postcss: 8.4.31
-      rollup: 4.5.2
-    optionalDependencies:
-      fsevents: 2.3.3
-    dev: true
-
   /vite@5.0.2(@types/node@20.10.0):
     resolution: {integrity: sha512-6CCq1CAJCNM1ya2ZZA7+jS2KgnhbzvxakmlIjN24cF/PXhRMzpM/z8QgsVJA/Dm5fWUWnVEsmtBoMhmerPxT0g==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -5926,12 +5814,4 @@ packages:
 
   /zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
-    dev: false
-
-  file:sdk/lib/sea-core-0.6.6.tgz:
-    resolution: {integrity: sha512-gvU48gAh37acMaaS9aA9mAf7WWH9j8j50XSCvhvuzITkP3sBeI3/MgMOQY2f6A4SAwnfPiOD3P5YtK+OguNtVA==, tarball: file:sdk/lib/sea-core-0.6.6.tgz}
-    name: sea-core
-    version: 0.6.6
-    dependencies:
-      rxjs: 7.8.1
     dev: false
