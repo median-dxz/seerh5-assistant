@@ -1,4 +1,5 @@
-import Icon from './all_inclusive.svg';
+import type { SEAMod } from '../../lib/mod';
+import Icon from './all_inclusive.svg?raw';
 
 export default class FightPuni implements SEAMod.IQuickAccessPlugin {
     logger: typeof console.log;

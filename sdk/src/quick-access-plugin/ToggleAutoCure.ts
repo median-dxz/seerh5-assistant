@@ -1,5 +1,6 @@
 import { getAutoCureState, toggleAutoCure } from 'sea-core';
-import Icon from './local_hospital.svg';
+import type { SEAMod } from '../../lib/mod';
+import Icon from './local_hospital.svg?raw';
 
 export default class FightPuni implements SEAMod.IQuickAccessPlugin {
     logger: typeof console.log;

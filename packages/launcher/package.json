@@ -1,5 +1,5 @@
 {
-    "name": "seerh5-assistant-launcher",
+    "name": "@sea/launcher",
     "private": true,
     "type": "module",
     "version": "0.5.1",
@@ -18,6 +18,9 @@
         "@mui/material": "^5.14.18",
         "@mui/styled-engine-sc": "^6.0.0-alpha.6",
         "@mui/system": "^5.14.18",
+        "@sea/server": "workspace:*",
+        "@trpc/client": "^10.44.1",
+        "@trpc/server": "^10.44.1",
         "chalk": "^5.3.0",
         "immer": "^10.0.3",
         "react": "^18.2.0",
@@ -25,6 +28,7 @@
         "react-transition-group": "^4.4.5",
         "sea-core": "workspace:*",
         "styled-components": "^6.1.1",
+        "superjson": "^2.2.1",
         "swr": "^2.2.4"
     },
     "devDependencies": {

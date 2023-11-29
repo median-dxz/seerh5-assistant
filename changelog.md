@@ -8,9 +8,16 @@ RoadMap: **见Readme**
 **todo已经迁移至issue/project**
 
 - [x] 项目更名为SEA(Seerh5 Assistant Project), 启动器部分名称更改为SEAL(Seerh5 Assistant Launcher)
+  - [x] `core`包更名为`sea-core`
+  - [x] `server`包现在是`@sea/server`
+  - [x] `app`包现在是`@sea/launcher`
 > 其实名称没变，变的是缩写
 
-- [ ] 迁移后端到typescript
+- [ ] 整理github issue和project, 删除过远和不够明确的目标, 关闭暂时无法复现的问题, 关闭已经完成的内容并链接commit/pr
+
+- [x] 后端使用typescript重构
+- [x] 迁移后端到fastify
+- [ ] 端点交互使用tRPC
 
 - [ ] 使用import map, 在全局共享`sea-core`ES模块实例, 使插件捆绑后以原生esm方式即可使用core
   - [ ] 编写vite插件和引入jspm, 使launcher在开发环境下将`sea-core`外部化, 由插件注入本地工作区包的importmap
@@ -39,10 +46,13 @@ RoadMap: **见Readme**
 - [x] `wrapper`api重构, 采用链式不可变结构对函数添加`before`和`after`装饰器
 - [ ] 通过declare module方式并设计相关接口，使得Core支持扩展
   - [ ] 添加Loader的扩展点
+  - [ ] 添加Engine的扩展点
   - [x] 添加Hook的扩展点
   - [x] 添加GameConfig的扩展点
 
 - [ ] 属性攻击/特攻/物攻的枚举
+- [x] 移除`extractObjectId`方法
+  - [x] 常用的`Entity`中添加`infer*`静态方法, 用于替代原来的api
 
 - [ ] 对于部分错误, 封装错误类
 - [ ] 额外允许一些模块打印关键日志, 通过`common`包下的`log`模块启用
@@ -50,7 +60,7 @@ RoadMap: **见Readme**
   - [ ] 外部api为`Log.enable()`和`Log.disable()`, 通过传入模块名称来开启这一部分的输出
   - [ ] 目前暂定支持的模块只有`Battle`, 开启后将输出Operator模块的入参
 - [ ] 解耦登录器/后端特定逻辑
-- [ ] 解耦非核心功能, 全部移动到登录器下的`features`包下, 由登录器提供扩展定义
+- [ ] 解耦非核心功能, 部分移动到登录器下的`features`包下, 由登录器提供扩展定义, 部分合并到engine中
   - [ ] 取代原functions子包
   - [ ] script解密
   - [ ] 对战显血

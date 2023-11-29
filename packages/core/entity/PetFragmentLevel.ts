@@ -32,8 +32,6 @@ export interface IPetFragmentLevelObject {
 }
 
 export class PetFragmentLevel extends EntityBase implements IPetFragmentLevelObject {
-    static readonly key = 'id';
-    static readonly instanceKey = 'id';
     declare readonly __type: EntityType;
 
     totalTimes: number;

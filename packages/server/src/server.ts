@@ -1,6 +1,11 @@
+import path from 'node:path';
+
 import cors from '@fastify/cors';
 import fastifyEnv from '@fastify/env';
 import fastifyMiddie from '@fastify/middie';
+import fastifyStatic from '@fastify/static';
+import ws from '@fastify/websocket';
+import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import fastify from 'fastify';
 
 import { envOptions } from './config.ts';
@@ -10,7 +15,9 @@ import { createAppJsProxy } from './middlewares/appJsProxy.ts';
 import { createAssetsProxy } from './middlewares/assetsProxy.ts';
 import { loginProxy } from './middlewares/loginProxy.ts';
 
-// const prefix = '/sea-server';
+import { buildSEALContext } from './context.ts';
+import { PetCache } from './data/PetCacheManager.ts';
+import { apiRouter } from './router/index.ts';
 
 export async function createServer() {
     const server = fastify({
@@ -27,7 +34,7 @@ export async function createServer() {
     await server.register(cors, {
         origin: (origin, cb) => {
             if (!origin) {
-                cb(new Error('Empty origin'), false);
+                cb(null, true);
                 return;
             }
             const hostname = new URL(origin).hostname;
@@ -44,12 +51,22 @@ export async function createServer() {
     void server.use('/account-co.61.com/', loginProxy);
     void server.register(createAppJsProxy);
 
-    //     void server.register(ws);
-    //     void server.register(fastifyTRPCPlugin, {
-    //         prefix: "/api",
-    //         useWSS: true,
-    //         trpcOptions: { router: appRouter, createContext },
-    //     });
+    PetCache.load(server.config.APP_ROOT);
+
+    void server.register(fastifyStatic, {
+        root: path.resolve(server.config.APP_ROOT, 'mods'),
+        prefix: '/mods',
+        extensions: ['js', 'json'],
+        index: false,
+        list: true,
+    });
+
+    void server.register(ws);
+    void server.register(fastifyTRPCPlugin, {
+        prefix: '/api',
+        useWSS: true,
+        trpcOptions: { router: apiRouter, createContext: buildSEALContext({ appRoot: server.config.APP_ROOT }) },
+    });
 
     const stop = async () => {
         await server.close();
@@ -67,28 +84,3 @@ export async function createServer() {
 
     return { server, start, stop };
 }
-
-// import ws from '@fastify/websocket';
-// import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
-
-// import { appRouter } from './router/index.ts';
-// import { createContext } from './context.ts';
-
-// import apiRouter from './routers/index.ts';
-
-// router.get('/api/mods', apiRouter.mod.getAllMods);
-// router.get('/api/mods/:namespace/config', apiRouter.mod.getConfig);
-// router.get('/api/pet', apiRouter.config.queryPets);
-// router.get('/api/petFragmentLevel', apiRouter.config.petFragmentLevel);
-// router.get('/api/realm', apiRouter.config.realm);
-// router.get('/api/launcher/config', apiRouter.config.launcherConfig);
-
-// router.post('/api/launcher/config', koaBody(), apiRouter.config.launcherConfig);
-// router.post('/api/mods/:namespace/config', koaBody(), apiRouter.mod.setConfig);
-// router.post('/api/pet', koaBody(), apiRouter.config.cachePets);
-
-// router.get('/mods/(.*)', async (ctx, next) => {
-//     ctx.path = ctx.params[0];
-//     return serve(path.resolve(configBase, 'mods'), { index: false })(ctx, next);
-// });
-// app.use(router.routes()).use(router.allowedMethods());

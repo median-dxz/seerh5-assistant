@@ -16,8 +16,6 @@ export interface ISkillObject {
 }
 
 export class Skill extends EntityBase implements ISkillObject {
-    static readonly key = 'id';
-    static readonly instanceKey = 'id';
     declare readonly __type: EntityType;
     element: PetElement;
     category: number;

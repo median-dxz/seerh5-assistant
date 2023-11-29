@@ -1,7 +1,9 @@
-import { CacheData, NOOP, extractObjectId } from '../common/utils.js';
+import { CacheData, NOOP } from '../common/utils.js';
 import { DataSource } from '../data-source/index.js';
 import { Socket } from '../engine/index.js';
-import { Item, Pet } from '../entity/index.js';
+import { EntityBase } from '../entity/EntityBase.js';
+import type { Item } from '../entity/index.js';
+import { Pet } from '../entity/index.js';
 
 import { PetLocation, setLocationTable } from './PetLocation.js';
 
@@ -206,7 +208,7 @@ export class ProxyPet extends Pet {
      * Attention: 该发包不具备收包resolve的条件! 请手动添加延迟
      */
     async useItem(item: Item | number) {
-        const itemId = extractObjectId(item, Item.instanceKey);
+        const itemId = EntityBase.inferId(item);
         const info = await PetManager.UpdateBagPetInfoAsynce(this.catchTime);
         ItemUseManager.getInstance().useItem(info, itemId);
         return ins.query(this.catchTime);
@@ -216,7 +218,7 @@ export class ProxyPet extends Pet {
      * @description 对精灵使用药品
      */
     async usePotion(potion: Item | number) {
-        const itemId = extractObjectId(potion, Item.instanceKey);
+        const itemId = EntityBase.inferId(potion);
         await Socket.sendByQueue(CommandID.USE_PET_ITEM_OUT_OF_FIGHT, [this.catchTime, itemId]);
         return ins.query(this.catchTime);
     }

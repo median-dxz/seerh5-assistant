@@ -1,4 +1,3 @@
-// vite.config.js
 import { resolve } from 'path';
 import externalGlobals from 'rollup-plugin-external-globals';
 import { defineConfig } from 'vite';

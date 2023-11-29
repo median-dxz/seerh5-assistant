@@ -1,5 +1,5 @@
 import MenuOpen from '@mui/icons-material/MenuOpen';
-import { SpeedDialAction, type SpeedDialActionProps, SvgIcon } from '@mui/material';
+import { SpeedDialAction, SvgIcon, type SpeedDialActionProps } from '@mui/material';
 import useSWR from 'swr';
 
 import React, { useState } from 'react';
@@ -9,13 +9,10 @@ import { ModStore } from '@sea-launcher/service/ModManager';
 import { SEAModType, type QuickAccessPlugin } from './service/ModManager/type';
 
 const SvgMaker = ({ url, children: _, ...rest }: React.SVGProps<SVGSVGElement> & { url: string }) => {
-    if (!url.startsWith('data:image/svg+xml;')) {
+    if (!url.startsWith('<svg xmlns="http://www.w3.org/2000/svg"')) {
         throw new Error('不是有效的svg信息');
     }
-    const svg = url.slice('data:image/svg+xml;'.length);
-    // 删除base64头
-    const base64 = svg.slice(svg.indexOf(',') + 1);
-    const svgXml = atob(base64);
+    const svgXml = url;
     // 解析里面的path
     const parser = new DOMParser();
     const doc = parser.parseFromString(svgXml, 'image/svg+xml');

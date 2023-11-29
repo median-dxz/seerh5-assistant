@@ -2,7 +2,6 @@ import { EntityBase, type EntityType } from './EntityBase.js';
 
 export class PetElement extends EntityBase {
     declare readonly __type: EntityType;
-    static readonly key = 'id';
     /** 是否是双属性 */
     composite: boolean;
     /** 英文属性名 */

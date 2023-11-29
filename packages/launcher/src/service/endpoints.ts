@@ -1,66 +1,48 @@
+import type { ApiRouter } from '@sea/server';
+import { createTRPCProxyClient, createWSClient, wsLink } from '@trpc/client';
+import superjson from 'superjson';
+
+const wsClient = createWSClient({
+    url: `ws://localhost:${import.meta.env.VITE_BACKEND_PORT}/api`,
+});
+
+const trpcClient = createTRPCProxyClient<ApiRouter>({
+    links: [wsLink({ client: wsClient })],
+    transformer: superjson,
+});
+
 type ModPathList = Array<{ path: string }>;
 
 type AllMods = () => Promise<ModPathList>;
 export const getAllMods: AllMods = async () => {
-    return fetch('/api/mods').then((res) => res.json());
+    return trpcClient.allMods.query();
 };
 
 type ModConfig = (ns: string) => Promise<{ config?: unknown }>;
 export const getModConfig: ModConfig = async (ns: string) => {
-    return fetch(`/api/mods/${ns}/config`).then((res) => {
-        return res.json();
-    });
+    return trpcClient.modConfig.query(ns);
 };
 
 export const setModConfig = async (namespace: string, config: string) => {
-    return fetch(`/api/mods/${namespace}/config`, {
-        method: 'POST',
-        body: config,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
-};
-
-export const setConfig = async (key: string, value: unknown) => {
-    return fetch(`/api/launcher/config?key=${key}`, {
-        method: 'POST',
-        body: JSON.stringify(value),
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
+    return trpcClient.setModConfig.mutate({ namespace, config });
 };
 
 export const getConfig = async (key: string) => {
-    return fetch(`/api/launcher/config?key=${key}`)
-        .then((res) => res.json())
-        .then((data) => {
-            if (JSON.stringify(data) === '{}') {
-                return null;
-            } else {
-                return data;
-            }
-        });
+    return trpcClient.launcherConfig.query(key);
 };
 
-type CatchTime = (name?: string) => Promise<Array<[string, number]>>;
-export const queryCatchTime: CatchTime = async (name) => {
-    if (name) {
-        return fetch(`/api/pet?name=${name}`).then((r) => r.json());
-    } else {
-        return fetch(`/api/pet`).then((r) => r.json());
-    }
+export const setConfig = async (key: string, value: unknown) => {
+    return trpcClient.setLauncherConfig.mutate({ key, value });
 };
+
+export async function queryCatchTime(name: string): Promise<[[string, number]]>;
+export async function queryCatchTime(): Promise<[string, number][]>;
+export async function queryCatchTime(name?: string) {
+    return trpcClient.pets.query(name);
+}
 
 export const cacheCatchTime = async (data: Map<string, number>) => {
-    return fetch(`/api/pet`, {
-        method: 'POST',
-        body: JSON.stringify([...data]),
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
+    return trpcClient.cachePets.mutate(data);
 };
 
 export interface PetFragmentOption {
@@ -70,7 +52,6 @@ export interface PetFragmentOption {
     battle: string[];
 }
 
-type PetFragmentConfig = () => Promise<PetFragmentOption[]>;
-export const getPetFragmentConfig: PetFragmentConfig = async () => {
-    return fetch(`/api/petFragmentLevel`).then((r) => r.json());
+export const getPetFragmentConfig = async () => {
+    return trpcClient.petFragmentLevel.query() as Promise<PetFragmentOption[]>;
 };

@@ -15,8 +15,6 @@ const testPetStorage2015PetInfoType = (o: seerh5.PetLike): o is PetStorage2015Pe
 
 export class Pet extends EntityBase implements IPetObject {
     readonly __type: EntityType;
-    static readonly key = 'id';
-    static readonly instanceKey = 'catchTime';
     readonly skills: Skill[];
     readonly catchTime: number;
     readonly level: number;
@@ -96,5 +94,17 @@ export class Pet extends EntityBase implements IPetObject {
         } else {
             return new Pet({ ...obj } as PetInfo);
         }
+    }
+
+    static inferCatchTime(obj: Exclude<seerh5.PetLike, seerh5.PetObj> | Pet | number) {
+        if (typeof obj === 'number') {
+            return obj;
+        }
+
+        if ('catchTime' in obj) {
+            return obj.catchTime;
+        }
+
+        return undefined as never;
     }
 }

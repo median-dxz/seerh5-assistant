@@ -1,5 +1,6 @@
 node_modules
 dist
+
 .tsbuildinfo/
 .vscode/
 
@@ -7,5 +8,6 @@ dist
 .env.*
 !env.example
 
+/release
+
 /docs/**
-/release/**

@@ -1,6 +1,4 @@
-import { extractObjectId } from '../common/utils.js';
-import type { Item } from '../entity/index.js';
-import { Pet } from '../entity/index.js';
+import { Pet, type Item } from '../entity/index.js';
 
 import type { ProxyPet } from './PetDataManager.js';
 import { PetDataManger as ins } from './PetDataManager.js';
@@ -10,7 +8,7 @@ export type CatchTime = number;
 
 const PetHandlerStatic = {
     async get(pet: CatchTime | Pet) {
-        const ct = extractObjectId(pet, Pet.instanceKey);
+        const ct = Pet.inferCatchTime(pet);
         if (ins.cache.has(ct)) {
             return ins.cache.get(ct)!;
         } else {
@@ -60,7 +58,8 @@ Object.entries(PetHandlerStatic).forEach(([_p, _f]) => {
 
 export const SEAPet: PetHandler = new Proxy(PetHandlerFunc, {
     apply: (target, thisArg, argArray: [CatchTime | Pet]) => {
-        const ct = extractObjectId(argArray[0], Pet.instanceKey);
+        const pet = argArray[0];
+        const ct = Pet.inferCatchTime(pet);
         return ins.cache.get(ct);
     },
 });
