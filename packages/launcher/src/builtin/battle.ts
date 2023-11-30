@@ -1,6 +1,8 @@
 import { ct } from '@sea-launcher/context/ct';
 import type { BattleModExport } from '@sea-launcher/service/ModManager/type';
-import { lowerBlood } from 'sea-core';
+import { Engine } from 'sea-core';
+
+const { lowerHp } = Engine;
 
 export default [
     {
@@ -8,7 +10,7 @@ export default [
         battle: {
             pets: ['潘克多斯', '蒂朵', '帝皇之御', '魔钰', '月照星魂', '时空界皇'],
             beforeBattle: async () => {
-                return lowerBlood(await ct('潘克多斯', '蒂朵', '帝皇之御', '魔钰', '月照星魂', '时空界皇'));
+                return lowerHp(await ct('潘克多斯', '蒂朵', '帝皇之御', '魔钰', '月照星魂', '时空界皇'));
             },
             strategy: '潘蒂表必先',
         },

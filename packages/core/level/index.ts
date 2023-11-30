@@ -1,8 +1,7 @@
 import { Manager } from '../battle/index.js';
 import { delay } from '../common/utils.js';
-import { toggleAutoCure } from '../engine/index.js';
-import { switchBag } from '../functions/index.js';
-import { SEAPet, cureAllPet } from '../pet-helper/index.js';
+import { Engine } from '../engine/index.js';
+import { SEAPet } from '../pet-helper/index.js';
 import type { ILevelRunner } from './type.js';
 import { LevelState } from './type.js';
 
@@ -54,10 +53,10 @@ export class LevelManager {
                 const { strategy, pets, beforeBattle } = runner.selectBattle();
 
                 logger('切换背包');
-                await switchBag(pets);
+                await Engine.switchBag(pets);
 
-                toggleAutoCure(false);
-                cureAllPet();
+                Engine.toggleAutoCure(false);
+                Engine.cureAllPet();
 
                 await delay(100);
 
@@ -78,7 +77,7 @@ export class LevelManager {
                     return;
                 }
 
-                await toggleAutoCure(true);
+                await Engine.toggleAutoCure(true);
                 Manager.clear();
                 logger('战斗完成');
             };

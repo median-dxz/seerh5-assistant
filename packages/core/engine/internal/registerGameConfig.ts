@@ -1,4 +1,4 @@
-import { GameConfigRegistry } from './GameConfig.js';
+import { GameConfigRegistry } from '../GameConfig.js';
 
 export default () => {
     GameConfigRegistry.register('item', {

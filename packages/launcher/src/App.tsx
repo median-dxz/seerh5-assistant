@@ -13,7 +13,7 @@ import { CommandBar } from './CommandBar';
 import { MainPanel } from './views/MainPanel';
 
 import { Hook, wrapper } from 'sea-core';
-import { Manager as BattleManager, autoStrategy } from 'sea-core/battle';
+import { Manager, autoStrategy } from 'sea-core/battle';
 import { DataSource, Subscription } from 'sea-core/data-source';
 
 import { QuickAccess } from './QuickAccess';
@@ -58,9 +58,9 @@ export default function App() {
     const handleBattleRoundEnd = React.useCallback(() => {
         if (battleAuto) {
             Logger.BattleManager.info('执行自定义行动策略');
-            BattleManager.resolveStrategy(autoStrategy);
+            Manager.resolveStrategy(autoStrategy);
         } else {
-            BattleManager.resolveStrategy();
+            Manager.resolveStrategy();
         }
     }, [battleAuto]);
 

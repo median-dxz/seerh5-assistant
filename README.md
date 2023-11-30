@@ -21,18 +21,11 @@
 
 ## 最近更新的内容
 
-*Core v0.6.6*
+*@sea/server v0.6.0*
 
-- [x] 事件模块全部重构, 采用RxJS, 以响应式结构作为事件相关逻辑的组织方式
-  - [x] 使用`Subscription`来批量管理订阅
-  - [x] `DataSource`现在是使用观察者模式而不是发布订阅模式
-  - [x] 使用`DataSource`上的静态方法`from*`来获取事件流, 而后进行订阅
-  - [x] 移除`SendWithReceivedPromise`接口, 根据发包客户端的源码分析，这个接口是没有必要的
-- [x] `wrapper`api重构, 采用链式不可变结构对函数添加`before`和`after`装饰器
-- [ ] 通过declare module方式并设计相关接口，使得Core支持扩展
-  - [ ] 添加Loader的扩展点
-  - [x] 添加Hook的扩展点
-  - [x] 添加GameConfig的扩展点
+- [x] 后端使用typescript重构
+- [x] 迁移后端到fastify
+- [x] 端点交互使用tRPC
 
 # 简介
 

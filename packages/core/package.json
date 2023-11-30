@@ -13,7 +13,6 @@
     "./engine": "./dist/engine/index.js",
     "./data-source": "./dist/data-source/index.js",
     "./entity": "./dist/entity/index.js",
-    "./functions": "./dist/functions/index.js",
     "./pet-helper": "./dist/pet-helper/index.js",
     "./level": "./dist/level/index.js",
     "./types/seerh5": {

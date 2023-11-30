@@ -337,6 +337,7 @@ declare class PetStorage2015InfoManager {
 
 declare class SystemTimerManager {
     static queryTime(): void;
+    static sockettimeout(): void;
     static time: number;
     static sysBJDate: {
         getTime(): number;

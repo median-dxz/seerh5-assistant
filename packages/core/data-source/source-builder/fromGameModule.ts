@@ -1,7 +1,7 @@
 import { filter, map } from 'rxjs';
 import { Hook } from '../../constant/index.js';
 import { type GameModuleMap } from '../../constant/type.js';
-import { UIModuleHelper } from '../../engine/index.js';
+import { Engine } from '../../engine/index.js';
 import { DataSource } from '../DataSource.js';
 import { $hook } from './fromHook.js';
 
@@ -23,7 +23,7 @@ const $fromGameModule = {
     mainPanel<TModule extends string>(module: TModule) {
         return $hook(Hook.Module.openMainPanel).pipe(
             filter(({ module: _module }) => _module === module),
-            map(() => UIModuleHelper.currentModule<GameModuleMap[TModule]>())
+            map(() => Engine.inferCurrentModule<GameModuleMap[TModule]>())
         );
     },
     destroy<TModule extends string>(module: TModule) {

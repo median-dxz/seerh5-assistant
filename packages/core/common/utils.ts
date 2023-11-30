@@ -159,9 +159,6 @@ export function hookPrototype<T extends HasPrototype, K extends keyof T['prototy
     proto && hookFn(proto, funcName, hookedFunc);
 }
 
-export const checkEnv = () =>
-    typeof window !== 'undefined' && window.sea != undefined && window.sea?.CoreReady && window.sea?.SeerH5Ready;
-
 export const NOOP = () => {};
 
 export { CacheData } from './CacheData.js';

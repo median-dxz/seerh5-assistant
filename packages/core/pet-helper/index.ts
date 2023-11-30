@@ -27,15 +27,7 @@ export const getStoragePets = async (location: StoragePetsPos) => {
     return [...dict.values()].filter((p) => p.posi === location);
 };
 
-export function cureAllPet() {
-    PetManager.noAlarmCureAll();
-}
-
-export function matchName(_name: string) {
-    throw new Error('not implemented');
-}
-
 export { PetDataManger } from './PetDataManager.js';
-export { PetLocation as PetLocation } from './PetLocation.js';
+export { PetLocation } from './PetLocation.js';
 export { SEAPet } from './SEAPet.js';
 

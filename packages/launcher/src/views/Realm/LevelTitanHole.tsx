@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { PetPosition, cureAllPet, delay, getBagPets, switchBag } from 'sea-core';
+import { Engine, PetPosition, Socket, delay, getBagPets } from 'sea-core';
 import * as Battle from 'sea-core/battle';
-import * as Engine from 'sea-core/engine';
 import * as Entity from 'sea-core/entity';
 
 import { Typography } from '@mui/material';
@@ -27,8 +26,8 @@ const maxDailyChallengeTimes = 2;
 
 const updateLevelData = async () => {
     const data = {} as LevelData;
-    const bits = await Engine.Socket.bitSet(640);
-    const values = await Engine.Socket.multiValue(18724, 18725, 18726, 18727);
+    const bits = await Socket.bitSet(640);
+    const values = await Socket.multiValue(18724, 18725, 18726, 18727);
 
     data.stimulation = bits[0];
 
@@ -59,12 +58,12 @@ export function LevelTitanHole(props: LevelExtendsProps) {
 
                 if (levelData.current.levelOpenCount < maxDailyChallengeTimes || levelData.current.levelOpen) {
                     setHint('正在准备背包');
-                    await switchBag(customData.cts);
-                    cureAllPet();
+                    await Engine.switchBag(customData.cts);
+                    Engine.cureAllPet();
                     PetManager.setDefault(customData.cts[0]);
                     setHint('准备背包完成');
                     if (!levelData.current.levelOpen) {
-                        await Engine.Socket.sendByQueue(42395, [104, 1, 3, 0]);
+                        await Socket.sendByQueue(42395, [104, 1, 3, 0]);
                         setStep(1);
                     } else {
                         setStep(levelData.current.step);
@@ -83,7 +82,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                             total={4}
                         />
                     );
-                    Engine.Socket.sendByQueue(42396, [104, 3, 1]);
+                    Socket.sendByQueue(42396, [104, 3, 1]);
                 }, customData.strategy);
                 levelData.current = await updateLevelData();
                 setStep(0);
@@ -113,7 +112,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                                 />
                             </>
                         );
-                        Engine.Socket.sendByQueue(42396, [104, 3, 2]);
+                        Socket.sendByQueue(42396, [104, 3, 2]);
                     }, customData.strategy);
 
                     levelData.current = await updateLevelData();
@@ -145,7 +144,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                     console.log('dig', row, col, row * 11 + col);
 
                     try {
-                        await Engine.Socket.sendByQueue(42395, [104, 2, row * 11 + col, 0]);
+                        await Socket.sendByQueue(42395, [104, 2, row * 11 + col, 0]);
                     } catch (error) {
                         setStep(-2);
                         break;
@@ -173,7 +172,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                             total={4}
                         />
                     );
-                    Engine.Socket.sendByQueue(42396, [104, 3, 4]);
+                    Socket.sendByQueue(42396, [104, 3, 4]);
                 }, customData.strategy);
                 levelData.current = await updateLevelData();
                 setStep(5);
@@ -182,7 +181,7 @@ export function LevelTitanHole(props: LevelExtendsProps) {
                 try {
                     setHint('正在领取奖励');
                     await delay(500);
-                    await Engine.Socket.sendByQueue(42395, [104, 5, 0, 0]);
+                    await Socket.sendByQueue(42395, [104, 5, 0, 0]);
                 } catch (err) {
                     setStep(-1);
                 }

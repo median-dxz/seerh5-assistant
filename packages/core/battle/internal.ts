@@ -1,7 +1,7 @@
 import { delay } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
 import { DataSource, SocketBuilderRegistry } from '../data-source/index.js';
-import { findObject } from '../engine/index.js';
+import { Engine } from '../engine/index.js';
 import { PetRoundInfo } from '../entity/index.js';
 import * as Manager from './manager.js';
 import { Provider, cachedRoundInfo } from './provider.js';
@@ -37,7 +37,7 @@ export default () => {
             TimeScaleManager.setBattleAnimateSpeed(1);
         }
         if (window.petNewSkillPanel) {
-            const newSkillPanel = findObject(petNewSkillPanel.PetNewSkillPanel).at(0);
+            const newSkillPanel = Engine.findObject(petNewSkillPanel.PetNewSkillPanel).at(0);
             newSkillPanel?._view.hide();
             newSkillPanel?.onClose();
         }

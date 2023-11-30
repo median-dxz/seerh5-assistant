@@ -2,7 +2,8 @@ import { Box, Button, ButtonGroup, Checkbox, CircularProgress, LinearProgress, T
 
 import * as SEALocalStorage from '@sea-launcher/utils/LocalStorage';
 import React from 'react';
-import { Pet, SEAPet, UIModuleHelper, delay, lowerBlood, switchBag } from 'sea-core';
+import { Pet, SEAPet, delay } from 'sea-core';
+import { Engine } from 'sea-core/engine';
 
 import { getPetHeadIcon } from '@sea-launcher/utils/egretRes';
 import { useBagPets } from '@sea-launcher/utils/hooks/useBagPets';
@@ -62,8 +63,8 @@ export function PetBagController() {
 
     if (!pets) return <LinearProgress />;
 
-    const handleLowerBlood = () => {
-        lowerBlood(selected);
+    const handleLowerHp = () => {
+        Engine.lowerHp(selected);
     };
 
     const handleCurePets = () => {
@@ -91,7 +92,7 @@ export function PetBagController() {
     };
 
     const handleSwitchBag = (group: BasePetInfo[]) => {
-        switchBag(group.map((pet) => pet.catchTime));
+        Engine.switchBag(group.map((pet) => pet.catchTime));
     };
 
     return (
@@ -99,7 +100,7 @@ export function PetBagController() {
             <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']}>
                 精灵背包
             </Typography>
-            <Button onClick={handleLowerBlood}>压血</Button>
+            <Button onClick={handleLowerHp}>压血</Button>
             <Button onClick={handleCurePets}>治疗</Button>
             <Button onClick={handleCopyCatchTime}>复制catchTime</Button>
 
@@ -153,7 +154,7 @@ function PanelRow({ selected, setSelected }: PanelRowProps) {
 
     const handleOpenPetItemUseProp = React.useCallback(async (ct: number) => {
         await ModuleManager.showModule('petBag');
-        const petBagModule = UIModuleHelper.currentModule<petBag.PetBag>();
+        const petBagModule = Engine.inferCurrentModule<petBag.PetBag>();
         await delay(300);
         const petBagPanel = petBagModule.currentPanel!;
         petBagPanel.onSelectPet({ data: PetManager.getPetInfo(ct) });

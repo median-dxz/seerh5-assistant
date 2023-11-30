@@ -1,7 +1,7 @@
 import { Button, Divider, Typography } from '@mui/material';
 
-import { GameConfigRegistry, cureAllPet } from 'sea-core';
-import * as Engine from 'sea-core/engine';
+import { GameConfigRegistry } from 'sea-core';
+import { Engine } from 'sea-core/engine';
 
 import { PanelStateContext } from '@sea-launcher/context/PanelState';
 
@@ -16,10 +16,10 @@ const titleQuery = GameConfigRegistry.getQuery('title');
 const suitQuery = GameConfigRegistry.getQuery('suit');
 
 export function GameController() {
-    const [userTitle, setUserTitle] = React.useState(Engine.getUserTitle());
-    const [userSuit, setUserSuit] = React.useState(Engine.getUserSuit());
+    const [userTitle, setUserTitle] = React.useState(Engine.playerTitle());
+    const [userSuit, setUserSuit] = React.useState(Engine.playerSuit());
 
-    const suits = Engine.getUserAbilitySuits();
+    const suits = Engine.playerAbilitySuits();
     const changeSuit = React.useCallback(
         (suit: number) => {
             if (suit !== userSuit) {
@@ -30,7 +30,7 @@ export function GameController() {
         [userSuit]
     );
 
-    const { data: titles } = useSWR('ds://PlayerData/title', Engine.getUserAbilityTitles);
+    const { data: titles } = useSWR('ds://PlayerData/title', Engine.playerAbilityTitles);
     const changeTitle = React.useCallback(
         (title: number) => {
             if (title !== userTitle) {
@@ -50,7 +50,7 @@ export function GameController() {
     return (
         <>
             <Button onClick={openPetBag}>打开背包界面</Button>
-            <Button onClick={cureAllPet}>全体治疗</Button>
+            <Button onClick={Engine.cureAllPet}>全体治疗</Button>
             <Divider />
 
             <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']}>

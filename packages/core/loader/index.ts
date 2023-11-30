@@ -17,7 +17,7 @@ export async function CoreLoader(readyEvent: string) {
 
         const { sea } = window;
 
-        if (typeof sea !== 'undefined' && sea.SeerH5Ready) {
+        if (typeof sea !== 'undefined') {
             if (sea.CoreReady) {
                 resolve(true);
             } else {

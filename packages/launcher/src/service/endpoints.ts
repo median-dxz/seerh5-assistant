@@ -28,7 +28,7 @@ export const setModConfig = async (namespace: string, config: string) => {
 };
 
 export const getConfig = async (key: string) => {
-    return trpcClient.launcherConfig.query(key);
+    return trpcClient.launcherConfig.query(key) as Promise<{ dsl: string[][]; snm: string[][] } | null>;
 };
 
 export const setConfig = async (key: string, value: unknown) => {

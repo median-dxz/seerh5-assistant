@@ -5,9 +5,14 @@ import { SEAContext } from '@sea-launcher/context/SAContext';
 import type { PetFragmentOption } from '@sea-launcher/service/endpoints';
 import React, { useCallback, useState } from 'react';
 import * as Battle from 'sea-core/battle';
-import * as Engine from 'sea-core/engine';
+import { Engine, Socket } from 'sea-core/engine';
 import type { IPFLevelBoss, IPetFragmentLevelObject } from 'sea-core/entity';
-import type { ILevelBattleStrategy, ILevelRunner, LevelData as SEALevelData, LevelInfo as SEALevelInfo } from 'sea-core/level';
+import type {
+    ILevelBattleStrategy,
+    ILevelRunner,
+    LevelData as SEALevelData,
+    LevelInfo as SEALevelInfo,
+} from 'sea-core/level';
 import { PanelTable, type PanelColumns } from '../components/PanelTable/PanelTable';
 
 import { loadBattle } from '@sea-launcher/service/ModManager';
@@ -79,13 +84,13 @@ export class PetFragmentRunner implements ILevelRunner<LevelData, LevelInfo> {
 
     async updater() {
         const { info: config, data } = this;
-        const values = await Engine.Socket.multiValue(
+        const values = await Socket.multiValue(
             config.values.openTimes,
             config.values.failTimes,
             config.values.progress
         );
 
-        data.pieces = await Engine.getItemNum(this.info.petFragmentItem);
+        data.pieces = await Engine.itemNum(this.info.petFragmentItem);
 
         data.leftTimes = this.info.maxTimes - values[0];
         data.failedTimes = values[1];
@@ -124,14 +129,14 @@ export class PetFragmentRunner implements ILevelRunner<LevelData, LevelInfo> {
 
     readonly actions: Record<string, () => Promise<void>> = {
         sweep: async () => {
-            await Engine.Socket.sendByQueue(41283, [this.info.designId, 4 + this.data.curDifficulty]);
+            await Socket.sendByQueue(41283, [this.info.designId, 4 + this.data.curDifficulty]);
             this.logger('执行一次扫荡');
         },
         battle: async () => {
-            const checkData = await Engine.Socket.sendByQueue(41284, [this.info.designId, this.data.curDifficulty]);
+            const checkData = await Socket.sendByQueue(41284, [this.info.designId, this.data.curDifficulty]);
             const check = new DataView(checkData!).getUint32(0);
             if (check === 0) {
-                Engine.Socket.sendByQueue(41282, [this.info.designId, this.data.curDifficulty]);
+                Socket.sendByQueue(41282, [this.info.designId, this.data.curDifficulty]);
             } else {
                 const err = `出战情况不合法: ${check}`;
                 BubblerManager.getInstance().showText(err);

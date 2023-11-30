@@ -44,35 +44,60 @@ RoadMap: **见Readme**
   - [x] 使用`DataSource`上的静态方法`from*`来获取事件流, 而后进行订阅
   - [x] 移除`SendWithReceivedPromise`接口, 根据发包客户端的源码分析，这个接口是没有必要的
 - [x] `wrapper`api重构, 采用链式不可变结构对函数添加`before`和`after`装饰器
-- [ ] 通过declare module方式并设计相关接口，使得Core支持扩展
-  - [ ] 添加Loader的扩展点
-  - [ ] 添加Engine的扩展点
-  - [x] 添加Hook的扩展点
-  - [x] 添加GameConfig的扩展点
-
 - [ ] 属性攻击/特攻/物攻的枚举
 - [x] 移除`extractObjectId`方法
   - [x] 常用的`Entity`中添加`infer*`静态方法, 用于替代原来的api
-
-- [ ] 对于部分错误, 封装错误类
-- [ ] 额外允许一些模块打印关键日志, 通过`common`包下的`log`模块启用
-  - [ ] `Log.setLogger()`允许使用自定义logger, 默认启用console.log, 输出格式为`[sea-core][module name]:`
-  - [ ] 外部api为`Log.enable()`和`Log.disable()`, 通过传入模块名称来开启这一部分的输出
-  - [ ] 目前暂定支持的模块只有`Battle`, 开启后将输出Operator模块的入参
-- [ ] 解耦登录器/后端特定逻辑
-- [ ] 解耦非核心功能, 部分移动到登录器下的`features`包下, 由登录器提供扩展定义, 部分合并到`engine`中
-  - [ ] 取代原functions子包
+- [ ] 通过declare module方式并设计相关接口，使得Core支持扩展
+  - [ ] 添加Loader的扩展点
+  - [x] 添加Engine的扩展点
+  - [x] 添加Hook的扩展点
+  - [x] 添加GameConfig的扩展点
+- [ ] 解耦登录器/后端特定逻辑, 分离非核心功能, 部分移动到登录器下的`features`包下, 由登录器提供扩展定义, 部分合并到`engine`中
   - [ ] script解密
   - [ ] 对战显血
   - [ ] 自动关弹窗
   - [ ] logFilter
+- [ ] 对于部分错误, 封装错误类
+  - [ ] 暂定有影响DRY原则的错误封装
+- [ ] 额外允许一些模块打印关键日志, 通过`common`包下的`log`模块启用
+  - [ ] `Log.setLogger()`允许使用自定义logger, 默认启用console.log, 输出格式为`[sea-core][module name]:`
+  - [ ] 外部api为`Log.enable()`和`Log.disable()`, 通过传入模块名称来开启这一部分的输出
+  - [ ] 目前暂定支持的模块只有`Battle`, 开启后将输出Operator模块的入参
 
 # App 当前版本 v0.5.1
 
 - [ ] 生产开发环境判断
+- [ ] 基于trpc, 不再需要持久化配置提供序列化函数
 - [ ] 为模组注入配置持久化接口
 
 # 其他
 
 - [ ] script通过语法树进行高级反混淆, 暂定主要目标是升级 async/await
 - [ ] 心跳包逻辑有点问题, 会被主动断线
+- [ ] 全体治疗基于Promise重写, 不需要加延时
+
+v0.7.0
+Loader扩展思路
+Loader是一个全局单例, 内部有promise, 保证内部初始化一次
+在全局挂载一个标志位, 用于检测多模块示例
+有一个load方法, 执行前先检查浏览器环境, 然后等待给定window上的事件进行两个阶段的初始化
+初始化的两个阶段:
+beforeGameCore 执行一次初始化(在`Core.init()`之前执行)
+afterMainPanelShow 执行一次初始化(在`Driver.complete`之后执行)
+每个阶段在初始化之前都可以添加函数, 将按添加顺序执行, sea-core内部的函数总是首先执行
+内部函数仅保留最基础的功能
+登录器通过添加额外的函数来进行扩展
+
+Engine扩展思路
+
+导出一个engine, 是一个动态绑定的单例
+有一个extendEngine方法, 往上面挂函数({fnA,fnB})
+
+然后基于其他模块用到的必要内容(以及测试), 精简Core, 其余全部移入登录器内处理
+
+quick-access-plugin整合成为新的command
+
+模组目前可以添加的贡献点: 
+
+command/qap | activate | module | level
+
