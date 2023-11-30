@@ -1,5 +1,6 @@
 import type { Pet } from 'sea-core';
-import { PetDataManger, SEAPet, hookPrototype, isPetEffectActivated } from 'sea-core';
+import { Engine, PetDataManger, SEAPet, hookPrototype } from 'sea-core';
+import type { SEAMod } from '../../lib/mod';
 
 interface PetFragment {
     EffectMsglog: number;
@@ -82,14 +83,14 @@ class ItemWareHouse implements SEAMod.IModuleMod<itemWarehouse.ItemWarehouse> {
         hookPrototype(itemWarehouse.ItemWarehouse, 'onShowPetFactorInfo', async function (fn) {
             fn();
             const data: PetFragment = this._list.selectedItem;
-            const pet = await findPetById(data.MonsterID);
+            const pet = (await findPetById(data.MonsterID))!;
 
             if (this._petFactorPage === 1) {
                 this.txtPetname.text = `${PetXMLInfo.getName(data.MonsterID)} ${pet ? '(已获得)' : ''}`;
                 DisplayUtil.setEnabled(this.btnhecheng, !Boolean(pet));
             } else if (this._petFactorPage === 2) {
                 if (pet.hasEffect) {
-                    const check = await isPetEffectActivated(pet);
+                    const check = await Engine.isPetEffectActivated(pet);
                     this.txtTexing.text = `专属特性: ${check ? '已开启' : '未开启'}`;
                     DisplayUtil.setEnabled(this.btnhecheng, !check);
                 }

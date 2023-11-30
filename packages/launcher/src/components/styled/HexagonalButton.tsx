@@ -6,7 +6,7 @@ import * as React from 'react';
 import { forwardRef, type ForwardedRef, type PropsWithChildren } from 'react';
 
 const HexagonalButtonRoot = forwardRef(function (
-    props: PropsWithChildren<object> & { baseSize: number },
+    props: PropsWithChildren<React.SVGProps<SVGSVGElement>> & { baseSize: number },
     ref: ForwardedRef<SVGSVGElement>
 ) {
     const { children, baseSize, ...other } = props;
@@ -101,5 +101,10 @@ export const HexagonalButton = forwardRef(function (
     props: ButtonBaseProps & { baseSize: number },
     ref: ForwardedRef<HTMLButtonElement>
 ) {
-    return <ButtonBase {...props} component={StyledButtonRoot} ref={ref} disableRipple />;
+    const { baseSize, children, ...other } = props;
+    return (
+        <ButtonBase {...other} ref={ref} disableRipple>
+            <StyledButtonRoot baseSize={baseSize}>{children}</StyledButtonRoot>
+        </ButtonBase>
+    );
 });

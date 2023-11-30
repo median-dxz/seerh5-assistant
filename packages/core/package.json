@@ -2,7 +2,7 @@
   "name": "sea-core",
   "description": "SeerH5-Assistant SEA 核心库",
   "type": "module",
-  "version": "0.6.6",
+  "version": "0.7.0",
   "license": "MPL-2.0",
   "private": true,
   "exports": {
@@ -35,7 +35,8 @@
     "data-source",
     "entity",
     "pet-helper",
-    "level"
+    "level",
+    "loader"
   ],
   "scripts": {
     "build": "tsc --build",

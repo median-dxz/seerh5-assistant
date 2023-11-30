@@ -14,9 +14,10 @@
         "clean": "rimraf ./dist && rimraf ./build && rimraf ../../.tsbuildinfo/launcher.tsbuildinfo"
     },
     "dependencies": {
+        "@emotion/react": "^11.11.1",
+        "@emotion/styled": "^11.11.0",
         "@mui/icons-material": "^5.14.18",
         "@mui/material": "^5.14.18",
-        "@mui/styled-engine": "npm:@mui/styled-engine-sc@latest",
         "@mui/system": "^5.14.18",
         "@sea/server": "workspace:*",
         "@trpc/client": "^10.44.1",
@@ -27,7 +28,6 @@
         "react-dom": "^18.2.0",
         "react-transition-group": "^4.4.5",
         "sea-core": "workspace:*",
-        "styled-components": "^6.1.1",
         "superjson": "^2.2.1",
         "swr": "^2.2.4"
     },

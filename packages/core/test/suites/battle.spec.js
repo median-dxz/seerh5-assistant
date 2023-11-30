@@ -1,15 +1,13 @@
 import {
     DataSource,
+    Engine,
     Hook,
     Manager,
     Operator,
     Subscription,
-    cureAllPet,
     delay,
     matchNoBloodChain,
     matchSkillName,
-    switchBag,
-    toggleAutoCure,
 } from '../../dist/index.js';
 import env from '../env/pet.json';
 
@@ -32,14 +30,12 @@ const filterCMD = [
 ];
 
 describe('BattleManager', function () {
-
     /** @type {Subscription} */
     let sub;
 
     before(async () => {
-        HelperLoader();
         sub = new Subscription();
-        await toggleAutoCure(true);
+        await Engine.toggleAutoCure(true);
 
         $hook(Hook.Socket.send).on((data) => {
             if (filterCMD.includes(data.cmd)) return;
@@ -116,8 +112,8 @@ describe('BattleManager', function () {
 
     beforeEach(async function () {
         const cts = [env.测试精灵1, env.测试精灵2, env.测试精灵3].map((v) => v.catchTime);
-        await switchBag(cts);
-        cureAllPet();
+        await Engine.switchBag(cts);
+        Engine.cureAllPet();
 
         await delay(200);
         console.log(`${this.currentTest.title}: start`);
@@ -125,7 +121,7 @@ describe('BattleManager', function () {
 
     afterEach(async function () {
         sub.dispose();
-        cureAllPet();
+        Engine.cureAllPet();
 
         await delay(1000);
         console.log(`${this.currentTest.title}: end`);

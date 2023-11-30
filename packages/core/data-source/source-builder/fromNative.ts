@@ -1,7 +1,7 @@
 import { fromEventPattern } from './fromEventPattern.js';
 
-export function fromEgret(event: string) {
-    return fromEventPattern(
+export function fromEgret<T>(event: string) {
+    return fromEventPattern<T>(
         (handler) => {
             EventManager.addEventListener(event, handler, undefined);
         },

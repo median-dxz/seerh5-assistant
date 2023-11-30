@@ -1,5 +1,10 @@
-import { take, type Observable, type Subscription } from 'rxjs';
+import { fromEventPattern, take, type Observable, type Subscription } from 'rxjs';
 import type { Handler } from '../common/utils.js';
+import { fromEvent } from './source-builder/fromEvent.js';
+import { fromGameModule } from './source-builder/fromGameModule.js';
+import { fromHook } from './source-builder/fromHook.js';
+import { fromEgret } from './source-builder/fromNative.js';
+import { fromSocket } from './source-builder/fromSocket.js';
 
 export class DataSource<T> {
     private _source$: Observable<T>;
@@ -33,4 +38,11 @@ export class DataSource<T> {
         }
         return false;
     }
+
+    static readonly event = fromEvent;
+    static readonly eventPattern = fromEventPattern;
+    static readonly gameModule = fromGameModule;
+    static readonly hook = fromHook;
+    static readonly egret = fromEgret;
+    static readonly socket = fromSocket;
 }

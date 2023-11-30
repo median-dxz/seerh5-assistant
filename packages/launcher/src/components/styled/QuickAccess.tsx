@@ -5,21 +5,24 @@ import { saTheme } from '@sea-launcher/style';
 
 export const SeaQuickAccess = styled(MuiSpeedDial)`
     & .MuiSpeedDial-actions {
-        margin-left: 0;
-        padding-left: 0;
+        margin: 0;
+        padding: 0;
     }
     & .MuiSpeedDial-actions .MuiSpeedDialAction-fab,
     & .MuiSpeedDial-fab {
         border-radius: 0;
-        background: none;
         box-shadow: none;
+        background: none;
         transition: all 0.2s ease-in-out !important;
-        filter: drop-shadow(0 0 4px ${alpha(saTheme.palette.primary.main, 0.4)});
+        filter: drop-shadow(0 0 4px ${alpha(saTheme.palette.primary.main, 0.8)});
         &:hover {
             color: ${saTheme.palette.emphases.main};
+            background: none;
+        }
+        &:active {
+            padding-top: 4px;
         }
     }
-
     &::after {
         content: ' ';
         position: absolute;

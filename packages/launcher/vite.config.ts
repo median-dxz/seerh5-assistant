@@ -69,8 +69,7 @@ export default defineConfig(({ command, mode }) => {
         ],
         resolve: {
             alias: {
-                '@sea-launcher': path.resolve(dirname, 'src'),
-                '@mui/styled-engine': path.resolve(path.resolve(dirname, 'node_modules'), '@mui/styled-engine-sc'),
+                '@sea-launcher': path.resolve(dirname, 'src')
             },
         },
     };

@@ -1,4 +1,4 @@
-import { getAutoCureState, toggleAutoCure } from 'sea-core';
+import { Engine } from 'sea-core';
 import type { SEAMod } from '../../lib/mod';
 import Icon from './local_hospital.svg?raw';
 
@@ -14,11 +14,11 @@ export default class FightPuni implements SEAMod.IQuickAccessPlugin {
     autoCure = false;
 
     click() {
-        toggleAutoCure(!this.autoCure);
+        Engine.toggleAutoCure(!this.autoCure);
     }
 
     async showAsync() {
-        this.autoCure = await getAutoCureState();
+        this.autoCure = await Engine.autoCureState();
         return `自动治疗: ${this.autoCure ? '开' : '关'}`;
     }
 }

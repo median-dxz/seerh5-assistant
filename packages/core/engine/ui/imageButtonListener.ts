@@ -4,5 +4,5 @@
  * @returns 注册的监听器函数
  */
 export function imageButtonListener(button: eui.UIComponent) {
-    return ImageButtonUtil.imgs[`k_${button.hashCode}`].callback;
+    return ImageButtonUtil.imgs[`k_${button.hashCode}`];
 }

@@ -1,18 +1,13 @@
 import {
     DataSource,
-    HelperLoader,
+    Engine,
     Hook,
     Manager,
     PetLocation,
-    SEAHookEmitter,
     SEAPet,
     Subscription,
     delay,
-    getAutoCureState,
     getBagPets,
-    lowerBlood,
-    switchBag,
-    toggleAutoCure,
 } from '../../dist/index.js';
 import env from '../env/pet.json';
 
@@ -26,8 +21,7 @@ describe('PetHelper', function () {
     let sub;
 
     before(async () => {
-        await toggleAutoCure(false);
-        HelperLoader();
+        await Engine.toggleAutoCure(false);
 
         sub = new Subscription();
         sub.on($hook(Hook.Battle.battleStart), Manager.resolveStrategy);
@@ -56,8 +50,8 @@ describe('PetHelper', function () {
     it('should clear main bag', async function () {
         const { catchTime, name } = env.测试精灵1;
 
-        await switchBag([catchTime]);
-        await switchBag([]);
+        await Engine.switchBag([catchTime]);
+        await Engine.switchBag([]);
 
         const pets = await getBagPets(1);
         expect(pets).to.be.an('array').that.is.empty;
@@ -94,14 +88,14 @@ describe('PetHelper', function () {
         // *回归测试样例*
         const cts = [env.测试精灵1, env.测试精灵2].map((v) => v.catchTime);
 
-        await switchBag(cts);
+        await Engine.switchBag(cts);
         await SEAPet.popFromBag(cts[1]);
 
         let loc = await SEAPet.location(cts[0]);
         expect(loc).to.be.an('string').equal(PetLocation.Default);
         console.log(`loc1: ${loc} -> default`);
 
-        await switchBag(cts);
+        await Engine.switchBag(cts);
         await SEAPet.popFromBag(cts[0]);
 
         loc = await SEAPet.location(cts[1]);
@@ -118,11 +112,11 @@ describe('PetHelper', function () {
     it('should lower pet hp', async function () {
         const { catchTime } = env.测试精灵1;
 
-        await switchBag([catchTime]);
+        await Engine.switchBag([catchTime]);
         await SEAPet.cure(catchTime);
         await SEAPet.popFromBag(catchTime);
 
-        await lowerBlood([catchTime]);
+        await Engine.lowerHp([catchTime]);
 
         const pet = await SEAPet.get(catchTime);
         const loc = await pet.location();
@@ -138,17 +132,17 @@ describe('PetHelper', function () {
     it('should toggle auto cure function', async function () {
         let state;
 
-        await toggleAutoCure(false);
-        state = await getAutoCureState();
+        await Engine.toggleAutoCure(false);
+        state = await Engine.autoCureState();
         expect(state).is.false;
 
-        await toggleAutoCure(true);
-        state = await getAutoCureState();
+        await Engine.toggleAutoCure(true);
+        state = await Engine.autoCureState();
         expect(state).is.true;
     });
 
     after(async () => {
         sub[Symbol.dispose]();
-        await toggleAutoCure(true);
+        await Engine.toggleAutoCure(true);
     });
 });

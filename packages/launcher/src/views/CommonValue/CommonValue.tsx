@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Item, updateItems } from 'sea-core';
+import { Item } from 'sea-core';
 
 import { Button, Typography } from '@mui/material';
 
@@ -34,11 +34,14 @@ export function CommonValue() {
     const [items, setItems] = useState(rows);
 
     useEffect(() => {
-        updateItems(rows.map((r) => r.id)).then(() => {
-            rows.forEach((r) => (r.amount = ItemManager.getNumByID(r.id)));
-            rows.find((r) => r.name === '赛尔豆')!.amount = MainManager.actorInfo.coins;
-            setItems([...rows]);
-        });
+        ItemManager.updateItems(
+            rows.map((r) => r.id),
+            () => {
+                rows.forEach((r) => (r.amount = ItemManager.getNumByID(r.id)));
+                rows.find((r) => r.name === '赛尔豆')!.amount = MainManager.actorInfo.coins;
+                setItems([...rows]);
+            }
+        );
     }, []);
 
     return <PanelTable columns={columns} rowElement={<PanelRow />} data={items} toRowKey={(item) => item.id} />;

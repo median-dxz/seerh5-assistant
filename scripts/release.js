@@ -26,8 +26,10 @@ try {
 try {
     // 卸载旧版本
     try {
-        await exec(`pnpm uninstall sea-core`, { cwd: sdkDir });
-    } catch (e) {}
+        await exec(`pnpm remove sea-core`, { cwd: sdkDir });
+    } catch (e) {
+        console.error(e);
+    }
 
     const libDir = path.resolve(sdkDir, 'lib');
     const dir = await fs.readdir(libDir);

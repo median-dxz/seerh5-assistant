@@ -21,8 +21,9 @@ const SvgMaker = ({ url, children: _, ...rest }: React.SVGProps<SVGSVGElement> &
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="1em"
-            height="1em"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
             dangerouslySetInnerHTML={{ __html: svgPaths }}
             {...rest}
         />
@@ -38,7 +39,7 @@ const QuickAccessPluginAction: React.FC<
         plugin: QuickAccessPlugin;
         setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     } & SpeedDialActionProps
-> = ({ plugin, setOpen, ...rest }) => {
+> = ({ plugin, setOpen, FabProps, ...rest }) => {
     const fetcher = () => {
         if (plugin.showAsync) {
             return plugin.showAsync();
@@ -48,9 +49,15 @@ const QuickAccessPluginAction: React.FC<
     };
 
     const { data: title, mutate } = useSWR(`ds://mod/quick-access-plugin/${plugin.namespace}`, fetcher);
+
+    console.log(rest);
+
     return (
         <SpeedDialAction
             FabProps={{
+                ...FabProps,
+                disableFocusRipple: true,
+                disableTouchRipple: true,
                 sx: {
                     color: (theme) => theme.palette.primary.main,
                 },
@@ -89,16 +96,20 @@ export function QuickAccess() {
                 left: '4vw',
             }}
             FabProps={{
+                disableRipple: true,
+                disableFocusRipple: true,
                 sx: {
                     color: (theme) => theme.palette.primary.main,
                 },
             }}
             open={open}
-            onOpen={() => {
-                setOpen(true);
+            onOpen={(evt, reason) => {
+                if (reason === 'toggle') {
+                    setOpen(true);
+                }
             }}
             onClose={(_, reason) => {
-                if (reason !== 'blur') {
+                if (reason === 'toggle') {
                     setOpen(false);
                 }
             }}

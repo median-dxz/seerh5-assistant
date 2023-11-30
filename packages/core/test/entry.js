@@ -1,4 +1,4 @@
-import * as lib from '../dist/index.js';
+import * as core from '../dist/index.js';
 
 mocha.setup('bdd');
 
@@ -12,5 +12,5 @@ document.querySelector('#test-page').addEventListener('click', () => {
     el.style.zIndex = Number(zIndex) ? 0 : 1;
 });
 
-await lib.CoreLoader('seerh5_load');
-window.sea = { ...window.sea, ...lib };
+await core.CoreLoader('seerh5_load');
+window.sea = { ...window.sea, ...core };

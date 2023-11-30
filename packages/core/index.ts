@@ -13,11 +13,13 @@ export { CoreLoader } from './loader/index.js';
 declare global {
     interface Window {
         /** 额外全局命名空间, 用以跨模块交互 */
-        sea: {
-            /** SEA Core就绪标志 */
-            CoreReady: boolean;
-            /** SEA 全局单例标志位 */
-            CoreInstance: boolean;
-        };
+        sea: SEA;
+    }
+
+    interface SEA {
+        /** SEA Core就绪标志 */
+        CoreReady: boolean;
+        /** SEA 全局单例标志位 */
+        CoreInstance: boolean;
     }
 }

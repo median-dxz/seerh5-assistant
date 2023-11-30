@@ -1,4 +1,4 @@
-import { DataSource, Pet, Subscription, debounce, getImageButtonListener, hookFn, hookPrototype } from 'sea-core';
+import { DataSource, Engine, Pet, Subscription, debounce, hookFn, hookPrototype } from 'sea-core';
 import type { SEAMod } from '../../lib/mod';
 
 class PetBag implements SEAMod.IModuleMod<petBag.PetBag> {
@@ -26,7 +26,7 @@ class PetBag implements SEAMod.IModuleMod<petBag.PetBag> {
     }
     mainPanel(ctx: petBag.PetBag) {
         const panel = ctx.panelMap['petBag.MainPanel'] as petBag.MainPanel;
-        const listener = getImageButtonListener(panel.btnIntoStorage);
+        const listener = Engine.imageButtonListener(panel.btnIntoStorage);
         hookFn(listener, 'callback', function (f) {
             panel.beginPetInfo = panel.arrFirstPet[0].petInfo;
             f.call(listener);
@@ -45,7 +45,10 @@ class PetBag implements SEAMod.IModuleMod<petBag.PetBag> {
         };
         this.subscription.on(DataSource.socket(CommandID.PET_DEFAULT, 'receive'), refresh);
         this.subscription.on(DataSource.socket(CommandID.PET_RELEASE, 'receive'), refresh);
-        this.subscription.on(DataSource.egret('petBag.MainPanelTouchPetItemEnd'), printTappingPetInfo);
+        this.subscription.on(
+            DataSource.egret<egret.TouchEvent>('petBag.MainPanelTouchPetItemEnd'),
+            printTappingPetInfo
+        );
     }
     destroy() {
         this.subscription.dispose();

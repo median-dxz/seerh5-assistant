@@ -1,7 +1,7 @@
 import { Button, Typography } from '@mui/material';
 import { PanelStateContext } from '@sea-launcher/context/PanelState';
 import React from 'react';
-import { BattleFireType, updateBattleFireInfo } from 'sea-core';
+import { BattleFireType, Engine } from 'sea-core';
 
 const timeFormatter = (n: number) => {
     const { format } = Intl.NumberFormat(undefined, {
@@ -10,14 +10,14 @@ const timeFormatter = (n: number) => {
     return `${format(Math.trunc(n / 60))}:${format(n % 60)}`;
 };
 
-type BattleFireInfo = Awaited<ReturnType<typeof updateBattleFireInfo>>;
+type BattleFireInfo = Awaited<ReturnType<typeof Engine.updateBattleFireInfo>>;
 
 export function BattleFireInfo() {
     const [battleFire, setBattleFire] = React.useState<BattleFireInfo>({} as BattleFireInfo);
     const [timeLeft, setTimeLeft] = React.useState(0);
 
     const updateBattleFire = React.useCallback(() => {
-        updateBattleFireInfo().then((i) => setBattleFire(i));
+        Engine.updateBattleFireInfo().then((i) => setBattleFire(i));
     }, []);
 
     React.useEffect(updateBattleFire, [updateBattleFire]);

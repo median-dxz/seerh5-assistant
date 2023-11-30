@@ -1,7 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import * as core from 'sea-core';
+import { CoreLoader } from 'sea-core';
 import { loadAllCt } from './context/ct';
+import extendEngine from './features/extend';
+
 import './index.css';
 
 const container = document.getElementById('sea-launcher')!;
@@ -11,14 +14,16 @@ const renderApp = async () => {
     console.info(`[info] SeerH5-Assistant Core Loaded Successfully!`);
 
     const sea = window.sea;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window as any).sea = { ...core, ...sea };
+
+    window.sea = { ...core, ...sea };
     await loadAllCt();
 
     config.xml.load('new_super_design');
     config.xml.load('Fragment');
     enableCancelAlertForUsePetItem();
     enableBackgroundHeartBeatCheck();
+
+    extendEngine();
 
     const { default: LauncherMain } = await import('./App');
 
@@ -33,7 +38,7 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register(import.meta.env.MODE === 'production' ? '/sw.js' : '/dev-sw.js?dev-sw');
 }
 
-await core.CoreLoader('seerh5_load');
+await CoreLoader('seerh5_load');
 
 renderApp();
 
