@@ -19,7 +19,7 @@ export function BattleFireInfo() {
     const updateBattleFire = React.useCallback(() => {
         Engine.updateBattleFireInfo().then((i) => setBattleFire(i));
     }, []);
-
+    
     React.useEffect(updateBattleFire, [updateBattleFire]);
 
     React.useEffect(() => {

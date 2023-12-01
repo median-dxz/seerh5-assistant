@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { filter, map } from 'rxjs';
-import { delay, hookFn, hookPrototype, restoreHookedFn, wrapper, type withClass } from '../common/utils.js';
-import { Hook } from '../constant/index.js';
-import { HookRegistry } from '../data-source/index.js';
-import { $hook } from '../data-source/source-builder/fromHook.js';
+import { delay, hookFn, hookPrototype, restoreHookedFn, wrapper, type withClass } from '../../common/utils.js';
+import { Hook } from '../../constant/index.js';
+import { HookRegistry } from '../../data-source/index.js';
+import { $hook } from '../../data-source/source-builder/fromHook.js';
 
 export default () => {
     HookRegistry.register(Hook.Module.loadScript, (resolve) => {
@@ -114,6 +114,7 @@ export default () => {
             originalFunc(...args);
             const { enemyMode, playerMode } = FighterModelFactory;
             if (!enemyMode || !playerMode) return;
+            // todo: move this to launcher/feature
             enemyMode.setHpView(true);
             enemyMode.setHpView = function () {
                 this.propView.isShowFtHp = true;

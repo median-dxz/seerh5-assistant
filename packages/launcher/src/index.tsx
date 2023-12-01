@@ -7,24 +7,13 @@ import extendEngine from './features/extend';
 
 import './index.css';
 
+const EVENT_SEER_READY = 'seerh5_load';
 const container = document.getElementById('sea-launcher')!;
 const root = ReactDOM.createRoot(container);
 
 const renderApp = async () => {
     console.info(`[info] SeerH5-Assistant Core Loaded Successfully!`);
-
-    const sea = window.sea;
-
-    window.sea = { ...core, ...sea };
     await loadAllCt();
-
-    config.xml.load('new_super_design');
-    config.xml.load('Fragment');
-    enableCancelAlertForUsePetItem();
-    enableBackgroundHeartBeatCheck();
-
-    extendEngine();
-
     const { default: LauncherMain } = await import('./App');
 
     root.render(
@@ -38,9 +27,20 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register(import.meta.env.MODE === 'production' ? '/sw.js' : '/dev-sw.js?dev-sw');
 }
 
-await CoreLoader('seerh5_load');
+const loader = new CoreLoader(EVENT_SEER_READY);
 
-renderApp();
+window.sea = { ...window.sea, ...core, EVENT_SEER_READY };
+
+loader.addSetupFn('afterFirstShowMainPanel', () => {
+    config.xml.load('new_super_design');
+    config.xml.load('Fragment');
+    enableCancelAlertForUsePetItem();
+    enableBackgroundHeartBeatCheck();
+    extendEngine();
+    renderApp();
+});
+
+await loader.load();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const Alert: any;

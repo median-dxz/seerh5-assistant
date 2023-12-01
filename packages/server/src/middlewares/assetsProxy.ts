@@ -22,6 +22,11 @@ export const createAssetsProxy = (appRoot: string) =>
                 headers['date'] = new Date().toUTCString();
 
                 proxyRes.on('end', () => {
+                    res.statusCode = proxyRes.statusCode ?? 200;
+                    for (const [k, v] of Object.entries(headers)) {
+                        v && res.setHeader(k, v);
+                    }
+
                     const rawBuf = Buffer.concat(chunks);
                     const url = req.url ?? '';
                     let respBuf = rawBuf;
@@ -30,13 +35,10 @@ export const createAssetsProxy = (appRoot: string) =>
                         writeFileSync(path.resolve(appRoot, 'entry', 'official.js'), body.toString());
                         const data = readFileSync(path.resolve(appRoot, 'entry', 'injected.js'));
                         respBuf = zlib.gzipSync(data);
+
+                        res.setHeader('cache-control', 'no-store, no-cache');
                     } else if (url.includes('sentry.js')) {
                         respBuf = zlib.gzipSync('var Sentry = {init: ()=>{}, configureScope: ()=>{}}');
-                    }
-
-                    res.statusCode = proxyRes.statusCode ?? 200;
-                    for (const [k, v] of Object.entries(headers)) {
-                        v && res.setHeader(k, v);
                     }
                     // console.log(`[Proxy]: --> ${req.url}`);
                     res.end(respBuf);

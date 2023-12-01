@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { defineConfig, loadEnv } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import importMap from './vite-plugin/vite-plugin-import-map';
+import Inspect from 'vite-plugin-inspect'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -66,10 +67,11 @@ export default defineConfig(({ command, mode }) => {
                 },
             }),
             importMap(),
+            Inspect()
         ],
         resolve: {
             alias: {
-                '@sea-launcher': path.resolve(dirname, 'src')
+                '@sea-launcher': path.resolve(dirname, 'src'),
             },
         },
     };

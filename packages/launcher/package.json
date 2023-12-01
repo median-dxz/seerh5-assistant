@@ -38,6 +38,7 @@
         "@vitejs/plugin-react": "^4.2.0",
         "eslint-plugin-react-hooks": "^4.6.0",
         "eslint-plugin-react-refresh": "^0.4.4",
+        "vite-plugin-inspect": "^0.8.0",
         "vite-plugin-pwa": "^0.17.2"
     }
 }

@@ -21,11 +21,22 @@
 
 ## 最近更新的内容
 
-*@sea/server v0.6.0*
+*Core v0.7.1*
 
-- [x] 后端使用typescript重构
-- [x] 迁移后端到fastify
-- [x] 端点交互使用tRPC
+- [ ] 属性攻击/特攻/物攻的枚举
+- [x] 移除`extractObjectId`方法
+  - [x] 常用的`Entity`中添加`infer*`静态方法, 用于替代原来的api
+- [ ] 通过declare module方式并设计相关接口，使得Core支持扩展
+  - [ ] 添加Loader的扩展点
+  - [x] 添加Engine的扩展点
+  - [x] 添加Hook的扩展点
+  - [x] 添加GameConfig的扩展点
+- [ ] 对于部分错误, 封装错误类
+  - [ ] 暂定有影响DRY原则的错误封装
+- [ ] 额外允许一些模块打印关键日志, 通过`common`包下的`log`模块启用
+  - [ ] `Log.setLogger()`允许使用自定义logger, 默认启用console.log, 输出格式为`[sea-core][module name]:`
+  - [ ] 外部api为`Log.enable()`和`Log.disable()`, 通过传入模块名称来开启这一部分的输出
+  - [ ] 目前暂定支持的模块只有`Battle`, 开启后将输出Operator模块的入参
 
 # 简介
 

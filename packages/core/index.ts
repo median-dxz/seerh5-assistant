@@ -17,9 +17,11 @@ declare global {
     }
 
     interface SEA {
-        /** SEA Core就绪标志 */
-        CoreReady: boolean;
         /** SEA 全局单例标志位 */
-        CoreInstance: boolean;
+        CoreInstance: {
+            flag: boolean;
+        };
+        /** 游戏核心加载就绪标志位 */
+        SeerH5Ready: boolean;
     }
 }

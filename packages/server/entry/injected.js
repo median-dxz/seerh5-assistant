@@ -20,10 +20,7 @@ var warnFilter = new Proxy(console.warn, {
     },
 });
 
-var sea = {
-    SeerH5Ready: false,
-    CoreReady: false,
-    EVENT_SEER_READY: 'seerh5_load',
+var sea = Object.assign(window.sea, {
     filterLogText: [
         /=.*?lifecycle.on.*=.*?$/,
         /(M|m)usic/,
@@ -42,7 +39,7 @@ var sea = {
         /battleResultPanel/,
         /GuideManager.isCompleted/,
     ],
-};
+});
 
 var __reflect =
     (this && this.__reflect) ||

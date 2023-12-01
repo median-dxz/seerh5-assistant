@@ -1,11 +1,8 @@
 declare global {
-    interface Window {
-        sea: SEA;
-    }
-
     interface SEA {
         /** 正则过滤列表 */
         logRegexFilter: { log: RegExp[]; warn: RegExp[] };
+        EVENT_SEER_READY: string;
     }
 }
 
