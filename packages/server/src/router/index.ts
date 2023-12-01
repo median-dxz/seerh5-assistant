@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { z } from 'zod';
 import { ModConfig } from '../data/ModConfig.ts';
+import { PetCache } from '../data/PetCacheManager.ts';
 import { cachePets, launcherConfig, petFragmentLevel, queryPets, setLauncherConfig } from './routers/router.config.ts';
 import { findMods } from './routers/router.mod.ts';
 import { procedure, router } from './trpc.ts';
@@ -40,6 +41,17 @@ export const apiRouter = router({
     }),
     cachePets: procedure.input(z.map(z.string(), z.number())).mutation(({ input }) => {
         return cachePets(input);
+    }),
+    addCachePet: procedure.input(z.tuple([z.string(), z.number()])).mutation(({ input }) => {
+        const [name, time] = input;
+        const data = PetCache.catchTimeMap;
+        data.set(name, time);
+        return cachePets(data);
+    }),
+    removeCachePet: procedure.input(z.string()).mutation(({ input }) => {
+        const data = PetCache.catchTimeMap;
+        data.delete(input);
+        return cachePets(data);
     }),
     petFragmentLevel: procedure.query(({ ctx }) => {
         const { appRoot } = ctx;

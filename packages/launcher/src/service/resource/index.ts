@@ -1,11 +1,13 @@
-export function getItemIcon(id: number) {
+function item(id: number) {
     const url = ClientConfig.getItemIcon(id);
     const resUrl = RES.getVirtualUrl(url);
     return resUrl;
 }
 
-export function getPetHeadIcon(id: number) {
+function petHead(id: number) {
     const url = ClientConfig.getPetHeadPath(id);
     const resUrl = RES.getVirtualUrl(url);
     return resUrl;
 }
+
+export const Icon = { item, petHead };

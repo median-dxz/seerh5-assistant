@@ -242,6 +242,11 @@ declare class BatteryController {
     _leftTime: number;
 }
 
+declare class ClientConfig {
+    static getItemIcon(id: number): string;
+    static getPetHeadPath(id: number): string;
+}
+
 declare class EffectInfoManager {
     static getEffect(id: number): EffectInfo;
 }

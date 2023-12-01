@@ -1,16 +1,16 @@
 import { Box, Button, ButtonGroup, Checkbox, CircularProgress, LinearProgress, Typography } from '@mui/material';
 
-import * as SEALocalStorage from '@sea-launcher/utils/LocalStorage';
+import * as SEALocalStorage from '@sea/launcher/utils/LocalStorage';
 import React from 'react';
 import { Pet, SEAPet, delay } from 'sea-core';
 import { Engine } from 'sea-core/engine';
 
-import { getPetHeadIcon } from '@sea-launcher/utils/egretRes';
-import { useBagPets } from '@sea-launcher/utils/hooks/useBagPets';
+import { petHeadIcon } from '@sea/launcher/service/resource';
+import { useBagPets } from '@sea/launcher/utils/hooks/useBagPets';
 
-import { PanelField, PanelTable, useIndex, useRowData, type PanelColumns } from '@sea-launcher/components/PanelTable';
-import { PopupMenuButton } from '@sea-launcher/components/PopupMenuButton';
-import { SeaTableRow } from '@sea-launcher/components/styled/TableRow';
+import { PanelField, PanelTable, useIndex, useRowData, type PanelColumns } from '@sea/launcher/components/PanelTable';
+import { PopupMenuButton } from '@sea/launcher/components/PopupMenuButton';
+import { SeaTableRow } from '@sea/launcher/components/styled/TableRow';
 
 const petGroupsStorage = SEALocalStorage.PetGroups;
 
@@ -182,7 +182,7 @@ function PanelRow({ selected, setSelected }: PanelRowProps) {
                 {pet.id}
             </PanelField>
             <PanelField field="icon" sx={{ userSelect: 'none' }}>
-                <img crossOrigin="anonymous" src={getPetHeadIcon(pet.id)} alt={pet.name} width={48} />
+                <img crossOrigin="anonymous" src={petHeadIcon(pet.id)} alt={pet.name} width={48} />
             </PanelField>
             <PanelField field="name">{pet.name}</PanelField>
             <PanelField field="hp">{`${pet.baseCurHp}/${pet.baseMaxHp}`}</PanelField>

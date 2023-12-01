@@ -1,7 +1,7 @@
-import { ModStore } from '@sea-launcher/service/ModManager';
+import { ModStore } from '@sea/launcher/service/ModManager';
 import React, { useEffect, useState } from 'react';
-import { SeaAutocomplete } from './components/styled/Autocomplete';
-import { SeaTextField } from './components/styled/TextField';
+import { SeaAutocomplete } from '../components/styled/Autocomplete';
+import { SeaTextField } from '../components/styled/TextField';
 
 // const AutocompleteWrapped: typeof MuiAutocomplete = ({ className, ...props }) => (
 //     <MuiAutocomplete {...props} classes={{ popper: className }} />

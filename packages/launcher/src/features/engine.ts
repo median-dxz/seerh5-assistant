@@ -65,7 +65,3 @@ export function updateBatteryTime() {
         (MainManager.actorInfo.timeToday + Math.floor(Date.now() / 1000 - MainManager.actorInfo.logintimeThisTime));
     BatteryController.Instance._leftTime = Math.max(0, leftTime);
 }
-
-export function updateItems(idList: number[]) {
-    return new Promise((res) => ItemManager.updateItems(idList, res));
-}

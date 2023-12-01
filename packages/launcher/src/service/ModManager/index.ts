@@ -1,6 +1,6 @@
-import { ct } from '@sea-launcher/context/ct';
-import * as EndPoints from '@sea-launcher/service/endpoints';
-import { SEAModuleLogger } from '@sea-launcher/utils/logger';
+import { ct } from '@sea/launcher/context/ct';
+import * as EndPoints from '@sea/launcher/service/endpoints';
+import { SEAModuleLogger } from '@sea/launcher/utils/logger';
 import type { ILevelBattleStrategy, MoveStrategy } from 'sea-core';
 import { DataSource, Subscription } from 'sea-core/data-source';
 import {
@@ -36,7 +36,7 @@ export const SEAModManager = {
         );
         // builtin strategy
         promises.push(
-            import('@sea-launcher/builtin/strategy')
+            import('@sea/launcher/builtin/strategy')
                 .then((s) => s.default as Array<{ id: string; strategy: MoveStrategy }>)
                 .then((s) => {
                     return s.map(({ id, strategy }) => {
@@ -53,7 +53,7 @@ export const SEAModManager = {
         );
         // builtin battle
         promises.push(
-            import('@sea-launcher/builtin/battle')
+            import('@sea/launcher/builtin/battle')
                 .then((s) => s.default as Array<{ id: string; battle: BattleModExport }>)
                 .then((s) => {
                     return s.map(({ id, battle }) => {
@@ -207,7 +207,7 @@ export const loadBattle = async (id: string, scope = 'sa') => {
     } satisfies ILevelBattleStrategy;
 };
 
-import { createLocalStorageProxy } from '@sea-launcher/utils/LocalStorage';
+import { createLocalStorageProxy } from '@sea/launcher/utils/LocalStorage';
 export const injectModConfig = async (mod: BaseMod) => {
     const { meta } = mod;
     const namespace = `${meta.type}::${meta.scope}::${meta.id}`;

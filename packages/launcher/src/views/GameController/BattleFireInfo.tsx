@@ -1,5 +1,5 @@
 import { Button, Typography } from '@mui/material';
-import { PanelStateContext } from '@sea-launcher/context/PanelState';
+import { PanelStateContext } from '@sea/launcher/context/PanelState';
 import React from 'react';
 import { BattleFireType, Engine } from 'sea-core';
 

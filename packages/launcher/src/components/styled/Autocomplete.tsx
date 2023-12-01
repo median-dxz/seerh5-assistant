@@ -1,6 +1,6 @@
 import { Autocomplete as MuiAutocomplete } from '@mui/material';
 import { styled } from '@mui/system';
-import { saTheme } from '@sea-launcher/style';
+import { theme } from '@sea/launcher/style';
 import React from 'react';
 
 export const SeaAutocomplete = styled<typeof MuiAutocomplete>(({ className, ...props }) => (
@@ -8,8 +8,8 @@ export const SeaAutocomplete = styled<typeof MuiAutocomplete>(({ className, ...p
 ))`
     & .MuiAutocomplete-paper {
         border-radius: 0;
-        background-color: ${saTheme.palette.background.default};
-        box-shadow: ${saTheme.boxShadow};
+        background-color: ${theme.palette.background.default};
+        box-shadow: ${theme.boxShadow};
         backdrop-filter: blur(12px);
     }
 ` as typeof MuiAutocomplete;

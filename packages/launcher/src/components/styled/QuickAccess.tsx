@@ -1,7 +1,7 @@
 import { SpeedDial as MuiSpeedDial } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { styled } from '@mui/system';
-import { saTheme } from '@sea-launcher/style';
+import { theme } from '@sea/launcher/style';
 
 export const SeaQuickAccess = styled(MuiSpeedDial)`
     & .MuiSpeedDial-actions {
@@ -14,9 +14,9 @@ export const SeaQuickAccess = styled(MuiSpeedDial)`
         box-shadow: none;
         background: none;
         transition: all 0.2s ease-in-out !important;
-        filter: drop-shadow(0 0 4px ${alpha(saTheme.palette.primary.main, 0.8)});
+        filter: drop-shadow(0 0 4px ${alpha(theme.palette.primary.main, 0.8)});
         &:hover {
-            color: ${saTheme.palette.emphases.main};
+            color: ${theme.palette.emphases.main};
             background: none;
         }
         &:active {
@@ -29,9 +29,9 @@ export const SeaQuickAccess = styled(MuiSpeedDial)`
         top: 0;
         left: 0;
         width: 0;
-        border-top: 1px solid ${saTheme.palette.emphases.main};
-        box-shadow: 0 0 4px ${saTheme.palette.emphases.main};
-        transition: ${saTheme.transitions.create(['width'])};
+        border-top: 1px solid ${theme.palette.emphases.main};
+        box-shadow: 0 0 4px ${theme.palette.emphases.main};
+        transition: ${theme.transitions.create(['width'])};
     }
 
     &::before {
@@ -40,9 +40,9 @@ export const SeaQuickAccess = styled(MuiSpeedDial)`
         bottom: 0;
         right: 0;
         width: 0;
-        border-bottom: 1px solid ${saTheme.palette.emphases.main};
-        box-shadow: 0 0 4px ${saTheme.palette.emphases.main};
-        transition: ${saTheme.transitions.create(['width'])};
+        border-bottom: 1px solid ${theme.palette.emphases.main};
+        box-shadow: 0 0 4px ${theme.palette.emphases.main};
+        transition: ${theme.transitions.create(['width'])};
     }
 
     &:hover {

@@ -35,14 +35,22 @@ export const setConfig = async (key: string, value: unknown) => {
     return trpcClient.setLauncherConfig.mutate({ key, value });
 };
 
-export async function queryCatchTime(name: string): Promise<[[string, number]]>;
-export async function queryCatchTime(): Promise<[string, number][]>;
+export async function queryCatchTime(name: string): Promise<[string, number]>;
+export async function queryCatchTime(): Promise<Map<string, number>>;
 export async function queryCatchTime(name?: string) {
     return trpcClient.pets.query(name);
 }
 
 export const cacheCatchTime = async (data: Map<string, number>) => {
     return trpcClient.cachePets.mutate(data);
+};
+
+export const deleteCatchTime = async (name: string) => {
+    return trpcClient.removeCachePet.mutate(name);
+};
+
+export const addCatchTime = async (name: string, time: number) => {
+    return trpcClient.addCachePet.mutate([name, time]);
 };
 
 export interface PetFragmentOption {

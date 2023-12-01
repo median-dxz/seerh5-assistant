@@ -1,9 +1,9 @@
 import ElectricBolt from '@mui/icons-material/ElectricBolt';
 import Lock from '@mui/icons-material/Lock';
 import { Backdrop, Box, Fade, Slide, Switch, Tab, Tabs, type SxProps, type TabProps } from '@mui/material';
-import { HexagonalButton } from '@sea-launcher/components/styled/HexagonalButton';
-import { PanelStateContext } from '@sea-launcher/context/PanelState';
-import { saTheme } from '@sea-launcher/style';
+import { HexagonalButton } from '@sea/launcher/components/styled/HexagonalButton';
+import { PanelStateContext } from '@sea/launcher/context/PanelState';
+import { theme } from '@sea/launcher/style';
 import * as React from 'react';
 import { TransitionGroup } from 'react-transition-group';
 import { AutoBattle } from './AutoBattle/AutoBattle';
@@ -230,8 +230,8 @@ export function MainPanel() {
                                         direction={layer === TabLayer.Main ? 'left' : 'right'}
                                         appear={false}
                                         easing={{
-                                            enter: saTheme.transitions.easing.easeOut,
-                                            exit: saTheme.transitions.easing.easeIn,
+                                            enter: theme.transitions.easing.easeOut,
+                                            exit: theme.transitions.easing.easeIn,
                                         }}
                                         key={layer}
                                     >

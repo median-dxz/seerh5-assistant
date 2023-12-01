@@ -1,8 +1,8 @@
 import { Button } from '@mui/material';
 import { Box } from '@mui/system';
-import { ct } from '@sea-launcher/context/ct';
-import { SEAModManager } from '@sea-launcher/service/ModManager';
-import * as SEAEndpoint from '@sea-launcher/service/endpoints';
+import { ct } from '@sea/launcher/context/ct';
+import { SEAModManager } from '@sea/launcher/service/ModManager';
+import * as SEAEndpoint from '@sea/launcher/service/endpoints';
 import React from 'react';
 import { PetDataManger, PetPosition } from 'sea-core';
 

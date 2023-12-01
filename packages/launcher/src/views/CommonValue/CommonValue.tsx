@@ -4,12 +4,12 @@ import { Item } from 'sea-core';
 
 import { Button, Typography } from '@mui/material';
 
-import { LabeledLinearProgress } from '@sea-launcher/components/LabeledProgress';
-import { PanelField, PanelTable, useRowData, type PanelColumns } from '@sea-launcher/components/PanelTable';
-import { PanelStateContext } from '@sea-launcher/context/PanelState';
-import { getItemIcon } from '@sea-launcher/utils/egretRes';
+import { LabeledLinearProgress } from '@sea/launcher/components/LabeledProgress';
+import { PanelField, PanelTable, useRowData, type PanelColumns } from '@sea/launcher/components/PanelTable';
+import { PanelStateContext } from '@sea/launcher/context/PanelState';
+import { itemIcon } from '@sea/launcher/service/resource';
 
-import { SeaTableRow } from '@sea-launcher/components/styled/TableRow';
+import { SeaTableRow } from '@sea/launcher/components/styled/TableRow';
 import { idList, openModuleList } from './data';
 
 const convertUnit = (count: number) => {
@@ -68,7 +68,7 @@ const PanelRow: React.FC = () => {
         <SeaTableRow>
             <PanelField field="id">{item.id}</PanelField>
             <PanelField field="icon">
-                <img crossOrigin="anonymous" src={getItemIcon(item.id)} alt={item.name} width={36} />
+                <img crossOrigin="anonymous" src={itemIcon(item.id)} alt={item.name} width={36} />
             </PanelField>
             <PanelField field="name">{item.name}</PanelField>
             <PanelField field="amount">{amountRender}</PanelField>

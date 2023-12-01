@@ -1,4 +1,4 @@
-import * as Endpoints from '@sea-launcher/service/endpoints';
+import * as Endpoints from '@sea/launcher/service/endpoints';
 import { enableMapSet, produce, type Draft } from 'immer';
 
 enableMapSet();

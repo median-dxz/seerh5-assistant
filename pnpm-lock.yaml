@@ -6282,7 +6282,7 @@ packages:
     dev: false
 
   file:sdk/lib/sea-core-0.7.1.tgz:
-    resolution: {integrity: sha512-sRUWYBu6uOu5Yv2om6G9EZ+mlR10KRY9/X4imwvi1qC2AtsCVHdZTZ6nM0v4Y00k/A6B54qGRuuRVM3BdZMW6Q==, tarball: file:sdk/lib/sea-core-0.7.1.tgz}
+    resolution: {integrity: sha512-U6vNboJBCMeeFWpv3IkwUat45Nq7NqoX8+UMjbU740zELhxE2bBVcasnsOpGlG0Cl6UzgNoTLcHY2OhxbecwiA==, tarball: file:sdk/lib/sea-core-0.7.1.tgz}
     name: sea-core
     version: 0.7.1
     dependencies:

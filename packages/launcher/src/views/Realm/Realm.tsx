@@ -1,10 +1,10 @@
 import { Button, Dialog, DialogActions, Divider, Typography, alpha } from '@mui/material';
-import { PanelField, PanelTable, useIndex, useRowData, type PanelColumns } from '@sea-launcher/components/PanelTable';
-import { SEAContext } from '@sea-launcher/context/SAContext';
+import { PanelField, PanelTable, useIndex, useRowData, type PanelColumns } from '@sea/launcher/components/PanelTable';
+import { SEAContext } from '@sea/launcher/context/SAContext';
 import React, { useCallback } from 'react';
 import { LevelTitanHole } from './LevelTitanHole';
 
-import { SeaTableRow } from '@sea-launcher/components/styled/TableRow';
+import { SeaTableRow } from '@sea/launcher/components/styled/TableRow';
 import { produce } from 'immer';
 import * as Battle from 'sea-core/battle';
 import { Socket } from 'sea-core/engine';

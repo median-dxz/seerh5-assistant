@@ -1,7 +1,7 @@
 import type { ButtonBaseProps } from '@mui/material';
 import ButtonBase from '@mui/material/ButtonBase';
 import { styled } from '@mui/system';
-import { saTheme } from '@sea-launcher/style';
+import { theme } from '@sea/launcher/style';
 import * as React from 'react';
 import { forwardRef, type ForwardedRef, type PropsWithChildren } from 'react';
 
@@ -46,7 +46,7 @@ const StyledButtonRoot = styled(HexagonalButtonRoot)`
         50% 118%,
         calc(50% - 25% * 1.732 - 18%) calc(50% + 50% / 2)
     );
-    transition: ${saTheme.transitions.create(['all'], { duration: saTheme.transitions.duration.shortest })};
+    transition: ${theme.transitions.create(['all'], { duration: theme.transitions.duration.shortest })};
 
     &:focus {
         outline: none;
@@ -67,11 +67,11 @@ const StyledButtonRoot = styled(HexagonalButtonRoot)`
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        transition: ${saTheme.transitions.create(['all'])};
+        transition: ${theme.transitions.create(['all'])};
     }
 
     & .bg {
-        stroke: ${saTheme.palette.primary.main};
+        stroke: ${theme.palette.primary.main};
         stroke-width: 2px;
         stroke-linecap: round;
         fill: transparent;
@@ -79,7 +79,7 @@ const StyledButtonRoot = styled(HexagonalButtonRoot)`
     }
 
     &:hover .content {
-        filter: drop-shadow(0 0 4px ${saTheme.palette.emphases.main});
+        filter: drop-shadow(0 0 4px ${theme.palette.emphases.main});
     }
 
     @keyframes breathe {
@@ -92,7 +92,7 @@ const StyledButtonRoot = styled(HexagonalButtonRoot)`
         50% {
             opacity: 0.45;
             transform: scale(1.02);
-            filter: drop-shadow(0 0 4px ${saTheme.palette.primary.main});
+            filter: drop-shadow(0 0 4px ${theme.palette.primary.main});
         }
     }
 `;

@@ -26,6 +26,7 @@
         "./loader",
         "./pet-helper",
         "./level",
-        "index.ts"
+        "index.ts",
+        "package.json"
     ],
 }

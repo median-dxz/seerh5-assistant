@@ -6,7 +6,7 @@ import * as Entity from 'sea-core/entity';
 
 import { Typography } from '@mui/material';
 
-import { LabeledLinearProgress } from '@sea-launcher/components/LabeledProgress';
+import { LabeledLinearProgress } from '@sea/launcher/components/LabeledProgress';
 import { LevelBase, type LevelExtendsProps } from './LevelBase';
 
 import dataProvider from './data';

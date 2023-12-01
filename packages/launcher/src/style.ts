@@ -24,7 +24,7 @@ const colors = {
     paper: '#1e88e5',
 };
 
-export const saTheme = createTheme({
+export const theme = createTheme({
     boxShadow: `0 8px 16px rgba(0 0 0 / 24%)`,
     palette: {
         mode: 'dark',

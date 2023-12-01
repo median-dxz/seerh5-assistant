@@ -1,8 +1,8 @@
 import { PetFragmentLevelDifficulty as Difficulty, LevelState, PetFragmentLevel, delay } from 'sea-core';
 
 import { Box, Button, CircularProgress, Dialog, DialogActions, Divider, Typography, alpha } from '@mui/material';
-import { SEAContext } from '@sea-launcher/context/SAContext';
-import type { PetFragmentOption } from '@sea-launcher/service/endpoints';
+import { SEAContext } from '@sea/launcher/context/SAContext';
+import type { PetFragmentOption } from '@sea/launcher/service/endpoints';
 import React, { useCallback, useState } from 'react';
 import * as Battle from 'sea-core/battle';
 import { Engine, Socket } from 'sea-core/engine';
@@ -15,8 +15,8 @@ import type {
 } from 'sea-core/level';
 import { PanelTable, type PanelColumns } from '../components/PanelTable/PanelTable';
 
-import { loadBattle } from '@sea-launcher/service/ModManager';
-import { saTheme } from '@sea-launcher/style';
+import { loadBattle } from '@sea/launcher/service/ModManager';
+import { theme } from '@sea/launcher/style';
 
 declare namespace pvePetYinzi {
     const DataManager: unknown;
@@ -163,10 +163,10 @@ function getCurPanelInfo() {
     console.log((pvePetYinzi.DataManager as any)._instance.curYinziData);
 }
 
-import { PanelField, useIndex, useRowData } from '@sea-launcher/components/PanelTable';
-import { SeaTableRow } from '@sea-launcher/components/styled/TableRow';
-import * as Endpoints from '@sea-launcher/service/endpoints';
-import { SEAModuleLogger } from '@sea-launcher/utils/logger';
+import { PanelField, useIndex, useRowData } from '@sea/launcher/components/PanelTable';
+import { SeaTableRow } from '@sea/launcher/components/styled/TableRow';
+import * as Endpoints from '@sea/launcher/service/endpoints';
+import { SEAModuleLogger } from '@sea/launcher/utils/logger';
 import { produce } from 'immer';
 import useSWR from 'swr';
 import { LevelBaseNew } from './LevelBaseNew';
@@ -303,7 +303,7 @@ const PanelRow = React.memo(({ taskCompleted, setRunner }: PanelRowProps) => {
     return (
         <SeaTableRow
             sx={{
-                backgroundColor: completed ? `${alpha(saTheme.palette.primary.main, 0.18)}` : 'transparent',
+                backgroundColor: completed ? `${alpha(theme.palette.primary.main, 0.18)}` : 'transparent',
             }}
         >
             <PanelField field="name">{runner.info.name}</PanelField>

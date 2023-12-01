@@ -2,12 +2,12 @@ import { Button, Divider, FormControlLabel, Switch } from '@mui/material';
 
 import React, { useState, type ReactNode } from 'react';
 
-import { PanelField, PanelTable, useRowData } from '@sea-launcher/components/PanelTable';
-import { useIndex } from '@sea-launcher/components/PanelTable/usePanelTableData';
-import { SeaTableRow } from '@sea-launcher/components/styled/TableRow';
-import { SEAContext } from '@sea-launcher/context/SAContext';
-import * as SALocalStorage from '@sea-launcher/utils/LocalStorage';
-import { TextEditDialog } from '@sea-launcher/views/AutoBattle/TextEditDialog';
+import { PanelField, PanelTable, useRowData } from '@sea/launcher/components/PanelTable';
+import { useIndex } from '@sea/launcher/components/PanelTable/usePanelTableData';
+import { SeaTableRow } from '@sea/launcher/components/styled/TableRow';
+import { SEAContext } from '@sea/launcher/context/SAContext';
+import * as SALocalStorage from '@sea/launcher/utils/LocalStorage';
+import { TextEditDialog } from '@sea/launcher/views/AutoBattle/TextEditDialog';
 import { NOOP } from 'sea-core';
 import * as Battle from 'sea-core/battle';
 

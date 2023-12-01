@@ -2,7 +2,7 @@ import { LevelState, Socket } from 'sea-core';
 
 import type { ILevelBattleStrategy, ILevelRunner, LevelData as SEALevelData, LevelInfo as SEALevelInfo } from 'sea-core';
 
-import { SEAModuleLogger } from '@sea-launcher/utils/logger';
+import { SEAModuleLogger } from '@sea/launcher/utils/logger';
 import dataProvider from './data';
 
 const customData = dataProvider['LevelExpTraining'];

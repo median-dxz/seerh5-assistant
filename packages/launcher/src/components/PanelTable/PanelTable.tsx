@@ -2,7 +2,7 @@ import type { TableCellProps, TableProps } from '@mui/material';
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import React from 'react';
 
-import { useCachedReturn } from '@sea-launcher/utils/hooks/useCachedReturn';
+import { useCachedReturn } from '@sea/launcher/utils/hooks/useCachedReturn';
 import { RowDataContext, RowIndexContext } from './usePanelTableData';
 
 export type PanelColumns = Array<{ field: string; columnName: string } & TableCellProps>;

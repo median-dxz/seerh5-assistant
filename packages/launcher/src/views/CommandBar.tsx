@@ -1,5 +1,5 @@
 import { Box, Grow } from '@mui/material';
-import { CommandInput } from '@sea-launcher/CommandInput';
+import { CommandInput } from '@sea/launcher/views/CommandInput';
 import React from 'react';
 
 interface Props {

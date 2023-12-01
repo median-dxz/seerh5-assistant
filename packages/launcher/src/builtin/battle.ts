@@ -1,5 +1,5 @@
-import { ct } from '@sea-launcher/context/ct';
-import type { BattleModExport } from '@sea-launcher/service/ModManager/type';
+import { ct } from '@sea/launcher/context/ct';
+import type { BattleModExport } from '@sea/launcher/service/ModManager/type';
 import { Engine } from 'sea-core';
 
 const { lowerHp } = Engine;
