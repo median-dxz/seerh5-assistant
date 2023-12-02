@@ -1,14 +1,12 @@
-import { Stack } from '@mui/system';
+import { Stack } from '@mui/material';
 import React from 'react';
-
 import { Header } from './Header';
-import { ModList } from './ModList';
 
-export function ModManager() {
+export function StrategyView() {
     return (
         <Stack>
             <Header />
-            <ModList />
+            {/* <StrategyList /> */}
         </Stack>
     );
 }

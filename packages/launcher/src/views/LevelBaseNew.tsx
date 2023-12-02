@@ -37,12 +37,12 @@ export function LevelBaseNew({ runner, children }: React.PropsWithChildren<Level
 
     return (
         <>
-            <DialogTitle>{runner.info.name}</DialogTitle>
+            <DialogTitle>{runner.meta.name}</DialogTitle>
             <DialogContent>
                 <LabeledLinearProgress
                     prompt={`当前进度`}
-                    progress={runner.info.maxTimes - runner.data.leftTimes}
-                    total={runner.info.maxTimes}
+                    progress={runner.meta.maxTimes - runner.data.leftTimes}
+                    total={runner.meta.maxTimes}
                 />
                 {children}
                 <DialogContentText component={'span'}>{state}</DialogContentText>

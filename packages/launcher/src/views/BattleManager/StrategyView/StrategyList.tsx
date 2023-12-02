@@ -1,13 +1,11 @@
-import { useModStore } from '@/context/useModStore';
-import type { ModInstance } from '@/service/store/mod';
 import { List, ListItemButton, ListItemText, Typography, alpha, type ListProps } from '@mui/material';
 import React from 'react';
 
-interface ModListItemProps {
-    mod: ModInstance;
+interface StrategyListItemProps {
+    strategy: StrategyInstance;
 }
 
-export function ModListItem({ mod }: ModListItemProps) {
+export function StrategyListItem({ strategy }: StrategyListItemProps) {
     const { meta } = mod;
     const title = (
         <>
@@ -21,7 +19,7 @@ export function ModListItem({ mod }: ModListItemProps) {
     const description = (
         <>
             <Typography component="span" fontSize={16}>
-                {meta.namespace} {meta.description}
+                {meta.type}::{meta.namespace} {meta.description}
             </Typography>
             <Typography component="span" color="GrayText" sx={{ float: 'right' }} fontSize={16}>
                 {mod.strategy.length ? `策略: ${mod.strategy.length}` : ''}
@@ -41,8 +39,8 @@ export function ModListItem({ mod }: ModListItemProps) {
     );
 }
 
-export function ModList(listProps: ListProps) {
-    const { store: _store } = useModStore();
+export function StrategyList(listProps: ListProps) {
+    const { store: _store } = useStrategyStore();
     const store = Array.from(_store.values());
     return (
         <List

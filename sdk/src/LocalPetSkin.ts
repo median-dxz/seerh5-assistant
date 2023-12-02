@@ -1,5 +1,3 @@
-import type { SEAMod } from '../lib/mod';
-
 import { NOOP, Socket } from 'sea-core';
 
 interface SkinInfo {
@@ -7,39 +5,24 @@ interface SkinInfo {
     petSkinId: number;
 }
 
-interface Config {
-    changed: Map<number, SkinInfo>;
-    original: Map<number, number>;
-}
+declare var PetFightSkinSkillReplaceXMLInfo: any;
+declare var PetIdTransform: any;
+declare var PetSkinXMLInfo: any;
+declare var PetSkinController: any;
 
-class LocalPetSkin implements SEAMod.IBaseMod<Config> {
-    declare logger: typeof console.log;
+export default async function LocalPetSkin(createContext: SEAL.createModContext) {
+    const { meta, config, mutate, logger } = await createContext({
+        meta: {
+            id: 'LocalPetSkin',
+            scope: 'median',
+            version: '1.0.0',
+            description: '本地全皮肤解锁',
+        },
+        defaultConfig: { changed: new Map<number, SkinInfo>(), original: new Map<number, number>() },
+    });
 
-    meta: SEAMod.MetaData = {
-        id: 'LocalPetSkin',
-        scope: 'median',
-        type: 'base',
-        description: '本地全皮肤解锁',
-    };
-
-    defaultConfig = { changed: new Map<number, SkinInfo>(), original: new Map<number, number>() };
-    config: Config & { use(producer: (draft: Config) => void): void };
-
-    serializeConfig(data: Config) {
-        const clothData = {
-            changed: Array.from(data.changed.entries()),
-            original: Array.from(data.original.entries()),
-        };
-        return JSON.stringify(clothData);
-    }
-
-    praseConfig(serialized: unknown) {
-        const { changed, original } = serialized;
-        return { changed: new Map(changed), original: new Map(original) } as Config;
-    }
-
-    activate() {
-        const cloth = this.config;
+    function install() {
+        const cloth = config;
 
         Object.defineProperty(FighterUserInfo.prototype, 'petInfoArr', {
             set: function (t) {
@@ -85,37 +68,40 @@ class LocalPetSkin implements SEAMod.IBaseMod<Config> {
 
         PetManager.equipSkin = async (catchTime, skinId = 0, callback = NOOP) => {
             const petInfo = PetManager.getPetInfo(catchTime);
-            this.logger('new skin id:', skinId, 'previous skin id:', petInfo.skinId);
+            logger('new skin id:', skinId, 'previous skin id:', petInfo.skinId);
 
             if (skinId === 0 || PetSkinController.instance.haveSkin(skinId)) {
                 if (cloth.original.get(petInfo.id) !== skinId) {
                     await Socket.sendByQueue(47310, [catchTime, skinId]);
                 } else {
-                    cloth.use(({ original }) => {
+                    mutate(({ changed, original }) => {
+                        changed.delete(petInfo.id);
                         original.delete(petInfo.id);
                     });
                 }
-                cloth.use(({ changed }) => {
+                mutate(({ changed }) => {
                     changed.delete(petInfo.id);
                 });
             } else {
                 if (!cloth.original.has(petInfo.id)) {
-                    cloth.use(({ original }) => {
+                    mutate(({ original }) => {
                         original.set(petInfo.id, petInfo.skinId);
                     });
                 }
-                cloth.use(({ changed }) => {
+                mutate(({ changed }) => {
                     changed.set(petInfo.id, {
                         skinId: skinId,
                         petSkinId: PetSkinXMLInfo.getSkinPetId(skinId, petInfo.id),
                     });
                 });
             }
-
             PetManager.dispatchEvent(new PetEvent(PetEvent.EQUIP_SKIN, catchTime, skinId));
             callback();
         };
     }
+    
+    return {
+        meta,
+        install,
+    } satisfies SEAL.ModExport;
 }
-
-export default LocalPetSkin;

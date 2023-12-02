@@ -22,6 +22,6 @@
     },
     "include": [
         "./src",
-        "lib/mod.d.ts"
+        "lib/launcher.d.ts"
     ]
 }

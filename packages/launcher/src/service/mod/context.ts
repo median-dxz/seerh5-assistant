@@ -34,13 +34,12 @@ function createProxyObjectRef<T extends object>(initValue: T) {
 const getLogger = (id: string) => CommonLogger(id, 'info', LogStyle.mod);
 
 export function buildMeta(meta: Partial<Meta>) {
-    let { scope, type, version } = meta;
+    let { scope, version } = meta;
 
     scope = scope ?? MOD_DEFAULT_SCOPE;
-    type = type ?? 'base';
     version = version ?? '0.0.0';
 
-    return { ...meta, scope, type, version } as Meta;
+    return { ...meta, scope, version } as Meta;
 }
 
 export function getNamespace(meta: Meta) {

@@ -1,6 +1,6 @@
 import { LevelState, Socket } from 'sea-core';
 
-import type { ILevelBattleStrategy, ILevelRunner, LevelData as SEALevelData, LevelInfo as SEALevelInfo } from 'sea-core';
+import type { ILevelBattle, ILevelRunner, LevelData as SEALevelData, LevelMeta as SEALevelInfo } from 'sea-core';
 
 import { SEAModuleLogger } from '@/utils/logger';
 import dataProvider from './data';
@@ -44,7 +44,7 @@ export class LevelElfKingsTrial implements ILevelRunner<LevelData, SEALevelInfo>
         weeklyChallengeCount: 0,
     };
 
-    readonly info = {
+    readonly meta = {
         name: '精灵王的试炼',
         maxTimes: 6,
     };
@@ -69,27 +69,27 @@ export class LevelElfKingsTrial implements ILevelRunner<LevelData, SEALevelInfo>
         const stageElfId = ((elfId - 1) % 9) * 3;
 
         this.data.unlockHard = Boolean(levelStage & (1 << (stageElfId + 2)));
-        this.data.leftTimes = this.info.maxTimes - values[2];
+        this.data.leftTimes = this.meta.maxTimes - values[2];
         this.data.weeklyChallengeCount = values[3];
 
         console.log(this.data);
 
         if (this.data.state === ('award_error' as LevelState)) {
-            this.logger(`${this.info.name}: 领取奖励出错`);
+            this.logger(`${this.meta.name}: 领取奖励出错`);
             return LevelState.STOP;
         }
 
         if (!this.data.unlockHard) {
-            this.logger(`${this.info.name}: 未解锁困难难度`);
+            this.logger(`${this.meta.name}: 未解锁困难难度`);
             this.data.success = true;
             return LevelState.STOP;
         } else if (this.data.leftTimes > 0) {
-            this.logger(`${this.info.name}: 进入关卡`);
+            this.logger(`${this.meta.name}: 进入关卡`);
             return LevelState.BATTLE;
         } else {
             this.data.success = !this.data.canReceiveReward;
             if (this.data.weeklyChallengeCount >= 30 && this.data.canReceiveReward) {
-                this.logger(`${this.info.name}: 领取奖励`);
+                this.logger(`${this.meta.name}: 领取奖励`);
                 return LevelState.AWARD;
             }
             return LevelState.STOP;
@@ -100,7 +100,7 @@ export class LevelElfKingsTrial implements ILevelRunner<LevelData, SEALevelInfo>
         return {
             pets: customData.cts,
             strategy: customData.strategy,
-        } as ILevelBattleStrategy;
+        } as ILevelBattle;
     }
 
     readonly actions: Record<string, () => Promise<void>> = {

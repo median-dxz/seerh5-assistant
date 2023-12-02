@@ -1,11 +1,11 @@
 import { LevelState, Socket } from 'sea-core';
 
-import type { ILevelBattleStrategy, ILevelRunner, LevelData as SEALevelData, LevelInfo as SEALevelInfo } from 'sea-core';
+import type { ILevelBattle, ILevelRunner, LevelData as SEALevelData, LevelMeta as SEALevelInfo } from 'sea-core';
 
 import { SEAModuleLogger } from '@/utils/logger';
 import dataProvider from './data';
 
-const customData = dataProvider['LevelStudyTraining'];
+const customData = dataProvider['LevelExpTraining'];
 
 interface LevelData extends SEALevelData {
     stimulation: boolean;
@@ -17,7 +17,7 @@ interface LevelOption {
     sweep: boolean;
 }
 
-export class LevelStudyTraining implements ILevelRunner<LevelData, SEALevelInfo> {
+export class LevelExpTraining implements ILevelRunner<LevelData, SEALevelInfo> {
     data: LevelData = {
         leftTimes: 0,
         state: LevelState.STOP,
@@ -26,8 +26,8 @@ export class LevelStudyTraining implements ILevelRunner<LevelData, SEALevelInfo>
         stimulation: false,
     };
 
-    readonly info = {
-        name: '学习力训练场',
+    readonly meta = {
+        name: '经验训练场',
         maxTimes: 6,
     };
 
@@ -40,14 +40,14 @@ export class LevelStudyTraining implements ILevelRunner<LevelData, SEALevelInfo>
     }
 
     async updater() {
-        this.logger(`${this.info.name}: 更新关卡信息...`);
-        const bits = (await Socket.bitSet(637, 1000572)).map(Boolean);
-        const buf = await Socket.sendByQueue(42397, [115]);
+        this.logger(`${this.meta.name}: 更新关卡信息...`);
+        const bits = (await Socket.bitSet(639, 1000571)).map(Boolean);
+        const buf = await Socket.sendByQueue(42397, [116]);
         const realmInfo = new DataView(buf!);
 
         this.data.stimulation = bits[0];
         this.data.rewardReceived = bits[1];
-        this.data.leftTimes = this.info.maxTimes - realmInfo.getUint32(8);
+        this.data.leftTimes = this.meta.maxTimes - realmInfo.getUint32(8);
 
         this.data.success = this.data.rewardReceived;
 
@@ -57,14 +57,14 @@ export class LevelStudyTraining implements ILevelRunner<LevelData, SEALevelInfo>
             }
 
             if (this.data.leftTimes > 0) {
-                this.logger(`${this.info.name}: 进入关卡`);
+                this.logger(`${this.meta.name}: 进入关卡`);
                 return LevelState.BATTLE;
             } else {
-                this.logger(`${this.info.name}: 领取奖励`);
+                this.logger(`${this.meta.name}: 领取奖励`);
                 return LevelState.AWARD;
             }
         } else {
-            this.logger(`${this.info.name}日任完成`);
+            this.logger(`${this.meta.name}日任完成`);
             this.data.success = true;
             return LevelState.STOP;
         }
@@ -74,17 +74,17 @@ export class LevelStudyTraining implements ILevelRunner<LevelData, SEALevelInfo>
         return {
             pets: customData.cts,
             strategy: customData.strategy,
-        } as ILevelBattleStrategy;
+        } as ILevelBattle;
     }
 
     readonly actions: Record<string, () => Promise<void>> = {
         battle: async () => {
-            Socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [115, 6, 1]);
+            Socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [116, 6, 1]);
         },
 
         award: async () => {
             try {
-                await Socket.sendByQueue(42395, [115, 3, 0, 0]);
+                await Socket.sendByQueue(42395, [116, 3, 0, 0]);
             } catch (error) {
                 this.logger(error);
                 this.data.state = 'award_error' as LevelState;

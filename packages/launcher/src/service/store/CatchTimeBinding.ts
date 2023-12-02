@@ -1,16 +1,17 @@
-import { PetDataManger } from 'sea-core';
-import * as Endpoints from './endpoints';
+import { PetDataManger, PetPosition } from 'sea-core';
+import * as Endpoints from '../endpoints';
 
 const JIM_ID = 3582;
 
 let store = new Map<string, number>();
 const lookup = new Map<number, string>();
 
-const petFilter = (v: { name: string; catchTime: number; id: number; level: number }) => v.id >= JIM_ID;
+const petFilter = (v: { id: number; level: number; posi: number }) =>
+    (v.id >= JIM_ID && v.level === 100) || v.posi === PetPosition.elite;
 
 /**
  * 同步玩家的CT表
- * 只查看几米往后的近现代精灵
+ * 取 (几米往后的近现代精灵 & 等级为100) | 精英收藏和背包中的精灵
  */
 async function sync() {
     const data1 = Array.from((await PetDataManger.miniInfo.get()).values());
@@ -19,7 +20,7 @@ async function sync() {
         add(v.name, v.catchTime);
     };
     data1.filter(petFilter).forEach(mapping);
-    data2.filter(petFilter).forEach(mapping);
+    data2.forEach(mapping);
 }
 
 /**

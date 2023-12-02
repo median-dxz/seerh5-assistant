@@ -1,6 +1,6 @@
 import { LevelState, Socket } from 'sea-core';
 
-import type { ILevelBattleStrategy, ILevelRunner, LevelData as SEALevelData, LevelInfo as SEALevelInfo } from 'sea-core';
+import type { ILevelBattle, ILevelRunner, LevelData as SEALevelData, LevelMeta as SEALevelInfo } from 'sea-core';
 
 import { SEAModuleLogger } from '@/utils/logger';
 import dataProvider from './data';
@@ -26,7 +26,7 @@ export class LevelCourageTower implements ILevelRunner<LevelData, SEALevelInfo> 
         stimulation: false,
     };
 
-    readonly info = {
+    readonly meta = {
         name: '勇者之塔',
         maxTimes: 5,
     };
@@ -46,7 +46,7 @@ export class LevelCourageTower implements ILevelRunner<LevelData, SEALevelInfo> 
 
         this.data.stimulation = bits[0];
         this.data.rewardReceived = bits[1];
-        this.data.leftTimes = this.info.maxTimes - realmInfo.getUint32(8);
+        this.data.leftTimes = this.meta.maxTimes - realmInfo.getUint32(8);
 
         console.log(this.data);
 
@@ -58,14 +58,14 @@ export class LevelCourageTower implements ILevelRunner<LevelData, SEALevelInfo> 
             }
 
             if (this.data.leftTimes > 0) {
-                this.logger(`${this.info.name}: 进入关卡`);
+                this.logger(`${this.meta.name}: 进入关卡`);
                 return LevelState.BATTLE;
             } else {
-                this.logger(`${this.info.name}: 领取奖励`);
+                this.logger(`${this.meta.name}: 领取奖励`);
                 return LevelState.AWARD;
             }
         } else {
-            this.logger(`${this.info.name}日任完成`);
+            this.logger(`${this.meta.name}日任完成`);
             this.data.success = true;
             return LevelState.STOP;
         }
@@ -75,7 +75,7 @@ export class LevelCourageTower implements ILevelRunner<LevelData, SEALevelInfo> 
         return {
             pets: customData.cts,
             strategy: customData.strategy,
-        } as ILevelBattleStrategy;
+        } as ILevelBattle;
     }
 
     readonly actions: Record<string, () => Promise<void>> = {

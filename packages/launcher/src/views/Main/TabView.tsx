@@ -133,7 +133,21 @@ export function TabView() {
                 id={`vertical-tabpanel-${currentTab}`}
                 aria-labelledby={`vertical-tab-${currentTab}`}
             >
-                {currentView}
+                <SwitchTransition>
+                    <Fade
+                        key={routerStack.length}
+                        timeout={150}
+                        appear={false}
+                        mountOnEnter
+                        unmountOnExit
+                        easing={{
+                            enter: theme.transitions.easing.easeOut,
+                            exit: theme.transitions.easing.easeInOut,
+                        }}
+                    >
+                        <Box id="tab-view-transition-ref"> {currentView} </Box>
+                    </Fade>
+                </SwitchTransition>
             </Box>
         </Box>
     );

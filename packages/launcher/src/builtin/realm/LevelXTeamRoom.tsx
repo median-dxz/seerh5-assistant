@@ -1,6 +1,6 @@
 import { LevelState, Socket } from 'sea-core';
 
-import type { ILevelBattleStrategy, ILevelRunner, LevelData as SEALevelData, LevelInfo as SEALevelInfo } from 'sea-core';
+import type { ILevelBattle, ILevelRunner, LevelData as SEALevelData, LevelMeta as SEALevelInfo } from 'sea-core';
 
 import { SEAModuleLogger } from '@/utils/logger';
 import dataProvider from './data';
@@ -27,7 +27,7 @@ export class LevelXTeamRoom implements ILevelRunner<LevelData, SEALevelInfo> {
         weeklyCompletedCount: 0,
     };
 
-    readonly info = {
+    readonly meta = {
         name: 'X战队密室',
         maxTimes: 3,
     };
@@ -37,7 +37,7 @@ export class LevelXTeamRoom implements ILevelRunner<LevelData, SEALevelInfo> {
     logger = SEAModuleLogger('X战队密室', "info");
 
     async updater() {
-        this.logger(`${this.info.name}: 更新关卡信息...`);
+        this.logger(`${this.meta.name}: 更新关卡信息...`);
         const bits = await Socket.bitSet(1000585, 2000036);
         const values = await Socket.multiValue(12769, 12774, 20133);
         const pInfos = await Socket.playerInfo(1197);
@@ -46,7 +46,7 @@ export class LevelXTeamRoom implements ILevelRunner<LevelData, SEALevelInfo> {
         this.data.weeklyRewardReceived = bits[1];
 
         this.data.open = Boolean(pInfos[0]);
-        this.data.leftTimes = this.info.maxTimes - values[0];
+        this.data.leftTimes = this.meta.maxTimes - values[0];
         this.data.dailyMinRound = values[1];
         this.data.weeklyCompletedCount = values[2];
 
@@ -56,29 +56,29 @@ export class LevelXTeamRoom implements ILevelRunner<LevelData, SEALevelInfo> {
         }
 
         if (this.data.weeklyRewardReceived) {
-            this.logger(`${this.info.name}: 日任完成`);
+            this.logger(`${this.meta.name}: 日任完成`);
             this.data.success = true;
             return LevelState.STOP;
         }
 
         if (!this.data.weeklyRewardReceived && this.data.weeklyCompletedCount >= 5) {
-            this.logger(`${this.info.name}: 领取每周奖励`);
+            this.logger(`${this.meta.name}: 领取每周奖励`);
             return 'award_weekly' as unknown as LevelState;
         }
 
         if (this.data.dailyRewardReceived) {
-            this.logger(`${this.info.name}: 日任完成`);
+            this.logger(`${this.meta.name}: 日任完成`);
             this.data.success = true;
             return LevelState.STOP;
         }
 
         if (!this.data.dailyRewardReceived && this.data.dailyMinRound > 0) {
-            this.logger(`${this.info.name}: 领取每日奖励`);
+            this.logger(`${this.meta.name}: 领取每日奖励`);
             return LevelState.AWARD;
         }
 
         if (this.data.dailyMinRound === 0 && (this.data.leftTimes > 0 || this.data.open)) {
-            this.logger(`${this.info.name}: 进入战斗`);
+            this.logger(`${this.meta.name}: 进入战斗`);
             if (this.data.open) {
                 return LevelState.BATTLE;
             } else {
@@ -86,7 +86,7 @@ export class LevelXTeamRoom implements ILevelRunner<LevelData, SEALevelInfo> {
             }
         }
 
-        this.logger(`${this.info.name}: 日任失败`);
+        this.logger(`${this.meta.name}: 日任失败`);
         this.data.success = false;
         return LevelState.STOP;
     }
@@ -95,7 +95,7 @@ export class LevelXTeamRoom implements ILevelRunner<LevelData, SEALevelInfo> {
         return {
             pets: customData.cts,
             strategy: customData.strategy,
-        } as ILevelBattleStrategy;
+        } as ILevelBattle;
     }
 
     readonly actions: Record<string, () => Promise<void>> = {

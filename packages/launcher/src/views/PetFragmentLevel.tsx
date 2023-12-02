@@ -1,6 +1,5 @@
 import { PetFragmentLevelDifficulty as Difficulty, LevelState, PetFragmentLevel, delay } from 'sea-core';
 
-import { SEAContext } from '@/context/SAContext';
 import type { PetFragmentOption } from '@/service/endpoints';
 import { Box, Button, CircularProgress, Dialog, DialogActions, Divider, Typography, alpha } from '@mui/material';
 import React, { useCallback, useState } from 'react';
@@ -8,14 +7,13 @@ import * as Battle from 'sea-core/battle';
 import { Engine, Socket } from 'sea-core/engine';
 import type { IPFLevelBoss, IPetFragmentLevelObject } from 'sea-core/entity';
 import type {
-    ILevelBattleStrategy,
+    ILevelBattle,
     ILevelRunner,
     LevelData as SEALevelData,
-    LevelInfo as SEALevelInfo,
+    LevelMeta as SEALevelInfo,
 } from 'sea-core/level';
 import { PanelTable, type PanelColumns } from '../components/PanelTable/PanelTable';
 
-import { loadBattle } from '@/service/mod';
 import { theme } from '@/style';
 
 declare namespace pvePetYinzi {
@@ -39,7 +37,7 @@ export interface Option {
     id: number;
     difficulty: Difficulty;
     sweep: boolean;
-    battle: ILevelBattleStrategy[];
+    battle: ILevelBattle[];
 }
 
 const loadOption = async (option: PetFragmentOption) => {
@@ -48,7 +46,7 @@ const loadOption = async (option: PetFragmentOption) => {
 
 export class PetFragmentRunner implements ILevelRunner<LevelData, LevelInfo> {
     data: LevelData;
-    info: LevelInfo;
+    meta: LevelInfo;
     option: Option;
     logger: (msg: React.ReactNode) => void;
 
@@ -68,14 +66,14 @@ export class PetFragmentRunner implements ILevelRunner<LevelData, LevelInfo> {
 
         const level = new PetFragmentLevel(LevelObj);
 
-        this.info = {
+        this.meta = {
             ...level,
             designId: level.id,
             maxTimes: level.totalTimes,
         };
         this.data = { success: false } as LevelData;
 
-        this.logger = SEAModuleLogger(`精灵因子-${this.info.name}`, 'info');
+        this.logger = SEAModuleLogger(`精灵因子-${this.meta.name}`, 'info');
     }
 
     selectBattle() {
@@ -83,16 +81,16 @@ export class PetFragmentRunner implements ILevelRunner<LevelData, LevelInfo> {
     }
 
     async updater() {
-        const { info: config, data } = this;
+        const { meta: config, data } = this;
         const values = await Socket.multiValue(
             config.values.openTimes,
             config.values.failTimes,
             config.values.progress
         );
 
-        data.pieces = await Engine.itemNum(this.info.petFragmentItem);
+        data.pieces = await Engine.itemNum(this.meta.petFragmentItem);
 
-        data.leftTimes = this.info.maxTimes - values[0];
+        data.leftTimes = this.meta.maxTimes - values[0];
         data.failedTimes = values[1];
         data.curDifficulty = (values[2] >> 8) & 255;
         if (data.curDifficulty === Difficulty.NotSelected && this.option.difficulty) {
@@ -129,14 +127,14 @@ export class PetFragmentRunner implements ILevelRunner<LevelData, LevelInfo> {
 
     readonly actions: Record<string, () => Promise<void>> = {
         sweep: async () => {
-            await Socket.sendByQueue(41283, [this.info.designId, 4 + this.data.curDifficulty]);
+            await Socket.sendByQueue(41283, [this.meta.designId, 4 + this.data.curDifficulty]);
             this.logger('执行一次扫荡');
         },
         battle: async () => {
-            const checkData = await Socket.sendByQueue(41284, [this.info.designId, this.data.curDifficulty]);
+            const checkData = await Socket.sendByQueue(41284, [this.meta.designId, this.data.curDifficulty]);
             const check = new DataView(checkData!).getUint32(0);
             if (check === 0) {
-                Socket.sendByQueue(41282, [this.info.designId, this.data.curDifficulty]);
+                Socket.sendByQueue(41282, [this.meta.designId, this.data.curDifficulty]);
             } else {
                 const err = `出战情况不合法: ${check}`;
                 BubblerManager.getInstance().showText(err);
@@ -146,21 +144,8 @@ export class PetFragmentRunner implements ILevelRunner<LevelData, LevelInfo> {
     };
 
     openPanel() {
-        ModuleManager.showModuleByID(151, `{Design:${this.info.designId}}`);
+        ModuleManager.showModuleByID(151, `{Design:${this.meta.designId}}`);
     }
-}
-
-function logDataByName(factorName: string) {
-    const data = config.xml
-        .getAnyRes('new_super_design')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .Root.Design.find((r: any) => (r.Desc as string).match(factorName));
-    console.log(data);
-}
-
-function getCurPanelInfo() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    console.log((pvePetYinzi.DataManager as any)._instance.curYinziData);
 }
 
 import { PanelField, useIndex, useRowData } from '@/components/PanelTable';
@@ -169,12 +154,12 @@ import * as Endpoints from '@/service/endpoints';
 import { SEAModuleLogger } from '@/utils/logger';
 import { produce } from 'immer';
 import useSWR from 'swr';
+import { LevelCourageTower } from '../builtin/realm/LevelCourageTower';
+import { ElfKingsId, LevelElfKingsTrial } from '../builtin/realm/LevelElfKingsTrial';
+import { LevelExpTraining } from '../builtin/realm/LevelExpTraining';
+import { LevelStudyTraining } from '../builtin/realm/LevelStudyTraining';
+import { LevelXTeamRoom } from '../builtin/realm/LevelXTeamRoom';
 import { LevelBaseNew } from './LevelBaseNew';
-import { LevelCourageTower } from './Realm/LevelCourageTower';
-import { ElfKingsId, LevelElfKingsTrial } from './Realm/LevelElfKingsTrial';
-import { LevelExpTraining } from './Realm/LevelExpTraining';
-import { LevelStudyTraining } from './Realm/LevelStudyTraining';
-import { LevelXTeamRoom } from './Realm/LevelXTeamRoom';
 
 export function PetFragmentLevelPanel() {
     const [runner, setRunner] = useState<null | PetFragmentRunner>(null);
@@ -249,7 +234,7 @@ export function PetFragmentLevelPanel() {
         []
     );
 
-    const toRowKey = useCallback((row: PetFragmentRunner) => row.info.name, []);
+    const toRowKey = useCallback((row: PetFragmentRunner) => row.meta.name, []);
 
     if (!rows.length)
         return (
@@ -306,7 +291,7 @@ const PanelRow = React.memo(({ taskCompleted, setRunner }: PanelRowProps) => {
                 backgroundColor: completed ? `${alpha(theme.palette.primary.main, 0.18)}` : 'transparent',
             }}
         >
-            <PanelField field="name">{runner.info.name}</PanelField>
+            <PanelField field="name">{runner.meta.name}</PanelField>
             <PanelField field="state">
                 <Typography color={completed ? '#eeff41' : 'inherited'}>{completed ? '已完成' : '未完成'}</Typography>
             </PanelField>

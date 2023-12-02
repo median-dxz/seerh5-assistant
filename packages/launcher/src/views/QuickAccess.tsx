@@ -5,7 +5,7 @@ import useSWR from 'swr';
 import React, { useState } from 'react';
 
 import { SeaQuickAccess } from '@/components/styled/QuickAccess';
-import { ModStore } from '@/service/mod';
+import { ModStore } from '@/service/store/mod';
 
 const SvgMaker = ({ url, children: _, ...rest }: React.SVGProps<SVGSVGElement> & { url: string }) => {
     if (!url.startsWith('<svg xmlns="http://www.w3.org/2000/svg"')) {

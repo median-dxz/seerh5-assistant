@@ -1,6 +1,5 @@
 import type { Pet } from 'sea-core';
-import { Engine, PetDataManger, SEAPet, hookPrototype } from 'sea-core';
-import type { SEAMod } from '../../lib/mod';
+import { DataSource, Engine, PetDataManger, SEAPet, hookPrototype } from 'sea-core';
 
 interface PetFragment {
     EffectMsglog: number;
@@ -35,19 +34,16 @@ export async function findPetById(id: number): Promise<Pet | null> {
     }
 }
 
-class ItemWareHouse implements SEAMod.IModuleMod<itemWarehouse.ItemWarehouse> {
-    declare logger: typeof console.log;
+export default async function ItemWareHouse(createContext: SEAL.createModContext) {
+    const { meta } = await createContext({
+        meta: {
+            id: 'itemWarehouse',
+            scope: 'median',
+            description: '物品仓库修改, 提供更换的精灵因子界面交互',
+        },
+    });
 
-    meta: SEAMod.MetaData = {
-        id: 'itemWarehouse',
-        scope: 'median',
-        type: 'module',
-        description: '物品仓库修改, 提供更换的精灵因子界面交互',
-    };
-
-    moduleName = 'itemWarehouse';
-
-    load() {
+    const load = () => {
         // hookPrototype(itemWarehouse.ItemWarehouse, '', function () {
         //     t = [];
         //     e = PetFragmentXMLInfo.GetShowArrInfos(1);
@@ -104,7 +100,22 @@ class ItemWareHouse implements SEAMod.IModuleMod<itemWarehouse.ItemWarehouse> {
                 }
             }
         });
-    }
-}
+    };
 
-export default ItemWareHouse;
+    let sub: number;
+    const ds = DataSource.gameModule('itemWarehouse', 'load');
+
+    const install = () => {
+        sub = ds.on(load);
+    };
+
+    const uninstall = () => {
+        ds.off(sub);
+    };
+
+    return {
+        meta,
+        install,
+        uninstall,
+    } satisfies SEAL.ModExport;
+}

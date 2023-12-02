@@ -53,6 +53,7 @@ declare global {
                 battle?: Array<Battle>;
                 level?: Array<Level>;
                 command?: Array<Command>;
+                sign?: Array<Sign>;
             };
             install?(): void;
             uninstall?(): void;
@@ -74,8 +75,13 @@ declare global {
         type Command = {
             name: string;
             icon?: string;
-            description?: string;
+            description?: string | (() => string);
             handler: (...args: string[]) => unknown;
+        };
+        type Sign = {
+            name: string;
+            check: () => Promise<number>;
+            run: () => Promise<void>;
         };
     }
 }

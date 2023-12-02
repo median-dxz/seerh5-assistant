@@ -1,8 +1,8 @@
 import { PanelField, PanelTable, useRowData, type PanelColumns } from '@/components/PanelTable';
 import React from 'react';
 
-import { ModStore } from '@/service/mod';
 import { BaseMod, SEAModType, type SignModExport } from '@/service/mod/type';
+import { ModStore } from '@/service/store/mod';
 import { Button, ButtonGroup, CircularProgress } from '@mui/material';
 
 import { SeaTableRow } from '@/components/styled/TableRow';

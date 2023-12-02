@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { VERSION } from '@/constants';
-import { Operator, generateStrategyByName } from 'sea-core/battle';
+import { Operator, autoStrategy, generateStrategyByName, matchNoBloodChain, matchSkillName } from 'sea-core/battle';
 import { Potion } from 'sea-core/constant';
 import type { Skill } from 'sea-core/entity';
 
 const noop = async () => true;
 
-export default async function builtinStrategies(createContext: SEAL.createModContext) {
+export default async function builtinStrategy(createContext: SEAL.createModContext) {
     const { meta } = await createContext({
-        meta: { id: 'builtin-strategies', scope: 'builtin', version: VERSION, description: '内置战斗策略模型' },
+        meta: { id: 'builtin-strategy', scope: 'builtin', version: VERSION, description: '内置战斗策略模型' },
     });
 
     const strategy: Array<SEAL.Strategy> = [
@@ -88,6 +88,72 @@ export default async function builtinStrategies(createContext: SEAL.createModCon
                 }
             },
         },
+        {
+            name: 'LevelXTeamRoom',
+            ...generateStrategyByName(['幻梦芳逝', '剑挥四方', '破寂同灾'], ['蒂朵', '六界帝神', '深渊狱神·哈迪斯']),
+        },
+        {
+            name: 'LevelExpTraining',
+            async resolveMove(round, skills, _pets) {
+                const selfPetName = round.self!.name;
+                let r: Skill | undefined;
+                if (selfPetName === '圣灵谱尼') {
+                    r = skills.find((skill) => skill.name === ['光荣之梦', '神灵救世光'][round.round % 2]);
+                } else if (selfPetName === '蒂朵') {
+                    // console.log(round.other!.hp.remain, round.other!.hp.max, round.other!.hp.remain / round.other!.hp.max);
+                    const hp = round.other!.hp;
+                    if (hp.max > 0 && hp.remain / hp.max <= 0.28) {
+                        r = skills.find((skill) => skill.name === '时空牵绊');
+                    } else {
+                        r = skills.find((skill) => skill.name === ['琴·万律归一', '朵·盛夏咏叹'][round.round % 2]);
+                    }
+                } else {
+                    r = skills.find((skill) => skill.name === '竭血残蝶');
+                }
+                return Operator.useSkill(r?.id);
+            },
+            async resolveNoBlood(round, skills, pets) {
+                const next = matchNoBloodChain(['圣灵谱尼', '幻影蝶', '蒂朵'])(pets, round.self!.catchtime);
+                const r = await Operator.switchPet(next);
+                if (!r) Operator.auto();
+                return true;
+            },
+        },
+        {
+            name: 'LevelStudyTraining',
+            ...generateStrategyByName(['有女初长成', '王·龙子盛威决', '竭血残蝶'], ['幻影蝶', '艾欧丽娅', '千裳']),
+        },
+        {
+            name: 'LevelCourageTower',
+            async resolveMove(round, skills, _pets) {
+                let r = matchSkillName(['王·龙子盛威决', '竭血残蝶', '时空牵绊'])(skills);
+                if (!r) {
+                    r = skills.find((skill) => skill.name === ['光荣之梦', '神灵救世光'][round.round % 2])?.id;
+                }
+                return Operator.useSkill(r);
+            },
+            async resolveNoBlood(round, skills, pets) {
+                const next = matchNoBloodChain(['幻影蝶', '圣灵谱尼', '蒂朵'])(pets, round.self!.catchtime);
+                const r = await Operator.switchPet(next);
+                if (!r) Operator.auto();
+                return true;
+            },
+        },
+        {
+            name: 'LevelTitanHole',
+            ...generateStrategyByName(
+                ['竭血残蝶', '剑挥四方', '破寂同灾', '神灵救世光', '有女初长成'],
+                ['幻影蝶', '六界帝神', '深渊狱神·哈迪斯']
+            ),
+        },
+        {
+            name: 'LevelElfKingsTrial',
+            ...generateStrategyByName(['竭血残蝶', '剑挥四方', '破寂同灾'], ['幻影蝶', '六界帝神', '深渊狱神·哈迪斯']),
+        },
+        {
+            name: 'auto',
+            ...autoStrategy,
+        },
     ];
 
     return {
@@ -95,5 +161,5 @@ export default async function builtinStrategies(createContext: SEAL.createModCon
         exports: {
             strategy,
         },
-    } as SEAL.ModExport;
+    } satisfies SEAL.ModExport;
 }

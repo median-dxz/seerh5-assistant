@@ -50,7 +50,12 @@ RoadMap: **见Readme**
 - [ ] script通过语法树进行高级反混淆, 暂定主要目标是升级 async/await
 - [ ] 心跳包逻辑有点问题, 会被主动断线
 - [ ] 全体治疗基于Promise重写, 不需要加延时
+
+# 低优先级
+
 - [ ] 本地文件缓存
+- [ ] 字体设置
+- [ ] join all pet, 全局pet筛选
 
 quick-access-plugin整合成为新的command
 

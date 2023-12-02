@@ -1,15 +1,26 @@
-import type { SEAMod } from '../../lib/mod';
 import Icon from './all_inclusive.svg?raw';
 
-export default class FightPuni implements SEAMod.IQuickAccessPlugin {
-    logger: typeof console.log;
-    meta: SEAMod.MetaData = {
-        id: '对战谱尼',
-        scope: 'median',
-        type: 'quick-access-plugin',
+export default async function FightPuni(createContext: SEAL.createModContext) {
+    const { meta } = await createContext({
+        meta: {
+            id: '对战谱尼',
+            scope: 'median',
+        },
+    });
+
+    const FightPuni: SEAL.Command = {
+        name: 'FightPuni',
+        icon: Icon,
+        description: '对战谱尼',
+        handler() {
+            FightManager.fightNoMapBoss(6730);
+        },
     };
-    icon = Icon;
-    click() {
-        FightManager.fightNoMapBoss(6730);
-    }
+
+    return {
+        meta,
+        exports: {
+            command: [FightPuni],
+        },
+    } satisfies SEAL.ModExport;
 }
