@@ -1,4 +1,4 @@
-import { loader } from '@sea/launcher/init';
+import { loader } from '@/init';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';

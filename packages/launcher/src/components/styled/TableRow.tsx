@@ -1,5 +1,5 @@
+import { theme } from '@/style';
 import { TableRow, alpha, styled } from '@mui/material';
-import { theme } from '@sea/launcher/style';
 
 export const SeaTableRow = styled(TableRow)`
     transition: ${theme.transitions.create(['background-color'])};

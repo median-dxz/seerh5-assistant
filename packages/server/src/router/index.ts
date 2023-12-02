@@ -11,22 +11,31 @@ export const apiRouter = router({
         const root = path.join(ctx.appRoot, 'mods');
         return findMods(root, root).map((path) => ({ path }));
     }),
-    modConfig: procedure.input(z.string()).query(({ input }) => {
-        const config = new ModConfig(input).load();
-        if (config) {
-            return { config };
-        } else {
-            throw new Error('配置不存在');
-        }
-    }),
-    setModConfig: procedure.input(z.object({ namespace: z.string(), config: z.string() })).mutation(({ input }) => {
-        const { namespace: ns, config: data } = input;
-        const config = new ModConfig(ns);
-        config.save(JSON.parse(data) as Record<string, unknown>);
-        return {
-            success: true,
-        };
-    }),
+    modConfig: procedure
+        .input(
+            z.object({
+                scope: z.string(),
+                id: z.string(),
+            })
+        )
+        .query(({ input: { id, scope } }) => {
+            const config = new ModConfig(`${scope}::${id}`).load();
+            if (config) {
+                return config as unknown;
+            } else {
+                return null;
+            }
+        }),
+    setModConfig: procedure
+        .input(z.object({ scope: z.string(), id: z.string(), config: z.unknown() }))
+        .mutation(({ input }) => {
+            const { id, scope, config: data } = input;
+            const config = new ModConfig(`${scope}::${id}`);
+            config.save(data as Record<string, unknown>);
+            return {
+                success: true,
+            };
+        }),
     launcherConfig: procedure.input(z.string()).query(({ ctx, input: key }) => {
         const { appRoot } = ctx;
         return launcherConfig(key, appRoot);

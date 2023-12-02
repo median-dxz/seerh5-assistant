@@ -18,17 +18,16 @@ export const getAllMods: AllMods = async () => {
     return trpcClient.allMods.query();
 };
 
-type ModConfig = (ns: string) => Promise<{ config?: unknown }>;
-export const getModConfig: ModConfig = async (ns: string) => {
-    return trpcClient.modConfig.query(ns);
+export const getModConfig = async (scope: string, id: string) => {
+    return trpcClient.modConfig.query({ scope, id });
 };
 
-export const setModConfig = async (namespace: string, config: string) => {
-    return trpcClient.setModConfig.mutate({ namespace, config });
+export const setModConfig = async (scope: string, id: string, config: unknown) => {
+    return trpcClient.setModConfig.mutate({ scope, id, config });
 };
 
 export const getConfig = async (key: string) => {
-    return trpcClient.launcherConfig.query(key) as Promise<{ dsl: string[][]; snm: string[][] } | null>;
+    return trpcClient.launcherConfig.query(key) as Promise<unknown>;
 };
 
 export const setConfig = async (key: string, value: unknown) => {

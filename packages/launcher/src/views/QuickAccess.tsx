@@ -4,9 +4,8 @@ import useSWR from 'swr';
 
 import React, { useState } from 'react';
 
-import { SeaQuickAccess } from '@sea/launcher/components/styled/QuickAccess';
-import { ModStore } from '@sea/launcher/service/ModManager';
-import { SEAModType, type QuickAccessPlugin } from '../service/ModManager/type';
+import { SeaQuickAccess } from '@/components/styled/QuickAccess';
+import { ModStore } from '@/service/mod';
 
 const SvgMaker = ({ url, children: _, ...rest }: React.SVGProps<SVGSVGElement> & { url: string }) => {
     if (!url.startsWith('<svg xmlns="http://www.w3.org/2000/svg"')) {

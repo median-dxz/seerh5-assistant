@@ -1,7 +1,7 @@
+import { theme } from '@/style';
 import { SpeedDial as MuiSpeedDial } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { styled } from '@mui/system';
-import { theme } from '@sea/launcher/style';
 
 export const SeaQuickAccess = styled(MuiSpeedDial)`
     & .MuiSpeedDial-actions {
@@ -21,6 +21,7 @@ export const SeaQuickAccess = styled(MuiSpeedDial)`
         }
         &:active {
             padding-top: 4px;
+            box-shadow: none;
         }
     }
     &::after {

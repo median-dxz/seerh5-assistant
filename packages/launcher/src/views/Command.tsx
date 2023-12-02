@@ -1,10 +1,6 @@
-import { Box, Grow } from '@mui/material';
-import { CommandInput } from '@sea/launcher/views/CommandInput';
+import { CommandInput } from '@/views/CommandInput';
+import { Box } from '@mui/material';
 import React from 'react';
-
-interface Props {
-    open: boolean;
-}
 
 const CommandInputRef = React.forwardRef<HTMLDivElement>((props, ref) => (
     <Box
@@ -23,10 +19,4 @@ const CommandInputRef = React.forwardRef<HTMLDivElement>((props, ref) => (
     </Box>
 ));
 
-export function CommandBar(props: Props) {
-    return (
-        <Grow in={props.open} unmountOnExit>
-            <CommandInputRef />
-        </Grow>
-    );
-}
+export const Command = CommandInputRef;

@@ -1,8 +1,8 @@
 import * as core from 'sea-core';
 import { CoreLoader, log } from 'sea-core';
 
-import { EVENT_SEER_READY, IS_DEV } from '@sea/launcher/constants';
-import { setupForLauncher } from '@sea/launcher/features/setup';
+import { EVENT_SEER_READY, IS_DEV } from '@/constants';
+import { setupForLauncher } from '@/features/setup';
 
 // register service work
 if ('serviceWorker' in navigator) {

@@ -3,9 +3,8 @@ import { Button, Divider, Typography } from '@mui/material';
 import { GameConfigRegistry } from 'sea-core';
 import { Engine } from 'sea-core/engine';
 
-import { PanelStateContext } from '@sea/launcher/context/PanelState';
-
-import { PopupMenuButton } from '@sea/launcher/components/PopupMenuButton';
+import { PopupMenuButton } from '@/components/PopupMenuButton';
+import { useMainState } from '@/context/useMainState';
 import React from 'react';
 import useSWR from 'swr';
 import { AnimationMode } from './AnimationMode';
@@ -41,7 +40,7 @@ export function GameController() {
         [userTitle]
     );
 
-    const { setOpen } = React.useContext(PanelStateContext);
+    const { setOpen } = useMainState();
     const openPetBag = React.useCallback(() => {
         ModuleManager.showModule('petBag');
         setOpen(false);

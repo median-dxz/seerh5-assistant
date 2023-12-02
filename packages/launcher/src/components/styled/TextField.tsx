@@ -1,6 +1,6 @@
+import { theme } from '@/style';
 import { TextField as MuiTextField } from '@mui/material';
 import { styled } from '@mui/system';
-import { theme } from '@sea/launcher/style';
 
 export const SeaTextField = styled(MuiTextField)`
     & .MuiFormLabel-root {

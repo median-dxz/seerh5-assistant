@@ -1,8 +1,8 @@
 import { PetFragmentLevelDifficulty as Difficulty, LevelState, PetFragmentLevel, delay } from 'sea-core';
 
+import { SEAContext } from '@/context/SAContext';
+import type { PetFragmentOption } from '@/service/endpoints';
 import { Box, Button, CircularProgress, Dialog, DialogActions, Divider, Typography, alpha } from '@mui/material';
-import { SEAContext } from '@sea/launcher/context/SAContext';
-import type { PetFragmentOption } from '@sea/launcher/service/endpoints';
 import React, { useCallback, useState } from 'react';
 import * as Battle from 'sea-core/battle';
 import { Engine, Socket } from 'sea-core/engine';
@@ -15,8 +15,8 @@ import type {
 } from 'sea-core/level';
 import { PanelTable, type PanelColumns } from '../components/PanelTable/PanelTable';
 
-import { loadBattle } from '@sea/launcher/service/ModManager';
-import { theme } from '@sea/launcher/style';
+import { loadBattle } from '@/service/mod';
+import { theme } from '@/style';
 
 declare namespace pvePetYinzi {
     const DataManager: unknown;
@@ -163,10 +163,10 @@ function getCurPanelInfo() {
     console.log((pvePetYinzi.DataManager as any)._instance.curYinziData);
 }
 
-import { PanelField, useIndex, useRowData } from '@sea/launcher/components/PanelTable';
-import { SeaTableRow } from '@sea/launcher/components/styled/TableRow';
-import * as Endpoints from '@sea/launcher/service/endpoints';
-import { SEAModuleLogger } from '@sea/launcher/utils/logger';
+import { PanelField, useIndex, useRowData } from '@/components/PanelTable';
+import { SeaTableRow } from '@/components/styled/TableRow';
+import * as Endpoints from '@/service/endpoints';
+import { SEAModuleLogger } from '@/utils/logger';
 import { produce } from 'immer';
 import useSWR from 'swr';
 import { LevelBaseNew } from './LevelBaseNew';

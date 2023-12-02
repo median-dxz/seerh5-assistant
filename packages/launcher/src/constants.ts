@@ -11,3 +11,5 @@ export const CMD_MASK = [
     9274, //PET_GET_LEVEL_UP_EXP
     41228, // SYSTEM_TIME_CHECK
 ];
+
+export const MOD_DEFAULT_SCOPE = 'external';

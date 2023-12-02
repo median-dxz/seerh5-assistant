@@ -6,13 +6,12 @@ import { configRoot } from './PetCacheManager.ts';
 export class ModConfig {
     data: Record<string, Record<string, object>> | undefined;
 
-    type;
     id;
     author;
 
     constructor(ns: string) {
-        const { type, id, author } = praseNamespace(ns);
-        this.type = type;
+        const { id, author } = praseNamespace(ns);
+
         this.id = id;
         this.author = author;
 
@@ -25,17 +24,14 @@ export class ModConfig {
     }
 
     load() {
-        return this.data?.[this.type]?.[this.id];
+        return this.data?.[this.id];
     }
 
     save(data: Record<string, any>) {
         this.data = {
             ...this.data,
-            [this.type]: {
-                ...this.data?.[this.type],
-                [this.id]: {
-                    ...data,
-                },
+            [this.id]: {
+                ...data,
             },
         };
         const content = toml.stringify(this.data);
@@ -44,10 +40,9 @@ export class ModConfig {
     }
 }
 
-function praseNamespace(ns: string): { type: string; author: string; id: string; } {
-    const [type, author, id] = ns.split('::');
+function praseNamespace(ns: string): { author: string; id: string } {
+    const [author, id] = ns.split('::');
     return {
-        type,
         author,
         id,
     };

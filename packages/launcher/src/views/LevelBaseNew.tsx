@@ -1,5 +1,5 @@
+import { LabeledLinearProgress } from '@/components/LabeledProgress';
 import { DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import { LabeledLinearProgress } from '@sea/launcher/components/LabeledProgress';
 import React from 'react';
 
 import { LevelManager as SEALevelManager, type ILevelRunner } from 'sea-core';

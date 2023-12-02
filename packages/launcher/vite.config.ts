@@ -71,7 +71,7 @@ export default defineConfig(({ command, mode }) => {
         ],
         resolve: {
             alias: {
-                '@sea/launcher': path.resolve(dirname, 'src'),
+                '@': path.resolve(dirname, 'src'),
             },
         },
     };

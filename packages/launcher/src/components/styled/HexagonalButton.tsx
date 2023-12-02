@@ -1,7 +1,7 @@
+import { theme } from '@/style';
 import type { ButtonBaseProps } from '@mui/material';
 import ButtonBase from '@mui/material/ButtonBase';
 import { styled } from '@mui/system';
-import { theme } from '@sea/launcher/style';
 import * as React from 'react';
 import { forwardRef, type ForwardedRef, type PropsWithChildren } from 'react';
 

@@ -1,8 +1,6 @@
+import * as SEAEndpoint from '@/service/endpoints';
 import { Button } from '@mui/material';
 import { Box } from '@mui/system';
-import { ct } from '@sea/launcher/context/ct';
-import { SEAModManager } from '@sea/launcher/service/ModManager';
-import * as SEAEndpoint from '@sea/launcher/service/endpoints';
 import React from 'react';
 import { PetDataManger, PetPosition } from 'sea-core';
 
@@ -53,22 +51,7 @@ export function QuickCommand() {
             >
                 dump ct(实验性功能)
             </Button>
-            <Button
-                onClick={async () => {
-                    SEAModManager.teardown();
-                    SEAModManager.setup(await SEAModManager.fetchMods());
-                }}
-            >
-                重载所有模组(开发者功能)
-            </Button>
-            <Button
-                onClick={async () => {
-                    const r = await ct('魔钰');
-                    console.log(r);
-                }}
-            >
-                测试专用
-            </Button>
+            <Button onClick={async () => {}}>测试专用</Button>
         </Box>
     );
 }

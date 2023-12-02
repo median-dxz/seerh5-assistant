@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
 
 import React from 'react';
-import { TextContext } from './AutoBattle';
+import { TextContext } from './StateView';
 
 export interface TextEditDialogProps {
     open: boolean;

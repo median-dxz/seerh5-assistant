@@ -1,6 +1,6 @@
+import { theme } from '@/style';
 import { Autocomplete as MuiAutocomplete } from '@mui/material';
 import { styled } from '@mui/system';
-import { theme } from '@sea/launcher/style';
 import React from 'react';
 
 export const SeaAutocomplete = styled<typeof MuiAutocomplete>(({ className, ...props }) => (

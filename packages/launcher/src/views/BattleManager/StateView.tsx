@@ -2,12 +2,10 @@ import { Button, Divider, FormControlLabel, Switch } from '@mui/material';
 
 import React, { useState, type ReactNode } from 'react';
 
-import { PanelField, PanelTable, useRowData } from '@sea/launcher/components/PanelTable';
-import { useIndex } from '@sea/launcher/components/PanelTable/usePanelTableData';
-import { SeaTableRow } from '@sea/launcher/components/styled/TableRow';
-import { SEAContext } from '@sea/launcher/context/SAContext';
-import * as SALocalStorage from '@sea/launcher/utils/LocalStorage';
-import { TextEditDialog } from '@sea/launcher/views/AutoBattle/TextEditDialog';
+import { PanelField, PanelTable, useRowData } from '@/components/PanelTable';
+import { useIndex } from '@/components/PanelTable/usePanelTableData';
+import { SeaTableRow } from '@/components/styled/TableRow';
+import { TextEditDialog } from '@/views/BattleManager/TextEditDialog';
 import { NOOP } from 'sea-core';
 import * as Battle from 'sea-core/battle';
 
@@ -27,16 +25,12 @@ const handleUpdated = (arr: unknown[], index: number, value: string) => {
     arr[index] = value.split(',').map((s) => s.trim());
 };
 
-const strategyStorage = SALocalStorage.BattleStrategy;
-
 // 待编辑文本的上下文
 export const TextContext = React.createContext(
     {} as { text: string; setText: React.Dispatch<React.SetStateAction<string>> }
 );
 
-export function AutoBattle() {
-    const { Battle: battleContext } = React.useContext(SEAContext);
-    const { enableAuto: auto, updateAuto } = battleContext;
+export function BattleManager() {
     const [strategy, setStrategy] = useState(strategyStorage.ref);
 
     const [open, setOpen] = useState(false);

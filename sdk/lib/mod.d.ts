@@ -47,14 +47,6 @@ export namespace SEAMod {
         config?: TOption;
     }
 
-    interface IBattleMod extends Mod {
-        pets: number[];
-        beforeBattle?: () => Promise<void>;
-        strategy: string;
-    }
-
-    interface IStrategy extends Mod, MoveStrategy {}
-
     /** 注意如果注册了监听器之类，必须在destroy中进行清理操作 */
     interface IModuleMod<ModuleType extends BaseModule> extends Mod {
         moduleName: string;

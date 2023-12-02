@@ -1,7 +1,7 @@
+import { PanelField, PanelTable, useRowData, type PanelColumns } from '@/components/PanelTable';
 import { Button, Toolbar } from '@mui/material';
-import { PanelField, PanelTable, useRowData, type PanelColumns } from '@sea/launcher/components/PanelTable';
 
-import { SeaTableRow } from '@sea/launcher/components/styled/TableRow';
+import { SeaTableRow } from '@/components/styled/TableRow';
 import { produce } from 'immer';
 import * as React from 'react';
 import type { AnyFunction, HookDataMap } from 'sea-core';

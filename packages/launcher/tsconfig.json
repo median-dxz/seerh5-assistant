@@ -14,10 +14,10 @@
         "noEmit": true,
         "composite": true,
         "paths": {
-            "@sea/launcher": [
+            "@": [
                 "./src"
             ],
-            "@sea/launcher/*": [
+            "@/*": [
                 "./src/*"
             ],
         },
@@ -28,7 +28,8 @@
         ]
     },
     "include": [
-        "./src",
+        "./src/sea-launcher.d.ts",
+        "./src/**/*"
     ],
     "references": [
         {
