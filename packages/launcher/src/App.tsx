@@ -1,12 +1,16 @@
-import { CssBaseline } from '@mui/material';
+import { CssBaseline, Grow } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
 import { DataSource, Hook, Subscription } from 'sea-core';
 
 import { SEALContextProvider } from '@/context/SEALContextProvider';
 
+import { ModLoader } from '@/service/mod/ModLoader';
+
+import { Command } from '@/views/Command';
 import { Main } from '@/views/Main';
 import { MainButton } from '@/views/Main/MainButton';
+import { QuickAccess } from '@/views/QuickAccess';
 
 export default function App() {
     const [commandOpen, toggleCommandOpen] = useState(false);
@@ -41,10 +45,11 @@ export default function App() {
     return (
         <SEALContextProvider>
             <CssBaseline />
-            {/* {!fighting && <QuickAccess />} */}
-            {/* <Grow in={commandOpen} unmountOnExit>
+            <ModLoader />
+            {!fighting && <QuickAccess />}
+            <Grow in={commandOpen} unmountOnExit>
                 <Command />
-            </Grow> */}
+            </Grow>
             <MainButton />
             <Main />
         </SEALContextProvider>

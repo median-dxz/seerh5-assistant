@@ -1,4 +1,4 @@
-import type { ILevelRunner, LevelData, LevelMeta, MoveStrategy } from 'sea-core';
+import type { ILevelRunner, MoveStrategy } from 'sea-core';
 
 /* eslint-disable */
 declare module 'sea-core' {
@@ -28,6 +28,7 @@ declare global {
             mutate: (recipe: (draft: TConfig) => void) => void;
 
             ct(...pets: string[]): number[];
+            battle(name: string): ILevelBattle;
         }
 
         type Meta = {
@@ -59,6 +60,13 @@ declare global {
             uninstall?(): void;
         }
 
+        /** 关卡的静态数据, 实现时可以使用getter来方便获取 */
+        interface LevelMeta {
+            id: string;
+            name: string;
+            maxTimes: number;
+        }
+
         type Strategy = MoveStrategy & { name: string };
         type Battle = {
             name: string;
@@ -66,12 +74,9 @@ declare global {
             pets: string[];
             beforeBattle?: () => Promise<void>;
         };
-        type Level<TData extends LevelData = LevelData, TMeta extends LevelMeta = LevelMeta> = Omit<
-            ILevelRunner<TData, TMeta>,
-            'selectBattle'
-        > & {
-            selectBattle: () => string;
-        };
+
+        type Level = { new (option: any): ILevelRunner; meta: LevelMeta };
+
         type Command = {
             name: string;
             icon?: string;

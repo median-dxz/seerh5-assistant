@@ -1,12 +1,12 @@
 /* eslint-disable */
-import { VERSION } from '@/constants';
+import { MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
 import { PetDataManger, PetElement, Socket, delay } from 'sea-core';
 
 declare var pvePetYinzi: any;
 
 export default async function builtinCommand(createContext: SEAL.createModContext) {
     const context = await createContext({
-        meta: { id: 'builtin-command', scope: 'builtin', version: VERSION, description: '内置命令组' },
+        meta: { id: 'builtin-command', scope: MOD_SCOPE_BUILTIN, version: VERSION, description: '内置命令组' },
     });
 
     const { meta, logger } = context;
@@ -92,6 +92,24 @@ export default async function builtinCommand(createContext: SEAL.createModContex
             name: 'getClickTarget',
             handler() {
                 LevelManager.stage.once(egret.TouchEvent.TOUCH_BEGIN, (e: egret.TouchEvent) => logger(e.target), null);
+            },
+        },
+        {
+            name: '关闭主页(挂机模式)',
+            handler() {
+                ModuleManager.currModule.hide();
+            },
+        },
+        {
+            name: '开启主页(恢复)',
+            handler() {
+                ModuleManager.currModule.show();
+            },
+        },
+        {
+            name: '返回主页(关闭所有模块)',
+            handler() {
+                ModuleManager.CloseAll();
             },
         },
     ];

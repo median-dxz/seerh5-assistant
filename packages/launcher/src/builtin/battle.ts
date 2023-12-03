@@ -1,9 +1,9 @@
-import { VERSION } from '@/constants';
+import { MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
 import { Engine } from 'sea-core/engine';
 
 export default async function builtinBattle(createContext: SEAL.createModContext) {
     const context = await createContext({
-        meta: { id: 'builtin-battle', scope: 'builtin', version: VERSION, description: '内置战斗模型' },
+        meta: { id: 'builtin-battle', scope: MOD_SCOPE_BUILTIN, version: VERSION, description: '内置战斗模型' },
     });
 
     const { ct, meta } = context;
@@ -70,6 +70,11 @@ export default async function builtinBattle(createContext: SEAL.createModContext
         {
             name: 'LevelTitanHole',
             pets: ['幻影蝶', '六界帝神', '深渊狱神·哈迪斯', '圣灵谱尼', '艾欧丽娅'],
+            strategy: 'LevelTitanHole',
+        },
+        {
+            name: 'LevelTitanHole_1',
+            pets: ['艾欧丽娅', '幻影蝶', '六界帝神', '深渊狱神·哈迪斯', '圣灵谱尼'],
             strategy: 'LevelTitanHole',
         },
         {

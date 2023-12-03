@@ -3,6 +3,8 @@ import path from 'path';
 import * as toml from 'smol-toml';
 import { configRoot } from './PetCacheManager.ts';
 
+import superjson, { type SuperJSONResult } from 'superjson';
+
 export class ModConfig {
     data: Record<string, Record<string, object>> | undefined;
 
@@ -18,8 +20,8 @@ export class ModConfig {
         const configFile = configFilePath(author);
         if (fs.existsSync(configFile)) {
             const content = fs.readFileSync(configFile, 'utf-8');
-            const config: any = toml.parse(content);
-            this.data = config;
+            const config = superjson.deserialize(toml.parse(content) as unknown as SuperJSONResult);
+            this.data = config as typeof this.data;
         }
     }
 
@@ -34,8 +36,8 @@ export class ModConfig {
                 ...data,
             },
         };
-        const content = toml.stringify(this.data);
-        console.log(content, this.data);
+
+        const content = toml.stringify(superjson.serialize(this.data));
         fs.writeFileSync(configFilePath(this.author), content);
     }
 }

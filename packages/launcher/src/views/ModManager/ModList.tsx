@@ -26,6 +26,18 @@ export function ModListItem({ mod }: ModListItemProps) {
             <Typography component="span" color="GrayText" sx={{ float: 'right' }} fontSize={16}>
                 {mod.strategy.length ? `策略: ${mod.strategy.length}` : ''}
             </Typography>
+            <Typography component="span" color="GrayText" sx={{ float: 'right' }} fontSize={16}>
+                {mod.battle.length ? `战斗: ${mod.battle.length}` : ''}
+            </Typography>
+            <Typography component="span" color="GrayText" sx={{ float: 'right' }} fontSize={16}>
+                {mod.level.length ? `关卡: ${mod.level.length}` : ''}
+            </Typography>
+            <Typography component="span" color="GrayText" sx={{ float: 'right' }} fontSize={16}>
+                {mod.sign.length ? `发包: ${mod.sign.length}` : ''}
+            </Typography>
+            <Typography component="span" color="GrayText" sx={{ float: 'right' }} fontSize={16}>
+                {mod.command.length ? `命令: ${mod.command.length}` : ''}
+            </Typography>
         </>
     );
     return (
@@ -36,7 +48,11 @@ export function ModListItem({ mod }: ModListItemProps) {
                 //TODO open mod detail
             }}
         >
-            <ListItemText primary={title} secondary={description} />
+            <ListItemText
+                primary={title}
+                secondary={description}
+                primaryTypographyProps={{ fontFamily: ['Open Sans', 'MFShangHei'] }}
+            />
         </ListItemButton>
     );
 }

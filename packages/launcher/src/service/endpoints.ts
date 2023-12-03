@@ -1,3 +1,4 @@
+import type { PetFragmentOptionRaw } from '@/views/Automation/PetFragmentLevel';
 import type { ApiRouter } from '@sea/server';
 import { createTRPCProxyClient, createWSClient, wsLink } from '@trpc/client';
 import superjson from 'superjson';
@@ -52,13 +53,6 @@ export const addCatchTime = async (name: string, time: number) => {
     return trpcClient.addCachePet.mutate([name, time]);
 };
 
-export interface PetFragmentOption {
-    id: number;
-    difficulty: number;
-    sweep: boolean;
-    battle: string[];
-}
-
 export const getPetFragmentConfig = async () => {
-    return trpcClient.petFragmentLevel.query() as Promise<PetFragmentOption[]>;
+    return trpcClient.petFragmentLevel.query() as Promise<PetFragmentOptionRaw[]>;
 };

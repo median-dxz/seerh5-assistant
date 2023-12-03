@@ -1,14 +1,14 @@
 import { useModStore } from '@/context/useModStore';
-import type { StrategyInstance } from '@/service/store/strategy';
+import type { LevelInstance } from '@/service/store/level';
 import { List, ListItemButton, ListItemText, Typography, alpha, type ListProps } from '@mui/material';
 import React from 'react';
 
-interface StrategyListItemProps {
-    strategy: StrategyInstance;
+interface levelListItemProps {
+    level: LevelInstance;
 }
 
-export function StrategyListItem({ strategy }: StrategyListItemProps) {
-    const { ownerMod, name } = strategy;
+export function LevelListItem({ level }: levelListItemProps) {
+    const { ownerMod, level: _level, name, id } = level;
     const title = (
         <>
             <Typography component="span" sx={{ paddingRight: '1em' }} fontSize={24}>
@@ -20,7 +20,7 @@ export function StrategyListItem({ strategy }: StrategyListItemProps) {
     const description = (
         <>
             <Typography component="span" fontSize={16}>
-                {ownerMod}
+                {ownerMod} {id}
             </Typography>
         </>
     );
@@ -28,7 +28,7 @@ export function StrategyListItem({ strategy }: StrategyListItemProps) {
         <ListItemButton
             sx={{ height: '72px', border: (theme) => `1px solid ${alpha(theme.palette.primary.main, 0.12)}` }}
             onClick={() => {
-                console.log(strategy);
+                console.log(level);
             }}
         >
             <ListItemText primary={title} secondary={description} />
@@ -36,8 +36,8 @@ export function StrategyListItem({ strategy }: StrategyListItemProps) {
     );
 }
 
-export function StrategyList(listProps: ListProps) {
-    const { strategyStore: _store } = useModStore();
+export function LevelList(listProps: ListProps) {
+    const { levelStore: _store } = useModStore();
     const store = Array.from(_store.values());
     return (
         <List
@@ -48,8 +48,8 @@ export function StrategyList(listProps: ListProps) {
             }}
             {...listProps}
         >
-            {store.map((strategy) => {
-                return <StrategyListItem key={strategy.name} strategy={strategy} />;
+            {store.map((level) => {
+                return <LevelListItem key={level.name} level={level} />;
             })}
         </List>
     );

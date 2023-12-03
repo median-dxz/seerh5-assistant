@@ -12,7 +12,7 @@ const MainBackdrop = ({ open, children }: PropsWithChildren<{ open: boolean }>) 
         open={open}
         sx={{
             bgcolor: alpha('#000', 0.75),
-            backdropFilter: 'blur(4px)',
+            backdropFilter: 'blur(12px)',
             zIndex: (theme) => theme.zIndex.appBar - 1,
         }}
     >

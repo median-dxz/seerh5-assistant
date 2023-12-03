@@ -1,5 +1,7 @@
-import { MOD_DEFAULT_SCOPE } from '@/constants';
+import { MOD_SCOPE_DEFAULT } from '@/constants';
 import * as endpoints from '@/service/endpoints';
+import * as ctStore from '@/service/store/CatchTimeBinding';
+import { store as battleStore } from '@/service/store/battle';
 import { CommonLogger, LogStyle } from '@/utils/logger';
 
 type ProxyObjectRef<T extends object> = T & { ref: T };
@@ -36,7 +38,7 @@ const getLogger = (id: string) => CommonLogger(id, 'info', LogStyle.mod);
 export function buildMeta(meta: Partial<Meta>) {
     let { scope, version } = meta;
 
-    scope = scope ?? MOD_DEFAULT_SCOPE;
+    scope = scope ?? MOD_SCOPE_DEFAULT;
     version = version ?? '0.0.0';
 
     return { ...meta, scope, version } as Meta;
@@ -70,11 +72,23 @@ async function buildConfig({ scope, id }: { id: string; scope: string }, default
 }
 
 export async function createModContext(options: CreateContextOptions) {
+    const ct = (...pets: string[]) => {
+        return pets.map((pet) => ctStore.ctByName(pet));
+    };
+
+    const battle = (name: string) => {
+        const r = battleStore.get(name);
+        if (!r) {
+            throw new Error(`Battle ${name} not found`);
+        }
+        return r.battle();
+    };
+
     const meta = buildMeta(options.meta);
     options.meta = meta;
 
     const logger = getLogger(meta.id);
     const config = await buildConfig(meta, options.defaultConfig);
 
-    return { meta, logger, ...config } as SEAL.ModContext<unknown>;
+    return { meta, logger, ct, battle, ...config } as SEAL.ModContext<unknown>;
 }

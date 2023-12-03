@@ -1,11 +1,12 @@
 import MenuOpen from '@mui/icons-material/MenuOpen';
 import { SpeedDialAction, SvgIcon, type SpeedDialActionProps } from '@mui/material';
-import useSWR from 'swr';
 
 import React, { useState } from 'react';
 
 import { SeaQuickAccess } from '@/components/styled/QuickAccess';
-import { ModStore } from '@/service/store/mod';
+import { useModStore } from '@/context/useModStore';
+import type { CommandInstance } from '@/service/store/command';
+import type { AnyFunction } from 'sea-core';
 
 const SvgMaker = ({ url, children: _, ...rest }: React.SVGProps<SVGSVGElement> & { url: string }) => {
     if (!url.startsWith('<svg xmlns="http://www.w3.org/2000/svg"')) {
@@ -35,21 +36,23 @@ const SvgWrapper = (url: string) => {
 
 const QuickAccessPluginAction: React.FC<
     {
-        plugin: QuickAccessPlugin;
+        plugin: CommandInstance;
         setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     } & SpeedDialActionProps
 > = ({ plugin, setOpen, FabProps, ...rest }) => {
-    const fetcher = () => {
-        if (plugin.showAsync) {
-            return plugin.showAsync();
+    const getTitle = () => {
+        if (plugin.description) {
+            if (typeof plugin.description === 'string') {
+                return plugin.description;
+            } else {
+                return (plugin.description as AnyFunction)() as string;
+            }
         } else {
-            return plugin.show?.() ?? plugin.meta.id;
+            return plugin.name;
         }
     };
 
-    const { data: title, mutate } = useSWR(`ds://mod/quick-access-plugin/${plugin.namespace}`, fetcher);
-
-    console.log(rest);
+    const [title, setTitle] = useState(getTitle);
 
     return (
         <SpeedDialAction
@@ -61,13 +64,19 @@ const QuickAccessPluginAction: React.FC<
                     color: (theme) => theme.palette.primary.main,
                 },
             }}
-            icon={<SvgIcon component={SvgWrapper(plugin.icon)} inheritViewBox></SvgIcon>}
+            icon={<SvgIcon component={SvgWrapper(plugin.icon!)} inheritViewBox></SvgIcon>}
             tooltipTitle={title}
             onClick={() => {
-                plugin.click();
-                if (plugin.showAsync) {
-                    mutate(plugin.showAsync);
+                const r = plugin.handler();
+
+                if (r instanceof Promise) {
+                    r.then(() => {
+                        setTitle(getTitle());
+                    });
+                } else {
+                    setTitle(getTitle());
                 }
+
                 setOpen(true);
             }}
             {...rest}
@@ -76,13 +85,9 @@ const QuickAccessPluginAction: React.FC<
 };
 
 export function QuickAccess() {
-    const plugins = Array.from(ModStore)
-        .filter(([_, mod]) => {
-            return mod.meta.type === SEAModType.QUICK_ACCESS_PLUGIN;
-        })
-        .map(([_, mod]) => mod as QuickAccessPlugin);
-
     const [open, setOpen] = useState(false);
+    const { commandStore } = useModStore();
+    const plugins = Array.from(commandStore.values()).filter((command) => command.icon);
 
     return (
         <SeaQuickAccess
@@ -114,7 +119,7 @@ export function QuickAccess() {
             }}
         >
             {plugins.map((plugin) => (
-                <QuickAccessPluginAction key={plugin.namespace} plugin={plugin} setOpen={setOpen} />
+                <QuickAccessPluginAction key={`${plugin.ownerMod}::${plugin.name}`} plugin={plugin} setOpen={setOpen} />
             ))}
         </SeaQuickAccess>
     );

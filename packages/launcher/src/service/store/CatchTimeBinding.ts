@@ -3,7 +3,7 @@ import * as Endpoints from '../endpoints';
 
 const JIM_ID = 3582;
 
-let store = new Map<string, number>();
+export let store = new Map<string, number>();
 const lookup = new Map<number, string>();
 
 const petFilter = (v: { id: number; level: number; posi: number }) =>

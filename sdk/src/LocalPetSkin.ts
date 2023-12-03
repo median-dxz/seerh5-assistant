@@ -99,7 +99,7 @@ export default async function LocalPetSkin(createContext: SEAL.createModContext)
             callback();
         };
     }
-    
+
     return {
         meta,
         install,

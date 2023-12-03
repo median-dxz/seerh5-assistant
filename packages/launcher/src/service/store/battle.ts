@@ -1,15 +1,46 @@
-export const loadBattle = async (id: string) => {
-    const BattleConfig = ModStore.get(`${SEAModType.BATTLE_MOD}::${scope}::${id}`);
-    if (!BattleConfig) {
-        throw new Error('未找到BATTLE');
-    }
-    if (BattleConfig.meta.type !== SEAModType.BATTLE_MOD) {
-        throw new Error('该Mod不是BATTLE类型');
-    }
-    const battleExport = (BattleConfig as BattleMod).export;
-    return {
-        beforeBattle: battleExport.beforeBattle,
-        pets: await ct(...battleExport.pets),
-        strategy: loadStrategy(battleExport.strategy, scope),
-    } satisfies ILevelBattleStrategy;
-};
+import type { ILevelBattle } from 'sea-core';
+
+import { ctByName } from './CatchTimeBinding';
+import { store as strategyStore } from './strategy';
+
+export interface BattleInstance {
+    name: string;
+    battle: () => ILevelBattle;
+    ownerMod: string;
+    pets: string[];
+    strategy: string;
+}
+
+export const store = new Map<string, BattleInstance>();
+
+export function add(mod: string, _battle: SEAL.Battle) {
+    const { name, pets, strategy: _strategy, beforeBattle } = _battle;
+    const instance: BattleInstance = {
+        battle: () => {
+            const strategyInstance = strategyStore.get(_strategy);
+            if (!strategyInstance) {
+                throw new Error(`Strategy ${strategyInstance} not found`);
+            }
+            if (!pets.every(ctByName)) {
+                throw new Error(`Pets ${pets.join(', ')} not all exist`);
+            }
+            return {
+                name,
+                pets: pets.map(ctByName) as number[],
+                strategy: strategyInstance.strategy,
+                beforeBattle,
+            };
+        },
+        name,
+        ownerMod: mod,
+        pets,
+        strategy: _strategy,
+    };
+    store.set(name, instance);
+}
+
+export function tryRemove(name: string) {
+    const instance = store.get(name);
+    if (!instance) return;
+    store.delete(name);
+}

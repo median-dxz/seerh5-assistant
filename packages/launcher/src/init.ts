@@ -19,8 +19,7 @@ if (IS_DEV) {
 }
 
 // init launcher
-const setupCanvasTabIndex = () => {
+loader.addSetupFn('afterFirstShowMainPanel', () => {
     const canvas: HTMLCanvasElement = document.querySelector('#egret_player_container canvas')!;
     canvas.setAttribute('tabindex', '-1');
-};
-loader.addSetupFn('afterFirstShowMainPanel', setupCanvasTabIndex);
+});

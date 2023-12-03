@@ -56,6 +56,7 @@ RoadMap: **见Readme**
 - [ ] 本地文件缓存
 - [ ] 字体设置
 - [ ] join all pet, 全局pet筛选
+- [ ] 根组件渲染提前到Core.init
 
 quick-access-plugin整合成为新的command
 

@@ -1,13 +1,13 @@
 import { Stack } from '@mui/material';
 import React from 'react';
+import { BattleList } from './BattleList';
 import { Header } from './Header';
-import { StrategyList } from './StrategyList';
 
-export function StrategyView() {
+export function BattleView() {
     return (
         <Stack>
             <Header />
-            <StrategyList />
+            <BattleList />
         </Stack>
     );
 }

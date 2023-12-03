@@ -6,13 +6,21 @@ type ModModuleExport = (createContext: typeof createModContext) => Promise<Mod>;
 
 import type { AnyFunction } from 'sea-core';
 import { getNamespace } from '../mod/context';
-import * as StrategyStore from '../store/strategy';
+import * as battleStore from '../store/battle';
+import * as commandStore from '../store/command';
+import * as levelStore from '../store/level';
+import * as signStore from '../store/sign';
+import * as strategyStore from '../store/strategy';
 
 export class ModInstance {
     meta: SEAL.Meta & { namespace: string };
     finalizers: AnyFunction[] = [];
 
     strategy: string[] = [];
+    battle: string[] = [];
+    level: string[] = [];
+    sign: string[] = [];
+    command: string[] = [];
 
     constructor(meta: SEAL.Meta) {
         this.meta = { ...meta, namespace: getNamespace(meta) };
@@ -26,12 +34,64 @@ export class ModInstance {
         if (!strategy) return;
 
         strategy.forEach((strategy) => {
-            StrategyStore.add(this.meta.namespace, strategy);
+            strategyStore.add(this.meta.namespace, strategy);
             this.strategy.push(strategy.name);
         });
 
         this.finalizers.push(() => {
-            this.strategy.forEach((name) => StrategyStore.tryRemove(name));
+            this.strategy.forEach((name) => strategyStore.tryRemove(name));
+        });
+    }
+
+    tryRegisterBattle(battle?: SEAL.Battle[]) {
+        if (!battle) return;
+
+        battle.forEach((battle) => {
+            battleStore.add(this.meta.namespace, battle);
+            this.battle.push(battle.name);
+        });
+
+        this.finalizers.push(() => {
+            this.battle.forEach((name) => battleStore.tryRemove(name));
+        });
+    }
+
+    tryRegisterLevel(level?: SEAL.Level[]) {
+        if (!level) return;
+
+        level.forEach((level) => {
+            levelStore.add(this.meta.namespace, level);
+            this.level.push(level.meta.name);
+        });
+
+        this.finalizers.push(() => {
+            this.level.forEach((name) => levelStore.tryRemove(name));
+        });
+    }
+
+    tryRegisterSign(sign?: SEAL.Sign[]) {
+        if (!sign) return;
+
+        sign.forEach((sign) => {
+            signStore.add(this.meta.namespace, sign);
+            this.sign.push(sign.name);
+        });
+
+        this.finalizers.push(() => {
+            this.sign.forEach((name) => signStore.tryRemove(name));
+        });
+    }
+
+    tryRegisterCommand(command?: SEAL.Command[]) {
+        if (!command) return;
+
+        command.forEach((command) => {
+            commandStore.add(this.meta.namespace, command);
+            this.command.push(command.name);
+        });
+
+        this.finalizers.push(() => {
+            this.command.forEach((name) => commandStore.tryRemove(name));
         });
     }
 
@@ -49,6 +109,7 @@ export async function fetchMods() {
         import(/* @vite-ignore */ `/mods/${path}?r=${Math.random()}`)
             .then((module) => module.default as ModModuleExport)
             .then((mod) => mod(createModContext))
+            .then()
     );
 
     // builtin strategy
@@ -60,14 +121,27 @@ export async function fetchMods() {
 
     // builtin battle
     promises.push(
-        import('@/builtin/strategy')
+        import('@/builtin/battle')
             .then((module) => module.default as ModModuleExport)
             .then((mod) => mod(createModContext))
     );
 
     // builtin level
     promises.push(
-        import('@/builtin/level')
+        import('@/builtin/realm')
+            .then((module) => module.default as ModModuleExport)
+            .then((mod) => mod(createModContext))
+    );
+
+    promises.push(
+        import('@/builtin/petFragment')
+            .then((module) => module.default as ModModuleExport)
+            .then((mod) => mod(createModContext))
+    );
+
+    // builtin command
+    promises.push(
+        import('@/builtin/command')
             .then((module) => module.default as ModModuleExport)
             .then((mod) => mod(createModContext))
     );
@@ -90,8 +164,13 @@ export function setup({ install, uninstall, meta, exports }: Mod) {
         console.error(`模组安装失败: ${ins.meta.namespace}`, error);
     }
 
-    // 加载导出的策略
+    // 加载导出的内容
     ins.tryRegisterStrategy(exports?.strategy);
+    ins.tryRegisterBattle(exports?.battle);
+    ins.tryRegisterLevel(exports?.level);
+    ins.tryRegisterCommand(exports?.command);
+    ins.tryRegisterSign(exports?.sign);
+
 
     store.set(ins.meta.namespace, ins);
 }
@@ -107,31 +186,3 @@ export function teardown() {
     });
     store.clear();
 }
-
-// try {
-//     mod.deactivate?.();
-//     // log(`卸载模组: ${mod.meta.id}`);
-// } catch (error) {
-//     console.error(`卸载模组失败: ${mod.meta.id}`, error);
-// }
-
-// const subscription = new Subscription();
-// const $module = DataSource.gameModule;
-
-// moduleMod.activate = function () {
-//     if (this.load) {
-//         subscription.on($module(this.moduleName, 'load'), this.load.bind(this));
-//     }
-//     if (this.show) {
-//         subscription.on($module(this.moduleName, 'show'), this.show.bind(this));
-//     }
-//     if (this.mainPanel) {
-//         subscription.on($module(this.moduleName, 'mainPanel'), this.mainPanel.bind(this));
-//     }
-//     if (this.destroy) {
-//         subscription.on($module(this.moduleName, 'destroy'), this.destroy.bind(this));
-//     }
-// };
-// moduleMod.deactivate = function () {
-//     subscription.dispose();
-// };

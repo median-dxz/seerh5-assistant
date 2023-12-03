@@ -1,32 +1,35 @@
-import type { ModInstance } from '@/service/mod/type';
-import * as service from '@/service/store/mod';
-import { produce, setAutoFreeze } from 'immer';
-import React, { useEffect, useState, type PropsWithChildren } from 'react';
-import { NOOP } from 'sea-core';
-import { ModStore, type SyncStore } from './useModStore';
+import * as ctService from '@/service/store/CatchTimeBinding';
+import * as battleService from '@/service/store/battle';
+import * as commandService from '@/service/store/command';
+import * as levelService from '@/service/store/level';
+import * as modService from '@/service/store/mod';
+import * as signService from '@/service/store/sign';
+import * as strategyService from '@/service/store/strategy';
+
+import React, { useCallback, useState, type PropsWithChildren } from 'react';
+import { ModStore } from './useModStore';
 
 export function ModStoreProvider({ children }: PropsWithChildren<object>) {
-    const [store, setStore] = useState(new Map<string, ModInstance>());
-    const sync: SyncStore = (store) => {
-        setAutoFreeze(false);
-        setStore(produce(store, NOOP));
-        setAutoFreeze(true);
-    };
+    const [_, setSignal] = useState({});
 
-    useEffect(() => {
-        // 加载模组
-        let active = true;
-        service.fetchMods().then((mods) => {
-            active && mods.forEach(service.setup);
-            sync(service.store);
-        });
+    const sync = useCallback(() => {
+        setSignal({});
+    }, []);
 
-        return () => {
-            active = false;
-            service.teardown();
-            sync(service.store);
-        };
-    });
-
-    return <ModStore.Provider value={{ store, sync }}>{children}</ModStore.Provider>;
+    return (
+        <ModStore.Provider
+            value={{
+                store: modService.store,
+                sync,
+                ctStore: ctService.store,
+                strategyStore: strategyService.store,
+                battleStore: battleService.store,
+                levelStore: levelService.store,
+                commandStore: commandService.store,
+                signStore: signService.store,
+            }}
+        >
+            {children}
+        </ModStore.Provider>
+    );
 }

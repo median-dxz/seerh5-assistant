@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { VERSION } from '@/constants';
+import { MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
 import { Operator, autoStrategy, generateStrategyByName, matchNoBloodChain, matchSkillName } from 'sea-core/battle';
 import { Potion } from 'sea-core/constant';
 import type { Skill } from 'sea-core/entity';
@@ -8,7 +8,7 @@ const noop = async () => true;
 
 export default async function builtinStrategy(createContext: SEAL.createModContext) {
     const { meta } = await createContext({
-        meta: { id: 'builtin-strategy', scope: 'builtin', version: VERSION, description: '内置战斗策略模型' },
+        meta: { id: 'builtin-strategy', scope: MOD_SCOPE_BUILTIN, version: VERSION, description: '内置战斗策略模型' },
     });
 
     const strategy: Array<SEAL.Strategy> = [

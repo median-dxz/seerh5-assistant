@@ -22,9 +22,6 @@ export default defineConfig(({ command, mode }) => {
         },
         build: {
             target: 'esnext',
-            dynamicImportVarsOptions: {
-                exclude: ['src/service/ModManager/*'],
-            },
             rollupOptions: {
                 output: {
                     manualChunks: {

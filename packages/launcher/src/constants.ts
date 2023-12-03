@@ -12,4 +12,5 @@ export const CMD_MASK = [
     41228, // SYSTEM_TIME_CHECK
 ];
 
-export const MOD_DEFAULT_SCOPE = 'external';
+export const MOD_SCOPE_DEFAULT = 'external';
+export const MOD_SCOPE_BUILTIN = 'builtin';
