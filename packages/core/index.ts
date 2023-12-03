@@ -20,6 +20,7 @@ declare global {
         /** SEA 全局单例标志位 */
         CoreInstance: {
             flag: boolean;
+            version: string;
         };
         /** 游戏核心加载就绪标志位 */
         SeerH5Ready: boolean;

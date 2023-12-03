@@ -12,6 +12,8 @@ declare class AwardItemDialog extends AwardBaseDialog {
 declare class BaseModule extends eui.Component {
     touchHandle(): void;
     onClose(): void;
+    show(): void;
+    hide(): void;
 }
 
 declare class BasicPanel extends eui.Component {}
@@ -228,6 +230,7 @@ declare class ModuleManager {
     ): Promise<void>;
     static showModuleByID(moduleId: number, params?: any): Promise<void>;
     static removeModuleInstance(module: BasicMultPanelModule): void;
+    static CloseAll(): void;
     static appJs: {
         [module: string]: boolean;
     };
@@ -240,6 +243,11 @@ declare class ModuleManager {
 declare class BatteryController {
     static Instance: BatteryController;
     _leftTime: number;
+}
+
+declare class ClientConfig {
+    static getItemIcon(id: number): string;
+    static getPetHeadPath(id: number): string;
 }
 
 declare class EffectInfoManager {

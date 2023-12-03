@@ -1,6 +1,6 @@
+import { theme } from '@/style';
 import { TextField as MuiTextField } from '@mui/material';
 import { styled } from '@mui/system';
-import { saTheme } from '@sea-launcher/style';
 
 export const SeaTextField = styled(MuiTextField)`
     & .MuiFormLabel-root {
@@ -9,8 +9,8 @@ export const SeaTextField = styled(MuiTextField)`
     }
 
     & .MuiAutocomplete-inputRoot {
-        box-shadow: ${saTheme.boxShadow};
-        background-color: ${saTheme.palette.background.default};
+        box-shadow: ${theme.boxShadow};
+        background-color: ${theme.palette.background.default};
         backdrop-filter: blur(12px);
         border-radius: 0;
 
@@ -21,15 +21,15 @@ export const SeaTextField = styled(MuiTextField)`
 
         & fieldset {
             border-color: none;
-            transition: ${saTheme.transitions.create(['border-color'])};
+            transition: ${theme.transitions.create(['border-color'])};
         }
 
         &.Mui-focused fieldset {
-            border: 1px solid ${saTheme.palette.primary.main};
+            border: 1px solid ${theme.palette.primary.main};
         }
 
         &.Mui-focused:hover fieldset {
-            border: 1px solid ${saTheme.palette.primary.main};
+            border: 1px solid ${theme.palette.primary.main};
         }
     }
 ` as typeof MuiTextField;

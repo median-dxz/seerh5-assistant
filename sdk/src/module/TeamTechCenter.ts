@@ -1,18 +1,18 @@
-import { Socket } from 'sea-core';
+import { DataSource, Socket } from 'sea-core';
 
-class TeamTechCenter implements SEAMod.IModuleMod<team.TeamTech> {
-    declare logger: typeof console.log;
+declare var Alarm: any;
 
-    meta: SEAMod.MetaData = {
-        id: 'teamTechCenter',
-        scope: 'median',
-        type: 'module' as const,
-        description: '精灵科技中心模块注入, 提供一键强化到满级功能',
-    };
+// team.TeamTech
+export default async function TeamTechCenter(createContext: SEAL.createModContext) {
+    const { meta } = await createContext({
+        meta: {
+            id: 'teamTechCenter',
+            scope: 'median',
+            description: '精灵科技中心模块注入, 提供一键强化到满级功能',
+        },
+    });
 
-    moduleName = 'team';
-
-    load() {
+    const load = () => {
         team.TeamTech.prototype.onClickEnhance = async function () {
             const index = this.list_attr.selectedIndex;
             if (null == this._petInfo) {
@@ -45,7 +45,22 @@ class TeamTechCenter implements SEAMod.IModuleMod<team.TeamTech> {
                     });
             await updateOnce();
         };
-    }
-}
+    };
 
-export default TeamTechCenter;
+    let sub: number;
+    const ds = DataSource.gameModule('team', 'load');
+
+    const install = () => {
+        sub = ds.on(load);
+    };
+
+    const uninstall = () => {
+        ds.off(sub);
+    };
+
+    return {
+        meta,
+        install,
+        uninstall,
+    } satisfies SEAL.ModExport;
+}

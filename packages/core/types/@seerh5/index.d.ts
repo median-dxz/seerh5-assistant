@@ -170,14 +170,18 @@ declare interface AppDoStyle {
 declare const AppDoStyle: AppDoStyle;
 
 declare var EventManager: egret.EventDispatcher;
+
 declare var Core: any;
+
 declare var config: {
     xml: any;
     Brave_lv: any;
 };
+
 declare var SeerVersionController: {
     getVersionUrl(url: string): string;
 };
+
 declare var GameInfo: {
     token_url: string;
 };
@@ -194,6 +198,7 @@ declare class OnlineManager {
 declare class SocketEvent extends egret.Event {
     data: egret.ByteArray | undefined;
 }
+
 declare class SocketErrorEvent extends egret.Event {}
 
 declare class PetEvent extends egret.Event {
@@ -206,10 +211,4 @@ declare class PetFightEvent extends egret.Event {
     static readonly ON_USE_PET_ITEM: 'onUsePetItem';
     static readonly CHANGE_PET: 'changePet';
     constructor(type: string, obj?: any);
-}
-
-declare namespace baseMenuComponent {
-    class BaseMenuComponent {
-        selectedValue: any;
-    }
 }

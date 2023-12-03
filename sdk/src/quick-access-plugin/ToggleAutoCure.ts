@@ -1,24 +1,30 @@
 import { Engine } from 'sea-core';
-import type { SEAMod } from '../../lib/mod';
 import Icon from './local_hospital.svg?raw';
 
-export default class FightPuni implements SEAMod.IQuickAccessPlugin {
-    logger: typeof console.log;
-    meta: SEAMod.MetaData = {
-        scope: 'median',
-        id: 'toggleAutoCure',
-        type: 'quick-access-plugin',
+export default async function ToggleAutoCure(createContext: SEAL.createModContext) {
+    const { meta } = await createContext({
+        meta: {
+            id: 'LocalPetSkin',
+            scope: 'median',
+        },
+    });
+
+    let autoCure = await Engine.autoCureState();
+
+    const toggleAutoCure: SEAL.Command = {
+        name: 'ToggleAutoCure',
+        icon: Icon,
+        description: () => `自动治疗: ${autoCure ? '开' : '关'}`,
+        async handler() {
+            await Engine.toggleAutoCure(!autoCure);
+            autoCure = await Engine.autoCureState();
+        },
     };
-    icon = Icon;
 
-    autoCure = false;
-
-    click() {
-        Engine.toggleAutoCure(!this.autoCure);
-    }
-
-    async showAsync() {
-        this.autoCure = await Engine.autoCureState();
-        return `自动治疗: ${this.autoCure ? '开' : '关'}`;
-    }
+    return {
+        meta,
+        exports: {
+            command: [toggleAutoCure],
+        },
+    } satisfies SEAL.ModExport;
 }

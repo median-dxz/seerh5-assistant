@@ -1,6 +1,9 @@
-import { CoreModuleWarning, delay } from '../common/utils.js';
+import { CoreDevInfo, CoreWarning, ModuleName } from '../common/log.js';
+import { delay } from '../common/utils.js';
 import { Socket } from '../engine/index.js';
-const warn = CoreModuleWarning('BattleOperator');
+
+const warn = CoreWarning(ModuleName.Battle);
+const info = CoreDevInfo(ModuleName.Battle);
 
 export const Operator = {
     auto: () => {
@@ -15,6 +18,9 @@ export const Operator = {
         if (!FighterModelFactory.playerMode || !skillId) {
             return false;
         }
+
+        info(`[Operator] useSkill: ${SkillXMLInfo.getName(skillId)} ${skillId}`);
+
         const controlPanelObserver = FighterModelFactory.playerMode.subject.array[1];
         controlPanelObserver.showFight();
         await delay(300);
@@ -27,6 +33,8 @@ export const Operator = {
         return true;
     },
     escape: async () => {
+        info(`[Operator] escape`);
+
         await Socket.sendByQueue(CommandID.ESCAPE_FIGHT);
         return true;
     },
@@ -35,6 +43,9 @@ export const Operator = {
         if (!FighterModelFactory.playerMode) {
             return false;
         }
+
+        info(`[Operator] useItem: ${itemId}`);
+
         const controlPanelObserver = FighterModelFactory.playerMode.subject.array[1];
         controlPanelObserver.showItem(1);
         await delay(300);
@@ -52,6 +63,9 @@ export const Operator = {
             warn('非法的petIndex');
             return false;
         }
+
+        info(`[Operator] switchPet: ${index}`);
+
         const controlPanelObserver = FighterModelFactory.playerMode.subject.array[1];
         if (controlPanelObserver.petPanel == undefined) {
             controlPanelObserver.showPet();

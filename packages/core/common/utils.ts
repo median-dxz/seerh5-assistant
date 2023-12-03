@@ -159,10 +159,6 @@ export function hookPrototype<T extends HasPrototype, K extends keyof T['prototy
     proto && hookFn(proto, funcName, hookedFunc);
 }
 
-export const NOOP = () => {};
-
-export { CacheData } from './CacheData.js';
-
 export function tryGet<TKey, TValue>(map: Map<TKey, Set<TValue>>, key: TKey) {
     if (!map.has(key)) {
         map.set(key, new Set());
@@ -170,6 +166,9 @@ export function tryGet<TKey, TValue>(map: Map<TKey, Set<TValue>>, key: TKey) {
     return map.get(key)!;
 }
 
-export const CoreModuleWarning = (module: string): typeof console.warn => {
-    return console.warn.bind(console, '[%s]:', module);
-};
+export const NOOP = () => {};
+
+export { CacheData } from './CacheData.js';
+
+import { ModuleName, disable, enable, setLogger } from './log.js';
+export const log = { ModuleName, disable, enable, setLogger };

@@ -24,10 +24,8 @@
 *Core v0.7.1*
 
 - [ ] 属性攻击/特攻/物攻的枚举
-- [x] 移除`extractObjectId`方法
-  - [x] 常用的`Entity`中添加`infer*`静态方法, 用于替代原来的api
-- [ ] 通过declare module方式并设计相关接口，使得Core支持扩展
-  - [ ] 添加Loader的扩展点
+- [x] 通过declare module方式并设计相关接口，使得Core支持扩展
+  - [x] 添加Loader的扩展点
   - [x] 添加Engine的扩展点
   - [x] 添加Hook的扩展点
   - [x] 添加GameConfig的扩展点
@@ -468,9 +466,7 @@ Socket.sendByQueue(cmd: number, data?: number[]): Promise<ArrayBuffer>
 
 ## Core:
 
-- [x] 0.5.x 重构`Battle`下的策略(Strategy)与行动(Move)，将概念和接口优化，降低代码复杂度和思维复杂度
-- [ ] --> 0.6.x 架构更新，完成其作为一个库的职能，提供对外定义，扩展支持，解耦登录器特定逻辑以及非核心功能
-- [ ] Release: 1.0.0 整合`Function`功能，重构组织形式，表现为内置模组，要求可以方便对接到launcher
+--> Release: 1.0.0 解耦登录器特定逻辑以及非核心功能, 要求可以方便对接到launcher
 
 ## App:
 

@@ -3,7 +3,7 @@ import { delay } from '../common/utils.js';
 import { Engine } from '../engine/index.js';
 import { SEAPet } from '../pet-helper/index.js';
 import type { ILevelRunner } from './type.js';
-import { LevelState } from './type.js';
+import { LevelAction } from './type.js';
 
 export * from './type.js';
 
@@ -84,16 +84,16 @@ export class LevelManager {
 
             while (this.runner) {
                 logger('更新关卡信息');
-                const state = await runner.updater();
-                switch (state) {
-                    case LevelState.BATTLE:
+                const nextAction = await runner.updater();
+                switch (nextAction) {
+                    case LevelAction.BATTLE:
                         await battle();
                         break;
-                    case LevelState.STOP:
+                    case LevelAction.STOP:
                         this.runner = null;
                         break;
                     default:
-                        await runner.actions[state].call(runner);
+                        await runner.actions[nextAction].call(runner);
                         break;
                 }
                 await delay(100);

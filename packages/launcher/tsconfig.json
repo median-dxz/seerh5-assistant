@@ -10,11 +10,15 @@
         "allowArbitraryExtensions": true,
         "allowImportingTsExtensions": true,
         "resolveJsonModule": true,
+        // "skipLibCheck": false,
         "jsx": "react",
         "noEmit": true,
         "composite": true,
         "paths": {
-            "@sea-launcher/*": [
+            "@": [
+                "./src"
+            ],
+            "@/*": [
                 "./src/*"
             ],
         },
@@ -25,7 +29,8 @@
         ]
     },
     "include": [
-        "./src"
+        "./src/sea-launcher.d.ts",
+        "./src/**/*"
     ],
     "references": [
         {

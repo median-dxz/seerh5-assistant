@@ -1,5 +1,5 @@
+import { useMainState } from '@/context/useMainState';
 import { Button, Typography } from '@mui/material';
-import { PanelStateContext } from '@sea-launcher/context/PanelState';
 import React from 'react';
 import { BattleFireType, Engine } from 'sea-core';
 
@@ -19,7 +19,7 @@ export function BattleFireInfo() {
     const updateBattleFire = React.useCallback(() => {
         Engine.updateBattleFireInfo().then((i) => setBattleFire(i));
     }, []);
-    
+
     React.useEffect(updateBattleFire, [updateBattleFire]);
 
     React.useEffect(() => {
@@ -52,7 +52,7 @@ export function BattleFireInfo() {
             break;
     }
 
-    const { open, setOpen } = React.useContext(PanelStateContext);
+    const { open, setOpen } = useMainState();
     const exchangeBattleFire = React.useCallback(() => {
         ModuleManager.showModule('battleFirePanel', ['battleFirePanel'], null, null, AppDoStyle.NULL);
         setOpen(false);

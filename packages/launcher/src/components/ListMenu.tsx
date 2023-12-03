@@ -1,5 +1,5 @@
+import { useCachedReturn } from '@/utils/hooks/useCachedReturn';
 import { Menu, MenuItem, Typography, type MenuProps } from '@mui/material';
-import { useCachedReturn } from '@sea-launcher/utils/hooks/useCachedReturn';
 import React from 'react';
 
 const MemoMenuItem = React.memo(MenuItem);

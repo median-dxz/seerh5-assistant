@@ -9,9 +9,9 @@ import { PetCache } from '../../data/PetCacheManager.ts';
 
 export const queryPets = (name?: string) => {
     if (name) {
-        return [[name, PetCache.query(name)] as const];
+        return [name, PetCache.query(name)] as const;
     } else {
-        return Array.from(PetCache.catchTimeMap.entries());
+        return PetCache.catchTimeMap;
     }
 };
 

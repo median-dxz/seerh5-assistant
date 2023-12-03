@@ -7,17 +7,7 @@ RoadMap: **见Readme**
 
 **todo已经迁移至issue/project**
 
-- [x] 项目更名为SEA(Seerh5 Assistant Project), 启动器部分名称更改为SEAL(Seerh5 Assistant Launcher)
-  - [x] `core`包更名为`sea-core`
-  - [x] `server`包现在是`@sea/server`
-  - [x] `app`包现在是`@sea/launcher`
-> 其实名称没变，变的是缩写
-
 - [ ] 整理github issue和project, 删除过远和不够明确的目标, 关闭暂时无法复现的问题, 关闭已经完成的内容并链接commit/pr
-
-- [x] 后端使用typescript重构
-- [x] 迁移后端到fastify
-- [x] 端点交互使用tRPC
 
 - [ ] 使用import map, 在全局共享`sea-core`ES模块实例, 使插件捆绑后以原生esm方式即可使用core
   - [ ] 编写vite插件和引入jspm, 使launcher在开发环境下将`sea-core`外部化, 由插件注入本地工作区包的importmap
@@ -28,34 +18,18 @@ RoadMap: **见Readme**
 - [ ] 抑制vite的html外部脚本报错 ([vite #11854](https://github.com/vitejs/vite/pull/11854))
 - [ ] 关闭生产环境下(`vite build`)对`sea-core`的`tree-shake`
 
-v0.7.0
-Loader扩展思路
-Loader是一个全局单例, 内部有promise, 保证内部初始化一次
-在全局挂载一个标志位, 用于检测多模块示例
-有一个load方法, 执行前先检查浏览器环境, 然后等待给定window上的事件进行两个阶段的初始化
-初始化的两个阶段:
-beforeGameCore 执行一次初始化(在`Core.init()`之前执行)
-afterMainPanelShow 执行一次初始化(在`Driver.complete`之后执行)
-每个阶段在初始化之前都可以添加函数, 将按添加顺序执行, sea-core内部的函数总是首先执行
-内部函数仅保留最基础的功能
-登录器通过添加额外的函数来进行扩展
-
 # Core 当前版本 v0.7.1
 
+- [ ] 添加发布版本的npm脚本, 并同步修改`loader/index.ts`内的`version`
+  - [ ] 入参是版本, 然后同步修改package.json和loader的两个字段, 使用正则替换+JSON.prase
+- [ ] 精简api界面, 删除不必要的导出
 - [ ] 属性攻击/特攻/物攻的枚举
-- [x] 移除`extractObjectId`方法
-  - [x] 常用的`Entity`中添加`infer*`静态方法, 用于替代原来的api
-- [x] 通过declare module方式并设计相关接口，使得Core支持扩展
-  - [x] 添加Loader的扩展点
-  - [x] 添加Engine的扩展点
-  - [x] 添加Hook的扩展点
-  - [x] 添加GameConfig的扩展点
 - [ ] 对于部分错误, 封装错误类
   - [ ] 暂定有影响DRY原则的错误封装
-- [ ] 额外允许一些模块打印关键日志, 通过`common`包下的`log`模块启用
-  - [ ] `Log.setLogger()`允许使用自定义logger, 默认启用console.log, 输出格式为`[sea-core][module name]:`
-  - [ ] 外部api为`Log.enable()`和`Log.disable()`, 通过传入模块名称来开启这一部分的输出
-  - [ ] 目前暂定支持的模块只有`Battle`, 开启后将输出Operator模块的入参
+- [x] 额外允许一些模块打印关键日志, 通过`common`包下的`log`模块启用
+  - [x] `Log.setLogger()`允许使用自定义logger, 默认启用console.log, 输出格式为`[sea-core][module name]:`
+  - [x] 外部api为`Log.enable()`和`Log.disable()`, 通过传入模块名称来开启这一部分的输出
+  - [x] 目前暂定支持的模块只有`Battle`, 开启后将输出Operator模块的入参
 
 > 以下内容等登录器端相关功能编写完善之后再迁移
  
@@ -68,7 +42,7 @@ afterMainPanelShow 执行一次初始化(在`Driver.complete`之后执行)
 # App 当前版本 v0.5.1
 
 - [ ] 生产开发环境判断
-- [ ] 基于trpc, 不再需要持久化配置提供序列化函数
+- [x] 基于trpc, 不再需要持久化配置提供序列化函数
 - [ ] 为模组注入配置持久化接口
 
 # 其他
@@ -76,6 +50,13 @@ afterMainPanelShow 执行一次初始化(在`Driver.complete`之后执行)
 - [ ] script通过语法树进行高级反混淆, 暂定主要目标是升级 async/await
 - [ ] 心跳包逻辑有点问题, 会被主动断线
 - [ ] 全体治疗基于Promise重写, 不需要加延时
+
+# 低优先级
+
+- [ ] 本地文件缓存
+- [ ] 字体设置
+- [ ] join all pet, 全局pet筛选
+- [ ] 根组件渲染提前到Core.init
 
 quick-access-plugin整合成为新的command
 

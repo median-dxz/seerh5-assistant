@@ -1,47 +1,40 @@
 import { Box, Button, ButtonGroup, Checkbox, CircularProgress, LinearProgress, Typography } from '@mui/material';
 
-import * as SEALocalStorage from '@sea-launcher/utils/LocalStorage';
+import { useConfigPersistence } from '@/utils/useConfigPersistence';
 import React from 'react';
 import { Pet, SEAPet, delay } from 'sea-core';
 import { Engine } from 'sea-core/engine';
 
-import { getPetHeadIcon } from '@sea-launcher/utils/egretRes';
-import { useBagPets } from '@sea-launcher/utils/hooks/useBagPets';
+import { Icon } from '@/service/resource';
+import { useBagPets } from '@/utils/hooks/useBagPets';
 
-import { PanelField, PanelTable, useIndex, useRowData, type PanelColumns } from '@sea-launcher/components/PanelTable';
-import { PopupMenuButton } from '@sea-launcher/components/PopupMenuButton';
-import { SeaTableRow } from '@sea-launcher/components/styled/TableRow';
-
-const petGroupsStorage = SEALocalStorage.PetGroups;
+import { PanelField, PanelTable, useIndex, useRowData, type PanelColumns } from '@/components/PanelTable';
+import { PopupMenuButton } from '@/components/PopupMenuButton';
+import { SeaTableRow } from '@/components/styled/TableRow';
+import useSWR from 'swr';
 
 type BasePetInfo = Pick<Pet, 'catchTime' | 'id' | 'name'>;
 
-function usePetPatternInfos() {
-    const [data, setData] = React.useState<BasePetInfo[][]>();
-    const [loading, setLoading] = React.useState(false);
+const defaultPetGroups: number[][] = Array(6).fill((() => [])());
 
-    const updater = React.useCallback(async () => {
-        setLoading(true);
-        const promises = petGroupsStorage.ref
-            .flat()
-            .map((ct) => SEAPet.get(ct).then((pet) => ({ catchTime: ct, id: pet.id, name: pet.name })));
-
-        const r = await Promise.all(promises);
-
-        const petGroups = petGroupsStorage.ref.map((group) => group.map((pet) => r.find((v) => v.catchTime === pet)!));
-
-        setData(petGroups);
-        setLoading(false);
-    }, []);
-
-    return [data, loading, updater] as const;
+function usePetGroups() {
+    const { data, isLoading, mutate } = useConfigPersistence('PetGroups', defaultPetGroups);
+    return [data, isLoading, mutate] as const;
 }
 
 export function PetBagController() {
     const { pets } = useBagPets();
 
     const [selected, setSelected] = React.useState<number[]>([]);
-    const [petGroups, loading, updatePetGroups] = usePetPatternInfos();
+    const [petGroups, loading, updatePetGroups] = usePetGroups();
+
+    const { data: petGroupsInfo, isLoading: loadingPetInfo } = useSWR(
+        `ds://petGroups/${JSON.stringify(petGroups)}`,
+        () => {
+            const promises = petGroups.map((group) => Promise.all(group.map(SEAPet.get)));
+            return Promise.all(promises);
+        }
+    );
 
     React.useEffect(() => {
         setSelected([]);
@@ -61,7 +54,7 @@ export function PetBagController() {
 
     const toRowKey = React.useCallback((pet: Pet) => pet.catchTime, []);
 
-    if (!pets) return <LinearProgress />;
+    if (!pets || loadingPetInfo || loading) return <LinearProgress />;
 
     const handleLowerHp = () => {
         Engine.lowerHp(selected);
@@ -85,10 +78,10 @@ export function PetBagController() {
     };
 
     const handleSavePattern = (_: BasePetInfo[], index: number) => {
-        petGroupsStorage.use((draft) => {
+        updatePetGroups((draft) => {
             draft[index] = pets.map((pet) => pet.catchTime);
+            return draft;
         });
-        updatePetGroups();
     };
 
     const handleSwitchBag = (group: BasePetInfo[]) => {
@@ -104,21 +97,11 @@ export function PetBagController() {
             <Button onClick={handleCurePets}>治疗</Button>
             <Button onClick={handleCopyCatchTime}>复制catchTime</Button>
 
-            <PopupMenuButton
-                data={petGroups}
-                renderItem={pattern}
-                onSelectItem={handleSwitchBag}
-                buttonProps={{ onClick: updatePetGroups }}
-            >
+            <PopupMenuButton data={petGroupsInfo} renderItem={pattern} onSelectItem={handleSwitchBag}>
                 {loading ? <CircularProgress size={16} /> : '更换方案'}
             </PopupMenuButton>
 
-            <PopupMenuButton
-                data={petGroups}
-                renderItem={pattern}
-                onSelectItem={handleSavePattern}
-                buttonProps={{ onClick: updatePetGroups }}
-            >
+            <PopupMenuButton data={petGroupsInfo} renderItem={pattern} onSelectItem={handleSavePattern}>
                 {loading ? <CircularProgress size={16} /> : '保存方案'}
             </PopupMenuButton>
 
@@ -182,7 +165,7 @@ function PanelRow({ selected, setSelected }: PanelRowProps) {
                 {pet.id}
             </PanelField>
             <PanelField field="icon" sx={{ userSelect: 'none' }}>
-                <img crossOrigin="anonymous" src={getPetHeadIcon(pet.id)} alt={pet.name} width={48} />
+                <img crossOrigin="anonymous" src={Icon.petHead(pet.id)} alt={pet.name} width={48} />
             </PanelField>
             <PanelField field="name">{pet.name}</PanelField>
             <PanelField field="hp">{`${pet.baseCurHp}/${pet.baseMaxHp}`}</PanelField>
