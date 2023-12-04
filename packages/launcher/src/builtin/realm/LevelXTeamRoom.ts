@@ -1,6 +1,6 @@
 import { LevelAction, Socket } from 'sea-core';
 
-import type { AnyFunction, ILevelBattle, ILevelRunner, LevelData as SEALevelData } from 'sea-core';
+import type { AnyFunction, ILevelBattle, ILevelRunner, LevelMeta, LevelData as SEALevelData } from 'sea-core';
 
 interface LevelData extends SEALevelData {
     open: boolean;
@@ -27,7 +27,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             weeklyCompletedCount: 0,
         };
 
-        static readonly meta: SEAL.LevelMeta = {
+        static readonly meta: LevelMeta = {
             id: 'LevelXTeamRoom',
             name: 'X战队密室',
             maxTimes: 3,

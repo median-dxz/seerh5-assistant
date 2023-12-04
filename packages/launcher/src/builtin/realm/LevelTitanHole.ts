@@ -1,4 +1,10 @@
-import type { AnyFunction, ILevelBattle, ILevelRunner, LevelData as SEALevelData } from 'sea-core';
+import type {
+    AnyFunction,
+    ILevelBattle,
+    ILevelRunner,
+    LevelData as SEALevelData,
+    LevelMeta as SEALevelMeta,
+} from 'sea-core';
 import { LevelAction, Socket, delay } from 'sea-core';
 
 interface LevelOption {
@@ -15,7 +21,7 @@ interface LevelData extends SEALevelData {
     step3Count: number;
 }
 
-interface LevelMeta extends SEAL.LevelMeta {
+interface LevelMeta extends SEALevelMeta {
     step2MaxCount: number;
     step3MaxCount: number;
 }

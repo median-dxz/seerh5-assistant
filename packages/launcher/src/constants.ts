@@ -1,4 +1,4 @@
-export const VERSION = '0.5.1';
+export const VERSION = '0.6.1'
 export const EVENT_SEER_READY = 'seerh5_load';
 export const IS_DEV = import.meta.env.DEV;
 export const CMD_MASK = [

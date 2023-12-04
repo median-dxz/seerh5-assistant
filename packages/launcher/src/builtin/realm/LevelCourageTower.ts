@@ -1,4 +1,4 @@
-import type { AnyFunction } from 'sea-core';
+import type { AnyFunction, LevelMeta } from 'sea-core';
 import { LevelAction, Socket } from 'sea-core';
 
 import type { ILevelBattle, ILevelRunner, LevelData as SEALevelData } from 'sea-core';
@@ -23,7 +23,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             stimulation: false,
         };
 
-        static readonly meta: SEAL.LevelMeta = {
+        static readonly meta: LevelMeta = {
             name: '勇者之塔',
             maxTimes: 5,
             id: 'LevelCourageTower',

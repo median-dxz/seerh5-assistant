@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 
 const exec = promisify(cp.exec);
-const cwd = path.resolve(fileURLToPath(import.meta.url), './../..');
+const cwd = path.resolve(fileURLToPath(import.meta.url), '../..');
 
 const coreDir = path.join(cwd, 'packages', 'core');
 const sdkDir = path.join(cwd, 'sdk');

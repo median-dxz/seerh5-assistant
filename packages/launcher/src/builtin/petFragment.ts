@@ -7,6 +7,7 @@ import {
     Socket,
     delay,
     type IPFLevelBoss,
+    type LevelMeta,
 } from 'sea-core';
 import { LevelAction, type ILevelRunner, type LevelData as SEALevelData } from 'sea-core/level';
 
@@ -30,7 +31,7 @@ export default async function (createModContext: SEAL.createModContext) {
     });
 
     class PetFragmentRunner implements ILevelRunner<LevelData>, IPetFragmentRunner {
-        static readonly meta: SEAL.LevelMeta = {
+        static readonly meta: LevelMeta = {
             maxTimes: 3, //TODO 除了静态进度指示器, 关卡内部可以额外有动态进度指示器
             name: '精灵因子',
             id: meta.id,

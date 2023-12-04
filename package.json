@@ -15,9 +15,10 @@
     "dev": "conc pnpm:core:watch pnpm:launcher:dev",
     "server:run": "pnpm -C ./packages/server run start",
     "launcher:dev": "pnpm -C ./packages/launcher run dev",
-    "core:build": "pnpm -F sea-core run build",
     "core:watch": "pnpm -F sea-core run watch",
-    "release": "node ./scripts/release.js"
+    "core:build": "pnpm -F sea-core run build",
+    "workspace:sync": "node ./scripts/sync.js",
+    "release:core": "node ./scripts/release.js"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",

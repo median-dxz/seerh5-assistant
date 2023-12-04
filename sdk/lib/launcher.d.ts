@@ -1,6 +1,5 @@
 import type { ILevelRunner, MoveStrategy } from 'sea-core';
 
-/* eslint-disable */
 declare module 'sea-core' {
     export interface Engine {
         updateBattleFireInfo(): Promise<{
@@ -8,6 +7,13 @@ declare module 'sea-core' {
             valid: boolean;
             timeLeft: number;
         }>;
+    }
+
+    /** 关卡的静态数据, 实现时可以使用getter来方便获取 */
+    export interface LevelMeta {
+        id: string;
+        name: string;
+        maxTimes: number;
     }
 }
 
@@ -60,13 +66,6 @@ declare global {
             uninstall?(): void;
         }
 
-        /** 关卡的静态数据, 实现时可以使用getter来方便获取 */
-        interface LevelMeta {
-            id: string;
-            name: string;
-            maxTimes: number;
-        }
-
         type Strategy = MoveStrategy & { name: string };
         type Battle = {
             name: string;
@@ -75,7 +74,7 @@ declare global {
             beforeBattle?: () => Promise<void>;
         };
 
-        type Level = { new (option: any): ILevelRunner; meta: LevelMeta };
+        type Level = { new (option: never): ILevelRunner; meta: LevelMeta };
 
         type Command = {
             name: string;

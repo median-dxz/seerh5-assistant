@@ -1,7 +1,7 @@
 import type { AnyFunction } from '../common/utils.js';
 import { coreSetup, coreSetupBasic } from './internal/index.js';
 
-const version = '0.7.1';
+const VERSION = '0.7.2'
 
 interface SetupFn {
     type: 'beforeGameCoreInit' | 'afterFirstShowMainPanel';
@@ -30,7 +30,7 @@ class CoreLoader {
 
             window.sea = {
                 SeerH5Ready: false,
-                CoreInstance: Object.freeze({ flag: true, version }),
+                CoreInstance: Object.freeze({ flag: true, version: VERSION }),
             };
 
             this.addSetupFn('beforeGameCoreInit', coreSetupBasic);

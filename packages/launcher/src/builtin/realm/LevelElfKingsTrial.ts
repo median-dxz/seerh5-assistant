@@ -1,6 +1,6 @@
 import { LevelAction, Socket } from 'sea-core';
 
-import type { AnyFunction, ILevelBattle, ILevelRunner, LevelData as SEALevelData } from 'sea-core';
+import type { AnyFunction, ILevelBattle, ILevelRunner, LevelMeta, LevelData as SEALevelData } from 'sea-core';
 
 interface LevelData extends SEALevelData {
     stimulation: boolean;
@@ -27,7 +27,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             weeklyChallengeCount: 0,
         };
 
-        static readonly meta: SEAL.LevelMeta = {
+        static readonly meta: LevelMeta = {
             name: '精灵王的试炼',
             maxTimes: 6,
             id: 'LevelElfKingsTrial',
