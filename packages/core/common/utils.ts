@@ -5,6 +5,12 @@ export type ValueOf<T> = T[keyof T];
 export type Handler<T> = (data: T) => void;
 export type withClass<T> = T & { __class__: string };
 
+class HookedSymbol {
+    static readonly original = Symbol('originalFunction');
+    static readonly before = Symbol('beforeDecorators');
+    static readonly after = Symbol('afterDecorators');
+}
+
 export function delay(time: number): Promise<void> {
     return new Promise((resolver) => setTimeout(resolver, time));
 }
@@ -30,25 +36,29 @@ type AfterDecorator<F extends AnyFunction> = (
 
 interface HookedFunction<F extends AnyFunction> {
     (...args: Parameters<F>): ReturnType<F>;
-    originalFunction: F;
+    [HookedSymbol.original]: F;
 }
 
 interface WrappedFunction<F extends AnyFunction> extends HookedFunction<F> {
     (...args: Parameters<F>): ReturnType<F>;
-    afterDecorators: AfterDecorator<F>[];
-    beforeDecorators: BeforeDecorator<F>[];
+    [HookedSymbol.after]: AfterDecorator<F>[];
+    [HookedSymbol.before]: BeforeDecorator<F>[];
     after(this: WrappedFunction<F>, decorator: AfterDecorator<F>): WrappedFunction<F>;
     before(this: WrappedFunction<F>, decorator: BeforeDecorator<F>): WrappedFunction<F>;
 }
 
 export function assertIsHookedFunction<F extends AnyFunction>(func: F | HookedFunction<F>): func is HookedFunction<F> {
-    return 'originalFunction' in func;
+    return Object.hasOwn(func, HookedSymbol.original);
 }
 
 export function assertIsWrappedFunction<F extends AnyFunction>(
     func: F | WrappedFunction<F>
 ): func is WrappedFunction<F> {
-    return 'afterDecorators' in func && 'beforeDecorators' in func && assertIsHookedFunction(func);
+    return (
+        Object.hasOwn(func, HookedSymbol.before) &&
+        Object.hasOwn(func, HookedSymbol.after) &&
+        assertIsHookedFunction(func)
+    );
 }
 
 export function wrapper<F extends (...args: any) => any>(func: F | HookedFunction<F> | WrappedFunction<F>) {
@@ -61,7 +71,7 @@ export function wrapper<F extends (...args: any) => any>(func: F | HookedFunctio
     }
 
     if (assertIsHookedFunction(func)) {
-        originalFunc = func.originalFunction;
+        originalFunc = func[HookedSymbol.original];
     } else {
         originalFunc = func;
     }
@@ -88,23 +98,23 @@ export function wrapper<F extends (...args: any) => any>(func: F | HookedFunctio
             return r;
         } as WrappedFunction<F>;
 
-        wrapped.originalFunction = originalFunction;
-        wrapped.afterDecorators = afterDecorators;
-        wrapped.beforeDecorators = beforeDecorators;
+        wrapped[HookedSymbol.original] = originalFunction;
+        wrapped[HookedSymbol.after] = afterDecorators;
+        wrapped[HookedSymbol.before] = beforeDecorators;
 
         wrapped.before = function (this: WrappedFunction<F>, decorator: BeforeDecorator<F>) {
             return createWrappedFunction(
-                this.originalFunction,
-                this.beforeDecorators.concat(decorator),
-                Array.from(this.afterDecorators)
+                this[HookedSymbol.original],
+                this[HookedSymbol.before].concat(decorator),
+                Array.from(this[HookedSymbol.after])
             );
         }.bind(wrapped);
 
         wrapped.after = function (this: WrappedFunction<F>, decorator: AfterDecorator<F>) {
             return createWrappedFunction(
-                this.originalFunction,
-                Array.from(this.beforeDecorators),
-                this.afterDecorators.concat(decorator)
+                this[HookedSymbol.original],
+                Array.from(this[HookedSymbol.before]),
+                this[HookedSymbol.after].concat(decorator)
             );
         }.bind(wrapped);
 
