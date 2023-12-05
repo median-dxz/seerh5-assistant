@@ -1,4 +1,4 @@
-import { MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
+import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
 import type { IPetFragmentRunner, PetFragmentOption } from '@/views/Automation/PetFragmentLevel';
 import {
     PetFragmentLevelDifficulty as Difficulty,
@@ -26,6 +26,7 @@ export default async function (createModContext: SEAL.createModContext) {
             id: 'PetFragmentLevel',
             scope: MOD_SCOPE_BUILTIN,
             version: VERSION,
+            core: CORE_VERSION,
             description: '精灵因子',
         },
     });

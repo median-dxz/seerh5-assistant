@@ -24,7 +24,7 @@ export const GameConfigRegistry = {
         const entity = gameConfigRegistryEntityMap.get(type) as GameConfigQuery<GameConfigMap[T]> | undefined;
 
         if (entity == undefined) {
-            throw `不支持的查询集合`;
+            throw `不支持的查询集合 ${type}`;
         }
 
         return entity;

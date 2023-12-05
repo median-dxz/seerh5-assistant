@@ -6,7 +6,7 @@ import { fromHook } from './source-builder/fromHook.js';
 import { fromEgret } from './source-builder/fromNative.js';
 import { fromSocket } from './source-builder/fromSocket.js';
 
-export class EventSource<T> {
+export class SEAEventSource<T> {
     private _source$: Observable<T>;
 
     public get source$(): Observable<T> {

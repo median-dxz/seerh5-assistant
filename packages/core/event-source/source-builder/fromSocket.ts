@@ -1,6 +1,6 @@
 import { filter, map, zip, type Observable } from 'rxjs';
 import { Hook, type SocketResponseMap } from '../../constant/index.js';
-import { EventSource } from '../EventSource.js';
+import { SEAEventSource } from '../EventSource.js';
 import { SocketBuilderRegistry } from '../SocketBuilderRegistry.js';
 import { $hook } from './fromHook.js';
 
@@ -56,6 +56,6 @@ type InferFromSocketReturnType<TCmd extends CMD, Event extends SocketEvent | und
     ? [seerh5.SocketRequestData, SocketResponseMap[TCmd]]
     : never;
 
-export function fromSocket<TCmd extends CMD, TEvent extends SocketEvent>(cmd: TCmd, event?: TEvent) {
-    return new EventSource($socket(cmd, event) as Observable<InferFromSocketReturnType<TCmd, TEvent>>);
+export function fromSocket<TCmd extends CMD, TEvent extends SocketEvent = undefined>(cmd: TCmd, event?: TEvent) {
+    return new SEAEventSource($socket(cmd, event) as Observable<InferFromSocketReturnType<TCmd, TEvent>>);
 }

@@ -1,9 +1,9 @@
 import {
     Engine,
-    EventSource,
     Hook,
     Manager,
     Operator,
+    SEAEventSource,
     Subscription,
     delay,
     matchNoBloodChain,
@@ -17,7 +17,7 @@ const startBattle = () => {
     FightManager.fightNoMapBoss(6730);
 };
 
-const $hook = EventSource.hook;
+const $hook = SEAEventSource.hook;
 const filterCMD = [
     1002, // SYSTEM_TIME
     2001, // ENTER_MAP

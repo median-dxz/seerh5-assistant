@@ -21,9 +21,8 @@ export enum PetFragmentLevelDifficulty {
     Hard = 3,
 }
 
-// todo: 给出具体的枚举值
 export enum SkillType {
-    特殊攻击,
-    物理攻击,
-    属性攻击,
+    特殊攻击 = 2,
+    物理攻击 = 1,
+    属性攻击 = 4,
 }

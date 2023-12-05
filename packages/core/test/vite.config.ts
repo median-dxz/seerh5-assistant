@@ -36,6 +36,6 @@ export default defineConfig(({ command, mode }) => {
                 '/account-co.61.com': `http://localhost:${env['VITE_BACKEND_PORT']}`,
             },
         },
-        plugins: [loadAppJs],
+        // plugins: [loadAppJs],
     };
 });

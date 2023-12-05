@@ -1,4 +1,4 @@
-import { MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
+import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
 import LevelCourageTower from './LevelCourageTower';
 import LevelElfKingsTrial from './LevelElfKingsTrial';
 import LevelExpTraining from './LevelExpTraining';
@@ -12,6 +12,7 @@ export default async function realm(createModContext: SEAL.createModContext) {
             id: 'Realm',
             scope: MOD_SCOPE_BUILTIN,
             version: VERSION,
+            core: CORE_VERSION,
             description: '日常关卡',
         },
         defaultConfig: {

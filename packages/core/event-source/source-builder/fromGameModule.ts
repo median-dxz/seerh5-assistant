@@ -2,7 +2,7 @@ import { filter, map } from 'rxjs';
 import { Hook } from '../../constant/index.js';
 import { type GameModuleMap } from '../../constant/type.js';
 import { Engine } from '../../engine/index.js';
-import { EventSource } from '../EventSource.js';
+import { SEAEventSource } from '../EventSource.js';
 import { $hook } from './fromHook.js';
 
 type ModuleEvent = 'load' | 'show' | 'mainPanel' | 'destroy';
@@ -34,28 +34,28 @@ const $fromGameModule = {
     },
 };
 
-export function fromGameModule(module: string, event: ModuleEvent): EventSource<unknown>;
-export function fromGameModule<TModule extends string>(module: TModule, event: 'load'): EventSource<undefined>;
+export function fromGameModule(module: string, event: ModuleEvent): SEAEventSource<unknown>;
+export function fromGameModule<TModule extends string>(module: TModule, event: 'load'): SEAEventSource<undefined>;
 export function fromGameModule<TModule extends string>(
     module: TModule,
     event: 'show'
-): EventSource<GameModuleMap[TModule]>;
+): SEAEventSource<GameModuleMap[TModule]>;
 export function fromGameModule<TModule extends string>(
     module: TModule,
     event: 'mainPanel'
-): EventSource<GameModuleMap[TModule]>;
-export function fromGameModule<TModule extends string>(module: TModule, event: 'destroy'): EventSource<undefined>;
+): SEAEventSource<GameModuleMap[TModule]>;
+export function fromGameModule<TModule extends string>(module: TModule, event: 'destroy'): SEAEventSource<undefined>;
 
 export function fromGameModule<TModule extends string, TEvent extends ModuleEvent>(module: TModule, event: TEvent) {
     switch (event) {
         case 'load':
-            return new EventSource($fromGameModule.load(module));
+            return new SEAEventSource($fromGameModule.load(module));
         case 'show':
-            return new EventSource($fromGameModule.show(module));
+            return new SEAEventSource($fromGameModule.show(module));
         case 'mainPanel':
-            return new EventSource($fromGameModule.mainPanel(module));
+            return new SEAEventSource($fromGameModule.mainPanel(module));
         case 'destroy':
-            return new EventSource($fromGameModule.destroy(module));
+            return new SEAEventSource($fromGameModule.destroy(module));
         default:
             throw `Invalid type ${event as string}, type could only be 'load' | 'show' | 'mainPanel' | 'destroy'`;
     }

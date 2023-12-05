@@ -24,10 +24,13 @@ RoadMap: **见Readme**
 - [x] 使用类型来提示SDK使用者和Launcher开发者当前Core的版本
   - [x] 从`CoreLoader`上来获取实例版本, 从type中获取api定义的版本
 - [x] `CoreLoader`现在不需要传入监听事件名了
+- [x] 属性攻击/特攻/物攻的枚举
+
+- [ ] 更改事件签名方式->`type:event`
 - [ ] 精简api界面, 删除不必要的导出
-- [ ] 属性攻击/特攻/物攻的枚举
 - [ ] 对于部分错误, 封装错误类
   - [ ] 暂定有影响DRY原则的错误封装
+
 - [x] 额外允许一些模块打印关键日志, 通过`common`包下的`log`模块启用
   - [x] `Log.setLogger()`允许使用自定义logger, 默认启用console.log, 输出格式为`[sea-core][module name]:`
   - [x] 外部api为`Log.enable()`和`Log.disable()`, 通过传入模块名称来开启这一部分的输出
@@ -58,11 +61,6 @@ RoadMap: **见Readme**
 - [ ] 本地文件缓存
 - [ ] 字体设置
 - [ ] join all pet, 全局pet筛选
-- [ ] 根组件渲染提前到Core.init
-
-quick-access-plugin整合成为新的command
-
-模组目前可以添加的贡献点: 
-
-command/qap | activate | module | level
+- [x] 根组件渲染提前到Core.init
+- [ ] jsx外部化, import-map共享react
 

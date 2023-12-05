@@ -1,9 +1,15 @@
-import { MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
+import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
 import { Engine } from 'sea-core/engine';
 
 export default async function builtinBattle(createContext: SEAL.createModContext) {
     const context = await createContext({
-        meta: { id: 'builtin-battle', scope: MOD_SCOPE_BUILTIN, version: VERSION, description: '内置战斗模型' },
+        meta: {
+            id: 'builtin-battle',
+            scope: MOD_SCOPE_BUILTIN,
+            version: VERSION,
+            core: CORE_VERSION,
+            description: '内置战斗模型',
+        },
     });
 
     const { ct, meta } = context;

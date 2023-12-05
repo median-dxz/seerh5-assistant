@@ -1,12 +1,18 @@
 /* eslint-disable */
-import { MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
+import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
 import { PetDataManger, PetElement, Socket, delay } from 'sea-core';
 
 declare var pvePetYinzi: any;
 
 export default async function builtinCommand(createContext: SEAL.createModContext) {
     const context = await createContext({
-        meta: { id: 'builtin-command', scope: MOD_SCOPE_BUILTIN, version: VERSION, description: '内置命令组' },
+        meta: {
+            id: 'builtin-command',
+            scope: MOD_SCOPE_BUILTIN,
+            version: VERSION,
+            core: CORE_VERSION,
+            description: '内置命令组',
+        },
     });
 
     const { meta, logger } = context;
