@@ -2,8 +2,8 @@
 import { filter, map } from 'rxjs';
 import { delay, hookFn, hookPrototype, restoreHookedFn, wrapper, type withClass } from '../../common/utils.js';
 import { Hook } from '../../constant/index.js';
-import { HookRegistry } from '../../data-source/index.js';
-import { $hook } from '../../data-source/source-builder/fromHook.js';
+import { HookRegistry } from '../../event-source/index.js';
+import { $hook } from '../../event-source/source-builder/fromHook.js';
 
 export default () => {
     HookRegistry.register(Hook.Module.loadScript, (resolve) => {

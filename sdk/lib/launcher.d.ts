@@ -74,7 +74,8 @@ declare global {
             beforeBattle?: () => Promise<void>;
         };
 
-        type Level = { new (option: never): ILevelRunner; meta: LevelMeta };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        type Level = { new (option: any): ILevelRunner; meta: LevelMeta };
 
         type Command = {
             name: string;

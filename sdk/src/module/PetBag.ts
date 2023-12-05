@@ -1,4 +1,4 @@
-import { DataSource, Engine, Pet, Subscription, debounce, hookFn, hookPrototype } from 'sea-core';
+import { Engine, EventSource, Pet, Subscription, debounce, hookFn, hookPrototype } from 'sea-core';
 
 declare module 'sea-core' {
     interface GameModuleMap {
@@ -51,15 +51,15 @@ export default async function PetBag(createContext: SEAL.createModContext) {
             const { petInfo } = e.data as { petInfo: PetInfo };
             petInfo && logger(new Pet(petInfo));
         };
-        sub.on(DataSource.socket(CommandID.PET_DEFAULT, 'receive'), refresh);
-        sub.on(DataSource.socket(CommandID.PET_RELEASE, 'receive'), refresh);
-        sub.on(DataSource.egret<egret.TouchEvent>('petBag.MainPanelTouchPetItemEnd'), printTappingPetInfo);
+        sub.on(EventSource.socket(CommandID.PET_DEFAULT, 'receive'), refresh);
+        sub.on(EventSource.socket(CommandID.PET_RELEASE, 'receive'), refresh);
+        sub.on(EventSource.egret<egret.TouchEvent>('petBag.MainPanelTouchPetItemEnd'), printTappingPetInfo);
     };
 
     const install = () => {
-        lifeCycleSub.on(DataSource.gameModule('petBag', 'load'), load);
-        lifeCycleSub.on(DataSource.gameModule('petBag', 'mainPanel'), mainPanel);
-        lifeCycleSub.on(DataSource.gameModule('petBag', 'destroy'), () => {
+        lifeCycleSub.on(EventSource.gameModule('petBag', 'load'), load);
+        lifeCycleSub.on(EventSource.gameModule('petBag', 'mainPanel'), mainPanel);
+        lifeCycleSub.on(EventSource.gameModule('petBag', 'destroy'), () => {
             sub.dispose();
         });
     };

@@ -24,6 +24,12 @@ declare namespace pveEnterPanel {
     }
 }
 
+declare namespace baseMenuComponent {
+    class BaseMenuComponent {
+        selectedValue: string;
+    }
+}
+
 const showPveResourcePanel = async (itemValue: string) => {
     await ModuleManager.showModuleByID(18);
     const curModule = Engine.inferCurrentModule<pveEnterPanel.PveEnterPanel>();

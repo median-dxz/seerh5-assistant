@@ -21,7 +21,7 @@
         "./constant",
         "./engine",
         "./entity",
-        "./data-source",
+        "./event-source",
         "./functions",
         "./loader",
         "./pet-helper",

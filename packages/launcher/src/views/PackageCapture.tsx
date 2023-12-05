@@ -5,7 +5,7 @@ import { SeaTableRow } from '@/components/styled/TableRow';
 import { produce } from 'immer';
 import * as React from 'react';
 import type { AnyFunction, HookDataMap } from 'sea-core';
-import { DataSource, Hook, Subscription, restoreHookedFn } from 'sea-core';
+import { EventSource, Hook, Subscription, restoreHookedFn } from 'sea-core';
 
 interface CapturedPackage {
     type: 'RemoveListener' | 'AddListener' | 'Received' | 'Send';
@@ -104,8 +104,8 @@ export function PackageCapture() {
         };
 
         const $socket = {
-            send: DataSource.hook(Hook.Socket.send),
-            receive: DataSource.hook(Hook.Socket.receive),
+            send: EventSource.hook(Hook.Socket.send),
+            receive: EventSource.hook(Hook.Socket.receive),
         };
 
         const subscription = new Subscription();

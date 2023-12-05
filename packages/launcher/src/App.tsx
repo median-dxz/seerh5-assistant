@@ -1,7 +1,7 @@
 import { CssBaseline, Grow } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
-import { DataSource, Hook, Subscription } from 'sea-core';
+import { EventSource, Hook, Subscription } from 'sea-core';
 
 import { SEALContextProvider } from '@/context/SEALContextProvider';
 
@@ -12,7 +12,10 @@ import { Main } from '@/views/Main';
 import { MainButton } from '@/views/Main/MainButton';
 import { QuickAccess } from '@/views/QuickAccess';
 
+import { loader } from '@/init';
+
 export default function App() {
+    const [init, setInit] = useState(false);
     const [commandOpen, toggleCommandOpen] = useState(false);
     const [fighting, toggleFighting] = useState(false);
 
@@ -24,15 +27,23 @@ export default function App() {
     };
 
     useEffect(() => {
+        if (init) return;
+        loader.load().then(() => {
+            setInit(true);
+        });
+    }, [init]);
+
+    useEffect(() => {
+        if (!init) return;
         // 注册全局快捷键
         document.body.addEventListener('keydown', handleShortCut);
 
         // 监听战斗状态变化
         const sub = new Subscription();
-        sub.on(DataSource.hook(Hook.Battle.battleStart), () => {
+        sub.on(EventSource.hook(Hook.Battle.battleStart), () => {
             toggleFighting(true);
         });
-        sub.on(DataSource.hook(Hook.Battle.battleEnd), () => {
+        sub.on(EventSource.hook(Hook.Battle.battleEnd), () => {
             toggleFighting(false);
         });
 
@@ -40,7 +51,9 @@ export default function App() {
             document.body.removeEventListener('keydown', handleShortCut);
             sub.dispose();
         };
-    }, []);
+    }, [init]);
+
+    if (!init) return null;
 
     return (
         <SEALContextProvider>

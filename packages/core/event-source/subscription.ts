@@ -1,11 +1,11 @@
 import { Subject, takeUntil } from 'rxjs';
-import type { DataSource } from './DataSource.js';
+import type { EventSource } from './EventSource.js';
 
 export class Subscription {
     private destroy$ = new Subject<void>();
 
-    on<T>(dataSource: DataSource<T>, handler: (data: T) => void) {
-        const { source$ } = dataSource;
+    on<T>(EventSource: EventSource<T>, handler: (data: T) => void) {
+        const { source$ } = EventSource;
         source$.pipe(takeUntil(this.destroy$)).subscribe(handler);
     }
 

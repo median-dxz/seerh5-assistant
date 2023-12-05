@@ -28,9 +28,9 @@ const columns: PanelColumns = [
     { field: 'exchange', columnName: '兑换' },
 ];
 
-const rows = idList.map((key) => ItemXMLInfo.getItemObj(key)!).map((obj) => new Item(obj));
-
 export function CommonValue() {
+    const rows = idList.map((key) => ItemXMLInfo.getItemObj(key)!).map((obj) => new Item(obj));
+
     const [items, setItems] = useState(rows);
 
     useEffect(() => {

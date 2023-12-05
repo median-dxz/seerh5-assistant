@@ -11,10 +11,10 @@ import { AnimationMode } from './AnimationMode';
 import { BattleFireInfo } from './BattleFireInfo';
 import { PetBagController } from './PetBagController';
 
-const titleQuery = GameConfigRegistry.getQuery('title');
-const suitQuery = GameConfigRegistry.getQuery('suit');
-
 export function GameController() {
+    const titleQuery = GameConfigRegistry.getQuery('title');
+    const suitQuery = GameConfigRegistry.getQuery('suit');
+
     const [userTitle, setUserTitle] = React.useState(Engine.playerTitle());
     const [userSuit, setUserSuit] = React.useState(Engine.playerSuit());
 

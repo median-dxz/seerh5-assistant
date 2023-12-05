@@ -1,9 +1,9 @@
 import { CacheData, NOOP } from '../common/utils.js';
-import { DataSource } from '../data-source/index.js';
 import { Socket } from '../engine/index.js';
 import { EntityBase } from '../entity/EntityBase.js';
 import type { Item } from '../entity/index.js';
 import { Pet } from '../entity/index.js';
+import { EventSource } from '../event-source/index.js';
 
 import { PetLocation, setLocationTable } from './PetLocation.js';
 
@@ -27,43 +27,43 @@ class PetDataManager {
 
     init() {
         if (!this.hasInit) {
-            DataSource.socket(CommandID.GET_PET_INFO_BY_ONCE, 'receive').on((pets) => {
+            EventSource.socket(CommandID.GET_PET_INFO_BY_ONCE, 'receive').on((pets) => {
                 this.bag.update([...pets]);
                 pets[0].concat(pets[1]).forEach((pet) => {
                     this.cachePet(pet);
                 });
             });
 
-            DataSource.socket(CommandID.GET_PET_INFO, 'receive').on((pet) => {
+            EventSource.socket(CommandID.GET_PET_INFO, 'receive').on((pet) => {
                 this.cachePet(pet);
                 this.bag.deactivate();
             });
 
-            DataSource.socket(CommandID.PET_DEFAULT, 'send').on((bytes) => {
+            EventSource.socket(CommandID.PET_DEFAULT, 'send').on((bytes) => {
                 this.defaultCt = bytes[0] as number;
                 this.bag.deactivate();
             });
 
-            DataSource.socket(CommandID.ADD_LOVE_PET, 'receive').on(() => {
+            EventSource.socket(CommandID.ADD_LOVE_PET, 'receive').on(() => {
                 this.miniInfo.deactivate();
             });
 
-            DataSource.socket(CommandID.DEL_LOVE_PET, 'receive').on(() => {
+            EventSource.socket(CommandID.DEL_LOVE_PET, 'receive').on(() => {
                 this.miniInfo.deactivate();
             });
 
-            DataSource.socket(CommandID.PET_CURE, 'receive').on(() => {
+            EventSource.socket(CommandID.PET_CURE, 'receive').on(() => {
                 this.bag.deactivate();
             });
 
-            DataSource.socket(CommandID.PET_RELEASE, 'send').on((bytes) => {
+            EventSource.socket(CommandID.PET_RELEASE, 'send').on((bytes) => {
                 const [ct, _opt] = bytes as [number, number];
                 this.cache.delete(ct);
                 this.miniInfo.deactivate();
                 this.bag.deactivate();
             });
 
-            DataSource.socket(CommandID.PET_RELEASE, 'receive').on((data) => {
+            EventSource.socket(CommandID.PET_RELEASE, 'receive').on((data) => {
                 // flag: 为假代表从背包移仓库, 仅此而已
                 PetManager._setDefault(data.firstPetTime);
                 this.defaultCt = data.firstPetTime;

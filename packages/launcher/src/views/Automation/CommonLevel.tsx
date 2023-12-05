@@ -10,7 +10,7 @@ import { useModStore } from '@/context/useModStore';
 import * as Endpoints from '@/service/endpoints';
 import { theme } from '@/style';
 import { produce } from 'immer';
-import { LevelAction, type ILevelRunner } from 'sea-core';
+import { LevelAction, type ILevelRunner, type LevelMeta } from 'sea-core';
 import { LevelBaseNew } from './LevelBaseNew';
 
 // const rows: Array<Level> = React.useMemo(
@@ -164,7 +164,7 @@ export function CommonLevelPanel() {
                     },
                 }}
             >
-                <LevelBaseNew runner={runner} />
+                <LevelBaseNew runner={runner as ILevelRunner & { meta: LevelMeta }} />
                 <DialogActions>
                     {/* {actions} */}
                     <Button onClick={closeHandler}>{'退出'}</Button>

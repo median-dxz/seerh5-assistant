@@ -1,8 +1,8 @@
 import { delay } from '../common/utils.js';
 import { Hook } from '../constant/index.js';
-import { DataSource, SocketBuilderRegistry } from '../data-source/index.js';
 import { Engine } from '../engine/index.js';
 import { PetRoundInfo } from '../entity/index.js';
+import { EventSource, SocketBuilderRegistry } from '../event-source/index.js';
 import * as Manager from './manager.js';
 import { Provider, cachedRoundInfo } from './provider.js';
 
@@ -25,14 +25,14 @@ export default () => {
         this.getMC().selected = !1;
     };
 
-    DataSource.hook(Hook.Battle.battleStart).on(() => {
+    EventSource.hook(Hook.Battle.battleStart).on(() => {
         cachedRoundInfo.deactivate();
         if (FightManager.fightAnimateMode === 1) {
             TimeScaleManager.setBattleAnimateSpeed(10);
         }
     });
 
-    DataSource.hook(Hook.Battle.endPropShown).on(() => {
+    EventSource.hook(Hook.Battle.endPropShown).on(() => {
         if (FightManager.fightAnimateMode === 1) {
             TimeScaleManager.setBattleAnimateSpeed(1);
         }
@@ -55,9 +55,9 @@ export default () => {
         }
     };
 
-    DataSource.hook(Hook.Battle.battleStart).on(onRoundStart);
-    DataSource.hook(Hook.Battle.roundEnd).on(onRoundStart);
-    DataSource.hook(Hook.Battle.battleEnd).on(() => {
+    EventSource.hook(Hook.Battle.battleStart).on(onRoundStart);
+    EventSource.hook(Hook.Battle.roundEnd).on(onRoundStart);
+    EventSource.hook(Hook.Battle.battleEnd).on(() => {
         const isWin = Boolean(FightManager.isWin);
         if (Manager.context.strategy) {
             Promise.all([Manager.context.delayTimeout, delay(1000)])
@@ -78,7 +78,7 @@ export default () => {
         return [fi, si] as const;
     });
 
-    DataSource.socket(CommandID.NOTE_USE_SKILL, 'receive').on((data) => {
+    EventSource.socket(CommandID.NOTE_USE_SKILL, 'receive').on((data) => {
         cachedRoundInfo.update([...data]);
     });
 };

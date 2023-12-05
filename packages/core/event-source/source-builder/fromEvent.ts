@@ -1,6 +1,6 @@
 import { fromEvent as rxFromEvent } from 'rxjs';
-import { DataSource } from '../DataSource.js';
+import { EventSource } from '../EventSource.js';
 
 export function fromEvent(target: EventTarget, event: string) {
-    return new DataSource(rxFromEvent(target, event));
+    return new EventSource(rxFromEvent(target, event));
 }

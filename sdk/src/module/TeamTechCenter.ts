@@ -1,4 +1,4 @@
-import { DataSource, Socket } from 'sea-core';
+import { EventSource, Socket } from 'sea-core';
 
 declare var Alarm: any;
 
@@ -48,7 +48,7 @@ export default async function TeamTechCenter(createContext: SEAL.createModContex
     };
 
     let sub: number;
-    const ds = DataSource.gameModule('team', 'load');
+    const ds = EventSource.gameModule('team', 'load');
 
     const install = () => {
         sub = ds.on(load);

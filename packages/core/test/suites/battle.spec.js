@@ -1,6 +1,6 @@
 import {
-    DataSource,
     Engine,
+    EventSource,
     Hook,
     Manager,
     Operator,
@@ -17,7 +17,7 @@ const startBattle = () => {
     FightManager.fightNoMapBoss(6730);
 };
 
-const $hook = DataSource.hook;
+const $hook = EventSource.hook;
 const filterCMD = [
     1002, // SYSTEM_TIME
     2001, // ENTER_MAP

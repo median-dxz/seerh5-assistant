@@ -1,4 +1,4 @@
-import { DataSource, Hook } from 'sea-core';
+import { EventSource, Hook } from 'sea-core';
 import * as Battle from 'sea-core/battle';
 import { extendEngine } from 'sea-core/engine';
 import { IS_DEV } from '../constants';
@@ -20,8 +20,8 @@ export function setupForLauncher() {
 
     // 自动战斗需要手动启用
     const { resolveStrategy } = Battle.Manager;
-    DataSource.hook(Hook.Battle.battleStart).on(resolveStrategy);
-    DataSource.hook(Hook.Battle.roundEnd).on(resolveStrategy);
+    EventSource.hook(Hook.Battle.battleStart).on(resolveStrategy);
+    EventSource.hook(Hook.Battle.roundEnd).on(resolveStrategy);
 }
 
 /** enable background heartbeat check */

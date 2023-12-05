@@ -1,4 +1,4 @@
-import { DataSource, GameConfigRegistry, ItemId, SEAPet, Socket, delay } from 'sea-core';
+import { EventSource, GameConfigRegistry, ItemId, SEAPet, Socket, delay } from 'sea-core';
 
 interface NatureObj extends seerh5.BaseObj {
     id: number;
@@ -86,7 +86,7 @@ export default async function CraftSkillStone(createContext: SEAL.createModConte
                 }
 
                 await new Promise((resolve) => {
-                    DataSource.socket(CommandID.MULTI_ITEM_LIST, 'receive').once(resolve);
+                    EventSource.socket(CommandID.MULTI_ITEM_LIST, 'receive').once(resolve);
                     ItemManager.updateItemNum([300070], [true]);
                 });
 
@@ -111,7 +111,7 @@ export default async function CraftSkillStone(createContext: SEAL.createModConte
             }> = [];
 
             await new Promise((resolve) => {
-                DataSource.socket(4475, 'receive').once(resolve);
+                EventSource.socket(4475, 'receive').once(resolve);
                 ItemManager.getSkillStone();
             });
 

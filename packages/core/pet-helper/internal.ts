@@ -1,5 +1,5 @@
 import { Hook } from '../constant/index.js';
-import { HookRegistry, SocketBuilderRegistry } from '../data-source/index.js';
+import { HookRegistry, SocketBuilderRegistry } from '../event-source/index.js';
 import { PetDataManger, ProxyPet } from './PetDataManager.js';
 
 export default () => {

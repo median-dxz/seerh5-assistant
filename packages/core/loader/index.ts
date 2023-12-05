@@ -1,7 +1,8 @@
 import type { AnyFunction } from '../common/utils.js';
 import { coreSetup, coreSetupBasic } from './internal/index.js';
 
-const VERSION = '0.7.2'
+const VERSION = '0.7.3' as const;
+export type VERSION = typeof VERSION;
 
 interface SetupFn {
     type: 'beforeGameCoreInit' | 'afterFirstShowMainPanel';

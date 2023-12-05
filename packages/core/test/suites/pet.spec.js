@@ -1,6 +1,6 @@
 import {
-    DataSource,
     Engine,
+    EventSource,
     Hook,
     Manager,
     PetLocation,
@@ -12,7 +12,7 @@ import {
 import env from '../env/pet.json';
 
 var expect = chai.expect;
-const $hook = DataSource.hook;
+const $hook = EventSource.hook;
 
 describe('PetHelper', function () {
     this.timeout('15s');

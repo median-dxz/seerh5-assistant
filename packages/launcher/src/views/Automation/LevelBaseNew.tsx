@@ -2,10 +2,10 @@ import { LabeledLinearProgress } from '@/components/LabeledProgress';
 import { DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import React from 'react';
 
-import { LevelManager as SEALevelManager, type ILevelRunner } from 'sea-core';
+import { LevelManager as SEALevelManager, type ILevelRunner, type LevelMeta } from 'sea-core';
 
 interface LevelProps {
-    runner: ILevelRunner | null;
+    runner: (ILevelRunner & { meta: LevelMeta }) | null;
 }
 
 function useLevelRunner(runner: ILevelRunner | null) {

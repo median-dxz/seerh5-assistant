@@ -1,5 +1,4 @@
 import { resolve } from 'path';
-import externalGlobals from 'rollup-plugin-external-globals';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
@@ -23,18 +22,7 @@ export default defineConfig({
             },
         },
         rollupOptions: {
-            external: ['sea-core'],
+            external: /sea-core/,
         },
     },
-    plugins: [
-        externalGlobals(
-            (id) => {
-                if (id.match(/sea-core/)) {
-                    return 'sea';
-                }
-                return undefined as unknown as string;
-            },
-            { include: ['src/**/*'] }
-        ),
-    ],
 });

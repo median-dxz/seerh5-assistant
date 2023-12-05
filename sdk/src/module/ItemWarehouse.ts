@@ -1,5 +1,5 @@
 import type { Pet } from 'sea-core';
-import { DataSource, Engine, PetDataManger, SEAPet, hookPrototype } from 'sea-core';
+import { Engine, EventSource, PetDataManger, SEAPet, hookPrototype } from 'sea-core';
 
 interface PetFragment {
     EffectMsglog: number;
@@ -103,7 +103,7 @@ export default async function ItemWareHouse(createContext: SEAL.createModContext
     };
 
     let sub: number;
-    const ds = DataSource.gameModule('itemWarehouse', 'load');
+    const ds = EventSource.gameModule('itemWarehouse', 'load');
 
     const install = () => {
         sub = ds.on(load);

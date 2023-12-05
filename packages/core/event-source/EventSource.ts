@@ -6,7 +6,7 @@ import { fromHook } from './source-builder/fromHook.js';
 import { fromEgret } from './source-builder/fromNative.js';
 import { fromSocket } from './source-builder/fromSocket.js';
 
-export class DataSource<T> {
+export class EventSource<T> {
     private _source$: Observable<T>;
 
     public get source$(): Observable<T> {
@@ -16,8 +16,8 @@ export class DataSource<T> {
     private subscriptions = new Map<number, Subscription>();
     private subscriptionId = 0;
 
-    constructor(dataSource$: Observable<T>) {
-        this._source$ = dataSource$;
+    constructor(EventSource$: Observable<T>) {
+        this._source$ = EventSource$;
     }
 
     on(handler: Handler<T>) {

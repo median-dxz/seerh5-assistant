@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Pet } from 'sea-core';
-import { DataSource, Hook, PetPosition, Subscription, debounce, getBagPets } from 'sea-core';
+import { EventSource, Hook, PetPosition, Subscription, debounce, getBagPets } from 'sea-core';
 import type { SWRSubscriptionOptions } from 'swr/subscription';
 import useSWRSubscription from 'swr/subscription';
 
@@ -11,9 +11,9 @@ export function useBagPets() {
             getBagPets(PetPosition.bag1).then((pets) => next(null, pets));
             const subscription = new Subscription();
 
-            subscription.on(DataSource.hook(Hook.PetBag.deactivate), debounce(getBagPets, 100));
+            subscription.on(EventSource.hook(Hook.PetBag.deactivate), debounce(getBagPets, 100));
             subscription.on(
-                DataSource.hook(Hook.PetBag.update),
+                EventSource.hook(Hook.PetBag.update),
                 debounce((pets) => {
                     next(null, pets[0]);
                 }, 100)

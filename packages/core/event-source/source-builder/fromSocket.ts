@@ -1,6 +1,6 @@
 import { filter, map, zip, type Observable } from 'rxjs';
 import { Hook, type SocketResponseMap } from '../../constant/index.js';
-import { DataSource } from '../DataSource.js';
+import { EventSource } from '../EventSource.js';
 import { SocketBuilderRegistry } from '../SocketBuilderRegistry.js';
 import { $hook } from './fromHook.js';
 
@@ -57,5 +57,5 @@ type InferFromSocketReturnType<TCmd extends CMD, Event extends SocketEvent | und
     : never;
 
 export function fromSocket<TCmd extends CMD, TEvent extends SocketEvent>(cmd: TCmd, event?: TEvent) {
-    return new DataSource($socket(cmd, event) as Observable<InferFromSocketReturnType<TCmd, TEvent>>);
+    return new EventSource($socket(cmd, event) as Observable<InferFromSocketReturnType<TCmd, TEvent>>);
 }

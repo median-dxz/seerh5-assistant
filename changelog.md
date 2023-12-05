@@ -3,25 +3,26 @@
 
 RoadMap: **见Readme**
 
-**注意，正在进行0.5.0版本的重构和功能添加，暂时不具备可用性**
+**注意，正在进行0.6.0版本的重构和功能添加，暂时不具备可用性**
 
 **todo已经迁移至issue/project**
 
 - [ ] 整理github issue和project, 删除过远和不够明确的目标, 关闭暂时无法复现的问题, 关闭已经完成的内容并链接commit/pr
 
-- [ ] 使用import map, 在全局共享`sea-core`ES模块实例, 使插件捆绑后以原生esm方式即可使用core
-  - [ ] 编写vite插件和引入jspm, 使launcher在开发环境下将`sea-core`外部化, 由插件注入本地工作区包的importmap
-  - [ ] 同样由vite插件和jspm, 在生产环境下将`sea-core`捆绑为单独的chunk并保留导出签名, 由插件注入chunk的importmap(额外步骤：将分包解析映射到总包)
-  - [ ] sdk中不用额外插件，仅做外部化配置
-  - [ ] 完善动态import加载插件的机制，在devtools中获取更好的显示
-- [ ] sdk中core版本兼容性检测
-- [ ] 抑制vite的html外部脚本报错 ([vite #11854](https://github.com/vitejs/vite/pull/11854))
-- [ ] 关闭生产环境下(`vite build`)对`sea-core`的`tree-shake`
+- [x] 使用import map, 在全局共享`sea-core`ES模块实例, 使插件捆绑后以原生esm方式即可使用core
+  - [x] 编写vite插件, 由插件注入import-map
+  - [x] 同样利用vite插件, 实现生产环境下将`sea-core`捆绑为单独的chunk并保留导出签名, 由插件注入chunk的import-map(额外步骤：将分包解析映射到总包)
+  - [x] sdk中不用额外插件，仅做外部化配置
+- [x] 抑制vite的html外部脚本报错 ([vite #11854](https://github.com/vitejs/vite/pull/11854))
+- [x] 关闭生产环境下(`vite build`)对`sea-core`的`tree-shake`
+- [x] 添加同步版本的npm脚本, 并同步修改`loader/index.ts`内的`version`
 
-# Core 当前版本 v0.7.1
+- [ ] sdk中core版本兼容性检测, 添加core版本字段(必填), 并规范launcher的core实例和sdk使用的api之间的关系
 
-- [ ] 添加发布版本的npm脚本, 并同步修改`loader/index.ts`内的`version`
-  - [ ] 入参是版本, 然后同步修改package.json和loader的两个字段, 使用正则替换+JSON.prase
+
+# Core 当前版本 v0.7.3
+
+- [x] 使用类型来提示SDK使用者和Launcher开发者当前Core的版本
 - [ ] 精简api界面, 删除不必要的导出
 - [ ] 属性攻击/特攻/物攻的枚举
 - [ ] 对于部分错误, 封装错误类
@@ -39,11 +40,11 @@ RoadMap: **见Readme**
   - [ ] 自动关弹窗
   - [ ] logFilter
 
-# App 当前版本 v0.5.1
+# App 当前版本 v0.6.1
 
-- [ ] 生产开发环境判断
+- [x] 生产开发环境判断
 - [x] 基于trpc, 不再需要持久化配置提供序列化函数
-- [ ] 为模组注入配置持久化接口
+- [x] 为模组注入配置持久化接口
 
 # 其他
 

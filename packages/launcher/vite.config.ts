@@ -4,7 +4,8 @@ import { fileURLToPath } from 'url';
 import { defineConfig, loadEnv } from 'vite';
 import Inspect from 'vite-plugin-inspect';
 import { VitePWA } from 'vite-plugin-pwa';
-import importMap from './vite-plugin/vite-plugin-import-map';
+import externalURL from './build-plugins/vite-plugin-external-url';
+import importMap from './build-plugins/vite-plugin-import-map';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -23,11 +24,13 @@ export default defineConfig(({ command, mode }) => {
         build: {
             target: 'esnext',
             rollupOptions: {
+                input: {
+                    index: path.resolve(dirname, 'index.html'),
+                },
                 output: {
                     manualChunks: {
-                        'sea-core': ['sea-core'],
+                        'mui-material': ['@mui/material'],
                     },
-                    minifyInternalExports: false,
                 },
             },
         },
@@ -36,6 +39,12 @@ export default defineConfig(({ command, mode }) => {
         },
         plugins: [
             react(),
+            importMap({
+                options: {
+                    'sea-core': { path: path.resolve(dirname, '../core/dist/index.js'), extras: ['sea-core/'] },
+                },
+            }),
+            externalURL(['/api/js/seerh5.61.com/app.js']),
             VitePWA({
                 manifest: false,
                 injectManifest: {
@@ -63,8 +72,7 @@ export default defineConfig(({ command, mode }) => {
                     ],
                 },
             }),
-            importMap(),
-            Inspect()
+            Inspect(),
         ],
         resolve: {
             alias: {

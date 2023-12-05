@@ -14,6 +14,7 @@ import {
     type PetFragmentLevelDifficulty as Difficulty,
     type ILevelBattle,
     type ILevelRunner,
+    type LevelMeta,
     type PetFragmentLevel,
 } from 'sea-core';
 
@@ -150,7 +151,7 @@ export function PetFragmentLevelPanel() {
                     },
                 }}
             >
-                <LevelBaseNew runner={runner} />
+                <LevelBaseNew runner={runner as unknown as ILevelRunner & { meta: LevelMeta }} />
                 <DialogActions>
                     {/* {actions} */}
                     <Button onClick={closeHandler}>{'退出'}</Button>

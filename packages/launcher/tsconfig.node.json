@@ -7,6 +7,6 @@
     },
     "include": [
         "vite.config.ts",
-        "./vite-plugin/vite-plugin-importmap.ts"
+        "./build-plugins/**"
     ]
 }

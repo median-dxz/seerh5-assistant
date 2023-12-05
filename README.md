@@ -21,20 +21,12 @@
 
 ## 最近更新的内容
 
-*Core v0.7.1*
-
-- [ ] 属性攻击/特攻/物攻的枚举
-- [x] 通过declare module方式并设计相关接口，使得Core支持扩展
-  - [x] 添加Loader的扩展点
-  - [x] 添加Engine的扩展点
-  - [x] 添加Hook的扩展点
-  - [x] 添加GameConfig的扩展点
-- [ ] 对于部分错误, 封装错误类
-  - [ ] 暂定有影响DRY原则的错误封装
-- [ ] 额外允许一些模块打印关键日志, 通过`common`包下的`log`模块启用
-  - [ ] `Log.setLogger()`允许使用自定义logger, 默认启用console.log, 输出格式为`[sea-core][module name]:`
-  - [ ] 外部api为`Log.enable()`和`Log.disable()`, 通过传入模块名称来开启这一部分的输出
-  - [ ] 目前暂定支持的模块只有`Battle`, 开启后将输出Operator模块的入参
+- [x] 使用import map, 在全局共享`sea-core`ES模块实例, 使插件捆绑后以原生esm方式即可使用core
+  - [x] 编写vite插件, 由插件注入import-map
+  - [x] 同样利用vite插件, 实现生产环境下将`sea-core`捆绑为单独的chunk并保留导出签名, 由插件注入chunk的import-map(额外步骤：将分包解析映射到总包)
+  - [x] sdk中不用额外插件，仅做外部化配置
+- [x] 抑制vite的html外部脚本报错 ([vite #11854](https://github.com/vitejs/vite/pull/11854))
+- [x] 关闭生产环境下(`vite build`)对`sea-core`的`tree-shake`
 
 # 简介
 
@@ -113,12 +105,7 @@ pnpm build
 第一条命令会启用一个脚本来构建`sea-core`，并自动安装到sdk下，
 第二条命令会自动构建模组并复制到server的mods目录下。
 
-检查`server/config`修改你的配置
-检查`launcher/builtin`以添加你需要的`Battle`和`Strategy`
-
-在上述两处地方其中添加你的相关配置。
-
-最后进入游戏！
+最后进入游戏！请注意浏览器版本, 如果不支持import-map, 原生esm加载等功能, 需要手动添加相应的polyfill
 
 注意该项目的后端的主要功能是作为**本地数据存储**和**跨域反代**，**部署在本地**，对于每一个用户存的都是独一份的数据。暂时还不考虑一人游玩多个号的场景。
 
