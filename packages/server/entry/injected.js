@@ -213,7 +213,7 @@ var Driver = (function () {
                             document.head.appendChild(script).parentNode.removeChild(script);
                             if (config.action === 'Core.init') {
                                 // dispatch event begin
-                                window.dispatchEvent(new CustomEvent(sea.EVENT_SEER_READY));
+                                window.dispatchEvent(new CustomEvent(sea.SEER_READY_EVENT));
                                 sea.SeerH5Ready = true;
                                 // dispatch event end
                                 Driver.doAction();

@@ -12,7 +12,7 @@ document.querySelector('#test-page').addEventListener('click', () => {
     el.style.zIndex = Number(zIndex) ? 0 : 1;
 });
 
-const coreLoader = new core.CoreLoader('seerh5_load');
+const coreLoader = new core.CoreLoader();
 await coreLoader.load();
 
 window.sea = { ...window.sea, ...core };

@@ -19,10 +19,11 @@ RoadMap: **见Readme**
 
 - [ ] sdk中core版本兼容性检测, 添加core版本字段(必填), 并规范launcher的core实例和sdk使用的api之间的关系
 
-
-# Core 当前版本 v0.7.3
+# Core 当前版本 v0.7.4
 
 - [x] 使用类型来提示SDK使用者和Launcher开发者当前Core的版本
+  - [x] 从`CoreLoader`上来获取实例版本, 从type中获取api定义的版本
+- [x] `CoreLoader`现在不需要传入监听事件名了
 - [ ] 精简api界面, 删除不必要的导出
 - [ ] 属性攻击/特攻/物攻的枚举
 - [ ] 对于部分错误, 封装错误类

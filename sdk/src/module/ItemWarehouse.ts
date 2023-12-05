@@ -40,6 +40,7 @@ export default async function ItemWareHouse(createContext: SEAL.createModContext
             id: 'itemWarehouse',
             scope: 'median',
             description: '物品仓库修改, 提供更换的精灵因子界面交互',
+            core: '0.7.4',
         },
     });
 

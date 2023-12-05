@@ -1,4 +1,4 @@
-import type { ILevelRunner, MoveStrategy } from 'sea-core';
+import type { ILevelRunner, MoveStrategy, VERSION } from 'sea-core';
 
 declare module 'sea-core' {
     export interface Engine {
@@ -21,7 +21,6 @@ declare global {
     interface SEA {
         /** 正则过滤列表 */
         logRegexFilter: { log: RegExp[]; warn: RegExp[] };
-        EVENT_SEER_READY: string;
     }
 
     namespace SEAL {
@@ -41,11 +40,12 @@ declare global {
             id: string;
             scope: string;
             version: string;
+            core: VERSION;
             description?: string;
         };
 
         interface CreateContextOptions<TConfig> {
-            meta: Omit<Partial<Meta>, 'id'> & { id: string };
+            meta: Omit<Partial<Meta>, 'id' | 'core'> & { id: string; core: VERSION };
             defaultConfig?: TConfig;
         }
 

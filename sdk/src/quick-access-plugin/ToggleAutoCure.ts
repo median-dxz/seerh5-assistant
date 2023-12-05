@@ -6,6 +6,7 @@ export default async function ToggleAutoCure(createContext: SEAL.createModContex
         meta: {
             id: 'LocalPetSkin',
             scope: 'median',
+            core: '0.7.4',
         },
     });
 

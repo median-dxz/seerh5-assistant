@@ -1,7 +1,7 @@
 import * as core from 'sea-core';
 import { CoreLoader, log } from 'sea-core';
 
-import { EVENT_SEER_READY, IS_DEV } from '@/constants';
+import { IS_DEV } from '@/constants';
 import { setupForLauncher } from '@/features/setup';
 
 // register service work
@@ -10,8 +10,8 @@ if ('serviceWorker' in navigator) {
 }
 
 // init sea core
-export const loader = new CoreLoader(EVENT_SEER_READY);
-window.sea = { ...window.sea, ...core, EVENT_SEER_READY };
+export const loader = new CoreLoader();
+window.sea = { ...window.sea, ...core };
 loader.addSetupFn('afterFirstShowMainPanel', setupForLauncher);
 
 if (IS_DEV) {

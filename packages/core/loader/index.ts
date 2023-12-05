@@ -1,7 +1,8 @@
 import type { AnyFunction } from '../common/utils.js';
 import { coreSetup, coreSetupBasic } from './internal/index.js';
 
-const VERSION = '0.7.3' as const;
+const VERSION = '0.7.4';
+const SEER_READY_EVENT = 'seerh5_ready';
 export type VERSION = typeof VERSION;
 
 interface SetupFn {
@@ -13,8 +14,9 @@ class CoreLoader {
     static checkEnv = () =>
         typeof window !== 'undefined' && window === window.self && typeof window.sea === 'undefined';
 
+    static readonly version = VERSION;
+
     private loadCalled: boolean;
-    private readonly readyEvent: string;
     private setupFns: Array<SetupFn> = [];
     private setup(type: SetupFn['type']) {
         this.setupFns
@@ -24,14 +26,14 @@ class CoreLoader {
             });
     }
 
-    constructor(readyEvent: string) {
+    constructor() {
         if (CoreLoader.checkEnv()) {
-            this.readyEvent = readyEvent;
             this.loadCalled = false;
 
             window.sea = {
+                SEER_READY_EVENT,
                 SeerH5Ready: false,
-                CoreInstance: Object.freeze({ flag: true, version: VERSION }),
+                CoreInstanceCreated: Object.freeze({ flag: true }),
             };
 
             this.addSetupFn('beforeGameCoreInit', coreSetupBasic);
@@ -76,7 +78,7 @@ class CoreLoader {
                 this.setupFns = [];
             };
 
-            window.addEventListener(this.readyEvent, beforeGameCoreInit, { once: true });
+            window.addEventListener(SEER_READY_EVENT, beforeGameCoreInit, { once: true });
         });
     }
 }

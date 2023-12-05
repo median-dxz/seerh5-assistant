@@ -9,8 +9,8 @@ export * from './level/index.js';
 export * from './pet-helper/index.js';
 
 export { CoreLoader } from './loader/index.js';
+export type { VERSION } from './loader/index.js';
 
-import type { VERSION } from './loader/index.js';
 declare global {
     interface Window {
         /** 额外全局命名空间, 用以跨模块交互 */
@@ -19,11 +19,12 @@ declare global {
 
     interface SEA {
         /** SEA 全局单例标志位 */
-        CoreInstance: {
+        CoreInstanceCreated: {
             flag: boolean;
-            version: VERSION;
         };
         /** 游戏核心加载就绪标志位 */
         SeerH5Ready: boolean;
+        /**  game core loaded event */
+        SEER_READY_EVENT: string;
     }
 }
