@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 export interface Logger {
     info: typeof console.info;
     warn: typeof console.warn;
@@ -35,8 +36,18 @@ const Logger: Logger = {
     warn: console.warn,
 };
 
-export const CoreWarning = (module: ModuleName): typeof console.warn =>
-    Logger.warn.bind(console, '[sea-core][%s]:', module);
+export const CoreWarning =
+    (module: ModuleName): typeof console.warn =>
+    (...args: Parameters<Logger['warn']>) => {
+        if (enables.has(module)) {
+            Logger.warn('[sea-core][%s]:', module, ...args);
+        }
+    };
 
-export const CoreDevInfo = (module: ModuleName): typeof console.info =>
-    Logger.info.bind(console, '[sea-core][%s]:', module);
+export const CoreDevInfo =
+    (module: ModuleName): typeof console.info =>
+    (...args: Parameters<Logger['info']>) => {
+        if (enables.has(module)) {
+            Logger.info('[sea-core][%s]:', module, ...args);
+        }
+    };
