@@ -1,6 +1,7 @@
 import { Hook } from '../constant/index.js';
 import { HookRegistry, SocketBuilderRegistry } from '../event-source/index.js';
-import { PetDataManger, ProxyPet } from './PetDataManager.js';
+import { PetDataManger } from './PetDataManager.js';
+import { ProxyPet } from './SEAPet.js';
 
 export default () => {
     SocketBuilderRegistry.register(CommandID.GET_PET_INFO_BY_ONCE, (data) => {

@@ -21,12 +21,25 @@
 
 ## 最近更新的内容
 
-- [x] 使用import map, 在全局共享`sea-core`ES模块实例, 使插件捆绑后以原生esm方式即可使用core
-  - [x] 编写vite插件, 由插件注入import-map
-  - [x] 同样利用vite插件, 实现生产环境下将`sea-core`捆绑为单独的chunk并保留导出签名, 由插件注入chunk的import-map(额外步骤：将分包解析映射到总包)
-  - [x] sdk中不用额外插件，仅做外部化配置
-- [x] 抑制vite的html外部脚本报错 ([vite #11854](https://github.com/vitejs/vite/pull/11854))
-- [x] 关闭生产环境下(`vite build`)对`sea-core`的`tree-shake`
+- [x] 使用import map, 在全局共享`sea-core`ES模块实例, 使插件捆绑后以原生esm方式即可使用core, 基于vite插件实现
+- [x] `SEAPet` 更换更优雅的链式调用api
+```typescript
+// 调用SEAPet事实上已经返回了一个Promise, 但是为了清晰起见,
+// 以及防止vscode的自动提示出现两个相同的属性(其中一个是自动帮你嵌套await后获取ProxyPet上的属性)
+// 约定使用一个get方法来获取返回的ProxyPet
+await SEAPet(pet).get(); 
+// get的用法和Promise的then一模一样, 实际上内部直接调用了Promise的then
+await SEAPet(pet).get((pet) => {
+    return pet.cure();
+});
+// 很优雅的异步获取属性
+await SEAPet(pet).catchTime;
+// 很优雅的异步调用突变方法
+await SEAPet(pet).default();
+// 对于更新并返回自身的突变, 可以很优雅的链式调用,
+// 如果最后一个调用仍然返回自身, 使用done属性来获取实际的promise
+await SEAPet(pet).cure().location().done;
+```
 
 # 简介
 

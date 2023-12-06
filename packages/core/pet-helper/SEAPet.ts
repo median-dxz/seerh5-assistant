@@ -1,65 +1,162 @@
-import { Pet, type Item } from '../entity/index.js';
+/* eslint-disable */
+import type { AnyFunction } from '../common/utils.js';
+import { Socket } from '../engine/index.js';
+import { EntityBase } from '../entity/EntityBase.js';
+import { Item, Pet } from '../entity/index.js';
+import { PetDataManger as ins, type CatchTime } from './PetDataManager.js';
+import { PetLocation, setLocationTable } from './PetLocation.js';
 
-import type { ProxyPet } from './PetDataManager.js';
-import { PetDataManger as ins } from './PetDataManager.js';
-import type { PetLocation } from './PetLocation.js';
-
-export type CatchTime = number;
-
-const PetHandlerStatic = {
-    async get(pet: CatchTime | Pet) {
-        const ct = Pet.inferCatchTime(pet);
-        if (ins.cache.has(ct)) {
-            return ins.cache.get(ct)!;
-        } else {
-            return ins.query(ct);
-        }
-    },
-    async isDefault(pet: CatchTime | Pet) {
-        const r = await this.get(pet);
-        return r.isDefault;
-    },
-    async default(pet: CatchTime | Pet) {
-        const r = await this.get(pet);
-        return r.default();
-    },
-    async location(pet: CatchTime | Pet) {
-        const r = await this.get(pet);
-        return r.location();
-    },
-    async setLocation(pet: CatchTime | Pet, newLocation: PetLocation) {
-        const r = await this.get(pet);
-        return r.setLocation(newLocation);
-    },
-    async popFromBag(pet: CatchTime | Pet) {
-        const r = await this.get(pet);
-        return r.popFromBag();
-    },
-    async cure(p: CatchTime | Pet) {
-        const pet = await this.get(p);
-        return pet.cure();
-    },
-    async useItem(pet: CatchTime | Pet, item: Item | number) {
-        const r = await this.get(pet);
-        return r.useItem(item);
-    },
-    async usePotion(pet: CatchTime | Pet, potion: Item | number) {
-        const r = await this.get(pet);
-        return r.usePotion(potion);
-    },
+type SEAPet = {
+    [P in keyof ProxyPet]: ProxyPet[P] extends (...args: infer A) => infer R
+        ? R extends Promise<ProxyPet>
+            ? (...args: A) => SEAPet
+            : R extends Promise<unknown>
+            ? ProxyPet[P]
+            : (...args: A) => Promise<R>
+        : Promise<ProxyPet[P]>;
+} & {
+    get<TResult1 = ProxyPet, TResult2 = never>(
+        onfulfilled?: ((value: ProxyPet) => TResult1 | PromiseLike<TResult1>) | undefined | null,
+        onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null
+    ): PromiseLike<TResult1 | TResult2>;
+    done: Promise<ProxyPet>;
 };
-type PetHandler = typeof PetHandlerStatic & { (pet: CatchTime | Pet): ProxyPet };
-const PetHandlerFunc = function () {
-    // let object callable
-} as unknown as PetHandler;
-Object.entries(PetHandlerStatic).forEach(([_p, _f]) => {
-    (PetHandlerFunc as any)[_p] = _f; // eslint-disable-line
-});
 
-export const SEAPet: PetHandler = new Proxy(PetHandlerFunc, {
-    apply: (target, thisArg, argArray: [CatchTime | Pet]) => {
-        const pet = argArray[0];
-        const ct = Pet.inferCatchTime(pet);
-        return ins.cache.get(ct);
-    },
-});
+const ChainableSymbol = Symbol('SEAPetChainable');
+
+function chainable(value: any, ctx: ClassMethodDecoratorContext) {
+    (value as any)[ChainableSymbol] = true;
+    return value;
+}
+
+export class ProxyPet extends Pet {
+    constructor(i: PetInfo) {
+        super(i);
+    }
+
+    get isDefault(): boolean {
+        return this.catchTime === ins.defaultCt;
+    }
+
+    default() {
+        return this.setLocation(PetLocation.Default);
+    }
+
+    async location(): Promise<PetLocation> {
+        const allInfo = await ins.miniInfo.get();
+        const bagPet = await ins.bag.get();
+        if (this.catchTime === ins.defaultCt && bagPet[0].length > 0) {
+            return PetLocation.Default;
+        }
+        if (bagPet[0].find((pet) => pet.catchTime === this.catchTime)) {
+            return PetLocation.Bag;
+        }
+        if (bagPet[1].find((pet) => pet.catchTime === this.catchTime)) {
+            return PetLocation.SecondBag;
+        }
+        if (allInfo.has(this.catchTime)) {
+            const pet = allInfo.get(this.catchTime)!;
+            let pos = PetLocation.Unknown;
+            switch (pet.posi) {
+                case 0:
+                    pos = PetLocation.Storage;
+                    break;
+                case 4:
+                    pos = PetLocation.Elite;
+                    break;
+                case 14:
+                    pos = PetLocation.OnDispatching;
+                    break;
+                default:
+            }
+            return pos;
+        }
+        return PetLocation.Unknown;
+    }
+
+    async setLocation(newLocation: PetLocation) {
+        const oldLocation = await this.location();
+        if (newLocation === oldLocation) {
+            return false;
+        }
+        const r = await setLocationTable[oldLocation][newLocation]?.(this.catchTime);
+        return r ?? false;
+    }
+
+    /**
+     * @chainable
+     */
+    @chainable
+    async cure() {
+        await Socket.sendByQueue(CommandID.PET_ONE_CURE, [this.catchTime]);
+        return ins.query(this.catchTime);
+    }
+
+    async popFromBag() {
+        const local = await this.location();
+        if (local === PetLocation.Bag || local === PetLocation.SecondBag || local === PetLocation.Default) {
+            await this.setLocation(PetLocation.Storage);
+        }
+        return;
+    }
+
+    /**
+     * @description 对精灵使用物品
+     * Attention: 该发包不具备收包resolve的条件! 请手动添加延迟
+     * @chainable
+     */
+    @chainable
+    async useItem(item: Item | number) {
+        const itemId = EntityBase.inferId(item);
+        const info = await PetManager.UpdateBagPetInfoAsynce(this.catchTime);
+        ItemUseManager.getInstance().useItem(info, itemId);
+        return ins.query(this.catchTime);
+    }
+
+    /**
+     * @description 对精灵使用药品
+     * @chainable
+     */
+    @chainable
+    async usePotion(potion: Item | number) {
+        const itemId = EntityBase.inferId(potion);
+        await Socket.sendByQueue(CommandID.USE_PET_ITEM_OUT_OF_FIGHT, [this.catchTime, itemId]);
+        return ins.query(this.catchTime);
+    }
+}
+
+export function SEAPet(pet: Pet | CatchTime) {
+    const ct = Pet.inferCatchTime(pet);
+    const petPromise = pet instanceof Promise ? pet : Promise.resolve(ins.cache.get(ct) ?? ins.query(ct));
+
+    const extractPromiseWrapper =
+        (target: Promise<ProxyPet>, fn: AnyFunction, isChainable: boolean) =>
+        (...args: unknown[]) => {
+            if (isChainable) {
+                return SEAPet(target.then((pet) => (fn as AnyFunction).apply(pet, args)) as any);
+            } else {
+                return target.then((pet) => (fn as AnyFunction).apply(pet, args));
+            }
+        };
+
+    const proxyPet = new Proxy(petPromise, {
+        get(target, prop, _) {
+            if (prop === 'get') {
+                return target.then.bind(target);
+            }
+            if (prop === 'done') {
+                return target;
+            }
+
+            const fn = ProxyPet.prototype[prop as keyof ProxyPet];
+
+            if (fn && typeof fn === 'function') {
+                return extractPromiseWrapper(target, fn, Boolean(ChainableSymbol in fn));
+            }
+
+            return target.then((pet) => pet[prop as keyof ProxyPet]);
+        },
+    }) as unknown as SEAPet;
+
+    return proxyPet;
+}

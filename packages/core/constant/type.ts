@@ -1,6 +1,6 @@
 import type { withClass } from '../common/utils.js';
-import type { Pet, PetRoundInfo } from '../entity/index.ts';
-import type { ProxyPet } from '../pet-helper/PetDataManager.ts';
+import type { Pet, PetRoundInfo } from '../entity/index.js';
+import type { ProxyPet } from '../pet-helper/SEAPet.js';
 
 export interface HookDataMap {
     module_openMainPanel: { module: string; panel: string };

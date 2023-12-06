@@ -23,6 +23,7 @@ export default defineConfig(({ command, mode }) => {
         },
         build: {
             target: 'esnext',
+            outDir: '../server/dist',
             rollupOptions: {
                 input: {
                     index: path.resolve(dirname, 'index.html'),
@@ -41,9 +42,19 @@ export default defineConfig(({ command, mode }) => {
             react(),
             importMap({
                 options: {
-                    'sea-core': { path: path.resolve(dirname, '../core/dist/index.js'), extras: ['sea-core/'] },
+                    'sea-core': {
+                        path: path.resolve(dirname, '../core/dist/index.js'),
+                        extras: [
+                            'sea-core/battle',
+                            'sea-core/constant',
+                            'sea-core/engine',
+                            'sea-core/entity',
+                        ],
+                    },
                 },
             }),
+            // 抑制vite在html中以相对路径引用外部脚本报错 ([vite #11854](https://github.com/vitejs/vite/pull/11854))
+            // 这是一个特殊的用例, 在这边的情况是因为对入口脚本使用了后端代理, 该请求实际上由后端接管
             externalURL(['/api/js/seerh5.61.com/app.js']),
             VitePWA({
                 manifest: false,

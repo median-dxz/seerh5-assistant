@@ -1,7 +1,9 @@
 import { EntityBase, type EntityType } from './EntityBase.js';
 
 export class PetElement extends EntityBase {
-    declare readonly __type: EntityType;
+    readonly __type: EntityType = 'PetElement';
+    readonly id: number;
+    readonly name: string;
     /** 是否是双属性 */
     composite: boolean;
     /** 英文属性名 */
@@ -10,8 +12,6 @@ export class PetElement extends EntityBase {
 
     constructor(obj: seerh5.ElementObj) {
         super();
-        this.__type = 'PetElement';
-
         [this.id, this.name, this.identifier, this.composite] = [obj.id, obj.cn, obj.en, Boolean(obj.is_dou)];
         if (this.composite) {
             this.attr = obj.att?.split(' ').map(Number) as [number, number];

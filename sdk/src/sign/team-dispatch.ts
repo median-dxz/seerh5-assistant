@@ -77,7 +77,7 @@ export const teamDispatch = (ignorePets: string[], logger: any) => {
                 for (const pid of e.petIds) {
                     const petName = PetXMLInfo.getName(pid);
                     if (ignorePetNames.has(petName)) {
-                        await SEAPet.setLocation(e.cts[index], SEAPetLocation.Bag);
+                        await SEAPet(e.cts[index]).setLocation(SEAPetLocation.Bag);
                         logger(`取出非派遣精灵: ${petName}`);
                     }
                     index++;

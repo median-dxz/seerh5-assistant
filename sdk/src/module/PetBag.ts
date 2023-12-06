@@ -1,4 +1,4 @@
-import { Engine, EventSource, Pet, Subscription, debounce, hookFn, hookPrototype } from 'sea-core';
+import { Engine, Pet, SEAEventSource, Subscription, debounce, hookFn, hookPrototype } from 'sea-core';
 
 declare module 'sea-core' {
     interface GameModuleMap {
@@ -12,7 +12,7 @@ export default async function PetBag(createContext: SEAL.createModContext) {
             id: 'petBag',
             scope: 'median',
             description: '精灵背包模块注入, 提供UI同步和本地皮肤功能的UI支持',
-            core: '0.7.4',
+            core: '0.7.5',
         },
     });
 
@@ -52,15 +52,15 @@ export default async function PetBag(createContext: SEAL.createModContext) {
             const { petInfo } = e.data as { petInfo: PetInfo };
             petInfo && logger(new Pet(petInfo));
         };
-        sub.on(EventSource.socket(CommandID.PET_DEFAULT, 'receive'), refresh);
-        sub.on(EventSource.socket(CommandID.PET_RELEASE, 'receive'), refresh);
-        sub.on(EventSource.egret<egret.TouchEvent>('petBag.MainPanelTouchPetItemEnd'), printTappingPetInfo);
+        sub.on(SEAEventSource.socket(CommandID.PET_DEFAULT, 'receive'), refresh);
+        sub.on(SEAEventSource.socket(CommandID.PET_RELEASE, 'receive'), refresh);
+        sub.on(SEAEventSource.egret<egret.TouchEvent>('petBag.MainPanelTouchPetItemEnd'), printTappingPetInfo);
     };
 
     const install = () => {
-        lifeCycleSub.on(EventSource.gameModule('petBag', 'load'), load);
-        lifeCycleSub.on(EventSource.gameModule('petBag', 'mainPanel'), mainPanel);
-        lifeCycleSub.on(EventSource.gameModule('petBag', 'destroy'), () => {
+        lifeCycleSub.on(SEAEventSource.gameModule('petBag', 'load'), load);
+        lifeCycleSub.on(SEAEventSource.gameModule('petBag', 'mainPanel'), mainPanel);
+        lifeCycleSub.on(SEAEventSource.gameModule('petBag', 'destroy'), () => {
             sub.dispose();
         });
     };

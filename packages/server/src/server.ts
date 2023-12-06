@@ -61,6 +61,13 @@ export async function createServer() {
         list: true,
     });
 
+    void server.register(fastifyStatic, {
+        root: path.resolve(server.config.APP_ROOT, 'dist'),
+        prefix: '/',
+        index: 'index.html',
+        decorateReply: false,
+    });
+
     void server.register(ws);
     void server.register(fastifyTRPCPlugin, {
         prefix: '/api',

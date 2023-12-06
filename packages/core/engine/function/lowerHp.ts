@@ -7,7 +7,7 @@ import { delay, type ValueOf } from '../../common/utils.js';
 import { PetPosition, Potion } from '../../constant/index.js';
 
 import { Pet } from '../../entity/index.js';
-import { getBagPets, PetLocation, SEAPet } from '../../pet-helper/index.js';
+import { PetLocation, SEAPet, getBagPets } from '../../pet-helper/index.js';
 
 /**
  * 利用谱尼封印自动压血
@@ -33,28 +33,33 @@ export async function lowerHp(
     const replacePets = curPets.filter((p) => !cts.includes(p.catchTime));
 
     for (const ct of cts) {
-        const location = await SEAPet.location(ct);
+        const location = await SEAPet(ct).location();
         if (location !== PetLocation.Bag && location !== PetLocation.Default) {
             if (PetManager.isBagFull) {
                 const replacePet = replacePets.pop()!;
                 await replacePet.popFromBag();
             }
-            await SEAPet.setLocation(ct, PetLocation.Bag);
+            await SEAPet(ct).setLocation(PetLocation.Bag);
         }
     }
     await getBagPets();
 
-    const hpChecker = () => cts.filter((ct) => SEAPet(ct).hp >= hpLimit);
+    let remains: Pet[];
+    const hpFilter = async () => {
+        const pets = await Promise.all(cts.map(SEAPet).map((pet) => pet.get()));
+        return pets.filter((v) => v.hp >= hpLimit);
+    };
 
     const usePotion = async (ct: number) => {
-        let pet = await SEAPet.get(ct);
+        let pet = await SEAPet(ct).get();
         if (pet.hp == 0) {
             pet = await pet.usePotion(healPotionId);
         }
         await pet.usePotion(Potion.中级活力药剂);
     };
 
-    if (hpChecker().length === 0) {
+    remains = await hpFilter();
+    if (remains.length === 0) {
         for (const ct of cts) {
             await usePotion(ct);
         }
@@ -64,9 +69,8 @@ export async function lowerHp(
 
     buyPetItem(Potion.中级活力药剂, cts.length);
     buyPetItem(healPotionId, cts.length);
-    await SEAPet.default(cts[0]);
+    await SEAPet(cts[0]).default();
     await toggleAutoCure(false);
-    await delay(300);
 
     const checkNextPet = (battleState: RoundData, pets: Pet[]) =>
         pets.findIndex(
@@ -101,9 +105,12 @@ export async function lowerHp(
     }
 
     await delay(300);
-    const leftCts = hpChecker();
-    if (leftCts.length > 0) {
-        return lowerHp(leftCts, healPotionId);
+    remains = await hpFilter();
+    if (remains.length > 0) {
+        return lowerHp(
+            remains.map((pet) => pet.catchTime),
+            healPotionId
+        );
     } else {
         await getBagPets();
         Manager.clear();

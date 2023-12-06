@@ -17,10 +17,10 @@ export async function switchBag(pets: number[] | Pet[]) {
     // 清空现有背包
     for (const v of await getBagPets(PetPosition.bag1)) {
         if (!cts.includes(v.catchTime)) {
-            await SEAPet.popFromBag(v);
+            await SEAPet(v).popFromBag();
         }
     }
     for (const v of cts) {
-        await SEAPet.setLocation(v, PetLocation.Bag);
+        await SEAPet(v).setLocation(PetLocation.Bag);
     }
 }

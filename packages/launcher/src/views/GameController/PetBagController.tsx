@@ -31,7 +31,7 @@ export function PetBagController() {
     const { data: petGroupsInfo, isLoading: loadingPetInfo } = useSWR(
         `ds://petGroups/${JSON.stringify(petGroups)}`,
         () => {
-            const promises = petGroups.map((group) => Promise.all(group.map(SEAPet.get)));
+            const promises = petGroups.map((group) => Promise.all(group.map(SEAPet).map((pet) => pet.get())));
             return Promise.all(promises);
         }
     );
@@ -62,7 +62,7 @@ export function PetBagController() {
 
     const handleCurePets = () => {
         for (const cureCt of selected) {
-            SEAPet.cure(cureCt);
+            SEAPet(cureCt).cure();
         }
     };
 
@@ -175,7 +175,7 @@ function PanelRow({ selected, setSelected }: PanelRowProps) {
                         <Button
                             onClick={(e) => {
                                 e.stopPropagation();
-                                SEAPet.default(pet.catchTime);
+                                SEAPet(pet).default();
                             }}
                         >
                             首发
@@ -184,7 +184,7 @@ function PanelRow({ selected, setSelected }: PanelRowProps) {
                     <Button
                         onClick={(e) => {
                             e.stopPropagation();
-                            SEAPet.cure(pet.catchTime);
+                            SEAPet(pet).cure();
                         }}
                     >
                         治疗

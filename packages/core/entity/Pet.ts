@@ -14,7 +14,9 @@ const testPetInfoType = (o: seerh5.PetLike): o is PetInfo => Object.hasOwn(o, 'n
 const testPetStorage2015PetInfoType = (o: seerh5.PetLike): o is PetStorage2015PetInfo => Object.hasOwn(o, 'posi');
 
 export class Pet extends EntityBase implements IPetObject {
-    readonly __type: EntityType;
+    readonly __type: EntityType = 'Pet';
+    readonly id: number;
+    readonly name: string;
     readonly skills: Skill[];
     readonly catchTime: number;
     readonly level: number;
@@ -36,8 +38,6 @@ export class Pet extends EntityBase implements IPetObject {
 
     constructor(obj: PetInfo) {
         super();
-        this.__type = 'Pet';
-
         [
             this.id,
             this.name,

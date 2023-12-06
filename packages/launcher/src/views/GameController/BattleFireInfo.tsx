@@ -52,11 +52,11 @@ export function BattleFireInfo() {
             break;
     }
 
-    const { open, setOpen } = useMainState();
+    const { setOpen } = useMainState();
     const exchangeBattleFire = React.useCallback(() => {
         ModuleManager.showModule('battleFirePanel', ['battleFirePanel'], null, null, AppDoStyle.NULL);
         setOpen(false);
-    }, [open]);
+    }, [setOpen]);
 
     return (
         <Typography color={renderProps.color}>

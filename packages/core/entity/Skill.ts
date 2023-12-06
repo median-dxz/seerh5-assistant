@@ -16,7 +16,9 @@ export interface ISkillObject {
 }
 
 export class Skill extends EntityBase implements ISkillObject {
-    declare readonly __type: EntityType;
+    readonly id: number;
+    readonly name: string;
+    readonly __type: EntityType = 'Skill';
     element: PetElement;
     category: number;
     power: number;
@@ -31,7 +33,6 @@ export class Skill extends EntityBase implements ISkillObject {
 
     constructor(obj: seerh5.MoveObj) {
         super();
-        this.__type = 'Skill';
         let tempEffects: [SkillEffectArgs, SkillEffectArgs];
 
         [
@@ -79,8 +80,7 @@ export class Skill extends EntityBase implements ISkillObject {
             const stoneId = SkillXMLInfo.getStoneBySkill(id);
             const stone = Object.values(SkillXMLInfo.moveStoneMap).find((v) => v.ItemID === stoneId);
             if (stone) {
-                const skill = new Skill(stone);
-                skill.id = id;
+                const skill = new Skill({ ...stone, ID: id });
                 skill.stoneSkillId = stone.ID;
                 skill.stoneItemId = stoneId;
                 return skill;

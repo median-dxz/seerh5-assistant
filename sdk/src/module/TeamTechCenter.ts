@@ -1,4 +1,4 @@
-import { EventSource, Socket } from 'sea-core';
+import { SEAEventSource, Socket } from 'sea-core';
 
 declare var Alarm: any;
 
@@ -9,7 +9,7 @@ export default async function TeamTechCenter(createContext: SEAL.createModContex
             id: 'teamTechCenter',
             scope: 'median',
             description: '精灵科技中心模块注入, 提供一键强化到满级功能',
-            core: '0.7.4',
+            core: '0.7.5',
         },
     });
 
@@ -49,7 +49,7 @@ export default async function TeamTechCenter(createContext: SEAL.createModContex
     };
 
     let sub: number;
-    const ds = EventSource.gameModule('team', 'load');
+    const ds = SEAEventSource.gameModule('team', 'load');
 
     const install = () => {
         sub = ds.on(load);

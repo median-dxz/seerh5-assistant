@@ -2,18 +2,15 @@
   "name": "sea-core",
   "description": "SeerH5-Assistant SEA 核心库",
   "type": "module",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "license": "MPL-2.0",
   "private": true,
   "exports": {
     ".": "./dist/index.js",
     "./battle": "./dist/battle/index.js",
-    "./common": "./dist/common/index.js",
     "./constant": "./dist/constant/index.js",
     "./engine": "./dist/engine/index.js",
-    "./event-source": "./dist/event-source/index.js",
     "./entity": "./dist/entity/index.js",
-    "./pet-helper": "./dist/pet-helper/index.js",
     "./level": "./dist/level/index.js",
     "./types/seerh5": {
       "types": "./types/@seerh5/index.d.ts"

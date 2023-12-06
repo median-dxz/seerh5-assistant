@@ -8,36 +8,24 @@ RoadMap: **见Readme**
 **todo已经迁移至issue/project**
 
 - [ ] 整理github issue和project, 删除过远和不够明确的目标, 关闭暂时无法复现的问题, 关闭已经完成的内容并链接commit/pr
-
-- [x] 使用import map, 在全局共享`sea-core`ES模块实例, 使插件捆绑后以原生esm方式即可使用core
-  - [x] 编写vite插件, 由插件注入import-map
-  - [x] 同样利用vite插件, 实现生产环境下将`sea-core`捆绑为单独的chunk并保留导出签名, 由插件注入chunk的import-map(额外步骤：将分包解析映射到总包)
-  - [x] sdk中不用额外插件，仅做外部化配置
-- [x] 抑制vite的html外部脚本报错 ([vite #11854](https://github.com/vitejs/vite/pull/11854))
-- [x] 关闭生产环境下(`vite build`)对`sea-core`的`tree-shake`
-- [x] 添加同步版本的npm脚本, 并同步修改`loader/index.ts`内的`version`
-
 - [ ] sdk中core版本兼容性检测, 添加core版本字段(必填), 并规范launcher的core实例和sdk使用的api之间的关系
 
-# Core 当前版本 v0.7.4
+# Core 当前版本 v0.7.5
 
 - [x] 使用类型来提示SDK使用者和Launcher开发者当前Core的版本
   - [x] 从`CoreLoader`上来获取实例版本, 从type中获取api定义的版本
 - [x] `CoreLoader`现在不需要传入监听事件名了
 - [x] 属性攻击/特攻/物攻的枚举
-
-- [ ] 更改事件签名方式->`type:event`
-- [ ] 精简api界面, 删除不必要的导出
-- [ ] 对于部分错误, 封装错误类
-  - [ ] 暂定有影响DRY原则的错误封装
-
 - [x] 额外允许一些模块打印关键日志, 通过`common`包下的`log`模块启用
   - [x] `Log.setLogger()`允许使用自定义logger, 默认启用console.log, 输出格式为`[sea-core][module name]:`
   - [x] 外部api为`Log.enable()`和`Log.disable()`, 通过传入模块名称来开启这一部分的输出
   - [x] 目前暂定支持的模块只有`Battle`, 开启后将输出Operator模块的入参
+- [ ] 更改事件签名方式->`type:event`
+- [ ] 精简api界面, 删除不必要的导出
 
-> 以下内容等登录器端相关功能编写完善之后再迁移
- 
+# Core v0.8.x
+
+- [x] `SEAPet` 更换更优雅的链式调用api
 - [ ] 解耦登录器/后端特定逻辑, 分离非核心功能, 部分移动到登录器下的`features`包下, 由登录器提供扩展定义, 部分合并到`engine`中
   - [ ] script解密
   - [ ] 对战显血
@@ -55,6 +43,8 @@ RoadMap: **见Readme**
 - [ ] script通过语法树进行高级反混淆, 暂定主要目标是升级 async/await
 - [ ] 心跳包逻辑有点问题, 会被主动断线
 - [ ] 全体治疗基于Promise重写, 不需要加延时
+- [ ] 对于部分错误, 封装错误类
+  - [ ] 暂定有影响DRY原则的错误封装
 
 # 低优先级
 
@@ -63,4 +53,4 @@ RoadMap: **见Readme**
 - [ ] join all pet, 全局pet筛选
 - [x] 根组件渲染提前到Core.init
 - [ ] jsx外部化, import-map共享react
-
+- [ ] cookie issue

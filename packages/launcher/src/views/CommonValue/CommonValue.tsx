@@ -42,7 +42,7 @@ export function CommonValue() {
                 setItems([...rows]);
             }
         );
-    }, []);
+    }, [rows]);
 
     return <PanelTable columns={columns} rowElement={<PanelRow />} data={items} toRowKey={(item) => item.id} />;
 }

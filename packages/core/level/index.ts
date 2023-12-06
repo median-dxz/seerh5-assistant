@@ -62,7 +62,7 @@ export class LevelManager {
 
                 logger('执行战斗前预处理');
                 await beforeBattle?.();
-                await SEAPet.default(pets[0]);
+                await SEAPet(pets[0]).default();
 
                 logger('进入战斗');
                 try {

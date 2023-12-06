@@ -1,4 +1,4 @@
-import { EventSource, GameConfigRegistry, ItemId, SEAPet, Socket, delay } from 'sea-core';
+import { GameConfigRegistry, ItemId, SEAEventSource, SEAPet, Socket, delay } from 'sea-core';
 
 interface NatureObj extends seerh5.BaseObj {
     id: number;
@@ -32,7 +32,7 @@ export default async function CraftSkillStone(createContext: SEAL.createModConte
             id: 'CraftSkillStone',
             scope: 'median',
             version: '1.0.0',
-            core: '0.7.4',
+            core: '0.7.5',
             description: 'misc',
         },
     });
@@ -78,7 +78,7 @@ export default async function CraftSkillStone(createContext: SEAL.createModConte
             const query = GameConfigRegistry.getQuery('nature');
 
             for (; ; await delay(200)) {
-                await SEAPet.get(ct).then((pet) => pet.useItem(300070));
+                await SEAPet(ct).useItem(300070).done;
                 const info = await PetManager.UpdateBagPetInfoAsynce(ct);
 
                 logger(`刷性格: 当前性格: ${query.getName(info.nature)}`);
@@ -87,7 +87,7 @@ export default async function CraftSkillStone(createContext: SEAL.createModConte
                 }
 
                 await new Promise((resolve) => {
-                    EventSource.socket(CommandID.MULTI_ITEM_LIST, 'receive').once(resolve);
+                    SEAEventSource.socket(CommandID.MULTI_ITEM_LIST, 'receive').once(resolve);
                     ItemManager.updateItemNum([300070], [true]);
                 });
 
@@ -112,7 +112,7 @@ export default async function CraftSkillStone(createContext: SEAL.createModConte
             }> = [];
 
             await new Promise((resolve) => {
-                EventSource.socket(4475, 'receive').once(resolve);
+                SEAEventSource.socket(4475, 'receive').once(resolve);
                 ItemManager.getSkillStone();
             });
 

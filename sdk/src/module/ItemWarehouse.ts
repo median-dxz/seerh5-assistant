@@ -1,5 +1,5 @@
 import type { Pet } from 'sea-core';
-import { Engine, EventSource, PetDataManger, SEAPet, hookPrototype } from 'sea-core';
+import { Engine, PetDataManger, SEAEventSource, SEAPet, hookPrototype } from 'sea-core';
 
 interface PetFragment {
     EffectMsglog: number;
@@ -28,7 +28,7 @@ export async function findPetById(id: number): Promise<Pet | null> {
     const data2 = Array.from(await PetDataManger.miniInfo.get()).map(([_, pet]) => pet);
     const r = [...data1, ...data2].find((pet) => pet.id === id);
     if (r) {
-        return SEAPet.get(r.catchTime);
+        return SEAPet(r.catchTime).get();
     } else {
         return null;
     }
@@ -40,7 +40,7 @@ export default async function ItemWareHouse(createContext: SEAL.createModContext
             id: 'itemWarehouse',
             scope: 'median',
             description: '物品仓库修改, 提供更换的精灵因子界面交互',
-            core: '0.7.4',
+            core: '0.7.5',
         },
     });
 
@@ -104,7 +104,7 @@ export default async function ItemWareHouse(createContext: SEAL.createModContext
     };
 
     let sub: number;
-    const ds = EventSource.gameModule('itemWarehouse', 'load');
+    const ds = SEAEventSource.gameModule('itemWarehouse', 'load');
 
     const install = () => {
         sub = ds.on(load);
