@@ -4,6 +4,7 @@ import { theme } from '@/style';
 import { ThemeProvider } from '@mui/material';
 
 import { SWRConfig, type SWRConfiguration } from 'swr';
+import { LevelSchedulerProvider } from './LevelSchedulerProvider';
 import { MainStateProvider } from './MainStateProvider';
 import { ModStoreProvider } from './ModStoreProvider';
 
@@ -13,7 +14,9 @@ export function SEALContextProvider({ children }: PropsWithChildren<object>) {
         <ThemeProvider theme={theme}>
             <SWRConfig value={swrOptions}>
                 <ModStoreProvider>
-                    <MainStateProvider>{children}</MainStateProvider>
+                    <LevelSchedulerProvider>
+                        <MainStateProvider>{children}</MainStateProvider>
+                    </LevelSchedulerProvider>
                 </ModStoreProvider>
             </SWRConfig>
         </ThemeProvider>

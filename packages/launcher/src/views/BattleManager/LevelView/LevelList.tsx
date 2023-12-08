@@ -1,6 +1,6 @@
 import { useModStore } from '@/context/useModStore';
 import type { LevelInstance } from '@/service/store/level';
-import { List, ListItemButton, ListItemText, Typography, alpha, type ListProps } from '@mui/material';
+import { List, ListItem, ListItemButton, ListItemText, Typography, alpha, type ListProps } from '@mui/material';
 import React from 'react';
 
 interface levelListItemProps {
@@ -25,14 +25,16 @@ export function LevelListItem({ level }: levelListItemProps) {
         </>
     );
     return (
-        <ListItemButton
-            sx={{ height: '72px', border: (theme) => `1px solid ${alpha(theme.palette.primary.main, 0.12)}` }}
-            onClick={() => {
-                console.log(level);
-            }}
-        >
-            <ListItemText primary={title} secondary={description} />
-        </ListItemButton>
+        <ListItem>
+            <ListItemButton
+                sx={{ height: '72px', border: (theme) => `1px solid ${alpha(theme.palette.primary.main, 0.12)}` }}
+                onClick={() => {
+                    console.log(level);
+                }}
+            >
+                <ListItemText primary={title} secondary={description} />
+            </ListItemButton>
+        </ListItem>
     );
 }
 

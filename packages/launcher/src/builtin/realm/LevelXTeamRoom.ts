@@ -17,7 +17,7 @@ interface LevelOption {
 export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => {
     return class LevelXTeamRoom implements ILevelRunner<LevelData> {
         data: LevelData = {
-            leftTimes: 0,
+            remainingTimes: 0,
             state: LevelAction.STOP,
             success: false,
             open: false,
@@ -51,7 +51,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             this.data.weeklyRewardReceived = bits[1];
 
             this.data.open = Boolean(pInfos[0]);
-            this.data.leftTimes = this.meta.maxTimes - values[0];
+            this.data.remainingTimes = this.meta.maxTimes - values[0];
             this.data.dailyMinRound = values[1];
             this.data.weeklyCompletedCount = values[2];
 
@@ -82,7 +82,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
                 return LevelAction.AWARD;
             }
 
-            if (this.data.dailyMinRound === 0 && (this.data.leftTimes > 0 || this.data.open)) {
+            if (this.data.dailyMinRound === 0 && (this.data.remainingTimes > 0 || this.data.open)) {
                 this.logger(`${this.meta.name}: 进入战斗`);
                 if (this.data.open) {
                     return LevelAction.BATTLE;

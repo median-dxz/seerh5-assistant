@@ -18,7 +18,7 @@ interface LevelOption {
 export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => {
     return class LevelElfKingsTrial implements ILevelRunner<LevelData> {
         data: LevelData = {
-            leftTimes: 0,
+            remainingTimes: 0,
             state: LevelAction.STOP,
             success: false,
             stimulation: false,
@@ -53,7 +53,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             const stageElfId = ((elfId - 1) % 9) * 3;
 
             this.data.unlockHard = Boolean(levelStage & (1 << (stageElfId + 2)));
-            this.data.leftTimes = this.meta.maxTimes - values[2];
+            this.data.remainingTimes = this.meta.maxTimes - values[2];
             this.data.weeklyChallengeCount = values[3];
 
             console.log(this.data);
@@ -67,7 +67,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
                 this.logger(`${this.meta.name}: 未解锁困难难度`);
                 this.data.success = true;
                 return LevelAction.STOP;
-            } else if (this.data.leftTimes > 0) {
+            } else if (this.data.remainingTimes > 0) {
                 this.logger(`${this.meta.name}: 进入关卡`);
                 return LevelAction.BATTLE;
             } else {

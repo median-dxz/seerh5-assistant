@@ -8,7 +8,8 @@ import { StrategyView } from './BattleManager/StrategyView';
 import { CommonLevelPanel } from './Automation/CommonLevel';
 import { DailySign } from './Automation/DailySign';
 import { PetFragmentLevelPanel } from './Automation/PetFragmentLevel';
-import StateView from './BattleManager/StateView';
+import { StateView } from './Automation/StateView';
+
 import { CommonValue } from './CommonValue';
 import { GameController } from './GameController';
 import { ModManager } from './ModManager';
@@ -28,19 +29,19 @@ export const root: ViewNode = {
             index: 1,
             name: '自动执行 >',
             view: [
-                { index: 1, default: true, name: '签到', view: <DailySign /> },
-                { index: 2, name: '因子', view: <PetFragmentLevelPanel /> },
-                { index: 3, name: '关卡', view: <CommonLevelPanel /> },
+                { index: 1, default: true, name: '当前状态', view: <StateView /> },
+                { index: 2, name: '签到', view: <DailySign /> },
+                { index: 3, name: '因子', view: <PetFragmentLevelPanel /> },
+                { index: 4, name: '关卡', view: <CommonLevelPanel /> },
             ],
         },
         {
             index: 2,
             name: '战斗管理 >',
             view: [
-                { index: 1, default: true, name: '当前状态', view: <StateView /> },
-                { index: 2, name: '策略', view: <StrategyView /> },
-                { index: 3, name: '战斗', view: <BattleView /> },
-                { index: 4, name: '关卡', view: <LevelView /> },
+                { index: 1, default: true, name: '策略', view: <StrategyView /> },
+                { index: 2, name: '战斗', view: <BattleView /> },
+                { index: 3, name: '关卡', view: <LevelView /> },
             ],
         },
         {

@@ -16,7 +16,7 @@ export interface LevelOption {
 export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => {
     class LevelCourageTower implements ILevelRunner<LevelData> {
         data: LevelData = {
-            leftTimes: 0,
+            remainingTimes: 0,
             state: LevelAction.STOP,
             success: false,
             rewardReceived: false,
@@ -44,7 +44,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
             this.data.stimulation = bits[0];
             this.data.rewardReceived = bits[1];
-            this.data.leftTimes = this.meta.maxTimes - realmInfo.getUint32(8);
+            this.data.remainingTimes = this.meta.maxTimes - realmInfo.getUint32(8);
 
             console.log(this.data);
 
@@ -55,7 +55,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
                     return LevelAction.STOP;
                 }
 
-                if (this.data.leftTimes > 0) {
+                if (this.data.remainingTimes > 0) {
                     this.logger(`${this.meta.name}: 进入关卡`);
                     return LevelAction.BATTLE;
                 } else {

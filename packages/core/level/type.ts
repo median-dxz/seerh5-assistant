@@ -7,18 +7,18 @@ export const LevelAction = {
 };
 
 export interface LevelData {
-    leftTimes: number;
+    remainingTimes: number;
     success: boolean;
     state: string;
 }
 
-/** 关卡配置 */
+/** 关卡状态机, 由LevelManager来运行 */
 export interface ILevelRunner<TData extends LevelData = LevelData> {
     /** 关卡的动态数据 */
     data: TData;
-    
+
     /** 玩家可选的关卡的配置数据 */
-    option: object;
+    readonly option: object;
 
     actions: Record<string, (this: ILevelRunner<TData>) => Promise<void>>;
 

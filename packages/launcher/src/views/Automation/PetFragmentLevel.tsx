@@ -4,9 +4,9 @@ import { SeaTableRow } from '@/components/styled/TableRow';
 import * as endpoints from '@/service/endpoints';
 import { theme } from '@/style';
 
-import { Box, Button, CircularProgress, Dialog, DialogActions, Divider, Typography, alpha } from '@mui/material';
+import { Box, Button, CircularProgress, Divider, Typography, alpha } from '@mui/material';
 import { produce } from 'immer';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import useSWR from 'swr';
 
 import {
@@ -14,14 +14,13 @@ import {
     type PetFragmentLevelDifficulty as Difficulty,
     type ILevelBattle,
     type ILevelRunner,
-    type LevelMeta,
     type PetFragmentLevel,
 } from 'sea-core';
 
+import { useLevelScheduler } from '@/context/useLevelScheduler';
 import { useMainState } from '@/context/useMainState';
 import { useModStore } from '@/context/useModStore';
 import { store } from '@/service/store/battle';
-import { LevelBaseNew } from './LevelBaseNew';
 
 export interface PetFragmentOption {
     id: number;
@@ -57,14 +56,7 @@ export function PetFragmentLevelPanel() {
     const { levelStore } = useModStore();
 
     const PetFragmentRunner = levelStore.get('PetFragmentLevel')!;
-
-    const [runner, setRunner] = useState<null | RunnerInstance>(null);
     const [taskCompleted, setTaskCompleted] = React.useState<Array<boolean>>([]);
-    const open = Boolean(runner);
-
-    const closeHandler = () => {
-        setRunner(null);
-    };
 
     const {
         data: rows = [],
@@ -138,36 +130,19 @@ export function PetFragmentLevelPanel() {
                 data={rows}
                 toRowKey={toRowKey}
                 columns={col}
-                rowElement={<PanelRow taskCompleted={taskCompleted} setRunner={setRunner} />}
+                rowElement={<PanelRow taskCompleted={taskCompleted} />}
             />
-            <Dialog
-                open={open}
-                sx={{
-                    '& .MuiBackdrop-root': {
-                        backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                    },
-                    '& .MuiDialog-paper': {
-                        minWidth: 384,
-                    },
-                }}
-            >
-                <LevelBaseNew runner={runner as unknown as ILevelRunner & { meta: LevelMeta }} />
-                <DialogActions>
-                    {/* {actions} */}
-                    <Button onClick={closeHandler}>{'退出'}</Button>
-                </DialogActions>
-            </Dialog>
         </>
     );
 }
 
 interface PanelRowProps {
     taskCompleted: boolean[];
-    setRunner: React.Dispatch<React.SetStateAction<RunnerInstance | null>>;
 }
 
-const PanelRow = React.memo(({ taskCompleted, setRunner }: PanelRowProps) => {
+const PanelRow = React.memo(({ taskCompleted }: PanelRowProps) => {
     const { setOpen } = useMainState();
+    const { enqueue } = useLevelScheduler();
     const runner = useRowData<RunnerInstance>();
     const index = useIndex();
     const completed = taskCompleted[index];
@@ -186,7 +161,7 @@ const PanelRow = React.memo(({ taskCompleted, setRunner }: PanelRowProps) => {
                 <Typography>扫荡: {runner.option.sweep ? '开启' : '关闭'}</Typography>
                 <Button
                     onClick={() => {
-                        setRunner(runner);
+                        enqueue(runner);
                     }}
                 >
                     启动

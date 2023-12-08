@@ -29,7 +29,7 @@ interface LevelMeta extends SEALevelMeta {
 export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => {
     return class LevelTitanHole implements ILevelRunner<LevelData> {
         data: LevelData = {
-            leftTimes: 0,
+            remainingTimes: 0,
             state: LevelAction.STOP,
             success: false,
             stimulation: false,

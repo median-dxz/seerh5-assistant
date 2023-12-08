@@ -28,9 +28,14 @@ export default function App() {
 
     useEffect(() => {
         if (init) return;
-        loader.load().then(() => {
-            setInit(true);
-        });
+        loader
+            .load()
+            .then(() => {
+                setInit(true);
+            })
+            .catch((_) => {
+                // React严格模式下导致的重复调用CoreLoader, 可以忽略
+            });
     }, [init]);
 
     useEffect(() => {

@@ -79,6 +79,7 @@ class PetDataManager {
 
             this.miniInfo = new CacheData<Map<number, PetStorage2015PetInfo>>(new Map(), updateMiniInfo);
 
+            this.miniInfo.deactivate();
             updateMiniInfo();
 
             this.defaultCt = PetManager.defaultTime;

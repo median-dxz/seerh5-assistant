@@ -79,7 +79,7 @@ export default async function (createModContext: SEAL.createModContext) {
 
             data.pieces = await Engine.itemNum(frag.petFragmentItem);
 
-            data.leftTimes = this.meta.maxTimes - values[0];
+            data.remainingTimes = this.meta.maxTimes - values[0];
             data.failedTimes = values[1];
             data.curDifficulty = (values[2] >> 8) & 255;
             if (data.curDifficulty === Difficulty.NotSelected && this.option.difficulty) {
@@ -102,7 +102,7 @@ export default async function (createModContext: SEAL.createModContext) {
             }
             this.data = { ...this.data };
 
-            if (data.isChallenge || data.leftTimes > 0) {
+            if (data.isChallenge || data.remainingTimes > 0) {
                 if (this.option.sweep) {
                     return 'sweep';
                 } else {

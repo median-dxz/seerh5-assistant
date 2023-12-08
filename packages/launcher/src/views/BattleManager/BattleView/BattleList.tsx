@@ -1,6 +1,6 @@
 import { useModStore } from '@/context/useModStore';
 import type { BattleInstance } from '@/service/store/battle';
-import { List, ListItemButton, ListItemText, Typography, alpha, type ListProps } from '@mui/material';
+import { List, ListItem, ListItemButton, ListItemText, Typography, alpha, type ListProps } from '@mui/material';
 import React from 'react';
 
 interface BattleListItemProps {
@@ -31,14 +31,16 @@ export function BattleListItem({ battle }: BattleListItemProps) {
         </>
     );
     return (
-        <ListItemButton
-            sx={{ height: '72px', border: (theme) => `1px solid ${alpha(theme.palette.primary.main, 0.12)}` }}
-            onClick={() => {
-                console.log(battle);
-            }}
-        >
-            <ListItemText primary={title} secondary={description} />
-        </ListItemButton>
+        <ListItem>
+            <ListItemButton
+                sx={{ height: '72px', border: (theme) => `1px solid ${alpha(theme.palette.primary.main, 0.12)}` }}
+                onClick={() => {
+                    console.log(battle);
+                }}
+            >
+                <ListItemText primary={title} secondary={description} />
+            </ListItemButton>
+        </ListItem>
     );
 }
 

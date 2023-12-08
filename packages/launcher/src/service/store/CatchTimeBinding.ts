@@ -21,6 +21,8 @@ async function sync() {
     };
     data1.filter(petFilter).forEach(mapping);
     data2.forEach(mapping);
+
+    await Endpoints.cacheCatchTime(store);
 }
 
 /**

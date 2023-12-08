@@ -6,16 +6,16 @@ export type Trigger = () => void;
 
 const context: {
     strategy: undefined | MoveStrategy;
-    triggerLocker: null | ((value: boolean | PromiseLike<boolean>) => void);
+    triggerLock: null | ((value: boolean | PromiseLike<boolean>) => void);
     delayTimeout: null | Promise<void>;
 } = {
     strategy: undefined,
-    triggerLocker: null,
+    triggerLock: null,
     delayTimeout: null,
 };
 
 function takeover(trigger: Trigger, _strategy?: MoveStrategy): Promise<boolean> {
-    if (context.triggerLocker == undefined) {
+    if (context.triggerLock == undefined) {
         try {
             trigger();
         } catch (err) {
@@ -23,7 +23,7 @@ function takeover(trigger: Trigger, _strategy?: MoveStrategy): Promise<boolean> 
         }
         return new Promise((resolve) => {
             context.strategy = _strategy;
-            context.triggerLocker = resolve;
+            context.triggerLock = resolve;
         });
     } else {
         return Promise.reject('已经接管了一场战斗！');
@@ -62,7 +62,7 @@ async function resolveStrategy(strategy?: MoveStrategy) {
 
 function clear() {
     context.strategy = undefined;
-    context.triggerLocker = null;
+    context.triggerLock = null;
 }
 
 export { clear, context, resolveStrategy, takeover };

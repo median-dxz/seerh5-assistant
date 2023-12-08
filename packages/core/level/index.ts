@@ -17,26 +17,29 @@ export class LevelManager {
         // constructor
     }
 
-    runner: ILevelRunner | null = null;
-    locker: Promise<boolean> | null = null;
+    private runner: ILevelRunner | null = null;
+    lock: Promise<boolean> | null = null;
 
     get running() {
         return this.runner != null;
     }
 
-    getRunner<TRunner extends ILevelRunner>(): TRunner | null {
-        return this.runner as TRunner;
+    /** 获取当前正在运行的Runner */
+    getRunner(): ILevelRunner | null {
+        return this.runner;
     }
 
     async stop() {
         if (!this.runner) return;
         this.runner = null;
         try {
-            await this.locker;
+            await this.lock;
         } catch (e) {
             throw `关卡运行失败: ${e as string}`;
+        } finally {
+            this.lock = null;
+            Manager.clear();
         }
-        this.locker = null;
     }
 
     run(runner: ILevelRunner) {
@@ -106,10 +109,10 @@ export class LevelManager {
             return runner.data.success;
         };
 
-        this.locker = lockFn();
-        this.locker.then((result) => {
+        this.lock = lockFn();
+        this.lock.then((result) => {
             logger(`关卡完成状态: ${result}`);
-            this.locker = this.runner = null;
+            this.lock = this.runner = null;
         });
     }
 }

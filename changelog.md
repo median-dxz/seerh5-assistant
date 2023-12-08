@@ -9,6 +9,8 @@ RoadMap: **见Readme**
 
 - [ ] 整理github issue和project, 删除过远和不够明确的目标, 关闭暂时无法复现的问题, 关闭已经完成的内容并链接commit/pr
 - [ ] sdk中core版本兼容性检测, 添加core版本字段(必填), 并规范launcher的core实例和sdk使用的api之间的关系
+- [ ] 统一签到模组(`sign`)到关卡, 将无战斗纯发包的也视为关卡的一种
+  - [ ] 可能需要重新设计关卡的整体接口
 
 # Core 当前版本 v0.7.5
 
@@ -37,9 +39,11 @@ RoadMap: **见Readme**
 - [x] 生产开发环境判断
 - [x] 基于trpc, 不再需要持久化配置提供序列化函数
 - [x] 为模组注入配置持久化接口
+- [ ] 添加关卡的调度管理
 
 # 其他
 
+- [ ] 战斗日志保存
 - [ ] script通过语法树进行高级反混淆, 暂定主要目标是升级 async/await
 - [ ] 心跳包逻辑有点问题, 会被主动断线
 - [ ] 全体治疗基于Promise重写, 不需要加延时
@@ -54,3 +58,4 @@ RoadMap: **见Readme**
 - [x] 根组件渲染提前到Core.init
 - [ ] jsx外部化, import-map共享react
 - [ ] cookie issue
+- [ ] 更换store库(不用context)

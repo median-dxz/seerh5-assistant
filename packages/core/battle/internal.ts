@@ -62,7 +62,7 @@ export default () => {
         if (Manager.context.strategy) {
             Promise.all([Manager.context.delayTimeout, delay(1000)])
                 .then(() => {
-                    Manager.context.triggerLocker?.(isWin);
+                    Manager.context.triggerLock?.(isWin);
                     Manager.clear();
                 })
                 .catch((e) => {
