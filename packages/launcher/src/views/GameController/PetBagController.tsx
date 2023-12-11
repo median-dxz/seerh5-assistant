@@ -90,7 +90,7 @@ export function PetBagController() {
 
     return (
         <>
-            <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']}>
+            <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']} pl={4}>
                 精灵背包
             </Typography>
             <Button onClick={handleLowerHp}>压血</Button>
@@ -107,7 +107,6 @@ export function PetBagController() {
 
             <Box
                 sx={{
-                    m: -1,
                     overflowX: 'scroll',
                 }}
             >

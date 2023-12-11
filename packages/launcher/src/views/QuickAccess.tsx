@@ -1,5 +1,5 @@
 import MenuOpen from '@mui/icons-material/MenuOpen';
-import { SpeedDialAction, SvgIcon, type SpeedDialActionProps } from '@mui/material';
+import { SpeedDialAction, SvgIcon, type SpeedDialActionProps, type SpeedDialProps } from '@mui/material';
 
 import React, { useState } from 'react';
 
@@ -84,26 +84,20 @@ const QuickAccessPluginAction: React.FC<
     );
 };
 
-export function QuickAccess() {
+export function QuickAccess(props: SpeedDialProps) {
     const [open, setOpen] = useState(false);
     const { commandStore } = useModStore();
     const plugins = Array.from(commandStore.values()).filter((command) => command.icon);
 
     return (
         <SeaQuickAccess
-            ariaLabel="Seerh5 Assistant Quick Access"
             icon={<MenuOpen />}
             direction="right"
-            sx={{
-                position: 'absolute',
-                bottom: '8vh',
-                left: '4vw',
-            }}
             FabProps={{
                 disableRipple: true,
                 disableFocusRipple: true,
                 sx: {
-                    color: (theme) => theme.palette.primary.main,
+                    color: 'primary.main',
                 },
             }}
             open={open}
@@ -117,6 +111,7 @@ export function QuickAccess() {
                     setOpen(false);
                 }
             }}
+            {...props}
         >
             {plugins.map((plugin) => (
                 <QuickAccessPluginAction key={`${plugin.ownerMod}::${plugin.name}`} plugin={plugin} setOpen={setOpen} />

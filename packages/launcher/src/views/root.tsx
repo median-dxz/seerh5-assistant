@@ -27,7 +27,7 @@ export const root: ViewNode = {
         },
         {
             index: 1,
-            name: '自动执行 >',
+            name: '自动执行',
             view: [
                 { index: 1, default: true, name: '当前状态', view: <StateView /> },
                 { index: 2, name: '签到', view: <DailySign /> },
@@ -37,7 +37,7 @@ export const root: ViewNode = {
         },
         {
             index: 2,
-            name: '战斗管理 >',
+            name: '战斗管理',
             view: [
                 { index: 1, default: true, name: '策略', view: <StrategyView /> },
                 { index: 2, name: '战斗', view: <BattleView /> },

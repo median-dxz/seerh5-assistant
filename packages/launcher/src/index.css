@@ -14,3 +14,9 @@
 body {
     margin: 0;
 }
+
+#sea-launcher {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+}

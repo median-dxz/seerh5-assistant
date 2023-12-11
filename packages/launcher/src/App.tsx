@@ -9,7 +9,6 @@ import { ModLoader } from '@/service/mod/ModLoader';
 
 import { Command } from '@/views/Command';
 import { Main } from '@/views/Main';
-import { MainButton } from '@/views/Main/MainButton';
 import { QuickAccess } from '@/views/QuickAccess';
 
 import { loader } from '@/init';
@@ -64,11 +63,28 @@ export default function App() {
         <SEALContextProvider>
             <CssBaseline />
             <ModLoader />
-            {!fighting && <QuickAccess />}
+            {!fighting && (
+                <QuickAccess
+                    ariaLabel="Seerh5 Assistant Quick Access"
+                    sx={{
+                        position: 'absolute',
+                        bottom: '64px',
+                        left: '64px',
+                    }}
+                />
+            )}
             <Grow in={commandOpen} unmountOnExit>
-                <Command />
+                <Command
+                    sx={{
+                        position: 'absolute',
+                        left: '30vw',
+                        top: '64px',
+                        width: '40vw',
+                        minWidth: '240px',
+                        zIndex: (theme) => theme.zIndex.snackbar,
+                    }}
+                />
             </Grow>
-            <MainButton />
             <Main />
         </SEALContextProvider>
     );

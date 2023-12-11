@@ -1,11 +1,35 @@
-import { Backdrop, alpha } from '@mui/material';
-import React, { type PropsWithChildren } from 'react';
+import ElectricBolt from '@mui/icons-material/ElectricBolt';
+import { Backdrop, alpha, type ButtonProps } from '@mui/material';
+import React, { useCallback, type PropsWithChildren } from 'react';
 
-import { useMainState } from '@/context/useMainState';
-
+import { HexagonalButton } from '@/components/styled/HexagonalButton';
 import { TabRouterProvider } from '@/context/TabRouterProvider';
+import { useMainState } from '@/context/useMainState';
 import { root } from '../root';
 import { TabView } from './TabView';
+
+export function Main() {
+    const { open, setOpen } = useMainState();
+
+    const handleClickMainButton = useCallback(() => {
+        setOpen((prev) => !prev);
+    }, [setOpen]);
+
+    return (
+        <>
+            <MainButton
+                baseSize={28}
+                sx={{ top: '64px', left: '64px', position: 'absolute', zIndex: (theme) => theme.zIndex.appBar }}
+                onClick={handleClickMainButton}
+            />
+            <MainBackdrop open={open}>
+                <TabRouterProvider rootView={root}>
+                    <TabView />
+                </TabRouterProvider>
+            </MainBackdrop>
+        </>
+    );
+}
 
 const MainBackdrop = ({ open, children }: PropsWithChildren<{ open: boolean }>) => (
     <Backdrop
@@ -20,13 +44,10 @@ const MainBackdrop = ({ open, children }: PropsWithChildren<{ open: boolean }>) 
     </Backdrop>
 );
 
-export function Main() {
-    const { open } = useMainState();
+export function MainButton({ baseSize, ...props }: ButtonProps & { baseSize: number }) {
     return (
-        <MainBackdrop open={open}>
-            <TabRouterProvider rootView={root}>
-                <TabView />
-            </TabRouterProvider>
-        </MainBackdrop>
+        <HexagonalButton baseSize={baseSize} {...props}>
+            <ElectricBolt />
+        </HexagonalButton>
     );
 }

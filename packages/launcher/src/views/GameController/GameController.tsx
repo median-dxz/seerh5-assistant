@@ -52,17 +52,17 @@ export function GameController() {
             <Button onClick={Engine.cureAllPet}>全体治疗</Button>
             <Divider />
 
-            <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']}>
+            <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']} pl={4}>
                 火焰信息
                 <BattleFireInfo />
             </Typography>
 
-            <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']}>
+            <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']} pl={4}>
                 动画模式
                 <AnimationMode />
             </Typography>
 
-            <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']}>
+            <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']} pl={4}>
                 套装
                 <PopupMenuButton
                     id="change-suit"
@@ -76,7 +76,7 @@ export function GameController() {
                 <Typography>{`效果: ${ItemSeXMLInfo.getSuitEff(userSuit)}`}</Typography>
             </Typography>
 
-            <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']}>
+            <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']} pl={4}>
                 称号
                 <PopupMenuButton
                     id="change-title"

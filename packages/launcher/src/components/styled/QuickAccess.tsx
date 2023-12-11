@@ -46,10 +46,8 @@ export const SeaQuickAccess = styled(MuiSpeedDial)`
         transition: ${theme.transitions.create(['width'])};
     }
 
-    &:hover {
-        &::before,
-        &::after {
-            width: 100%;
-        }
+    &:hover::before,
+    &:hover::after {
+        width: 100%;
     }
 ` as typeof MuiSpeedDial;

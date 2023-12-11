@@ -1,12 +1,14 @@
 import React, { forwardRef, useCallback } from 'react';
 
 import { theme } from '@/style';
-import { Fade, Stack, Tabs } from '@mui/material';
-import { alpha, Box } from '@mui/system';
+import { Fade, Tabs, Typography } from '@mui/material';
+import { alpha, Box, Stack } from '@mui/system';
 import { StyledTab } from './styled/Tab';
 
+import { VERSION } from '@/constants';
 import { useTabRouter, type ViewNode } from '@/context/useTabRouter';
 import { SwitchTransition } from 'react-transition-group';
+import { CoreLoader } from 'sea-core';
 
 interface Tab {
     index: number;
@@ -49,9 +51,14 @@ const TabsGroup = forwardRef<HTMLDivElement, TabsGroupProps>(function ({ onSelec
                     value={value}
                     ref={ref}
                     sx={{
-                        position: 'absolute',
-                        left: 0,
-                        width: '100%',
+                        paddingLeft: '12px',
+                        '& .Mui-selected': {
+                            backgroundColor: ({ palette }) => alpha(palette.secondary.main, 0.12),
+                            border: 'none',
+                        },
+                    }}
+                    TabIndicatorProps={{
+                        sx: { display: 'none' },
                     }}
                 >
                     {tabs.map(({ index, name }) => (
@@ -102,36 +109,65 @@ export function TabView() {
     );
 
     return (
-        <Box
-            display="flex"
-            sx={{
-                left: 'calc(25vw / 2)',
-                width: '75vw',
-                height: '100%',
-            }}
+        <Stack
+            direction="row"
+            sx={{ width: '100vw', height: '100vh', alignItems: 'stretch', justifyContent: 'stretch' }}
         >
             <Stack
                 sx={{
-                    position: 'relative',
-                    height: '100%',
-                    width: '168px',
-                    minWidth: '168px',
-                    justifyContent: 'center',
-                    borderRight: (theme) => `1px solid ${alpha(theme.palette.divider, 0.12)}`,
+                    borderRight: `1px solid ${alpha(theme.palette.primary.main, 0.12)}`,
+                    minWidth: '193px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-end',
                 }}
             >
-                <TabsGroup tabs={currentViewNodes} onSelect={handleSelectTab} value={currentTab} />
+                <Box sx={{ minHeight: '192px' }} />
+                <Box
+                    sx={{
+                        position: 'relative',
+                        height: '100%',
+                        overflowY: 'scroll',
+                        '::-webkit-scrollbar-thumb': {
+                            backgroundColor: 'transparent',
+                        },
+                        ':hover::-webkit-scrollbar-thumb': {
+                            backgroundColor: alpha(theme.palette.primary.main, 0.4),
+                        },
+                    }}
+                >
+                    <TabsGroup tabs={currentViewNodes} onSelect={handleSelectTab} value={currentTab} />
+                </Box>
+                <Stack
+                    sx={{
+                        minHeight: '96px',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        borderRadius: ({ shape }) => `${shape.borderRadius}px`,
+                        backgroundColor: alpha(theme.palette.secondary.main, 0.12),
+                        boxShadow: theme.boxShadow,
+                        m: 8,
+                    }}
+                >
+                    <Typography fontSize={22} fontFamily={'Noto Sans SC'}>
+                        SEAL
+                        <Typography fontSize={12} fontFamily={'Noto Sans SC'} component="span">
+                            {` v${VERSION}`}
+                        </Typography>
+                    </Typography>
+                    <Typography fontSize={22} fontFamily={'Noto Sans SC'}>
+                        Core
+                        <Typography fontSize={12} fontFamily={'Noto Sans SC'} component="span">
+                            {` v${CoreLoader.version}`}
+                        </Typography>
+                    </Typography>
+                </Stack>
             </Stack>
-            <Box
-                role="tabpanel"
-                sx={{
-                    width: '100%',
-                    overflowY: 'auto',
-                    overflowX: 'hidden',
-                    marginRight: '-1px',
-                }}
+            <Stack
                 id={`vertical-tabpanel-${currentTab}`}
                 aria-labelledby={`vertical-tab-${currentTab}`}
+                role="tabpanel"
+                sx={{ overflowY: 'auto', width: '100%' }}
             >
                 <SwitchTransition>
                     <Fade
@@ -145,10 +181,10 @@ export function TabView() {
                             exit: theme.transitions.easing.easeInOut,
                         }}
                     >
-                        <Box id="tab-view-transition-ref"> {currentView} </Box>
+                        <Box id="tab-view-transition-ref">{currentView}</Box>
                     </Fade>
                 </SwitchTransition>
-            </Box>
-        </Box>
+            </Stack>
+        </Stack>
     );
 }

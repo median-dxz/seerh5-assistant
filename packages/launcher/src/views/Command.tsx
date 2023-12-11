@@ -1,9 +1,10 @@
-import { Box } from '@mui/material';
+import { Box, type SxProps } from '@mui/material';
 import React, { useState } from 'react';
 
 import { SeaAutocomplete } from '@/components/styled/Autocomplete';
 import { SeaTextField } from '@/components/styled/TextField';
 import { useModStore } from '@/context/useModStore';
+import type { theme } from '@/style';
 
 interface Option {
     value: string;
@@ -20,7 +21,7 @@ export function CommandInput() {
         return Array.from(commandStore.values()).map((cmd) => {
             let description = cmd.description;
             if (typeof cmd.description === 'function') {
-                description = ''
+                description = '';
             }
             return { value: cmd.name, label: `${cmd.name} ${description ?? ''}` } as Option;
         });
@@ -83,20 +84,9 @@ export function CommandInput() {
     );
 }
 
-const CommandInputRef = React.forwardRef<HTMLDivElement>((props, ref) => (
-    <Box
-        sx={{
-            position: 'absolute',
-            left: '30vw',
-            top: '10vh',
-            width: '40vw',
-            minWidth: '240px',
-            zIndex: (theme) => theme.zIndex.snackbar,
-        }}
-    >
-        <div ref={ref} {...props}>
-            <CommandInput />
-        </div>
+const CommandInputRef = React.forwardRef<HTMLDivElement, { sx: SxProps<typeof theme> }>(({ sx, ...props }, ref) => (
+    <Box sx={sx} ref={ref}>
+        <CommandInput {...props} />
     </Box>
 ));
 

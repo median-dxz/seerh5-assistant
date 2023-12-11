@@ -39,17 +39,12 @@ export default defineConfig(({ command, mode }) => {
             port: 1234,
         },
         plugins: [
-            react(),
+            react({ jsxImportSource: '@emotion/react' }),
             importMap({
                 options: {
                     'sea-core': {
                         path: path.resolve(dirname, '../core/dist/index.js'),
-                        extras: [
-                            'sea-core/battle',
-                            'sea-core/constant',
-                            'sea-core/engine',
-                            'sea-core/entity',
-                        ],
+                        extras: ['sea-core/battle', 'sea-core/constant', 'sea-core/engine', 'sea-core/entity'],
                     },
                 },
             }),

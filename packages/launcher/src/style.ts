@@ -26,6 +26,7 @@ const colors = {
 
 export const theme = createTheme({
     boxShadow: `0 8px 16px rgba(0 0 0 / 24%)`,
+    spacing: 4,
     palette: {
         mode: 'dark',
         emphases: {
@@ -54,17 +55,20 @@ export const theme = createTheme({
         MuiCssBaseline: {
             styleOverrides: {
                 '::-webkit-scrollbar': {
-                    width: 8,
-                    height: 8,
+                    width: '12px',
+                    height: '12px',
                 },
                 '::-webkit-scrollbar-track': {
-                    backgroundColor: alpha(colors.primary, 0.08),
+                    backgroundColor: 'transparent',
                 },
                 '::-webkit-scrollbar-thumb': {
-                    backgroundColor: alpha(colors.primary, 0.5),
+                    backgroundColor: alpha(colors.primary, 0.25),
+                    borderRadius: '12px',
+                    border: '4px solid transparent',
+                    backgroundClip: 'content-box',
                 },
                 '::-webkit-scrollbar-thumb:hover': {
-                    backgroundColor: colors.primary,
+                    backgroundColor: alpha(colors.primary, 0.4),
                 },
             },
         },
