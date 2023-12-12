@@ -1,4 +1,3 @@
-import { Hook } from '../constant/index.js';
 import { HookRegistry, SocketBuilderRegistry } from '../event-source/index.js';
 import { PetDataManger } from './PetDataManager.js';
 import { ProxyPet } from './SEAPet.js';
@@ -38,7 +37,7 @@ export default () => {
 
     PetDataManger.init();
 
-    HookRegistry.register(Hook.PetBag.update, (resolve) => {
+    HookRegistry.register('pet_bag:update', (resolve) => {
         // eslint-disable-next-line @typescript-eslint/unbound-method
         PetDataManger.bag.update = new Proxy(PetDataManger.bag.update, {
             apply: (target, thisArg, argArray: [[ProxyPet[], ProxyPet[]]]) => {
@@ -48,7 +47,7 @@ export default () => {
         });
     });
 
-    HookRegistry.register(Hook.PetBag.deactivate, (resolve) => {
+    HookRegistry.register('pet_bag:deactivate', (resolve) => {
         // eslint-disable-next-line @typescript-eslint/unbound-method
         PetDataManger.bag.deactivate = new Proxy(PetDataManger.bag.deactivate, {
             apply: (target, thisArg, argArray) => {

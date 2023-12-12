@@ -1,7 +1,7 @@
 import { CssBaseline, Grow } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
-import { Hook, SEAEventSource, Subscription } from 'sea-core';
+import { SEAEventSource, Subscription } from 'sea-core';
 
 import { SEALContextProvider } from '@/context/SEALContextProvider';
 
@@ -44,10 +44,10 @@ export default function App() {
 
         // 监听战斗状态变化
         const sub = new Subscription();
-        sub.on(SEAEventSource.hook(Hook.Battle.battleStart), () => {
+        sub.on(SEAEventSource.hook('battle:start'), () => {
             toggleFighting(true);
         });
-        sub.on(SEAEventSource.hook(Hook.Battle.battleEnd), () => {
+        sub.on(SEAEventSource.hook('battle:end'), () => {
             toggleFighting(false);
         });
 

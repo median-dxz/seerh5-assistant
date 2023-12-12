@@ -18,7 +18,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
     return class LevelXTeamRoom implements ILevelRunner<LevelData> {
         data: LevelData = {
             remainingTimes: 0,
-            state: LevelAction.STOP,
+            progress: 0,
             success: false,
             open: false,
             dailyMinRound: 0,
@@ -54,11 +54,6 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             this.data.remainingTimes = this.meta.maxTimes - values[0];
             this.data.dailyMinRound = values[1];
             this.data.weeklyCompletedCount = values[2];
-
-            if (this.data.state === 'award_error') {
-                this.data.success = false;
-                return LevelAction.STOP;
-            }
 
             if (this.data.weeklyRewardReceived) {
                 this.logger(`${this.meta.name}: 日任完成`);
@@ -110,21 +105,11 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             },
 
             award: async () => {
-                try {
-                    await Socket.sendByQueue(42395, [105, 2, 0, 0]);
-                } catch (error) {
-                    this.logger(error);
-                    this.data.state = 'award_error';
-                }
+                await Socket.sendByQueue(42395, [105, 2, 0, 0]);
             },
 
             award_weekly: async () => {
-                try {
-                    await Socket.sendByQueue(42395, [105, 3, 0, 0]);
-                } catch (error) {
-                    this.logger(error);
-                    this.data.state = 'award_error';
-                }
+                await Socket.sendByQueue(42395, [105, 3, 0, 0]);
             },
         };
     };

@@ -12,7 +12,7 @@ RoadMap: **见Readme**
 - [ ] 统一签到模组(`sign`)到关卡, 将无战斗纯发包的也视为关卡的一种
   - [ ] 可能需要重新设计关卡的整体接口
 
-# Core 当前版本 v0.7.5
+# Core 当前版本 v0.7.6
 
 - [x] 使用类型来提示SDK使用者和Launcher开发者当前Core的版本
   - [x] 从`CoreLoader`上来获取实例版本, 从type中获取api定义的版本
@@ -22,7 +22,8 @@ RoadMap: **见Readme**
   - [x] `Log.setLogger()`允许使用自定义logger, 默认启用console.log, 输出格式为`[sea-core][module name]:`
   - [x] 外部api为`Log.enable()`和`Log.disable()`, 通过传入模块名称来开启这一部分的输出
   - [x] 目前暂定支持的模块只有`Battle`, 开启后将输出Operator模块的入参
-- [ ] 更改事件签名方式->`type:event`
+- [x] `LevelRunner` api更改
+- [x] 更改事件签名方式->`type:event`
 - [ ] 精简api界面, 删除不必要的导出
 
 # Core v0.8.x
@@ -43,6 +44,7 @@ RoadMap: **见Readme**
 
 # 其他
 
+- [ ] sdk中的同步core版本号脚本
 - [ ] 战斗日志保存
 - [ ] script通过语法树进行高级反混淆, 暂定主要目标是升级 async/await
 - [ ] 心跳包逻辑有点问题, 会被主动断线

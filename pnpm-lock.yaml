@@ -184,8 +184,8 @@ importers:
         version: 1.11.10
     devDependencies:
       sea-core:
-        specifier: file:lib\sea-core-0.7.5.tgz
-        version: file:sdk/lib/sea-core-0.7.5.tgz
+        specifier: file:lib\sea-core-0.7.6.tgz
+        version: file:sdk/lib/sea-core-0.7.6.tgz
       typescript:
         specifier: ^5.3.2
         version: 5.3.2
@@ -6232,10 +6232,10 @@ packages:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
     dev: false
 
-  file:sdk/lib/sea-core-0.7.5.tgz:
-    resolution: {integrity: sha512-guZDtaAKaMW1h68vXaarj8Cha7HkLj/McyFru87jJ94pSOjhhKDP/muBBoJQPsGtDouboCIVfGYJ3I8qdcZ2bQ==, tarball: file:sdk/lib/sea-core-0.7.5.tgz}
+  file:sdk/lib/sea-core-0.7.6.tgz:
+    resolution: {integrity: sha512-ib9fpR2ds12uj9j62NZRBJSK8Vfac6DvTwV9Rtleu9YyjyISwZRSfFmxtO9+3Lg12BFEghuZ/VG+tsbugo9dew==, tarball: file:sdk/lib/sea-core-0.7.6.tgz}
     name: sea-core
-    version: 0.7.5
+    version: 0.7.6
     dependencies:
       rxjs: 7.8.1
     dev: true

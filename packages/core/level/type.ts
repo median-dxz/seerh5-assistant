@@ -9,7 +9,7 @@ export const LevelAction = {
 export interface LevelData {
     remainingTimes: number;
     success: boolean;
-    state: string;
+    progress: number;
 }
 
 /** 关卡状态机, 由LevelManager来运行 */

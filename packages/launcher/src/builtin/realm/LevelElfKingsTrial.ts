@@ -18,8 +18,8 @@ interface LevelOption {
 export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => {
     return class LevelElfKingsTrial implements ILevelRunner<LevelData> {
         data: LevelData = {
+            progress: 0,
             remainingTimes: 0,
-            state: LevelAction.STOP,
             success: false,
             stimulation: false,
             unlockHard: false,
@@ -56,13 +56,6 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             this.data.remainingTimes = this.meta.maxTimes - values[2];
             this.data.weeklyChallengeCount = values[3];
 
-            console.log(this.data);
-
-            if (this.data.state === 'award_error') {
-                this.logger(`${this.meta.name}: 领取奖励出错`);
-                return LevelAction.STOP;
-            }
-
             if (!this.data.unlockHard) {
                 this.logger(`${this.meta.name}: 未解锁困难难度`);
                 this.data.success = true;
@@ -90,12 +83,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             },
 
             award: async () => {
-                try {
-                    await Socket.sendByQueue(42395, [106, 3, 0, 0]);
-                } catch (error) {
-                    this.logger(error);
-                    this.data.state = 'award_error';
-                }
+                await Socket.sendByQueue(42395, [106, 3, 0, 0]);
             },
         };
     };

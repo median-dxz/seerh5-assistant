@@ -47,7 +47,7 @@ export function enableFastStaticAnimation() {
     (RenewPPEffect as unknown) = function (model: BaseFighterModel, itemId: number) {
         const ins = new _RenewPPEffect(model, itemId);
         if (FightManager.fightAnimateMode === 1) {
-            // eslint-disable-next-line @typescript-eslint/unbound-method
+             
             ins.timer?.removeEventListener(egret.TimerEvent.TIMER, ins.closeTxt, ins);
             ins.timer?.stop();
             ins.timer = null;

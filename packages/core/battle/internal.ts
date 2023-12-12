@@ -1,5 +1,4 @@
 import { delay } from '../common/utils.js';
-import { Hook } from '../constant/index.js';
 import { Engine } from '../engine/index.js';
 import { PetRoundInfo } from '../entity/index.js';
 import { SEAEventSource, SocketBuilderRegistry } from '../event-source/index.js';
@@ -25,14 +24,14 @@ export default () => {
         this.getMC().selected = !1;
     };
 
-    SEAEventSource.hook(Hook.Battle.battleStart).on(() => {
+    SEAEventSource.hook('battle:start').on(() => {
         cachedRoundInfo.deactivate();
         if (FightManager.fightAnimateMode === 1) {
             TimeScaleManager.setBattleAnimateSpeed(10);
         }
     });
 
-    SEAEventSource.hook(Hook.Battle.endPropShown).on(() => {
+    SEAEventSource.hook('battle:showEndProp').on(() => {
         if (FightManager.fightAnimateMode === 1) {
             TimeScaleManager.setBattleAnimateSpeed(1);
         }
@@ -55,9 +54,9 @@ export default () => {
         }
     };
 
-    SEAEventSource.hook(Hook.Battle.battleStart).on(onRoundStart);
-    SEAEventSource.hook(Hook.Battle.roundEnd).on(onRoundStart);
-    SEAEventSource.hook(Hook.Battle.battleEnd).on(() => {
+    SEAEventSource.hook('battle:start').on(onRoundStart);
+    SEAEventSource.hook('battle:roundEnd').on(onRoundStart);
+    SEAEventSource.hook('battle:end').on(() => {
         const isWin = Boolean(FightManager.isWin);
         if (Manager.context.strategy) {
             Promise.all([Manager.context.delayTimeout, delay(1000)])

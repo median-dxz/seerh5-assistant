@@ -5,7 +5,7 @@ export default async function FightPuni(createContext: SEAL.createModContext) {
         meta: {
             id: '对战谱尼',
             scope: 'median',
-            core: '0.7.5',
+            core: '0.7.6',
         },
     });
 

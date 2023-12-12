@@ -1,5 +1,5 @@
 import { filter, map } from 'rxjs';
-import type { HookDataMap } from '../../constant/type.js';
+import type { HookDataMap } from '../../constant/types.js';
 import { SEAEventSource } from '../EventSource.js';
 import { HookRegistry } from '../HookRegistry.js';
 

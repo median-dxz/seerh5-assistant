@@ -1,6 +1,5 @@
 import {
     Engine,
-    Hook,
     Manager,
     Operator,
     SEAEventSource,
@@ -37,7 +36,7 @@ describe('BattleManager', function () {
         sub = new Subscription();
         await Engine.toggleAutoCure(true);
 
-        $hook(Hook.Socket.send).on((data) => {
+        $hook('socket:send').on((data) => {
             if (filterCMD.includes(data.cmd)) return;
             console.log(data);
         });
@@ -49,8 +48,8 @@ describe('BattleManager', function () {
         const skn = matchSkillName(env.skill.map((v) => v.name));
         const nbc = matchNoBloodChain([env.测试精灵1.name, env.测试精灵3.name]);
 
-        sub.on($hook(Hook.Battle.battleStart), Manager.resolveStrategy);
-        sub.on($hook(Hook.Battle.roundEnd), Manager.resolveStrategy);
+        sub.on($hook('battle:start'), Manager.resolveStrategy);
+        sub.on($hook('battle:roundEnd'), Manager.resolveStrategy);
 
         await Manager.takeover(startBattle, {
             async resolveMove(state, skills, _) {
@@ -94,8 +93,8 @@ describe('BattleManager', function () {
             }
         };
 
-        sub.on($hook(Hook.Battle.battleStart), resolve);
-        sub.on($hook(Hook.Battle.roundEnd), resolve);
+        sub.on($hook('battle:start'), resolve);
+        sub.on($hook('battle:roundEnd'), resolve);
 
         await Manager.takeover(startBattle, {
             async resolveMove() {

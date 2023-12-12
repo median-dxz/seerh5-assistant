@@ -1,6 +1,5 @@
 import { filter, map } from 'rxjs';
-import { Hook } from '../../constant/index.js';
-import { type GameModuleMap } from '../../constant/type.js';
+import { type GameModuleMap } from '../../constant/types.js';
 import { Engine } from '../../engine/index.js';
 import { SEAEventSource } from '../EventSource.js';
 import { $hook } from './fromHook.js';
@@ -9,25 +8,25 @@ type ModuleEvent = 'load' | 'show' | 'mainPanel' | 'destroy';
 
 const $fromGameModule = {
     load<TModule extends string>(module: TModule) {
-        return $hook(Hook.Module.loadScript).pipe(
+        return $hook('module:loadScript').pipe(
             filter((_module) => _module === module),
             map(() => undefined)
         );
     },
     show<TModule extends string>(module: TModule) {
-        return $hook(Hook.Module.show).pipe(
+        return $hook('module:show').pipe(
             filter(({ module: _module }) => _module === module),
             map(({ moduleInstance }) => moduleInstance as GameModuleMap[TModule])
         );
     },
     mainPanel<TModule extends string>(module: TModule) {
-        return $hook(Hook.Module.openMainPanel).pipe(
+        return $hook('module:openMainPanel').pipe(
             filter(({ module: _module }) => _module === module),
             map(() => Engine.inferCurrentModule<GameModuleMap[TModule]>())
         );
     },
     destroy<TModule extends string>(module: TModule) {
-        return $hook(Hook.Module.destroy).pipe(
+        return $hook('module:destroy').pipe(
             filter((_module) => _module === module),
             map(() => undefined)
         );

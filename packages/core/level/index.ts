@@ -11,7 +11,7 @@ export class LevelManager {
     // 单例模式
     private static _instance: LevelManager;
     public static get ins() {
-        return this._instance || (this._instance = new LevelManager());
+        return LevelManager._instance || (LevelManager._instance = new LevelManager());
     }
     private constructor() {
         // constructor

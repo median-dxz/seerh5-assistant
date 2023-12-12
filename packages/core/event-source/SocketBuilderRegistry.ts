@@ -1,8 +1,7 @@
-import type { Hook } from 'index.js';
 import type { ValueOf } from '../common/utils.js';
-import type { HookDataMap, SocketResponseMap as ResponseMap } from '../constant/type.js';
+import type { HookDataMap, SocketResponseMap as ResponseMap } from '../constant/types.js';
 
-type BufferData = HookDataMap[typeof Hook.Socket.receive]['buffer'];
+type BufferData = HookDataMap['socket:receive']['buffer'];
 
 type DataBuilder<T> = (data: BufferData) => T;
 

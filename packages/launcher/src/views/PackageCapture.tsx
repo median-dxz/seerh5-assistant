@@ -5,7 +5,7 @@ import { SeaTableRow } from '@/components/styled/TableRow';
 import { produce } from 'immer';
 import * as React from 'react';
 import type { AnyFunction, HookDataMap } from 'sea-core';
-import { Hook, SEAEventSource, Subscription, restoreHookedFn } from 'sea-core';
+import { SEAEventSource, Subscription, restoreHookedFn } from 'sea-core';
 
 interface CapturedPackage {
     type: 'RemoveListener' | 'AddListener' | 'Received' | 'Send';
@@ -89,12 +89,12 @@ export function PackageCapture() {
         //     capturedPkgFactory(setCapture, { cmd, type: 'RemoveListener', data: callback });
         // });
 
-        const onReceive = ({ buffer, cmd }: HookDataMap['socket_receive']) => {
+        const onReceive = ({ buffer, cmd }: HookDataMap['socket:receive']) => {
             if (state !== 'capturing' || CmdMask.includes(cmd)) return;
             capturedPkgFactory(setCapture, { cmd, data: buffer?.dataView, type: 'Received' });
         };
 
-        const onSend = ({ cmd, data }: HookDataMap['socket_send']) => {
+        const onSend = ({ cmd, data }: HookDataMap['socket:send']) => {
             if (state !== 'capturing' || CmdMask.includes(cmd)) return;
             capturedPkgFactory(setCapture, {
                 cmd,
@@ -104,8 +104,8 @@ export function PackageCapture() {
         };
 
         const $socket = {
-            send: SEAEventSource.hook(Hook.Socket.send),
-            receive: SEAEventSource.hook(Hook.Socket.receive),
+            send: SEAEventSource.hook('socket:send'),
+            receive: SEAEventSource.hook('socket:receive'),
         };
 
         const subscription = new Subscription();

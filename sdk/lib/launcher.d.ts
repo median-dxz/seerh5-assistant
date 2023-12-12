@@ -75,7 +75,7 @@ declare global {
         };
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        type Level = { new (option: any): ILevelRunner; meta: LevelMeta };
+        type Level = { new (option: any): ILevelRunner; readonly meta: LevelMeta };
 
         type Command = {
             name: string;

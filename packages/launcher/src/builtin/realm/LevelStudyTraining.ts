@@ -16,7 +16,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
     return class LevelStudyTraining implements ILevelRunner<LevelData> {
         data: LevelData = {
             remainingTimes: 0,
-            state: LevelAction.STOP,
+            progress: 0,
             success: false,
             rewardReceived: false,
             stimulation: false,
@@ -49,10 +49,6 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             this.data.success = this.data.rewardReceived;
 
             if (!this.data.rewardReceived) {
-                if (this.data.state === 'award_error') {
-                    return LevelAction.STOP;
-                }
-
                 if (this.data.remainingTimes > 0) {
                     this.logger(`${this.meta.name}: 进入关卡`);
                     return LevelAction.BATTLE;
@@ -77,12 +73,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             },
 
             award: async () => {
-                try {
-                    await Socket.sendByQueue(42395, [115, 3, 0, 0]);
-                } catch (error) {
-                    this.logger(error);
-                    this.data.state = 'award_error';
-                }
+                await Socket.sendByQueue(42395, [115, 3, 0, 0]);
             },
         };
     };

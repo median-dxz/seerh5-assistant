@@ -30,7 +30,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
     return class LevelTitanHole implements ILevelRunner<LevelData> {
         data: LevelData = {
             remainingTimes: 0,
-            state: LevelAction.STOP,
+            progress: 0,
             success: false,
             stimulation: false,
             levelOpen: false,
@@ -55,15 +55,6 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
         constructor(public option: LevelOption) {}
 
         async updater() {
-            if (this.data.state === 'award_error') {
-                this.logger('领取奖励出错');
-                return LevelAction.STOP;
-            }
-            if (this.data.state === 'mine_error') {
-                this.logger('自动开采矿石出错, 请手动开采');
-                return LevelAction.STOP;
-            }
-
             const bits = await Socket.bitSet(640);
             const values = await Socket.multiValue(18724, 18725, 18726, 18727);
 
@@ -114,12 +105,8 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
                     }
                     this.logger('dig', row, col, row * 11 + col);
 
-                    try {
-                        await Socket.sendByQueue(42395, [104, 2, row * 11 + col, 0]);
-                    } catch (error) {
-                        this.data.state = 'mine_error';
-                        return;
-                    }
+                    // may throw error
+                    await Socket.sendByQueue(42395, [104, 2, row * 11 + col, 0]);
 
                     await delay(Math.random() * 100 + 200);
                 }
@@ -128,12 +115,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
                 Socket.sendByQueue(42396, [104, 3, this.data.step]);
             },
             award: async () => {
-                try {
-                    await Socket.sendByQueue(42395, [104, 5, 0, 0]);
-                } catch (error) {
-                    this.logger(error);
-                    this.data.state = 'award_error';
-                }
+                await Socket.sendByQueue(42395, [104, 5, 0, 0]);
             },
         };
     };

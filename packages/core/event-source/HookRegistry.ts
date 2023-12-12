@@ -1,7 +1,7 @@
 import type { Subscription } from 'rxjs';
 import { Observable, Subject } from 'rxjs';
 import type { AnyFunction, ValueOf } from '../common/utils.js';
-import type { HookDataMap } from '../constant/type.js';
+import type { HookDataMap } from '../constant/types.js';
 
 type DataSteam<TEvents extends object> = {
     type: keyof TEvents;

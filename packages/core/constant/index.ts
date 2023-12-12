@@ -1,6 +1,5 @@
-export * from './GameHooks.js';
 export * from './ItemId.js';
-export * from './type.js';
+export * from './types.js';
 
 export const PetPosition = {
     bag1: 1,

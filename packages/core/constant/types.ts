@@ -3,27 +3,27 @@ import type { Pet, PetRoundInfo } from '../entity/index.js';
 import type { ProxyPet } from '../pet-helper/SEAPet.js';
 
 export interface HookDataMap {
-    module_openMainPanel: { module: string; panel: string };
-    module_show: { module: string; id?: number; moduleInstance: withClass<BaseModule> };
-    module_destroy: string;
-    module_loadScript: string;
+    'module:openMainPanel': { module: string; panel: string };
+    'module:show': { module: string; id?: number; moduleInstance: withClass<BaseModule> };
+    'module:loadScript': string;
+    'module:destroy': string;
 
-    battle_battleStart: undefined;
-    battle_roundEnd: undefined;
-    battle_endPropShown: undefined;
-    battle_battleEnd: undefined;
+    'battle:start': undefined;
+    'battle:roundEnd': undefined;
+    'battle:showEndProp': undefined;
+    'battle:end': undefined;
 
-    popview_open: string;
-    popview_close: string;
+    'pop_view:open': string;
+    'pop_view:close': string;
 
-    award_show: undefined;
-    award_receive: { items?: Array<{ id: number; count: number }> };
+    'award:show': undefined;
+    'award:receive': { items?: Array<{ id: number; count: number }> };
 
-    socket_send: { cmd: number; data: seerh5.SocketRequestData };
-    socket_receive: { cmd: number; buffer?: egret.ByteArray };
+    'socket:send': { cmd: number; data: seerh5.SocketRequestData };
+    'socket:receive': { cmd: number; buffer?: egret.ByteArray };
 
-    petbag_update: [Pet[], Pet[]];
-    petbag_deactivate: undefined;
+    'pet_bag:update': [Pet[], Pet[]];
+    'pet_bag:deactivate': undefined;
 }
 
 export interface SocketResponseMap {

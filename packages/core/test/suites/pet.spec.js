@@ -1,6 +1,5 @@
 import {
     Engine,
-    Hook,
     Manager,
     PetLocation,
     SEAEventSource,
@@ -25,8 +24,8 @@ describe('PetHelper', function () {
         await Engine.toggleAutoCure(false);
 
         sub = new Subscription();
-        sub.on($hook(Hook.Battle.battleStart), Manager.resolveStrategy);
-        sub.on($hook(Hook.Battle.roundEnd), Manager.resolveStrategy);
+        sub.on($hook('battle:start'), Manager.resolveStrategy);
+        sub.on($hook('battle:end'), Manager.resolveStrategy);
     });
 
     beforeEach(async function () {
@@ -43,8 +42,8 @@ describe('PetHelper', function () {
 
         const pet = await SEAPet(catchTime).get();
         const ct = await SEAPet(catchTime).catchTime;
-        const result_boolean = await SEAPet(catchTime).isDefault; // test getter
         await SEAPet(catchTime).default();
+        const result_boolean = await SEAPet(catchTime).isDefault; // test getter
         const result_location = await SEAPet(catchTime).cure().location();
         const result_promise = await SEAPet(catchTime).get((pet) => {
             return pet.cure();

@@ -1,5 +1,5 @@
 import { filter, map, zip, type Observable } from 'rxjs';
-import { Hook, type SocketResponseMap } from '../../constant/index.js';
+import { type SocketResponseMap } from '../../constant/index.js';
 import { SEAEventSource } from '../EventSource.js';
 import { SocketBuilderRegistry } from '../SocketBuilderRegistry.js';
 import { $hook } from './fromHook.js';
@@ -9,13 +9,13 @@ type CMD = keyof SocketResponseMap;
 
 const $fromSocket = {
     send<TCmd extends CMD>(cmd: TCmd) {
-        return $hook(Hook.Socket.send).pipe(
+        return $hook('socket:send').pipe(
             filter(({ cmd: _cmd }) => _cmd === cmd),
             map(({ data }) => data)
         );
     },
     receive<TCmd extends CMD>(cmd: TCmd) {
-        return $hook(Hook.Socket.receive).pipe(
+        return $hook('socket:receive').pipe(
             filter(({ cmd: _cmd }) => _cmd === cmd),
             map(({ buffer }) => buffer),
             map(SocketBuilderRegistry.getBuilder(cmd))

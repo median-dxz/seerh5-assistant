@@ -116,6 +116,7 @@ export function TabView() {
             <Stack
                 sx={{
                     borderRight: `1px solid ${alpha(theme.palette.primary.main, 0.12)}`,
+                    boxShadow: theme.boxShadow,
                     minWidth: '193px',
                     display: 'flex',
                     flexDirection: 'column',
