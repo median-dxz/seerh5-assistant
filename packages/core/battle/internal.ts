@@ -1,5 +1,4 @@
 import { delay } from '../common/utils.js';
-import { Engine } from '../engine/index.js';
 import { PetRoundInfo } from '../entity/index.js';
 import { SEAEventSource, SocketBuilderRegistry } from '../event-source/index.js';
 import * as Manager from './manager.js';
@@ -34,11 +33,6 @@ export default () => {
     SEAEventSource.hook('battle:showEndProp').on(() => {
         if (FightManager.fightAnimateMode === 1) {
             TimeScaleManager.setBattleAnimateSpeed(1);
-        }
-        if (window.petNewSkillPanel) {
-            const newSkillPanel = Engine.findObject(petNewSkillPanel.PetNewSkillPanel).at(0);
-            newSkillPanel?._view.hide();
-            newSkillPanel?.onClose();
         }
         const currModule = ModuleManager.currModule;
         currModule.onClose();

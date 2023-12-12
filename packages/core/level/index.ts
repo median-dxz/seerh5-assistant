@@ -75,16 +75,16 @@ export class LevelManager {
                     await Manager.takeover(() => {
                         runner.actions['battle'].call(runner);
                     }, strategy);
+
+                    logger('战斗完成');
                 } catch (error) {
                     this.runner = null;
                     logger(`战斗进入错误: ${error as string}`);
-                    return;
                 }
 
                 // 恢复自动治疗状态
                 await Engine.toggleAutoCure(autoCureState);
                 Manager.clear();
-                logger('战斗完成');
             };
 
             while (this.runner) {

@@ -69,9 +69,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
             if (this.data.levelOpenCount < this.meta.maxTimes || this.data.levelOpen) {
                 if (!this.data.levelOpen) {
-                    this.logger('开启泰坦矿洞');
-                    await Socket.sendByQueue(42395, [104, 1, 3, 0]);
-                    return LevelAction.BATTLE;
+                    return 'open_level';
                 } else if (this.data.step === 3) {
                     return 'mine_ores';
                 }
@@ -115,6 +113,10 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             },
             award: async () => {
                 await Socket.sendByQueue(42395, [104, 5, 0, 0]);
+            },
+            open_level: async () => {
+                this.logger('开启泰坦矿洞');
+                await Socket.sendByQueue(42395, [104, 1, 3, 0]);
             },
         };
     };

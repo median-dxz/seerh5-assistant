@@ -55,7 +55,7 @@ export default async function builtinBattle(createContext: SEAL.createModContext
         },
         {
             name: 'LevelXTeamRoom',
-            pets: ['蒂朵', '六界帝神', '时空界皇'],
+            pets: ['蒂朵', '六界帝神', '深渊狱神·哈迪斯'],
             strategy: 'LevelXTeamRoom',
         },
         {

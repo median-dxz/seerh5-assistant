@@ -6,26 +6,48 @@ import { updateBattleFireInfo } from './engine';
 import { registerLog } from './registerLog';
 
 export function setupForLauncher() {
+    const start$ = SEAEventSource.hook('battle:start');
+    const roundEnd$ = SEAEventSource.hook('battle:roundEnd');
+    const end$ = SEAEventSource.hook('battle:end');
+
     config.xml.load('new_super_design');
     config.xml.load('Fragment');
 
     extendEngine({ updateBattleFireInfo });
     backgroundHeartBeatCheck();
     cancelAlertForUsePetItem();
+    disableNewSkillPanel(start$, end$);
 
     // 启用开发调试输出
     if (IS_DEV) {
         registerLog();
     }
 
-    // 自动战斗需要手动启用
+    // 自动战斗需要在Launcher层通过对应hook启用
     const { resolveStrategy } = Battle.Manager;
-    SEAEventSource.hook('battle:start').on(resolveStrategy);
-    SEAEventSource.hook('battle:roundEnd').on(resolveStrategy);
+    start$.on(resolveStrategy);
+    roundEnd$.on(resolveStrategy);
+}
+
+function disableNewSkillPanel(start$: SEAEventSource<void>, end$: SEAEventSource<void>) {
+    start$.on(() => {
+        SocketConnection.removeCmdListener(
+            CommandID.NOTE_UPDATE_SKILL,
+            PetUpdateCmdListener.onUpdateSkill,
+            PetUpdateCmdListener
+        );
+    });
+    end$.on(() => {
+        SocketConnection.addCmdListener(
+            CommandID.NOTE_UPDATE_SKILL,
+            PetUpdateCmdListener.onUpdateSkill,
+            PetUpdateCmdListener
+        );
+    });
 }
 
 /** enable background heartbeat check */
-export function backgroundHeartBeatCheck() {
+function backgroundHeartBeatCheck() {
     let timer: number | undefined = undefined;
 
     egret.lifecycle.onPause = () => {
@@ -33,7 +55,7 @@ export function backgroundHeartBeatCheck() {
         timer = setInterval(() => {
             if (!SocketConnection.mainSocket.connected) return;
             SystemTimerManager.queryTime();
-        }, 5000);
+        }, 3000);
     };
 
     egret.lifecycle.onResume = () => {
@@ -46,7 +68,7 @@ export function backgroundHeartBeatCheck() {
 declare var Alert: any;
 
 /** cancel alert before use item for pet */
-export function cancelAlertForUsePetItem() {
+function cancelAlertForUsePetItem() {
     ItemUseManager.prototype.useItem = function (t, e) {
         if (!t) return void BubblerManager.getInstance().showText('使用物品前，请先选择一只精灵');
         e = Number(e);

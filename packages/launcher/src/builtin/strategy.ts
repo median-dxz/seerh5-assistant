@@ -148,7 +148,7 @@ export default async function builtinStrategy(createContext: SEAL.createModConte
         {
             name: 'LevelTitanHole',
             ...generateStrategyByName(
-                ['竭血残蝶', '剑挥四方', '破寂同灾', '神灵救世光', '有女初长成'],
+                ['竭血残蝶', '剑挥四方', '破寂同灾', '神灵救世光', '有女初长成', '魂魄缠绕'],
                 ['幻影蝶', '六界帝神', '深渊狱神·哈迪斯']
             ),
         },

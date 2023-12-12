@@ -184,6 +184,7 @@ declare var SeerVersionController: {
 
 declare var GameInfo: {
     token_url: string;
+    online_gate: string;
 };
 
 declare class WebSoundManager {

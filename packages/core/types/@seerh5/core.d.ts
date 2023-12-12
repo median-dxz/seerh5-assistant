@@ -425,3 +425,7 @@ declare class PetStatusEffectConfig {
 declare class TypeXMLInfo {
     static getRelationsPow(a: string, b: string): number;
 }
+
+declare class PetUpdateCmdListener {
+    static onUpdateSkill(): void;
+}
