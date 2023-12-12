@@ -20,7 +20,6 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
         data: LevelData = {
             progress: 0,
             remainingTimes: 0,
-            success: false,
             stimulation: false,
             unlockHard: false,
             canReceiveReward: false,
@@ -41,7 +40,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
         constructor(public option: LevelOption) {}
 
-        async updater() {
+        async update() {
             const bits = (await Socket.bitSet(8832, 2000037)).map(Boolean);
             const values = await Socket.multiValue(108105, 108106, 18745, 20134);
 
@@ -58,13 +57,11 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
             if (!this.data.unlockHard) {
                 this.logger(`${this.meta.name}: 未解锁困难难度`);
-                this.data.success = true;
                 return LevelAction.STOP;
             } else if (this.data.remainingTimes > 0) {
                 this.logger(`${this.meta.name}: 进入关卡`);
                 return LevelAction.BATTLE;
             } else {
-                this.data.success = !this.data.canReceiveReward;
                 if (this.data.weeklyChallengeCount >= 30 && this.data.canReceiveReward) {
                     this.logger(`${this.meta.name}: 领取奖励`);
                     return LevelAction.AWARD;

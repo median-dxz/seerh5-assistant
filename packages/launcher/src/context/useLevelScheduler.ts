@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react';
 import type { ILevelRunner } from 'sea-core';
 
 export interface LevelRunnerState {
-    status: 'pending' | 'running' | 'success' | 'fail' | 'error' | 'stopped';
+    status: 'pending' | 'running' | 'completed' | 'error' | 'stopped';
     error?: Error;
     runner: ILevelRunner;
 }

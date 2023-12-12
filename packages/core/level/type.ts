@@ -8,7 +8,6 @@ export const LevelAction = {
 
 export interface LevelData {
     remainingTimes: number;
-    success: boolean;
     progress: number;
 }
 
@@ -23,7 +22,7 @@ export interface ILevelRunner<TData extends LevelData = LevelData> {
     actions: Record<string, (this: ILevelRunner<TData>) => Promise<void>>;
 
     logger: typeof console.log;
-    updater(): Promise<string>;
+    update(): Promise<string>;
     selectBattle(): ILevelBattle;
 
     beforeAll?: () => Promise<void>;

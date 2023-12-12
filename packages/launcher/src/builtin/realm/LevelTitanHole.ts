@@ -31,7 +31,6 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
         data: LevelData = {
             remainingTimes: 0,
             progress: 0,
-            success: false,
             stimulation: false,
             levelOpen: false,
             levelOpenCount: 0,
@@ -54,7 +53,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
         constructor(public option: LevelOption) {}
 
-        async updater() {
+        async update() {
             const bits = await Socket.bitSet(640);
             const values = await Socket.multiValue(18724, 18725, 18726, 18727);
 

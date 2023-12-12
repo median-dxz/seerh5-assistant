@@ -160,8 +160,8 @@ const PanelRow = React.memo(({ taskCompleted, setTaskCompleted }: PanelRowProps)
     const index = useIndex();
     const completed = taskCompleted[index];
 
-    const levelUpdater = runner.updater.bind(runner);
-    runner.updater = async () => {
+    const levelUpdater = runner.update.bind(runner);
+    runner.update = async () => {
         const r = await levelUpdater();
         setTaskCompleted(
             produce((draft) => {

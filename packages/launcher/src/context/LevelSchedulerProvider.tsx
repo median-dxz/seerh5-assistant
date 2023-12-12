@@ -142,8 +142,8 @@ export const LevelSchedulerProvider = ({ children }: PropsWithChildren<object>) 
         const { lock } = levelManager;
 
         lock!
-            .then((result) => {
-                changeRunnerState(result ? 'success' : 'fail');
+            .then(() => {
+                changeRunnerState('completed');
             })
             .catch((e) => {
                 changeRunnerState('error', e);

@@ -18,7 +18,7 @@ export class LevelManager {
     }
 
     private runner: ILevelRunner | null = null;
-    lock: Promise<boolean> | null = null;
+    lock: Promise<void> | null = null;
 
     get running() {
         return this.runner != null;
@@ -58,6 +58,7 @@ export class LevelManager {
                 logger('切换背包');
                 await Engine.switchBag(pets);
 
+                const autoCureState = await Engine.autoCureState();
                 Engine.toggleAutoCure(false);
                 Engine.cureAllPet();
 
@@ -80,14 +81,15 @@ export class LevelManager {
                     return;
                 }
 
-                await Engine.toggleAutoCure(true);
+                // 恢复自动治疗状态
+                await Engine.toggleAutoCure(autoCureState);
                 Manager.clear();
                 logger('战斗完成');
             };
 
             while (this.runner) {
                 logger('更新关卡信息');
-                const nextAction = await runner.updater();
+                const nextAction = await runner.update();
                 switch (nextAction) {
                     case LevelAction.BATTLE:
                         await battle();
@@ -105,14 +107,10 @@ export class LevelManager {
             logger('正在停止关卡');
             await afterAll?.();
 
-            logger('关卡结束');
-            return runner.data.success;
+            logger('关卡完成');
+            this.lock = this.runner = null;
         };
 
         this.lock = lockFn();
-        this.lock.then((result) => {
-            logger(`关卡完成状态: ${result}`);
-            this.lock = this.runner = null;
-        });
     }
 }

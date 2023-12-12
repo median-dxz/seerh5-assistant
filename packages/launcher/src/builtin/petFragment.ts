@@ -65,7 +65,7 @@ export default async function (createModContext: SEAL.createModContext) {
             this.frag = new PetFragmentLevel(LevelObj);
             this.designId = this.frag.id;
 
-            this.data = { success: false } as LevelData;
+            this.data = {} as LevelData;
             this.logger = logger.bind(logger, `精灵因子-${this.frag.name}: `);
         }
 
@@ -73,7 +73,7 @@ export default async function (createModContext: SEAL.createModContext) {
             return this.option.battle.at(this.data.curPosition)!;
         }
 
-        async updater() {
+        async update() {
             const { frag, data } = this;
             const values = await Socket.multiValue(frag.values.openTimes, frag.values.failTimes, frag.values.progress);
 
@@ -109,7 +109,6 @@ export default async function (createModContext: SEAL.createModContext) {
                     return LevelAction.BATTLE;
                 }
             } else {
-                this.data.success = true;
                 return LevelAction.STOP;
             }
         }

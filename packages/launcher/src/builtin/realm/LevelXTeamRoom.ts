@@ -19,7 +19,6 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
         data: LevelData = {
             remainingTimes: 0,
             progress: 0,
-            success: false,
             open: false,
             dailyMinRound: 0,
             dailyRewardReceived: false,
@@ -41,7 +40,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
         constructor(public option: LevelOption) {}
 
-        async updater() {
+        async update() {
             this.logger(`${this.meta.name}: 更新关卡信息...`);
             const bits = await Socket.bitSet(1000585, 2000036);
             const values = await Socket.multiValue(12769, 12774, 20133);
@@ -57,7 +56,6 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
             if (this.data.weeklyRewardReceived) {
                 this.logger(`${this.meta.name}: 日任完成`);
-                this.data.success = true;
                 return LevelAction.STOP;
             }
 
@@ -68,7 +66,6 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
             if (this.data.dailyRewardReceived) {
                 this.logger(`${this.meta.name}: 日任完成`);
-                this.data.success = true;
                 return LevelAction.STOP;
             }
 
@@ -87,7 +84,6 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             }
 
             this.logger(`${this.meta.name}: 日任失败`);
-            this.data.success = false;
             return LevelAction.STOP;
         }
 

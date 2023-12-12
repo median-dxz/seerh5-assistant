@@ -17,7 +17,6 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
         data: LevelData = {
             remainingTimes: 0,
             progress: 0,
-            success: false,
             rewardReceived: false,
             stimulation: false,
         };
@@ -36,7 +35,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
         constructor(public option: LevelOption) {}
 
-        async updater() {
+        async update() {
             this.logger(`${this.meta.name}: 更新关卡信息...`);
             const bits = (await Socket.bitSet(639, 1000571)).map(Boolean);
             const buf = await Socket.sendByQueue(42397, [116]);
@@ -45,8 +44,6 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             this.data.stimulation = bits[0];
             this.data.rewardReceived = bits[1];
             this.data.remainingTimes = this.meta.maxTimes - realmInfo.getUint32(8);
-
-            this.data.success = this.data.rewardReceived;
 
             if (!this.data.rewardReceived) {
                 if (this.data.remainingTimes > 0) {
@@ -58,7 +55,6 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
                 }
             } else {
                 this.logger(`${this.meta.name}日任完成`);
-                this.data.success = true;
                 return LevelAction.STOP;
             }
         }

@@ -69,8 +69,8 @@ export function PetFragmentLevelPanel() {
     });
 
     rows.forEach((runner, index) => {
-        const levelUpdater = runner.updater.bind(runner);
-        runner.updater = async () => {
+        const levelUpdater = runner.update.bind(runner);
+        runner.update = async () => {
             const r = await levelUpdater();
             setTaskCompleted(
                 produce((draft) => {
@@ -82,7 +82,7 @@ export function PetFragmentLevelPanel() {
     });
 
     React.useEffect(() => {
-        rows.forEach((level) => level.updater());
+        rows.forEach((level) => level.update());
     }, [rows]);
 
     const col: PanelColumns = React.useMemo(
