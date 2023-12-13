@@ -1,6 +1,6 @@
 import { Socket } from 'sea-core/engine';
 
-const vip = (exchangeId: number) =>
+export const vip = (exchangeId: number) =>
     [
         {
             name: '领取vip每日箱子',

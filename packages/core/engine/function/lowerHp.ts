@@ -67,8 +67,8 @@ export async function lowerHp(
         return;
     }
 
-    buyPetItem(Potion.中级活力药剂, cts.length);
-    buyPetItem(healPotionId, cts.length);
+    buyPetItem(Potion.中级活力药剂, remains.length);
+    buyPetItem(healPotionId, remains.length);
     await SEAPet(cts[0]).default();
     await toggleAutoCure(false);
 

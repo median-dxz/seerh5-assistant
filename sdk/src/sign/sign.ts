@@ -1,6 +1,7 @@
 import { daily } from './daily';
 import { teamSign } from './team';
 import { teamDispatch } from './team-dispatch';
+import { vip } from './vip';
 
 const EXCHANGE_LIST = {
     战队道具: {
@@ -44,7 +45,12 @@ export default async function Sign(createContext: SEAL.createModContext) {
     return {
         meta,
         exports: {
-            sign: [...daily, teamDispatch(config.teamDispatch.ignorePets, logger), ...teamSign(config.team.exchangeId)],
+            sign: [
+                ...daily,
+                teamDispatch(config.teamDispatch.ignorePets, logger),
+                ...teamSign(config.team.exchangeId),
+                ...vip(config.vip.exchangeId),
+            ],
         },
     } satisfies SEAL.ModExport;
 }
