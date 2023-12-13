@@ -12,7 +12,7 @@ const timeFormatter = (n: number) => {
 
 type BattleFireInfo = Awaited<ReturnType<typeof Engine.updateBattleFireInfo>>;
 
-export function BattleFireInfo() {
+export function BattleFire() {
     const [battleFire, setBattleFire] = React.useState<BattleFireInfo>({} as BattleFireInfo);
     const [timeLeft, setTimeLeft] = React.useState(0);
 
@@ -59,8 +59,9 @@ export function BattleFireInfo() {
     }, [setOpen]);
 
     return (
-        <Typography color={renderProps.color}>
-            {renderProps.text}
+        <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']} pl={4}>
+            火焰信息
+            <Typography color={renderProps.color}>{renderProps.text}</Typography>{' '}
             <Button onClick={updateBattleFire}>刷新</Button>
             <Button onClick={exchangeBattleFire}>兑换</Button>
         </Typography>

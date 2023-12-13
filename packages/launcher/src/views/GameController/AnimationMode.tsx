@@ -1,4 +1,4 @@
-import { Switch } from '@mui/material';
+import { Switch, Typography } from '@mui/material';
 import React from 'react';
 
 export function AnimationMode() {
@@ -17,5 +17,10 @@ export function AnimationMode() {
         [setAnimationMode]
     );
 
-    return <Switch checked={animationMode} onChange={handleToggleMode} />;
+    return (
+        <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']} pl={4}>
+            动画模式
+            <Switch checked={animationMode} onChange={handleToggleMode} />
+        </Typography>
+    );
 }

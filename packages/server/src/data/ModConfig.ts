@@ -1,9 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import * as toml from 'smol-toml';
+import * as superjson from 'superjson';
 import { configRoot } from './PetCacheManager.ts';
-
-import superjson, { type SuperJSONResult } from 'superjson';
 
 export class ModConfig {
     data: Record<string, Record<string, object>> | undefined;
@@ -20,7 +18,7 @@ export class ModConfig {
         const configFile = configFilePath(author);
         if (fs.existsSync(configFile)) {
             const content = fs.readFileSync(configFile, 'utf-8');
-            const config = superjson.deserialize(toml.parse(content) as unknown as SuperJSONResult);
+            const config = superjson.parse(content);
             this.data = config as typeof this.data;
         }
     }
@@ -29,6 +27,7 @@ export class ModConfig {
         return this.data?.[this.id];
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     save(data: Record<string, any>) {
         this.data = {
             ...this.data,
@@ -37,7 +36,7 @@ export class ModConfig {
             },
         };
 
-        const content = toml.stringify(superjson.serialize(this.data));
+        const content = superjson.stringify(this.data);
         fs.writeFileSync(configFilePath(this.author), content);
     }
 }
@@ -51,5 +50,5 @@ function praseNamespace(ns: string): { author: string; id: string } {
 }
 
 function configFilePath(filename: string) {
-    return path.join(configRoot, `${filename}.toml`);
+    return path.join(configRoot, `${filename}.json`);
 }

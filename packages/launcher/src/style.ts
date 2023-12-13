@@ -11,6 +11,7 @@ declare module '@mui/material/styles' {
 
     interface Theme {
         boxShadow: string;
+        palette: Palette;
     }
 
     interface ThemeOptions {
@@ -20,6 +21,7 @@ declare module '@mui/material/styles' {
 
 const colors = {
     primary: '#b3e5fc',
+    secondary: '#03a9f4',
     text: '#e1f5fe',
     paper: '#1e88e5',
 };
@@ -36,7 +38,7 @@ export const theme = createTheme({
             main: colors.primary,
         },
         secondary: {
-            main: '#03a9f4',
+            main: colors.secondary,
         },
         text: {
             primary: colors.text,
@@ -74,13 +76,13 @@ export const theme = createTheme({
         },
         MuiBackdrop: {
             styleOverrides: {
-                root: { backgroundColor: 'rgba(0, 0, 0, 0.15)' },
+                root: { backgroundColor: alpha('#000', 0.15) },
             },
         },
         MuiTooltip: {
             styleOverrides: {
                 tooltip: {
-                    backgroundColor: 'rgba(33 150 243 / 45%)',
+                    backgroundColor: alpha(colors.paper, 0.45),
                     backdropFilter: 'blur(4px)',
                 },
             },
@@ -91,6 +93,6 @@ export const theme = createTheme({
                     backgroundColor: alpha('#fff', 0.33),
                 },
             },
-        },
+        }
     },
 });

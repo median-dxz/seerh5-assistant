@@ -11,6 +11,7 @@ import { useBagPets } from '@/utils/hooks/useBagPets';
 import { PanelField, PanelTable, useIndex, useRowData, type PanelColumns } from '@/components/PanelTable';
 import { PopupMenuButton } from '@/components/PopupMenuButton';
 import { SeaTableRow } from '@/components/styled/TableRow';
+import { useMainState } from '@/context/useMainState';
 import useSWR from 'swr';
 
 type BasePetInfo = Pick<Pet, 'catchTime' | 'id' | 'name'>;
@@ -22,7 +23,7 @@ function usePetGroups() {
     return [data, isLoading, mutate] as const;
 }
 
-export function PetBagController() {
+export function PetBag() {
     const { pets } = useBagPets();
 
     const [selected, setSelected] = React.useState<number[]>([]);
@@ -53,6 +54,12 @@ export function PetBagController() {
     );
 
     const toRowKey = React.useCallback((pet: Pet) => pet.catchTime, []);
+
+    const { setOpen } = useMainState();
+    const openPetBag = React.useCallback(() => {
+        ModuleManager.showModule('petBag');
+        setOpen(false);
+    }, [setOpen]);
 
     if (!pets || loadingPetInfo || loading) return <LinearProgress />;
 
@@ -96,6 +103,8 @@ export function PetBagController() {
             <Button onClick={handleLowerHp}>压血</Button>
             <Button onClick={handleCurePets}>治疗</Button>
             <Button onClick={handleCopyCatchTime}>复制catchTime</Button>
+            <Button onClick={openPetBag}>打开背包界面</Button>
+            <Button onClick={Engine.cureAllPet}>全体治疗</Button>
 
             <PopupMenuButton data={petGroupsInfo} renderItem={pattern} onSelectItem={handleSwitchBag}>
                 {loading ? <CircularProgress size={16} /> : '更换方案'}

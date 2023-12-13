@@ -1,8 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-
-import * as toml from 'smol-toml';
-
+import * as superjson from 'superjson';
 import { PetCache } from '../../data/PetCacheManager.ts';
 
 // ===== procedures =====
@@ -23,22 +21,22 @@ export const cachePets = (pets: Map<string, number>) => {
 };
 
 export const petFragmentLevel = (appRoot: string) => {
-    const configPath = path.join(appRoot, 'config', 'sea-petFragmentLevel.toml');
+    const configPath = path.join(appRoot, 'config', 'sea-petFragmentLevel.json');
     if (!fs.existsSync(configPath)) {
-        fs.writeFileSync(configPath, '');
+        fs.writeFileSync(configPath, '{}');
     }
     const content = fs.readFileSync(configPath, 'utf-8');
-    const config = toml.parse(content);
-    return config['PetFragmentLevel'] as unknown;
+    const config = superjson.parse(content);
+    return config;
 };
 
 export const launcherConfig = (key: string, appRoot: string): unknown => {
-    const configPath = path.join(appRoot, 'config', 'sea-launcher.toml');
+    const configPath = path.join(appRoot, 'config', 'sea-launcher.json');
     if (!fs.existsSync(configPath)) {
-        fs.writeFileSync(configPath, '');
+        fs.writeFileSync(configPath, '{}');
     }
     const content = fs.readFileSync(configPath, 'utf-8');
-    const config = toml.parse(content);
+    const config: Record<string, unknown> = superjson.parse(content);
     if (JSON.stringify(config[key]) === '{}') {
         return null;
     }
@@ -46,15 +44,14 @@ export const launcherConfig = (key: string, appRoot: string): unknown => {
 };
 
 export const setLauncherConfig = (key: string, appRoot: string, newConfig: unknown) => {
-    const configPath = path.join(appRoot, 'config', 'sea-launcher.toml');
+    const configPath = path.join(appRoot, 'config', 'sea-launcher.json');
     if (!fs.existsSync(configPath)) {
-        fs.writeFileSync(configPath, '');
+        fs.writeFileSync(configPath, '{}');
     }
     const content = fs.readFileSync(configPath, 'utf-8');
-    const config = toml.parse(content);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-    config[key] = newConfig ?? ({} as any);
-    fs.writeFileSync(configPath, toml.stringify(config));
+    const config: Record<string, unknown> = superjson.parse(content);
+    config[key] = newConfig ?? ({} as unknown);
+    fs.writeFileSync(configPath, superjson.stringify(config));
     return {
         success: true,
     };

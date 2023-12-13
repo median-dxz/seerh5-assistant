@@ -1,18 +1,20 @@
-import React, { forwardRef, useCallback } from 'react';
-
-import { theme } from '@/style';
 import { Fade, Tabs, Typography } from '@mui/material';
 import { alpha, Box, Stack } from '@mui/system';
-import { StyledTab } from './styled/Tab';
+import React, { forwardRef, useCallback, type ReactElement } from 'react';
+import { SwitchTransition } from 'react-transition-group';
+import { CoreLoader } from 'sea-core';
 
 import { VERSION } from '@/constants';
 import { useTabRouter, type ViewNode } from '@/context/useTabRouter';
-import { SwitchTransition } from 'react-transition-group';
-import { CoreLoader } from 'sea-core';
+import { theme } from '@/style';
+import { StyledTab } from './styled/Tab';
+
+import ArrowBack from '@mui/icons-material/ArrowBackRounded';
 
 interface Tab {
     index: number;
     name: string;
+    icon?: ReactElement;
 }
 
 interface TabsGroupProps {
@@ -53,19 +55,25 @@ const TabsGroup = forwardRef<HTMLDivElement, TabsGroupProps>(function ({ onSelec
                     sx={{
                         paddingLeft: '12px',
                         '& .Mui-selected': {
+                            boxShadow: (theme) => theme.boxShadow,
                             backgroundColor: ({ palette }) => alpha(palette.secondary.main, 0.12),
-                            border: 'none',
+                            border: ({ palette }) => `1px solid ${alpha(palette.primary.main, 0.12)}`,
+                        },
+                        '& .MuiTabs-flexContainer': {
+                            gap: '2px',
                         },
                     }}
                     TabIndicatorProps={{
                         sx: { display: 'none' },
                     }}
                 >
-                    {tabs.map(({ index, name }) => (
+                    {tabs.map(({ index, name, icon }) => (
                         <StyledTab
                             key={index}
-                            onClick={() => onSelect(index)}
                             label={name}
+                            icon={icon}
+                            iconPosition="start"
+                            onClick={() => onSelect(index)}
                             disableRipple
                             {...a11yProps(index)}
                         />
@@ -85,6 +93,7 @@ export function TabView() {
             {
                 index: 0,
                 name: '返回',
+                icon: <ArrowBack fontSize="small" />,
             },
             ...currentViewNodes,
         ];

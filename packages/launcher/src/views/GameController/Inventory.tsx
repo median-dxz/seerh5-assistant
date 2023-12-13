@@ -1,17 +1,13 @@
-import { Button, Divider, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 
 import { GameConfigRegistry } from 'sea-core';
 import { Engine } from 'sea-core/engine';
 
 import { PopupMenuButton } from '@/components/PopupMenuButton';
-import { useMainState } from '@/context/useMainState';
 import React from 'react';
 import useSWR from 'swr';
-import { AnimationMode } from './AnimationMode';
-import { BattleFireInfo } from './BattleFireInfo';
-import { PetBagController } from './PetBagController';
 
-export function GameController() {
+export function Inventory() {
     const titleQuery = GameConfigRegistry.getQuery('title');
     const suitQuery = GameConfigRegistry.getQuery('suit');
 
@@ -40,28 +36,8 @@ export function GameController() {
         [userTitle]
     );
 
-    const { setOpen } = useMainState();
-    const openPetBag = React.useCallback(() => {
-        ModuleManager.showModule('petBag');
-        setOpen(false);
-    }, [setOpen]);
-
     return (
         <>
-            <Button onClick={openPetBag}>打开背包界面</Button>
-            <Button onClick={Engine.cureAllPet}>全体治疗</Button>
-            <Divider />
-
-            <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']} pl={4}>
-                火焰信息
-                <BattleFireInfo />
-            </Typography>
-
-            <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']} pl={4}>
-                动画模式
-                <AnimationMode />
-            </Typography>
-
             <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']} pl={4}>
                 套装
                 <PopupMenuButton
@@ -89,10 +65,6 @@ export function GameController() {
                 </PopupMenuButton>
                 <Typography>{`效果: ${titleQuery.get(userTitle)?.abtext}`}</Typography>
             </Typography>
-
-            <Divider />
-
-            <PetBagController />
         </>
     );
 }
