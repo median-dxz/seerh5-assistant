@@ -1,4 +1,4 @@
-import { Switch, Typography } from '@mui/material';
+import { Paper, Stack, Switch, Typography } from '@mui/material';
 import React from 'react';
 
 export function AnimationMode() {
@@ -18,9 +18,18 @@ export function AnimationMode() {
     );
 
     return (
-        <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']} pl={4}>
-            动画模式
-            <Switch checked={animationMode} onChange={handleToggleMode} />
-        </Typography>
+        <Paper sx={{ p: 4, height: '100%', flexDirection: 'column', alignItems: 'baseline' }}>
+            <Typography fontWeight="bold" fontFamily={['Noto Sans SC', 'sans-serif']}>
+                动画模式
+            </Typography>
+            <Stack flexDirection="row" alignItems="center" justifyContent="space-between" width={'100%'}>
+                <Typography>对战动画</Typography>
+                <Switch
+                    checked={animationMode}
+                    onChange={handleToggleMode}
+                    inputProps={{ 'aria-label': 'switch animation mode' }}
+                />
+            </Stack>
+        </Paper>
     );
 }

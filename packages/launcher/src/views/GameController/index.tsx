@@ -9,14 +9,32 @@ import { PetBag } from './PetBag';
 
 export function GameController() {
     return (
-        <Grid container>
-            <Grid item sm={12} md={3}>
-                <AnimationMode />
-                <BattleFire />
-                <Inventory />
-            </Grid>
-            <Grid item sm={12} md={9}>
+        <Grid container spacing={4} p={4}>
+            <Grid item xs={12} md={8}>
                 <PetBag />
+            </Grid>
+
+            <Grid
+                item
+                container
+                spacing={4}
+                xs={12}
+                md={4}
+                alignItems="stretch"
+                justifyContent="center"
+                minWidth="232px"
+            >
+                <Grid item xs={12}>
+                    <AnimationMode />
+                </Grid>
+
+                <Grid item xs={12}>
+                    <BattleFire />
+                </Grid>
+
+                <Grid item xs={12}>
+                    <Inventory />
+                </Grid>
             </Grid>
         </Grid>
     );

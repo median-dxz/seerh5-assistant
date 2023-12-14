@@ -7,9 +7,13 @@ export const SeaAutocomplete = styled<typeof MuiAutocomplete>(({ className, ...p
     <MuiAutocomplete {...props} classes={{ popper: className }} />
 ))`
     & .MuiAutocomplete-paper {
-        border-radius: 0;
-        background-color: ${theme.palette.background.default};
+        width: 100%;
         box-shadow: ${theme.boxShadow};
         backdrop-filter: blur(12px);
+        background-color: ${theme.palette.command.background};
+        font-family: ${theme.fonts.input};
+        & .MuiAutocomplete-listbox {
+            width: 100%;
+        }
     }
 ` as typeof MuiAutocomplete;

@@ -4,7 +4,7 @@ import { SeaTableRow } from '@/components/styled/TableRow';
 import * as endpoints from '@/service/endpoints';
 import { theme } from '@/style';
 
-import { Box, Button, CircularProgress, Divider, Typography, alpha } from '@mui/material';
+import { Box, Button, CircularProgress, Typography, alpha } from '@mui/material';
 import { produce } from 'immer';
 import React, { useCallback } from 'react';
 import useSWR from 'swr';
@@ -125,7 +125,6 @@ export function PetFragmentLevelPanel() {
     return (
         <>
             <Button>一键日任</Button>
-            <Divider />
             <PanelTable
                 data={rows}
                 toRowKey={toRowKey}

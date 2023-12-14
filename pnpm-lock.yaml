@@ -48,6 +48,9 @@ importers:
 
   packages/launcher:
     dependencies:
+      '@emotion/css':
+        specifier: ^11.11.2
+        version: 11.11.2
       '@emotion/react':
         specifier: ^11.11.1
         version: 11.11.1(@types/react@18.2.38)(react@18.2.0)
@@ -78,6 +81,9 @@ importers:
       immer:
         specifier: ^10.0.3
         version: 10.0.3
+      nanoclamp:
+        specifier: ^2.0.7
+        version: 2.0.7(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -181,8 +187,8 @@ importers:
         version: 1.11.10
     devDependencies:
       sea-core:
-        specifier: file:lib\sea-core-0.7.6.tgz
-        version: file:sdk/lib/sea-core-0.7.6.tgz
+        specifier: file:lib\sea-core-0.7.7.tgz
+        version: file:sdk/lib/sea-core-0.7.7.tgz
       typescript:
         specifier: ^5.3.2
         version: 5.3.2
@@ -1430,6 +1436,16 @@ packages:
       '@emotion/utils': 1.2.1
       '@emotion/weak-memoize': 0.3.1
       stylis: 4.2.0
+    dev: false
+
+  /@emotion/css@11.11.2:
+    resolution: {integrity: sha512-VJxe1ucoMYMS7DkiMdC2T7PWNbrEI0a39YRiyDvK2qq4lXwjRbVP/z4lpG+odCsRzadlR+1ywwrTzhdm5HNdew==}
+    dependencies:
+      '@emotion/babel-plugin': 11.11.0
+      '@emotion/cache': 11.11.0
+      '@emotion/serialize': 1.1.2
+      '@emotion/sheet': 1.2.2
+      '@emotion/utils': 1.2.1
     dev: false
 
   /@emotion/hash@0.9.1:
@@ -4646,6 +4662,15 @@ packages:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
     dev: true
 
+  /nanoclamp@2.0.7(react@18.2.0):
+    resolution: {integrity: sha512-3o89bMrPPIgMSwREbj+ZaQh1j9zZ41ZEKMBMzJPZO4We3k0+FXcW47K3MnUOB8t5D/0TaLMz3aeH8sHmqmgIXg==}
+    engines: {node: '>= 8'}
+    peerDependencies:
+      react: ^18
+    dependencies:
+      react: 18.2.0
+    dev: false
+
   /nanoid@3.3.7:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -6224,10 +6249,10 @@ packages:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
     dev: false
 
-  file:sdk/lib/sea-core-0.7.6.tgz:
-    resolution: {integrity: sha512-ib9fpR2ds12uj9j62NZRBJSK8Vfac6DvTwV9Rtleu9YyjyISwZRSfFmxtO9+3Lg12BFEghuZ/VG+tsbugo9dew==, tarball: file:sdk/lib/sea-core-0.7.6.tgz}
+  file:sdk/lib/sea-core-0.7.7.tgz:
+    resolution: {integrity: sha512-i365WQovTunwVNbD0LpTgZELOpxzqOxG0YJxWGGPZ0tQchLdXxvZ5PtIH1TEcFn4a/hJVBzAjIJXhI8svUwrPA==, tarball: file:sdk/lib/sea-core-0.7.7.tgz}
     name: sea-core
-    version: 0.7.6
+    version: 0.7.7
     dependencies:
       rxjs: 7.8.1
     dev: true

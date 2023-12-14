@@ -1,7 +1,7 @@
 import { theme } from '@/style';
 import type { ButtonBaseProps } from '@mui/material';
 import ButtonBase from '@mui/material/ButtonBase';
-import { styled } from '@mui/system';
+import { alpha, styled } from '@mui/system';
 import * as React from 'react';
 import { forwardRef, type ForwardedRef, type PropsWithChildren } from 'react';
 
@@ -36,6 +36,8 @@ const HexagonalButtonRoot = forwardRef(function (
     );
 });
 
+const { palette, transitions } = theme;
+
 const StyledButtonRoot = styled(HexagonalButtonRoot)`
     overflow: overlay;
     clip-path: polygon(
@@ -46,7 +48,7 @@ const StyledButtonRoot = styled(HexagonalButtonRoot)`
         50% 118%,
         calc(50% - 25% * 1.732 - 18%) calc(50% + 50% / 2)
     );
-    transition: ${theme.transitions.create(['all'], { duration: theme.transitions.duration.shortest })};
+    transition: ${transitions.create(['all'], { duration: transitions.duration.shortest })};
 
     &:focus {
         outline: none;
@@ -67,19 +69,19 @@ const StyledButtonRoot = styled(HexagonalButtonRoot)`
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        transition: ${theme.transitions.create(['all'])};
+        transition: ${transitions.create(['all'])};
     }
 
     & .bg {
-        stroke: ${theme.palette.primary.main};
-        stroke-width: 2px;
+        stroke: ${palette.primary.main};
+        stroke-width: 3px;
         stroke-linecap: round;
         fill: transparent;
         animation: breathe 2s linear infinite;
     }
 
     &:hover .content {
-        filter: drop-shadow(0 0 4px ${theme.palette.emphases.main});
+        filter: drop-shadow(0 0 4px ${alpha(palette.primary.main, 1)});
     }
 
     @keyframes breathe {
@@ -90,9 +92,9 @@ const StyledButtonRoot = styled(HexagonalButtonRoot)`
         }
 
         50% {
-            opacity: 0.45;
+            opacity: 0.85;
             transform: scale(1.02);
-            filter: drop-shadow(0 0 4px ${theme.palette.primary.main});
+            filter: drop-shadow(0 0 4px ${alpha(palette.background.default, 1)});
         }
     }
 `;

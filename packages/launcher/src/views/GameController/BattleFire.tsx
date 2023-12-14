@@ -1,7 +1,11 @@
 import { useMainState } from '@/context/useMainState';
-import { Button, Typography } from '@mui/material';
-import React from 'react';
-import { BattleFireType, Engine } from 'sea-core';
+import { Button, Paper, Typography } from '@mui/material';
+import { Stack } from '@mui/system';
+import { produce } from 'immer';
+import React, { useEffect, useRef, useState } from 'react';
+import { BattleFireType, Engine, SEAEventSource, Subscription } from 'sea-core';
+
+type BattleFireInfo = Awaited<ReturnType<typeof Engine.updateBattleFireInfo>>;
 
 const timeFormatter = (n: number) => {
     const { format } = Intl.NumberFormat(undefined, {
@@ -10,46 +14,61 @@ const timeFormatter = (n: number) => {
     return `${format(Math.trunc(n / 60))}:${format(n % 60)}`;
 };
 
-type BattleFireInfo = Awaited<ReturnType<typeof Engine.updateBattleFireInfo>>;
+const { setInterval } = window;
 
 export function BattleFire() {
-    const [battleFire, setBattleFire] = React.useState<BattleFireInfo>({} as BattleFireInfo);
-    const [timeLeft, setTimeLeft] = React.useState(0);
+    const [battleFire, setBattleFire] = useState<BattleFireInfo>({ valid: false, timeLeft: 0 } as BattleFireInfo);
+    const timer = useRef<null | number>(null);
 
-    const updateBattleFire = React.useCallback(() => {
-        Engine.updateBattleFireInfo().then((i) => setBattleFire(i));
+    const update = async () => {
+        const i = await Engine.updateBattleFireInfo();
+
+        setBattleFire(i);
+        if (!i.valid || i.timeLeft <= 0) return;
+        if (timer.current) clearInterval(timer.current);
+
+        timer.current = setInterval(() => {
+            setBattleFire(
+                produce((draft) => {
+                    if (draft.timeLeft > 0) {
+                        draft.timeLeft -= 1;
+                    } else {
+                        draft.valid = false;
+                        if (timer.current) {
+                            clearInterval(timer.current);
+                            timer.current = null;
+                        }
+                    }
+                })
+            );
+        }, 1000);
+    };
+    
+    useEffect(() => {
+        update();
+        const sub = new Subscription();
+        sub.on(SEAEventSource.egret('battleFireUpdateInfo'), update);
+        return () => {
+            sub.dispose();
+        };
     }, []);
 
-    React.useEffect(updateBattleFire, [updateBattleFire]);
-
-    React.useEffect(() => {
-        setTimeLeft(battleFire.timeLeft);
-        if (battleFire.timeLeft <= 0 || battleFire.valid === false) {
-            return;
-        }
-        const timer = setInterval(() => {
-            setTimeLeft((t) => {
-                if (t <= 0) updateBattleFire();
-                return t - 1;
-            });
-        }, 1000);
-        return () => clearInterval(timer);
-    }, [battleFire, updateBattleFire]);
-
     let renderProps: { color: string; text: string };
-    switch (true) {
-        case !battleFire.valid:
-            renderProps = { color: 'inherit', text: '无火焰' };
-            break;
-        case battleFire.type === BattleFireType.绿火:
-            renderProps = { color: 'green', text: `使用中: 绿火 剩余时间: ${timeFormatter(timeLeft)}` };
-            break;
-        case battleFire.type === BattleFireType.金火:
-            renderProps = { color: 'gold', text: `使用中: 金火 剩余时间: ${timeFormatter(timeLeft)}` };
-            break;
-        default:
-            renderProps = { color: 'inherit', text: '其他火焰' };
-            break;
+    const { timeLeft } = battleFire;
+    if (battleFire.valid) {
+        switch (battleFire.type) {
+            case BattleFireType.绿火:
+                renderProps = { color: 'green', text: `绿火 ${timeFormatter(timeLeft)}` };
+                break;
+            case BattleFireType.金火:
+                renderProps = { color: 'gold', text: `金火 ${timeFormatter(timeLeft)}` };
+                break;
+            default:
+                renderProps = { color: 'inherit', text: '其他火焰' };
+                break;
+        }
+    } else {
+        renderProps = { color: 'inherit', text: '无火焰' };
     }
 
     const { setOpen } = useMainState();
@@ -59,11 +78,14 @@ export function BattleFire() {
     }, [setOpen]);
 
     return (
-        <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']} pl={4}>
-            火焰信息
-            <Typography color={renderProps.color}>{renderProps.text}</Typography>{' '}
-            <Button onClick={updateBattleFire}>刷新</Button>
-            <Button onClick={exchangeBattleFire}>兑换</Button>
-        </Typography>
+        <Paper sx={{ p: 4, height: '100%', flexDirection: 'column', alignItems: 'baseline' }}>
+            <Typography fontWeight="bold" fontFamily={['Noto Sans SC', 'sans-serif']}>
+                火焰信息
+            </Typography>
+            <Stack flexDirection="row" alignItems="center" justifyContent="space-between" width={'100%'}>
+                <Typography color={renderProps.color}>{renderProps.text}</Typography>
+                <Button onClick={exchangeBattleFire}>兑换</Button>
+            </Stack>
+        </Paper>
     );
 }

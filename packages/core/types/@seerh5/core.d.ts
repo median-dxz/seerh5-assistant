@@ -170,6 +170,18 @@ declare class UseSkillInfo {
     get secondAttackInfo(): AttackValue;
 }
 
+declare class UserInfo extends egret.EventDispatcher {
+    curTitle: number;
+    vipScore: number;
+    clothIDs: number[];
+    readonly vipScoreMax: number;
+    readonly coins: number;
+    readonly logintimeThisTime: number;
+    readonly timeToday: number;
+    readonly timeLimit: number;
+    requestChangeClotherBySuit(suitId: number, callback?: Callback, arg?: unknown, thisArg?: any): void;
+}
+
 declare class AwardManager {
     static resume(): void;
     static showDialog(
@@ -195,17 +207,7 @@ declare class KTool {
 
 declare class MainManager {
     static actorID: number;
-    static actorInfo: {
-        clothIDs: number[];
-        curTitle: number;
-        vipScore: number;
-        readonly vipScoreMax: number;
-        readonly coins: number;
-        readonly logintimeThisTime: number;
-        readonly timeToday: number;
-        readonly timeLimit: number;
-        requestChangeClotherBySuit(suitId: number, callback?: Callback, arg?: unknown, thisArg?: any): void;
-    };
+    static actorInfo: UserInfo;
 }
 
 declare class ModuleManager {
@@ -284,6 +286,7 @@ declare class ItemManager {
     /** @description 获取精灵背包内物品 */
     static getPetItemIDs(): number[];
     static GetMySuitIds(): number[];
+    static getClothIDs(): number[];
 }
 
 declare class ItemUseManager {
@@ -408,6 +411,7 @@ declare class SuitXMLInfo {
     static getName(id: number): string;
     static getIsElite(id: number): boolean;
     static getSuitID(clothIds: number[]): number;
+    static getSuitIDs(clothIds: number[]): number[];
 }
 
 declare class PetXMLInfo {

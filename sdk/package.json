@@ -11,11 +11,8 @@
         "build": "vite build && copy.sh",
         "watch:tsc": "tsc --watch --noEmit"
     },
-    "peerDependencies": {
-        "sea-core": "^0.7.6"
-    },
     "devDependencies": {
-        "sea-core": "file:lib\\sea-core-0.7.6.tgz",
+        "sea-core": "file:lib\\sea-core-0.7.7.tgz",
         "typescript": "^5.3.2",
         "vite": "^5.0.2"
     },

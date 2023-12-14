@@ -1,4 +1,4 @@
-import { Box, Button, ButtonGroup, Checkbox, CircularProgress, LinearProgress, Typography } from '@mui/material';
+import { Box, Button, ButtonGroup, Checkbox, CircularProgress, LinearProgress, Stack } from '@mui/material';
 
 import { useConfigPersistence } from '@/utils/useConfigPersistence';
 import React from 'react';
@@ -96,27 +96,27 @@ export function PetBag() {
     };
 
     return (
-        <>
-            <Typography variant="subtitle1" fontWeight={'bold'} fontFamily={['sans-serif']} pl={4}>
-                精灵背包
-            </Typography>
-            <Button onClick={handleLowerHp}>压血</Button>
-            <Button onClick={handleCurePets}>治疗</Button>
-            <Button onClick={handleCopyCatchTime}>复制catchTime</Button>
-            <Button onClick={openPetBag}>打开背包界面</Button>
-            <Button onClick={Engine.cureAllPet}>全体治疗</Button>
+        <Stack width={'100%'} alignItems="center">
+            <ButtonGroup sx={{ alignSelf: 'start' }}>
+                <Button onClick={handleLowerHp}>压血</Button>
+                <Button onClick={handleCurePets}>治疗</Button>
+                <Button onClick={handleCopyCatchTime}>复制catchTime</Button>
+                <Button onClick={openPetBag}>打开背包界面</Button>
+                <Button onClick={Engine.cureAllPet}>全体治疗</Button>
 
-            <PopupMenuButton data={petGroupsInfo} renderItem={pattern} onSelectItem={handleSwitchBag}>
-                {loading ? <CircularProgress size={16} /> : '更换方案'}
-            </PopupMenuButton>
+                <PopupMenuButton data={petGroupsInfo} renderItem={pattern} onSelectItem={handleSwitchBag}>
+                    {loading ? <CircularProgress size={16} /> : '更换方案'}
+                </PopupMenuButton>
 
-            <PopupMenuButton data={petGroupsInfo} renderItem={pattern} onSelectItem={handleSavePattern}>
-                {loading ? <CircularProgress size={16} /> : '保存方案'}
-            </PopupMenuButton>
+                <PopupMenuButton data={petGroupsInfo} renderItem={pattern} onSelectItem={handleSavePattern}>
+                    {loading ? <CircularProgress size={16} /> : '保存方案'}
+                </PopupMenuButton>
+            </ButtonGroup>
 
             <Box
                 sx={{
                     overflowX: 'scroll',
+                    width: '100%',
                 }}
             >
                 <PanelTable
@@ -130,7 +130,7 @@ export function PetBag() {
                     toRowKey={toRowKey}
                 />
             </Box>
-        </>
+        </Stack>
     );
 }
 

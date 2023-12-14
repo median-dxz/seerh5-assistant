@@ -16,3 +16,5 @@ export const CMD_MASK = [
 
 export const MOD_SCOPE_DEFAULT = 'external';
 export const MOD_SCOPE_BUILTIN = 'builtin';
+
+export const DS = {};

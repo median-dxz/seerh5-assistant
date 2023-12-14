@@ -12,7 +12,7 @@ RoadMap: **见Readme**
 - [ ] 统一签到模组(`sign`)到关卡, 将无战斗纯发包的也视为关卡的一种
   - [ ] 可能需要重新设计关卡的整体接口
 
-# Core 当前版本 v0.7.6
+# Core 当前版本 v0.7.7
 
 - [x] 使用类型来提示SDK使用者和Launcher开发者当前Core的版本
   - [x] 从`CoreLoader`上来获取实例版本, 从type中获取api定义的版本
@@ -24,6 +24,8 @@ RoadMap: **见Readme**
   - [x] 目前暂定支持的模块只有`Battle`, 开启后将输出Operator模块的入参
 - [x] `LevelRunner` api更改
 - [x] 更改事件签名方式->`type:event`
+- [x] 修复缺失的`fromEventPattern`导出
+- [x] 更换`playerSuit`的检测方式, 添加更多定义
 - [ ] 精简api界面, 删除不必要的导出
 
 # Core v0.8.x
@@ -51,6 +53,10 @@ RoadMap: **见Readme**
 - [ ] 全体治疗基于Promise重写, 不需要加延时
 - [ ] 对于部分错误, 封装错误类
   - [ ] 暂定有影响DRY原则的错误封装
+- [ ] 一键收星星
+- [ ] 自定义背景（各种意义上？）
+- [ ] 控制中心：自动治疗
+- [ ] QuickAccess重做，移入主界面底部
 
 # 低优先级
 

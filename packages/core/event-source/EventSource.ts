@@ -1,6 +1,7 @@
-import { fromEventPattern, take, type Observable, type Subscription } from 'rxjs';
+import { take, type Observable, type Subscription } from 'rxjs';
 import type { Handler } from '../common/utils.js';
 import { fromEvent } from './source-builder/fromEvent.js';
+import { fromEventPattern } from './source-builder/fromEventPattern.js';
 import { fromGameModule } from './source-builder/fromGameModule.js';
 import { fromHook } from './source-builder/fromHook.js';
 import { fromEgret } from './source-builder/fromNative.js';

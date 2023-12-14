@@ -23,6 +23,8 @@ import Settings from '@mui/icons-material/SettingsRounded';
 import Tune from '@mui/icons-material/TuneRounded';
 import Widgets from '@mui/icons-material/WidgetsRounded';
 
+const placeholder = <Widgets fontSize="small" sx={{ opacity: 0 }} />;
+
 export const root: ViewNode = {
     name: 'root',
     index: 0,
@@ -39,10 +41,10 @@ export const root: ViewNode = {
             name: '自动执行',
             icon: <AutoFixHigh fontSize="small" />,
             view: [
-                { index: 1, default: true, name: '当前状态', icon: <Route fontSize='small'/>, view: <StateView /> },
-                { index: 2, name: '签到', view: <DailySign /> },
-                { index: 3, name: '因子', view: <PetFragmentLevelPanel /> },
-                { index: 4, name: '关卡', view: <CommonLevelPanel /> },
+                { index: 1, default: true, name: '当前状态', icon: <Route fontSize="small" />, view: <StateView /> },
+                { index: 2, name: '签到', icon: placeholder, view: <DailySign /> },
+                { index: 3, name: '因子', icon: placeholder, view: <PetFragmentLevelPanel /> },
+                { index: 4, name: '关卡', icon: placeholder, view: <CommonLevelPanel /> },
             ],
         },
         {
@@ -50,9 +52,9 @@ export const root: ViewNode = {
             name: '战斗管理',
             icon: <AutoFixHigh fontSize="small" />,
             view: [
-                { index: 1, default: true, name: '策略', view: <StrategyView /> },
-                { index: 2, name: '战斗', view: <BattleView /> },
-                { index: 3, name: '关卡', view: <LevelView /> },
+                { index: 1, default: true, name: '策略', icon: placeholder, view: <StrategyView /> },
+                { index: 2, name: '战斗', icon: placeholder, view: <BattleView /> },
+                { index: 3, name: '关卡', icon: placeholder, view: <LevelView /> },
             ],
         },
         {

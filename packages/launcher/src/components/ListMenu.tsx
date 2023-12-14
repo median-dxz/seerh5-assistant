@@ -1,5 +1,5 @@
 import { useCachedReturn } from '@/utils/hooks/useCachedReturn';
-import { Menu, MenuItem, Typography, type MenuProps } from '@mui/material';
+import { Menu, MenuItem, Typography, alpha, type MenuProps } from '@mui/material';
 import React from 'react';
 
 const MemoMenuItem = React.memo(MenuItem);
@@ -31,18 +31,28 @@ export function ListMenu<T>(props: ListMenuProps<T>) {
     const onClickRef = useCachedReturn(data, handleClickItem, (r) => r);
 
     return (
-        <Menu anchorEl={anchorEl} {...menuProps} open={open} onClose={handleCloseMenu}>
-            {data.map((item, index) => (
-                <MemoMenuItem
-                    sx={{ maxWidth: '25vw' }}
-                    key={index}
-                    onClick={onClickRef.current.get(item)}
-                >
-                    <Typography variant="inherit" noWrap>
-                        {renderRef.current.get(item)}
-                    </Typography>
-                </MemoMenuItem>
-            ))}
-        </Menu>
+        data.length > 0 && (
+            <Menu
+                anchorEl={anchorEl}
+                {...menuProps}
+                MenuListProps={{
+                    sx: {
+                        maxHeight: '50vh',
+                        overflowY: 'auto',
+                        bgcolor: (theme) => alpha(theme.palette.secondary.main, 0.88),
+                    },
+                }}
+                open={open}
+                onClose={handleCloseMenu}
+            >
+                {data.map((item, index) => (
+                    <MemoMenuItem sx={{ maxWidth: '25vw' }} key={index} onClick={onClickRef.current.get(item)}>
+                        <Typography variant="inherit" noWrap>
+                            {renderRef.current.get(item)}
+                        </Typography>
+                    </MemoMenuItem>
+                ))}
+            </Menu>
+        )
     );
 }

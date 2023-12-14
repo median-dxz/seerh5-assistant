@@ -1,5 +1,5 @@
 import type { TableCellProps, TableProps } from '@mui/material';
-import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { Table, TableBody, TableCell, TableHead, TableRow, alpha } from '@mui/material';
 import React from 'react';
 
 import { useCachedReturn } from '@/utils/hooks/useCachedReturn';
@@ -27,7 +27,7 @@ export function PanelTable<TData>(props: PanelTableProps<TData>) {
     return (
         <Table size="small" {...tableProps}>
             <TableHead>
-                <TableRow>
+                <TableRow sx={{ th: { borderBottom: `1px solid ${alpha('rgb(129, 212, 250)', 0.16)}` } }}>
                     {columns.map(({ columnName: name, ...rest }, index) => (
                         <TableCell key={index} align="center" {...rest}>
                             {name}
@@ -35,6 +35,7 @@ export function PanelTable<TData>(props: PanelTableProps<TData>) {
                     ))}
                 </TableRow>
             </TableHead>
+
             <TableBody>
                 <ColumnContext.Provider value={columns}>
                     {data.map((data, index) => {

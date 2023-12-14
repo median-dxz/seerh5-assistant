@@ -1,4 +1,4 @@
-import { Fade, Tabs, Typography } from '@mui/material';
+import { Fade, Paper, Tabs, Typography, useTheme } from '@mui/material';
 import { alpha, Box, Stack } from '@mui/system';
 import React, { forwardRef, useCallback, type ReactElement } from 'react';
 import { SwitchTransition } from 'react-transition-group';
@@ -6,7 +6,6 @@ import { CoreLoader } from 'sea-core';
 
 import { VERSION } from '@/constants';
 import { useTabRouter, type ViewNode } from '@/context/useTabRouter';
-import { theme } from '@/style';
 import { StyledTab } from './styled/Tab';
 
 import ArrowBack from '@mui/icons-material/ArrowBackRounded';
@@ -33,6 +32,13 @@ function a11yProps(index: number) {
 
 const TabsGroup = forwardRef<HTMLDivElement, TabsGroupProps>(function ({ onSelect, tabs, value }: TabsGroupProps, ref) {
     const { routerStack } = useTabRouter();
+    const {
+        border,
+        transitions: { easing },
+        boxShadow,
+        palette: { primary },
+    } = useTheme();
+
     return (
         <SwitchTransition>
             <Fade
@@ -42,8 +48,8 @@ const TabsGroup = forwardRef<HTMLDivElement, TabsGroupProps>(function ({ onSelec
                 mountOnEnter
                 unmountOnExit
                 easing={{
-                    enter: theme.transitions.easing.easeOut,
-                    exit: theme.transitions.easing.easeInOut,
+                    enter: easing.easeOut,
+                    exit: easing.easeInOut,
                 }}
             >
                 <Tabs
@@ -55,9 +61,12 @@ const TabsGroup = forwardRef<HTMLDivElement, TabsGroupProps>(function ({ onSelec
                     sx={{
                         paddingLeft: '12px',
                         '& .Mui-selected': {
-                            boxShadow: (theme) => theme.boxShadow,
-                            backgroundColor: ({ palette }) => alpha(palette.secondary.main, 0.12),
-                            border: ({ palette }) => `1px solid ${alpha(palette.primary.main, 0.12)}`,
+                            boxShadow: boxShadow,
+                            backgroundColor: alpha(primary.main, 0.12),
+                            border: border,
+                        },
+                        '& .Mui-selected:active': {
+                            backgroundColor: alpha(primary.main, 0.24),
                         },
                         '& .MuiTabs-flexContainer': {
                             gap: '2px',
@@ -86,6 +95,13 @@ const TabsGroup = forwardRef<HTMLDivElement, TabsGroupProps>(function ({ onSelec
 
 export function TabView() {
     const { routerStack, currentTab, back, push, setTab } = useTabRouter();
+    const {
+        boxShadow,
+        border,
+        palette: { primary },
+        transitions: { easing },
+    } = useTheme();
+
     let currentViewNodes = routerStack.at(-1)?.view as ViewNode[];
 
     if (routerStack.length > 1) {
@@ -124,8 +140,8 @@ export function TabView() {
         >
             <Stack
                 sx={{
-                    borderRight: `1px solid ${alpha(theme.palette.primary.main, 0.12)}`,
-                    boxShadow: theme.boxShadow,
+                    borderRight: border,
+                    boxShadow: boxShadow,
                     minWidth: '193px',
                     display: 'flex',
                     flexDirection: 'column',
@@ -142,20 +158,19 @@ export function TabView() {
                             backgroundColor: 'transparent',
                         },
                         ':hover::-webkit-scrollbar-thumb': {
-                            backgroundColor: alpha(theme.palette.primary.main, 0.4),
+                            backgroundColor: alpha(primary.main, 0.24),
                         },
                     }}
                 >
                     <TabsGroup tabs={currentViewNodes} onSelect={handleSelectTab} value={currentTab} />
                 </Box>
-                <Stack
+                <Paper
                     sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
                         minHeight: '96px',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        borderRadius: ({ shape }) => `${shape.borderRadius}px`,
-                        backgroundColor: alpha(theme.palette.secondary.main, 0.12),
-                        boxShadow: theme.boxShadow,
                         m: 8,
                     }}
                 >
@@ -171,30 +186,30 @@ export function TabView() {
                             {` v${CoreLoader.version}`}
                         </Typography>
                     </Typography>
-                </Stack>
+                </Paper>
             </Stack>
-            <Stack
-                id={`vertical-tabpanel-${currentTab}`}
-                aria-labelledby={`vertical-tab-${currentTab}`}
-                role="tabpanel"
-                sx={{ overflowY: 'auto', width: '100%' }}
-            >
-                <SwitchTransition>
-                    <Fade
-                        key={routerStack.length}
-                        timeout={150}
-                        appear={false}
-                        mountOnEnter
-                        unmountOnExit
-                        easing={{
-                            enter: theme.transitions.easing.easeOut,
-                            exit: theme.transitions.easing.easeInOut,
-                        }}
+            <SwitchTransition>
+                <Fade
+                    key={`${routerStack.length}:${currentTab}`}
+                    timeout={150}
+                    appear={false}
+                    mountOnEnter
+                    unmountOnExit
+                    easing={{
+                        enter: easing.easeOut,
+                        exit: easing.easeInOut,
+                    }}
+                >
+                    <Box
+                        id={`vertical-tabpanel-${currentTab}`}
+                        aria-labelledby={`vertical-tab-${currentTab}`}
+                        role="tabpanel"
+                        sx={{ paddingLeft: '12px', overflowY: 'scroll', width: '100%' }}
                     >
-                        <Box id="tab-view-transition-ref">{currentView}</Box>
-                    </Fade>
-                </SwitchTransition>
-            </Stack>
+                        {currentView}
+                    </Box>
+                </Fade>
+            </SwitchTransition>
         </Stack>
     );
 }

@@ -26,8 +26,13 @@ const reducer: Reducer<LevelSchedulerState, Action> = (state, { type, payload })
         return produce(prev, (state) => {
             const { queue } = state;
             queue.push({ runner: payload.runner, status: 'pending' });
-            if (queue.length === 1) {
-                state.currentIndex = 0;
+            if (state.currentIndex == undefined) {
+                for (let i = 0; i < queue.length; i++) {
+                    if (queue[i].status === 'pending') {
+                        state.currentIndex = i;
+                        break;
+                    }
+                }
             }
         });
     }

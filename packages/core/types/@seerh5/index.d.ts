@@ -150,6 +150,8 @@ declare const CommandID: {
 
     NOTE_USE_SKILL: 2505;
 
+    SETTITLE: 3404;
+
     GET_PET_INFO_BY_ONCE: 43706;
 };
 
@@ -212,4 +214,9 @@ declare class PetFightEvent extends egret.Event {
     static readonly ON_USE_PET_ITEM: 'onUsePetItem';
     static readonly CHANGE_PET: 'changePet';
     constructor(type: string, obj?: any);
+}
+
+declare class UserInfoEvent extends egret.Event {
+    static readonly EVENT_CHANGE_TITLE: 'event_change_title';
+    static readonly EVENT_CHANGE_CLOTHERS: 'event_change_clothers';
 }

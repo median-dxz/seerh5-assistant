@@ -30,9 +30,6 @@ export function CommandInput() {
     return (
         <SeaAutocomplete
             id="command-input"
-            sx={{
-                width: '100%',
-            }}
             autoHighlight
             selectOnFocus
             clearOnBlur

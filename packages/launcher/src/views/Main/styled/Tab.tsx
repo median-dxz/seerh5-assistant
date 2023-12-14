@@ -6,15 +6,12 @@ const StyledTab = styled(MuiTab)`
     border-radius: ${({ theme: { shape } }) => shape.borderRadius}px;
     border: 1px solid transparent;
     min-height: auto; // 覆盖原来的样式
-    justify-content: flex-start;
-    &:not(.MuiTab-labelIcon) {
-        padding-left: 3rem;
-    }
+    justify-content: start;
     &:hover {
-        background-color: ${({ theme: { palette } }) => alpha(palette.secondary.main, 0.12)};
+        background-color: ${({ theme: { palette } }) => alpha(palette.primary.main, 0.12)};
     }
     &:active {
-        background-color: ${({ theme: { palette } }) => alpha(palette.secondary.main, 0.24)};
+        background-color: ${({ theme: { palette } }) => alpha(palette.primary.main, 0.24)};
     }
 ` as typeof MuiTab;
 

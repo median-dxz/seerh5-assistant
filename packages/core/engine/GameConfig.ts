@@ -5,7 +5,7 @@ type PredicateFn<T> = (value: T) => boolean;
 export interface GameConfigRegistryEntity<T extends object> {
     objectName: (obj: T) => string;
     objectId: (obj: T) => number;
-    iterator: Iterable<T>;
+    objectMap: Map<number, T>;
 }
 
 export interface GameConfigQuery<T extends GameConfigMap[keyof GameConfigMap]> {
@@ -15,6 +15,7 @@ export interface GameConfigQuery<T extends GameConfigMap[keyof GameConfigMap]> {
     getName(id: number): string;
     findByName(name: string): T;
     filterByName(name: string | RegExp): T[];
+    getIdByName(name: string): number;
 }
 
 const gameConfigRegistryEntityMap = new Map<string, GameConfigQuery<GameConfigMap[keyof GameConfigMap]>>();
@@ -31,14 +32,14 @@ export const GameConfigRegistry = {
     },
 
     register<T extends keyof GameConfigMap>(type: T, entity: GameConfigRegistryEntity<GameConfigMap[T]>) {
-        if(gameConfigRegistryEntityMap.has(type)) {
-            throw `[error]: 重复注册配置查询 ${type}`
+        if (gameConfigRegistryEntityMap.has(type)) {
+            throw `[error]: 重复注册配置查询 ${type}`;
         }
 
-        const { iterator, objectName, objectId } = entity;
+        const { objectMap, objectName, objectId } = entity;
 
         function find(predicate: PredicateFn<GameConfigMap[T]>) {
-            for (const obj of iterator) {
+            for (const [_, obj] of objectMap) {
                 if (predicate(obj)) {
                     return obj;
                 }
@@ -48,7 +49,7 @@ export const GameConfigRegistry = {
 
         function filter(predicate: PredicateFn<GameConfigMap[T]>) {
             const r = [];
-            for (const obj of iterator) {
+            for (const [_, obj] of objectMap) {
                 if (predicate(obj)) {
                     r.push(obj);
                 }
@@ -57,7 +58,12 @@ export const GameConfigRegistry = {
         }
 
         function get(id: number) {
-            return find((v) => objectId(v) === id);
+            return objectMap.get(id);
+        }
+
+        function getName(id: number) {
+            const o = objectMap.get(id);
+            return o && objectName(o);
         }
 
         function findByName(name: string) {
@@ -65,12 +71,12 @@ export const GameConfigRegistry = {
         }
 
         function filterByName(name: string | RegExp) {
-            return filter((v) => Boolean(objectName(v).match(name)));
+            return filter((v) => Boolean(objectName(v)?.match(name)));
         }
 
-        function getName(id: number) {
-            const o = find((v) => objectId(v) === id);
-            return o && objectName(o);
+        function getIdByName(name: string) {
+            const o = findByName(name);
+            return o && objectId(o);
         }
 
         gameConfigRegistryEntityMap.set(type, {
@@ -80,6 +86,7 @@ export const GameConfigRegistry = {
             filterByName,
             find,
             findByName,
+            getIdByName
         } as GameConfigQuery<GameConfigMap[T]>);
     },
 
