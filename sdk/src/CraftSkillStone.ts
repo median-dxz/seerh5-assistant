@@ -1,4 +1,4 @@
-import { GameConfigRegistry, ItemId, SEAEventSource, SEAPet, Socket, delay } from 'sea-core';
+import { GameConfigRegistry, SEAEventSource, SEAPet, Socket, delay } from 'sea-core';
 
 interface NatureObj extends seerh5.BaseObj {
     id: number;
@@ -32,21 +32,14 @@ export default async function CraftSkillStone(createContext: SEAL.createModConte
             id: 'CraftSkillStone',
             scope: 'median',
             version: '1.0.0',
-            core: '0.7.6',
+            core: '0.7.8',
             description: 'misc',
         },
     });
 
     const install = () => {
         GameConfigRegistry.register('nature', {
-            iterator: {
-                *[Symbol.iterator]() {
-                    const arr = Object.values(NatureXMLInfo._dataMap);
-                    for (const obj of arr) {
-                        yield obj;
-                    }
-                },
-            },
+            objectMap: new Map(Object.values(NatureXMLInfo._dataMap).map((v) => [v.id, v])),
             objectId: (obj) => obj.id,
             objectName: (obj) => obj.name,
         });
@@ -54,20 +47,6 @@ export default async function CraftSkillStone(createContext: SEAL.createModConte
 
     const uninstall = () => {
         GameConfigRegistry.unregister('nature');
-    };
-
-    const craftDreamGem: SEAL.Command = {
-        name: 'craftDreamGem',
-        description: '合成梦幻宝石',
-        async handler(_id: string, _left: string) {
-            const [id, left] = [parseInt(_id), parseInt(_left)];
-            const total = ItemManager.getNumByID(id);
-            const { 低阶梦幻宝石, 中阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石, 高阶梦幻宝石 } = ItemId;
-            const level = [低阶梦幻宝石, 中阶梦幻宝石, 高阶梦幻宝石, 闪光梦幻宝石, 闪耀梦幻宝石] as const;
-            for (let i = 1; i <= Math.trunc((total - left) / 4); i++) {
-                Socket.sendByQueue(9332, [level.indexOf(id as (typeof level)[number]), 4]);
-            }
-        },
     };
 
     const resetNature: SEAL.Command = {
@@ -162,7 +141,7 @@ export default async function CraftSkillStone(createContext: SEAL.createModConte
 
     return {
         meta,
-        exports: { command: [craftDreamGem, resetNature, craftOne] },
+        exports: { command: [resetNature, craftOne] },
         install,
         uninstall,
     } satisfies SEAL.ModExport;

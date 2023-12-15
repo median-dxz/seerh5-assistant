@@ -1,8 +1,7 @@
 import { SEAEventSource } from 'sea-core';
 import * as Battle from 'sea-core/battle';
-import { extendEngine } from 'sea-core/engine';
 import { IS_DEV } from '../constants';
-import { updateBattleFireInfo } from './engine';
+import { extendCoreEngine } from './engine';
 import { registerLog } from './registerLog';
 
 export function setupForLauncher() {
@@ -13,7 +12,7 @@ export function setupForLauncher() {
     config.xml.load('new_super_design');
     config.xml.load('Fragment');
 
-    extendEngine({ updateBattleFireInfo });
+    extendCoreEngine();
     backgroundHeartBeatCheck();
     cancelAlertForUsePetItem();
     disableNewSkillPanel(start$, end$);

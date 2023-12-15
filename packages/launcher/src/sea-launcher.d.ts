@@ -7,6 +7,12 @@ declare module 'sea-core' {
             valid: boolean;
             timeLeft: number;
         }>;
+
+        /**
+         * @param type 装备类型, 代表装备的位置(目镜, 头部, 腰部等)
+         * @param itemId 装备的**物品**id
+         */
+        changeEquipment(type: Parameters<UserInfo['requestChangeClothes']>[0], itemId: number): Promise<void>;
     }
 
     /** 关卡的静态数据, 实现时可以使用getter来方便获取 */

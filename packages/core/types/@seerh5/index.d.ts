@@ -18,7 +18,7 @@ declare namespace seerh5 {
 
     class HashMap<T extends object> {
         containsKey(key: any): boolean;
-        getValue(key: any): T;
+        getValue(key: any): T | undefined;
         getValues(): Array<T>;
         private _length: number;
         private _content: seerh5.Dict<T>;
@@ -129,6 +129,19 @@ declare namespace seerh5 {
     }
 
     interface SideEffectObj extends BaseObj {}
+
+    interface EquipmentObj extends BaseObj {
+        ID: number;
+        ItemID: number;
+        Name: string;
+        Part: number;
+        Quality: number;
+        Occasion: number;
+        Target: number;
+        Desc: string;
+        SuitID?: number;
+        SuitNewseId?: number;
+    }
 
     interface ObserverList<T> {
         array: Array<T>;

@@ -180,6 +180,7 @@ declare class UserInfo extends egret.EventDispatcher {
     readonly timeToday: number;
     readonly timeLimit: number;
     requestChangeClotherBySuit(suitId: number, callback?: Callback, arg?: unknown, thisArg?: any): void;
+    requestChangeClothes(type: 'head' | 'eye' | 'hand' | 'waist' | 'foot', id: number, callback?: Callback): void;
 }
 
 declare class AwardManager {
@@ -286,7 +287,7 @@ declare class ItemManager {
     /** @description 获取精灵背包内物品 */
     static getPetItemIDs(): number[];
     static GetMySuitIds(): number[];
-    static getClothIDs(): number[];
+    static getClothIDs(): string[];
 }
 
 declare class ItemUseManager {
@@ -384,6 +385,7 @@ declare class ItemSeXMLInfo {
     static getAllAbilitySuit(): string[];
     static getIsEffSuit(id: number): boolean;
     static getSuitEff(id: number): string;
+    static _equipDict: seerh5.HashMap<seerh5.EquipmentObj>;
 }
 
 declare class SkillXMLInfo {

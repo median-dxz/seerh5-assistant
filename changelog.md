@@ -11,8 +11,9 @@ RoadMap: **见Readme**
 - [ ] sdk中core版本兼容性检测, 添加core版本字段(必填), 并规范launcher的core实例和sdk使用的api之间的关系
 - [ ] 统一签到模组(`sign`)到关卡, 将无战斗纯发包的也视为关卡的一种
   - [ ] 可能需要重新设计关卡的整体接口
+- [x] 删除合成梦幻宝石功能(已经被官方实现)
 
-# Core 当前版本 v0.7.7
+# Core 当前版本 v0.7.9
 
 - [x] 使用类型来提示SDK使用者和Launcher开发者当前Core的版本
   - [x] 从`CoreLoader`上来获取实例版本, 从type中获取api定义的版本
@@ -26,6 +27,11 @@ RoadMap: **见Readme**
 - [x] 更改事件签名方式->`type:event`
 - [x] 修复缺失的`fromEventPattern`导出
 - [x] 更换`playerSuit`的检测方式, 添加更多定义
+- [x] `GameConfigQuery` api更新
+  - [x] 添加查询id的`getIdByName` 方法
+  - [x] 现在要求传入以id为键的Map, 查询id时现在基于Map, 以此加快对大表进行id查找时的速度
+  - [x] 添加对`Equipment`(装备)的查询
+  - [x] `Query`的查询方法现在具有正确的可空返回type
 - [ ] 精简api界面, 删除不必要的导出
 
 # Core v0.8.x
@@ -37,7 +43,7 @@ RoadMap: **见Readme**
   - [ ] 自动关弹窗
   - [ ] logFilter
 
-# App 当前版本 v0.6.1
+# App 当前版本 v0.6.2
 
 - [x] 生产开发环境判断
 - [x] 基于trpc, 不再需要持久化配置提供序列化函数

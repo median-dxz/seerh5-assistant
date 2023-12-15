@@ -2,7 +2,7 @@
     "name": "@sea/launcher",
     "private": true,
     "type": "module",
-    "version": "0.6.2",
+    "version": "0.6.3",
     "main": "./src/index.tsx",
     "scripts": {
         "dev": "vite --open",

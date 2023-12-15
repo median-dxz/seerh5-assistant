@@ -1,7 +1,7 @@
 import { Divider, Paper, Stack } from '@mui/material';
 import React from 'react';
 
-import { EyeItemSelector } from './EyeItemSelector';
+import { EyeEquipmentSelector } from './EyeEquipmentSelector';
 import { SuitSelector } from './SuitSelector';
 import { TitleSelector } from './TitleSelector';
 
@@ -18,7 +18,7 @@ export function Inventory() {
                 <Divider />
                 <SuitSelector />
                 <Divider />
-                <EyeItemSelector />
+                <EyeEquipmentSelector />
             </Stack>
         </Paper>
     );

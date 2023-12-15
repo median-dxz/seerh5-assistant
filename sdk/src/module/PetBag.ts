@@ -12,7 +12,7 @@ export default async function PetBag(createContext: SEAL.createModContext) {
             id: 'petBag',
             scope: 'median',
             description: '精灵背包模块注入, 提供UI同步和本地皮肤功能的UI支持',
-            core: '0.7.6',
+            core: '0.7.8',
         },
     });
 

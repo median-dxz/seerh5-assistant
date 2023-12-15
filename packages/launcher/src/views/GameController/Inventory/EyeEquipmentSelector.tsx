@@ -1,18 +1,20 @@
 import { PopupMenuButton } from '@/components/PopupMenuButton';
 import { Box, Tooltip, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { GameConfigRegistry, SEAEventSource, Subscription } from 'sea-core';
+import { Engine, GameConfigRegistry, SEAEventSource, Subscription } from 'sea-core';
 
 import { ClampText } from './styled/ClampText';
 import { StyledRow } from './styled/StyledRow';
 
-export function EyeItemSelector() {
+export function EyeEquipmentSelector() {
+    const equipmentQuery = useMemo(() => GameConfigRegistry.getQuery('equipment'), []);
     const itemQuery = useMemo(() => GameConfigRegistry.getQuery('item'), []);
-    const getEyeItemFromClothes = useCallback(() => {
+
+    const getEyeEquipmentFromClothes = useCallback(() => {
         const clothesIds = MainManager.actorInfo.clothIDs;
         return clothesIds.map(itemQuery.get).find((clothes) => clothes?.type === 'eye')?.ID;
     }, [itemQuery]);
-    const [userEyeItem, setUserEyeItem] = useState<undefined | number>(getEyeItemFromClothes());
+    const [userEyeEquipment, setUserEyeEquipment] = useState<undefined | number>(getEyeEquipmentFromClothes());
 
     useEffect(() => {
         const sub = new Subscription();
@@ -26,24 +28,24 @@ export function EyeItemSelector() {
                 }
             ),
             () => {
-                setUserEyeItem(getEyeItemFromClothes());
+                setUserEyeEquipment(getEyeEquipmentFromClothes());
             }
         );
         return () => {
             sub.dispose();
         };
-    }, [getEyeItemFromClothes]);
+    }, [getEyeEquipmentFromClothes]);
 
-    const changeEyeItem = React.useCallback(
-        (eyeItem: number) => {
-            if (eyeItem !== userEyeItem) {
-                // Engine.changeSuit(eyeItem);
+    const changeEyeEquipment = React.useCallback(
+        (eyeEquipment: number) => {
+            if (eyeEquipment !== userEyeEquipment) {
+                Engine.changeEquipment('eye', eyeEquipment);
             }
         },
-        [userEyeItem]
+        [userEyeEquipment]
     );
 
-    const eyeItemEffectDescription = '';
+    const eyeEquipmentEffectDescription = equipmentQuery.find((e) => e.ItemID === userEyeEquipment)?.Desc ?? '无';
 
     return (
         <StyledRow>
@@ -57,18 +59,24 @@ export function EyeItemSelector() {
                     sx: { whiteSpace: 'nowrap', width: '50%', textOverflow: 'ellipsis' },
                 }}
                 data={ItemManager.getClothIDs()
+                    .map((v) => parseInt(v))
                     .map(itemQuery.get)
-                    .filter((item) => item?.type === 'eye')
-                    .map((item) => item.ID)}
-
+                    .filter((item) => item && item.type === 'eye' && equipmentQuery.find((e) => e.ItemID === item.ID && !e.SuitID))
+                    .map((item) => item!.ID)}
                 renderItem={itemQuery.getName}
-                onSelectItem={changeEyeItem}
+                onSelectItem={changeEyeEquipment}
             >
-                {userEyeItem ? itemQuery.getName(userEyeItem) : '无'}
+                {userEyeEquipment ? itemQuery.getName(userEyeEquipment) : '无'}
             </PopupMenuButton>
-            <Tooltip title={eyeItemEffectDescription}>
+            <Tooltip title={eyeEquipmentEffectDescription}>
                 <Box>
-                    <ClampText accessibility={false} is="p" lines={2} debounce={150} text={eyeItemEffectDescription} />
+                    <ClampText
+                        accessibility={false}
+                        is="p"
+                        lines={2}
+                        debounce={150}
+                        text={eyeEquipmentEffectDescription}
+                    />
                 </Box>
             </Tooltip>
         </StyledRow>

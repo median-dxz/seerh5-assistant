@@ -42,6 +42,7 @@ export interface GameConfigMap {
     skill: seerh5.MoveObj;
     pet: seerh5.PetObj;
     statusEffect: seerh5.StatusEffectObj;
+    equipment: seerh5.EquipmentObj;
 }
 
 export interface GameModuleMap {

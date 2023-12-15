@@ -9,13 +9,13 @@ export interface GameConfigRegistryEntity<T extends object> {
 }
 
 export interface GameConfigQuery<T extends GameConfigMap[keyof GameConfigMap]> {
-    get(id: number): T;
-    find(predicate: PredicateFn<T>): T;
+    get(id: number): T | undefined;
+    find(predicate: PredicateFn<T>): T | undefined;
     filter(predicate: PredicateFn<T>): T[];
-    getName(id: number): string;
-    findByName(name: string): T;
+    getName(id: number): string | undefined;
+    findByName(name: string): T | undefined;
     filterByName(name: string | RegExp): T[];
-    getIdByName(name: string): number;
+    getIdByName(name: string): number | undefined;
 }
 
 const gameConfigRegistryEntityMap = new Map<string, GameConfigQuery<GameConfigMap[keyof GameConfigMap]>>();
@@ -48,7 +48,7 @@ export const GameConfigRegistry = {
         }
 
         function filter(predicate: PredicateFn<GameConfigMap[T]>) {
-            const r = [];
+            const r: Array<GameConfigMap[T]> = [];
             for (const [_, obj] of objectMap) {
                 if (predicate(obj)) {
                     r.push(obj);
@@ -86,8 +86,8 @@ export const GameConfigRegistry = {
             filterByName,
             find,
             findByName,
-            getIdByName
-        } as GameConfigQuery<GameConfigMap[T]>);
+            getIdByName,
+        } satisfies GameConfigQuery<GameConfigMap[T]>);
     },
 
     unregister<T extends keyof GameConfigMap>(type: T) {

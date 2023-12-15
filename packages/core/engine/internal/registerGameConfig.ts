@@ -42,4 +42,10 @@ export default () => {
         objectName: (obj) => obj.Name,
         objectMap: new Map(Object.values(PetStatusEffectConfig.xml.BattleEffect[0].SubEffect).map((v) => [v.ID, v])),
     });
+
+    GameConfigRegistry.register('equipment', {
+        objectId: (obj) => obj.ID,
+        objectName: (obj) => obj.Name,
+        objectMap: new Map(ItemSeXMLInfo._equipDict.getValues().map((v) => [v.ID, v])),
+    });
 };

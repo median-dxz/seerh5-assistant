@@ -23,6 +23,20 @@ function usePetGroups() {
     return [data, isLoading, mutate] as const;
 }
 
+const Loading = () => (
+    <Box
+        sx={{
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'stretch',
+            flexDirection: 'column',
+        }}
+    >
+        <LinearProgress />
+    </Box>
+);
+
 export function PetBag() {
     const { pets } = useBagPets();
 
@@ -36,8 +50,7 @@ export function PetBag() {
             return Promise.all(promises);
         }
     );
-
-    React.useEffect(() => {
+    -React.useEffect(() => {
         setSelected([]);
     }, [pets]);
 
@@ -61,7 +74,7 @@ export function PetBag() {
         setOpen(false);
     }, [setOpen]);
 
-    if (!pets || loadingPetInfo || loading) return <LinearProgress />;
+    if (!pets || loadingPetInfo || loading) return <Loading />;
 
     const handleLowerHp = () => {
         Engine.lowerHp(selected);

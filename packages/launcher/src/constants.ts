@@ -1,7 +1,7 @@
 import type { VERSION as _CORE_VERSION } from 'sea-core';
 
-export const VERSION = '0.6.2';
-export const CORE_VERSION: _CORE_VERSION = '0.7.6';
+export const VERSION = '0.6.3';
+export const CORE_VERSION: _CORE_VERSION = '0.7.9';
 export const IS_DEV = import.meta.env.DEV;
 export const CMD_MASK = [
     1002, // SYSTEM_TIME
