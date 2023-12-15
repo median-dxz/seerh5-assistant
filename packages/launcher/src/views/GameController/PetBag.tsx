@@ -111,7 +111,9 @@ export function PetBag() {
     return (
         <Stack width={'100%'} alignItems="center">
             <ButtonGroup sx={{ alignSelf: 'start' }}>
-                <Button onClick={handleLowerHp}>压血</Button>
+                <Button variant="contained" onClick={handleLowerHp}>
+                    压血
+                </Button>
                 <Button onClick={handleCurePets}>治疗</Button>
                 <Button onClick={handleCopyCatchTime}>复制catchTime</Button>
                 <Button onClick={openPetBag}>打开背包界面</Button>

@@ -19,11 +19,8 @@ export function AnimationMode() {
 
     return (
         <Paper sx={{ p: 4, height: '100%', flexDirection: 'column', alignItems: 'baseline' }}>
-            <Typography fontWeight="bold" fontFamily={['Noto Sans SC', 'sans-serif']}>
-                动画模式
-            </Typography>
             <Stack flexDirection="row" alignItems="center" justifyContent="space-between" width={'100%'}>
-                <Typography>对战动画</Typography>
+                <Typography>动画模式</Typography>
                 <Switch
                     checked={animationMode}
                     onChange={handleToggleMode}

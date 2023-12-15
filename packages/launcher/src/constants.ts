@@ -1,6 +1,6 @@
 import type { VERSION as _CORE_VERSION } from 'sea-core';
 
-export const VERSION = '0.6.3';
+export const VERSION = '0.6.4';
 export const CORE_VERSION: _CORE_VERSION = '0.7.9';
 export const IS_DEV = import.meta.env.DEV;
 export const CMD_MASK = [
@@ -17,4 +17,8 @@ export const CMD_MASK = [
 export const MOD_SCOPE_DEFAULT = 'external';
 export const MOD_SCOPE_BUILTIN = 'builtin';
 
-export const DS = {};
+export const DS = {
+    state: {
+        autoCure: 'swr://state/autoCure',
+    },
+};

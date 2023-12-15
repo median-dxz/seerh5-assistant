@@ -2,8 +2,12 @@ import { useMainState } from '@/context/useMainState';
 import { Button, Paper, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { produce } from 'immer';
-import React, { useEffect, useRef, useState } from 'react';
-import { BattleFireType, Engine, SEAEventSource, Subscription } from 'sea-core';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { BattleFireType, Engine, SEAEventSource, Socket, Subscription } from 'sea-core';
+
+declare class FriendManager {
+    static getFriendList(): Promise<{ itemSend: number }[]>;
+}
 
 type BattleFireInfo = Awaited<ReturnType<typeof Engine.updateBattleFireInfo>>;
 
@@ -43,7 +47,7 @@ export function BattleFire() {
             );
         }, 1000);
     };
-    
+
     useEffect(() => {
         update();
         const sub = new Subscription();
@@ -72,10 +76,29 @@ export function BattleFire() {
     }
 
     const { setOpen } = useMainState();
-    const exchangeBattleFire = React.useCallback(() => {
+    const exchangeBattleFire = useCallback(() => {
         ModuleManager.showModule('battleFirePanel', ['battleFirePanel'], null, null, AppDoStyle.NULL);
         setOpen(false);
     }, [setOpen]);
+
+    const giftStars = useCallback(async () => {
+        // 可用的每日赠送次数
+        const remainingGifts = 20 - (await Socket.multiValue(12777))[0];
+
+        FriendManager.getFriendList().then(function (e) {
+            for (var n = [], r = new egret.ByteArray(), a = 0; a < e.length; a++)
+                0 == e[a].itemSend && n.length < i && n.push(e[a].id);
+            var r = new egret.ByteArray();
+            r.writeUnsignedInt(n.length);
+            for (var o = 0; o < n.length; o++) r.writeUnsignedInt(n[o]);
+            SocketConnection.sendByQueue(47348, [4, 0, r], function (e) {
+                var i = e.data;
+                n = i.readUnsignedInt();
+                r = i.readUnsignedInt();
+                t.showTxt(n, r);
+            });
+        });
+    }, []);
 
     return (
         <Paper sx={{ p: 4, height: '100%', flexDirection: 'column', alignItems: 'baseline' }}>
@@ -84,7 +107,10 @@ export function BattleFire() {
             </Typography>
             <Stack flexDirection="row" alignItems="center" justifyContent="space-between" width={'100%'}>
                 <Typography color={renderProps.color}>{renderProps.text}</Typography>
-                <Button onClick={exchangeBattleFire}>兑换</Button>
+                <Stack flexDirection="row">
+                    <Button onClick={giftStars}>互送星星</Button>
+                    <Button onClick={exchangeBattleFire}>兑换</Button>
+                </Stack>
             </Stack>
         </Paper>
     );

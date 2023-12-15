@@ -12,6 +12,7 @@
         "declarationMap": true,
         "incremental": true,
         "composite": true,
+        "skipLibCheck": false,
         "types": []
     },
     "include": [

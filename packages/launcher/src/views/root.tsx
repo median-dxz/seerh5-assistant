@@ -16,6 +16,7 @@ import { ModManager } from './ModManager';
 import { PackageCapture } from './PackageCapture';
 
 import AutoFixHigh from '@mui/icons-material/AutoFixHighRounded';
+import AutoMode from '@mui/icons-material/AutoModeRounded';
 import DataObject from '@mui/icons-material/DataObjectRounded';
 import Equalizer from '@mui/icons-material/EqualizerRounded';
 import Route from '@mui/icons-material/RouteRounded';
@@ -39,7 +40,7 @@ export const root: ViewNode = {
         {
             index: 1,
             name: '自动执行',
-            icon: <AutoFixHigh fontSize="small" />,
+            icon: <AutoMode fontSize="small" />,
             view: [
                 { index: 1, default: true, name: '当前状态', icon: <Route fontSize="small" />, view: <StateView /> },
                 { index: 2, name: '签到', icon: placeholder, view: <DailySign /> },
