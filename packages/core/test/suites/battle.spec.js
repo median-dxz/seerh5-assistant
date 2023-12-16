@@ -3,6 +3,7 @@ import {
     Manager,
     Operator,
     SEAEventSource,
+    SEAPet,
     Subscription,
     delay,
     matchNoBloodChain,
@@ -113,6 +114,7 @@ describe('BattleManager', function () {
         const cts = [env.测试精灵1, env.测试精灵2, env.测试精灵3].map((v) => v.catchTime);
         await Engine.switchBag(cts);
         Engine.cureAllPet();
+        await SEAPet(cts[0]).default();
 
         await delay(200);
         console.log(`${this.currentTest.title}: start`);

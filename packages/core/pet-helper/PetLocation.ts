@@ -1,4 +1,4 @@
-import { PetPosition } from '../constant/index.js';
+import { PetPosType } from '../constant/index.js';
 import { Socket } from '../engine/index.js';
 
 export enum PetLocation {
@@ -82,7 +82,7 @@ export const setLocationTable: {
 
             await Socket.sendByQueue(CommandID.DEL_LOVE_PET, [ct]).then(() => {
                 PetManager.onDelLovePetSuccessHandler(ct);
-                PetStorage2015InfoManager.changePetPosi(ct, PetPosition.elite);
+                PetStorage2015InfoManager.changePetPosi(ct, PetPosType.elite);
             });
             return true;
         },
@@ -113,7 +113,7 @@ export const setLocationTable: {
 
             await Socket.sendByQueue(CommandID.ADD_LOVE_PET, [ct]).then(() => {
                 PetManager.onAddLovePetSuccessHandler(ct);
-                PetStorage2015InfoManager.changePetPosi(ct, PetPosition.elite);
+                PetStorage2015InfoManager.changePetPosi(ct, PetPosType.elite);
             });
             return true;
         },

@@ -17,7 +17,7 @@ export default async function CraftSkillStone(createContext: SEAL.createModConte
             id: 'CraftSkillStone',
             scope: 'median',
             version: '1.0.0',
-            core: '0.7.10',
+            core: '0.7.11',
             description: 'misc',
         },
     });

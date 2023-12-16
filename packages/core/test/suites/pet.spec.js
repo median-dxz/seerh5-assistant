@@ -15,7 +15,7 @@ var expect = chai.expect;
 const $hook = SEAEventSource.hook;
 
 describe('PetHelper', function () {
-    this.timeout('15s');
+    this.timeout('20s');
 
     /** @type {Subscription} */
     let sub;
@@ -25,7 +25,7 @@ describe('PetHelper', function () {
 
         sub = new Subscription();
         sub.on($hook('battle:start'), Manager.resolveStrategy);
-        sub.on($hook('battle:end'), Manager.resolveStrategy);
+        sub.on($hook('battle:roundEnd'), Manager.resolveStrategy);
     });
 
     beforeEach(async function () {
@@ -128,18 +128,26 @@ describe('PetHelper', function () {
         console.log(`loc3: ${loc} -> elite/storage`);
     });
 
-    it('should lower pet hp', async function () {
-        const { catchTime } = env.测试精灵1;
+    it('should lower pet hp and skip pet whose hp has been lowered', async function () {
+        // *回归测试样例*
+        const { catchTime: ct1 } = env.测试精灵1;
+        const { catchTime: ct2 } = env.测试精灵2;
+        await Engine.switchBag([ct1, ct2]);
+        await SEAPet(ct1).cure().popFromBag();
+        await SEAPet(ct2).cure().popFromBag();
 
-        await Engine.switchBag([catchTime]);
-        await SEAPet(catchTime).cure().popFromBag();
+        await Engine.lowerHp([ct1]);
+        let hp = await SEAPet(ct1).hp;
+        let loc = await SEAPet(ct1).location();
+        expect(hp).equal(50);
+        expect(loc).to.be.an('string').equal(PetLocation.Default);
 
-        await Engine.lowerHp([catchTime]);
-
-        const pet = await SEAPet(catchTime).get();
-        const loc = await pet.location();
-
-        expect(pet.hp).equal(50);
+        await Engine.lowerHp([ct1, ct2]);
+        hp = await SEAPet(ct1).hp;
+        expect(hp).equal(50);
+        hp = await SEAPet(ct2).hp;
+        expect(hp).equal(50);
+        loc = await SEAPet(ct2).location();
         expect(loc).to.be.an('string').equal(PetLocation.Default);
     });
 

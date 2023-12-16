@@ -1,10 +1,8 @@
 import * as endpoints from '@/service/endpoints';
-import { enableMapSet, produce, type Draft } from 'immer';
+import { produce, type Draft } from 'immer';
 import useSWR from 'swr';
 
-enableMapSet();
-
-export function useConfigPersistence<T>(key: string, initValue: T) {
+export function usePersistentConfig<T>(key: string, initValue: T) {
     const {
         data,
         isLoading,
@@ -34,4 +32,3 @@ export function useConfigPersistence<T>(key: string, initValue: T) {
 
     return { data, isLoading, mutate };
 }
-

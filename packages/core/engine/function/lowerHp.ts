@@ -4,7 +4,7 @@ import { toggleAutoCure } from '../mutate/toggleAutoCure.js';
 
 import { Manager, Operator, type MoveStrategy, type RoundData } from '../../battle/index.js';
 import { delay, type ValueOf } from '../../common/utils.js';
-import { PetPosition, Potion } from '../../constant/index.js';
+import { Potion } from '../../constant/index.js';
 
 import { Pet } from '../../entity/index.js';
 import { PetLocation, SEAPet, getBagPets } from '../../pet-helper/index.js';
@@ -29,7 +29,7 @@ export async function lowerHp(
     const cts = pets.map((v) => Pet.inferCatchTime(v));
 
     // 检测列表是否全在背包
-    const curPets = await getBagPets(PetPosition.bag1);
+    const curPets = await getBagPets(PetLocation.Bag);
     const replacePets = curPets.filter((p) => !cts.includes(p.catchTime));
 
     for (const ct of cts) {
@@ -69,7 +69,6 @@ export async function lowerHp(
     buyPetItem(healPotionId, remains.length);
     await SEAPet(remains[0]).default();
     await toggleAutoCure(false);
-    await getBagPets();
 
     const checkNextPet = (battleState: RoundData, pets: Pet[]) =>
         pets.findIndex(
@@ -97,8 +96,6 @@ export async function lowerHp(
         fightBoss(6730);
     }, strategy);
 
-    await delay(300);
-
     for (const ct of cts) {
         await usePotion(ct);
     }
@@ -111,7 +108,6 @@ export async function lowerHp(
             healPotionId
         );
     } else {
-        await getBagPets();
         Manager.clear();
         return;
     }

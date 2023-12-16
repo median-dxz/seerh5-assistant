@@ -10,6 +10,7 @@ import type { SWRSubscriptionOptions } from 'swr/subscription';
 import useSWRSubscription from 'swr/subscription';
 import { Paper } from './styled/Paper';
 import { Row } from './styled/Row';
+import { BoldTitle } from './styled/BoldTitle';
 
 declare class FriendManager {
     static getFriendList(): Promise<{ itemSend: number; id: number }[]>;
@@ -140,9 +141,7 @@ export function BattleFire() {
 
     return (
         <Paper>
-            <Typography fontWeight="bold" fontFamily={['Noto Sans SC', 'sans-serif']}>
-                火焰信息
-            </Typography>
+            <BoldTitle>火焰信息</BoldTitle>
             <Row justifyContent="space-between">
                 <Typography color={renderProps.color}>{renderProps.text}</Typography>
                 <Stack flexDirection="row">

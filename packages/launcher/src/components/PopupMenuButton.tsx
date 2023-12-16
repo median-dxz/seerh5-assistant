@@ -1,65 +1,78 @@
 import type { ButtonProps, MenuProps } from '@mui/material';
-import { Button } from '@mui/material';
-import React, { useState, type MouseEventHandler } from 'react';
-import { ListMenu } from './ListMenu';
+import { Button, CircularProgress } from '@mui/material';
+import React, { useEffect, useState, type MouseEventHandler } from 'react';
+import { ListMenu, type ListMenuProps } from './ListMenu';
 
 const SUFFIX = 'item-menu';
 
-export interface PopupMenuButtonProps<T> {
+export interface PopupMenuButtonProps<T, P extends object> {
     id?: string;
     children?: React.ReactNode;
     data?: T[] | (() => Promise<T[]>);
     dataKey?: string;
-    renderItem?: (data: T, index: number) => React.ReactNode;
     onSelectItem?: (item: T, index: number) => void;
     buttonProps?: ButtonProps;
-    menuProps?: Omit<MenuProps, 'open' | 'onClose' | 'onClick'>;
+    menuProps?: Omit<MenuProps, 'open' | 'onClose' | 'onClick'> &
+        Pick<ListMenuProps<T, P>, 'RenderItem' | 'renderItemProps' | 'listItemProps'>;
 }
 
-export function PopupMenuButton<T>({
+export function PopupMenuButton<T, P extends object>({
     id,
     children,
     data: _data,
-    renderItem,
     onSelectItem,
     buttonProps,
     menuProps,
-}: PopupMenuButtonProps<T>) {
+}: PopupMenuButtonProps<T, P>) {
     const [anchor, setAnchor] = useState<HTMLElement | null>(null);
     const [data, setData] = useState<T[] | undefined>(undefined);
+    const [loading, setLoading] = useState(false);
 
-    if (typeof _data !== 'function' && data !== _data) {
-        setData(_data);
-    }
+    useEffect(() => {
+        if (typeof _data !== 'function' && Array.isArray(_data) && _data.length > 0) {
+            setData(_data);
+        } else if (typeof _data === 'function' && anchor != null) {
+            // 和点击事件相比, 多了一个对锚点的判断, 以实现懒加载
+            setLoading(true);
+            _data().then((data) => {
+                setLoading(false);
+                setData(data.length ? data : undefined);
+            });
+        } else {
+            setData(undefined);
+        }
+    }, [_data, anchor]);
 
     const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
         buttonProps?.onClick?.(e);
         const target = e.currentTarget;
 
         if (typeof _data === 'function') {
+            setLoading(true);
             _data().then((data) => {
-                if (data.length > 0) {
-                    setAnchor(target);
-                    setData(data);
-                }
+                setLoading(false);
+                setAnchor(data.length ? target : null);
+                setData(data.length ? data : undefined);
             });
         } else if (Array.isArray(_data) && _data.length > 0) {
             setAnchor(target);
             setData(_data);
+        } else {
+            setAnchor(null);
+            setData(undefined);
         }
     };
 
     return (
         <>
             <Button {...buttonProps} onClick={handleClick}>
-                {children}
+                {loading ? <CircularProgress size={16} /> : children}
             </Button>
             <ListMenu
                 id={id && `${id}-${SUFFIX}`}
                 anchorEl={anchor}
                 setAnchor={setAnchor}
                 data={data}
-                renderItem={renderItem}
                 onClick={onSelectItem}
                 {...menuProps}
             />

@@ -2,7 +2,7 @@ import { PopupMenuButton, type PopupMenuButtonProps } from '@/components/PopupMe
 import { Box } from '@mui/system';
 import React from 'react';
 
-export function SelectorButton<T>({ children, ...props }: PopupMenuButtonProps<T>) {
+export function SelectorButton<T, P extends object>({ children, ...props }: PopupMenuButtonProps<T, P>) {
     return (
         <PopupMenuButton
             buttonProps={{

@@ -13,7 +13,7 @@ RoadMap: **见Readme**
   - [ ] 可能需要重新设计关卡的整体接口
 - [x] 删除合成梦幻宝石功能(已经被官方实现)
 
-# Core 当前版本 v0.7.9
+# Core 当前版本 v0.7.11
 
 - [x] 使用类型来提示SDK使用者和Launcher开发者当前Core的版本
   - [x] 从`CoreLoader`上来获取实例版本, 从type中获取api定义的版本

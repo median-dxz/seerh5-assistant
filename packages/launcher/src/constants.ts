@@ -1,7 +1,7 @@
 import type { VERSION as _CORE_VERSION } from 'sea-core';
 
-export const VERSION = '0.6.4';
-export const CORE_VERSION: _CORE_VERSION = '0.7.10';
+export const VERSION = '0.6.5';
+export const CORE_VERSION: _CORE_VERSION = '0.7.11';
 export const IS_DEV = import.meta.env.DEV;
 export const CMD_MASK = [
     1002, // SYSTEM_TIME
@@ -26,4 +26,8 @@ export const DS = {
         suit: 'swr://multiValue/suit',
     },
     petBag: 'ds://PetBag',
+};
+
+export const SEA_CONFIG = {
+    PetGroups: 'PetGroups',
 };

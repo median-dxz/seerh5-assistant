@@ -3,12 +3,15 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 
 import LauncherMain from './App';
+import { ApplicationContext } from './context/ApplicationContext';
 
 const container = document.getElementById('sea-launcher')!;
 
 const root = ReactDOM.createRoot(container);
 root.render(
     <React.StrictMode>
-        <LauncherMain />
+        <ApplicationContext>
+            <LauncherMain />
+        </ApplicationContext>
     </React.StrictMode>
 );

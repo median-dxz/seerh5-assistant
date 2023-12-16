@@ -1,18 +1,24 @@
 import { useCachedReturn } from '@/utils/hooks/useCachedReturn';
-import { Menu, MenuItem, Typography, alpha, type MenuProps } from '@mui/material';
+import { Menu, MenuItem, alpha, type MenuItemProps, type MenuProps } from '@mui/material';
 import React from 'react';
 
 const MemoMenuItem = React.memo(MenuItem);
 
-export type ListMenuProps<T> = {
+export type ListMenuProps<T, P> = {
     data?: T[];
     onClick?: (item: T, index: number) => void;
-    renderItem?: (item: T, index: number) => React.ReactNode;
+    RenderItem?: React.JSXElementConstructor<P>;
+    renderItemProps?: Omit<P, 'index' | 'item'> extends Record<string, unknown> ? Omit<P, 'index' | 'item'> : never;
     setAnchor: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
+    listItemProps?: MenuItemProps;
 } & Omit<MenuProps, 'open' | 'onClose' | 'onClick'>;
 
-export function ListMenu<T>(props: ListMenuProps<T>) {
-    const { data = [], onClick, renderItem, anchorEl = null, setAnchor, ...menuProps } = props;
+export function ListMenu<T, P extends object>(props: ListMenuProps<T, P>) {
+    const { data = [], onClick, anchorEl = null, setAnchor, listItemProps, MenuListProps, ...rest } = props;
+    const { renderItemProps, RenderItem, ...menuProps } = rest as {
+        RenderItem?: React.JSXElementConstructor<{ index: number; item: T }>;
+        renderItemProps?: object;
+    } & Omit<MenuProps, 'open' | 'onClose' | 'onClick'>;
     const open = Boolean(anchorEl);
 
     const handleCloseMenu = React.useCallback(() => {
@@ -27,32 +33,38 @@ export function ListMenu<T>(props: ListMenuProps<T>) {
         [onClick, setAnchor]
     );
 
-    const renderRef = useCachedReturn(data, renderItem, (_, r) => _ ?? JSON.stringify(r));
     const onClickRef = useCachedReturn(data, handleClickItem, (r) => r);
 
+    if (data.length === 0) {
+        return null;
+    }
+
     return (
-        data.length > 0 && (
-            <Menu
-                anchorEl={anchorEl}
-                {...menuProps}
-                MenuListProps={{
-                    sx: {
-                        maxHeight: '50vh',
-                        overflowY: 'auto',
-                        bgcolor: (theme) => alpha(theme.palette.secondary.main, 0.88),
-                    },
-                }}
-                open={open}
-                onClose={handleCloseMenu}
-            >
-                {data.map((item, index) => (
-                    <MemoMenuItem sx={{ maxWidth: '25vw' }} key={index} onClick={onClickRef.current.get(item)}>
-                        <Typography variant="inherit" noWrap>
-                            {renderRef.current.get(item)}
-                        </Typography>
-                    </MemoMenuItem>
-                ))}
-            </Menu>
-        )
+        <Menu
+            anchorEl={anchorEl}
+            {...menuProps}
+            MenuListProps={{
+                ...MenuListProps,
+                sx: {
+                    maxHeight: '50vh',
+                    overflowY: 'auto',
+                    bgcolor: (theme) => alpha(theme.palette.secondary.main, 0.88),
+                    ...MenuListProps?.sx,
+                },
+            }}
+            open={open}
+            onClose={handleCloseMenu}
+        >
+            {data.map((item, index) => (
+                <MemoMenuItem
+                    key={index}
+                    sx={{ maxWidth: '25vw' }}
+                    onClick={onClickRef.current.get(item)}
+                    {...listItemProps}
+                >
+                    {RenderItem ? <RenderItem index={index} item={item} {...renderItemProps} /> : String(item)}
+                </MemoMenuItem>
+            ))}
+        </Menu>
     );
 }

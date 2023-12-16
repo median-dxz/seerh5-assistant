@@ -3,9 +3,12 @@ import React from 'react';
 
 const StyledIconButton = styled(IconButton)`
     color: ${({ theme }) => theme.palette.text.primary};
-    transition: ${({ theme }) => theme.transitions.create('color')};
+    transition: ${({ theme }) => theme.transitions.create(['color', 'transform'])};
     &:hover {
         color: ${({ theme }) => theme.palette.primary.main};
+    }
+    &:active {
+        transform: scale(0.9);
     }
 `;
 

@@ -1,7 +1,7 @@
 import type { SWRSubscriptionOptions } from 'swr/subscription';
 
 import { Box, Grid, Tooltip } from '@mui/material';
-import React from 'react';
+import React, { memo } from 'react';
 import useSWRSubscription from 'swr/subscription';
 
 import { SEAEventSource, Subscription } from 'sea-core';
@@ -15,7 +15,7 @@ export interface SelectorProps {
     id: string;
     label: string;
     currentItemGetter: () => number | undefined;
-    allItemGetter: () => PopupMenuButtonProps<number>['data'];
+    allItemGetter: () => PopupMenuButtonProps<number, object>['data'];
     nameGetter: (id: number) => string | undefined;
     descriptionGetter: (id: number) => string | undefined;
     dataKey: string;
@@ -68,8 +68,11 @@ export function Selector({
                 <SelectorButton
                     id={id}
                     data={allItemGetter()}
-                    renderItem={nameGetter}
                     onSelectItem={handleSelectItem}
+                    menuProps={{
+                        RenderItem: ItemName,
+                        renderItemProps: { nameGetter },
+                    }}
                 >
                     {data ? nameGetter(data) ?? '无' : '无'}
                 </SelectorButton>
@@ -84,3 +87,10 @@ export function Selector({
         </Grid>
     );
 }
+
+interface ItemProps {
+    item: number;
+    nameGetter: (id: number) => string | undefined;
+}
+
+const ItemName = memo(({ item, nameGetter }: ItemProps) => nameGetter(item) ?? '');

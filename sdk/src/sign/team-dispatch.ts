@@ -1,4 +1,4 @@
-import { PetPosition, SEAPet, PetLocation as SEAPetLocation, getBagPets } from 'sea-core';
+import { PetLocation, SEAPet, PetLocation as SEAPetLocation, getBagPets } from 'sea-core';
 import { Socket } from 'sea-core/engine';
 
 declare class MainManager {
@@ -37,12 +37,11 @@ export const teamDispatch = (ignorePets: string[], logger: any) => {
             });
 
             const ignorePetNames = new Set(ignorePets);
-            const PosType = PetPosition;
             let reSelect = false;
             for (let tid = 16; tid > 0; tid--) {
                 if (tid === 5) tid = 1;
                 if (hasDispatched.includes(tid)) continue;
-                const pets = await getBagPets(PosType.bag1);
+                const pets = await getBagPets(PetLocation.Bag);
                 if (!reSelect) {
                     // 清空背包
                     for (const p of pets) {

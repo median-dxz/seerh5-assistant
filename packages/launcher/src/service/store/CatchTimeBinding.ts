@@ -1,4 +1,4 @@
-import { PetDataManger, PetPosition } from 'sea-core';
+import { PetDataManger, PetPosType } from 'sea-core';
 import * as Endpoints from '../endpoints';
 
 const JIM_ID = 3582;
@@ -7,7 +7,7 @@ export let store = new Map<string, number>();
 const lookup = new Map<number, string>();
 
 const petFilter = (v: { id: number; level: number; posi: number }) =>
-    (v.id >= JIM_ID && v.level === 100) || v.posi === PetPosition.elite;
+    (v.id >= JIM_ID && v.level === 100) || v.posi === PetPosType.elite;
 
 /**
  * 同步玩家的CT表

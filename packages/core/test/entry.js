@@ -13,6 +13,13 @@ document.querySelector('#test-page').addEventListener('click', () => {
 });
 
 const coreLoader = new core.CoreLoader();
+
+coreLoader.addSetupFn('beforeGameCoreInit', () => {
+    OnlineManager.prototype.setSentryScope = () => {};
+    GameInfo.online_gate = GameInfo.online_gate.replace('is_ssl=0', 'is_ssl=1');
+    GameInfo.token_url = 'account-co.61.com/v3/token/convert'; // http://account-co.61.com/v3/token/convert
+});
+
 await coreLoader.load();
 
 window.sea = { ...window.sea, ...core };

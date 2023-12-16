@@ -6,7 +6,7 @@ import { AnimationMode } from './AnimationMode';
 import { AutoCureState } from './AutoCureState';
 import { BattleFire } from './BattleFire';
 import { Inventory } from './Inventory';
-import { PetBag } from './PetBag/PetBag';
+import { PetBag } from './PetBag';
 
 export function GameController() {
     return (

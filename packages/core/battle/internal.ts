@@ -44,7 +44,7 @@ export default () => {
     const onRoundStart = () => {
         const info = Provider.getCurRoundInfo()!;
         if (info.round <= 0) {
-            Manager.context.delayTimeout = delay(5000);
+            Manager.context.delayTimeout = delay(4500);
         }
     };
 
@@ -53,7 +53,7 @@ export default () => {
     SEAEventSource.hook('battle:end').on(() => {
         const isWin = Boolean(FightManager.isWin);
         if (Manager.context.strategy) {
-            Promise.all([Manager.context.delayTimeout, delay(1000)])
+            Promise.all([Manager.context.delayTimeout, delay(500)])
                 .then(() => {
                     Manager.context.triggerLock?.(isWin);
                     Manager.clear();

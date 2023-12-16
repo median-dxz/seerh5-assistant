@@ -26,7 +26,7 @@ export default async function Sign(createContext: SEAL.createModContext) {
             id: 'sign',
             scope: 'median',
             description: '日常签到',
-            core: '0.7.10',
+            core: '0.7.11',
         },
         defaultConfig: {
             teamDispatch: {

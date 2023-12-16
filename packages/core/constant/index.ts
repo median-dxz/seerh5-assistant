@@ -1,12 +1,12 @@
 export * from './ItemId.js';
 export * from './types.js';
 
-export const PetPosition = {
-    bag1: 1,
-    secondBag1: 7,
-    elite: 4,
-    storage: 0,
-} as const;
+export enum PetPosType {
+    bag1 = 1,
+    secondBag1 = 7,
+    elite = 4,
+    storage = 0,
+}
 
 export enum BattleFireType {
     绿火 = 6,
