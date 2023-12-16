@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { Item } from 'sea-core';
 
@@ -29,7 +29,7 @@ const columns: PanelColumns = [
 ];
 
 export function CommonValue() {
-    const rows = idList.map((key) => ItemXMLInfo.getItemObj(key)!).map((obj) => new Item(obj));
+    const rows = useMemo(() => idList.map((key) => ItemXMLInfo.getItemObj(key)!).map((obj) => new Item(obj)), []);
 
     const [items, setItems] = useState(rows);
 

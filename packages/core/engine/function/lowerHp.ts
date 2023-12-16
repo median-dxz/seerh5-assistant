@@ -42,7 +42,6 @@ export async function lowerHp(
             await SEAPet(ct).setLocation(PetLocation.Bag);
         }
     }
-    await getBagPets();
 
     let remains: Pet[];
     const hpFilter = async () => {
@@ -63,14 +62,14 @@ export async function lowerHp(
         for (const ct of cts) {
             await usePotion(ct);
         }
-        await getBagPets();
         return;
     }
 
     buyPetItem(Potion.中级活力药剂, remains.length);
     buyPetItem(healPotionId, remains.length);
-    await SEAPet(cts[0]).default();
+    await SEAPet(remains[0]).default();
     await toggleAutoCure(false);
+    await getBagPets();
 
     const checkNextPet = (battleState: RoundData, pets: Pet[]) =>
         pets.findIndex(

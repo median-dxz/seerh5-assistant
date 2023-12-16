@@ -47,11 +47,17 @@ export const Operator = {
         info(`[Operator] useItem: ${itemId}`);
 
         const controlPanelObserver = FighterModelFactory.playerMode.subject.array[1];
+
+        const { currPanelType } = controlPanelObserver;
+        if (currPanelType !== panel_type.itemPanel && currPanelType !== panel_type.skillPanel) {
+            return false;
+        }
+
         controlPanelObserver.showItem(1);
         await delay(300);
         controlPanelObserver.itemPanel.onUseItem(itemId);
         await delay(300);
-        controlPanelObserver.showFight();
+
         return true;
     },
 
@@ -67,7 +73,8 @@ export const Operator = {
         info(`[Operator] switchPet: ${index}`);
 
         const controlPanelObserver = FighterModelFactory.playerMode.subject.array[1];
-        if (controlPanelObserver.petPanel == undefined) {
+        const { currPanelType } = controlPanelObserver;
+        if (currPanelType !== panel_type.petPanel) {
             controlPanelObserver.showPet();
             await delay(300);
         }
@@ -77,7 +84,7 @@ export const Operator = {
             petBtn.autoUse();
             return true;
         } catch (error) {
-            error instanceof Error && warn(`切换精灵失败: ${index} ${petBtn.info.name} ${error.message}`);
+            error instanceof Error && warn(`切换精灵失败: ${index} ${error.message}`);
             return false;
         }
     },

@@ -52,6 +52,10 @@ class PetDataManager {
                 this.bag.deactivate();
             });
 
+            SEAEventSource.socket(CommandID.USE_PET_ITEM_OUT_OF_FIGHT, 'receive').on(() => {
+                this.bag.deactivate();
+            });
+
             SEAEventSource.socket(42019, 'send').on((data) => {
                 if (Array.isArray(data) && data.length === 2 && data[0] === 22439) {
                     this.bag.deactivate();

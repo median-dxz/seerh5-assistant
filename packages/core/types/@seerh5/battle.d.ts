@@ -65,6 +65,13 @@ declare global {
         showFight(): void;
         itemPanel: FightItemPanel;
         showItem(index: number): void;
+        currPanelType: panel_type;
+    }
+
+    enum panel_type {
+        itemPanel = 2,
+        petPanel = 1,
+        skillPanel = 0,
     }
 
     class BaseControlPanel extends egret.EventDispatcher {}

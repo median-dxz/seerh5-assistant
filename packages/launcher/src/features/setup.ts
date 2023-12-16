@@ -51,6 +51,11 @@ function disableNewSkillPanel(start$: SEAEventSource<void>, end$: SEAEventSource
     });
 }
 
+declare class LifeCycleManager {
+    static readonly LIFE_CYCLE_PAUSE: 'LIFE_CYCLE_PAUSE';
+    static readonly LIFE_CYCLE_RESUME: 'LIFE_CYCLE_RESUME';
+}
+
 /** enable background heartbeat check */
 function backgroundHeartBeatCheck() {
     let timer: number | undefined = undefined;
@@ -61,11 +66,13 @@ function backgroundHeartBeatCheck() {
             if (!SocketConnection.mainSocket.connected) return;
             SystemTimerManager.queryTime();
         }, 3000);
+        EventManager.dispatchEventWith(LifeCycleManager.LIFE_CYCLE_PAUSE);
     };
 
     egret.lifecycle.onResume = () => {
         clearInterval(timer);
         timer = undefined;
+        EventManager.dispatchEventWith(LifeCycleManager.LIFE_CYCLE_RESUME);
     };
 }
 

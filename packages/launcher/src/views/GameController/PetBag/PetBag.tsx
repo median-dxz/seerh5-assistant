@@ -10,10 +10,13 @@ import { Engine } from 'sea-core/engine';
 import useSWR from 'swr';
 import { Loading } from './Loading';
 import { PanelRow } from './PetBagPanelRow';
+import { Backpack } from './icons/Backpack';
+import { HealthBroken } from './icons/HealthBroken';
+import { HpBar } from './icons/HpBar';
 
 type BasePetInfo = Pick<Pet, 'catchTime' | 'id' | 'name'>;
 
-const defaultPetGroups: number[][] = Array(6).fill((() => [])());
+const defaultPetGroups: number[][] = Array(0);
 
 function usePetGroups() {
     const { data, isLoading, mutate } = useConfigPersistence('PetGroups', defaultPetGroups);
@@ -76,6 +79,10 @@ export function PetBag() {
         return `方案${index}: ${group.map((pet) => pet.name).join(', ')}`;
     };
 
+    const editPattern = (group: BasePetInfo[], index: number) => {
+        return `方案${index}: ${group.map((pet) => pet.name).join(', ')}`;
+    };
+
     const handleSavePattern = (_: BasePetInfo[], index: number) => {
         updatePetGroups((draft) => {
             draft[index] = pets.map((pet) => pet.catchTime);
@@ -98,9 +105,15 @@ export function PetBag() {
                         },
                     }}
                 >
-                    <Button onClick={handleLowerHp}>压血</Button>
-                    <Button onClick={handleCurePets}>治疗</Button>
-                    <Button onClick={openPetBag}>背包</Button>
+                    <Button startIcon={<HpBar />} onClick={handleLowerHp}>
+                        压血
+                    </Button>
+                    <Button startIcon={<HealthBroken />} onClick={handleCurePets}>
+                        治疗
+                    </Button>
+                    <Button startIcon={<Backpack />} onClick={openPetBag}>
+                        背包
+                    </Button>
                 </Stack>
                 <Stack
                     sx={{
@@ -110,11 +123,15 @@ export function PetBag() {
                         },
                     }}
                 >
-                    <PopupMenuButton data={petGroupsInfo} renderItem={pattern} onSelectItem={handleSwitchBag}>
-                        {loading ? <CircularProgress size={16} /> : '更换方案'}
-                    </PopupMenuButton>
                     <PopupMenuButton data={petGroupsInfo} renderItem={pattern} onSelectItem={handleSavePattern}>
                         {loading ? <CircularProgress size={16} /> : '保存方案'}
+                    </PopupMenuButton>
+                    <PopupMenuButton
+                        data={petGroupsInfo}
+                        renderItem={editPattern}
+                        onSelectItem={handleSwitchBag}
+                    >
+                        {loading ? <CircularProgress size={16} /> : '更换方案'}
                     </PopupMenuButton>
                 </Stack>
             </Stack>
@@ -138,5 +155,3 @@ export function PetBag() {
         </Stack>
     );
 }
-
-

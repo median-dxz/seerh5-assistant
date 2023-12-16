@@ -10,6 +10,7 @@ import React, { useState } from 'react';
 import { Pet, SEAPet, delay } from 'sea-core';
 import { Engine, GameConfigRegistry } from 'sea-core/engine';
 import { HealthBroken } from './icons/HealthBroken';
+import { MoveToInbox } from './icons/MoveToInbox';
 import { Pill } from './icons/Pill';
 
 interface PanelRowProps {
@@ -108,6 +109,7 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
             <PanelField field="action">
                 {index !== 0 && (
                     <IconButton
+                        title="首发"
                         onClick={(e) => {
                             e.stopPropagation();
                             SEAPet(pet).default();
@@ -117,6 +119,7 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
                     </IconButton>
                 )}
                 <IconButton
+                    title="治疗"
                     onClick={() => {
                         SEAPet(pet).cure();
                     }}
@@ -124,6 +127,15 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
                     <HealthBroken />
                 </IconButton>
                 <IconButton
+                    title="入库"
+                    onClick={() => {
+                        SEAPet(pet).popFromBag();
+                    }}
+                >
+                    <MoveToInbox />
+                </IconButton>
+                <IconButton
+                    title="使用道具"
                     onClick={() => {
                         handleOpenPetItemUseProp(pet.catchTime);
                     }}
@@ -132,6 +144,7 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
                 </IconButton>
                 <IconButton
                     aria-describedby={id}
+                    title="详情"
                     onClick={(e) => {
                         setPetDetails(
                             <Box sx={{ p: 2 }}>

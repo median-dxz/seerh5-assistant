@@ -1,15 +1,26 @@
 import { PopupMenuButton, type PopupMenuButtonProps } from '@/components/PopupMenuButton';
+import { Box } from '@mui/system';
 import React from 'react';
 
 export function SelectorButton<T>({ children, ...props }: PopupMenuButtonProps<T>) {
     return (
         <PopupMenuButton
             buttonProps={{
-                sx: { whiteSpace: 'nowrap', minWidth: '40%', overflow: 'hidden' },
+                sx: { width: '100%', padding: '6px 12px', justifyContent: 'start' },
             }}
             {...props}
         >
-            {children}
+            <Box
+                sx={{
+                    width: '100%',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    textAlign: 'start',
+                }}
+            >
+                {children}
+            </Box>
         </PopupMenuButton>
     );
 }
