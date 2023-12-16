@@ -52,6 +52,12 @@ class PetDataManager {
                 this.bag.deactivate();
             });
 
+            SEAEventSource.socket(42019, 'send').on((data) => {
+                if (Array.isArray(data) && data.length === 2 && data[0] === 22439) {
+                    this.bag.deactivate();
+                }
+            });
+
             SEAEventSource.socket(CommandID.PET_RELEASE).on(([req, res]) => {
                 const [ct, opt] = req as [number, number];
                 const { firstPetTime } = res;

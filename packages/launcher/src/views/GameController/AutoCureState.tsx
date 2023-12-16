@@ -1,25 +1,43 @@
 import { DS } from '@/constants';
-import { CircularProgress, Paper, Stack, Switch, Typography } from '@mui/material';
-import React, { useCallback, type ChangeEvent } from 'react';
+import { CircularProgress, Switch, Typography } from '@mui/material';
+import type { ChangeEvent } from 'react';
+import React from 'react';
+import { SEAEventSource, Subscription } from 'sea-core';
 import { Engine } from 'sea-core/engine';
-import useSWR from 'swr';
+import type { SWRSubscriptionOptions } from 'swr/subscription';
+import useSWRSubscription from 'swr/subscription';
+import { Paper } from './styled/Paper';
+import { Row } from './styled/Row';
 
 export function AutoCureState() {
-    const { data: autoCure, mutate: setAutoCure } = useSWR(DS.state.autoCure, Engine.autoCureState);
-
-    const handleToggleMode = useCallback(
-        (e: ChangeEvent, checked: boolean) => {
-            setAutoCure(async () => {
-                await Engine.toggleAutoCure(checked);
-                return Engine.autoCureState();
+    const { data: autoCure } = useSWRSubscription(
+        DS.multiValue.autoCure,
+        (_, { next }: SWRSubscriptionOptions<boolean, Error>) => {
+            const sub = new Subscription();
+            sub.on(SEAEventSource.socket(42019, 'send'), (data) => {
+                if (Array.isArray(data) && data.length === 2 && data[0] === 22439) {
+                    const [_, autoCure] = data as [number, number];
+                    next(null, autoCure === 1);
+                }
             });
-        },
-        [setAutoCure]
+
+            Engine.autoCureState().then((autoCure) => {
+                next(null, autoCure);
+            });
+
+            return () => {
+                sub.dispose();
+            };
+        }
     );
 
+    const handleToggleMode = (_: ChangeEvent, checked: boolean) => {
+        Engine.toggleAutoCure(checked);
+    };
+
     return (
-        <Paper sx={{ p: 4, height: '100%', flexDirection: 'column', alignItems: 'baseline' }}>
-            <Stack flexDirection="row" alignItems="center" justifyContent="space-between" width={'100%'}>
+        <Paper>
+            <Row justifyContent="space-between">
                 <Typography>自动治疗</Typography>
                 {autoCure != undefined ? (
                     <Switch
@@ -30,7 +48,7 @@ export function AutoCureState() {
                 ) : (
                     <CircularProgress />
                 )}
-            </Stack>
+            </Row>
         </Paper>
     );
 }

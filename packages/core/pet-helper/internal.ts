@@ -25,15 +25,10 @@ export default () => {
         return new ProxyPet(new PetInfo(bytes));
     });
 
-    // SocketBuilderRegistry.register(CommandID.PET_DEFAULT);
     SocketBuilderRegistry.register(CommandID.PET_RELEASE, (data) => {
         const bytes = new egret.ByteArray(data!.rawBuffer);
         return new PetTakeOutInfo(bytes);
     });
-
-    // SocketBuilderRegistry.register(CommandID.ADD_LOVE_PET);
-    // SocketBuilderRegistry.register(CommandID.DEL_LOVE_PET);
-    // SocketBuilderRegistry.register(CommandID.PET_CURE);
 
     PetDataManger.init();
 

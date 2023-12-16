@@ -1,4 +1,4 @@
-import { SEAEventSource } from 'sea-core';
+import { GameConfigRegistry, SEAEventSource } from 'sea-core';
 import * as Battle from 'sea-core/battle';
 import { IS_DEV } from '../constants';
 import { extendCoreEngine } from './engine';
@@ -26,6 +26,12 @@ export function setupForLauncher() {
     const { resolveStrategy } = Battle.Manager;
     start$.on(resolveStrategy);
     roundEnd$.on(resolveStrategy);
+
+    GameConfigRegistry.register('nature', {
+        objectId: (obj) => obj.id,
+        objectName: (obj) => obj.name,
+        objectMap: new Map(Object.values(NatureXMLInfo._dataMap).map((obj) => [obj.id, obj])),
+    });
 }
 
 function disableNewSkillPanel(start$: SEAEventSource<void>, end$: SEAEventSource<void>) {

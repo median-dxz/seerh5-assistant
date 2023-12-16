@@ -25,6 +25,18 @@ export function debounce<F extends AnyFunction>(func: F, wait: number) {
     };
 }
 
+export function throttle<F extends AnyFunction>(func: F, wait: number) {
+    let timer: number | undefined;
+    return function (this: unknown, ...args: Parameters<F>) {
+        if (timer) return;
+        func.apply(this, args);
+        timer = window.setTimeout(() => {
+            clearTimeout(timer);
+            timer = undefined;
+        }, wait);
+    };
+}
+
 type InferPromiseResultType<T> = T extends PromiseLike<infer TResult> ? TResult : T;
 type ConvertVoid<T> = T extends void ? undefined : T;
 

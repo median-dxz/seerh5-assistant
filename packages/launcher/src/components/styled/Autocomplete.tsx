@@ -10,7 +10,7 @@ export const SeaAutocomplete = styled<typeof MuiAutocomplete>(({ className, ...p
         width: 100%;
         box-shadow: ${theme.boxShadow};
         backdrop-filter: blur(12px);
-        background-color: ${theme.palette.command.background};
+        background-color: ${theme.palette.popup.background};
         font-family: ${theme.fonts.input};
         & .MuiAutocomplete-listbox {
             width: 100%;

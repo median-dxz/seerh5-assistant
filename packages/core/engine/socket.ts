@@ -4,12 +4,12 @@
  * 都是按顺序发出的, 要等待上一个cmd发送完毕才能发送下一个
  * 这里的resolve会在收包的时候resolve
  */
-export async function sendByQueue(cmd: number, data: number[] = []) {
+export async function sendByQueue(cmd: number, data: Parameters<SocketConnection['sendByQueue']>[1] = []) {
     return new Promise<ArrayBuffer | undefined>((resolve, reject) => {
         SocketConnection.sendByQueue(
             cmd,
             data,
-            (v: SocketEvent) => resolve(v.data?.buffer),
+            (v: SocketEvent) => resolve(v.data?.rawBuffer),
             (err: SocketErrorEvent) => reject(err.data)
         );
     });

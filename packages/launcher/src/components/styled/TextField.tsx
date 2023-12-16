@@ -5,7 +5,7 @@ import { styled } from '@mui/system';
 export const SeaTextField = styled(MuiTextField)`
     & .MuiAutocomplete-inputRoot {
         box-shadow: ${theme.boxShadow};
-        background-color: ${theme.palette.command.background};
+        background-color: ${theme.palette.popup.background};
         backdrop-filter: blur(12px);
         font-family: ${theme.fonts.input};
 

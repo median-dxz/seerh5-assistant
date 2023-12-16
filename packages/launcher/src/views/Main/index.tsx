@@ -1,6 +1,6 @@
 import ElectricBolt from '@mui/icons-material/ElectricBolt';
 import { Backdrop, alpha, type ButtonProps } from '@mui/material';
-import React, { useCallback, type PropsWithChildren } from 'react';
+import React, { type PropsWithChildren } from 'react';
 
 import { HexagonalButton } from '@/components/styled/HexagonalButton';
 import { TabRouterProvider } from '@/context/TabRouterProvider';
@@ -10,17 +10,12 @@ import { TabView } from './TabView';
 
 export function Main() {
     const { open, setOpen } = useMainState();
-
-    const handleClickMainButton = useCallback(() => {
-        setOpen((prev) => !prev);
-    }, [setOpen]);
-
     return (
         <>
             <MainButton
                 baseSize={28}
                 sx={{ top: '64px', left: '64px', position: 'absolute', zIndex: (theme) => theme.zIndex.appBar }}
-                onClick={handleClickMainButton}
+                onClick={() => setOpen((prev) => !prev)}
             />
             <MainBackdrop open={open}>
                 <TabRouterProvider rootView={root}>

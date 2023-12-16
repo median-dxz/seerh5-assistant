@@ -1,32 +1,31 @@
-import { Paper, Stack, Switch, Typography } from '@mui/material';
-import React from 'react';
+import { Switch, Typography } from '@mui/material';
+import React, { useEffect, useState, type ChangeEvent } from 'react';
+import { Paper } from './styled/Paper';
+import { Row } from './styled/Row';
 
 export function AnimationMode() {
-    const [animationMode, setAnimationMode] = React.useState(false);
+    const [animationMode, setAnimationMode] = useState(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const fightMode = window.localStorage.getItem('fight_mode');
-        setAnimationMode(fightMode === '0');
+        setAnimationMode(fightMode === '0' || fightMode === null);
     }, [animationMode]);
 
-    const handleToggleMode = React.useCallback(
-        (e: React.ChangeEvent, checked: boolean) => {
-            FightManager.fightAnimateMode = Number(!checked);
-            setAnimationMode(checked);
-        },
-        [setAnimationMode]
-    );
+    const handleToggleMode = (_: ChangeEvent, checked: boolean) => {
+        FightManager.fightAnimateMode = Number(!checked);
+        setAnimationMode(checked);
+    };
 
     return (
-        <Paper sx={{ p: 4, height: '100%', flexDirection: 'column', alignItems: 'baseline' }}>
-            <Stack flexDirection="row" alignItems="center" justifyContent="space-between" width={'100%'}>
+        <Paper>
+            <Row justifyContent="space-between">
                 <Typography>动画模式</Typography>
                 <Switch
                     checked={animationMode}
                     onChange={handleToggleMode}
                     inputProps={{ 'aria-label': 'switch animation mode' }}
                 />
-            </Stack>
+            </Row>
         </Paper>
     );
 }

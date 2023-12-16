@@ -1,12 +1,18 @@
+import { DS } from '@/constants';
 import { useMainState } from '@/context/useMainState';
-import { Button, Paper, Typography } from '@mui/material';
+import { Button, CircularProgress, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { produce } from 'immer';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { BattleFireType, Engine, SEAEventSource, Socket, Subscription } from 'sea-core';
+import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+import { BattleFireType, Engine, SEAEventSource, Socket, Subscription, throttle } from 'sea-core';
+import type { SWRSubscriptionOptions } from 'swr/subscription';
+import useSWRSubscription from 'swr/subscription';
+import { Paper } from './styled/Paper';
+import { Row } from './styled/Row';
 
 declare class FriendManager {
-    static getFriendList(): Promise<{ itemSend: number }[]>;
+    static getFriendList(): Promise<{ itemSend: number; id: number }[]>;
 }
 
 type BattleFireInfo = Awaited<ReturnType<typeof Engine.updateBattleFireInfo>>;
@@ -21,46 +27,51 @@ const timeFormatter = (n: number) => {
 const { setInterval } = window;
 
 export function BattleFire() {
-    const [battleFire, setBattleFire] = useState<BattleFireInfo>({ valid: false, timeLeft: 0 } as BattleFireInfo);
-    const timer = useRef<null | number>(null);
+    const { enqueueSnackbar } = useSnackbar();
+    const { data: battleFire } = useSWRSubscription(
+        DS.multiValue.battleFire,
+        (_, { next }: SWRSubscriptionOptions<BattleFireInfo, Error>) => {
+            let timer: null | number = null;
+            const update = async () => {
+                const i = await Engine.updateBattleFireInfo();
 
-    const update = async () => {
-        const i = await Engine.updateBattleFireInfo();
+                next(null, i);
+                if (!i.valid || i.timeLeft <= 0) return;
+                timer && clearInterval(timer);
 
-        setBattleFire(i);
-        if (!i.valid || i.timeLeft <= 0) return;
-        if (timer.current) clearInterval(timer.current);
+                timer = setInterval(() => {
+                    next(
+                        null,
+                        produce((draft) => {
+                            if (draft.timeLeft > 0) {
+                                draft.timeLeft -= 1;
+                            } else {
+                                draft.valid = false;
+                                timer && clearInterval(timer);
+                                timer = null;
+                            }
+                        })
+                    );
+                }, 1000);
+            };
 
-        timer.current = setInterval(() => {
-            setBattleFire(
-                produce((draft) => {
-                    if (draft.timeLeft > 0) {
-                        draft.timeLeft -= 1;
-                    } else {
-                        draft.valid = false;
-                        if (timer.current) {
-                            clearInterval(timer.current);
-                            timer.current = null;
-                        }
-                    }
-                })
-            );
-        }, 1000);
-    };
+            const sub = new Subscription();
+            sub.on(SEAEventSource.egret('battleFireUpdateInfo'), update);
+            Engine.updateBattleFireInfo().then((data) => next(null, data));
 
-    useEffect(() => {
-        update();
-        const sub = new Subscription();
-        sub.on(SEAEventSource.egret('battleFireUpdateInfo'), update);
-        return () => {
-            sub.dispose();
-        };
-    }, []);
+            return () => {
+                sub.dispose();
+            };
+        },
+        { fallbackData: { valid: false, timeLeft: 0 } as BattleFireInfo }
+    );
+
+    const [giftingStars, setGiftingStars] = useState(false);
 
     let renderProps: { color: string; text: string };
-    const { timeLeft } = battleFire;
-    if (battleFire.valid) {
-        switch (battleFire.type) {
+    const { timeLeft, valid, type } = battleFire!;
+    if (valid) {
+        switch (type) {
             case BattleFireType.绿火:
                 renderProps = { color: 'green', text: `绿火 ${timeFormatter(timeLeft)}` };
                 break;
@@ -76,42 +87,71 @@ export function BattleFire() {
     }
 
     const { setOpen } = useMainState();
-    const exchangeBattleFire = useCallback(() => {
+    const exchangeBattleFire = () => {
         ModuleManager.showModule('battleFirePanel', ['battleFirePanel'], null, null, AppDoStyle.NULL);
         setOpen(false);
-    }, [setOpen]);
+    };
 
-    const giftStars = useCallback(async () => {
+    const giftStars = async () => {
+        if (giftingStars) return;
+
         // 可用的每日赠送次数
         const remainingGifts = 20 - (await Socket.multiValue(12777))[0];
-
-        FriendManager.getFriendList().then(function (e) {
-            for (var n = [], r = new egret.ByteArray(), a = 0; a < e.length; a++)
-                0 == e[a].itemSend && n.length < i && n.push(e[a].id);
-            var r = new egret.ByteArray();
-            r.writeUnsignedInt(n.length);
-            for (var o = 0; o < n.length; o++) r.writeUnsignedInt(n[o]);
-            SocketConnection.sendByQueue(47348, [4, 0, r], function (e) {
-                var i = e.data;
-                n = i.readUnsignedInt();
-                r = i.readUnsignedInt();
-                t.showTxt(n, r);
+        if (remainingGifts <= 0) {
+            enqueueSnackbar({
+                variant: 'warning',
+                message: '今日赠送次数已用完',
+                onClose() {
+                    setGiftingStars(false);
+                },
             });
-        });
-    }, []);
+            return;
+        }
+
+        setGiftingStars(true);
+        FriendManager.getFriendList()
+            .then((friendsList) => {
+                friendsList = friendsList.filter((friend) => friend.itemSend === 0).slice(0, remainingGifts);
+
+                const buf = new egret.ByteArray();
+                buf.writeUnsignedInt(friendsList.length);
+
+                friendsList.forEach((friend) => {
+                    buf.writeUnsignedInt(friend.id);
+                });
+
+                return Socket.sendByQueue(47348, [4, 0, buf]);
+            })
+            .then((r) => {
+                const buf = new egret.ByteArray(r);
+                const received = buf.readUnsignedInt();
+                const sent = buf.readUnsignedInt();
+                enqueueSnackbar({
+                    variant: 'info',
+                    message: `获得${received}个星星, 送出${sent}个星星`,
+                    onClose() {
+                        setGiftingStars(false);
+                    },
+                });
+            });
+    };
+
+    const throttledGiftStars = throttle(giftStars, 1500);
 
     return (
-        <Paper sx={{ p: 4, height: '100%', flexDirection: 'column', alignItems: 'baseline' }}>
+        <Paper>
             <Typography fontWeight="bold" fontFamily={['Noto Sans SC', 'sans-serif']}>
                 火焰信息
             </Typography>
-            <Stack flexDirection="row" alignItems="center" justifyContent="space-between" width={'100%'}>
+            <Row justifyContent="space-between">
                 <Typography color={renderProps.color}>{renderProps.text}</Typography>
                 <Stack flexDirection="row">
-                    <Button onClick={giftStars}>互送星星</Button>
+                    <Button onClick={throttledGiftStars}>
+                        {giftingStars ? <CircularProgress size={16} /> : '互送星星'}
+                    </Button>
                     <Button onClick={exchangeBattleFire}>兑换</Button>
                 </Stack>
-            </Stack>
+            </Row>
         </Paper>
     );
 }

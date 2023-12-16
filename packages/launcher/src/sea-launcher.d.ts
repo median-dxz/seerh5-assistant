@@ -15,6 +15,10 @@ declare module 'sea-core' {
         changeEquipment(type: Parameters<UserInfo['requestChangeClothes']>[0], itemId: number): Promise<void>;
     }
 
+    export interface GameConfigMap {
+        nature: seerh5.NatureObj;
+    }
+
     /** 关卡的静态数据, 实现时可以使用getter来方便获取 */
     export interface LevelMeta {
         id: string;
@@ -24,6 +28,13 @@ declare module 'sea-core' {
 }
 
 declare global {
+    namespace seerh5 {
+        interface NatureObj extends seerh5.BaseObj {
+            id: number;
+            name: string;
+        }
+    }
+
     interface SEA {
         /** 正则过滤列表 */
         logRegexFilter: { log: RegExp[]; warn: RegExp[] };
@@ -94,6 +105,10 @@ declare global {
             check: () => Promise<number>;
             run: () => Promise<void>;
         };
+    }
+
+    declare class NatureXMLInfo {
+        static _dataMap: seerh5.Dict<seerh5.NatureObj>;
     }
 }
 

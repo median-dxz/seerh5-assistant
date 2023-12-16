@@ -1,4 +1,5 @@
 import { Box, type SxProps } from '@mui/material';
+import { useSnackbar, type SnackbarProviderProps } from 'notistack';
 import React, { useState } from 'react';
 
 import { SeaAutocomplete } from '@/components/styled/Autocomplete';
@@ -11,7 +12,13 @@ interface Option {
     label: string;
 }
 
+const snackBarOptions: SnackbarProviderProps = {
+    autoHideDuration: 3000,
+    anchorOrigin: { horizontal: 'center', vertical: 'bottom' },
+};
+
 export function CommandInput() {
+    const { enqueueSnackbar } = useSnackbar();
     const { commandStore } = useModStore();
     const [open, setOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
@@ -45,12 +52,12 @@ export function CommandInput() {
                 const cmd = commandStore.get(newValue.value)!;
 
                 if (cmd.handler.length > 0) {
-                    BubblerManager.getInstance().showText(`[Info]: 命令: ${cmd.name} 需要输入参数`);
+                    enqueueSnackbar(`命令: ${cmd.name} 需要输入参数`, snackBarOptions);
                     return;
                 }
 
                 cmd.handler();
-                BubblerManager.getInstance().showText(`[Info]: 应用命令: ${cmd.name}`);
+                enqueueSnackbar(`应用命令: ${cmd.name}`, snackBarOptions);
 
                 setValue(null);
                 setInputValue('');

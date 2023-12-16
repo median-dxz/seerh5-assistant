@@ -84,6 +84,9 @@ importers:
       nanoclamp:
         specifier: ^2.0.7
         version: 2.0.7(react@18.2.0)
+      notistack:
+        specifier: ^3.0.1
+        version: 3.0.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -187,8 +190,8 @@ importers:
         version: 1.11.10
     devDependencies:
       sea-core:
-        specifier: file:lib\sea-core-0.7.8.tgz
-        version: file:sdk/lib/sea-core-0.7.8.tgz
+        specifier: file:lib\sea-core-0.7.10.tgz
+        version: file:sdk/lib/sea-core-0.7.10.tgz
       typescript:
         specifier: ^5.3.2
         version: 5.3.2
@@ -3112,6 +3115,11 @@ packages:
     resolution: {integrity: sha512-Xga0jyAb4fX98u5pZAgqlbqHP8cHuy5M3Wto0k0L/36aP2C25Cjp51XfPw3Hz7dNC2L2/hF/PK/KJhO275L+VA==}
     dev: false
 
+  /clsx@1.2.1:
+    resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
+    engines: {node: '>=6'}
+    dev: false
+
   /clsx@2.0.0:
     resolution: {integrity: sha512-rQ1+kcj+ttHG0MKVGBUXwayCCF1oh39BF5COIpRzuCEv8Mwjv0XucrI2ExNTOn9IlLifGClWQcU9BrZORvtw6Q==}
     engines: {node: '>=6'}
@@ -4026,6 +4034,14 @@ packages:
       slash: 3.0.0
     dev: true
 
+  /goober@2.1.13(csstype@3.1.2):
+    resolution: {integrity: sha512-jFj3BQeleOoy7t93E9rZ2de+ScC4lQICLwiAQmKMg9F6roKGaLSHoCDYKkWlSafg138jejvq/mTdvmnwDQgqoQ==}
+    peerDependencies:
+      csstype: ^3.0.10
+    dependencies:
+      csstype: 3.1.2
+    dev: false
+
   /gopd@1.0.1:
     resolution: {integrity: sha512-d65bNlIadxvpb/A2abVdlqKqV563juRnZ1Wtk6s1sIR8uNsXR70xqIzVqxVf1eTqDunwT2MkczEeaezCKTZhwA==}
     dependencies:
@@ -4713,6 +4729,21 @@ packages:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /notistack@3.0.1(csstype@3.1.2)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-ntVZXXgSQH5WYfyU+3HfcXuKaapzAJ8fBLQ/G618rn3yvSzEbnOB8ZSOwhX+dAORy/lw+GC2N061JA0+gYWTVA==}
+    engines: {node: '>=12.0.0', npm: '>=6.0.0'}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      clsx: 1.2.1
+      goober: 2.1.13(csstype@3.1.2)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    transitivePeerDependencies:
+      - csstype
+    dev: false
 
   /npm-run-path@4.0.1:
     resolution: {integrity: sha512-S48WzZW777zhNIrn7gxOlISNAqi9ZC/uQFnRdbeIHhZhCA6UqpkOT8T1G7BvfdgP4Er8gF4sUbaS0i7QvIfCWw==}
@@ -6249,10 +6280,10 @@ packages:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
     dev: false
 
-  file:sdk/lib/sea-core-0.7.8.tgz:
-    resolution: {integrity: sha512-D5GstEXF+EvezbSRsVFhGuUJ46jU1/4KVvThg4jO3U3nBzRVdrcpJ0624EO2A0C9Ds6LQV/WmOXuS3x6OAKG6w==, tarball: file:sdk/lib/sea-core-0.7.8.tgz}
+  file:sdk/lib/sea-core-0.7.10.tgz:
+    resolution: {integrity: sha512-2mn/yTetms5P9hUFR4jzRcUP+t3yoEEblNmqAJavdJg9KKvugvScJEuMPJbrNtq+LMwNQp5+AhD73LQErNwHxg==, tarball: file:sdk/lib/sea-core-0.7.10.tgz}
     name: sea-core
-    version: 0.7.8
+    version: 0.7.10
     dependencies:
       rxjs: 7.8.1
     dev: true

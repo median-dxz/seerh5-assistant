@@ -1,17 +1,17 @@
 import { useLevelScheduler } from '@/context/useLevelScheduler';
 import { FormControlLabel, Stack, Switch, TextField, Typography } from '@mui/material';
-import React, { useCallback } from 'react';
+import React from 'react';
 
 export function Header() {
     const { isPaused, pause, resume, status } = useLevelScheduler();
 
-    const handlePauseScheduler = useCallback(() => {
+    const handlePauseScheduler = () => {
         if (isPaused) {
             resume();
         } else {
             pause();
         }
-    }, [isPaused, pause, resume]);
+    };
 
     return (
         <Stack

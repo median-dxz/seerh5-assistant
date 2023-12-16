@@ -1,20 +1,5 @@
 import { GameConfigRegistry, SEAEventSource, SEAPet, Socket, delay } from 'sea-core';
 
-interface NatureObj extends seerh5.BaseObj {
-    id: number;
-    name: string;
-}
-
-declare class NatureXMLInfo {
-    static _dataMap: seerh5.Dict<NatureObj>;
-}
-
-declare module 'sea-core' {
-    export interface GameConfigMap {
-        nature: NatureObj;
-    }
-}
-
 const rate = [
     [0, 24, 5.8, 1.4, 0.3],
     [0, 0, 23, 5.5, 1.3],
@@ -32,22 +17,14 @@ export default async function CraftSkillStone(createContext: SEAL.createModConte
             id: 'CraftSkillStone',
             scope: 'median',
             version: '1.0.0',
-            core: '0.7.8',
+            core: '0.7.10',
             description: 'misc',
         },
     });
 
-    const install = () => {
-        GameConfigRegistry.register('nature', {
-            objectMap: new Map(Object.values(NatureXMLInfo._dataMap).map((v) => [v.id, v])),
-            objectId: (obj) => obj.id,
-            objectName: (obj) => obj.name,
-        });
-    };
+    const install = () => {};
 
-    const uninstall = () => {
-        GameConfigRegistry.unregister('nature');
-    };
+    const uninstall = () => {};
 
     const resetNature: SEAL.Command = {
         name: 'resetNature',

@@ -1,6 +1,6 @@
 import { Fade, Paper, Tabs, Typography, useTheme } from '@mui/material';
 import { alpha, Box, Stack } from '@mui/system';
-import React, { forwardRef, useCallback, type ReactElement } from 'react';
+import React, { forwardRef, type ReactElement } from 'react';
 import { SwitchTransition } from 'react-transition-group';
 import { CoreLoader } from 'sea-core';
 
@@ -117,21 +117,18 @@ export function TabView() {
 
     const currentView = currentViewNodes[currentTab].view as React.ReactNode;
 
-    const handleSelectTab = useCallback(
-        (idx: number) => {
-            if (idx === 0 && routerStack.length > 1) {
-                back();
-                return;
-            }
-            const currentViewNode = currentViewNodes[idx];
-            if (Array.isArray(currentViewNode.view)) {
-                push(currentViewNode);
-            } else {
-                setTab(idx);
-            }
-        },
-        [back, currentViewNodes, push, routerStack.length, setTab]
-    );
+    const handleSelectTab = (idx: number) => {
+        if (idx === 0 && routerStack.length > 1) {
+            back();
+            return;
+        }
+        const currentViewNode = currentViewNodes[idx];
+        if (Array.isArray(currentViewNode.view)) {
+            push(currentViewNode);
+        } else {
+            setTab(idx);
+        }
+    };
 
     return (
         <Stack

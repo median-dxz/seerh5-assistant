@@ -1,11 +1,11 @@
 import type { ButtonProps, MenuProps } from '@mui/material';
 import { Button } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useState, type MouseEventHandler } from 'react';
 import { ListMenu } from './ListMenu';
 
 const SUFFIX = 'item-menu';
 
-interface PopupMenuButtonProps<T> {
+export interface PopupMenuButtonProps<T> {
     id?: string;
     children?: React.ReactNode;
     data?: T[] | (() => Promise<T[]>);
@@ -32,16 +32,22 @@ export function PopupMenuButton<T>({
         setData(_data);
     }
 
-    const handleClick: React.MouseEventHandler<HTMLButtonElement> = React.useCallback(
-        (e) => {
-            setAnchor(e.currentTarget);
-            buttonProps?.onClick?.(e);
-            if (typeof _data === 'function') {
-                _data().then(setData);
-            }
-        },
-        [_data, buttonProps]
-    );
+    const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
+        buttonProps?.onClick?.(e);
+        const target = e.currentTarget;
+
+        if (typeof _data === 'function') {
+            _data().then((data) => {
+                if (data.length > 0) {
+                    setAnchor(target);
+                    setData(data);
+                }
+            });
+        } else if (Array.isArray(_data) && _data.length > 0) {
+            setAnchor(target);
+            setData(_data);
+        }
+    };
 
     return (
         <>

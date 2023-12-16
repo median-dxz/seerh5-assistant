@@ -1,7 +1,7 @@
 import type { VERSION as _CORE_VERSION } from 'sea-core';
 
 export const VERSION = '0.6.4';
-export const CORE_VERSION: _CORE_VERSION = '0.7.9';
+export const CORE_VERSION: _CORE_VERSION = '0.7.10';
 export const IS_DEV = import.meta.env.DEV;
 export const CMD_MASK = [
     1002, // SYSTEM_TIME
@@ -18,7 +18,12 @@ export const MOD_SCOPE_DEFAULT = 'external';
 export const MOD_SCOPE_BUILTIN = 'builtin';
 
 export const DS = {
-    state: {
-        autoCure: 'swr://state/autoCure',
+    multiValue: {
+        autoCure: 'swr://multiValue/autoCure',
+        battleFire: 'swr://multiValue/battleFire',
+        eyeEquipment: 'swr://multiValue/eyeEquipment',
+        title: 'swr://multiValue/title',
+        suit: 'swr://multiValue/suit',
     },
+    petBag: 'ds://PetBag',
 };

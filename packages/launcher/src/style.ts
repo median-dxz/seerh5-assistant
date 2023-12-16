@@ -1,15 +1,15 @@
-import { alpha, createTheme, type SxProps } from '@mui/material';
+import { alpha, createTheme, darken, type SxProps } from '@mui/material';
 import { deepPurple } from '@mui/material/colors';
 
 declare module '@mui/material/styles' {
     interface Palette {
-        command: {
+        popup: {
             background: string;
         };
     }
 
     interface PaletteOptions {
-        command?: {
+        popup?: {
             background?: string;
         };
     }
@@ -68,8 +68,8 @@ export const theme = createTheme({
             paper: alpha(colors.primary, 0.08),
         },
         divider: alpha('#81d4fa', 0.16),
-        command: {
-            background: alpha('#4a148c', 0.24),
+        popup: {
+            background: alpha(colors.secondary, 0.36),
         },
     },
     typography: {
@@ -122,6 +122,17 @@ export const theme = createTheme({
                 root: {
                     boxShadow: `0 8px 16px rgba(0 0 0 / 24%)`,
                     display: 'flex',
+                },
+            },
+        },
+        MuiButton: {
+            styleOverrides: {
+                contained: {
+                    color: colors.text,
+                    backgroundColor: colors.secondary,
+                    ':hover': {
+                        backgroundColor: darken(colors.secondary, 0.15),
+                    },
                 },
             },
         },

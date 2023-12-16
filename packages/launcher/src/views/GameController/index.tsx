@@ -6,11 +6,11 @@ import { AnimationMode } from './AnimationMode';
 import { AutoCureState } from './AutoCureState';
 import { BattleFire } from './BattleFire';
 import { Inventory } from './Inventory';
-import { PetBag } from './PetBag';
+import { PetBag } from './PetBag/PetBag';
 
 export function GameController() {
     return (
-        <Grid container spacing={4} p={4}>
+        <Grid container spacing={4} pt={4} pb={4}>
             <Grid item xs={12} md={8}>
                 <PetBag />
             </Grid>
