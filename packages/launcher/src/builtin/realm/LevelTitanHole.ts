@@ -85,7 +85,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             }
         }
 
-        selectBattle() {
+        selectLevelBattle() {
             if (this.data.step === 2) {
                 return battle('LevelTitanHole_1');
             } else {

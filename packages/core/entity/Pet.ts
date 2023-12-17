@@ -2,18 +2,13 @@ import { EntityBase, type EntityType } from './EntityBase.js';
 import { PetElement } from './PetElement.js';
 import { Skill } from './Skill.js';
 
-export interface IPetObject {
-    id: number;
-    name: string;
-}
-
 const testPetObjectType = (o: seerh5.PetLike): o is seerh5.PetObj => Object.hasOwn(o, 'ID');
 
 const testPetInfoType = (o: seerh5.PetLike): o is PetInfo => Object.hasOwn(o, 'nature');
 
 const testPetStorage2015PetInfoType = (o: seerh5.PetLike): o is PetStorage2015PetInfo => Object.hasOwn(o, 'posi');
 
-export class Pet extends EntityBase implements IPetObject {
+export class Pet extends EntityBase {
     readonly __type: EntityType = 'Pet';
     readonly id: number;
     readonly name: string;

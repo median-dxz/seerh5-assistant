@@ -8,11 +8,13 @@ export interface IPFLevelBoss {
     id: number;
 }
 
-export interface IPetFragmentLevelObject {
-    petFragmentItem: number;
-    level: { ease: IPFLevelBoss[]; normal: IPFLevelBoss[]; hard: IPFLevelBoss[] };
+export class PetFragmentLevel extends EntityBase {
+    readonly __type: EntityType = 'PetFragmentLevel';
+    readonly id: number;
+    readonly name: string;
     /** 今日总次数 */
     totalTimes: number;
+    petFragmentItem: number;
 
     /** 查询用键值 */
     values: {
@@ -21,26 +23,6 @@ export interface IPetFragmentLevelObject {
         /** 当前失败次数 */
         failTimes: number;
         /** 进度参数查询 */
-        progress: number;
-    };
-
-    // pieces: {
-    //     ease: number;
-    //     normal: number;
-    //     hard: number;
-    // };
-}
-
-export class PetFragmentLevel extends EntityBase implements IPetFragmentLevelObject {
-    readonly __type: EntityType = 'PetFragmentLevel';
-    readonly id: number;
-    readonly name: string;
-    totalTimes: number;
-    petFragmentItem: number;
-
-    values: {
-        openTimes: number;
-        failTimes: number;
         progress: number;
     };
     level: { ease: IPFLevelBoss[]; normal: IPFLevelBoss[]; hard: IPFLevelBoss[] };

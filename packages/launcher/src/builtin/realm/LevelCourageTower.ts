@@ -63,7 +63,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             }
         }
 
-        selectBattle() {
+        selectLevelBattle() {
             return battle('LevelCourageTower');
         }
 

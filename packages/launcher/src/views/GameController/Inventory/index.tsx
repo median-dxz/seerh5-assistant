@@ -5,8 +5,7 @@ import { Selector } from './Selector';
 
 import { Paper } from '@/components/styled/Paper';
 import { DS } from '@/constants';
-import { GameConfigRegistry, SEAEventSource } from 'sea-core';
-import { Engine } from 'sea-core/engine';
+import { Engine, GameConfigRegistry, SEAEventSource } from 'sea-core';
 
 export function Inventory() {
     const equipmentQuery = GameConfigRegistry.getQuery('equipment');

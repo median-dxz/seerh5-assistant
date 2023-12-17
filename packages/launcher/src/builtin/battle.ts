@@ -1,5 +1,5 @@
 import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
-import { Engine } from 'sea-core/engine';
+import { Engine } from 'sea-core';
 
 export default async function builtinBattle(createContext: SEAL.createModContext) {
     const context = await createContext({
@@ -60,7 +60,7 @@ export default async function builtinBattle(createContext: SEAL.createModContext
         },
         {
             name: 'LevelExpTraining',
-            pets: ['圣灵谱尼', '蒂朵', '幻影蝶'],
+            pets: ['蒂朵', '暴君史莱姆', '西斯里', '幻影蝶'],
             strategy: 'LevelExpTraining',
         },
         {
@@ -70,7 +70,7 @@ export default async function builtinBattle(createContext: SEAL.createModContext
         },
         {
             name: 'LevelCourageTower',
-            pets: ['圣灵谱尼', '王之哈莫', '幻影蝶', '蒂朵'],
+            pets: ['幻影蝶', '王之哈莫', '圣灵谱尼', '蒂朵'],
             strategy: 'LevelCourageTower',
         },
         {

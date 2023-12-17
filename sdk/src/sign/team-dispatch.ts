@@ -1,5 +1,4 @@
-import { PetLocation, SEAPet, PetLocation as SEAPetLocation, getBagPets } from 'sea-core';
-import { Socket } from 'sea-core/engine';
+import { PetLocation, SEAPet, PetLocation as SEAPetLocation, Socket, getBagPets } from 'sea-core';
 
 declare class MainManager {
     static actorInfo: {

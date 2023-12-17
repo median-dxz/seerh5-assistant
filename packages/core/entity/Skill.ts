@@ -4,18 +4,7 @@ import { PetElement } from './PetElement.js';
 type SkillEffects = [number[], number[]];
 type SkillEffectArgs = string | number | undefined;
 
-export interface ISkillObject {
-    id: number;
-    category: number;
-    power: number;
-    priority: number;
-    accuracy: number;
-    maxPP: number;
-    effects: SkillEffects;
-    mustHit: boolean;
-}
-
-export class Skill extends EntityBase implements ISkillObject {
+export class Skill extends EntityBase {
     readonly id: number;
     readonly name: string;
     readonly __type: EntityType = 'Skill';

@@ -1,5 +1,5 @@
 import { delay } from '../common/utils.js';
-import { Provider } from './provider.js';
+import { provider } from './provider.js';
 import type { MoveStrategy } from './strategy.js';
 
 export type Trigger = () => void;
@@ -32,15 +32,15 @@ function takeover(trigger: Trigger, _strategy?: MoveStrategy): Promise<boolean> 
 
 async function resolveStrategy(strategy?: MoveStrategy) {
     strategy = context.strategy ?? strategy;
-    if (!strategy || !Provider.isInBattle()) return;
+    if (!strategy || !provider.isInBattle()) return;
 
     if (FighterModelFactory.playerMode == null) {
         throw `[error] 当前playerMode为空`;
     }
-    
+
     await delay(200);
 
-    let battleContext = [Provider.getCurRoundInfo()!, Provider.getCurSkills()!, Provider.getPets()!] as const;
+    let battleContext = [provider.getCurRoundInfo()!, provider.getCurSkills()!, provider.getPets()!] as const;
 
     if (battleContext[0].isSwitchNoBlood) {
         const r = await strategy.resolveNoBlood(...battleContext);
@@ -48,11 +48,11 @@ async function resolveStrategy(strategy?: MoveStrategy) {
 
         await delay(200);
 
-        battleContext = [Provider.getCurRoundInfo()!, Provider.getCurSkills()!, battleContext[2]];
+        battleContext = [provider.getCurRoundInfo()!, provider.getCurSkills()!, battleContext[2]];
     }
 
     // 战斗已经结束, 例如在死切中escape
-    if (!Provider.isInBattle()) {
+    if (!provider.isInBattle()) {
         return;
     }
 
@@ -65,4 +65,11 @@ function clear() {
     context.triggerLock = null;
 }
 
-export { clear, context, resolveStrategy, takeover };
+const manager = {
+    takeover,
+    resolveStrategy,
+    clear,
+};
+
+export { context, manager };
+

@@ -1,5 +1,5 @@
 import * as core from 'sea-core';
-import { CoreLoader, NOOP, log } from 'sea-core';
+import { CoreLoader, LogControl, NOOP } from 'sea-core';
 
 import { IS_DEV } from '@/constants';
 import { setupForLauncher } from '@/features/setup';
@@ -15,7 +15,7 @@ window.sea = { ...window.sea, ...core };
 loader.addSetupFn('afterFirstShowMainPanel', setupForLauncher);
 
 if (IS_DEV) {
-    loader.addSetupFn('beforeGameCoreInit', log.enable);
+    loader.addSetupFn('beforeGameCoreInit', LogControl.enable);
 }
 
 loader.addSetupFn('beforeGameCoreInit', () => {

@@ -1,12 +1,6 @@
 import { EntityBase, type EntityType } from './EntityBase.js';
 
-export interface IItemObject {
-    id: number;
-    name: string;
-    limit?: number;
-}
-
-export class Item extends EntityBase implements IItemObject {
+export class Item extends EntityBase {
     readonly __type: EntityType = 'Item';
     readonly id: number;
     readonly name: string;

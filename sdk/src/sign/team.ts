@@ -1,4 +1,4 @@
-import { Socket } from 'sea-core/engine';
+import { Socket } from 'sea-core';
 
 const MULTI_QUERY = {
     资源生产次数: 12470,

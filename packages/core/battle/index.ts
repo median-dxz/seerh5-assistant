@@ -1,12 +1,15 @@
 export type { Trigger } from './manager.js';
-import { clear, resolveStrategy, takeover } from './manager.js';
-export const Manager = {
-    clear,
-    resolveStrategy,
-    takeover,
+export type { RoundData } from './provider.js';
+export type { MoveHandler, MoveStrategy, SwitchNoBloodHandler } from './strategy.js';
+
+import { manager } from './manager.js';
+import { operator } from './operator.js';
+import { provider } from './provider.js';
+
+export * as Strategy from './strategy.js';
+
+export const SEABattle = {
+    operator,
+    provider,
+    manager,
 };
-
-export * from './operator.js';
-export * from './provider.js';
-export * from './strategy.js';
-

@@ -26,7 +26,7 @@ export const ItemId = {
 } as const;
 
 /** 精灵药剂 */
-export const Potion = {
+export const PotionId = {
     初级体力药剂: 300011,
     中级体力药剂: 300012,
     高级体力药剂: 300013,

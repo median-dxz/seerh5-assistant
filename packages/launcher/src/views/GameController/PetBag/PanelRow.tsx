@@ -10,8 +10,7 @@ import MoreHoriz from '@mui/icons-material/MoreHoriz';
 import VerticalAlignTop from '@mui/icons-material/VerticalAlignTop';
 import { Box, Checkbox, Popover, Stack, Typography } from '@mui/material';
 import React, { useState, type ReactNode } from 'react';
-import { Pet, SEAPet, delay } from 'sea-core';
-import { Engine, GameConfigRegistry } from 'sea-core/engine';
+import { Engine, GameConfigRegistry, Pet, SEAPet, delay } from 'sea-core';
 
 interface PanelRowProps {
     selected: number[];

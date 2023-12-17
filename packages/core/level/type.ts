@@ -21,12 +21,13 @@ export interface ILevelRunner<TData extends LevelData = LevelData> {
 
     actions: Record<string, (this: ILevelRunner<TData>) => Promise<void>>;
 
-    logger: typeof console.log;
     update(): Promise<string>;
-    selectBattle(): ILevelBattle;
+    selectLevelBattle(): ILevelBattle;
 
     beforeAll?: () => Promise<void>;
-    afterAll?: () => Promise<void>;
+    afterAll?: () => Promise<void>; 
+    
+    logger: typeof console.log;
 }
 
 export interface ILevelBattle {

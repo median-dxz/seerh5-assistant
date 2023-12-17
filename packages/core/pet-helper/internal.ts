@@ -1,9 +1,9 @@
-import { HookRegistry, SocketBuilderRegistry } from '../event-source/index.js';
+import { HookRegistry, SocketDeserializerRegistry } from '../event-source/index.js';
 import { PetDataManger } from './PetDataManager.js';
 import { ProxyPet } from './SEAPet.js';
 
 export default () => {
-    SocketBuilderRegistry.register(CommandID.GET_PET_INFO_BY_ONCE, (data) => {
+    SocketDeserializerRegistry.register(CommandID.GET_PET_INFO_BY_ONCE, (data) => {
         const bytes = new egret.ByteArray(data!.rawBuffer);
         let size = bytes.readUnsignedInt();
         const r1 = [];
@@ -20,12 +20,12 @@ export default () => {
         return [r1, r2] as const;
     });
 
-    SocketBuilderRegistry.register(CommandID.GET_PET_INFO, (data) => {
+    SocketDeserializerRegistry.register(CommandID.GET_PET_INFO, (data) => {
         const bytes = new egret.ByteArray(data!.rawBuffer);
         return new ProxyPet(new PetInfo(bytes));
     });
 
-    SocketBuilderRegistry.register(CommandID.PET_RELEASE, (data) => {
+    SocketDeserializerRegistry.register(CommandID.PET_RELEASE, (data) => {
         const bytes = new egret.ByteArray(data!.rawBuffer);
         return new PetTakeOutInfo(bytes);
     });

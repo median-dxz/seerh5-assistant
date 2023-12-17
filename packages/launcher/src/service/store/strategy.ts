@@ -1,4 +1,4 @@
-import type { MoveStrategy } from 'sea-core/battle';
+import type { MoveStrategy } from 'sea-core';
 
 export interface StrategyInstance {
     name: string;

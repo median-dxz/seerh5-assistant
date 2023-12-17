@@ -14,7 +14,7 @@ RoadMap: **见Readme**
   - [ ] 顺便解决关卡进度指示器的问题
 - [x] 删除合成梦幻宝石功能(已经被官方实现)
 
-# Core 当前版本 v0.7.11
+# Core v0.7.x
 
 - [x] 使用类型来提示SDK使用者和Launcher开发者当前Core的版本
   - [x] 从`CoreLoader`上来获取实例版本, 从type中获取api定义的版本
@@ -33,10 +33,14 @@ RoadMap: **见Readme**
   - [x] 现在要求传入以id为键的Map, 查询id时现在基于Map, 以此加快对大表进行id查找时的速度
   - [x] 添加对`Equipment`(装备)的查询
   - [x] `Query`的查询方法现在具有正确的可空返回type
-- [ ] 精简api界面, 删除不必要的导出
 
-# Core v0.8.x
+# Core 当前版本 v0.8.1
 
+- [x] 精简api界面, 删除不必要的导出
+  - [x] 删除不常用的子包导出
+  - [x] 删除不必要的实体接口
+  - [x] 重命名`SocketBuilderRegistry`为`SocketDeserializerRegistry`
+  - [x] `Battle`下导出全部重新组织, 统一导出到`SEABattle`
 - [x] `SEAPet` 更换更优雅的链式调用api
 - [ ] 查询关卡获取的因子数量
 - [ ] 解耦登录器/后端特定逻辑, 分离非核心功能, 部分移动到登录器下的`features`包下, 由登录器提供扩展定义, 部分合并到`engine`中
@@ -65,6 +69,7 @@ RoadMap: **见Readme**
 - [ ] 自定义背景（各种意义上？）
 - [x] 控制中心：自动治疗开关
 - [ ] QuickAccess重做，移入主界面底部
+- [ ] ctOverride
 
 # 低优先级
 

@@ -1,4 +1,4 @@
-import { Socket, extendEngine } from 'sea-core/engine';
+import { Socket, extendEngine } from 'sea-core';
 
 export function extendCoreEngine() {
     extendEngine({

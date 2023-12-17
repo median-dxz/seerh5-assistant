@@ -4,8 +4,7 @@ import { DS } from '@/constants';
 import { CircularProgress, Switch, Typography } from '@mui/material';
 import type { ChangeEvent } from 'react';
 import React from 'react';
-import { SEAEventSource, Subscription } from 'sea-core';
-import { Engine } from 'sea-core/engine';
+import { Engine, SEAEventSource, Subscription } from 'sea-core';
 import type { SWRSubscriptionOptions } from 'swr/subscription';
 import useSWRSubscription from 'swr/subscription';
 

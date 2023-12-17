@@ -90,7 +90,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             return LevelAction.STOP;
         }
 
-        selectBattle() {
+        selectLevelBattle() {
             return battle('LevelXTeamRoom');
         }
 

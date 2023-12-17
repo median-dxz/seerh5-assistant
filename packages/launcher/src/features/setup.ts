@@ -1,5 +1,4 @@
-import { GameConfigRegistry, SEAEventSource } from 'sea-core';
-import * as Battle from 'sea-core/battle';
+import { GameConfigRegistry, SEABattle, SEAEventSource } from 'sea-core';
 import { IS_DEV } from '../constants';
 import { extendCoreEngine } from './engine';
 import { registerLog } from './registerLog';
@@ -23,9 +22,9 @@ export function setupForLauncher() {
     }
 
     // 自动战斗需要在Launcher层通过对应hook启用
-    const { resolveStrategy } = Battle.Manager;
-    start$.on(resolveStrategy);
-    roundEnd$.on(resolveStrategy);
+    const { manager } = SEABattle;
+    start$.on(manager.resolveStrategy);
+    roundEnd$.on(manager.resolveStrategy);
 
     GameConfigRegistry.register('nature', {
         objectId: (obj) => obj.id,

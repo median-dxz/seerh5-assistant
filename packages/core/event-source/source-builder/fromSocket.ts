@@ -1,7 +1,7 @@
 import { filter, map, zip, type Observable } from 'rxjs';
 import { type SocketResponseMap } from '../../constant/index.js';
 import { SEAEventSource } from '../EventSource.js';
-import { SocketBuilderRegistry } from '../SocketBuilderRegistry.js';
+import { SocketDeserializerRegistry } from '../SocketDeserializerRegistry.js';
 import { $hook } from './fromHook.js';
 
 type SocketEvent = 'send' | 'receive' | undefined;
@@ -18,7 +18,7 @@ const $fromSocket = {
         return $hook('socket:receive').pipe(
             filter(({ cmd: _cmd }) => _cmd === cmd),
             map(({ buffer }) => buffer),
-            map(SocketBuilderRegistry.getBuilder(cmd))
+            map(SocketDeserializerRegistry.getDeserializer(cmd))
         );
     },
 };

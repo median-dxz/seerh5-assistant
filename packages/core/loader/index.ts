@@ -1,7 +1,7 @@
 import type { AnyFunction } from '../common/utils.js';
 import { coreSetup, coreSetupBasic } from './internal/index.js';
 
-const VERSION = '0.7.11';
+const VERSION = '0.8.1';
 const SEER_READY_EVENT = 'seerh5_ready';
 export type VERSION = typeof VERSION;
 

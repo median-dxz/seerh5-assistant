@@ -2,9 +2,9 @@ import { buyPetItem } from '../mutate/buyPetItem.js';
 import { fightBoss } from '../mutate/fightBoss.js';
 import { toggleAutoCure } from '../mutate/toggleAutoCure.js';
 
-import { Manager, Operator, type MoveStrategy, type RoundData } from '../../battle/index.js';
+import { SEABattle, type MoveStrategy, type RoundData } from '../../battle/index.js';
 import { delay, type ValueOf } from '../../common/utils.js';
-import { Potion } from '../../constant/index.js';
+import { PotionId } from '../../constant/index.js';
 
 import { Pet } from '../../entity/index.js';
 import { PetLocation, SEAPet, getBagPets } from '../../pet-helper/index.js';
@@ -18,7 +18,7 @@ import { PetLocation, SEAPet, getBagPets } from '../../pet-helper/index.js';
  */
 export async function lowerHp(
     pets: number[],
-    healPotionId: ValueOf<typeof Potion> = Potion.中级体力药剂,
+    healPotionId: ValueOf<typeof PotionId> = PotionId.中级体力药剂,
     hpLimit = 200
 ): Promise<void> {
     pets = pets.slice(0, 6);
@@ -54,7 +54,7 @@ export async function lowerHp(
         if (pet.hp == 0) {
             pet = await pet.usePotion(healPotionId);
         }
-        await pet.usePotion(Potion.中级活力药剂);
+        await pet.usePotion(PotionId.中级活力药剂);
     };
 
     remains = await hpFilter();
@@ -65,7 +65,7 @@ export async function lowerHp(
         return;
     }
 
-    buyPetItem(Potion.中级活力药剂, remains.length);
+    buyPetItem(PotionId.中级活力药剂, remains.length);
     buyPetItem(healPotionId, remains.length);
     await SEAPet(remains[0]).default();
     await toggleAutoCure(false);
@@ -75,24 +75,26 @@ export async function lowerHp(
             (v) => cts.includes(v.catchTime) && v.hp >= hpLimit && v.catchTime !== battleState.self.catchtime
         );
 
+    const { operator, manager } = SEABattle;
+
     const strategy: MoveStrategy = {
         resolveMove(battleState, skills, pets) {
             if (battleState.self.hp.remain < hpLimit || !cts.includes(battleState.self.catchtime)) {
                 return this.resolveNoBlood(battleState, skills, pets);
             } else {
-                return Operator.useSkill(skills.find((v) => v.category !== 4)!.id);
+                return operator.useSkill(skills.find((v) => v.category !== 4)!.id);
             }
         },
         resolveNoBlood: (battleState, _, pets) => {
             const nextPet = checkNextPet(battleState, pets);
             if (nextPet === -1) {
-                return Operator.escape();
+                return operator.escape();
             }
-            return Operator.switchPet(nextPet);
+            return operator.switchPet(nextPet);
         },
     };
 
-    await Manager.takeover(() => {
+    await manager.takeover(() => {
         fightBoss(6730);
     }, strategy);
 
@@ -108,7 +110,7 @@ export async function lowerHp(
             healPotionId
         );
     } else {
-        Manager.clear();
+        manager.clear();
         return;
     }
 }

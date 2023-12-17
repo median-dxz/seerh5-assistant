@@ -1,14 +1,5 @@
-import {
-    Engine,
-    Manager,
-    Operator,
-    SEAEventSource,
-    SEAPet,
-    Subscription,
-    delay,
-    matchNoBloodChain,
-    matchSkillName,
-} from '../../dist/index.js';
+import { Engine, SEABattle, SEAEventSource, SEAPet, Strategy, Subscription, delay } from '../../dist/index.js';
+
 import env from '../env/pet.json';
 
 var expect = chai.expect;
@@ -32,6 +23,7 @@ const filterCMD = [
 describe('BattleManager', function () {
     /** @type {Subscription} */
     let sub;
+    const { manager, operator } = SEABattle;
 
     before(async () => {
         sub = new Subscription();
@@ -46,13 +38,13 @@ describe('BattleManager', function () {
     it('test preset strategy function', async function () {
         this.timeout('10s');
 
-        const skn = matchSkillName(env.skill.map((v) => v.name));
-        const nbc = matchNoBloodChain([env.测试精灵1.name, env.测试精灵3.name]);
+        const skn = Strategy.matchSkillName(env.skill.map((v) => v.name));
+        const nbc = Strategy.matchNoBloodChain([env.测试精灵1.name, env.测试精灵3.name]);
 
-        sub.on($hook('battle:start'), Manager.resolveStrategy);
-        sub.on($hook('battle:roundEnd'), Manager.resolveStrategy);
+        sub.on($hook('battle:start'), manager.resolveStrategy);
+        sub.on($hook('battle:roundEnd'), manager.resolveStrategy);
 
-        await Manager.takeover(startBattle, {
+        await manager.takeover(startBattle, {
             async resolveMove(state, skills, _) {
                 const skillId = skn(skills);
                 if (state.self.catchtime === env.测试精灵1.catchTime) {
@@ -61,7 +53,7 @@ describe('BattleManager', function () {
                 if (state.self.catchtime === env.测试精灵3.catchTime) {
                     expect(skillId).equal(env.skill[1].id);
                 }
-                const r = await Operator.useSkill(skillId);
+                const r = await operator.useSkill(skillId);
                 expect(r).to.be.true;
                 return r;
             },
@@ -74,9 +66,9 @@ describe('BattleManager', function () {
                     expect(next).equal(-1);
                 }
                 if (next === -1) {
-                    return Operator.escape();
+                    return operator.escape();
                 }
-                return Operator.switchPet(next);
+                return operator.switchPet(next);
             },
         });
     });
@@ -87,19 +79,19 @@ describe('BattleManager', function () {
 
         const resolve = async () => {
             try {
-                await Manager.resolveStrategy();
+                await manager.resolveStrategy();
             } catch (error) {
                 expect(error).to.match(/死切/);
-                Operator.escape();
+                operator.escape();
             }
         };
 
         sub.on($hook('battle:start'), resolve);
         sub.on($hook('battle:roundEnd'), resolve);
 
-        await Manager.takeover(startBattle, {
+        await manager.takeover(startBattle, {
             async resolveMove() {
-                Operator.auto();
+                operator.auto();
                 expect(noBlood).to.be.false;
                 return true;
             },

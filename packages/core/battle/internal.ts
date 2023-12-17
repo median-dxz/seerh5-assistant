@@ -1,11 +1,13 @@
 import { delay } from '../common/utils.js';
 import { PetRoundInfo } from '../entity/index.js';
-import { SEAEventSource, SocketBuilderRegistry } from '../event-source/index.js';
-import * as Manager from './manager.js';
-import { Provider, cachedRoundInfo } from './provider.js';
+import { SEAEventSource, SocketDeserializerRegistry } from '../event-source/index.js';
+import { context, manager } from './manager.js';
+import { cachedRoundInfo, provider } from './provider.js';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare const CountExpPanelManager: any;
+declare const CountExpPanelManager: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    overData: any;
+};
 
 export default () => {
     /** better switch pet handler */
@@ -37,14 +39,13 @@ export default () => {
         const currModule = ModuleManager.currModule;
         currModule.onClose();
         AwardManager.resume();
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         EventManager.dispatchEvent(new PetFightEvent(PetFightEvent.ALARM_CLICK, CountExpPanelManager.overData));
     });
 
     const onRoundStart = () => {
-        const info = Provider.getCurRoundInfo()!;
+        const info = provider.getCurRoundInfo()!;
         if (info.round <= 0) {
-            Manager.context.delayTimeout = delay(4500);
+            context.delayTimeout = delay(4500);
         }
     };
 
@@ -52,11 +53,11 @@ export default () => {
     SEAEventSource.hook('battle:roundEnd').on(onRoundStart);
     SEAEventSource.hook('battle:end').on(() => {
         const isWin = Boolean(FightManager.isWin);
-        if (Manager.context.strategy) {
-            Promise.all([Manager.context.delayTimeout, delay(500)])
+        if (context.strategy) {
+            Promise.all([context.delayTimeout, delay(500)])
                 .then(() => {
-                    Manager.context.triggerLock?.(isWin);
-                    Manager.clear();
+                    context.triggerLock?.(isWin);
+                    manager.clear();
                 })
                 .catch((e) => {
                     console.error(e);
@@ -64,7 +65,7 @@ export default () => {
         }
     });
 
-    SocketBuilderRegistry.register(CommandID.NOTE_USE_SKILL, (data) => {
+    SocketDeserializerRegistry.register(CommandID.NOTE_USE_SKILL, (data) => {
         const roundInfo = new UseSkillInfo(new egret.ByteArray(data!.rawBuffer));
         const fi = new PetRoundInfo(roundInfo.firstAttackInfo);
         const si = new PetRoundInfo(roundInfo.secondAttackInfo);

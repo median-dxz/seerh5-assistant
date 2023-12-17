@@ -1,7 +1,7 @@
 import {
     Engine,
-    Manager,
     PetLocation,
+    SEABattle,
     SEAEventSource,
     SEAPet,
     Subscription,
@@ -19,13 +19,14 @@ describe('PetHelper', function () {
 
     /** @type {Subscription} */
     let sub;
+    const { manager } = SEABattle;
 
     before(async () => {
         await Engine.toggleAutoCure(false);
 
         sub = new Subscription();
-        sub.on($hook('battle:start'), Manager.resolveStrategy);
-        sub.on($hook('battle:roundEnd'), Manager.resolveStrategy);
+        sub.on($hook('battle:start'), manager.resolveStrategy);
+        sub.on($hook('battle:roundEnd'), manager.resolveStrategy);
     });
 
     beforeEach(async function () {
@@ -72,7 +73,7 @@ describe('PetHelper', function () {
         await Engine.switchBag([catchTime]);
         await Engine.switchBag([]);
 
-        const pets = await getBagPets(1);
+        const pets = await getBagPets(PetLocation.Bag);
         expect(pets).to.be.an('array').that.is.empty;
     });
 

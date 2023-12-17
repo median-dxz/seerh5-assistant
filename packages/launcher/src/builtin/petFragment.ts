@@ -3,13 +3,14 @@ import type { IPetFragmentRunner, PetFragmentOption } from '@/views/Automation/P
 import {
     PetFragmentLevelDifficulty as Difficulty,
     Engine,
+    LevelAction,
     PetFragmentLevel,
     Socket,
     delay,
     type IPFLevelBoss,
     type LevelMeta,
+    type LevelData as SEALevelData,
 } from 'sea-core';
-import { LevelAction, type LevelData as SEALevelData } from 'sea-core/level';
 
 interface LevelData extends SEALevelData {
     pieces: number;
@@ -73,7 +74,7 @@ export default async function (createModContext: SEAL.createModContext) {
             this.logger = logger.bind(logger, this.name);
         }
 
-        selectBattle() {
+        selectLevelBattle() {
             return this.option.battle.at(this.data.curPosition)!;
         }
 

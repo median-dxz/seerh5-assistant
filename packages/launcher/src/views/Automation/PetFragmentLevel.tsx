@@ -13,8 +13,7 @@ import {
     LevelAction,
     type PetFragmentLevelDifficulty as Difficulty,
     type ILevelBattle,
-    type ILevelRunner,
-    type PetFragmentLevel,
+    type PetFragmentLevel
 } from 'sea-core';
 
 import { useLevelScheduler } from '@/context/useLevelScheduler';
@@ -37,7 +36,7 @@ export interface IPetFragmentRunner {
     option: PetFragmentOption;
 }
 
-type RunnerInstance = IPetFragmentRunner & ILevelRunner;
+type RunnerInstance = IPetFragmentRunner & SEAL.LevelRunner;
 
 const loadOption = async (option: PetFragmentOptionRaw) => {
     return {
