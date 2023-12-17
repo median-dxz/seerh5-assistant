@@ -9,7 +9,7 @@ import {
     type IPFLevelBoss,
     type LevelMeta,
 } from 'sea-core';
-import { LevelAction, type ILevelRunner, type LevelData as SEALevelData } from 'sea-core/level';
+import { LevelAction, type LevelData as SEALevelData } from 'sea-core/level';
 
 interface LevelData extends SEALevelData {
     pieces: number;
@@ -31,15 +31,19 @@ export default async function (createModContext: SEAL.createModContext) {
         },
     });
 
-    class PetFragmentRunner implements ILevelRunner<LevelData>, IPetFragmentRunner {
+    class PetFragmentRunner implements SEAL.LevelRunner<LevelData>, IPetFragmentRunner {
         static readonly meta: LevelMeta = {
-            maxTimes: 3, //TODO 除了静态进度指示器, 关卡内部可以额外有动态进度指示器
+            maxTimes: 3,
             name: '精灵因子',
             id: meta.id,
         };
 
         get meta() {
             return PetFragmentRunner.meta;
+        }
+
+        get name() {
+            return `精灵因子-${this.frag.name}`;
         }
 
         readonly designId: number;
@@ -66,7 +70,7 @@ export default async function (createModContext: SEAL.createModContext) {
             this.designId = this.frag.id;
 
             this.data = {} as LevelData;
-            this.logger = logger.bind(logger, `精灵因子-${this.frag.name}: `);
+            this.logger = logger.bind(logger, this.name);
         }
 
         selectBattle() {
@@ -87,6 +91,8 @@ export default async function (createModContext: SEAL.createModContext) {
             }
             data.curPosition = values[2] >> 16;
             data.isChallenge = data.curDifficulty !== 0 && data.curPosition !== 0;
+            data.progress = (data.curPosition / 5) * 100;
+
             switch (data.curDifficulty) {
                 case Difficulty.Ease:
                     data.bosses = frag.level.ease;

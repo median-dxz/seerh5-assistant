@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 
 import cors from '@fastify/cors';
@@ -30,6 +31,15 @@ export async function createServer() {
     });
 
     await server.register(fastifyEnv, envOptions);
+
+    const root = server.config.APP_ROOT;
+    const folders = ['mods', 'dist', 'config', 'logs'];
+    folders.forEach((folder) => {
+        if (!fs.statSync(path.resolve(root, folder)).isDirectory) {
+            fs.mkdirSync(path.resolve(root, folder));
+        }
+    });
+
     await server.register(fastifyMiddie);
     await server.register(cors, {
         origin: (origin, cb) => {

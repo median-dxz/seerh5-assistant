@@ -1,4 +1,84 @@
-import type { ILevelRunner, MoveStrategy, VERSION } from 'sea-core';
+import type { ILevelRunner, LevelMeta, MoveStrategy, VERSION } from 'sea-core';
+
+declare global {
+    namespace SEAL {
+        interface ModContext<TConfig> {
+            meta: Meta;
+
+            logger: typeof console.log;
+
+            config: TConfig;
+            mutate: (recipe: (draft: TConfig) => void) => void;
+
+            ct(...pets: string[]): number[];
+            battle(name: string): ILevelBattle;
+        }
+
+        type Meta = {
+            id: string;
+            scope: string;
+            version: string;
+            core: VERSION;
+            description?: string;
+        };
+
+        interface CreateContextOptions<TConfig> {
+            meta: Omit<Partial<Meta>, 'id' | 'core'> & { id: string; core: VERSION };
+            defaultConfig?: TConfig;
+        }
+
+        type createModContext = <TConfig extends undefined | object = undefined>(
+            options: CreateContextOptions<TConfig>
+        ) => Promise<ModContext<TConfig>>;
+
+        interface LevelRunner<TData extends LevelData = LevelData> extends ILevelRunner<TData> {
+            get meta(): LevelMeta;
+            get name(): string;
+        }
+
+        interface ModExport {
+            meta: Meta;
+            exports?: {
+                strategy?: Array<Strategy>;
+                battle?: Array<Battle>;
+                level?: Array<Level>;
+                command?: Array<Command>;
+                sign?: Array<Sign>;
+            };
+            install?(): void;
+            uninstall?(): void;
+        }
+
+        type Strategy = MoveStrategy & { name: string };
+
+        type Battle = {
+            name: string;
+            strategy: string;
+            pets: string[];
+            beforeBattle?: () => Promise<void>;
+        };
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        type Level = { new (option: any): LevelRunner; readonly meta: LevelMeta };
+
+        type Command = {
+            name: string;
+            icon?: string;
+            description?: string | (() => string);
+            handler: (...args: string[]) => unknown;
+        };
+
+        type Sign = {
+            name: string;
+            check: () => Promise<number>;
+            run: () => Promise<void>;
+        };
+    }
+
+    declare class NatureXMLInfo {
+        static _dataMap: seerh5.Dict<seerh5.NatureObj>;
+    }
+}
 
 declare module 'sea-core' {
     export interface Engine {
@@ -38,77 +118,6 @@ declare global {
     interface SEA {
         /** 正则过滤列表 */
         logRegexFilter: { log: RegExp[]; warn: RegExp[] };
-    }
-
-    namespace SEAL {
-        interface ModContext<TConfig> {
-            meta: Meta;
-
-            logger: typeof console.log;
-
-            config: TConfig;
-            mutate: (recipe: (draft: TConfig) => void) => void;
-
-            ct(...pets: string[]): number[];
-            battle(name: string): ILevelBattle;
-        }
-
-        type Meta = {
-            id: string;
-            scope: string;
-            version: string;
-            core: VERSION;
-            description?: string;
-        };
-
-        interface CreateContextOptions<TConfig> {
-            meta: Omit<Partial<Meta>, 'id' | 'core'> & { id: string; core: VERSION };
-            defaultConfig?: TConfig;
-        }
-
-        type createModContext = <TConfig extends undefined | object = undefined>(
-            options: CreateContextOptions<TConfig>
-        ) => Promise<ModContext<TConfig>>;
-
-        interface ModExport {
-            meta: Meta;
-            exports?: {
-                strategy?: Array<Strategy>;
-                battle?: Array<Battle>;
-                level?: Array<Level>;
-                command?: Array<Command>;
-                sign?: Array<Sign>;
-            };
-            install?(): void;
-            uninstall?(): void;
-        }
-
-        type Strategy = MoveStrategy & { name: string };
-        type Battle = {
-            name: string;
-            strategy: string;
-            pets: string[];
-            beforeBattle?: () => Promise<void>;
-        };
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        type Level = { new (option: any): ILevelRunner; readonly meta: LevelMeta };
-
-        type Command = {
-            name: string;
-            icon?: string;
-            description?: string | (() => string);
-            handler: (...args: string[]) => unknown;
-        };
-        type Sign = {
-            name: string;
-            check: () => Promise<number>;
-            run: () => Promise<void>;
-        };
-    }
-
-    declare class NatureXMLInfo {
-        static _dataMap: seerh5.Dict<seerh5.NatureObj>;
     }
 }
 

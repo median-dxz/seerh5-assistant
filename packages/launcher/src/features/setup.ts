@@ -74,6 +74,11 @@ function backgroundHeartBeatCheck() {
         timer = undefined;
         EventManager.dispatchEventWith(LifeCycleManager.LIFE_CYCLE_RESUME);
     };
+
+    setInterval(() => {
+        if (!SocketConnection.mainSocket.connected) return;
+        SystemTimerManager.queryTime();
+    }, 4000 + Math.trunc(Math.random() * 1000));
 }
 
 /* eslint-disable-next-line */

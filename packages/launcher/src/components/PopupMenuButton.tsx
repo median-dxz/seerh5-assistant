@@ -66,7 +66,7 @@ export function PopupMenuButton<T, P extends object>({
     return (
         <>
             <Button {...buttonProps} onClick={handleClick}>
-                {loading ? <CircularProgress size={16} /> : children}
+                {loading ? <CircularProgress size="1.5rem" /> : children}
             </Button>
             <ListMenu
                 id={id && `${id}-${SUFFIX}`}

@@ -1,7 +1,7 @@
+import { Paper } from '@/components/styled/Paper';
+import { Row } from '@/components/styled/Row';
 import { Switch, Typography } from '@mui/material';
 import React, { useEffect, useState, type ChangeEvent } from 'react';
-import { Paper } from './styled/Paper';
-import { Row } from './styled/Row';
 
 export function AnimationMode() {
     const [animationMode, setAnimationMode] = useState(false);

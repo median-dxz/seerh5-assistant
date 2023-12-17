@@ -1,3 +1,5 @@
+import { Paper } from '@/components/styled/Paper';
+import { Row } from '@/components/styled/Row';
 import { DS } from '@/constants';
 import { useMainState } from '@/context/useMainState';
 import { Button, CircularProgress, Typography } from '@mui/material';
@@ -8,9 +10,6 @@ import React, { useState } from 'react';
 import { BattleFireType, Engine, SEAEventSource, Socket, Subscription, throttle } from 'sea-core';
 import type { SWRSubscriptionOptions } from 'swr/subscription';
 import useSWRSubscription from 'swr/subscription';
-import { Paper } from './styled/Paper';
-import { Row } from './styled/Row';
-import { BoldTitle } from './styled/BoldTitle';
 
 declare class FriendManager {
     static getFriendList(): Promise<{ itemSend: number; id: number }[]>;
@@ -141,7 +140,9 @@ export function BattleFire() {
 
     return (
         <Paper>
-            <BoldTitle>火焰信息</BoldTitle>
+            <Typography variant="subtitle1" fontSize="1em">
+                火焰信息
+            </Typography>
             <Row justifyContent="space-between">
                 <Typography color={renderProps.color}>{renderProps.text}</Typography>
                 <Stack flexDirection="row">

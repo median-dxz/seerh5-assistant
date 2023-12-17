@@ -1,6 +1,6 @@
 import { LevelAction, Socket } from 'sea-core';
 
-import type { AnyFunction, ILevelBattle, ILevelRunner, LevelMeta, LevelData as SEALevelData } from 'sea-core';
+import type { AnyFunction, ILevelBattle, LevelMeta, LevelData as SEALevelData } from 'sea-core';
 
 interface LevelData extends SEALevelData {
     open: boolean;
@@ -15,7 +15,7 @@ interface LevelOption {
 }
 
 export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => {
-    return class LevelXTeamRoom implements ILevelRunner<LevelData> {
+    return class LevelXTeamRoom implements SEAL.LevelRunner<LevelData> {
         data: LevelData = {
             remainingTimes: 0,
             progress: 0,
@@ -36,6 +36,9 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             return LevelXTeamRoom.meta;
         }
 
+        get name() {
+            return LevelXTeamRoom.meta.name;
+        }
         logger = logger;
 
         constructor(public option: LevelOption) {}

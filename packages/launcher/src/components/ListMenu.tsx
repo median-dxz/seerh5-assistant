@@ -14,11 +14,20 @@ export type ListMenuProps<T, P> = {
 } & Omit<MenuProps, 'open' | 'onClose' | 'onClick'>;
 
 export function ListMenu<T, P extends object>(props: ListMenuProps<T, P>) {
-    const { data = [], onClick, anchorEl = null, setAnchor, listItemProps, MenuListProps, ...rest } = props;
+    const {
+        data = [],
+        onClick,
+        anchorEl = null,
+        setAnchor,
+        listItemProps,
+        MenuListProps: allMenuListProps,
+        ...rest
+    } = props;
     const { renderItemProps, RenderItem, ...menuProps } = rest as {
         RenderItem?: React.JSXElementConstructor<{ index: number; item: T }>;
         renderItemProps?: object;
     } & Omit<MenuProps, 'open' | 'onClose' | 'onClick'>;
+    const { sx: MenuListSx, ...MenuListProps } = allMenuListProps ?? {};
     const open = Boolean(anchorEl);
 
     const handleCloseMenu = React.useCallback(() => {
@@ -49,7 +58,7 @@ export function ListMenu<T, P extends object>(props: ListMenuProps<T, P>) {
                     maxHeight: '50vh',
                     overflowY: 'auto',
                     bgcolor: (theme) => alpha(theme.palette.secondary.main, 0.88),
-                    ...MenuListProps?.sx,
+                    ...MenuListSx,
                 },
             }}
             open={open}

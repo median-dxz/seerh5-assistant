@@ -3,10 +3,10 @@ import React, { useCallback, useMemo } from 'react';
 
 import { Selector } from './Selector';
 
+import { Paper } from '@/components/styled/Paper';
 import { DS } from '@/constants';
 import { GameConfigRegistry, SEAEventSource } from 'sea-core';
 import { Engine } from 'sea-core/engine';
-import { Paper } from '../styled/Paper';
 
 export function Inventory() {
     const equipmentQuery = GameConfigRegistry.getQuery('equipment');

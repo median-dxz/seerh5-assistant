@@ -1,4 +1,4 @@
-import { alpha, createTheme, darken, type SxProps } from '@mui/material';
+import { alpha, createTheme, darken, lighten, type SxProps } from '@mui/material';
 import { deepPurple } from '@mui/material/colors';
 
 declare module '@mui/material/styles' {
@@ -44,12 +44,18 @@ const colors = {
     paper: '#211d22',
 };
 
+const border = `1px solid ${alpha(colors.primary, 0.24)}`;
+
+const fonts = {
+    input: `"Noto Sans SC", "Open Sans", consolas, monospace`,
+    main: `MFShangHei, "Open Sans", "Noto Sans SC", Helvetica, Arial, sans-serif`,
+    header: `"Noto Sans SC", system-ui, -apple-system, "Open Sans", "Helvetica Neue", sans-serif`,
+};
+
 export const theme = createTheme({
     boxShadow: `0 8px 16px rgba(0 0 0 / 24%)`,
-    fonts: {
-        input: '"Noto Sans SC", "Open Sans", monospace',
-    },
-    border: `1px solid ${alpha('#81d4fa', 0.16)}`,
+    fonts,
+    border,
 
     spacing: 4,
     palette: {
@@ -67,14 +73,20 @@ export const theme = createTheme({
             default: alpha(colors.paper, 0.24),
             paper: alpha(colors.primary, 0.08),
         },
-        divider: alpha('#81d4fa', 0.16),
+        divider: alpha(colors.primary, 0.16),
         popup: {
             background: alpha(colors.secondary, 0.36),
         },
     },
     typography: {
         fontSize: 16,
-        fontFamily: `MFShangHei, "Open Sans", "Noto Sans SC", Helvetica, Arial, sans-serif`,
+        fontFamily: fonts.main,
+        subtitle1: {
+            fontSize: 20,
+            fontFamily: fonts.header,
+            fontWeight: 'bold',
+            whiteSpace: 'nowrap',
+        },
     },
     components: {
         MuiCssBaseline: {
@@ -127,12 +139,46 @@ export const theme = createTheme({
         },
         MuiButton: {
             styleOverrides: {
+                outlined: {
+                    backgroundColor: alpha(colors.primary, 0.18),
+                    border,
+                    ':hover': {
+                        backgroundColor: alpha(colors.primary, 0.24),
+                        border,
+                    },
+                },
                 contained: {
                     color: colors.text,
-                    backgroundColor: colors.secondary,
+                    border,
+                    backgroundColor: alpha(colors.secondary, 0.48),
                     ':hover': {
-                        backgroundColor: darken(colors.secondary, 0.15),
+                        backgroundColor: alpha(darken(colors.secondary, 0.15), 0.48),
                     },
+                    ':active': {
+                        backgroundColor: alpha(lighten(colors.secondary, 0.15), 0.48),
+                    },
+                },
+                outlinedInherit: {
+                    border: `1px solid ${alpha(colors.text, 0.24)}`,
+                    ':hover': {
+                        border: `1px solid ${alpha(colors.text, 0.48)}`,
+                    },
+                },
+            },
+        },
+        MuiTypography: {
+            defaultProps: {
+                variantMapping: {
+                    subtitle1: 'h2',
+                },
+            },
+        },
+        MuiChip: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: alpha(colors.primary, 0.18),
+                    border: `1px solid ${alpha(colors.text, 0.24)}`,
+                    fontFamily: fonts.input,
                 },
             },
         },

@@ -1,5 +1,8 @@
 import { IconButtonNoRipple as IconButton } from '@/components/IconButtonNoRipple';
 import { PanelField, useIndex, useRowData } from '@/components/PanelTable';
+import { HealthBroken } from '@/components/icons/HealthBroken';
+import { MoveToInbox } from '@/components/icons/MoveToInbox';
+import { Pill } from '@/components/icons/Pill';
 import { SeaTableRow } from '@/components/styled/TableRow';
 import { useMainState } from '@/context/useMainState';
 import { Icon } from '@/service/resource';
@@ -9,9 +12,6 @@ import { Box, Checkbox, Popover, Stack, Typography } from '@mui/material';
 import React, { useState, type ReactNode } from 'react';
 import { Pet, SEAPet, delay } from 'sea-core';
 import { Engine, GameConfigRegistry } from 'sea-core/engine';
-import { HealthBroken } from './icons/HealthBroken';
-import { MoveToInbox } from './icons/MoveToInbox';
-import { Pill } from './icons/Pill';
 
 interface PanelRowProps {
     selected: number[];

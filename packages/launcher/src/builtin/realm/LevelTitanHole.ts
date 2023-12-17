@@ -1,9 +1,8 @@
 import type {
     AnyFunction,
     ILevelBattle,
-    ILevelRunner,
     LevelData as SEALevelData,
-    LevelMeta as SEALevelMeta,
+    LevelMeta as SEALevelMeta
 } from 'sea-core';
 import { LevelAction, Socket, delay } from 'sea-core';
 
@@ -27,7 +26,7 @@ interface LevelMeta extends SEALevelMeta {
 }
 
 export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => {
-    return class LevelTitanHole implements ILevelRunner<LevelData> {
+    return class LevelTitanHole implements SEAL.LevelRunner<LevelData> {
         data: LevelData = {
             remainingTimes: 0,
             progress: 0,
@@ -49,6 +48,10 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
         get meta() {
             return LevelTitanHole.meta;
+        }
+
+        get name() {
+            return LevelTitanHole.meta.name;
         }
 
         constructor(public option: LevelOption) {}

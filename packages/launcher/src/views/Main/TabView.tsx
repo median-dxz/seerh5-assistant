@@ -98,6 +98,7 @@ export function TabView() {
     const {
         boxShadow,
         border,
+        fonts,
         palette: { primary },
         transitions: { easing },
     } = useTheme();
@@ -132,7 +133,7 @@ export function TabView() {
 
     return (
         <Stack
-            direction="row"
+            flexDirection="row"
             sx={{ width: '100vw', height: '100vh', alignItems: 'stretch', justifyContent: 'stretch' }}
         >
             <Stack
@@ -171,15 +172,15 @@ export function TabView() {
                         m: 8,
                     }}
                 >
-                    <Typography fontSize={22} fontFamily={'Noto Sans SC'}>
+                    <Typography fontSize={22} fontFamily={fonts.input}>
                         SEAL
-                        <Typography fontSize={12} fontFamily={'Noto Sans SC'} component="span">
+                        <Typography fontSize={12} fontFamily={fonts.input} component="span">
                             {` v${VERSION}`}
                         </Typography>
                     </Typography>
-                    <Typography fontSize={22} fontFamily={'Noto Sans SC'}>
+                    <Typography fontSize={22} fontFamily={fonts.input}>
                         Core
-                        <Typography fontSize={12} fontFamily={'Noto Sans SC'} component="span">
+                        <Typography fontSize={12} fontFamily={fonts.input} component="span">
                             {` v${CoreLoader.version}`}
                         </Typography>
                     </Typography>

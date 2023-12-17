@@ -1,3 +1,5 @@
+import { Paper } from '@/components/styled/Paper';
+import { Row } from '@/components/styled/Row';
 import { DS } from '@/constants';
 import { CircularProgress, Switch, Typography } from '@mui/material';
 import type { ChangeEvent } from 'react';
@@ -6,8 +8,6 @@ import { SEAEventSource, Subscription } from 'sea-core';
 import { Engine } from 'sea-core/engine';
 import type { SWRSubscriptionOptions } from 'swr/subscription';
 import useSWRSubscription from 'swr/subscription';
-import { Paper } from './styled/Paper';
-import { Row } from './styled/Row';
 
 export function AutoCureState() {
     const { data: autoCure } = useSWRSubscription(

@@ -1,13 +1,12 @@
 import type { SWRSubscriptionOptions } from 'swr/subscription';
 
-import { Box, Grid, Tooltip } from '@mui/material';
+import { Box, Grid, Tooltip, Typography } from '@mui/material';
 import React, { memo } from 'react';
 import useSWRSubscription from 'swr/subscription';
 
 import { SEAEventSource, Subscription } from 'sea-core';
 
 import type { PopupMenuButtonProps } from '@/components/PopupMenuButton';
-import { BoldTitle } from '../styled/BoldTitle';
 import { ClampText } from '../styled/ClampText';
 import { SelectorButton } from '../styled/SelectorButton';
 
@@ -62,7 +61,7 @@ export function Selector({
     return (
         <Grid container columnSpacing={3} alignItems="center">
             <Grid item xs={2}>
-                <BoldTitle>{label}</BoldTitle>
+                <Typography variant="subtitle1" fontSize='1rem'>{label}</Typography>
             </Grid>
             <Grid item xs={5}>
                 <SelectorButton

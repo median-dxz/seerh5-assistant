@@ -1,19 +1,19 @@
 import { IconButtonNoRipple as IconButton } from '@/components/IconButtonNoRipple';
 import { Loading } from '@/components/Loading';
 import { PopupMenuButton } from '@/components/PopupMenuButton';
+import { Backpack } from '@/components/icons/Backpack';
+import { HealthBroken } from '@/components/icons/HealthBroken';
+import { HpBar } from '@/components/icons/HpBar';
+import { Row } from '@/components/styled/Row';
 import { useMainState } from '@/context/useMainState';
 import { usePetGroups } from '@/service/configs/usePetGroups';
 import Bookmarks from '@mui/icons-material/Bookmarks';
 import Clear from '@mui/icons-material/ClearRounded';
-import { Button, Typography } from '@mui/material';
+import { Button, Tooltip, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import React, { useCallback } from 'react';
 import { Pet, PetLocation, SEAPet, getBagPets } from 'sea-core';
 import { Engine } from 'sea-core/engine';
-import { Row } from '../styled/Row';
-import { Backpack } from './icons/Backpack';
-import { HealthBroken } from './icons/HealthBroken';
-import { HpBar } from './icons/HpBar';
 
 interface ToolBarProps {
     selected: number[];
@@ -98,6 +98,9 @@ export function ToolBar({ selected }: ToolBarProps) {
             <PopupMenuButton
                 data={loadPets}
                 onSelectItem={handleSwitchBag}
+                buttonProps={{
+                    variant: 'outlined',
+                }}
                 menuProps={{
                     RenderItem: PetGroupItem,
                     renderItemProps: {
@@ -121,6 +124,7 @@ interface PetGroupItemProps {
 }
 
 const PetGroupItem = React.memo(({ item: group, index, onSave, onDelete }: PetGroupItemProps) => {
+    const groupString = group.length > 0 ? group.map((i) => i.name).join(', ') : '空';
     return (
         <Row
             sx={{
@@ -128,17 +132,19 @@ const PetGroupItem = React.memo(({ item: group, index, onSave, onDelete }: PetGr
             }}
             justifyContent="space-between"
         >
-            <Typography
-                width="100%"
-                fontSize="inherit"
-                noWrap
-                textAlign="center"
-                textOverflow="ellipsis"
-                overflow="hidden"
-            >
-                {`方案${index + 1}: `}
-                {group.length > 0 ? group.map((i) => i.name).join(', ') : '空'}
-            </Typography>
+            <Tooltip title={group.length > 0 ? groupString : ''}>
+                <Typography
+                    width="100%"
+                    fontSize="inherit"
+                    noWrap
+                    textAlign="center"
+                    textOverflow="ellipsis"
+                    overflow="hidden"
+                >
+                    {`方案${index + 1}: ${groupString}`}
+                </Typography>
+            </Tooltip>
+
             <Stack flexDirection="row" ml={2}>
                 <IconButton
                     onClick={(e) => {

@@ -1,16 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { produce } from 'immer';
 import React, { useCallback, useEffect, useReducer, useRef, type PropsWithChildren, type Reducer } from 'react';
-import { LevelManager, type ILevelRunner } from 'sea-core';
+import { LevelManager, SEAEventSource, Subscription } from 'sea-core';
 import { LevelScheduler, type LevelRunnerState } from './useLevelScheduler';
 const { ins: levelManager } = LevelManager;
 
+type LevelRunner = SEAL.LevelRunner;
+
 type ActionType = {
-    enqueue: { runner: ILevelRunner };
-    dequeue: { runner: ILevelRunner };
+    enqueue: { runner: LevelRunner };
+    dequeue: { runner: LevelRunner };
     moveNext: undefined;
     changeRunnerStatus: { status: LevelRunnerState['status']; error?: Error };
     changeSchedulerStatus: { status: LevelSchedulerState['status'] };
+    addRunnerBattleCount: undefined;
+    logWithRunner: { message: string };
     setPause: boolean;
 };
 
@@ -25,7 +29,7 @@ const reducer: Reducer<LevelSchedulerState, Action> = (state, { type, payload })
     function enqueue(prev: LevelSchedulerState, payload: ActionType['enqueue']) {
         return produce(prev, (state) => {
             const { queue } = state;
-            queue.push({ runner: payload.runner, status: 'pending' });
+            queue.push({ runner: payload.runner, status: 'pending', logs: [], battleCount: 0 });
             if (state.currentIndex == undefined) {
                 for (let i = 0; i < queue.length; i++) {
                     if (queue[i].status === 'pending') {
@@ -74,6 +78,32 @@ const reducer: Reducer<LevelSchedulerState, Action> = (state, { type, payload })
                 if (payload.error) {
                     item.error = payload.error;
                 }
+                if (payload.status === 'running') {
+                    item.startTime = Date.now();
+                }
+                if (payload.status === 'completed' || payload.status === 'error' || payload.status === 'stopped') {
+                    item.endTime = Date.now();
+                }
+            }
+        });
+    }
+
+    function addRunnerBattleCount(prev: LevelSchedulerState) {
+        return produce(prev, (state) => {
+            const { queue, currentIndex } = state;
+            if (currentIndex != undefined) {
+                const item = queue[currentIndex];
+                item.battleCount++;
+            }
+        });
+    }
+
+    function logWithRunner(prev: LevelSchedulerState, payload: ActionType['logWithRunner']) {
+        return produce(prev, (state) => {
+            const { queue, currentIndex } = state;
+            if (currentIndex != undefined) {
+                const item = queue[currentIndex];
+                item.logs.push(payload.message);
             }
         });
     }
@@ -103,6 +133,10 @@ const reducer: Reducer<LevelSchedulerState, Action> = (state, { type, payload })
             return changeSchedulerStatus(state, payload as ActionType[typeof type]);
         case 'setPause':
             return setPaused(state, payload as ActionType[typeof type]);
+        case 'addRunnerBattleCount':
+            return addRunnerBattleCount(state);
+        case 'logWithRunner':
+            return logWithRunner(state, payload as ActionType[typeof type]);
         default:
             return state;
     }
@@ -142,6 +176,15 @@ export const LevelSchedulerProvider = ({ children }: PropsWithChildren<object>) 
         changeSchedulerState('running');
 
         const { runner } = queue[currentIndex];
+
+        // TODO! 在后端日志功能完善后 重新设计该部分
+        runner.logger = new Proxy(runner.logger, {
+            apply(target, thisArg, argArray) {
+                dispatch({ type: 'logWithRunner', payload: { message: argArray[0] } });
+                return Reflect.apply(target, thisArg, argArray);
+            },
+        });
+
         levelManager.run(runner);
 
         const { lock } = levelManager;
@@ -173,6 +216,14 @@ export const LevelSchedulerProvider = ({ children }: PropsWithChildren<object>) 
         tryStartNextRunner();
     });
 
+    useEffect(() => {
+        const sub = new Subscription();
+        sub.on(SEAEventSource.hook('battle:start'), () => {
+            dispatch({ type: 'addRunnerBattleCount' });
+        });
+        return () => sub.dispose();
+    }, []);
+
     const tryStopCurrentRunner = useCallback(() => {
         if (state.status !== 'running') {
             return;
@@ -189,13 +240,13 @@ export const LevelSchedulerProvider = ({ children }: PropsWithChildren<object>) 
             });
     }, [changeRunnerState, changeSchedulerState, state.status]);
 
-    const handleEnqueue = useCallback((runner: ILevelRunner) => {
+    const handleEnqueue = useCallback((runner: LevelRunner) => {
         dispatch({ type: 'enqueue', payload: { runner } });
         updateRequest.current = true;
     }, []);
 
     const handleDequeue = useCallback(
-        async (runner: ILevelRunner) => {
+        async (runner: LevelRunner) => {
             if (state.queue.findIndex((r) => r.runner === runner) === state.currentIndex) {
                 await tryStopCurrentRunner();
                 dispatch({ type: 'dequeue', payload: { runner } });
@@ -219,7 +270,6 @@ export const LevelSchedulerProvider = ({ children }: PropsWithChildren<object>) 
 
     const handleStopCurrentRunner = useCallback(async () => {
         await tryStopCurrentRunner();
-        dispatch({ type: 'moveNext' });
         updateRequest.current = true;
     }, [tryStopCurrentRunner]);
 

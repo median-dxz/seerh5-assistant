@@ -1,10 +1,10 @@
+import { Loading } from '@/components/Loading';
 import { PanelTable, type PanelColumns } from '@/components/PanelTable';
 import { useBagPets } from '@/service/useBagPets';
 import { Box, Stack } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pet } from 'sea-core';
-import { Loading } from '../../../components/Loading';
-import { PanelRow } from './PetBagPanelRow';
+import { PanelRow } from './PanelRow';
 import { ToolBar } from './ToolBar';
 
 export function PetBag() {

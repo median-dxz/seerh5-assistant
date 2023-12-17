@@ -1,4 +1,4 @@
-import { Box, Button, CircularProgress, Divider, Typography, alpha } from '@mui/material';
+import { Box, Button, CircularProgress, Typography, alpha } from '@mui/material';
 import React, { useCallback } from 'react';
 import useSWR from 'swr';
 
@@ -137,7 +137,6 @@ export function CommonLevelPanel() {
     return (
         <>
             <Button>一键日任</Button>
-            <Divider />
             <PanelTable
                 data={rows}
                 toRowKey={toRowKey}
