@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="initial-scale=1, width=device-width" />
+
+        <title>SeerH5-Assistant | 登陆器核心模块测试页</title>
+
+        <link rel="shortcut icon" href="http://seerh5.61.com/favicon.ico" type="image/x-icon" />
+        <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />
+        <link rel="stylesheet" href="./style.css" />
+        <script src="https://unpkg.com/chai/chai.js"></script>
+        <script src="https://unpkg.com/mocha/mocha.js"></script>
+    </head>
+    <body>
+        <div id="mocha"></div>
+        <div id="test-toolbar">
+            <div id="test-run" class="test-button">开始测试</div>
+            <div id="test-page" class="test-button">切换测试页显示</div>
+        </div>
+
+        <div id="logo"></div>
+        <script type="module" src="./entry.js"></script>
+
+        <script type="module" src="./suites/loader.spec.js"></script>
+        <script type="module" src="./suites/pet.spec.js"></script>
+        <script type="module" src="./suites/battle.spec.js"></script>
+    </body>
+</html>

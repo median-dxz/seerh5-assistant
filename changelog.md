@@ -13,8 +13,6 @@ RoadMap: **见Readme**
 - [ ] sdk中的同步core版本号脚本
 - [ ] 战斗日志保存
 - [ ] script通过语法树进行高级反混淆, 暂定主要目标是升级 async/await
-- [ ] 对于部分错误, 封装错误类
-  - [ ] 暂定有影响DRY原则的错误封装
 - [x] 一键收星星
 - [ ] 自定义背景（各种意义上？）
 - [x] 控制中心：自动治疗开关
@@ -61,15 +59,12 @@ RoadMap: **见Readme**
   - [x] 重命名`SocketBuilderRegistry`为`SocketDeserializerRegistry`
   - [x] `Battle`下导出全部重新组织
 - [x] `SEAPet` 更换更优雅的链式调用api
-
-- [ ] ? 重新组织命名空间导出到专门的模块导出
+- [ ] 重新组织命名空间导出到专门的模块导出
 - [ ] 全体治疗基于Promise重写, 不需要加延时
 - [ ] 查询关卡获取的因子数量
-
 - [ ] `Strategy`模块重写, 提供更加方便优雅的api, 且统一大部分操作
   - [ ] 包括技能对点, 自动, 第五, 攻击
   - [ ] 可能需要单独导出一个StrategyMatcher模块
-
 - [ ] 对于CoreLoad的注册hook, 提供标志位来进行功能的打开，关闭
   - [ ] 同时公开hook数组, 以便登录器层可以开关特定功能
 - [ ] 启用单元测试，集成测试作为单独的包，移出core
@@ -79,10 +74,18 @@ RoadMap: **见Readme**
   - [ ] 自动关弹窗
   - [ ] logFilter
 - [ ] 日志模块重写，可以动态改变等级，输出object而不是消息，可以子logger化
-
+- [ ] 对于部分错误, 封装错误类
+  - [ ] 暂定有影响DRY原则的错误封装
 - [ ] 查询魂印激活放到SEAPet中
 - [ ] 完善pet缓存逻辑
   - [ ] 同时优化第五和魂印的检测逻辑
+- [ ] 更名
+  - [ ] `SEAPet` -> `spet`
+  - [ ] `GameConfigRegistry.getQuery` -> `query`
+  - [ ] `extendEngine` -> `sea.core.extend`
+  - [ ] `Engine` -> `engine`
+  - [ ] `SEABattle` -> `battle`
+  - [ ] `CoreLoader` -> `core`
 
 # 低优先级
 

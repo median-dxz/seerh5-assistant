@@ -1,7 +1,7 @@
 import type { AnyFunction } from '../common/utils.js';
 import { coreSetup, coreSetupBasic } from './internal/index.js';
 
-const VERSION = '0.8.1';
+const VERSION = '1.0.0-rc.1';
 const SEER_READY_EVENT = 'seerh5_ready';
 export type VERSION = typeof VERSION;
 
@@ -10,7 +10,7 @@ interface SetupFn {
     fn: AnyFunction;
 }
 
-class CoreLoader {
+export class SeerAssistantCore {
     static checkEnv = () =>
         typeof window !== 'undefined' && window === window.self && typeof window.sea === 'undefined';
 
@@ -27,13 +27,13 @@ class CoreLoader {
     }
 
     constructor() {
-        if (CoreLoader.checkEnv()) {
+        if (SeerAssistantCore.checkEnv()) {
             this.loadCalled = false;
 
             window.sea = {
                 SEER_READY_EVENT,
                 SeerH5Ready: false,
-                CoreInstanceCreated: Object.freeze({ flag: true }),
+                core: this,
             };
 
             this.addSetupFn('beforeGameCoreInit', coreSetupBasic);
@@ -82,6 +82,3 @@ class CoreLoader {
         });
     }
 }
-
-export { CoreLoader };
-

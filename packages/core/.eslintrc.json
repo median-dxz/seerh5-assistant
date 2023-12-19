@@ -47,6 +47,7 @@
     "reportUnusedDisableDirectives": true,
     "ignorePatterns": [
         "/dist",
-        "/test"
+        "/test",
+        "vitest.config.ts"
     ]
 }

@@ -7,8 +7,6 @@
   "private": true,
   "exports": {
     ".": "./dist/index.js",
-    "./constant": "./dist/constant/index.js",
-    "./entity": "./dist/entity/index.js",
     "./types/seerh5": {
       "types": "./types/@seerh5/index.d.ts"
     },
@@ -18,6 +16,14 @@
   },
   "browser": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --build",
+    "watch": "tsc --watch",
+    "clean": "rimraf ./dist && rimraf ../../.tsbuildinfo/core.tsbuildinfo",
+    "lint": "eslint --fix . && tsc --noEmit",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
+  },
   "files": [
     "dist",
     "types",
@@ -29,19 +35,10 @@
     "data-source",
     "entity",
     "pet-helper",
-    "level",
     "loader"
   ],
-  "scripts": {
-    "build": "tsc --build",
-    "watch": "tsc --watch",
-    "clean": "rimraf ./dist && rimraf ../../.tsbuildinfo/core.tsbuildinfo",
-    "lint": "eslint --fix . && tsc --noEmit",
-    "test": "vite --config ./test/vite.config.ts"
-  },
   "devDependencies": {
-    "@types/chai": "^4.3.5",
-    "@types/mocha": "^10.0.1"
+    "vitest": "^1.0.4"
   },
   "dependencies": {
     "rxjs": "^7.8.1"

@@ -13,7 +13,7 @@
         "incremental": true,
         "composite": true,
         // "skipLibCheck": false,
-        "types": []
+        "types": [],
     },
     "include": [
         "./types",
@@ -26,7 +26,7 @@
         "./functions",
         "./loader",
         "./pet-helper",
-        "./level",
+        "./test",
         "index.ts",
         "package.json"
     ],
