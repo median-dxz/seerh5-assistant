@@ -46,13 +46,13 @@ const reducer: Reducer<LevelSchedulerState, Action> = (state, { type, payload })
             const { queue } = state;
             const index = queue.findIndex((item) => item.runner === payload.runner);
             if (index !== -1) {
-                if (queue.length === 1 || index === queue.length - 1) {
-                    state.currentIndex = undefined;
-                }
-                if (index < state.currentIndex!) {
-                    state.currentIndex = state.currentIndex! - 1;
+                if (state.currentIndex && index < state.currentIndex) {
+                    state.currentIndex = state.currentIndex - 1;
                 }
                 queue.splice(index, 1);
+                if (queue.length === 0 || (state.currentIndex && state.currentIndex >= queue.length)) {
+                    state.currentIndex = undefined;
+                }
             }
         });
     }

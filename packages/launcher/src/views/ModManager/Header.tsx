@@ -1,7 +1,9 @@
+import { useModStore } from '@/context/useModStore';
 import { Box, Button, alpha } from '@mui/material';
 import React from 'react';
 
 export function Header() {
+    const { reload } = useModStore();
     return (
         <Box
             sx={{
@@ -14,7 +16,7 @@ export function Header() {
                 borderBottom: (theme) => `1px solid ${alpha(theme.palette.divider, 0.12)}`,
             }}
         >
-            <Button>重载所有模组</Button>
+            <Button onClick={() => reload()}>重载所有模组</Button>
         </Box>
     );
 }

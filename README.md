@@ -468,9 +468,9 @@ Socket.sendByQueue(cmd: number, data?: number[]): Promise<ArrayBuffer>
 
 ## App:
 
-- [ ] --> 0.5.x 重构React组织和实现，将使项目具有一定可用性，可以在生产环境使用（不考虑动态加载模组功能）
-- [ ] 0.6.x 版本将重构迁移至**electron**，使用node.js提供的文件api能力进行配置文件，模组等内容的读写
-- [ ] 0.7.x 版本将完成模组编写的库分发配置，届时考虑在electron版本的生成环境下开放模组sdk环境进行编写，调试和加载
+- [x] 0.5.x 用node.js提供的文件api能力进行配置文件，模组等内容的读写
+- [ ] --> 0.6.x 重构React组织和实现，将使项目具有一定可用性，**支持docker部署**，拥有SDK
+- [ ] 0.7.x 版本将重构迁移至**electron**
 
 # 开源协议
 

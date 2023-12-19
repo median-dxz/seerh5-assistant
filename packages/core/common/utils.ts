@@ -144,8 +144,8 @@ export function hookFn<T extends object, K extends keyof T>(target: T, funcName:
     let func = target[funcName] as AnyFunction;
     if (typeof func !== 'function') return;
 
-    if (Object.hasOwn(func, 'originalFunction')) {
-        func = (func as any).originalFunction;
+    if (assertIsHookedFunction(func)) {
+        func = func[HookedSymbol.original];
     }
 
     if (hookedFunc == undefined) return;
@@ -154,15 +154,15 @@ export function hookFn<T extends object, K extends keyof T>(target: T, funcName:
         return hookedFunc.call(this, func.bind(this), ...args);
     };
 
-    (target[funcName] as any).originalFunction = func;
+    (target[funcName] as any)[HookedSymbol.original] = func;
 }
 
 export function restoreHookedFn<T extends object, K extends keyof T>(target: T, funcName: K) {
     let func = target[funcName] as AnyFunction;
     if (typeof func !== 'function') return;
 
-    while (Object.hasOwn(func, 'originalFunction')) {
-        func = (func as any).originalFunction;
+    while (assertIsHookedFunction(func)) {
+        func = func[HookedSymbol.original];
     }
 
     (target[funcName] as any) = func;

@@ -51,6 +51,7 @@ export class LevelManager {
         const lockFn = async () => {
             logger('预处理');
             await beforeAll?.();
+            const autoCureState = await Engine.autoCureState();
 
             const battle = async () => {
                 const { strategy, pets, beforeBattle } = runner.selectLevelBattle();
@@ -58,7 +59,6 @@ export class LevelManager {
                 logger('准备对战');
                 await Engine.switchBag(pets);
 
-                const autoCureState = await Engine.autoCureState();
                 Engine.toggleAutoCure(false);
                 Engine.cureAllPet();
 
@@ -79,11 +79,9 @@ export class LevelManager {
                     logger('对战完成');
                 } catch (error) {
                     this.runner = null;
-                    logger(`接管对战失败错误: ${error as string}`);
+                    logger(`接管对战失败: ${error as string}`);
                 }
 
-                // 恢复自动治疗状态
-                await Engine.toggleAutoCure(autoCureState);
                 manager.clear();
             };
 
@@ -106,6 +104,10 @@ export class LevelManager {
                 if (!this.runner) break;
             }
             logger('正在停止关卡');
+            // 恢复自动治疗状态
+            await Engine.toggleAutoCure(autoCureState);
+            // TODO
+            Engine.cureAllPet();
             await afterAll?.();
 
             logger('关卡完成');

@@ -21,6 +21,14 @@ export const matchRotatingSkills = (skillNames: string[]) => (skills: Skill[], r
     return r?.id;
 };
 
+export const matchHideSkill = () => (pet: Pet, skills: Skill[]) => {
+    // TODO implement it
+};
+
+export const matchAttack = () => (skills: Skill[]) => {
+    // TODO implement it
+};
+
 export const matchNoBloodChain = (petNames: string[]) => (pets: Pet[], dyingCt: number) => {
     const r = pets.find((pet) => pet.catchTime === dyingCt);
     if (!r) return -1;

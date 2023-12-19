@@ -73,7 +73,11 @@ async function buildConfig({ scope, id }: { id: string; scope: string }, default
 
 export async function createModContext(options: CreateContextOptions) {
     const ct = (...pets: string[]) => {
-        return pets.map((pet) => ctStore.ctByName(pet));
+        const r = pets.map((pet) => ctStore.ctByName(pet));
+        if (r.some((v) => v === undefined)) {
+            throw new Error(`Pet ${pets} not found`);
+        }
+        return r as number[];
     };
 
     const battle = (name: string) => {

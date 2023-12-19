@@ -18,6 +18,7 @@ import { loginProxy } from './middlewares/loginProxy.ts';
 
 import { buildSEALContext } from './context.ts';
 import { PetCache } from './data/PetCacheManager.ts';
+import { fastifyLogRotate } from './logger/index.ts';
 import { apiRouter } from './router/index.ts';
 
 export async function createServer() {
@@ -40,6 +41,7 @@ export async function createServer() {
         }
     });
 
+    await server.register(fastifyLogRotate);
     await server.register(fastifyMiddie);
     await server.register(cors, {
         origin: (origin, cb) => {

@@ -6,7 +6,7 @@ import { ProxyPet } from './SEAPet.js';
 export type CatchTime = number;
 
 class PetDataManager {
-    private readonly CacheSize = 50;
+    private readonly CacheSize = 200;
     private cacheTimestamp = new Map<CatchTime, number>();
     private hasInit = false;
 
@@ -52,7 +52,7 @@ class PetDataManager {
                 this.bag.deactivate();
             });
 
-            SEAEventSource.socket(CommandID.USE_PET_ITEM_OUT_OF_FIGHT, 'receive').on(() => {
+            SEAEventSource.socket(CommandID.USE_PET_ITEM_OUT_OF_FIGHT, 'send').on(() => {
                 this.bag.deactivate();
             });
 
@@ -97,6 +97,12 @@ class PetDataManager {
         this.hasInit = true;
     }
 
+    async getAllPets(): Promise<{ catchTime: number; name: string; id: number }[]> {
+        const data1 = (await this.bag.get()).flat();
+        const data2 = Array.from((await this.miniInfo.get()).values());
+        return [...data1, ...data2];
+    }
+
     cachePet(pet: ProxyPet) {
         this.cache.set(pet.catchTime, pet);
         this.cacheTimestamp.set(pet.catchTime, Date.now());
@@ -123,10 +129,23 @@ class PetDataManager {
         }
     }
 
-    query(ct: CatchTime) {
-        this.bag.deactivate();
+    async query(ct: CatchTime) {
         this.cache.delete(ct);
         this.cacheTimestamp.delete(ct);
+
+        const all = await this.getAllPets();
+        if (!all.some((pet) => pet.catchTime === ct)) {
+            throw Error(`ct: ${ct} 不存在`);
+        }
+
+        const petInBag = this.bag
+            .getImmediate()
+            .flat()
+            .find((pet) => pet.catchTime === ct);
+
+        if (petInBag) {
+            return petInBag;
+        }
 
         if (!this.queryQueue.has(ct)) {
             this.queryQueue.set(ct, []);
@@ -142,4 +161,3 @@ class PetDataManager {
 const ins = new PetDataManager();
 
 export { ins as PetDataManger };
-

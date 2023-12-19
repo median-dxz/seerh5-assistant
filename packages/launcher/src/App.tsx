@@ -5,8 +5,6 @@ import { SEAEventSource, Subscription } from 'sea-core';
 
 import { SEALContextProvider } from '@/context/SEALContextProvider';
 
-import { ModLoader } from '@/service/mod/ModLoader';
-
 import { Command } from '@/views/Command';
 import { Main } from '@/views/Main';
 import { QuickAccess } from '@/views/QuickAccess';
@@ -62,7 +60,6 @@ export default function App() {
     return (
         <SEALContextProvider>
             <CssBaseline />
-            <ModLoader />
             {!fighting && (
                 <QuickAccess
                     ariaLabel="Seerh5 Assistant Quick Access"

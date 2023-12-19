@@ -60,7 +60,7 @@ export default async function builtinBattle(createContext: SEAL.createModContext
         },
         {
             name: 'LevelExpTraining',
-            pets: ['蒂朵', '暴君史莱姆', '西斯里', '幻影蝶'],
+            pets: ['幻影蝶', '蒂朵', '暴君史莱姆', '西斯里'],
             strategy: 'LevelExpTraining',
         },
         {

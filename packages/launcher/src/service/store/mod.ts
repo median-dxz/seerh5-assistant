@@ -1,11 +1,11 @@
 import * as EndPoints from '../endpoints';
-import { buildMeta, createModContext } from '../mod/context';
+import { buildMeta, createModContext } from '../mod/createContext';
 
 type Mod = SEAL.ModExport;
 type ModModuleExport = (createContext: typeof createModContext) => Promise<Mod>;
 
 import type { AnyFunction } from 'sea-core';
-import { getNamespace } from '../mod/context';
+import { getNamespace } from '../mod/createContext';
 import * as battleStore from '../store/battle';
 import * as commandStore from '../store/command';
 import * as levelStore from '../store/level';
@@ -102,8 +102,8 @@ export class ModInstance {
 
 export const store = new Map<string, ModInstance>();
 
-export async function fetchMods() {
-    const modList = await EndPoints.getAllMods();
+export async function fetchMods(mods?: EndPoints.ModPathList) {
+    const modList = mods ?? (await EndPoints.getAllMods());
 
     const promises = modList.map(({ path }) =>
         import(/* @vite-ignore */ `/mods/${path}?r=${Math.random()}`)
@@ -170,7 +170,6 @@ export function setup({ install, uninstall, meta, exports }: Mod) {
     ins.tryRegisterLevel(exports?.level);
     ins.tryRegisterCommand(exports?.command);
     ins.tryRegisterSign(exports?.sign);
-
 
     store.set(ins.meta.namespace, ins);
 }

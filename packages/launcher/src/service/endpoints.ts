@@ -12,7 +12,7 @@ const trpcClient = createTRPCProxyClient<ApiRouter>({
     transformer: superjson,
 });
 
-type ModPathList = Array<{ path: string }>;
+export type ModPathList = Array<{ path: string }>;
 
 type AllMods = () => Promise<ModPathList>;
 export const getAllMods: AllMods = async () => {

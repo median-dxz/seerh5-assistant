@@ -363,7 +363,7 @@ function RunnerDetailDialog({ open, close, runnerState }: RunnerDetailDialogProp
                             },
                         }}
                         fullWidth
-                        defaultValue={runnerState.logs.join('\n')}
+                        value={runnerState.logs.join('\n')}
                     />
                 </Paper>
             </DialogContent>

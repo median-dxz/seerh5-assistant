@@ -99,20 +99,16 @@ export default async function builtinStrategy(createContext: SEAL.createModConte
             name: 'LevelExpTraining',
             async resolveMove({ round }, skills, _) {
                 let r;
-                if (round === 0) {
-                    r = Strategy.matchSkillName('时空牵绊')(skills);
-                } else if (round === 1) {
-                    r = Strategy.matchSkillName('朵·盛夏咏叹')(skills);
-                } else if (round === 2) {
-                    r = Strategy.matchSkillName('幻梦芳逝')(skills);
-                }
                 r = r ?? Strategy.matchSkillName('竭血残蝶')(skills);
-                r = r ?? Strategy.matchRotatingSkills(['暴政统治者', '闪光次元击'])(skills, round);
-                r = r ?? Strategy.matchSkillName('巫祝祈愿符');
-                return SEABattle.operator.useSkill(r);
+                r = r ?? Strategy.matchSkillName('巫祝祈愿符')(skills);
+                r = r ?? Strategy.matchSkillName('幻梦芳逝')(skills);
+                r = r ?? Strategy.matchRotatingSkills(['暴政统治者', '暴君意志', '闪光次元击'])(skills, round);
+                const callResult = await SEABattle.operator.useSkill(r);
+                if (!callResult) SEABattle.operator.auto();
+                return true;
             },
             async resolveNoBlood({ self }, _, pets) {
-                const next = Strategy.matchNoBloodChain(['蒂朵', '暴君史莱姆', '幻影蝶', '西斯里'])(
+                const next = Strategy.matchNoBloodChain(['幻影蝶', '西斯里', '蒂朵', '暴君史莱姆'])(
                     pets,
                     self.catchtime
                 );
@@ -135,7 +131,9 @@ export default async function builtinStrategy(createContext: SEAL.createModConte
                 r = r ?? Strategy.matchRotatingSkills(['光荣之梦', '神灵救世光'])(skills, round);
                 r = r ?? Strategy.matchRotatingSkills(['龙子诞生', '王·龙子盛威决'])(skills, round);
                 r = r ?? Strategy.matchRotatingSkills(['狂龙击杀', '王·龙战八荒'])(skills, round);
-                return SEABattle.operator.useSkill(r);
+                const callResult = await SEABattle.operator.useSkill(r);
+                if (!callResult) SEABattle.operator.auto();
+                return true;
             },
             async resolveNoBlood({ self }, _, pets) {
                 const next = Strategy.matchNoBloodChain(['幻影蝶', '王之哈莫', '蒂朵'])(pets, self.catchtime);

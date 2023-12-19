@@ -1,9 +1,19 @@
 import type { Pet } from 'sea-core';
-import { Engine, PetDataManger, SEAEventSource, SEAPet, hookPrototype } from 'sea-core';
+import {
+    Engine,
+    GameConfigRegistry,
+    PetDataManger,
+    SEAEventSource,
+    SEAPet,
+    hookPrototype,
+    restoreHookedFn,
+    wrapper,
+} from 'sea-core';
 
 interface PetFragment {
     EffectMsglog: number;
     ID: number;
+    itemID?: number;
     MonsterID: number;
     MoveID: number;
     MovesConsume: number;
@@ -23,10 +33,26 @@ declare const DisplayUtil: {
     setEnabled(target: egret.DisplayObject, enabled: boolean): void;
 };
 
+declare class PetFragmentXMLInfo {
+    static getItemByID(id?: number): PetFragment;
+    static GetShowArrInfos(arg: number): PetFragment[];
+}
+
+declare global {
+    namespace itemWarehouse {
+        interface ItemWarehouse {
+            currList: PetFragment[];
+            getFilterPetFactorItems(): Promise<void>;
+            _curRarity: number[];
+            _currentAttributeID: number[];
+            allType: number;
+        }
+    }
+}
+
 export async function findPetById(id: number): Promise<Pet | null> {
-    const data1 = (await PetDataManger.bag.get()).flat();
-    const data2 = Array.from(await PetDataManger.miniInfo.get()).map(([_, pet]) => pet);
-    const r = [...data1, ...data2].find((pet) => pet.id === id);
+    const data = await PetDataManger.getAllPets();
+    const r = data.find((pet) => pet.id === id);
     if (r) {
         return SEAPet(r.catchTime).get();
     } else {
@@ -45,61 +71,146 @@ export default async function ItemWareHouse(createContext: SEAL.createModContext
     });
 
     const load = () => {
-        // hookPrototype(itemWarehouse.ItemWarehouse, '', function () {
-        //     t = [];
-        //     e = PetFragmentXMLInfo.GetShowArrInfos(1);
-        //     i = function (t) {
-        //         var e = t.Rarity;
-        //         return o._curRarity.indexOf(e) > -1;
-        //     };
-        //     n = [];
-        //     r = [];
-        //     s = [];
-        //     e.filter(function (t) {
-        //         var e = t,
-        //             a = e.MonsterID,
-        //             u = +PetXMLInfo.getType(a),
-        //             _ = i(e),
-        //             h = ItemManager.checkPetFactorRedFlag(t.ID, e),
-        //             c = ItemManager.getInfo(t.ID);
+        const skillQuery = GameConfigRegistry.getQuery('skill');
+        const petQuery = GameConfigRegistry.getQuery('pet');
+        hookPrototype(itemWarehouse.ItemWarehouse, 'getFilterPetFactorItems', async function (fn) {
+            if (this.allType === 1) {
+                return fn();
+            }
 
-        //         let l;
-        //         if (1 == o.allType) {
-        //             l = true;
-        //         } else if (2 == o.allType) {
-        //             l = h;
-        //         } else {
-        //             l = !c;
-        //         }
+            let r = PetFragmentXMLInfo.GetShowArrInfos(1)
+                .filter((petFragment) => {
+                    const { MonsterID } = petFragment;
+                    const pet = petQuery.get(MonsterID);
+                    if (!pet) return false;
+                    // 筛选精灵属性
+                    if (this._currentAttributeID.length > 0) {
+                        return this._currentAttributeID.includes(pet.Type);
+                    } else {
+                        return true;
+                    }
+                })
+                .filter(({ Rarity }) => this._curRarity.includes(Rarity)); // 筛选品质
 
-        //         g = (o._currentAttributeID.indexOf(u) > -1 || !o._currentAttributeID.length) && l && _;
-        //         return g && (h ? n.push(t) : c ? r.push(t) : s.push(t)), g;
-        //     });
-        //     return (this.currList = n.concat(r, s));
-        // });
-        hookPrototype(itemWarehouse.ItemWarehouse, 'onShowPetFactorInfo', async function (fn) {
-            fn();
+            const allPets = await PetDataManger.getAllPets();
+
+            // 未拥有
+            if (this.allType === 3) {
+                this.currList = r.filter(({ MonsterID, ID }) => {
+                    const itemCount = ItemManager.getNumByID(ID);
+                    const pet = allPets.find((pet) => pet.id === MonsterID);
+                    return !pet && itemCount > 0;
+                });
+            }
+
+            // 可合成
+            if (this.allType === 2) {
+                const pets = await Promise.all(
+                    allPets
+                        .filter((pet) => {
+                            return r.some(({ MonsterID }) => MonsterID === pet.id);
+                        })
+                        .map(async (pet) => {
+                            const spet = await SEAPet(pet.catchTime).get();
+                            const notActivatedEffect = !(await Engine.isPetEffectActivated(spet));
+                            return {
+                                id: pet.id,
+                                notActivatedHideSkill: spet.hideSkillActivated === false,
+                                notActivatedEffect,
+                            };
+                        })
+                );
+
+                const filterResults = await Promise.all(
+                    r.map(async ({ ID, MonsterID }) => {
+                        const itemCount = ItemManager.getNumByID(ID);
+                        const pet = pets.find((pet) => pet.id === MonsterID);
+                        if (!pet) return false;
+
+                        const { notActivatedEffect, notActivatedHideSkill } = pet;
+
+                        return itemCount > 0 && (notActivatedEffect || notActivatedHideSkill);
+                    })
+                );
+                this.currList = r.filter((_, i) => filterResults[i]);
+            }
+
+            // 按稀有度排序, 稀有度相同按ID倒序
+            this.currList.sort((a, b) => {
+                if (b.Rarity - a.Rarity) {
+                    return b.Rarity - a.Rarity;
+                } else {
+                    return b.ID - a.ID;
+                }
+            });
+        });
+
+        // 显示因子是否获得并在对应情况下禁用兑换按钮
+        itemWarehouse.ItemWarehouse.prototype.onShowPetFactorInfo = wrapper(
+            itemWarehouse.ItemWarehouse.prototype.onShowPetFactorInfo
+        ).after(async function (this: itemWarehouse.ItemWarehouse, _) {
             const data: PetFragment = this._list.selectedItem;
-            const pet = (await findPetById(data.MonsterID))!;
 
+            // 对非唯一性精灵不做修改
+            if (data.PetLimit !== 1) {
+                return;
+            }
+
+            const pet = await findPetById(data.MonsterID);
+            const itemCount = ItemManager.getNumByID(data.ID);
+
+            let check: boolean | undefined = undefined;
             if (this._petFactorPage === 1) {
-                this.txtPetname.text = `${PetXMLInfo.getName(data.MonsterID)} ${pet ? '(已获得)' : ''}`;
-                DisplayUtil.setEnabled(this.btnhecheng, !Boolean(pet));
+                this.txtPetname.text = `${petQuery.getName(data.MonsterID)} ${pet ? '(已获得)' : ''}`;
+                check = data.PetConsume <= itemCount;
             } else if (this._petFactorPage === 2) {
-                if (pet.hasEffect) {
-                    const check = await Engine.isPetEffectActivated(pet);
-                    this.txtTexing.text = `专属特性: ${check ? '已开启' : '未开启'}`;
-                    DisplayUtil.setEnabled(this.btnhecheng, !check);
+                if (pet?.hasEffect) {
+                    const activated = await Engine.isPetEffectActivated(pet);
+                    this.txtTexing.text = `专属特性: ${activated ? '已开启' : '未开启'}`;
+                    check = data.NewseConsume <= itemCount && !activated;
+                }
+                if (!pet) {
+                    check = false;
                 }
             } else if (this._petFactorPage === 3) {
-                if (pet.hideSkillActivated != undefined) {
+                if (pet?.hideSkillActivated != undefined) {
                     const hideSkillId = data.MoveID;
-                    this.txtMsg_kb_3.text = `${SkillXMLInfo.getName(hideSkillId)} ${
+                    this.txtMsg_kb_3.text = `${skillQuery.getName(hideSkillId)} ${
                         pet.hideSkillActivated ? '(已开启)' : '(未开启)'
                     }`;
-                    DisplayUtil.setEnabled(this.btnhecheng, !pet.hideSkillActivated);
+                    check = data.MovesConsume <= itemCount && !pet.hideSkillActivated;
+                }
+                if (!pet) {
+                    check = false;
                 }
             }
+
+            if (check != undefined) {
+                DisplayUtil.setEnabled(this.btnhecheng, check);
+            }
+        });
+
+        // 尝试自动设置首发
+        hookPrototype(itemWarehouse.ItemWarehouse, 'onCompose', async function (fn) {
+            const data: PetFragment = this._list.selectedItem;
+
+            // 对非唯一性精灵不做修改
+            if (data.PetLimit !== 1) {
+                return;
+            }
+
+            const { NeedmonID, MonsterID } = PetFragmentXMLInfo.getItemByID(data.itemID) || data;
+
+            const needPet = await findPetById(NeedmonID);
+            const pet = await findPetById(MonsterID);
+
+            if (this._petFactorPage === 1 && NeedmonID && needPet) {
+                await SEAPet(needPet).default();
+            } else if (this._petFactorPage > 1 && pet) {
+                await SEAPet(pet).default();
+            }
+
+            fn();
         });
     };
 
@@ -108,9 +219,16 @@ export default async function ItemWareHouse(createContext: SEAL.createModContext
 
     const install = () => {
         sub = ds.on(load);
+        if (globalThis.itemWarehouse) {
+            load();
+        }
     };
 
     const uninstall = () => {
+        if (globalThis.itemWarehouse) {
+            restoreHookedFn(itemWarehouse.ItemWarehouse.prototype, 'onShowPetFactorInfo');
+            restoreHookedFn(itemWarehouse.ItemWarehouse.prototype, 'onCompose');
+        }
         ds.off(sub);
     };
 
