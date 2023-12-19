@@ -15,29 +15,20 @@
 
 # 近期公告
 
-见ChangeLog
+**全面暂停SEAL的开发（目前版本已经具备初步可用性）**，开始对`sea-core`模块进行一系列调整，准备进行`1.0.0-rc.1`版本的发布
+
+重大事项：
+
+- [ ] api全面文档化，使用`docusauru`在`github.io`上搭建api参考
+- [ ] 编写教程（仅包含core层的使用）
+- [ ] 将集成测试移入单独的包
+- [ ] 全面启用真正的单元测试，采用jest
+- [ ] 命名空间，导出再次调整
+- [ ] 修复若干历史遗留问题
 
 ## 最近更新的内容
 
-- [x] 使用import map, 在全局共享`sea-core`ES模块实例, 使插件捆绑后以原生esm方式即可使用core, 基于vite插件实现
-- [x] `SEAPet` 更换更优雅的链式调用api
-```typescript
-// 调用SEAPet事实上已经返回了一个Promise, 但是为了清晰起见,
-// 以及防止vscode的自动提示出现两个相同的属性(其中一个是自动帮你嵌套await后获取ProxyPet上的属性)
-// 约定使用一个get方法来获取返回的ProxyPet
-await SEAPet(pet).get(); 
-// get的用法和Promise的then一模一样, 实际上内部直接调用了Promise的then
-await SEAPet(pet).get((pet) => {
-    return pet.cure();
-});
-// 很优雅的异步获取属性
-await SEAPet(pet).catchTime;
-// 很优雅的异步调用突变方法
-await SEAPet(pet).default();
-// 对于更新并返回自身的突变, 可以很优雅的链式调用,
-// 如果最后一个调用仍然返回自身, 使用done属性来获取实际的promise
-await SEAPet(pet).cure().location().done;
-```
+见ChangeLog
 
 # 简介
 
