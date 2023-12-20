@@ -1,6 +1,6 @@
 import { Fade, Paper, Tabs, Typography, useTheme } from '@mui/material';
 import { alpha, Box, Stack } from '@mui/system';
-import { CoreLoader } from '@sea/core';
+import { core } from '@sea/core';
 import React, { forwardRef, type ReactElement } from 'react';
 import { SwitchTransition } from 'react-transition-group';
 
@@ -181,7 +181,7 @@ export function TabView() {
                     <Typography fontSize={22} fontFamily={fonts.input}>
                         Core
                         <Typography fontSize={12} fontFamily={fonts.input} component="span">
-                            {` v${CoreLoader.version}`}
+                            {` v${core.version}`}
                         </Typography>
                     </Typography>
                 </Paper>

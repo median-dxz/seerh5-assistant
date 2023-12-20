@@ -1,25 +1,23 @@
 /* eslint-disable */
-export type AnyFunction = (...args: any[]) => unknown;
+export type AnyFunction = (...args: any[]) => any;
 export type Constructor<T> = { new (...args: any[]): T };
 export type ValueOf<T> = T[keyof T];
 export type WithClass<T> = T & { __class__: string };
 export const NOOP = () => {};
 
-class HookedSymbol {
+export class HookedSymbol {
     static readonly original = Symbol('originalFunction');
     static readonly before = Symbol('beforeDecorators');
     static readonly after = Symbol('afterDecorators');
 }
 
-/**
- * 延时
- */
+const logger = getModuleLogger(ModuleName.Utils);
+
+/** 延时 */
 export function delay(time: number): Promise<void> {
     return new Promise((resolver) => setTimeout(resolver, time));
 }
-/**
- * 去抖 所有小于指定间隔的调用只会响应最后一个
- */
+/** 去抖 所有小于指定间隔的调用只会响应最后一个 */
 export function debounce<F extends AnyFunction>(func: F, time: number) {
     let timer: number | undefined;
     return function (this: unknown, ...args: Parameters<F>) {
@@ -30,9 +28,7 @@ export function debounce<F extends AnyFunction>(func: F, time: number) {
     };
 }
 
-/**
- * 节流 所有小于指定间隔的调用只会响应第一个
- */
+/** 节流 所有小于指定间隔的调用只会响应第一个 */
 export function throttle<F extends AnyFunction>(func: F, time: number) {
     let timer: number | undefined;
     return function (this: unknown, ...args: Parameters<F>) {
@@ -81,20 +77,8 @@ export function assertIsWrappedFunction<F extends AnyFunction>(
     );
 }
 
-export function wrapper<F extends (...args: any) => any>(func: F | HookedFunction<F> | WrappedFunction<F>) {
+export function wrapper<F extends AnyFunction>(func: F | HookedFunction<F> | WrappedFunction<F>) {
     if (typeof func !== 'function') return undefined as never;
-
-    let originalFunc;
-
-    if (assertIsWrappedFunction(func)) {
-        return func;
-    }
-
-    if (assertIsHookedFunction(func)) {
-        originalFunc = func[HookedSymbol.original];
-    } else {
-        originalFunc = func;
-    }
 
     const createWrappedFunction = (
         originalFunction: F,
@@ -106,7 +90,7 @@ export function wrapper<F extends (...args: any) => any>(func: F | HookedFunctio
                 decorator.apply(this, args);
             });
 
-            const r = func.apply(this, args);
+            const r = func.apply(this, args); // 注意这里没有使用 originalFunction
 
             afterDecorators.forEach((decorator) => {
                 if (r instanceof Promise) {
@@ -141,6 +125,22 @@ export function wrapper<F extends (...args: any) => any>(func: F | HookedFunctio
         return wrapped;
     };
 
+    let originalFunc: F;
+
+    if (assertIsWrappedFunction(func)) {
+        return createWrappedFunction(
+            func[HookedSymbol.original],
+            [...func[HookedSymbol.before]],
+            [...func[HookedSymbol.after]]
+        );
+    }
+
+    if (assertIsHookedFunction(func)) {
+        originalFunc = func[HookedSymbol.original];
+    } else {
+        originalFunc = func;
+    }
+
     return createWrappedFunction(originalFunc, [], []);
 }
 
@@ -152,25 +152,25 @@ type HookFunction<T extends object, K extends keyof T> = T[K] extends (...args: 
  * 就地修改函数实现
  * @param target 目标函数的挂载对象
  * @param funcName 目标函数的名称
- * @param hookedFunc 修改后的实现
+ * @param hooked 修改后的实现
  */
-export function hookFn<T extends object, K extends keyof T>(target: T, funcName: K, hookedFunc?: HookFunction<T, K>) {
+export function hookFn<T extends object, K extends keyof T>(target: T, funcName: K, override: HookFunction<T, K>) {
     let func = target[funcName] as AnyFunction;
     if (typeof func !== 'function') return;
 
     if (assertIsHookedFunction(func)) {
+        logger.warn(`[hookFn]: 检测到对 ${String(funcName)} 的重复hook行为, 这可能导致冲突`);
         func = func[HookedSymbol.original];
     }
 
-    if (hookedFunc == undefined) return;
-
     (target[funcName] as any) = function (this: T, ...args: any[]): any {
-        return hookedFunc.call(this, func.bind(this), ...args);
+        return override.call(this, func.bind(this), ...args);
     };
 
     (target[funcName] as any)[HookedSymbol.original] = func;
 }
 
+/** 还原被修改的函数 */
 export function restoreHookedFn<T extends object, K extends keyof T>(target: T, funcName: K) {
     let func = target[funcName] as AnyFunction;
     if (typeof func !== 'function') return;
@@ -189,13 +189,24 @@ interface HasPrototype {
 export function hookPrototype<T extends HasPrototype, K extends keyof T['prototype']>(
     target: T,
     funcName: K,
-    hookedFunc?: HookFunction<T['prototype'], K>
+    override: HookFunction<T['prototype'], K>
 ) {
     const proto = target.prototype;
-    proto && hookFn(proto, funcName, hookedFunc);
+    proto && hookFn(proto, funcName, override);
+}
+
+export function experiment_hookConstructor<TClass extends Constructor<any>>(
+    classType: TClass,
+    override: (ins: InstanceType<TClass>, ...args: ConstructorParameters<TClass>) => void
+) {
+    hookFn(globalThis as any, classType.name, (_, ...args) => {
+        const ins = new classType(...args);
+        override(ins, ...(args as ConstructorParameters<TClass>));
+        return ins;
+    });
 }
 
 export { CacheData } from './CacheData.js';
 
-import { disable, enable, setLogger } from './log.js';
-export const LogControl = { disable, enable, setLogger };
+import { ModuleName, getModuleLogger, setDev, setLogger } from './log.js';
+export const coreLog = { setDev, setLogger };

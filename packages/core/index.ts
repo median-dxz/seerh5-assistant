@@ -1,6 +1,21 @@
-import { SEAC } from './loader/index.js';
+import { SEACore } from './loader/index.js';
 
-export * from './common/utils.js';
+export {
+    NOOP,
+    assertIsHookedFunction,
+    assertIsWrappedFunction,
+    coreLog,
+    debounce,
+    delay,
+    experiment_hookConstructor,
+    hookFn,
+    hookPrototype,
+    restoreHookedFn,
+    throttle,
+    wrapper
+} from './common/utils.js';
+export type { AnyFunction, Constructor, ValueOf, WithClass } from './common/utils.js';
+
 export * from './constant/index.js';
 
 export * from './battle/index.js';
@@ -11,7 +26,7 @@ export * from './event-source/index.js';
 export * from './pet-helper/index.js';
 
 export type { VERSION } from './loader/index.js';
-export const core = new SEAC();
+export const core = new SEACore();
 
 declare global {
     interface Window {
@@ -20,8 +35,8 @@ declare global {
     }
 
     interface SEA {
-        /** sea-core 全局单例 */
-        core: SEAC;
+        /** seac 全局单例 */
+        seac: SEACore;
         /** 游戏核心加载就绪标志位 */
         SeerH5Ready: boolean;
         /**  game core loaded event */

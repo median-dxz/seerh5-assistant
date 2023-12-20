@@ -26,7 +26,6 @@
         "./functions",
         "./loader",
         "./pet-helper",
-        "./test",
         "index.ts",
         "package.json"
     ],

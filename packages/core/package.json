@@ -1,6 +1,6 @@
 {
   "name": "@sea/core",
-  "description": "SeerH5-Assistant SEA 核心库",
+  "description": "SeerH5-Assistant SEA 核心",
   "type": "module",
   "version": "1.0.0-rc.1",
   "license": "MPL-2.0",
@@ -38,6 +38,7 @@
     "loader"
   ],
   "devDependencies": {
+    "happy-dom": "^12.10.3",
     "vitest": "^1.0.4"
   },
   "dependencies": {

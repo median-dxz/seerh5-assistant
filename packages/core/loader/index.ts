@@ -10,11 +10,10 @@ interface SetupFn {
     fn: AnyFunction;
 }
 
-export class SEAC {
-    static checkEnv = () =>
-        typeof window !== 'undefined' && window === window.self && typeof window.sea === 'undefined';
+const checkEnv = () => typeof window !== 'undefined' && window === window.self && typeof window.sea === 'undefined';
 
-    static readonly version = VERSION;
+export class SEACore {
+    readonly version = VERSION;
 
     private loadCalled: boolean;
     private setupFns: Array<SetupFn> = [];
@@ -27,13 +26,13 @@ export class SEAC {
     }
 
     constructor() {
-        if (SEAC.checkEnv()) {
+        if (checkEnv()) {
             this.loadCalled = false;
 
             window.sea = {
                 SEER_READY_EVENT,
                 SeerH5Ready: false,
-                core: this,
+                seac: this,
             };
 
             this.addSetupFn('beforeGameCoreInit', coreSetupBasic);

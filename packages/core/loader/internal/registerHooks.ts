@@ -13,12 +13,11 @@ export default () => {
     });
 
     HookRegistry.register('module:openMainPanel', (resolve) => {
-        const originalFn = BasicMultPanelModule.prototype.onShowMainPanel;
-        BasicMultPanelModule.prototype.onShowMainPanel = async function () {
+        hookPrototype(BasicMultPanelModule, 'onShowMainPanel', async function () {
             await this.openPanel(this._mainPanelName);
             resolve({ module: this.moduleName, panel: this._mainPanelName });
-        };
-        return () => (BasicMultPanelModule.prototype.onShowMainPanel = originalFn);
+        });
+        return () => void restoreHookedFn(BasicMultPanelModule.prototype, 'onShowMainPanel');
     });
 
     HookRegistry.register('module:show', (resolve) => {
@@ -31,7 +30,7 @@ export default () => {
                 resolve({ module, moduleInstance: currModule });
             }
         });
-        return () => restoreHookedFn(ModuleManager, 'beginShow');
+        return () => void restoreHookedFn(ModuleManager, 'beginShow');
     });
 
     HookRegistry.register('battle:showEndProp', (resolve) => {
@@ -50,8 +49,7 @@ export default () => {
     });
 
     HookRegistry.register('module:destroy', (resolve) => {
-        const originalFn = ModuleManager.removeModuleInstance;
-        ModuleManager.removeModuleInstance = function (module) {
+        hookFn(ModuleManager, 'removeModuleInstance', function (_, module) {
             const key = Object.keys(this._modules).find((key) => this._modules[key] === module);
             if (key) {
                 resolve(module.moduleName);
@@ -59,8 +57,8 @@ export default () => {
                 this._addModuleToFreeRes(module.moduleName, module.resList, module.resEffectList, config);
                 delete this._modules[key];
             }
-        };
-        return () => (ModuleManager.removeModuleInstance = originalFn);
+        });
+        return () => void restoreHookedFn(ModuleManager, 'removeModuleInstance');
     });
 
     HookRegistry.register('pop_view:open', (resolve) => {
@@ -84,9 +82,6 @@ export default () => {
                 resolve((Object.getPrototypeOf(popView) as WithClass<PopView>).__class__);
             }
         });
-        hookPrototype(PopViewManager, 'hideView', function (originalFunc, id, ...args) {
-            originalFunc(id, ...args);
-        });
         return () => restoreHookedFn(PopViewManager.prototype, 'hideView');
     });
 
@@ -94,6 +89,7 @@ export default () => {
         hookPrototype(AwardItemDialog, 'startEvent', async function (originalFunc, ...args) {
             originalFunc.apply(this, args);
             resolve();
+            // TODO 副作用移除
             LevelManager.stage.removeEventListener(egret.TouchEvent.TOUCH_TAP, this.startRemoveDialog, this);
             await delay(500);
             this.destroy();
@@ -113,7 +109,7 @@ export default () => {
             originalFunc(...args);
             const { enemyMode, playerMode } = FighterModelFactory;
             if (!enemyMode || !playerMode) return;
-            // todo: move this to launcher/feature
+            // TODO 副作用移除
             enemyMode.setHpView(true);
             enemyMode.setHpView = function () {
                 this.propView.isShowFtHp = true;

@@ -5,11 +5,11 @@ import registerHooks from './registerHooks.js';
 
 import { enableBetterAlarm } from './enableBetterAlarm.js';
 import { enableFastStaticAnimation } from './enableFastStaticAnimation.js';
+import { enableScriptDeobfuscation } from './enableScriptDeobfuscation.js';
 import { fixSoundLoad } from './fixSoundLoad.js';
-import { loadScript } from './loadScript.js';
 
 export function coreSetupBasic() {
-    ModuleManager.loadScript = loadScript;
+    enableScriptDeobfuscation();
     fixSoundLoad();
 }
 

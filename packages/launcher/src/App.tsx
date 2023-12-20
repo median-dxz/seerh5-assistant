@@ -1,15 +1,13 @@
 import { CssBaseline, Grow } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
-import { SEAEventSource, Subscription } from '@sea/core';
+import { SEAEventSource, Subscription, core } from '@sea/core';
 
 import { SEALContextProvider } from '@/context/SEALContextProvider';
 
 import { Command } from '@/views/Command';
 import { Main } from '@/views/Main';
 import { QuickAccess } from '@/views/QuickAccess';
-
-import { loader } from '@/init';
 
 export default function App() {
     const [init, setInit] = useState(false);
@@ -25,8 +23,7 @@ export default function App() {
 
     useEffect(() => {
         if (init) return;
-        loader
-            .load()
+        core.load()
             .then(() => {
                 setInit(true);
             })

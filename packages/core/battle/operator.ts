@@ -1,9 +1,8 @@
-import { CoreDevInfo, CoreWarning, ModuleName } from '../common/log.js';
+import { ModuleName, getModuleLogger } from '../common/log.js';
 import { delay } from '../common/utils.js';
 import { Socket } from '../engine/index.js';
 
-const warn = CoreWarning(ModuleName.Battle);
-const info = CoreDevInfo(ModuleName.Battle);
+const logger = getModuleLogger(ModuleName.Battle);
 
 function auto() {
     TimerManager.countDownOverHandler();
@@ -19,13 +18,13 @@ async function useSkill(skillId?: number) {
         return false;
     }
 
-    info(`[Operator] useSkill: ${SkillXMLInfo.getName(skillId)} ${skillId}`);
+    logger.debug(`[operator] useSkill: ${SkillXMLInfo.getName(skillId)} ${skillId}`);
 
     const controlPanelObserver = FighterModelFactory.playerMode.subject.array[1];
     controlPanelObserver.showFight();
     await delay(300);
     if (skillId <= 0) {
-        warn('非法的skillId');
+        logger.warn('非法的skillId');
         return false;
     } else {
         await Socket.sendByQueue(CommandID.USE_SKILL, [skillId]);
@@ -34,7 +33,7 @@ async function useSkill(skillId?: number) {
 }
 
 async function escape() {
-    info(`[Operator] escape`);
+    logger.debug(`[operator] escape`);
 
     await Socket.sendByQueue(CommandID.ESCAPE_FIGHT);
     return true;
@@ -45,7 +44,7 @@ async function useItem(itemId: number) {
         return false;
     }
 
-    info(`[Operator] useItem: ${itemId}`);
+    logger.debug(`[operator] useItem: ${itemId}`);
 
     const controlPanelObserver = FighterModelFactory.playerMode.subject.array[1];
 
@@ -67,11 +66,11 @@ async function switchPet(index: number) {
         return false;
     }
     if (index == undefined || index < 0) {
-        warn('非法的petIndex');
+        logger.warn('非法的petIndex');
         return false;
     }
 
-    info(`[Operator] switchPet: ${index}`);
+    logger.debug(`[operator] switchPet: ${index}`);
 
     const controlPanelObserver = FighterModelFactory.playerMode.subject.array[1];
     const { currPanelType } = controlPanelObserver;
@@ -85,7 +84,7 @@ async function switchPet(index: number) {
         petBtn.autoUse();
         return true;
     } catch (error) {
-        error instanceof Error && warn(`切换精灵失败: ${index} ${error.message}`);
+        error instanceof Error && logger.warn(`切换精灵失败: ${index} ${error.message}`);
         return false;
     }
 }

@@ -1,9 +1,9 @@
 /* eslint-disable */
-import { hookPrototype } from '../../common/utils.js';
+import { experiment_hookConstructor, hookPrototype } from '../../common/utils.js';
 
 /** parallel the skill animation in static animation mode */
 export function enableFastStaticAnimation() {
-    DBSkillAnimator.prototype.play = function (_, callback, thisObj) {
+    hookPrototype(DBSkillAnimator, 'play', function (f, _, callback, thisObj) {
         const { skillMC } = DBSkillAnimator;
         PetFightController.mvContainer.addChild(skillMC);
         switch (SkillXMLInfo.getCategory(~~this.skillId)) {
@@ -23,9 +23,9 @@ export function enableFastStaticAnimation() {
         } else {
             skillMC.once(dragonBones.EventObject.COMPLETE, callback.bind(thisObj), this);
         }
-    };
+    });
 
-    CardPetAnimator.prototype.playAnimate = function (t, e, i, thisObj) {
+    hookPrototype(CardPetAnimator, 'playAnimate', function (f, _, e, i, thisObj) {
         thisObj = thisObj ?? this;
         if (e)
             if (FightManager.fightAnimateMode === 1) e.call(thisObj);
@@ -34,7 +34,7 @@ export function enableFastStaticAnimation() {
             if (FightManager.fightAnimateMode === 1) i.call(thisObj);
             else egret.setTimeout(i.bind(thisObj), thisObj, 2000);
         this.animate?.parent?.addChild(this.animate);
-    };
+    });
 
     hookPrototype(UseSkillController, 'onMovieOver', function (f, ...args) {
         f.apply(this, ...args);
@@ -43,16 +43,13 @@ export function enableFastStaticAnimation() {
         }
     });
 
-    const _RenewPPEffect = RenewPPEffect;
-    (RenewPPEffect as unknown) = function (model: BaseFighterModel, itemId: number) {
-        const ins = new _RenewPPEffect(model, itemId);
+    experiment_hookConstructor(RenewPPEffect, function (ins) {
         if (FightManager.fightAnimateMode === 1) {
-             
             ins.timer?.removeEventListener(egret.TimerEvent.TIMER, ins.closeTxt, ins);
             ins.timer?.stop();
             ins.timer = null;
             EventManager.dispatchEvent(new PetFightEvent(PetFightEvent.ON_USE_PET_ITEM));
         }
         return ins;
-    };
+    });
 }
