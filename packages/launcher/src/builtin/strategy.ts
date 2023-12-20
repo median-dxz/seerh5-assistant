@@ -1,6 +1,6 @@
 import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
-import { SEABattle, Strategy } from 'sea-core';
-import { PotionId } from 'sea-core/constant';
+import { SEABattle, Strategy } from '@sea/core';
+import { PotionId } from '@sea/core/constant';
 
 const noop = async () => true;
 

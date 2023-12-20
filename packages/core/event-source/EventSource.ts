@@ -1,5 +1,4 @@
 import { take, type Observable, type Subscription } from 'rxjs';
-import type { Handler } from '../common/utils.js';
 import { fromEvent } from './source-builder/fromEvent.js';
 import { fromEventPattern } from './source-builder/fromEventPattern.js';
 import { fromGameModule } from './source-builder/fromGameModule.js';
@@ -21,13 +20,13 @@ export class SEAEventSource<T> {
         this._source$ = EventSource$;
     }
 
-    on(handler: Handler<T>) {
+    on(handler: (data: T) => void) {
         const subscription = this._source$.subscribe(handler);
         this.subscriptions.set(++this.subscriptionId, subscription);
         return this.subscriptionId;
     }
 
-    once(handler: Handler<T>) {
+    once(handler: (data: T) => void) {
         this._source$.pipe(take(1)).subscribe(handler);
     }
 

@@ -4,10 +4,10 @@ import { DS } from '@/constants';
 import { useMainState } from '@/context/useMainState';
 import { Button, CircularProgress, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
+import { BattleFireType, Engine, SEAEventSource, Socket, Subscription, throttle } from '@sea/core';
 import { produce } from 'immer';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
-import { BattleFireType, Engine, SEAEventSource, Socket, Subscription, throttle } from 'sea-core';
 import type { SWRSubscriptionOptions } from 'swr/subscription';
 import useSWRSubscription from 'swr/subscription';
 

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { LevelManager, SEAEventSource, Subscription } from '@sea/core';
 import { produce } from 'immer';
 import React, { useCallback, useEffect, useReducer, useRef, type PropsWithChildren, type Reducer } from 'react';
-import { LevelManager, SEAEventSource, Subscription } from 'sea-core';
 import { LevelScheduler, type LevelRunnerState } from './useLevelScheduler';
 const { ins: levelManager } = LevelManager;
 

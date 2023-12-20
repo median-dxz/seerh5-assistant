@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { Item } from 'sea-core';
+import { Item } from '@sea/core';
 
 import { Button, Typography } from '@mui/material';
 

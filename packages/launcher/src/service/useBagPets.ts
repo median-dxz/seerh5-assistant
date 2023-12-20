@@ -1,6 +1,6 @@
 import { DS } from '@/constants';
-import type { Pet } from 'sea-core';
-import { PetLocation, SEAEventSource, Subscription, debounce, getBagPets } from 'sea-core';
+import type { Pet } from '@sea/core';
+import { PetLocation, SEAEventSource, Subscription, debounce, getBagPets } from '@sea/core';
 import type { SWRSubscriptionOptions } from 'swr/subscription';
 import useSWRSubscription from 'swr/subscription';
 

@@ -1,5 +1,5 @@
-import * as core from 'sea-core';
-import { CoreLoader, LogControl, NOOP } from 'sea-core';
+import * as core from '@sea/core';
+import { CoreLoader, LogControl, NOOP } from '@sea/core';
 
 import { IS_DEV } from '@/constants';
 import { setupForLauncher } from '@/features/setup';

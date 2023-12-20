@@ -2,9 +2,9 @@ import { Paper } from '@/components/styled/Paper';
 import { Row } from '@/components/styled/Row';
 import { DS } from '@/constants';
 import { CircularProgress, Switch, Typography } from '@mui/material';
+import { Engine, SEAEventSource, Subscription } from '@sea/core';
 import type { ChangeEvent } from 'react';
 import React from 'react';
-import { Engine, SEAEventSource, Subscription } from 'sea-core';
 import type { SWRSubscriptionOptions } from 'swr/subscription';
 import useSWRSubscription from 'swr/subscription';
 

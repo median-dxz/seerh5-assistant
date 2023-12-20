@@ -4,7 +4,7 @@ import { buildMeta, createModContext } from '../mod/createContext';
 type Mod = SEAL.ModExport;
 type ModModuleExport = (createContext: typeof createModContext) => Promise<Mod>;
 
-import type { AnyFunction } from 'sea-core';
+import type { AnyFunction } from '@sea/core';
 import { getNamespace } from '../mod/createContext';
 import * as battleStore from '../store/battle';
 import * as commandStore from '../store/command';

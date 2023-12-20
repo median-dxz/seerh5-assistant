@@ -1,10 +1,10 @@
-import type { withClass } from '../common/utils.js';
+import type { WithClass } from '../common/utils.js';
 import type { Pet, PetRoundInfo } from '../entity/index.js';
 import type { ProxyPet } from '../pet-helper/SEAPet.js';
 
 export interface HookDataMap {
     'module:openMainPanel': { module: string; panel: string };
-    'module:show': { module: string; id?: number; moduleInstance: withClass<BaseModule> };
+    'module:show': { module: string; id?: number; moduleInstance: WithClass<BaseModule> };
     'module:loadScript': string;
     'module:destroy': string;
 

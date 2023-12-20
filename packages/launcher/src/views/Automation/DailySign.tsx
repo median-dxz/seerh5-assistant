@@ -6,7 +6,7 @@ import { Button, ButtonGroup, CircularProgress } from '@mui/material';
 import { SeaTableRow } from '@/components/styled/TableRow';
 import { useModStore } from '@/context/useModStore';
 import type { SignInstance } from '@/service/store/sign';
-import { delay } from 'sea-core';
+import { delay } from '@sea/core';
 import useSWR from 'swr';
 
 export function DailySign() {

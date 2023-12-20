@@ -2,8 +2,8 @@ import { Loading } from '@/components/Loading';
 import { PanelTable, type PanelColumns } from '@/components/PanelTable';
 import { useBagPets } from '@/service/useBagPets';
 import { Box, Stack } from '@mui/material';
+import { Pet } from '@sea/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Pet } from 'sea-core';
 import { PanelRow } from './PanelRow';
 import { ToolBar } from './ToolBar';
 

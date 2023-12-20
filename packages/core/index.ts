@@ -1,4 +1,4 @@
-import { SeerAssistantCore } from './loader/index.js';
+import { SEAC } from './loader/index.js';
 
 export * from './common/utils.js';
 export * from './constant/index.js';
@@ -11,7 +11,7 @@ export * from './event-source/index.js';
 export * from './pet-helper/index.js';
 
 export type { VERSION } from './loader/index.js';
-export const core = new SeerAssistantCore();
+export const core = new SEAC();
 
 declare global {
     interface Window {
@@ -21,7 +21,7 @@ declare global {
 
     interface SEA {
         /** sea-core 全局单例 */
-        core: SeerAssistantCore;
+        core: SEAC;
         /** 游戏核心加载就绪标志位 */
         SeerH5Ready: boolean;
         /**  game core loaded event */

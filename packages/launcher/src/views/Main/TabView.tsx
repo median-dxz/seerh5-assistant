@@ -1,8 +1,8 @@
 import { Fade, Paper, Tabs, Typography, useTheme } from '@mui/material';
 import { alpha, Box, Stack } from '@mui/system';
+import { CoreLoader } from '@sea/core';
 import React, { forwardRef, type ReactElement } from 'react';
 import { SwitchTransition } from 'react-transition-group';
-import { CoreLoader } from 'sea-core';
 
 import { VERSION } from '@/constants';
 import { useTabRouter, type ViewNode } from '@/context/useTabRouter';

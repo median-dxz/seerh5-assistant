@@ -14,7 +14,7 @@ import {
     type PetFragmentLevelDifficulty as Difficulty,
     type ILevelBattle,
     type PetFragmentLevel
-} from 'sea-core';
+} from '@sea/core';
 
 import { useLevelScheduler } from '@/context/useLevelScheduler';
 import { useMainState } from '@/context/useMainState';

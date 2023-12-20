@@ -1,4 +1,4 @@
-import { GameConfigRegistry, SEABattle, SEAEventSource } from 'sea-core';
+import { GameConfigRegistry, SEABattle, SEAEventSource } from '@sea/core';
 import { IS_DEV } from '../constants';
 import { extendCoreEngine } from './engine';
 import { registerLog } from './registerLog';

@@ -1,4 +1,4 @@
-import { delay, Engine } from 'sea-core';
+import { delay, Engine } from '@sea/core';
 
 export const idList = [
     1, //赛尔豆

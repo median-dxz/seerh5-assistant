@@ -1,4 +1,4 @@
-import { PetDataManger, PetPosType } from 'sea-core';
+import { PetDataManger, PetPosType } from '@sea/core';
 import * as Endpoints from '../endpoints';
 
 const JIM_ID = 3582;

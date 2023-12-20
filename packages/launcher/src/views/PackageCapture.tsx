@@ -2,10 +2,10 @@ import { PanelField, PanelTable, useRowData, type PanelColumns } from '@/compone
 import { Button, Toolbar } from '@mui/material';
 
 import { SeaTableRow } from '@/components/styled/TableRow';
+import type { AnyFunction, HookDataMap } from '@sea/core';
+import { SEAEventSource, Subscription, restoreHookedFn } from '@sea/core';
 import { produce } from 'immer';
 import * as React from 'react';
-import type { AnyFunction, HookDataMap } from 'sea-core';
-import { SEAEventSource, Subscription, restoreHookedFn } from 'sea-core';
 
 interface CapturedPackage {
     type: 'RemoveListener' | 'AddListener' | 'Received' | 'Send';

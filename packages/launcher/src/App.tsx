@@ -1,7 +1,7 @@
 import { CssBaseline, Grow } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
-import { SEAEventSource, Subscription } from 'sea-core';
+import { SEAEventSource, Subscription } from '@sea/core';
 
 import { SEALContextProvider } from '@/context/SEALContextProvider';
 

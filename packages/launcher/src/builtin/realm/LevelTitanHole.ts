@@ -3,8 +3,8 @@ import type {
     ILevelBattle,
     LevelData as SEALevelData,
     LevelMeta as SEALevelMeta
-} from 'sea-core';
-import { LevelAction, Socket, delay } from 'sea-core';
+} from '@sea/core';
+import { LevelAction, Socket, delay } from '@sea/core';
 
 interface LevelOption {
     stimulation: boolean;

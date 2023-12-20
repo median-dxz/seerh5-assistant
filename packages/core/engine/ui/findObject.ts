@@ -6,14 +6,14 @@ import type { Constructor } from '../../common/utils.js';
  * @param classType obj的类对象
  * @param predicate 断言函数
  */
-export function findObject<T extends Constructor<T>>(classType: T, predicate?: (obj: egret.DisplayObject) => boolean) {
+export function findObject<T>(classType: Constructor<T>, predicate?: (obj: egret.DisplayObject) => boolean) {
     const root = LevelManager.stage;
 
     function find(parent: egret.DisplayObject) {
         if (parent.$children == null) {
             return [];
         }
-        let result: InstanceType<T>[] = [];
+        let result: T[] = [];
         for (const child of parent.$children) {
             if (child instanceof classType && (predicate == undefined || predicate(child) === true)) {
                 result.push(child);

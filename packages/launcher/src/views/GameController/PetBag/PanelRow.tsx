@@ -9,8 +9,8 @@ import { Icon } from '@/service/resource';
 import MoreHoriz from '@mui/icons-material/MoreHoriz';
 import VerticalAlignTop from '@mui/icons-material/VerticalAlignTop';
 import { Box, Checkbox, Popover, Stack, Typography } from '@mui/material';
+import { Engine, GameConfigRegistry, Pet, SEAPet, delay } from '@sea/core';
 import React, { useState, type ReactNode } from 'react';
-import { Engine, GameConfigRegistry, Pet, SEAPet, delay } from 'sea-core';
 
 interface PanelRowProps {
     selected: number[];

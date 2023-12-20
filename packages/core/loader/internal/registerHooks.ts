@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { filter, map } from 'rxjs';
-import { delay, hookFn, hookPrototype, restoreHookedFn, wrapper, type withClass } from '../../common/utils.js';
+import { delay, hookFn, hookPrototype, restoreHookedFn, wrapper, type WithClass } from '../../common/utils.js';
 import { HookRegistry } from '../../event-source/index.js';
 import { $hook } from '../../event-source/source-builder/fromHook.js';
 
@@ -23,7 +23,7 @@ export default () => {
 
     HookRegistry.register('module:show', (resolve) => {
         ModuleManager.beginShow = wrapper(ModuleManager.beginShow).after((_r, module, _1, _2, _3, _4, config) => {
-            const currModule = ModuleManager.currModule as withClass<BaseModule>;
+            const currModule = ModuleManager.currModule as WithClass<BaseModule>;
             if (config) {
                 const { id } = config as { id: number; moduleName: string };
                 resolve({ module, id, moduleInstance: currModule });
@@ -65,7 +65,7 @@ export default () => {
 
     HookRegistry.register('pop_view:open', (resolve) => {
         PopViewManager.prototype.openView = wrapper(PopViewManager.prototype.openView).after((r, view) => {
-            resolve((Object.getPrototypeOf(view) as withClass<PopView>).__class__);
+            resolve((Object.getPrototypeOf(view) as WithClass<PopView>).__class__);
         });
         return () => restoreHookedFn(PopViewManager.prototype, 'openView');
     });
@@ -81,7 +81,7 @@ export default () => {
             }
             const popView = this.__viewMap__['key_' + id];
             if (popView) {
-                resolve((Object.getPrototypeOf(popView) as withClass<PopView>).__class__);
+                resolve((Object.getPrototypeOf(popView) as WithClass<PopView>).__class__);
             }
         });
         hookPrototype(PopViewManager, 'hideView', function (originalFunc, id, ...args) {

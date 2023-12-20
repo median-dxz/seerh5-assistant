@@ -1,5 +1,5 @@
 import * as Logger from '@/utils/logger';
-import { SEAEventSource, Subscription, wrapper } from 'sea-core';
+import { SEAEventSource, Subscription, wrapper } from '@sea/core';
 
 export function registerLog() {
     SystemTimerManager.sockettimeout = wrapper(SystemTimerManager.sockettimeout).after(() => {

@@ -10,7 +10,7 @@ import {
     type IPFLevelBoss,
     type LevelMeta,
     type LevelData as SEALevelData,
-} from 'sea-core';
+} from '@sea/core';
 
 interface LevelData extends SEALevelData {
     pieces: number;

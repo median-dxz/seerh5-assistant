@@ -1,4 +1,4 @@
-import type { ILevelBattle } from 'sea-core';
+import type { ILevelBattle } from '@sea/core';
 
 import { ctByName } from './CatchTimeBinding';
 import { store as strategyStore } from './strategy';

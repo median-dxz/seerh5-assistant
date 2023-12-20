@@ -1,5 +1,5 @@
 {
-    "name": "@sea-mod/presets-official",
+    "name": "@sea/mod-presets",
     "private": true,
     "type": "module",
     "version": "1.0.0",

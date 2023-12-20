@@ -1,9 +1,9 @@
 /* eslint-disable */
 export type AnyFunction = (...args: any[]) => unknown;
-export type Constructor<T extends new (...args: any) => unknown> = { new (...args: any[]): InstanceType<T> };
+export type Constructor<T> = { new (...args: any[]): T };
 export type ValueOf<T> = T[keyof T];
-export type Handler<T> = (data: T) => void;
-export type withClass<T> = T & { __class__: string };
+export type WithClass<T> = T & { __class__: string };
+export const NOOP = () => {};
 
 class HookedSymbol {
     static readonly original = Symbol('originalFunction');
@@ -11,21 +11,29 @@ class HookedSymbol {
     static readonly after = Symbol('afterDecorators');
 }
 
+/**
+ * 延时
+ */
 export function delay(time: number): Promise<void> {
     return new Promise((resolver) => setTimeout(resolver, time));
 }
-
-export function debounce<F extends AnyFunction>(func: F, wait: number) {
+/**
+ * 去抖 所有小于指定间隔的调用只会响应最后一个
+ */
+export function debounce<F extends AnyFunction>(func: F, time: number) {
     let timer: number | undefined;
     return function (this: unknown, ...args: Parameters<F>) {
         timer && clearTimeout(timer);
         timer = window.setTimeout(() => {
             func.apply(this, args);
-        }, wait);
+        }, time);
     };
 }
 
-export function throttle<F extends AnyFunction>(func: F, wait: number) {
+/**
+ * 节流 所有小于指定间隔的调用只会响应第一个
+ */
+export function throttle<F extends AnyFunction>(func: F, time: number) {
     let timer: number | undefined;
     return function (this: unknown, ...args: Parameters<F>) {
         if (timer) return;
@@ -33,7 +41,7 @@ export function throttle<F extends AnyFunction>(func: F, wait: number) {
         timer = window.setTimeout(() => {
             clearTimeout(timer);
             timer = undefined;
-        }, wait);
+        }, time);
     };
 }
 
@@ -140,6 +148,12 @@ type HookFunction<T extends object, K extends keyof T> = T[K] extends (...args: 
     ? (this: T, originalFunc: (...args: P) => R, ...args: P) => R
     : never;
 
+/**
+ * 就地修改函数实现
+ * @param target 目标函数的挂载对象
+ * @param funcName 目标函数的名称
+ * @param hookedFunc 修改后的实现
+ */
 export function hookFn<T extends object, K extends keyof T>(target: T, funcName: K, hookedFunc?: HookFunction<T, K>) {
     let func = target[funcName] as AnyFunction;
     if (typeof func !== 'function') return;
@@ -180,8 +194,6 @@ export function hookPrototype<T extends HasPrototype, K extends keyof T['prototy
     const proto = target.prototype;
     proto && hookFn(proto, funcName, hookedFunc);
 }
-
-export const NOOP = () => {};
 
 export { CacheData } from './CacheData.js';
 

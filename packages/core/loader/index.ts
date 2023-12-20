@@ -10,7 +10,7 @@ interface SetupFn {
     fn: AnyFunction;
 }
 
-export class SeerAssistantCore {
+export class SEAC {
     static checkEnv = () =>
         typeof window !== 'undefined' && window === window.self && typeof window.sea === 'undefined';
 
@@ -27,7 +27,7 @@ export class SeerAssistantCore {
     }
 
     constructor() {
-        if (SeerAssistantCore.checkEnv()) {
+        if (SEAC.checkEnv()) {
             this.loadCalled = false;
 
             window.sea = {

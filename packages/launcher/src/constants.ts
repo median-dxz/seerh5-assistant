@@ -1,4 +1,4 @@
-import type { VERSION as _CORE_VERSION } from 'sea-core';
+import type { VERSION as _CORE_VERSION } from '@sea/core';
 
 export const VERSION = '0.6.6';
 export const CORE_VERSION: _CORE_VERSION = '0.8.1';

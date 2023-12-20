@@ -4,7 +4,7 @@ import { Box, Grid, Tooltip, Typography } from '@mui/material';
 import React, { memo } from 'react';
 import useSWRSubscription from 'swr/subscription';
 
-import { SEAEventSource, Subscription } from 'sea-core';
+import { SEAEventSource, Subscription } from '@sea/core';
 
 import type { PopupMenuButtonProps } from '@/components/PopupMenuButton';
 import { ClampText } from '../styled/ClampText';

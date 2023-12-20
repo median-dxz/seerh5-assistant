@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
-import { PetDataManger, PetElement, Socket, delay } from 'sea-core';
+import { PetDataManger, PetElement, Socket, delay } from '@sea/core';
 
 declare var pvePetYinzi: any;
 

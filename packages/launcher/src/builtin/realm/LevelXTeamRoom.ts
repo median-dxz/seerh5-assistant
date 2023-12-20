@@ -1,6 +1,6 @@
-import { LevelAction, Socket } from 'sea-core';
+import { LevelAction, Socket } from '@sea/core';
 
-import type { AnyFunction, ILevelBattle, LevelMeta, LevelData as SEALevelData } from 'sea-core';
+import type { AnyFunction, ILevelBattle, LevelMeta, LevelData as SEALevelData } from '@sea/core';
 
 interface LevelData extends SEALevelData {
     open: boolean;

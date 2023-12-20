@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { SeaQuickAccess } from '@/components/styled/QuickAccess';
 import { useModStore } from '@/context/useModStore';
 import type { CommandInstance } from '@/service/store/command';
-import type { AnyFunction } from 'sea-core';
+import type { AnyFunction } from '@sea/core';
 
 const SvgMaker = ({ url, children: _, ...rest }: React.SVGProps<SVGSVGElement> & { url: string }) => {
     if (!url.startsWith('<svg xmlns="http://www.w3.org/2000/svg"')) {

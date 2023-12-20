@@ -10,8 +10,8 @@ import { useLevelScheduler } from '@/context/useLevelScheduler';
 import { useModStore } from '@/context/useModStore';
 import * as Endpoints from '@/service/endpoints';
 import { theme } from '@/style';
+import { LevelAction } from '@sea/core';
 import { produce } from 'immer';
-import { LevelAction } from 'sea-core';
 
 // const rows: Array<Level> = React.useMemo(
 //     () => [
