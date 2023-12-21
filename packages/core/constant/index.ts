@@ -1,5 +1,5 @@
 export * from './ItemId.js';
-export * from './types.js';
+export * from './TypeMaps.js';
 
 export enum PetPosType {
     bag1 = 1,

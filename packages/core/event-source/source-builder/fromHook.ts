@@ -1,10 +1,10 @@
 import { filter, map } from 'rxjs';
-import type { HookDataMap } from '../../constant/types.js';
+import type { HookDataMap } from '../../constant/TypeMaps.js';
 import { SEAEventSource } from '../EventSource.js';
-import { HookRegistry } from '../HookRegistry.js';
+import { HookPointRegistry } from '../HookPointRegistry.js';
 
 export function $hook<T extends keyof HookDataMap>(hook: T) {
-    return HookRegistry.subject$.pipe(
+    return HookPointRegistry.subject$.pipe(
         filter(({ type }) => type === hook),
         map(({ data }) => data as HookDataMap[T])
     );

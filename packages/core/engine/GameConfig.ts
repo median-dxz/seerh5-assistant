@@ -1,4 +1,4 @@
-import type { GameConfigMap } from '../constant/types.js';
+import type { GameConfigMap } from '../constant/TypeMaps.js';
 
 type PredicateFn<T> = (value: T) => boolean;
 

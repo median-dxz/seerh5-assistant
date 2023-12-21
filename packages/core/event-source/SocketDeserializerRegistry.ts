@@ -1,5 +1,5 @@
 import type { ValueOf } from '../common/utils.js';
-import type { HookDataMap, SocketResponseMap as ResponseMap } from '../constant/types.js';
+import type { HookDataMap, SocketResponseMap as ResponseMap } from '../constant/TypeMaps.js';
 
 type BufferData = HookDataMap['socket:receive']['buffer'];
 

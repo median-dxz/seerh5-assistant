@@ -1,4 +1,4 @@
-import { GameConfigRegistry, SEABattle, SEAEventSource } from '@sea/core';
+import { GameConfigRegistry, SEABattle, SEAEventSource, hookPrototype } from '@sea/core';
 import { IS_DEV } from '../constants';
 import { extendCoreEngine } from './engine';
 import { registerLog } from './registerLog';
@@ -85,7 +85,7 @@ declare var Alert: any;
 
 /** cancel alert before use item for pet */
 function cancelAlertForUsePetItem() {
-    ItemUseManager.prototype.useItem = function (t, e) {
+    hookPrototype(ItemUseManager, 'useItem', function (_, t, e) {
         if (!t) return void BubblerManager.getInstance().showText('使用物品前，请先选择一只精灵');
         e = Number(e);
 
@@ -101,5 +101,5 @@ function cancelAlertForUsePetItem() {
                 use();
             }
         }
-    };
+    });
 }

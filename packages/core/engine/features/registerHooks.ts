@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { filter, map } from 'rxjs';
 import { delay, hookFn, hookPrototype, restoreHookedFn, wrapper, type WithClass } from '../../common/utils.js';
-import { HookRegistry } from '../../event-source/index.js';
+import { HookPointRegistry } from '../../event-source/index.js';
 import { $hook } from '../../event-source/source-builder/fromHook.js';
 
 export default () => {
-    HookRegistry.register('module:loadScript', (resolve) => {
+    HookPointRegistry.register('module:loadScript', (resolve) => {
         ModuleManager.loadScript = wrapper(ModuleManager.loadScript).after((_, script) => {
             resolve(script);
         });
         return () => void restoreHookedFn(ModuleManager, 'loadScript');
     });
 
-    HookRegistry.register('module:openMainPanel', (resolve) => {
+    HookPointRegistry.register('module:openMainPanel', (resolve) => {
         hookPrototype(BasicMultPanelModule, 'onShowMainPanel', async function () {
             await this.openPanel(this._mainPanelName);
             resolve({ module: this.moduleName, panel: this._mainPanelName });
@@ -20,7 +20,7 @@ export default () => {
         return () => void restoreHookedFn(BasicMultPanelModule.prototype, 'onShowMainPanel');
     });
 
-    HookRegistry.register('module:show', (resolve) => {
+    HookPointRegistry.register('module:show', (resolve) => {
         ModuleManager.beginShow = wrapper(ModuleManager.beginShow).after((_r, module, _1, _2, _3, _4, config) => {
             const currModule = ModuleManager.currModule as WithClass<BaseModule>;
             if (config) {
@@ -33,7 +33,7 @@ export default () => {
         return () => void restoreHookedFn(ModuleManager, 'beginShow');
     });
 
-    HookRegistry.register('battle:showEndProp', (resolve) => {
+    HookPointRegistry.register('battle:showEndProp', (resolve) => {
         const subscription = $hook('module:show')
             .pipe(
                 filter(({ module }) => module === 'battleResultPanel'),
@@ -48,7 +48,7 @@ export default () => {
         return () => subscription.unsubscribe();
     });
 
-    HookRegistry.register('module:destroy', (resolve) => {
+    HookPointRegistry.register('module:destroy', (resolve) => {
         hookFn(ModuleManager, 'removeModuleInstance', function (_, module) {
             const key = Object.keys(this._modules).find((key) => this._modules[key] === module);
             if (key) {
@@ -61,14 +61,14 @@ export default () => {
         return () => void restoreHookedFn(ModuleManager, 'removeModuleInstance');
     });
 
-    HookRegistry.register('pop_view:open', (resolve) => {
+    HookPointRegistry.register('pop_view:open', (resolve) => {
         PopViewManager.prototype.openView = wrapper(PopViewManager.prototype.openView).after((r, view) => {
             resolve((Object.getPrototypeOf(view) as WithClass<PopView>).__class__);
         });
         return () => restoreHookedFn(PopViewManager.prototype, 'openView');
     });
 
-    HookRegistry.register('pop_view:close', (resolve) => {
+    HookPointRegistry.register('pop_view:close', (resolve) => {
         PopViewManager.prototype.hideView = wrapper(PopViewManager.prototype.hideView).after(function (
             this: PopViewManager,
             _,
@@ -85,7 +85,7 @@ export default () => {
         return () => restoreHookedFn(PopViewManager.prototype, 'hideView');
     });
 
-    HookRegistry.register('award:show', (resolve) => {
+    HookPointRegistry.register('award:show', (resolve) => {
         hookPrototype(AwardItemDialog, 'startEvent', async function (originalFunc, ...args) {
             originalFunc.apply(this, args);
             resolve();
@@ -97,14 +97,14 @@ export default () => {
         return () => restoreHookedFn(AwardItemDialog.prototype, 'startEvent');
     });
 
-    HookRegistry.register('award:receive', (resolve) => {
+    HookPointRegistry.register('award:receive', (resolve) => {
         AwardManager.showDialog = wrapper(AwardManager.showDialog).after((_, _dialog, items) => {
             resolve({ items });
         });
         return () => restoreHookedFn(AwardManager, 'showDialog');
     });
 
-    HookRegistry.register('battle:roundEnd', (resolve) => {
+    HookPointRegistry.register('battle:roundEnd', (resolve) => {
         hookFn(PetFightController, 'onStartFight', function (originalFunc, ...args) {
             originalFunc(...args);
             const { enemyMode, playerMode } = FighterModelFactory;
@@ -119,7 +119,7 @@ export default () => {
         return () => restoreHookedFn(PetFightController, 'onStartFight');
     });
 
-    HookRegistry.register('battle:start', (resolve) => {
+    HookPointRegistry.register('battle:start', (resolve) => {
         // 因为这个Socket监听注册发生在Battle模块初始化的时候, 在这边Hook会滞后, 要重新注册
         SocketConnection.removeCmdListener(
             CommandID.NOTE_START_FIGHT,
@@ -148,19 +148,19 @@ export default () => {
         };
     });
 
-    HookRegistry.register('battle:end', (resolve) => {
+    HookPointRegistry.register('battle:end', (resolve) => {
         EventManager.addEventListener(PetFightEvent.ALARM_CLICK, resolve, null);
         return () => EventManager.removeEventListener(PetFightEvent.ALARM_CLICK, resolve, null);
     });
 
-    HookRegistry.register('socket:send', (resolve) => {
+    HookPointRegistry.register('socket:send', (resolve) => {
         SocketConnection.mainSocket.send = wrapper(SocketConnection.mainSocket.send).before((cmd, data) => {
             resolve({ cmd, data });
         });
         return () => restoreHookedFn(SocketConnection.mainSocket, 'send');
     });
 
-    HookRegistry.register('socket:receive', (resolve) => {
+    HookPointRegistry.register('socket:receive', (resolve) => {
         SocketConnection.mainSocket.dispatchCmd = wrapper(SocketConnection.mainSocket.dispatchCmd).before(
             (cmd, head, buffer) => {
                 resolve({ cmd, buffer });

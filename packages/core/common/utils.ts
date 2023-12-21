@@ -90,7 +90,7 @@ export function wrapper<F extends AnyFunction>(func: F | HookedFunction<F> | Wra
                 decorator.apply(this, args);
             });
 
-            const r = func.apply(this, args); // 注意这里没有使用 originalFunction
+            const r = originalFunction.apply(this, args);
 
             afterDecorators.forEach((decorator) => {
                 if (r instanceof Promise) {
@@ -125,8 +125,6 @@ export function wrapper<F extends AnyFunction>(func: F | HookedFunction<F> | Wra
         return wrapped;
     };
 
-    let originalFunc: F;
-
     if (assertIsWrappedFunction(func)) {
         return createWrappedFunction(
             func[HookedSymbol.original],
@@ -135,13 +133,7 @@ export function wrapper<F extends AnyFunction>(func: F | HookedFunction<F> | Wra
         );
     }
 
-    if (assertIsHookedFunction(func)) {
-        originalFunc = func[HookedSymbol.original];
-    } else {
-        originalFunc = func;
-    }
-
-    return createWrappedFunction(originalFunc, [], []);
+    return createWrappedFunction(func as F, [], []);
 }
 
 type HookFunction<T extends object, K extends keyof T> = T[K] extends (...args: infer P) => infer R
@@ -160,6 +152,9 @@ export function hookFn<T extends object, K extends keyof T>(target: T, funcName:
 
     if (assertIsHookedFunction(func)) {
         logger.warn(`[hookFn]: 检测到对 ${String(funcName)} 的重复hook行为, 这可能导致冲突`);
+    }
+
+    while (assertIsHookedFunction(func)) {
         func = func[HookedSymbol.original];
     }
 

@@ -4,6 +4,8 @@ sidebar_position: 2
 
 # common 模块
 
+你会用到的！
+
 ## hook 相关
 
 目前 SEAC 内置了两种相对安全的 hook 方式：`wrapper` 和 `hookFn` 。
@@ -56,9 +58,9 @@ obj.fn();
 - 通过 `assertIsWrappedFunction` 和 `assertIsHookedFunction` 断言 hook 类型
 - 对非幂等的 `wrapper` 和 `hookFn` 进行特殊处理
 
-然后传入一个函数来替换原函数，这个传入函数 `override` 的增加了一个额外参数 `originalFunc` 也就是原函数，你可以选择使用它或完全忽略。
+然后你需要传入一个函数 `override` 来替换原函数，这个传入函数的参数分两部分： `originalFunc` 也就是原函数，以及后面跟着的是原函数的入参，你可以选择使用它们或完全忽略。
 
-一般来说，你只会将这个函数应用在游戏暴露出来的对象中，极端情况有下列若干种：
+一般来说，你只会将 hook 应用在游戏暴露出来的对象中，极端情况有下列若干种：
 
 1. 目标函数是一个构造函数
 
@@ -74,17 +76,9 @@ obj.fn();
 
 4. 目标函数已经被 hook 过
 
-那么这个函数会**丢弃**之前的所有更改（SEAC 会在出现丢弃修改行为的时候发出警告），在你的`override`中传入的，**保证一定是最初的原函数**。换而言之，`hookFn`是完全幂等的。
+如果目标函数只用 `hookFn` 修改过，那么之前的所有更改都会被**丢弃**（SEAC 会在出现丢弃修改行为的时候发出警告），在你的`override` 中传入的，**是最初的原函数**。
 
-如果你不想要这种行为，请提一个 **issue** 来讨论这种情况。幂等性的存在可以保证单个模组的行为（包括 SEAC 和 SEAL 自身）更加的可预测，并且能保证 `restoreHookedFn` 函数的可靠性。一般来说，不需要“叠盒子”式的修改行为来达成 hook，更大的可能是造成冲突。
-
-:::danger
-对于模组，可能会存在不同 mod 之间使用 `hookFn` 修改同一个函数，甚至和 SEAC/SEAL 内部的 hook 行为冲突的情况。
-
-- 登录器应该利用 SEAC 发出的警告提示潜在的冲突问题。
-- 请在模组开发的时候检阅相关的警告，如果可以的话，尽量将将 `hookFn` 当成最后手段。尽管如此，使用 SEAC 提供的 hook 函数也比直接修改原函数好。请不要**直接修改并替换原函数**！
-
-:::
+请务必查看[hook 教程](../tutorial-extras/hook.md#互操作性)中对 `hookFn` 和 `wrapper` 两者**互操作性**的描述。
 
 ### hookPrototype
 
@@ -111,8 +105,6 @@ function wrapper<F extends AnyFunction>(func: F | HookedFunction<F> | WrappedFun
 
 interface WrappedFunction<F extends AnyFunction> extends HookedFunction<F> {
   (...args: Parameters<F>): ReturnType<F>;
-  [HookedSymbol.after]: AfterDecorator<F>[];
-  [HookedSymbol.before]: BeforeDecorator<F>[];
   after(this: WrappedFunction<F>, decorator: AfterDecorator<F>): WrappedFunction<F>;
   before(this: WrappedFunction<F>, decorator: BeforeDecorator<F>): WrappedFunction<F>;
 }
@@ -153,25 +145,15 @@ f('1');
 // '2'
 ```
 
+在 `before` 装饰器 和 `after` 装饰器内都可以获得原函数的调用参数，`after` 装饰器内可以额外获得原函数的返回值。
+
 在使用 `wrapper` 的时候，有一些需要注意的地方。
 
 - 幂等性与不可变性
 
-如果你传入了一个已经被 `hookFn` 或 `wrapper` 修改过的函数，那么 `wrapper` 会在**修改后的基础**上进行包装。尽管如此， `wrapper` 、 `after` 和 `before`调用后保证返回一个全新的函数。换而言之，这三个操作都是纯函数操作。因此你可以放心的使用 `wrapper` 包装函数并添加装饰器。
+如果你传入了一个已经被 `hookFn` 或 `wrapper` 修改过的函数，那么 `wrapper` 会在**修改后的基础**上进行包装。另外， `wrapper` 、 `after` 和 `before`调用后保证返回一个全新的函数。换而言之，这三个操作都是纯函数操作。因此你可以放心的使用 `wrapper` 包装函数并添加装饰器。
 
-:::warning `wrapper` 一定是安全的吗？
-不一定，如果你在装饰器中执行了对原函数调用过程造成影响的**副作用**，这种情况下，装饰器之间可能产生冲突。
-:::
-
-:::tip 识别什么时候用`wrapper`，什么时候用 `hookFn`
-简单来说，遵守以下原则：
-
-1. 尽可能用`wrapper`
-2. 需要修改原函数入参和返回值时，只能用`hookFn`
-3. 需要替换原函数副作用行为时，只能用`hookFn`
-4. 在原函数基础上引发副作用行为，建议用`wrapper`
-
-:::
+另请务必查看[hook 教程](../tutorial-extras/hook.md#互操作性)中对两者**互操作性**的描述。
 
 - `this` 的处理
 
@@ -215,8 +197,12 @@ function restoreHookedFn<T extends object, K extends keyof T>(target: T, funcNam
 还原被修改的函数到最初的样子，这一节列出的所有 hook 方式都可以还原。调用形式和`hookFn`一致。
 
 ```ts
-restoreHookedFn(obj, 'f');
+restoreHookedFn(object, 'f'); // 还原上面的object
+object.f();
+// 输出 true
 ```
+
+另请参阅[hook 教程](../tutorial-extras/hook.md)。
 
 ### experiment_hookConstructor
 
@@ -232,6 +218,28 @@ function experiment_hookConstructor<TClass extends Constructor<any>>(
 :::info
 **experiment**: 这是一个实验性 API
 :::
+
+### assertIsHookedFunction
+
+```ts
+function assertIsHookedFunction<F extends AnyFunction>(func: F | HookedFunction<F>): func is HookedFunction<F>;
+```
+
+断言 `func` 是否被 SEAC 的 hook 函数修改过。
+
+另请参阅[hook 教程](../tutorial-extras/hook.md)。
+
+### assertIsWrappedFunction
+
+```ts
+function assertIsWrappedFunction<F extends AnyFunction>(func: F | WrappedFunction<F>): func is WrappedFunction<F>;
+```
+
+断言 `func` 是否是一个 wrapped 的函数，注意一个 wrapped 函数一定是 hooked，反之不一定。
+
+这里的 hooked 指该函数被 SEAC 的 hook 函数修改过，而 wrapped 特指该函数是使用 `wrapper` 修改的。在教程中这两个词和*WrappedFunction*、*HookedFunction*指代相同。
+
+另请参阅[hook 教程](../tutorial-extras/hook.md)。
 
 ## 延时相关
 

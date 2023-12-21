@@ -126,6 +126,12 @@ export default async function builtinStrategy(createContext: SEAL.createModConte
         {
             name: 'LevelCourageTower',
             async resolveMove({ round }, skills, _) {
+                // const matcher = getSkillMatcher(skills, round);
+                // r = matcher
+                //     .name(['竭血残蝶', '时空牵绊'])
+                //     .rotating(['光荣之梦', '神灵救世光'])
+                //     .rotating(['龙子诞生', '王·龙子盛威决'])
+                //     .rotating(['狂龙击杀', '王·龙战八荒']);
                 let r = Strategy.matchSkillName(['竭血残蝶', '时空牵绊'])(skills);
                 r = r ?? Strategy.matchRotatingSkills(['光荣之梦', '神灵救世光'])(skills, round);
                 r = r ?? Strategy.matchRotatingSkills(['龙子诞生', '王·龙子盛威决'])(skills, round);

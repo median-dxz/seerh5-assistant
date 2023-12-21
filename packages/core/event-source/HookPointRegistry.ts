@@ -1,7 +1,7 @@
 import type { Subscription } from 'rxjs';
 import { Observable, Subject } from 'rxjs';
 import type { AnyFunction, ValueOf } from '../common/utils.js';
-import type { HookDataMap } from '../constant/types.js';
+import type { HookDataMap } from '../constant/TypeMaps.js';
 
 type DataSteam<TEvents extends object> = {
     type: keyof TEvents;
@@ -16,7 +16,7 @@ type HookEventData = DataSteam<HookDataMap>;
 
 const hookDataSubscriptionMap = new Map<string, Subscription>();
 
-export const HookRegistry = {
+export const HookPointRegistry = {
     subject$: new Subject<HookEventData>(),
 
     register<T extends keyof HookDataMap>(name: T, hookResolver: HookResolver<HookDataMap[T]>) {

@@ -1,7 +1,7 @@
 import { CssBaseline, Grow } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
-import { SEAEventSource, Subscription, core } from '@sea/core';
+import { SEAEventSource, Subscription, seac } from '@sea/core';
 
 import { SEALContextProvider } from '@/context/SEALContextProvider';
 
@@ -23,7 +23,7 @@ export default function App() {
 
     useEffect(() => {
         if (init) return;
-        core.load()
+        seac.load()
             .then(() => {
                 setInit(true);
             })
