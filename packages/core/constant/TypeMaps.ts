@@ -1,8 +1,8 @@
 import type { WithClass } from '../common/utils.js';
 import type { Pet, PetRoundInfo } from '../entity/index.js';
-import type { ProxyPet } from '../pet-helper/SEAPet.js';
+import type { CaughtPet } from '../pet-helper/SEAPet.js';
 
-export interface HookDataMap {
+export interface HookPointDataMap {
     'module:openMainPanel': { module: string; panel: string };
     'module:show': { module: string; id?: number; moduleInstance: WithClass<BaseModule> };
     'module:loadScript': string;
@@ -29,9 +29,9 @@ export interface HookDataMap {
 export interface SocketResponseMap {
     [cmd: number]: unknown;
     2505: readonly [PetRoundInfo, PetRoundInfo]; // NOTE_USE_SKILL
-    2301: ProxyPet; // GET_PET_INFO
+    2301: CaughtPet; // GET_PET_INFO
     2304: PetTakeOutInfo; // PET_RELEASE
-    43706: readonly [ProxyPet[], ProxyPet[]]; // GET_PET_INFO_BY_ONCE
+    43706: readonly [CaughtPet[], CaughtPet[]]; // GET_PET_INFO_BY_ONCE
 }
 
 export interface GameConfigMap {

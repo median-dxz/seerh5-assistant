@@ -2,7 +2,9 @@ export * from './GameConfig.js';
 export { Engine, extendEngine } from './engine.js';
 export * as Socket from './socket.js';
 
+import { event$, setDevMode } from '../common/log.js';
 import type { AnyFunction } from '../common/utils.js';
+import { SEAEventSource } from '../event-source/index.js';
 import { coreSetup, coreSetupBasic } from './features/index.js';
 
 const VERSION = '1.0.0-rc.1';
@@ -28,6 +30,9 @@ export class SEAC {
                 i.fn();
             });
     }
+
+    readonly event$ = new SEAEventSource(event$);
+    readonly setDevMode = setDevMode;
 
     constructor() {
         if (checkEnv()) {

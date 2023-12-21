@@ -48,6 +48,6 @@
     "ignorePatterns": [
         "/dist",
         "/test",
-        "vitest.config.ts"
+        "vitest.config.*"
     ]
 }

@@ -1,8 +1,8 @@
+export type { CoreLogEvent } from './common/log.js';
 export {
     NOOP,
     assertIsHookedFunction,
     assertIsWrappedFunction,
-    coreLog,
     debounce,
     delay,
     experiment_hookConstructor,
@@ -13,7 +13,6 @@ export {
     wrapper
 } from './common/utils.js';
 export type { AnyFunction, Constructor, ValueOf, WithClass } from './common/utils.js';
-
 export * from './constant/index.js';
 
 export * from './battle/index.js';

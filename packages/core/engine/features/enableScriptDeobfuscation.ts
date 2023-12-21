@@ -1,4 +1,4 @@
-import { hookFn } from 'index.js';
+import { hookFn } from '../../common/utils.js';
 
 // 启用脚本反混淆
 export function enableScriptDeobfuscation() {

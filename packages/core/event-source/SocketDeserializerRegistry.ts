@@ -1,7 +1,7 @@
 import type { ValueOf } from '../common/utils.js';
-import type { HookDataMap, SocketResponseMap as ResponseMap } from '../constant/TypeMaps.js';
+import type { HookPointDataMap, SocketResponseMap as ResponseMap } from '../constant/TypeMaps.js';
 
-type BufferData = HookDataMap['socket:receive']['buffer'];
+type BufferData = HookPointDataMap['socket:receive']['buffer'];
 
 type DataDeserializer<T> = (data: BufferData) => T;
 

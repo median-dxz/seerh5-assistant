@@ -7,29 +7,29 @@ import { PetDataManger as ins, type CatchTime } from './PetDataManager.js';
 import { PetLocation, setLocationTable } from './PetLocation.js';
 
 type SEAPet = {
-    [P in keyof ProxyPet]: ProxyPet[P] extends (...args: infer A) => infer R
-        ? R extends Promise<ProxyPet>
+    [P in keyof CaughtPet]: CaughtPet[P] extends (...args: infer A) => infer R
+        ? R extends Promise<CaughtPet>
             ? (...args: A) => SEAPet
             : R extends Promise<unknown>
-            ? ProxyPet[P]
+            ? CaughtPet[P]
             : (...args: A) => Promise<R>
-        : Promise<ProxyPet[P]>;
+        : Promise<CaughtPet[P]>;
 } & {
-    get<TResult1 = ProxyPet, TResult2 = never>(
-        onfulfilled?: ((value: ProxyPet) => TResult1 | PromiseLike<TResult1>) | undefined | null,
+    get<TResult1 = CaughtPet, TResult2 = never>(
+        onfulfilled?: ((value: CaughtPet) => TResult1 | PromiseLike<TResult1>) | undefined | null,
         onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null
     ): PromiseLike<TResult1 | TResult2>;
-    done: Promise<ProxyPet>;
+    done: Promise<CaughtPet>;
 };
 
-const ChainableSymbol = Symbol('SEAPetChainable');
+const ChainableSymbol = Symbol('CaughtPetChainable');
 
 function chainable(value: any, ctx: ClassMethodDecoratorContext) {
     (value as any)[ChainableSymbol] = true;
     return value;
 }
 
-export class ProxyPet extends Pet {
+export class CaughtPet extends Pet {
     constructor(i: PetInfo) {
         super(i);
     }
@@ -125,17 +125,18 @@ export class ProxyPet extends Pet {
     }
 }
 
-export function SEAPet(pet: Pet | CatchTime) {
+export function spet(pet: Pet | CatchTime) {
     const ct = Pet.inferCatchTime(pet);
-    const petPromise = pet instanceof Promise ? pet : Promise.resolve(ins.cache.get(ct) ?? ins.query(ct));
+    const petPromise: Promise<CaughtPet> =
+        pet instanceof Promise ? pet : Promise.resolve(ins.cache.get(ct) ?? ins.query(ct));
 
     const extractPromiseWrapper =
-        (target: Promise<ProxyPet>, fn: AnyFunction, isChainable: boolean) =>
+        (target: Promise<CaughtPet>, fn: AnyFunction, isChainable: boolean) =>
         (...args: unknown[]) => {
             if (isChainable) {
-                return SEAPet(target.then((pet) => (fn as AnyFunction).apply(pet, args)) as any);
+                return spet(target.then((pet) => fn.apply(pet, args)) as any);
             } else {
-                return target.then((pet) => (fn as AnyFunction).apply(pet, args));
+                return target.then((pet) => fn.apply(pet, args));
             }
         };
 
@@ -148,13 +149,13 @@ export function SEAPet(pet: Pet | CatchTime) {
                 return target;
             }
 
-            const fn = ProxyPet.prototype[prop as keyof ProxyPet];
+            const fn = CaughtPet.prototype[prop as keyof CaughtPet];
 
             if (fn && typeof fn === 'function') {
                 return extractPromiseWrapper(target, fn, Boolean(ChainableSymbol in fn));
             }
 
-            return target.then((pet) => pet[prop as keyof ProxyPet]);
+            return target.then((pet) => pet[prop as keyof CaughtPet]);
         },
     }) as unknown as SEAPet;
 

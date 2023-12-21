@@ -29,5 +29,5 @@ export const getStoragePets = async (location: StoragePetsPos) => {
 
 export { PetDataManger } from './PetDataManager.js';
 export { PetLocation } from './PetLocation.js';
-export { SEAPet } from './SEAPet.js';
+export { spet as SEAPet } from './SEAPet.js';
 

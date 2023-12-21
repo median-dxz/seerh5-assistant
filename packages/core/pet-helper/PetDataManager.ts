@@ -1,7 +1,7 @@
 import { CacheData, NOOP } from '../common/utils.js';
 import { Socket } from '../engine/index.js';
 import { SEAEventSource } from '../event-source/index.js';
-import { ProxyPet } from './SEAPet.js';
+import { CaughtPet } from './SEAPet.js';
 
 export type CatchTime = number;
 
@@ -10,16 +10,16 @@ class PetDataManager {
     private cacheTimestamp = new Map<CatchTime, number>();
     private hasInit = false;
 
-    private queryQueue = new Map<CatchTime, Array<(value: ProxyPet) => void>>();
+    private queryQueue = new Map<CatchTime, Array<(value: CaughtPet) => void>>();
 
     defaultCt: CatchTime = -1;
-    bag: CacheData<[ProxyPet[], ProxyPet[]]> = new CacheData([[], []], NOOP);
+    bag: CacheData<[CaughtPet[], CaughtPet[]]> = new CacheData([[], []], NOOP);
     miniInfo: CacheData<Map<CatchTime, PetStorage2015PetInfo>> = new CacheData(
         new Map<CatchTime, PetStorage2015PetInfo>(),
         NOOP
     );
 
-    cache = new Map<CatchTime, ProxyPet>();
+    cache = new Map<CatchTime, CaughtPet>();
 
     init() {
         if (!this.hasInit) {
@@ -76,7 +76,7 @@ class PetDataManager {
             });
 
             this.bag = new CacheData(
-                [PetManager.infos.map((p) => new ProxyPet(p)), PetManager.secondInfos.map((p) => new ProxyPet(p))],
+                [PetManager.infos.map((p) => new CaughtPet(p)), PetManager.secondInfos.map((p) => new CaughtPet(p))],
                 () => PetManager.updateBagInfo()
             );
 
@@ -103,7 +103,7 @@ class PetDataManager {
         return [...data1, ...data2];
     }
 
-    cachePet(pet: ProxyPet) {
+    cachePet(pet: CaughtPet) {
         this.cache.set(pet.catchTime, pet);
         this.cacheTimestamp.set(pet.catchTime, Date.now());
 
@@ -152,7 +152,7 @@ class PetDataManager {
             void Socket.sendByQueue(CommandID.GET_PET_INFO, [ct]);
         }
 
-        return new Promise<ProxyPet>((resolve) => {
+        return new Promise<CaughtPet>((resolve) => {
             this.queryQueue.get(ct)!.push(resolve);
         });
     }
@@ -161,3 +161,4 @@ class PetDataManager {
 const ins = new PetDataManager();
 
 export { ins as PetDataManger };
+

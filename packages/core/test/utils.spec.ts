@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from 'vitest';
 
-import { HookedSymbol } from '../common/utils';
-import { wrapper } from '../index';
+import { HookedSymbol, type HookedFunction } from '../dist/common/utils';
+import { hookFn, wrapper } from '../dist/index';
 
 const createFn = () => () => {};
 
@@ -24,6 +24,7 @@ describe('wrapper', () => {
 
         expect(wrapped1).not.toEqual(wrapped2);
         expect(wrapped2).not.toEqual(wrapped3);
+        expect(wrapped3[HookedSymbol.after]).toEqual(wrapped2[HookedSymbol.after]);
     });
 
     test('测试 before 和 after 钩子', () => {
@@ -45,18 +46,18 @@ describe('wrapper', () => {
 
     test('wrap 一个 HookedFunction', () => {
         const f = createFn();
-        const hookedFunc = createFn();
+        const hookedFunc = createFn() as HookedFunction<() => void>;
         hookedFunc[HookedSymbol.original] = f;
         const result = wrapper(hookedFunc);
         expect(result[HookedSymbol.original]).toBe(hookedFunc);
     });
 
     test('wrap 一个 WrappedFunction', () => {
-        const f = () => {};
-        const before = [createFn(), createFn()];
-        const after = [createFn(), createFn()];
-        const wrapped = wrapper(f).after(before[0]).before(after[0]);
-        const rewrapped = wrapper(wrapped).after(before[1]).before(after[1]);
+        const f = createFn();
+        const before = [createFn(), () => 1];
+        const after = [createFn(), () => 2];
+        const wrapped = wrapper(f).after(after[0]).before(before[0]);
+        const rewrapped = wrapper(wrapped).after(after[1]).before(before[1]);
 
         expect(rewrapped[HookedSymbol.original]).toBe(f);
         expect(rewrapped[HookedSymbol.before]).toEqual(before);
@@ -83,5 +84,31 @@ describe('wrapper', () => {
 
         expect(afterDecorator1).toHaveBeenCalledWith('result', ...args);
         expect(afterDecorator2).toHaveBeenCalledWith('result', ...args);
+    });
+});
+
+describe('hookFn', () => {
+    test('不是函数的入参', () => {
+        const result = wrapper(undefined as any);
+        expect(result).toBeUndefined();
+    });
+
+    test('wrapFn', () => {
+        const target = {
+            funcName: createFn(),
+        };
+
+        const override = vi.fn();
+        const originalFunc = target.funcName;
+
+        hookFn(target, 'funcName', override);
+
+        expect(target.funcName).not.toBe(originalFunc);
+        expect(target.funcName[HookedSymbol.original]).toBe(originalFunc);
+
+        const args = [1, 2, 3];
+        target.funcName(...args);
+
+        expect(override).toHaveBeenCalledWith(originalFunc.bind(target), ...args);
     });
 });

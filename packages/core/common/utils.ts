@@ -11,6 +11,10 @@ export class HookedSymbol {
     static readonly after = Symbol('afterDecorators');
 }
 
+export { CacheData } from './CacheData.js';
+
+import { ModuleName, getModuleLogger } from './log.js';
+
 const logger = getModuleLogger(ModuleName.Utils);
 
 /** 延时 */
@@ -50,12 +54,12 @@ type AfterDecorator<F extends AnyFunction> = (
     ...args: Parameters<F>
 ) => void;
 
-interface HookedFunction<F extends AnyFunction> {
+export interface HookedFunction<F extends AnyFunction> {
     (...args: Parameters<F>): ReturnType<F>;
     [HookedSymbol.original]: F;
 }
 
-interface WrappedFunction<F extends AnyFunction> extends HookedFunction<F> {
+export interface WrappedFunction<F extends AnyFunction> extends HookedFunction<F> {
     (...args: Parameters<F>): ReturnType<F>;
     [HookedSymbol.after]: AfterDecorator<F>[];
     [HookedSymbol.before]: BeforeDecorator<F>[];
@@ -103,8 +107,8 @@ export function wrapper<F extends AnyFunction>(func: F | HookedFunction<F> | Wra
         } as WrappedFunction<F>;
 
         wrapped[HookedSymbol.original] = originalFunction;
-        wrapped[HookedSymbol.after] = afterDecorators;
         wrapped[HookedSymbol.before] = beforeDecorators;
+        wrapped[HookedSymbol.after] = afterDecorators;
 
         wrapped.before = function (this: WrappedFunction<F>, decorator: BeforeDecorator<F>) {
             return createWrappedFunction(
@@ -200,8 +204,3 @@ export function experiment_hookConstructor<TClass extends Constructor<any>>(
         return ins;
     });
 }
-
-export { CacheData } from './CacheData.js';
-
-import { ModuleName, getModuleLogger, setDev, setLogger } from './log.js';
-export const coreLog = { setDev, setLogger };

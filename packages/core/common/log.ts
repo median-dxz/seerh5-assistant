@@ -1,6 +1,11 @@
-export interface Logger {
-    debug: typeof console.info;
-    warn: typeof console.warn;
+import { Subject } from 'rxjs';
+
+export interface CoreLogEvent {
+    module: ModuleName;
+    stack?: string;
+    time: number;
+    level: 'debug' | 'info' | 'warn' | 'error';
+    msg?: string;
 }
 
 export enum ModuleName {
@@ -9,27 +14,25 @@ export enum ModuleName {
 }
 
 let isDev = false;
-
-let coreLogger: Logger = {
-    debug: console.info,
-    warn: console.warn,
-};
-
-export const setDev = (dev: boolean) => {
+export const setDevMode = (dev: boolean) => {
     isDev = dev;
 };
 
-export const setLogger = (logger: Logger) => {
-    coreLogger = logger;
-};
+export const event$ = new Subject<CoreLogEvent>();
 
-export const getModuleLogger = (module: ModuleName): Logger => ({
-    debug: (...args: Parameters<Logger['warn']>) => {
+export const getModuleLogger = (module: ModuleName) => ({
+    debug: (msg?: string) => {
         if (isDev) {
-            coreLogger.debug('[sea-core][%s]:', module, ...args);
+            event$.next({ module, level: 'debug', time: Date.now(), msg });
         }
     },
-    warn: (...args: Parameters<Logger['warn']>) => {
-        coreLogger.warn('[sea-core][%s]:', module, ...args);
+    info: (msg?: string) => {
+        event$.next({ module, level: 'info', time: Date.now(), msg });
+    },
+    warn: (msg?: string) => {
+        event$.next({ module, level: 'warn', time: Date.now(), msg });
+    },
+    error: (msg?: string) => {
+        event$.next({ module, level: 'error', time: Date.now(), msg, stack: Error().stack });
     },
 });

@@ -21,8 +21,7 @@
     "watch": "tsc --watch",
     "clean": "rimraf ./dist && rimraf ../../.tsbuildinfo/core.tsbuildinfo",
     "lint": "eslint --fix . && tsc --noEmit",
-    "test": "vitest",
-    "coverage": "vitest run --coverage"
+    "test": "vitest"
   },
   "files": [
     "dist",
@@ -39,7 +38,7 @@
   ],
   "devDependencies": {
     "happy-dom": "^12.10.3",
-    "vitest": "^1.0.4"
+    "vitest": "^1.1.0"
   },
   "dependencies": {
     "rxjs": "^7.8.1"

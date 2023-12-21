@@ -2,7 +2,7 @@ import { PanelField, PanelTable, useRowData, type PanelColumns } from '@/compone
 import { Button, Toolbar } from '@mui/material';
 
 import { SeaTableRow } from '@/components/styled/TableRow';
-import type { AnyFunction, HookDataMap } from '@sea/core';
+import type { AnyFunction, HookPointDataMap } from '@sea/core';
 import { SEAEventSource, Subscription, restoreHookedFn } from '@sea/core';
 import { produce } from 'immer';
 import * as React from 'react';
@@ -89,12 +89,12 @@ export function PackageCapture() {
         //     capturedPkgFactory(setCapture, { cmd, type: 'RemoveListener', data: callback });
         // });
 
-        const onReceive = ({ buffer, cmd }: HookDataMap['socket:receive']) => {
+        const onReceive = ({ buffer, cmd }: HookPointDataMap['socket:receive']) => {
             if (state !== 'capturing' || CmdMask.includes(cmd)) return;
             capturedPkgFactory(setCapture, { cmd, data: buffer?.dataView, type: 'Received' });
         };
 
-        const onSend = ({ cmd, data }: HookDataMap['socket:send']) => {
+        const onSend = ({ cmd, data }: HookPointDataMap['socket:send']) => {
             if (state !== 'capturing' || CmdMask.includes(cmd)) return;
             capturedPkgFactory(setCapture, {
                 cmd,
