@@ -21,7 +21,7 @@ export default defineConfig({
             },
         },
         rollupOptions: {
-            external: /sea-core/,
+            external: /@sea\/core/,
         },
     },
 });

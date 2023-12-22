@@ -1,5 +1,4 @@
 import { delay } from '../../common/utils.js';
-import { Engine } from '../../engine/index.js';
 import { SEAPet } from '../../pet-helper/index.js';
 import { manager } from '../manager.js';
 import type { ILevelRunner } from './type.js';

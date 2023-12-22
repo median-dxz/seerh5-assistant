@@ -1,15 +1,14 @@
 import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
 import type { IPetFragmentRunner, PetFragmentOption } from '@/views/Automation/PetFragmentLevel';
 import {
-    PetFragmentLevelDifficulty as Difficulty,
-    Engine,
-    LevelAction,
-    PetFragmentLevel,
-    Socket,
-    delay,
-    type IPFLevelBoss,
-    type LevelMeta,
-    type LevelData as SEALevelData,
+  PetFragmentLevelDifficulty as Difficulty,
+  LevelAction,
+  PetFragmentLevel,
+  Socket,
+  delay,
+  type IPFLevelBoss,
+  type LevelMeta,
+  type LevelData as SEALevelData
 } from '@sea/core';
 
 interface LevelData extends SEALevelData {

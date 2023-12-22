@@ -81,7 +81,7 @@ declare global {
 }
 
 declare module '@sea/core' {
-    export interface Engine {
+    export interface SEAEngine {
         updateBattleFireInfo(): Promise<{
             type: number;
             valid: boolean;

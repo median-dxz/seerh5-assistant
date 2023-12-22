@@ -4,11 +4,11 @@ sidebar_position: 1
 
 # 教程一览
 
-欢迎使用 SEA-Project！
+欢迎使用 SEA Project！
 
-## SEA-Project 是什么？
+## SEA Project 是什么？
 
-**SEA-Project**，全称 SeerH5-Assistant-Project，框架因此取名 SEA。SEA-Project 是一个赛尔号 H5 端的**框架级**登录器项目，包含一系列框架，脚手架，api，工具链等，当然还有最重要的：**SEAL**，即在这一切基础上开发的 H5 端登录器。
+SEA Project 是一个赛尔号 H5 端的**框架级**登录器项目，包含一系列框架，脚手架，api，工具链等，以及在这一切基础上开发的 H5 端登录器 **SEAL**。
 
 ## 这和其他登录器有什么不同？
 
@@ -25,35 +25,31 @@ sidebar_position: 1
   - 成为赛尔号 H5 端上的模组框架，**类比 Minecraft 的 Forge 和 Fabric**
   - 成为一款赛尔号 H5 端上的优秀启动器，类比**HMCL**
 
-## 这个教程是教什么的？
+## 我能用这些做到什么？
 
-这个教程**不是**给登录器的最终用户（玩家）准备的，而是给**开发者**准备的，你需要有一定的编程开发知识储备，大致上有：
+SEA Project 目前提供的组件以及对应的能力如下，你可以根据下面的内容来大致判断自己可以用 SEA-Project 做什么：
 
-- node.js 基础，基于 npm 包的项目管理与开发能力，会使用 npm 生态的相关工具
-- 较强的现代 ECMAScript（ES7 以上）能力
-- typescript 基础
-
-SEA-Project 目前提供的组件以及对于的能力如下，你可以根据下面的内容来大致判断自己可以用 SEA-Project 做什么：
-
-- `@sea/core` SEA 核心(SEAC, C = Core)，在游戏的**生产版本**上运行的中间层，对上层暴露 api，保留极强的扩展能力，基于它你可以开发一款属于你自己的登录器！
-- `@sea/launcher`SEA 启动器(SEAL, L = Launcher)，使用 React18 开发，界面基于 Mui 定制
-- `@sea/server`SEAL 配套的后端服务器，提供资源代理，登录代理，配置持久等一切前端鞭长莫及的能力，使用`tRPC`和`WebSocket`进行前后端通信
+- `@sea/core` SEA 核心(SEAC, C = Core)，在游戏的**生产版本**上运行的中间层，对上层暴露 api，保留极强的扩展能力，你甚至可以基于它开发一款属于你自己的登录器！
+- `@sea/launcher`SEA 启动器(SEAL, L = Launcher)，使用 React18 开发，界面基于 MUI 定制。
+- `@sea/server`SEAL 配套的后端服务器，提供资源代理，登录代理，配置持久等一切前端鞭长莫及的能力，使用`tRPC`和`WebSocket`进行前后端通信。
 - `@sea/mod-presets`给 SEAL 的预装 mod，同时是 mod 开发很好的一个起点！
 
 ## 那就开始吧
 
-选择你的角色：
-
 ### 我想使用 SEAL
 
-你应该右转[安装 SEAL](./404.md)
+你应该右转[安装 SEAL](./404.md)。
 
 ### 我想开发模组
 
-查看[设置工作区](./404.md)来配置你的环境，以便进行下一步工作
+查看[设置工作区](./404.md)来配置你的环境，以便进行下一步工作。
 
 ### 我想知道引擎盖下发生的事情
 
-这么说你是 SEA-Project 的高级用户了！那么你可以查看以下页面
+这么说你是 SEA-Project 的高级用户了！那么你可以查看以下页面：
 
-- [seac 完全指南](/docs/category/seac-完全指南): 从头开始，但是更深入的了解`core`层的全貌
+- [SEAC 完全指南](/docs/category/seac-完全指南): 从头开始，但是更深入的了解`core`层的全貌。
+
+:::info
+名称由来：**Se**erH5 **A**ssistant Project
+:::

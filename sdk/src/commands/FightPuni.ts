@@ -1,4 +1,4 @@
-import { Engine } from 'sea-core';
+import { Engine } from '@sea/core';
 import Icon from './all_inclusive.svg?raw';
 
 export default async function FightPuni(createContext: SEAL.createModContext) {
@@ -6,7 +6,7 @@ export default async function FightPuni(createContext: SEAL.createModContext) {
         meta: {
             id: '对战谱尼',
             scope: 'median',
-            core: '0.8.1',
+            core: '1.0.0-rc.1',
         },
     });
 

@@ -1,4 +1,4 @@
-import { Socket } from 'sea-core';
+import { Socket } from '@sea/core';
 
 export const vip = (exchangeId: number) =>
     [

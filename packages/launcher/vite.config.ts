@@ -42,10 +42,7 @@ export default defineConfig(({ command, mode }) => {
             react({ jsxImportSource: '@emotion/react', devTarget: 'es2022' }),
             importMap({
                 options: {
-                    '@sea/core': {
-                        path: path.resolve(dirname, '../core/dist/index.js'),
-                        extras: ['@sea/core/battle', '@sea/core/strategy'],
-                    },
+                    '@sea/core': path.resolve(dirname, '../core/dist/index.js'),
                 },
             }),
             // 抑制vite在html中以相对路径引用外部脚本报错 ([vite #11854](https://github.com/vitejs/vite/pull/11854))

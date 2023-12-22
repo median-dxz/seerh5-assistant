@@ -26,7 +26,7 @@ async function syncVersion(packageJsonFile, jsFile) {
     }
 }
 
-syncVersion(path.join(coreDir, 'package.json'), path.join(coreDir, 'engine', 'index.ts'));
+syncVersion(path.join(coreDir, 'package.json'), path.join(coreDir, 'seac.ts'));
 syncVersion(path.join(launcherDir, 'package.json'), path.join(launcherDir, 'src', 'constants.ts'));
 
 // 同步api定义到sdk

@@ -4,7 +4,7 @@ import { DS } from '@/constants';
 import { useMainState } from '@/context/useMainState';
 import { Button, CircularProgress, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
-import { BattleFireType, Engine, SEAEventSource, Socket, Subscription, throttle } from '@sea/core';
+import { BattleFireType, SEAEventSource, Socket, Subscription, throttle } from '@sea/core';
 import { produce } from 'immer';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';

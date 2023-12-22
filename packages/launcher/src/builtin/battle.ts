@@ -1,5 +1,4 @@
 import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
-import { Engine } from '@sea/core';
 
 export default async function builtinBattle(createContext: SEAL.createModContext) {
     const context = await createContext({

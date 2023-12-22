@@ -28,5 +28,5 @@
         "./pet-helper",
         "index.ts",
         "package.json"
-    ],
+, "seac.ts"    ],
 }

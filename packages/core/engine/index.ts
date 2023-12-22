@@ -1,92 +1,57 @@
 export * from './GameConfig.js';
-export { Engine, extendEngine } from './engine.js';
 export * as Socket from './socket.js';
 
-import { event$, setDevMode } from '../common/log.js';
 import type { AnyFunction } from '../common/utils.js';
-import { SEAEventSource } from '../event-source/index.js';
-import { coreSetup, coreSetupBasic } from './features/index.js';
 
-const VERSION = '1.0.0-rc.1';
-const SEER_READY_EVENT = 'seerh5_ready';
-export type VERSION = typeof VERSION;
+import { lowerHp } from './function/lowerHp.js';
+import { switchBag } from './function/switchBag.js';
 
-interface SetupFn {
-    type: 'beforeGameCoreInit' | 'afterFirstShowMainPanel';
-    fn: AnyFunction;
-}
+import { buyPetItem } from './mutate/buyPetItem.js';
+import { changeSuit } from './mutate/changeSuit.js';
+import { changeTitle } from './mutate/changeTitle.js';
+import { cureAllPet } from './mutate/cureAllPet.js';
+import { fightBoss } from './mutate/fightBoss.js';
+import { toggleAutoCure } from './mutate/toggleAutoCure.js';
 
-const checkEnv = () => typeof window !== 'undefined' && window === window.self && typeof window.sea === 'undefined';
+import { autoCureState } from './query/autoCureState.js';
+import { eliteStorageLimit } from './query/eliteStorageLimit.js';
+import { isPetEffectActivated } from './query/isPetEffectActivated.js';
+import { itemNum } from './query/itemNum.js';
+import { playerAbilitySuits } from './query/playerAbilitySuits.js';
+import { playerAbilityTitles } from './query/playerAbilityTitles.js';
+import { playerSuit } from './query/playerSuit.js';
+import { playerTitle } from './query/playerTitle.js';
 
-export class SEAC {
-    readonly version = VERSION;
+import { findObject } from './ui/findObject.js';
+import { imageButtonListener } from './ui/imageButtonListener.js';
+import { inferCurrentModule } from './ui/inferCurrentModule.js';
 
-    private loadCalled: boolean;
-    private setupFns: Array<SetupFn> = [];
-    private setup(type: SetupFn['type']) {
-        this.setupFns
-            .filter(({ type: _type }) => _type === type)
-            .forEach((i) => {
-                i.fn();
-            });
-    }
+const engine = {
+    lowerHp,
+    switchBag,
+    buyPetItem,
+    changeSuit,
+    changeTitle,
+    cureAllPet,
+    fightBoss,
+    toggleAutoCure,
+    autoCureState,
+    eliteStorageLimit,
+    isPetEffectActivated,
+    itemNum,
+    playerAbilitySuits,
+    playerAbilityTitles,
+    playerSuit,
+    playerTitle,
+    findObject,
+    imageButtonListener,
+    inferCurrentModule,
 
-    readonly event$ = new SEAEventSource(event$);
-    readonly setDevMode = setDevMode;
-
-    constructor() {
-        if (checkEnv()) {
-            this.loadCalled = false;
-
-            window.sea = {
-                SEER_READY_EVENT,
-                SeerH5Ready: false,
-                seac: this,
-            };
-
-            this.addSetupFn('beforeGameCoreInit', coreSetupBasic);
-            this.addSetupFn('afterFirstShowMainPanel', coreSetup);
+    extend(func: AnyFunction | Record<string, AnyFunction>) {
+        if (typeof func === 'function') {
+            (engine as unknown as { [method: string]: AnyFunction })[func.name] = func;
         } else {
-            if (window.sea !== undefined) {
-                throw new Error('There can be only one instance of SEA Core');
-            } else {
-                throw new Error('Not in browser environment');
-            }
+            Object.assign(engine, func);
         }
-    }
-
-    addSetupFn(type: SetupFn['type'], fn: SetupFn['fn']) {
-        this.setupFns.push({ type, fn });
-    }
-
-    async load() {
-        if (this.loadCalled) {
-            throw new Error('load() should be called only once');
-        }
-        this.loadCalled = true;
-
-        const { sea } = window;
-        if (sea.SeerH5Ready) {
-            throw new Error('load() should be only called before Core.init()');
-        }
-
-        return new Promise<void>((resolve) => {
-            const beforeGameCoreInit = () => {
-                EventManager.addEventListener('event_first_show_main_panel', afterFirstShowMainPanel, null);
-                this.setup('beforeGameCoreInit');
-
-                // eslint-disable-next-line
-                Core.init();
-            };
-
-            const afterFirstShowMainPanel = () => {
-                EventManager.removeEventListener('event_first_show_main_panel', afterFirstShowMainPanel, null);
-                this.setup('afterFirstShowMainPanel');
-                resolve();
-                this.setupFns = [];
-            };
-
-            window.addEventListener(SEER_READY_EVENT, beforeGameCoreInit, { once: true });
-        });
-    }
-}
+    },
+};

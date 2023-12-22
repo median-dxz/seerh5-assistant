@@ -1,3 +1,4 @@
+import type { SkillType } from '../constant/index.js';
 import { EntityBase, type EntityType } from './EntityBase.js';
 import { PetElement } from './PetElement.js';
 
@@ -9,7 +10,7 @@ export class Skill extends EntityBase {
     readonly name: string;
     readonly __type: EntityType = 'Skill';
     element: PetElement;
-    category: number;
+    category: SkillType;
     power: number;
     priority: number;
     accuracy: number;

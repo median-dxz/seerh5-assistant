@@ -26,7 +26,7 @@ try {
 try {
     // 卸载旧版本
     try {
-        await exec(`pnpm remove sea-core`, { cwd: sdkDir });
+        await exec(`npm uninstall @sea/core`, { cwd: sdkDir });
     } catch (e) {
         console.error(e);
     }
@@ -44,7 +44,7 @@ try {
     await fs.copyFile(tarball, targetFile);
 
     targetFile = path.relative(sdkDir, targetFile);
-    const { stdout } = await exec(`pnpm add ${targetFile} -D`, { cwd: sdkDir });
+    const { stdout } = await exec(`npm install ${targetFile} -D`, { cwd: sdkDir });
 
     console.log(stdout);
 } catch (e) {

@@ -1,7 +1,7 @@
 import { Socket, extendEngine } from '@sea/core';
 
 export function extendCoreEngine() {
-    extendEngine({
+    engine.extend({
         async updateBattleFireInfo() {
             // 类型: 2913,
             // 到期时间戳: 2914,

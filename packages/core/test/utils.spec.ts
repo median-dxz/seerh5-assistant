@@ -1,6 +1,12 @@
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { HookedSymbol, type HookedFunction } from '../dist/common/utils';
+import {
+    AnyFunction,
+    HookedSymbol,
+    assertIsHookedFunction,
+    assertIsWrappedFunction,
+    type HookedFunction,
+} from '../dist/common/utils';
 import { hookFn, wrapper } from '../dist/index';
 
 const createFn = () => () => {};
@@ -17,6 +23,8 @@ describe('wrapper', () => {
         const wrapped1 = wrapper(originalFunc);
         const wrapped2 = wrapped1.after(createFn());
         const wrapped3 = wrapped2.before(createFn());
+
+        expect(assertIsWrappedFunction(wrapped3)).toBe(true);
 
         expect(wrapped1[HookedSymbol.original]).toBe(originalFunc);
         expect(wrapped2[HookedSymbol.original]).toBe(originalFunc);
@@ -46,10 +54,18 @@ describe('wrapper', () => {
 
     test('wrap 一个 HookedFunction', () => {
         const f = createFn();
-        const hookedFunc = createFn() as HookedFunction<() => void>;
-        hookedFunc[HookedSymbol.original] = f;
-        const result = wrapper(hookedFunc);
-        expect(result[HookedSymbol.original]).toBe(hookedFunc);
+        const hookedFunc1 = createFn() as HookedFunction<() => void>;
+        const hookedFunc2 = createFn() as HookedFunction<() => void>;
+        hookedFunc1[HookedSymbol.original] = f;
+        hookedFunc2[HookedSymbol.original] = hookedFunc1;
+
+        const result1 = wrapper(hookedFunc1);
+        expect(result1[HookedSymbol.original]).toBe(hookedFunc1); // original 指向 HookedFunction
+
+        const result2 = wrapper(hookedFunc2);
+        expect(result2[HookedSymbol.original]).toBe(hookedFunc2); // original 指向 HookedFunction
+
+        expect(result2[HookedSymbol.original][HookedSymbol.original]).toBe(hookedFunc1);
     });
 
     test('wrap 一个 WrappedFunction', () => {
@@ -59,7 +75,7 @@ describe('wrapper', () => {
         const wrapped = wrapper(f).after(after[0]).before(before[0]);
         const rewrapped = wrapper(wrapped).after(after[1]).before(before[1]);
 
-        expect(rewrapped[HookedSymbol.original]).toBe(f);
+        expect(rewrapped[HookedSymbol.original]).toBe(f); // original 指向 originalFunction
         expect(rewrapped[HookedSymbol.before]).toEqual(before);
         expect(rewrapped[HookedSymbol.after]).toEqual(after);
     });
@@ -93,22 +109,94 @@ describe('hookFn', () => {
         expect(result).toBeUndefined();
     });
 
-    test('wrapFn', () => {
-        const target = {
-            funcName: createFn(),
+    interface LocalTestContext {
+        target: {
+            func: AnyFunction;
         };
+    }
 
-        const override = vi.fn();
-        const originalFunc = target.funcName;
+    beforeEach<LocalTestContext>(async (context) => {
+        context.target = {
+            func: vi.fn(function (...args: unknown[]) {
+                return this;
+            }),
+        };
+    });
 
-        hookFn(target, 'funcName', override);
+    test<LocalTestContext>('测试HookedFunction', ({ target }) => {
+        const override = vi.fn(function (f, ...args: any[]) {
+            return { this: this, args, thisBind: this === f() };
+        });
+        const originalFunc = target.func;
 
-        expect(target.funcName).not.toBe(originalFunc);
-        expect(target.funcName[HookedSymbol.original]).toBe(originalFunc);
+        hookFn(target, 'func', override);
+
+        expect(target.func).not.toBe(originalFunc);
+        expect(target.func[HookedSymbol.original]).toBe(originalFunc);
 
         const args = [1, 2, 3];
-        target.funcName(...args);
+        const r = target.func(...args);
 
-        expect(override).toHaveBeenCalledWith(originalFunc.bind(target), ...args);
+        expect(override).toHaveBeenCalled();
+
+        expect(r).toEqual({
+            this: target,
+            args: [1, 2, 3],
+            thisBind: true,
+        });
+        expect(assertIsHookedFunction(target.func)).toBe(true);
+    });
+
+    test<LocalTestContext>('hook 一个 HookedFunction', ({ target }) => {
+        const originalFunc = target.func;
+        const override1 = vi.fn();
+        const override2 = vi.fn((f) => f());
+        hookFn(target, 'func', override1);
+        hookFn(target, 'func', override2);
+        const r = target.func();
+
+        expect(override1).not.toHaveBeenCalled();
+        expect(override2).toHaveBeenCalled();
+        expect(target.func[HookedSymbol.original]).toBe(originalFunc); // original 指向 originalFunction
+        expect(r).toBe(target); // this === target
+    });
+
+    test<LocalTestContext>('hook 一个 WrappedFunction', ({ target }) => {
+        const originalFunc = target.func;
+        const override = vi.fn();
+        const decorator = vi.fn();
+        target.func = wrapper(target.func).before(decorator).after(decorator);
+        hookFn(target, 'func', override);
+        target.func();
+
+        expect(override).toHaveBeenCalled();
+        expect(decorator).not.toHaveBeenCalled();
+
+        // 验证是否了清空之前的修改
+        expect(target.func[HookedSymbol.original]).toBe(originalFunc);
+        expect(target.func[HookedSymbol.before]).toBeUndefined();
+        expect(target.func[HookedSymbol.after]).toBeUndefined();
+        expect(assertIsWrappedFunction(target.func)).toBe(false);
+    });
+
+    test<LocalTestContext>('hook 一个 wrap 了 HookedFunction 的 WrappedFunction', ({ target }) => {
+        const originalFunc = target.func;
+        const override1 = vi.fn();
+        const override2 = vi.fn();
+        const decorator = vi.fn();
+        hookFn(target, 'func', override1);
+        target.func = wrapper(target.func).before(decorator).after(decorator);
+        hookFn(target, 'func', override2);
+        target.func();
+
+        expect(override2).toHaveBeenCalled();
+        expect(override1).not.toHaveBeenCalled();
+        expect(decorator).not.toHaveBeenCalled();
+
+        // 验证是否了清空之前的修改
+        expect(target.func[HookedSymbol.original]).toBe(originalFunc);
+        expect(target.func[HookedSymbol.before]).toBeUndefined();
+        expect(target.func[HookedSymbol.after]).toBeUndefined();
+        expect(assertIsWrappedFunction(target.func)).toBe(false);
     });
 });

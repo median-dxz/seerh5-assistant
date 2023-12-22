@@ -1,4 +1,4 @@
-import { Socket } from 'sea-core';
+import { Socket } from '@sea/core';
 
 const MULTI_QUERY = {
     刻印抽奖次数: 16577,

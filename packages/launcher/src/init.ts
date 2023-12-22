@@ -1,15 +1,12 @@
 import * as seaCore from '@sea/core';
-import { NOOP, coreLog, seac } from '@sea/core';
+import { NOOP, seac } from '@sea/core';
 
-import { IS_DEV } from '@/constants';
 import { setupForLauncher } from '@/features/setup';
 
 // register service work
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register(import.meta.env.MODE === 'production' ? '/sw.js' : '/dev-sw.js?dev-sw');
 }
-
-coreLog.setDev(IS_DEV);
 
 // init sea core
 window.sea = { ...window.sea, ...seaCore };

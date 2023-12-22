@@ -14,17 +14,16 @@ export {
 } from './common/utils.js';
 export type { AnyFunction, Constructor, ValueOf, WithClass } from './common/utils.js';
 export * from './constant/index.js';
+export * from './seac.js';
 
 export * from './battle/index.js';
 export * from './battle/level/index.js';
 export * from './engine/index.js';
-export type { VERSION } from './engine/index.js';
 export * from './entity/index.js';
 export * from './event-source/index.js';
 export * from './pet-helper/index.js';
 
-import { SEAC } from './engine/index.js';
-export const seac = new SEAC();
+import type { SEAC } from './seac.js';
 
 declare global {
     interface Window {

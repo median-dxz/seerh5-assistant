@@ -1,14 +1,14 @@
-import type { Pet } from 'sea-core';
+import type { Pet } from '@sea/core';
 import {
-    Engine,
-    GameConfigRegistry,
-    PetDataManger,
-    SEAEventSource,
-    SEAPet,
-    hookPrototype,
-    restoreHookedFn,
-    wrapper,
-} from 'sea-core';
+  Engine,
+  GameConfigRegistry,
+  PetDataManger,
+  SEAEventSource,
+  SEAPet,
+  hookPrototype,
+  restoreHookedFn,
+  wrapper,
+} from '@sea/core';
 
 interface PetFragment {
     EffectMsglog: number;
@@ -66,7 +66,7 @@ export default async function ItemWareHouse(createContext: SEAL.createModContext
             id: 'itemWarehouse',
             scope: 'median',
             description: '物品仓库修改, 提供更换的精灵因子界面交互',
-            core: '0.8.1',
+            core: '1.0.0-rc.1',
         },
     });
 

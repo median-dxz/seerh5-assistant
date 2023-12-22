@@ -1,4 +1,4 @@
-import { GameConfigRegistry, SEAEventSource, SEAPet, Socket, delay } from 'sea-core';
+import { GameConfigRegistry, SEAEventSource, SEAPet, Socket, delay } from '@sea/core';
 
 const rate = [
     [0, 24, 5.8, 1.4, 0.3],
@@ -17,7 +17,7 @@ export default async function CraftSkillStone(createContext: SEAL.createModConte
             id: 'CraftSkillStone',
             scope: 'median',
             version: '1.0.0',
-            core: '0.8.1',
+            core: '1.0.0-rc.1',
             description: 'misc',
         },
     });

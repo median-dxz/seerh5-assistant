@@ -1,6 +1,6 @@
-import { Engine, Pet, SEAEventSource, Subscription, debounce, hookFn, hookPrototype } from 'sea-core';
+import { Engine, Pet, SEAEventSource, Subscription, debounce, hookFn, hookPrototype } from '@sea/core';
 
-declare module 'sea-core' {
+declare module '@sea/core' {
     interface GameModuleMap {
         petBag: petBag.PetBag;
     }
@@ -12,7 +12,7 @@ export default async function PetBag(createContext: SEAL.createModContext) {
             id: 'petBag',
             scope: 'median',
             description: '精灵背包模块注入, 提供UI同步和本地皮肤功能的UI支持',
-            core: '0.8.1',
+            core: '1.0.0-rc.1',
         },
     });
 

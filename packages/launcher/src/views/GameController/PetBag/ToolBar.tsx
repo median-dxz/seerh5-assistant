@@ -11,7 +11,7 @@ import Bookmarks from '@mui/icons-material/Bookmarks';
 import Clear from '@mui/icons-material/ClearRounded';
 import { Button, Tooltip, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
-import { Engine, Pet, PetLocation, SEAPet, getBagPets } from '@sea/core';
+import { Pet, PetLocation, SEAPet, getBagPets } from '@sea/core';
 import React, { useCallback } from 'react';
 
 interface ToolBarProps {

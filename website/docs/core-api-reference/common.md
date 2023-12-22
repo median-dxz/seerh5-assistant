@@ -58,7 +58,7 @@ obj.fn();
 - 通过 `assertIsWrappedFunction` 和 `assertIsHookedFunction` 断言 hook 类型
 - 对非幂等的 `wrapper` 和 `hookFn` 进行特殊处理
 
-然后你需要传入一个函数 `override` 来替换原函数，这个传入函数的参数分两部分： `originalFunc` 也就是原函数，以及后面跟着的是原函数的入参，你可以选择使用它们或完全忽略。
+你需要传入一个函数 `override` 来替换原函数，`override`的参数分两部分： `originalFunc` 是**绑定了挂载对象作为 this**的原函数，后面跟着的是原函数的入参，你可以选择使用它们或完全忽略。
 
 一般来说，你只会将 hook 应用在游戏暴露出来的对象中，极端情况有下列若干种：
 
@@ -68,9 +68,9 @@ obj.fn();
 
 2. 目标函数在顶级作用域
 
-那么这个游戏对象一定被挂载在 `globalThis` 或者说 `window` 上了，因为 SeerH5 采用的是 IIFE 加载方案。
+那么这个游戏对象一定被挂载在 `globalThis` 或者说 `window` 上了，因为游戏模块是使用 IIFE 加载的。
 
-3. 目标函数是一个 getter
+1. 目标函数是一个 getter
 
 包括下面的 `wrapper`，暂时不支持这种特殊情况，你可以选择直接修改这个 getter，或者提一个 **issue** 来讨论这种情况。
 
@@ -78,7 +78,7 @@ obj.fn();
 
 如果目标函数只用 `hookFn` 修改过，那么之前的所有更改都会被**丢弃**（SEAC 会在出现丢弃修改行为的时候发出警告），在你的`override` 中传入的，**是最初的原函数**。
 
-请务必查看[hook 教程](../tutorial-extras/hook.md#互操作性)中对 `hookFn` 和 `wrapper` 两者**互操作性**的描述。
+请务必查看[hook 教程](./hook.md#互操作性)中对 `hookFn` 和 `wrapper` 两者**互操作性**的描述。
 
 ### hookPrototype
 
@@ -153,7 +153,7 @@ f('1');
 
 如果你传入了一个已经被 `hookFn` 或 `wrapper` 修改过的函数，那么 `wrapper` 会在**修改后的基础**上进行包装。另外， `wrapper` 、 `after` 和 `before`调用后保证返回一个全新的函数。换而言之，这三个操作都是纯函数操作。因此你可以放心的使用 `wrapper` 包装函数并添加装饰器。
 
-另请务必查看[hook 教程](../tutorial-extras/hook.md#互操作性)中对两者**互操作性**的描述。
+另请务必查看[hook 教程](./hook.md#互操作性)中对两者**互操作性**的描述。
 
 - `this` 的处理
 
@@ -202,8 +202,6 @@ object.f();
 // 输出 true
 ```
 
-另请参阅[hook 教程](../tutorial-extras/hook.md)。
-
 ### experiment_hookConstructor
 
 ```ts
@@ -227,8 +225,6 @@ function assertIsHookedFunction<F extends AnyFunction>(func: F | HookedFunction<
 
 断言 `func` 是否被 SEAC 的 hook 函数修改过。
 
-另请参阅[hook 教程](../tutorial-extras/hook.md)。
-
 ### assertIsWrappedFunction
 
 ```ts
@@ -237,9 +233,7 @@ function assertIsWrappedFunction<F extends AnyFunction>(func: F | WrappedFunctio
 
 断言 `func` 是否是一个 wrapped 的函数，注意一个 wrapped 函数一定是 hooked，反之不一定。
 
-这里的 hooked 指该函数被 SEAC 的 hook 函数修改过，而 wrapped 特指该函数是使用 `wrapper` 修改的。在教程中这两个词和*WrappedFunction*、*HookedFunction*指代相同。
-
-另请参阅[hook 教程](../tutorial-extras/hook.md)。
+这里的 hooked 指该函数被 SEAC 的 hook 函数修改过，而 wrapped 特指该函数是使用 `wrapper` 修改的。在[Hook 教程](./hook.md)中这两个词和*WrappedFunction*、*HookedFunction*指代相同。
 
 ## 延时相关
 

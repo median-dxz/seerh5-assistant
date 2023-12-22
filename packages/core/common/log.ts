@@ -13,18 +13,11 @@ export enum ModuleName {
     Utils = 'utils',
 }
 
-let isDev = false;
-export const setDevMode = (dev: boolean) => {
-    isDev = dev;
-};
-
 export const event$ = new Subject<CoreLogEvent>();
 
 export const getModuleLogger = (module: ModuleName) => ({
     debug: (msg?: string) => {
-        if (isDev) {
-            event$.next({ module, level: 'debug', time: Date.now(), msg });
-        }
+        event$.next({ module, level: 'debug', time: Date.now(), msg });
     },
     info: (msg?: string) => {
         event$.next({ module, level: 'info', time: Date.now(), msg });

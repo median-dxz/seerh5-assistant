@@ -1,4 +1,4 @@
-import { NOOP, Socket } from 'sea-core';
+import { NOOP, Socket } from '@sea/core';
 
 interface SkinInfo {
     skinId: number;
@@ -16,7 +16,7 @@ export default async function LocalPetSkin(createContext: SEAL.createModContext)
             id: 'LocalPetSkin',
             scope: 'median',
             version: '1.0.0',
-            core: '0.8.1',
+            core: '1.0.0-rc.1',
             description: '本地全皮肤解锁',
         },
         defaultConfig: { changed: new Map<number, SkinInfo>(), original: new Map<number, number>() },

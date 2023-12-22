@@ -1,5 +1,5 @@
 {
-  "name": "seerh5-assistant-project",
+  "name": "sea-project",
   "private": true,
   "type": "module",
   "license": "MPL-2.0",
@@ -15,8 +15,8 @@
     "dev": "conc pnpm:core:watch pnpm:launcher:dev",
     "server:run": "pnpm -C ./packages/server run start",
     "launcher:dev": "pnpm -C ./packages/launcher run dev",
-    "core:watch": "pnpm -F sea-core run watch",
-    "core:build": "pnpm -F sea-core run build",
+    "core:watch": "pnpm --filter \"@sea/core\" run watch",
+    "core:build": "pnpm --filter \"@sea/core\" run build",
     "workspace:sync": "node ./scripts/sync.js",
     "release:core": "node ./scripts/release.js"
   },
@@ -31,6 +31,6 @@
     "vite": "^5.0.10"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=20.0.0"
   }
 }

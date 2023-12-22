@@ -1,6 +1,6 @@
 {
   "name": "@sea/core",
-  "description": "SeerH5-Assistant SEA 核心",
+  "description": "SEA 核心",
   "type": "module",
   "version": "1.0.0-rc.1",
   "license": "MPL-2.0",

@@ -4,7 +4,7 @@ import { themes as prismThemes } from 'prism-react-renderer';
 
 const config: Config = {
     title: 'SEA Project',
-    tagline: 'Dinosaurs are cool',
+    tagline: 'Web登录器框架',
     favicon: 'img/favicon.ico',
 
     // Set the production url of your site here
@@ -59,9 +59,9 @@ const config: Config = {
         // Replace with your project's social card
         image: 'img/docusaurus-social-card.jpg',
         navbar: {
-            title: 'My Site',
+            title: 'SEA Project',
             logo: {
-                alt: 'My Site Logo',
+                alt: 'SEA Project Logo',
                 src: 'img/logo.svg',
             },
             items: [
@@ -73,7 +73,7 @@ const config: Config = {
                 },
                 { to: '/blog', label: 'Blog', position: 'left' },
                 {
-                    href: 'https://github.com/facebook/docusaurus',
+                    href: 'https://github.com/median-dxz/seerh5-assistant',
                     label: 'GitHub',
                     position: 'right',
                 },

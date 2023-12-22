@@ -1,4 +1,4 @@
-import type { ILevelRunner, LevelMeta, MoveStrategy, VERSION } from 'sea-core';
+import type { ILevelRunner, LevelMeta, MoveStrategy, VERSION } from '@sea/core';
 
 declare global {
     namespace SEAL {
@@ -80,7 +80,7 @@ declare global {
     }
 }
 
-declare module 'sea-core' {
+declare module '@sea/core' {
     export interface Engine {
         updateBattleFireInfo(): Promise<{
             type: number;
