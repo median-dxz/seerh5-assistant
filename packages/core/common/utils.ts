@@ -148,7 +148,7 @@ type HookFunction<T extends object, K extends keyof T> = T[K] extends (...args: 
  * 就地修改函数实现
  * @param target 目标函数的挂载对象
  * @param funcName 目标函数的名称
- * @param hooked 修改后的实现
+ * @param override 修改后的实现
  */
 export function hookFn<T extends object, K extends keyof T>(target: T, funcName: K, override: HookFunction<T, K>) {
     let func = target[funcName] as AnyFunction;
