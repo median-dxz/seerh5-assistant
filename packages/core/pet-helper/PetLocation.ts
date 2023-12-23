@@ -1,5 +1,5 @@
 import { PetPosType } from '../constant/index.js';
-import { Socket } from '../engine/index.js';
+import { socket } from '../internal/index.js';
 
 export enum PetLocation {
     Default = 'Default',
@@ -11,7 +11,7 @@ export enum PetLocation {
     OnDispatching = 'OnDispatching',
 }
 
-export const setLocationTable: {
+export const LocationTransformTable: {
     [loc in keyof typeof PetLocation]: { [loc in keyof typeof PetLocation]?: (ct: number) => Promise<boolean> };
 } = {
     Default: {
@@ -80,7 +80,7 @@ export const setLocationTable: {
                 catchTime: ct,
             } as PetListInfo;
 
-            await Socket.sendByQueue(CommandID.DEL_LOVE_PET, [ct]).then(() => {
+            await socket.sendByQueue(CommandID.DEL_LOVE_PET, [ct]).then(() => {
                 PetManager.onDelLovePetSuccessHandler(ct);
                 PetStorage2015InfoManager.changePetPosi(ct, PetPosType.elite);
             });
@@ -111,7 +111,7 @@ export const setLocationTable: {
                 catchTime: ct,
             } as PetListInfo;
 
-            await Socket.sendByQueue(CommandID.ADD_LOVE_PET, [ct]).then(() => {
+            await socket.sendByQueue(CommandID.ADD_LOVE_PET, [ct]).then(() => {
                 PetManager.onAddLovePetSuccessHandler(ct);
                 PetStorage2015InfoManager.changePetPosi(ct, PetPosType.elite);
             });

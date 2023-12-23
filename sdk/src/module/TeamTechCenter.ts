@@ -1,4 +1,4 @@
-import { SEAEventSource, Socket } from '@sea/core';
+import { SEAEventSource, socket } from '@sea/core';
 
 declare var Alarm: any;
 
@@ -30,7 +30,8 @@ export default async function TeamTechCenter(createContext: SEAL.createModContex
             }
 
             const updateOnce = (): Promise<void> =>
-                Socket.sendByQueue(CommandID.NEW_TEAM_PET_RISE, [this._petInfo.catchTime, index])
+                socket
+                    .sendByQueue(CommandID.NEW_TEAM_PET_RISE, [this._petInfo.catchTime, index])
                     .then(() => PetManager.UpdateBagPetInfoAsynce(this._petInfo.catchTime))
                     .then((petInfo) => {
                         this._petInfo = petInfo;

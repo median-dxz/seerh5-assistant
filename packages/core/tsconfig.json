@@ -20,13 +20,11 @@
         "./battle",
         "./common",
         "./constant",
-        "./engine",
         "./entity",
         "./event-source",
-        "./functions",
-        "./loader",
+        "./internal",
         "./pet-helper",
         "index.ts",
         "package.json"
-, "seac.ts"    ],
+    ],
 }

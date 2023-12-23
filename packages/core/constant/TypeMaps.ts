@@ -1,6 +1,6 @@
 import type { WithClass } from '../common/utils.js';
 import type { Pet, PetRoundInfo } from '../entity/index.js';
-import type { CaughtPet } from '../pet-helper/SEAPet.js';
+import type { CaughtPet } from '../pet-helper/pet.js';
 
 export interface HookPointDataMap {
     'module:openMainPanel': { module: string; panel: string };

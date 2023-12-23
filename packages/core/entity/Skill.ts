@@ -92,4 +92,8 @@ export class Skill extends EntityBase {
     get categoryName() {
         return SkillXMLInfo.getCategoryName(this.id);
     }
+
+    get isFifth() {
+        return Object.values(SkillXMLInfo.hideMovesMap).flat().find((v) => v.id === this.id);
+    }
 }

@@ -1,10 +1,4 @@
-import type { MoveStrategy } from '../index.js';
-
-export const LevelAction = {
-    BATTLE: 'battle' as const,
-    AWARD: 'award' as const,
-    STOP: 'stop' as const,
-};
+import type { MoveStrategy } from '../strategy.js';
 
 export interface LevelData {
     remainingTimes: number;
@@ -25,8 +19,8 @@ export interface ILevelRunner<TData extends LevelData = LevelData> {
     selectLevelBattle(): ILevelBattle;
 
     beforeAll?: () => Promise<void>;
-    afterAll?: () => Promise<void>; 
-    
+    afterAll?: () => Promise<void>;
+
     logger: typeof console.log;
 }
 

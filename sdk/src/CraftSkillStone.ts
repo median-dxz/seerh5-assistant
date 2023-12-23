@@ -1,4 +1,4 @@
-import { GameConfigRegistry, SEAEventSource, SEAPet, Socket, delay } from '@sea/core';
+import { GameConfigRegistry, SEAEventSource, delay, socket, spet } from '@sea/core';
 
 const rate = [
     [0, 24, 5.8, 1.4, 0.3],
@@ -34,7 +34,7 @@ export default async function CraftSkillStone(createContext: SEAL.createModConte
             const query = GameConfigRegistry.getQuery('nature');
 
             for (; ; await delay(200)) {
-                await SEAPet(ct).useItem(300070).done;
+                await spet(ct).useItem(300070).done;
                 const info = await PetManager.UpdateBagPetInfoAsynce(ct);
 
                 logger(`刷性格: 当前性格: ${query.getName(info.nature)}`);
@@ -108,7 +108,7 @@ export default async function CraftSkillStone(createContext: SEAL.createModConte
                 return;
             }
             console.log(getRate(), toCraft);
-            await Socket.sendByQueue(
+            await socket.sendByQueue(
                 CommandID.SKILL_STONE_COMPOSE_ITEM,
                 toCraft.map((v) => v.id)
             );

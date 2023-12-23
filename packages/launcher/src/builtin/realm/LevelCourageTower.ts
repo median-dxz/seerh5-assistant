@@ -1,5 +1,5 @@
 import type { AnyFunction, LevelMeta } from '@sea/core';
-import { LevelAction, Socket } from '@sea/core';
+import { LevelAction, socket } from '@sea/core';
 
 import type { ILevelBattle, LevelData as SEALevelData } from '@sea/core';
 
@@ -41,8 +41,8 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
         constructor(public option: LevelOption) {}
 
         async update() {
-            const bits = (await Socket.bitSet(636, 1000577)).map(Boolean);
-            const buf = await Socket.sendByQueue(42397, [117]);
+            const bits = (await socket.bitSet(636, 1000577)).map(Boolean);
+            const buf = await socket.sendByQueue(42397, [117]);
             const realmInfo = new DataView(buf!);
 
             this.data.stimulation = bits[0];
@@ -69,11 +69,11 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
         readonly actions: Record<string, () => Promise<void>> = {
             battle: async () => {
-                Socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [117, 30, 1]);
+                socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [117, 30, 1]);
             },
 
             award: async () => {
-                await Socket.sendByQueue(42395, [117, 4, 0, 0]);
+                await socket.sendByQueue(42395, [117, 4, 0, 0]);
             },
         };
     }

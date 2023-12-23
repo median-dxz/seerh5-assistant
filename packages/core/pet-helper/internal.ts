@@ -1,6 +1,6 @@
-import { HookPointRegistry, SocketDeserializerRegistry } from '../event-source/index.js';
-import { PetDataManger } from './PetDataManager.js';
-import { CaughtPet } from './SEAPet.js';
+import { HookPointRegistry, SocketDeserializerRegistry } from '../internal/index.js';
+import { CaughtPet } from './pet.js';
+import { SEAPetStore } from './PetStore.js';
 
 export default () => {
     SocketDeserializerRegistry.register(CommandID.GET_PET_INFO_BY_ONCE, (data) => {
@@ -30,11 +30,11 @@ export default () => {
         return new PetTakeOutInfo(bytes);
     });
 
-    PetDataManger.init();
+    SEAPetStore.init();
 
     HookPointRegistry.register('pet_bag:update', (resolve) => {
         // eslint-disable-next-line @typescript-eslint/unbound-method
-        PetDataManger.bag.update = new Proxy(PetDataManger.bag.update, {
+        SEAPetStore.bag.update = new Proxy(SEAPetStore.bag.update, {
             apply: (target, thisArg, argArray: [[CaughtPet[], CaughtPet[]]]) => {
                 resolve(...argArray);
                 return Reflect.apply(target, thisArg, argArray);
@@ -44,7 +44,7 @@ export default () => {
 
     HookPointRegistry.register('pet_bag:deactivate', (resolve) => {
         // eslint-disable-next-line @typescript-eslint/unbound-method
-        PetDataManger.bag.deactivate = new Proxy(PetDataManger.bag.deactivate, {
+        SEAPetStore.bag.deactivate = new Proxy(SEAPetStore.bag.deactivate, {
             apply: (target, thisArg, argArray) => {
                 resolve();
                 return void Reflect.apply(target, thisArg, argArray);

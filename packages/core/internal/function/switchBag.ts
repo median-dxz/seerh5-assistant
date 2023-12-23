@@ -1,5 +1,5 @@
 import { Pet } from '../../entity/index.js';
-import { PetLocation, SEAPet, getBagPets } from '../../pet-helper/index.js';
+import { PetLocation, SEAPetStore, spet } from '../../pet-helper/index.js';
 
 /**
  * 切换背包
@@ -15,13 +15,13 @@ export async function switchBag(pets: number[] | Pet[]) {
     const cts = pets.map((v) => Pet.inferCatchTime(v));
 
     // 清空现有背包
-    for (const v of await getBagPets(PetLocation.Bag)) {
+    for (const v of await SEAPetStore.getBagPets(PetLocation.Bag)) {
         if (!cts.includes(v.catchTime)) {
-            await SEAPet(v).popFromBag();
+            await spet(v).popFromBag();
         }
     }
 
     for (const v of cts) {
-        await SEAPet(v).setLocation(PetLocation.Bag);
+        await spet(v).setLocation(PetLocation.Bag);
     }
 }

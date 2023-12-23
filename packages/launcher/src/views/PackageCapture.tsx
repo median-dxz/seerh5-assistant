@@ -43,7 +43,7 @@ const capturedPkgFactory = (
     );
 };
 
-// SocketConnection.mainSocket.filterCMDLog(1001, 1002, 1016, 2001, 2002, 2441, 9019, 41228, 42387);
+// socketConnection.mainsocket.filterCMDLog(1001, 1002, 1016, 2001, 2002, 2441, 9019, 41228, 42387);
 const CmdMask = [
     1002, // SYSTEM_TIME
     2001, // ENTER_MAP
@@ -66,7 +66,7 @@ const CmdMask = [
 // dumpListener() {
 //     for (const [k, v] of this.listenerList.entries()) {
 //         if (v.length > 0) {
-//             console.log(`${k} : ${SocketEncryptImpl.getCmdLabel(k)}`);
+//             console.log(`${k} : ${socketEncryptImpl.getCmdLabel(k)}`);
 //             console.table(v);
 //         }
 //     }
@@ -76,7 +76,7 @@ export function PackageCapture() {
     const [state, setState] = React.useState<State>('pending');
     const [capture, setCapture] = React.useState<CapturedPackage[]>([]);
 
-    // const getLabel = SocketEncryptImpl.getCmdLabel;
+    // const getLabel = socketEncryptImpl.getCmdLabel;
 
     React.useEffect(() => {
         // wrapperFactory('addCmdListener', (cmd, callback) => {

@@ -1,7 +1,7 @@
 import { filter, map } from 'rxjs';
 import type { HookPointDataMap } from '../../constant/TypeMaps.js';
+import { HookPointRegistry } from '../../internal/index.js';
 import { SEAEventSource } from '../EventSource.js';
-import { HookPointRegistry } from '../HookPointRegistry.js';
 
 export function $hook<T extends keyof HookPointDataMap>(hook: T) {
     return HookPointRegistry.subject$.pipe(

@@ -1,10 +1,9 @@
 import { delay } from '../../common/utils.js';
-import { SEAPet } from '../../pet-helper/index.js';
+import { engine } from '../../internal/index.js';
+import { spet } from '../../pet-helper/index.js';
 import { manager } from '../manager.js';
+import { LevelAction } from './action.js';
 import type { ILevelRunner } from './type.js';
-import { LevelAction } from './type.js';
-
-export * from './type.js';
 
 export class LevelManager {
     // 单例模式
@@ -50,22 +49,22 @@ export class LevelManager {
         const lockFn = async () => {
             logger('预处理');
             await beforeAll?.();
-            const autoCureState = await Engine.autoCureState();
+            const autoCureState = await engine.autoCureState();
 
             const battle = async () => {
                 const { strategy, pets, beforeBattle } = runner.selectLevelBattle();
 
                 logger('准备对战');
-                await Engine.switchBag(pets);
+                await engine.switchBag(pets);
 
-                Engine.toggleAutoCure(false);
-                Engine.cureAllPet();
+                engine.toggleAutoCure(false);
+                engine.cureAllPet();
 
                 await delay(100);
 
                 logger('执行beforeBattle');
                 await beforeBattle?.();
-                await SEAPet(pets[0]).default();
+                await spet(pets[0]).default();
 
                 logger('进入对战');
                 try {
@@ -104,9 +103,9 @@ export class LevelManager {
             }
             logger('正在停止关卡');
             // 恢复自动治疗状态
-            await Engine.toggleAutoCure(autoCureState);
+            await engine.toggleAutoCure(autoCureState);
             // TODO
-            Engine.cureAllPet();
+            engine.cureAllPet();
             await afterAll?.();
 
             logger('关卡完成');

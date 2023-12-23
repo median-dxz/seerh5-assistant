@@ -1,6 +1,3 @@
-export * from './GameConfig.js';
-export * as Socket from './socket.js';
-
 import type { AnyFunction } from '../common/utils.js';
 
 import { lowerHp } from './function/lowerHp.js';
@@ -26,7 +23,7 @@ import { findObject } from './ui/findObject.js';
 import { imageButtonListener } from './ui/imageButtonListener.js';
 import { inferCurrentModule } from './ui/inferCurrentModule.js';
 
-const engine = {
+export const engine: SEAEngine = {
     lowerHp,
     switchBag,
     buyPetItem,
@@ -47,7 +44,7 @@ const engine = {
     imageButtonListener,
     inferCurrentModule,
 
-    extend(func: AnyFunction | Record<string, AnyFunction>) {
+    extend(func) {
         if (typeof func === 'function') {
             (engine as unknown as { [method: string]: AnyFunction })[func.name] = func;
         } else {
@@ -55,3 +52,26 @@ const engine = {
         }
     },
 };
+
+export interface SEAEngine {
+    lowerHp: typeof lowerHp;
+    switchBag: typeof switchBag;
+    buyPetItem: typeof buyPetItem;
+    changeSuit: typeof changeSuit;
+    changeTitle: typeof changeTitle;
+    cureAllPet: () => void;
+    fightBoss: (id: number) => void;
+    toggleAutoCure: typeof toggleAutoCure;
+    autoCureState: typeof autoCureState;
+    eliteStorageLimit: typeof eliteStorageLimit;
+    isPetEffectActivated: typeof isPetEffectActivated;
+    itemNum: typeof itemNum;
+    playerAbilitySuits: typeof playerAbilitySuits;
+    playerAbilityTitles: typeof playerAbilityTitles;
+    playerSuit: typeof playerSuit;
+    playerTitle: typeof playerTitle;
+    findObject: typeof findObject;
+    imageButtonListener: typeof imageButtonListener;
+    inferCurrentModule: typeof inferCurrentModule;
+    extend(func: AnyFunction | Record<string, AnyFunction>): void;
+}

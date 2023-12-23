@@ -1,4 +1,5 @@
 import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
+import { engine } from '@sea/core';
 
 export default async function builtinBattle(createContext: SEAL.createModContext) {
     const context = await createContext({
@@ -18,7 +19,7 @@ export default async function builtinBattle(createContext: SEAL.createModContext
             name: '潘蒂表必先',
             pets: ['潘克多斯', '蒂朵', '帝皇之御', '魔钰', '月照星魂', '时空界皇'],
             beforeBattle: () => {
-                return Engine.lowerHp(ct('潘克多斯', '蒂朵', '帝皇之御', '魔钰', '月照星魂', '时空界皇'));
+                return engine.lowerHp(ct('潘克多斯', '蒂朵', '帝皇之御', '魔钰', '月照星魂', '时空界皇'));
             },
             strategy: '潘蒂表必先',
         },

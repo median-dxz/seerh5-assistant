@@ -1,6 +1,7 @@
 import { delay } from '../common/utils.js';
 import { PetRoundInfo } from '../entity/index.js';
-import { SEAEventSource, SocketDeserializerRegistry } from '../event-source/index.js';
+import { SEAEventSource } from '../event-source/index.js';
+import { SocketDeserializerRegistry } from '../internal/SocketDeserializerRegistry.js';
 import { context, manager } from './manager.js';
 import { cachedRoundInfo, provider } from './provider.js';
 

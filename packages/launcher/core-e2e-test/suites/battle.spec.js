@@ -1,4 +1,4 @@
-import { Engine, SEABattle, SEAEventSource, SEAPet, Strategy, Subscription, delay } from '../../dist/index.js';
+import { SEABattle, SEAEventSource, SEAPet, Strategy, Subscription, delay, engine } from '../../dist/index.js';
 
 import env from '../env/pet.json';
 
@@ -27,7 +27,7 @@ describe('BattleManager', function () {
 
     before(async () => {
         sub = new Subscription();
-        await Engine.toggleAutoCure(true);
+        await engine.toggleAutoCure(true);
 
         $hook('socket:send').on((data) => {
             if (filterCMD.includes(data.cmd)) return;
@@ -104,8 +104,8 @@ describe('BattleManager', function () {
 
     beforeEach(async function () {
         const cts = [env.测试精灵1, env.测试精灵2, env.测试精灵3].map((v) => v.catchTime);
-        await Engine.switchBag(cts);
-        Engine.cureAllPet();
+        await engine.switchBag(cts);
+        engine.cureAllPet();
         await SEAPet(cts[0]).default();
 
         await delay(200);
@@ -114,7 +114,7 @@ describe('BattleManager', function () {
 
     afterEach(async function () {
         sub.dispose();
-        Engine.cureAllPet();
+        engine.cureAllPet();
 
         await delay(1000);
         console.log(`${this.currentTest.title}: end`);

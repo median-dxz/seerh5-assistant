@@ -1,7 +1,8 @@
-import { event$ } from './common/log.js';
-import type { AnyFunction } from './common/utils.js';
-import { coreSetup, coreSetupBasic } from './engine/features/index.js';
-import { SEAEventSource } from './event-source/index.js';
+import { tap } from 'rxjs';
+import { event$ } from '../common/log.js';
+import type { AnyFunction } from '../common/utils.js';
+import { SEAEventSource } from '../event-source/index.js';
+import { coreSetup, coreSetupBasic } from './features/index.js';
 
 const VERSION = '1.0.0-rc.1';
 const SEER_READY_EVENT = 'seerh5_ready';
@@ -26,10 +27,32 @@ export class SEAC {
             });
     }
 
-    readonly event$ = new SEAEventSource(event$);
+    readonly event$ = new SEAEventSource(
+        event$.pipe(
+            tap((evt) => {
+                const msg = `[${evt.module}] ${evt?.msg}`;
+                switch (evt.level) {
+                    case 'error':
+                        console.error(msg);
+                        break;
+                    case 'warn':
+                        console.warn(msg);
+                        break;
+                    case 'info':
+                        console.info(msg);
+                        break;
+                    case 'debug':
+                        console.debug(msg);
+                        break;
+                }
+            })
+        )
+    );
+    devMode: boolean = false;
 
     constructor() {
         if (checkEnv()) {
+            console.log(`%c[SEAC] Version: %c${VERSION}`, 'color: #ff00ff', 'color: #4527a0');
             this.loadCalled = false;
 
             window.sea = {

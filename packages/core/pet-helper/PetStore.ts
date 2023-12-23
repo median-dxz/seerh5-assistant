@@ -1,11 +1,13 @@
-import { CacheData, NOOP } from '../common/utils.js';
-import { Socket } from '../engine/index.js';
+import { CacheData } from '../common/CacheData.js';
+import { NOOP } from '../common/utils.js';
 import { SEAEventSource } from '../event-source/index.js';
-import { CaughtPet } from './SEAPet.js';
+import { socket } from '../internal/index.js';
+import { PetLocation } from './PetLocation.js';
+import { CaughtPet } from './pet.js';
 
 export type CatchTime = number;
 
-class PetDataManager {
+class SEAPetStore {
     private readonly CacheSize = 200;
     private cacheTimestamp = new Map<CatchTime, number>();
     private hasInit = false;
@@ -103,6 +105,17 @@ class PetDataManager {
         return [...data1, ...data2];
     }
 
+    async getBagPets(location: PetLocation = PetLocation.Unknown): Promise<CaughtPet[]> {
+        switch (location) {
+            case PetLocation.Bag:
+                return (await this.bag.get())[0];
+            case PetLocation.SecondBag:
+                return (await this.bag.get())[1];
+            default:
+                return [];
+        }
+    }
+
     cachePet(pet: CaughtPet) {
         this.cache.set(pet.catchTime, pet);
         this.cacheTimestamp.set(pet.catchTime, Date.now());
@@ -149,7 +162,7 @@ class PetDataManager {
 
         if (!this.queryQueue.has(ct)) {
             this.queryQueue.set(ct, []);
-            void Socket.sendByQueue(CommandID.GET_PET_INFO, [ct]);
+            void socket.sendByQueue(CommandID.GET_PET_INFO, [ct]);
         }
 
         return new Promise<CaughtPet>((resolve) => {
@@ -158,7 +171,7 @@ class PetDataManager {
     }
 }
 
-const ins = new PetDataManager();
+const ins = new SEAPetStore();
 
-export { ins as PetDataManger };
+export { ins as SEAPetStore };
 

@@ -94,3 +94,6 @@ export const GameConfigRegistry = {
         return gameConfigRegistryEntityMap.delete(type);
     },
 };
+
+// eslint-disable-next-line @typescript-eslint/unbound-method
+export const query = GameConfigRegistry.getQuery;

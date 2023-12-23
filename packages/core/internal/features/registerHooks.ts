@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { filter, map } from 'rxjs';
 import { delay, hookFn, hookPrototype, restoreHookedFn, wrapper, type WithClass } from '../../common/utils.js';
-import { HookPointRegistry } from '../../event-source/index.js';
 import { $hook } from '../../event-source/source-builder/fromHook.js';
+import { HookPointRegistry } from '../HookPointRegistry.js';
 
 export default () => {
     HookPointRegistry.register('module:loadScript', (resolve) => {

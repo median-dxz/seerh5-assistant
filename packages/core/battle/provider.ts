@@ -1,4 +1,5 @@
-import { CacheData, NOOP } from '../common/utils.js';
+import { CacheData } from '../common/CacheData.js';
+import { NOOP } from '../common/utils.js';
 import type { PetRoundInfo } from '../entity/index.js';
 import { Pet, Skill } from '../entity/index.js';
 

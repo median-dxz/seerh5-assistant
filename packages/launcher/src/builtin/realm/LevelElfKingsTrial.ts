@@ -1,4 +1,4 @@
-import { LevelAction, Socket } from '@sea/core';
+import { LevelAction, socket } from '@sea/core';
 
 import type { AnyFunction, ILevelBattle, LevelMeta, LevelData as SEALevelData } from '@sea/core';
 
@@ -45,8 +45,8 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
         constructor(public option: LevelOption) {}
 
         async update() {
-            const bits = (await Socket.bitSet(8832, 2000037)).map(Boolean);
-            const values = await Socket.multiValue(108105, 108106, 18745, 20134);
+            const bits = (await socket.bitSet(8832, 2000037)).map(Boolean);
+            const values = await socket.multiValue(108105, 108106, 18745, 20134);
 
             this.data.stimulation = bits[0];
             this.data.canReceiveReward = !bits[1];
@@ -80,11 +80,11 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
         readonly actions: Record<string, () => Promise<void>> = {
             battle: async () => {
-                Socket.sendByQueue(42396, [106, this.option.elfId, 2]);
+                socket.sendByQueue(42396, [106, this.option.elfId, 2]);
             },
 
             award: async () => {
-                await Socket.sendByQueue(42395, [106, 3, 0, 0]);
+                await socket.sendByQueue(42395, [106, 3, 0, 0]);
             },
         };
     };

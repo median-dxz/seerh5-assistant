@@ -2,12 +2,12 @@ import { buyPetItem } from '../mutate/buyPetItem.js';
 import { fightBoss } from '../mutate/fightBoss.js';
 import { toggleAutoCure } from '../mutate/toggleAutoCure.js';
 
-import { SEABattle, type MoveStrategy, type RoundData } from '../../battle/index.js';
+import { battle, type MoveStrategy, type RoundData } from '../../battle/index.js';
 import { delay, type ValueOf } from '../../common/utils.js';
-import { PotionId } from '../../constant/index.js';
+import { PotionId, SkillType } from '../../constant/index.js';
 
 import { Pet } from '../../entity/index.js';
-import { PetLocation, SEAPet, getBagPets } from '../../pet-helper/index.js';
+import { PetLocation, SEAPetStore, spet } from '../../pet-helper/index.js';
 
 /**
  * 利用谱尼封印自动压血
@@ -29,28 +29,28 @@ export async function lowerHp(
     const cts = pets.map((v) => Pet.inferCatchTime(v));
 
     // 检测列表是否全在背包
-    const curPets = await getBagPets(PetLocation.Bag);
+    const curPets = await SEAPetStore.getBagPets(PetLocation.Bag);
     const replacePets = curPets.filter((p) => !cts.includes(p.catchTime));
 
     for (const ct of cts) {
-        const location = await SEAPet(ct).location();
+        const location = await spet(ct).location();
         if (location !== PetLocation.Bag && location !== PetLocation.Default) {
             if (PetManager.isBagFull) {
                 const replacePet = replacePets.pop()!;
                 await replacePet.popFromBag();
             }
-            await SEAPet(ct).setLocation(PetLocation.Bag);
+            await spet(ct).setLocation(PetLocation.Bag);
         }
     }
 
     let remains: Pet[];
     const hpFilter = async () => {
-        const pets = await Promise.all(cts.map(SEAPet).map((pet) => pet.get()));
+        const pets = await Promise.all(cts.map(spet).map((pet) => pet.get()));
         return pets.filter((v) => v.hp >= hpLimit);
     };
 
     const usePotion = async (ct: number) => {
-        let pet = await SEAPet(ct).get();
+        let pet = await spet(ct).get();
         if (pet.hp == 0) {
             pet = await pet.usePotion(healPotionId);
         }
@@ -67,7 +67,7 @@ export async function lowerHp(
 
     buyPetItem(PotionId.中级活力药剂, remains.length);
     buyPetItem(healPotionId, remains.length);
-    await SEAPet(remains[0]).default();
+    await spet(remains[0]).default();
     await toggleAutoCure(false);
 
     const checkNextPet = (battleState: RoundData, pets: Pet[]) =>
@@ -75,14 +75,14 @@ export async function lowerHp(
             (v) => cts.includes(v.catchTime) && v.hp >= hpLimit && v.catchTime !== battleState.self.catchtime
         );
 
-    const { operator, manager } = SEABattle;
+    const { executor: operator, manager } = battle;
 
     const strategy: MoveStrategy = {
         resolveMove(battleState, skills, pets) {
             if (battleState.self.hp.remain < hpLimit || !cts.includes(battleState.self.catchtime)) {
                 return this.resolveNoBlood(battleState, skills, pets);
             } else {
-                return operator.useSkill(skills.find((v) => v.category !== 4)!.id);
+                return operator.useSkill(skills.find((v) => v.category !== SkillType.属性攻击)!.id);
             }
         },
         resolveNoBlood: (battleState, _, pets) => {

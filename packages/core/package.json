@@ -30,11 +30,10 @@
     "battle",
     "common",
     "constant",
-    "engine",
+    "internal",
     "data-source",
     "entity",
-    "pet-helper",
-    "loader"
+    "pet-helper"
   ],
   "devDependencies": {
     "happy-dom": "^12.10.3",

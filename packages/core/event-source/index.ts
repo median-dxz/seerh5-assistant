@@ -1,5 +1,3 @@
-export * from './EventSource.js';
-export * from './HookPointRegistry.js';
-export * from './SocketDeserializerRegistry.js';
-export * from './subscription.js';
+export { SEAEventSource } from './EventSource.js';
+export { Subscription } from './subscription.js';
 

@@ -4,7 +4,7 @@ import type {
     LevelData as SEALevelData,
     LevelMeta as SEALevelMeta
 } from '@sea/core';
-import { LevelAction, Socket, delay } from '@sea/core';
+import { LevelAction, delay, socket } from '@sea/core';
 
 interface LevelOption {
     stimulation: boolean;
@@ -57,8 +57,8 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
         constructor(public option: LevelOption) {}
 
         async update() {
-            const bits = await Socket.bitSet(640);
-            const values = await Socket.multiValue(18724, 18725, 18726, 18727);
+            const bits = await socket.bitSet(640);
+            const values = await socket.multiValue(18724, 18725, 18726, 18727);
 
             this.data.stimulation = bits[0];
 
@@ -106,20 +106,20 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
                     this.logger('dig', row, col, row * 11 + col);
 
                     // may throw error
-                    await Socket.sendByQueue(42395, [104, 2, row * 11 + col, 0]);
+                    await socket.sendByQueue(42395, [104, 2, row * 11 + col, 0]);
 
                     await delay(Math.random() * 100 + 200);
                 }
             },
             battle: async () => {
-                Socket.sendByQueue(42396, [104, 3, this.data.step]);
+                socket.sendByQueue(42396, [104, 3, this.data.step]);
             },
             award: async () => {
-                await Socket.sendByQueue(42395, [104, 5, 0, 0]);
+                await socket.sendByQueue(42395, [104, 5, 0, 0]);
             },
             open_level: async () => {
                 this.logger('开启泰坦矿洞');
-                await Socket.sendByQueue(42395, [104, 1, 3, 0]);
+                await socket.sendByQueue(42395, [104, 1, 3, 0]);
             },
         };
     };

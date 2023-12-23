@@ -1,21 +1,16 @@
 import { Subject } from 'rxjs';
 
 export interface CoreLogEvent {
-    module: ModuleName;
+    module: string;
     stack?: string;
     time: number;
     level: 'debug' | 'info' | 'warn' | 'error';
     msg?: string;
 }
 
-export enum ModuleName {
-    Battle = 'battle',
-    Utils = 'utils',
-}
-
 export const event$ = new Subject<CoreLogEvent>();
 
-export const getModuleLogger = (module: ModuleName) => ({
+export const getLogger = (module: string) => ({
     debug: (msg?: string) => {
         event$.next({ module, level: 'debug', time: Date.now(), msg });
     },

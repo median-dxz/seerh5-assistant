@@ -19,10 +19,10 @@ import { produce } from 'immer';
 //             name: '泰坦矿洞',
 //             module: <LevelTitanHole setRunning={setRunning} running={running} />,
 //             async sweep() {
-//                 await Socket.sendByQueue(42395, [104, 6, 3, 0]);
+//                 await socket.sendByQueue(42395, [104, 6, 3, 0]);
 //             },
 //             async getState() {
-//                 const [count, step] = await Socket.multiValue(18724, 18725);
+//                 const [count, step] = await socket.multiValue(18724, 18725);
 //                 return count === 2 && step === 0;
 //             },
 //         },
@@ -30,12 +30,12 @@ import { produce } from 'immer';
 //         {
 //             name: '六界神王殿',
 //             async sweep() {
-//                 await Socket.sendByQueue(45767, [38, 3]);
+//                 await socket.sendByQueue(45767, [38, 3]);
 //                 return;
 //             },
 //             async getState() {
 //                 let state = true;
-//                 const values = await Socket.multiValue(11411, 11412, 11413, 11414);
+//                 const values = await socket.multiValue(11411, 11412, 11413, 11414);
 //                 for (let i = 1; i <= 7; i++) {
 //                     const group = Math.trunc((i - 1) / 2);
 //                     const v = [values[group] & ((1 << 16) - 1), values[group] >> 16];

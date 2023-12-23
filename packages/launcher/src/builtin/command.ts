@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
-import { PetDataManger, PetElement, Socket, delay } from '@sea/core';
+import { PetElement, SEAPetStore, delay, socket } from '@sea/core';
 
 declare var pvePetYinzi: any;
 
@@ -37,8 +37,8 @@ export default async function builtinCommand(createContext: SEAL.createModContex
             name: 'calcAllEfficientPet',
             async handler(_e: string, _radio: string) {
                 const [e, radio] = [parseInt(_e), parseFloat(_radio)];
-                const [bag1, bag2] = await PetDataManger.bag.get();
-                const mini = (await PetDataManger.miniInfo.get()).values();
+                const [bag1, bag2] = await SEAPetStore.bag.get();
+                const mini = (await SEAPetStore.miniInfo.get()).values();
                 const pets = [...bag1, ...bag2, ...mini];
 
                 const r = pets.filter((v) => PetElement.formatById(PetXMLInfo.getType(v.id)).calcRatio(e) >= radio);
@@ -86,7 +86,7 @@ export default async function builtinCommand(createContext: SEAL.createModContex
                     if (v.length > 5) {
                         for (let i = 18; i < v.length; i++) {
                             const mark = v[i];
-                            await Socket.sendByQueue(CommandID.COUNTERMARK_RESOLVE, [mark.obtainTime]);
+                            await socket.sendByQueue(CommandID.COUNTERMARK_RESOLVE, [mark.obtainTime]);
                             await delay(100);
                         }
                     }

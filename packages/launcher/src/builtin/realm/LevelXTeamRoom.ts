@@ -1,4 +1,4 @@
-import { LevelAction, Socket } from '@sea/core';
+import { LevelAction, socket } from '@sea/core';
 
 import type { AnyFunction, ILevelBattle, LevelMeta, LevelData as SEALevelData } from '@sea/core';
 
@@ -45,9 +45,9 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
         async update() {
             this.logger(`${this.meta.name}: 更新关卡信息...`);
-            const bits = await Socket.bitSet(1000585, 2000036);
-            const values = await Socket.multiValue(12769, 12774, 20133);
-            const pInfos = await Socket.playerInfo(1197);
+            const bits = await socket.bitSet(1000585, 2000036);
+            const values = await socket.multiValue(12769, 12774, 20133);
+            const pInfos = await socket.playerInfo(1197);
 
             this.data.dailyRewardReceived = bits[0];
             this.data.weeklyRewardReceived = bits[1];
@@ -96,19 +96,19 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
         readonly actions: Record<string, () => Promise<void>> = {
             open_level: async () => {
-                await Socket.sendByQueue(42395, [105, 1, 1, 0]);
+                await socket.sendByQueue(42395, [105, 1, 1, 0]);
             },
 
             battle: async () => {
-                Socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [105, 7, 0]);
+                socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [105, 7, 0]);
             },
 
             award: async () => {
-                await Socket.sendByQueue(42395, [105, 2, 0, 0]);
+                await socket.sendByQueue(42395, [105, 2, 0, 0]);
             },
 
             award_weekly: async () => {
-                await Socket.sendByQueue(42395, [105, 3, 0, 0]);
+                await socket.sendByQueue(42395, [105, 3, 0, 0]);
             },
         };
     };

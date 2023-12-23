@@ -1,4 +1,4 @@
-import { NOOP, Socket } from '@sea/core';
+import { NOOP, socket } from '@sea/core';
 
 interface SkinInfo {
     skinId: number;
@@ -73,7 +73,7 @@ export default async function LocalPetSkin(createContext: SEAL.createModContext)
 
             if (skinId === 0 || PetSkinController.instance.haveSkin(skinId)) {
                 if (cloth.original.get(petInfo.id) !== skinId) {
-                    await Socket.sendByQueue(47310, [catchTime, skinId]);
+                    await socket.sendByQueue(47310, [catchTime, skinId]);
                 } else {
                     mutate(({ changed, original }) => {
                         changed.delete(petInfo.id);

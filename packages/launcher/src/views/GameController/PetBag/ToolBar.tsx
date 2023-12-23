@@ -11,7 +11,7 @@ import Bookmarks from '@mui/icons-material/Bookmarks';
 import Clear from '@mui/icons-material/ClearRounded';
 import { Button, Tooltip, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
-import { Pet, PetLocation, SEAPet, getBagPets } from '@sea/core';
+import { Pet, PetLocation, SEAPetStore, engine, spet } from '@sea/core';
 import React, { useCallback } from 'react';
 
 interface ToolBarProps {
@@ -23,15 +23,15 @@ export function ToolBar({ selected }: ToolBarProps) {
     const { isLoading, mutate, petGroups } = usePetGroups();
 
     const handleLowerHp = () => {
-        Engine.lowerHp(selected);
+        engine.lowerHp(selected);
     };
 
     const handleCurePets = () => {
         if (selected.length === 0) {
-            Engine.cureAllPet();
+            engine.cureAllPet();
         } else {
             for (const ct of selected) {
-                SEAPet(ct).cure();
+                spet(ct).cure();
             }
         }
     };
@@ -42,7 +42,7 @@ export function ToolBar({ selected }: ToolBarProps) {
     };
 
     const loadPets = useCallback(
-        () => Promise.all(petGroups.map((group) => Promise.all(group.map(SEAPet).map((pet) => pet.get())))),
+        () => Promise.all(petGroups.map((group) => Promise.all(group.map(spet).map((pet) => pet.get())))),
         [petGroups]
     );
 
@@ -57,7 +57,7 @@ export function ToolBar({ selected }: ToolBarProps) {
 
     const handleSaveGroup = useCallback(
         (_: unknown, index: number) => {
-            getBagPets(PetLocation.Bag).then((pets) => {
+            SEAPetStore.getBagPets(PetLocation.Bag).then((pets) => {
                 mutate((groups) => {
                     groups.splice(
                         index,
@@ -72,7 +72,7 @@ export function ToolBar({ selected }: ToolBarProps) {
 
     const handleSwitchBag = useCallback((group: Pet[]) => {
         if (group.length > 0) {
-            Engine.switchBag(group);
+            engine.switchBag(group);
         }
     }, []);
 

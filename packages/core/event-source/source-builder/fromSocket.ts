@@ -1,7 +1,7 @@
 import { filter, map, zip, type Observable } from 'rxjs';
 import { type SocketResponseMap } from '../../constant/index.js';
+import { SocketDeserializerRegistry } from '../../internal/index.js';
 import { SEAEventSource } from '../EventSource.js';
-import { SocketDeserializerRegistry } from '../SocketDeserializerRegistry.js';
 import { $hook } from './fromHook.js';
 
 type SocketEvent = 'send' | 'receive' | undefined;

@@ -1,10 +1,10 @@
 /* eslint-disable */
 import type { AnyFunction } from '../common/utils.js';
-import { Socket } from '../engine/index.js';
 import { EntityBase } from '../entity/EntityBase.js';
 import { Item, Pet } from '../entity/index.js';
-import { PetDataManger as ins, type CatchTime } from './PetDataManager.js';
-import { PetLocation, setLocationTable } from './PetLocation.js';
+import { socket } from '../internal/index.js';
+import { LocationTransformTable, PetLocation } from './PetLocation.js';
+import { SEAPetStore as ins, type CatchTime } from './PetStore.js';
 
 type SEAPet = {
     [P in keyof CaughtPet]: CaughtPet[P] extends (...args: infer A) => infer R
@@ -79,7 +79,7 @@ export class CaughtPet extends Pet {
         if (newLocation === oldLocation) {
             return false;
         }
-        const r = await setLocationTable[oldLocation][newLocation]?.(this.catchTime);
+        const r = await LocationTransformTable[oldLocation][newLocation]?.(this.catchTime);
         return r ?? false;
     }
 
@@ -88,7 +88,7 @@ export class CaughtPet extends Pet {
      */
     @chainable
     async cure() {
-        await Socket.sendByQueue(CommandID.PET_ONE_CURE, [this.catchTime]);
+        await socket.sendByQueue(CommandID.PET_ONE_CURE, [this.catchTime]);
         return ins.query(this.catchTime);
     }
 
@@ -120,7 +120,7 @@ export class CaughtPet extends Pet {
     @chainable
     async usePotion(potion: Item | number) {
         const itemId = EntityBase.inferId(potion);
-        await Socket.sendByQueue(CommandID.USE_PET_ITEM_OUT_OF_FIGHT, [this.catchTime, itemId]);
+        await socket.sendByQueue(CommandID.USE_PET_ITEM_OUT_OF_FIGHT, [this.catchTime, itemId]);
         return ins.query(this.catchTime);
     }
 }

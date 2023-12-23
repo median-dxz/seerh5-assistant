@@ -1,3 +1,5 @@
+import { getLogger as logger } from './log.js';
+
 /* eslint-disable */
 export type AnyFunction = (...args: any[]) => any;
 export type Constructor<T> = { new (...args: any[]): T };
@@ -10,12 +12,6 @@ export class HookedSymbol {
     static readonly before = Symbol('beforeDecorators');
     static readonly after = Symbol('afterDecorators');
 }
-
-export { CacheData } from './CacheData.js';
-
-import { ModuleName, getModuleLogger } from './log.js';
-
-const logger = getModuleLogger(ModuleName.Utils);
 
 /** 延时 */
 export function delay(time: number): Promise<void> {
@@ -155,7 +151,7 @@ export function hookFn<T extends object, K extends keyof T>(target: T, funcName:
     if (typeof func !== 'function') return;
 
     if (assertIsHookedFunction(func)) {
-        logger.warn(`[hookFn]: 检测到对 ${String(funcName)} 的重复hook行为, 这可能导致冲突`);
+        logger('hookFn').warn(`检测到对 ${String(funcName)} 的重复hook行为, 这可能导致冲突`);
     }
 
     while (assertIsHookedFunction(func)) {

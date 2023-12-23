@@ -1,4 +1,4 @@
-import { PetLocation, SEAPet, PetLocation as SEAPetLocation, Socket, getBagPets } from '@sea/core';
+import { PetLocation, PetLocation as SEAPetLocation, SEAPetStore, socket, spet } from '@sea/core';
 
 declare class MainManager {
     static actorInfo: {
@@ -14,7 +14,7 @@ export const teamDispatch = (ignorePets: string[], logger: any) => {
         check: async () => {
             const { teamInfo } = MainManager.actorInfo;
             if (teamInfo && teamInfo.id > 0) {
-                const times = await Socket.sendByQueue(45807).then((r) => new DataView(r!).getUint32(0));
+                const times = await socket.sendByQueue(45807).then((r) => new DataView(r!).getUint32(0));
                 return Number(12 - times > 0);
             } else {
                 return 0;
@@ -23,8 +23,8 @@ export const teamDispatch = (ignorePets: string[], logger: any) => {
         async run() {
             const hasDispatched: number[] = [];
 
-            await Socket.sendByQueue(45809, [0]).catch(() => logger('没有可收取的派遣'));
-            await Socket.sendByQueue(45807).then((r) => {
+            await socket.sendByQueue(45809, [0]).catch(() => logger('没有可收取的派遣'));
+            await socket.sendByQueue(45807).then((r) => {
                 const bytes = new DataView(r!);
                 let offset = 12;
                 for (let i = 0; i < bytes.getUint32(8); i++) {
@@ -40,14 +40,15 @@ export const teamDispatch = (ignorePets: string[], logger: any) => {
             for (let tid = 16; tid > 0; tid--) {
                 if (tid === 5) tid = 1;
                 if (hasDispatched.includes(tid)) continue;
-                const pets = await getBagPets(PetLocation.Bag);
+                const pets = await SEAPetStore.getBagPets(PetLocation.Bag);
                 if (!reSelect) {
                     // 清空背包
                     for (const p of pets) {
                         await p.popFromBag();
                     }
                 }
-                const data = await Socket.sendByQueue(45810, [tid])
+                const data = await socket
+                    .sendByQueue(45810, [tid])
                     .then((v) => new DataView(v!))
                     .catch((_) => undefined);
                 if (!data) continue;
@@ -75,7 +76,7 @@ export const teamDispatch = (ignorePets: string[], logger: any) => {
                 for (const pid of e.petIds) {
                     const petName = PetXMLInfo.getName(pid);
                     if (ignorePetNames.has(petName)) {
-                        await SEAPet(e.cts[index]).setLocation(SEAPetLocation.Bag);
+                        await spet(e.cts[index]).setLocation(SEAPetLocation.Bag);
                         logger(`取出非派遣精灵: ${petName}`);
                     }
                     index++;
@@ -85,7 +86,7 @@ export const teamDispatch = (ignorePets: string[], logger: any) => {
                     tid++;
                 } else {
                     console.table(e.petIds.map((v) => PetXMLInfo.getName(v)));
-                    Socket.sendByQueue(45808, [tid, e.cts[0], e.cts[1], e.cts[2], e.cts[3], e.cts[4]]);
+                    socket.sendByQueue(45808, [tid, e.cts[0], e.cts[1], e.cts[2], e.cts[3], e.cts[4]]);
                 }
             }
         },

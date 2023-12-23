@@ -1,4 +1,4 @@
-import { Engine, Pet, SEAEventSource, Subscription, debounce, hookFn, hookPrototype } from '@sea/core';
+import { Pet, SEAEventSource, Subscription, debounce, engine, hookFn, hookPrototype } from '@sea/core';
 
 declare module '@sea/core' {
     interface GameModuleMap {
@@ -33,7 +33,7 @@ export default async function PetBag(createContext: SEAL.createModContext) {
 
     const mainPanel = (ctx: petBag.PetBag) => {
         const panel = ctx.panelMap['petBag.MainPanel'] as petBag.MainPanel;
-        const listener = Engine.imageButtonListener(panel.btnIntoStorage);
+        const listener = engine.imageButtonListener(panel.btnIntoStorage);
         hookFn(listener, 'callback', function (f) {
             panel.beginPetInfo = panel.arrFirstPet[0].petInfo;
             f.call(listener);

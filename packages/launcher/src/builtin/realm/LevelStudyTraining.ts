@@ -1,4 +1,4 @@
-import { LevelAction, Socket } from '@sea/core';
+import { LevelAction, socket } from '@sea/core';
 
 import type { AnyFunction, ILevelBattle, LevelMeta, LevelData as SEALevelData } from '@sea/core';
 
@@ -41,8 +41,8 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
         async update() {
             this.logger(`${this.meta.name}: 更新关卡信息...`);
-            const bits = (await Socket.bitSet(637, 1000572)).map(Boolean);
-            const buf = await Socket.sendByQueue(42397, [115]);
+            const bits = (await socket.bitSet(637, 1000572)).map(Boolean);
+            const buf = await socket.sendByQueue(42397, [115]);
             const realmInfo = new DataView(buf!);
 
             this.data.stimulation = bits[0];
@@ -69,11 +69,11 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
         readonly actions: Record<string, () => Promise<void>> = {
             battle: async () => {
-                Socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [115, 6, 1]);
+                socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [115, 6, 1]);
             },
 
             award: async () => {
-                await Socket.sendByQueue(42395, [115, 3, 0, 0]);
+                await socket.sendByQueue(42395, [115, 3, 0, 0]);
             },
         };
     };

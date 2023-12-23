@@ -2,7 +2,7 @@ import { Paper } from '@/components/styled/Paper';
 import { Row } from '@/components/styled/Row';
 import { DS } from '@/constants';
 import { CircularProgress, Switch, Typography } from '@mui/material';
-import { SEAEventSource, Subscription } from '@sea/core';
+import { SEAEventSource, Subscription, engine } from '@sea/core';
 import type { ChangeEvent } from 'react';
 import React from 'react';
 import type { SWRSubscriptionOptions } from 'swr/subscription';
@@ -20,7 +20,7 @@ export function AutoCureState() {
                 }
             });
 
-            Engine.autoCureState().then((autoCure) => {
+            engine.autoCureState().then((autoCure) => {
                 next(null, autoCure);
             });
 
@@ -31,7 +31,7 @@ export function AutoCureState() {
     );
 
     const handleToggleMode = (_: ChangeEvent, checked: boolean) => {
-        Engine.toggleAutoCure(checked);
+        engine.toggleAutoCure(checked);
     };
 
     return (

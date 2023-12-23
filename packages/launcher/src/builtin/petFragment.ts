@@ -1,14 +1,15 @@
 import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
 import type { IPetFragmentRunner, PetFragmentOption } from '@/views/Automation/PetFragmentLevel';
 import {
-  PetFragmentLevelDifficulty as Difficulty,
-  LevelAction,
-  PetFragmentLevel,
-  Socket,
-  delay,
-  type IPFLevelBoss,
-  type LevelMeta,
-  type LevelData as SEALevelData
+    PetFragmentLevelDifficulty as Difficulty,
+    LevelAction,
+    PetFragmentLevel,
+    delay,
+    engine,
+    socket,
+    type IPFLevelBoss,
+    type LevelMeta,
+    type LevelData as SEALevelData,
 } from '@sea/core';
 
 interface LevelData extends SEALevelData {
@@ -79,9 +80,9 @@ export default async function (createModContext: SEAL.createModContext) {
 
         async update() {
             const { frag, data } = this;
-            const values = await Socket.multiValue(frag.values.openTimes, frag.values.failTimes, frag.values.progress);
+            const values = await socket.multiValue(frag.values.openTimes, frag.values.failTimes, frag.values.progress);
 
-            data.pieces = await Engine.itemNum(frag.petFragmentItem);
+            data.pieces = await engine.itemNum(frag.petFragmentItem);
 
             data.remainingTimes = this.meta.maxTimes - values[0];
             data.failedTimes = values[1];
@@ -121,14 +122,14 @@ export default async function (createModContext: SEAL.createModContext) {
 
         readonly actions: Record<string, () => Promise<void>> = {
             sweep: async () => {
-                await Socket.sendByQueue(41283, [this.designId, 4 + this.data.curDifficulty]);
+                await socket.sendByQueue(41283, [this.designId, 4 + this.data.curDifficulty]);
                 this.logger('执行一次扫荡');
             },
             battle: async () => {
-                const checkData = await Socket.sendByQueue(41284, [this.designId, this.data.curDifficulty]);
+                const checkData = await socket.sendByQueue(41284, [this.designId, this.data.curDifficulty]);
                 const check = new DataView(checkData!).getUint32(0);
                 if (check === 0) {
-                    Socket.sendByQueue(41282, [this.designId, this.data.curDifficulty]);
+                    socket.sendByQueue(41282, [this.designId, this.data.curDifficulty]);
                 } else {
                     const err = `出战情况不合法: ${check}`;
                     BubblerManager.getInstance().showText(err);
