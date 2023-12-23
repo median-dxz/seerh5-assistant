@@ -40,7 +40,6 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
         constructor(public option: LevelOption) {}
 
         async update() {
-            this.logger(`${this.meta.name}: 更新关卡信息...`);
             const bits = (await socket.bitSet(637, 1000572)).map(Boolean);
             const buf = await socket.sendByQueue(42397, [115]);
             const realmInfo = new DataView(buf!);
@@ -51,14 +50,11 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
             if (!this.data.rewardReceived) {
                 if (this.data.remainingTimes > 0) {
-                    this.logger(`${this.meta.name}: 进入关卡`);
                     return LevelAction.BATTLE;
                 } else {
-                    this.logger(`${this.meta.name}: 领取奖励`);
                     return LevelAction.AWARD;
                 }
             } else {
-                this.logger(`${this.meta.name}日任完成`);
                 return LevelAction.STOP;
             }
         }

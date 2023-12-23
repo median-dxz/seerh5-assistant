@@ -67,7 +67,7 @@ export class Pet extends EntityBase {
         });
 
         this.hasFifthSkill = Boolean(SkillXMLInfo.hideMovesMap[this.id]);
-        this.fifthSkill = obj.hideSKill ? Skill.formatById(obj.hideSKill.id) : undefined;
+        this.fifthSkill = Object.hasOwn(obj, 'hideSKill') ? Skill.formatById(obj.hideSKill.id) : undefined;
         if (this.fifthSkill) {
             this.fifthSkill.pp = obj.hideSKill.pp;
         }

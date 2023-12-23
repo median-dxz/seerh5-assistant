@@ -20,6 +20,7 @@ RoadMap: **见 Readme**
 - [ ] ctOverride
 - [ ] 日常新增：功勋任务
 - [ ] spt 扫荡
+- [ ] 常用配置查询
 - [ ] 精灵养成模组，每天自动养成指定精灵
   - [ ] 自动消耗积分
   - [ ] 指定一个列表，自动选择没有达到指标的精灵进行养成
@@ -27,8 +28,8 @@ RoadMap: **见 Readme**
 - [ ] launcher 轻量配置编辑器模块，日志显示模块
 - [ ] launcher 和 server 的 logger 模块
 - [ ] 调度界面, 删除全部已完成
-- [ ] 考虑如何使`Strategy`的编写更加简便, 同时添加更简单的 fallback 支持(可能添加一个字段?)
-  - [ ] 例如`true`代表 fallback 到自动, 否则链式依次 fallback
+- [ ] 模组加载时的出错处理
+
 # Core 当前版本 v1.0.0-rc.1
 
 - [x] 精简 api 界面, 删除不必要的导出
@@ -49,7 +50,7 @@ RoadMap: **见 Readme**
     - [x] `Engine` -> `engine`
     - [x] `SEABattle` -> `battle`
     - [x] `CoreLoader` -> `core`
-- [ ] 日志模块重写，可以动态改变等级，输出 object 而不是消息，可以子 logger 化
+- [x] 日志模块重写，输出 object 而不是消息，可以子 logger 化
 - [ ] 全体治疗基于 Promise 重写, 不需要加延时
 - [ ] 查询关卡获取的因子数量
 - [ ] 启用单元测试，集成测试作为单独的包，移出 core
@@ -74,3 +75,5 @@ RoadMap: **见 Readme**
 - [ ] cookie issue
 - [ ] 更换 store 库(不用 context)
 - [ ] 在三个加载资源处都显示 总加载文件数 当前文件名 当前已下载大小/当前文件大小
+- [ ] 考虑如何使`Strategy`添加更简单的 fallback 支持(可能添加一个字段?)
+  - [ ] 例如`true`代表 fallback 到自动, 否则链式依次 fallback

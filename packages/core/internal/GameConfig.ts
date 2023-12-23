@@ -1,3 +1,4 @@
+import { getLogger } from '../common/log.js';
 import type { GameConfigMap } from '../constant/TypeMaps.js';
 
 type PredicateFn<T> = (value: T) => boolean;
@@ -20,6 +21,8 @@ export interface GameConfigQuery<T extends GameConfigMap[keyof GameConfigMap]> {
 
 const gameConfigRegistryEntityMap = new Map<string, GameConfigQuery<GameConfigMap[keyof GameConfigMap]>>();
 
+const logger = getLogger('GameConfigRegistry');
+
 export const GameConfigRegistry = {
     getQuery<T extends keyof GameConfigMap>(type: T) {
         const entity = gameConfigRegistryEntityMap.get(type) as GameConfigQuery<GameConfigMap[T]> | undefined;
@@ -33,7 +36,7 @@ export const GameConfigRegistry = {
 
     register<T extends keyof GameConfigMap>(type: T, entity: GameConfigRegistryEntity<GameConfigMap[T]>) {
         if (gameConfigRegistryEntityMap.has(type)) {
-            throw `[error]: 重复注册配置查询 ${type}`;
+            logger.warn(`[error]: 查询 ${type} 已经被注册, 这将导致之前的查询被覆盖, 请检查可能的冲突问题`);
         }
 
         const { objectMap, objectName, objectId } = entity;

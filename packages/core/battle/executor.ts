@@ -6,71 +6,72 @@ const logger = getLogger('battle');
 
 function auto() {
     TimerManager.countDownOverHandler();
-    // if (!FighterModelFactory.playerMode) {
-    //     return;
-    // }
-    // const {skillPanel} = FighterModelFactory.playerMode.subject.array[1];
-    // skillPanel.auto();
+    return true;
 }
 
 async function useSkill(skillId?: number) {
     if (!FighterModelFactory.playerMode || !skillId) {
         return false;
     }
-
-    logger.debug(`[operator] useSkill: ${SkillXMLInfo.getName(skillId)} ${skillId}`);
+    if (skillId < 0) {
+        logger.warn(`非法的skillId: ${skillId}`);
+        return false;
+    }
 
     const controlPanelObserver = FighterModelFactory.playerMode.subject.array[1];
-    controlPanelObserver.showFight();
-    await delay(300);
-    if (skillId < 0) {
-        logger.warn('非法的skillId');
-        return false;
-    } else {
-        await socket.sendByQueue(CommandID.USE_SKILL, [skillId]);
+    const { currPanelType } = controlPanelObserver;
+    if (currPanelType !== panel_type.skillPanel) {
+        controlPanelObserver.showFight();
+        await delay(300);
     }
+
+    logger.debug(`useSkill: ${SkillXMLInfo.getName(skillId)} ${skillId}`);
+    await socket.sendByQueue(CommandID.USE_SKILL, [skillId]);
+
     return true;
 }
 
 async function escape() {
-    logger.debug(`[operator] escape`);
-
+    logger.debug(`escape`);
     await socket.sendByQueue(CommandID.ESCAPE_FIGHT);
     return true;
 }
 
-async function useItem(itemId: number) {
-    if (!FighterModelFactory.playerMode) {
+async function useItem(itemId?: number) {
+    if (!FighterModelFactory.playerMode || !itemId) {
         return false;
     }
-
-    logger.debug(`[operator] useItem: ${itemId}`);
+    if (itemId < 0) {
+        logger.warn(`非法的itemId: ${itemId}`);
+        return false;
+    }
 
     const controlPanelObserver = FighterModelFactory.playerMode.subject.array[1];
-
     const { currPanelType } = controlPanelObserver;
-    if (currPanelType !== panel_type.itemPanel && currPanelType !== panel_type.skillPanel) {
-        return false;
+    if (currPanelType !== panel_type.itemPanel) {
+        controlPanelObserver.showItem(1);
+        await delay(300);
     }
 
-    controlPanelObserver.showItem(1);
-    await delay(300);
-    controlPanelObserver.itemPanel.onUseItem(itemId);
-    await delay(300);
-
-    return true;
+    logger.debug(`useItem: ${itemId}`);
+    try {
+        controlPanelObserver.itemPanel.onUseItem(itemId);
+        await delay(300);
+        return true;
+    } catch (error) {
+        error instanceof Error && logger.warn(`使用物品失败: id: ${itemId} ${error.message}`);
+        return false;
+    }
 }
 
 async function switchPet(index?: number) {
     if (!FighterModelFactory.playerMode || !index) {
         return false;
     }
-    if (index == undefined || index < 0) {
-        logger.warn('非法的petIndex');
+    if (index < 0) {
+        logger.warn(`非法的petIndex ${index}`);
         return false;
     }
-
-    logger.debug(`[operator] switchPet: ${index}`);
 
     const controlPanelObserver = FighterModelFactory.playerMode.subject.array[1];
     const { currPanelType } = controlPanelObserver;
@@ -80,11 +81,13 @@ async function switchPet(index?: number) {
     }
 
     const petBtn = controlPanelObserver.petPanel._petsArray[index];
+    logger.debug(`switchPet: ${index} ${petBtn.info.name}`);
     try {
         petBtn.autoUse();
+        await delay(300);
         return true;
     } catch (error) {
-        error instanceof Error && logger.warn(`切换精灵失败: ${index} ${error.message}`);
+        error instanceof Error && logger.warn(`切换精灵失败: index: ${index} ${error.message}`);
         return false;
     }
 }

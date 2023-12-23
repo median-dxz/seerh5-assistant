@@ -51,14 +51,11 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
             if (!this.data.rewardReceived) {
                 if (this.data.remainingTimes > 0) {
-                    this.logger(`${this.meta.name}: 进入关卡`);
                     return LevelAction.BATTLE;
                 } else {
-                    this.logger(`${this.meta.name}: 领取奖励`);
                     return LevelAction.AWARD;
                 }
             } else {
-                this.logger(`${this.meta.name}日任完成`);
                 return LevelAction.STOP;
             }
         }

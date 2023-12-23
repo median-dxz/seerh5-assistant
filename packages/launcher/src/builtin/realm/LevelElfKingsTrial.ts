@@ -63,11 +63,9 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
                 this.logger(`${this.meta.name}: 未解锁困难难度`);
                 return LevelAction.STOP;
             } else if (this.data.remainingTimes > 0) {
-                this.logger(`${this.meta.name}: 进入关卡`);
                 return LevelAction.BATTLE;
             } else {
                 if (this.data.weeklyChallengeCount >= 30 && this.data.canReceiveReward) {
-                    this.logger(`${this.meta.name}: 领取奖励`);
                     return LevelAction.AWARD;
                 }
                 return LevelAction.STOP;

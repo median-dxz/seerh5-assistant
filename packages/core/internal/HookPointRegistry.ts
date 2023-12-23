@@ -1,5 +1,6 @@
 import type { Subscription } from 'rxjs';
 import { Observable, Subject } from 'rxjs';
+import { getLogger } from '../common/log.js';
 import type { AnyFunction, ValueOf } from '../common/utils.js';
 import type { HookPointDataMap } from '../constant/TypeMaps.js';
 
@@ -21,7 +22,8 @@ export const HookPointRegistry = {
 
     register<T extends keyof HookPointDataMap>(name: T, hookResolver: HookResolver<HookPointDataMap[T]>) {
         if (hookDataSubscriptionMap.has(name)) {
-            throw `[error]: hook ${name} already registered`;
+            getLogger('HookPointRegistry').error(`HookPoint ${name} 已经被注册, 如果这是有意的, 请先取消之前的注册`);
+            return;
         }
 
         const hookData$ = new Observable<HookEventData>((subscriber) =>

@@ -1,3 +1,4 @@
+import { getLogger } from '../common/log.js';
 import type { AnyFunction } from '../common/utils.js';
 
 import { lowerHp } from './function/lowerHp.js';
@@ -23,6 +24,8 @@ import { findObject } from './ui/findObject.js';
 import { imageButtonListener } from './ui/imageButtonListener.js';
 import { inferCurrentModule } from './ui/inferCurrentModule.js';
 
+const logger = getLogger('engine');
+
 export const engine: SEAEngine = {
     lowerHp,
     switchBag,
@@ -46,8 +49,16 @@ export const engine: SEAEngine = {
 
     extend(func) {
         if (typeof func === 'function') {
+            if (Object.hasOwn(engine, func.name)) {
+                logger.warn(`engine 已经存在 ${func.name} 方法, 该方法将被覆盖, 请检查潜在的冲突问题`);
+            }
             (engine as unknown as { [method: string]: AnyFunction })[func.name] = func;
         } else {
+            for (const key of Object.keys(func)) {
+                if (Object.hasOwn(engine, key)) {
+                    logger.warn(`engine 已经存在 ${key} 方法, 该方法将被覆盖, 请检查潜在的冲突问题`);
+                }
+            }
             Object.assign(engine, func);
         }
     },

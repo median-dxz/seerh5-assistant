@@ -2,9 +2,8 @@ import { PanelField, useIndex, useRowData } from '@/components/PanelTable';
 import { PanelTable, type PanelColumns } from '@/components/PanelTable/PanelTable';
 import { SeaTableRow } from '@/components/styled/TableRow';
 import * as endpoints from '@/service/endpoints';
-import { theme } from '@/style';
 
-import { Box, Button, CircularProgress, Typography, alpha } from '@mui/material';
+import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import { produce } from 'immer';
 import React, { useCallback } from 'react';
 import useSWR from 'swr';
@@ -13,7 +12,7 @@ import {
     LevelAction,
     type PetFragmentLevelDifficulty as Difficulty,
     type ILevelBattle,
-    type PetFragmentLevel
+    type PetFragmentLevel,
 } from '@sea/core';
 
 import { useLevelScheduler } from '@/context/useLevelScheduler';
@@ -146,11 +145,7 @@ const PanelRow = React.memo(({ taskCompleted }: PanelRowProps) => {
     const completed = taskCompleted[index];
 
     return (
-        <SeaTableRow
-            sx={{
-                backgroundColor: completed ? `${alpha(theme.palette.primary.main, 0.18)}` : 'transparent',
-            }}
-        >
+        <SeaTableRow>
             <PanelField field="name">{runner.frag.name}</PanelField>
             <PanelField field="state">
                 <Typography color={completed ? '#eeff41' : 'inherited'}>{completed ? '已完成' : '未完成'}</Typography>
@@ -161,6 +156,7 @@ const PanelRow = React.memo(({ taskCompleted }: PanelRowProps) => {
                     onClick={() => {
                         enqueue(runner);
                     }}
+                    disabled={completed}
                 >
                     启动
                 </Button>

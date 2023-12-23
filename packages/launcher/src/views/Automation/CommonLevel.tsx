@@ -1,4 +1,4 @@
-import { Box, Button, CircularProgress, Typography, alpha } from '@mui/material';
+import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 import useSWR from 'swr';
 
@@ -9,7 +9,6 @@ import { MOD_SCOPE_BUILTIN } from '@/constants';
 import { useLevelScheduler } from '@/context/useLevelScheduler';
 import { useModStore } from '@/context/useModStore';
 import * as Endpoints from '@/service/endpoints';
-import { theme } from '@/style';
 import { LevelAction } from '@sea/core';
 import { produce } from 'immer';
 
@@ -169,13 +168,10 @@ const PanelRow = React.memo(({ taskCompleted, setTaskCompleted }: PanelRowProps)
         );
         return r;
     };
+    runner.update();
 
     return (
-        <SeaTableRow
-            sx={{
-                backgroundColor: completed ? `${alpha(theme.palette.primary.main, 0.18)}` : 'transparent',
-            }}
-        >
+        <SeaTableRow>
             <PanelField field="name">{levelClass.meta.name}</PanelField>
             <PanelField field="state">
                 <Typography color={completed ? '#eeff41' : 'inherited'}>{completed ? '已完成' : '未完成'}</Typography>
@@ -186,6 +182,7 @@ const PanelRow = React.memo(({ taskCompleted, setTaskCompleted }: PanelRowProps)
                         onClick={() => {
                             enqueue(runner);
                         }}
+                        disabled={completed}
                     >
                         启动
                     </Button>

@@ -1,4 +1,3 @@
-import { tap } from 'rxjs';
 import { event$ } from '../common/log.js';
 import type { AnyFunction } from '../common/utils.js';
 import { SEAEventSource } from '../event-source/index.js';
@@ -27,27 +26,7 @@ export class SEAC {
             });
     }
 
-    readonly event$ = new SEAEventSource(
-        event$.pipe(
-            tap((evt) => {
-                const msg = `[${evt.module}] ${evt?.msg}`;
-                switch (evt.level) {
-                    case 'error':
-                        console.error(msg);
-                        break;
-                    case 'warn':
-                        console.warn(msg);
-                        break;
-                    case 'info':
-                        console.info(msg);
-                        break;
-                    case 'debug':
-                        console.debug(msg);
-                        break;
-                }
-            })
-        )
-    );
+    readonly event$ = new SEAEventSource(event$);
     devMode: boolean = false;
 
     constructor() {
@@ -101,6 +80,23 @@ export class SEAC {
                 this.setup('afterFirstShowMainPanel');
                 resolve();
                 this.setupFns = [];
+                this.event$.source$.subscribe(({ module, msg: msg_, level }) => {
+                    const msg = `[${module}] ${msg_}`;
+                    switch (level) {
+                        case 'error':
+                            console.error(msg);
+                            break;
+                        case 'warn':
+                            console.warn(msg);
+                            break;
+                        case 'info':
+                            console.info(msg);
+                            break;
+                        case 'debug':
+                            this.devMode && console.debug(msg);
+                            break;
+                    }
+                });
             };
 
             window.addEventListener(SEER_READY_EVENT, beforeGameCoreInit, { once: true });

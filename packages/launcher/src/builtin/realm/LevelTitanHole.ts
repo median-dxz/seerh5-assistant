@@ -68,8 +68,6 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             this.data.step2Count = (values[2] >> 8) & 255;
             this.data.step3Count = values[3] & 255;
 
-            console.log(this.data);
-
             if (this.data.levelOpenCount < this.meta.maxTimes || this.data.levelOpen) {
                 if (!this.data.levelOpen) {
                     return 'open_level';
@@ -78,7 +76,6 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
                 }
                 return LevelAction.BATTLE;
             } else if (this.data.levelOpenCount === this.meta.maxTimes && !this.data.levelOpen) {
-                this.logger(`${this.meta.name}日任完成`);
                 return LevelAction.STOP;
             } else {
                 return LevelAction.AWARD;
@@ -95,7 +92,6 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
         readonly actions: Record<string, () => Promise<void>> = {
             mine_ores: async () => {
-                this.logger('开采矿石');
                 if (this.data.step3Count < 48) {
                     const i = this.data.step3Count + 1;
                     // eslint-disable-next-line prefer-const
