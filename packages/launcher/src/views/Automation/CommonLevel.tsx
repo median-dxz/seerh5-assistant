@@ -1,5 +1,5 @@
 import { Box, Button, CircularProgress, Typography } from '@mui/material';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import useSWR from 'swr';
 
 import { PanelField, useIndex, useRowData } from '@/components/PanelTable';
@@ -170,8 +170,10 @@ const PanelRow = React.memo(({ taskCompleted, setTaskCompleted }: PanelRowProps)
             return r;
         },
     });
-    
-    runner.update();
+
+    useEffect(() => {
+        runner.update().then(() => runner.next());
+    }, [runner]);
 
     return (
         <SeaTableRow>

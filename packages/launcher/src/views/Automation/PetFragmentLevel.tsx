@@ -5,7 +5,7 @@ import * as endpoints from '@/service/endpoints';
 
 import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import { produce } from 'immer';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import useSWR from 'swr';
 
 import {
@@ -81,10 +81,6 @@ export function PetFragmentLevelPanel() {
         });
     });
 
-    React.useEffect(() => {
-        rows.forEach((level) => level.update());
-    }, [rows]);
-
     const col: PanelColumns = React.useMemo(
         () => [
             {
@@ -145,6 +141,10 @@ const PanelRow = React.memo(({ taskCompleted }: PanelRowProps) => {
     const runner = useRowData<RunnerInstance>();
     const index = useIndex();
     const completed = taskCompleted[index];
+
+    useEffect(() => {
+        runner.update().then(() => runner.next());
+    }, [runner]);
 
     return (
         <SeaTableRow>

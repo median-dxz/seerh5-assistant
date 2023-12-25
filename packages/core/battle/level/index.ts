@@ -88,7 +88,9 @@ class LevelManager {
                         await battle();
                         break;
                     case LevelAction.STOP:
-                        await runner.actions['stop'].call(runner);
+                        if (runner.actions['stop']) {
+                            await runner.actions['stop'].call(runner);
+                        }
                         this.runner = null;
                         break;
                     default:
