@@ -18,6 +18,7 @@ import {
 import { useMainState } from '@/context/useMainState';
 import { useModStore } from '@/context/useModStore';
 import { useTaskScheduler } from '@/context/useTaskScheduler';
+import type { TaskRunner } from '@/sea-launcher';
 import { store } from '@/service/store/battle';
 
 export interface PetFragmentOption {
@@ -35,7 +36,7 @@ export interface IPetFragmentRunner {
     option: PetFragmentOption;
 }
 
-type RunnerInstance = IPetFragmentRunner & SEAL.TaskRunner;
+type RunnerInstance = IPetFragmentRunner & TaskRunner;
 
 const loadOption = async (option: PetFragmentOptionRaw) => {
     return {

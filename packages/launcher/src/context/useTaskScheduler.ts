@@ -1,5 +1,5 @@
+import type { TaskRunner } from '@/sea-launcher';
 import { createContext, useContext } from 'react';
-type TaskRunner = SEAL.TaskRunner;
 
 export interface TaskState {
     status: 'pending' | 'running' | 'completed' | 'error' | 'stopped';

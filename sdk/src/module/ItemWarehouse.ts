@@ -9,6 +9,7 @@ import {
     spet,
     wrapper,
 } from '@sea/core';
+import type { CreateModContext, ModExport } from '@sea/launcher';
 
 interface PetFragment {
     EffectMsglog: number;
@@ -60,7 +61,7 @@ export async function findPetById(id: number): Promise<Pet | null> {
     }
 }
 
-export default async function ItemWareHouse(createContext: SEAL.createModContext) {
+export default async function ItemWareHouse(createContext: CreateModContext) {
     const { meta } = await createContext({
         meta: {
             id: 'itemWarehouse',
@@ -236,5 +237,5 @@ export default async function ItemWareHouse(createContext: SEAL.createModContext
         meta,
         install,
         uninstall,
-    } satisfies SEAL.ModExport;
+    } satisfies ModExport;
 }

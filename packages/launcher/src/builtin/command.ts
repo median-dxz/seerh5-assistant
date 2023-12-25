@@ -1,10 +1,11 @@
 /* eslint-disable */
 import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
+import type { Command, CreateModContext, ModExport } from '@/sea-launcher';
 import { PetElement, SEAPetStore, delay, socket } from '@sea/core';
 
 declare var pvePetYinzi: any;
 
-export default async function builtinCommand(createContext: SEAL.createModContext) {
+export default async function builtinCommand(createContext: CreateModContext) {
     const context = await createContext({
         meta: {
             id: 'builtin-command',
@@ -17,7 +18,7 @@ export default async function builtinCommand(createContext: SEAL.createModContex
 
     const { meta, logger } = context;
 
-    const command: SEAL.Command[] = [
+    const command: Command[] = [
         {
             name: 'getCurPanelInfo',
             handler() {
@@ -125,5 +126,5 @@ export default async function builtinCommand(createContext: SEAL.createModContex
         exports: {
             command,
         },
-    } satisfies SEAL.ModExport;
+    } satisfies ModExport;
 }

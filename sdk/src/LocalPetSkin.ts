@@ -1,4 +1,5 @@
 import { NOOP, socket } from '@sea/core';
+import type { CreateModContext, ModExport } from '@sea/launcher';
 
 interface SkinInfo {
     skinId: number;
@@ -10,7 +11,7 @@ declare var PetIdTransform: any;
 declare var PetSkinXMLInfo: any;
 declare var PetSkinController: any;
 
-export default async function LocalPetSkin(createContext: SEAL.createModContext) {
+export default async function LocalPetSkin(createContext: CreateModContext) {
     const { meta, config, mutate, logger } = await createContext({
         meta: {
             id: 'LocalPetSkin',
@@ -104,5 +105,5 @@ export default async function LocalPetSkin(createContext: SEAL.createModContext)
     return {
         meta,
         install,
-    } satisfies SEAL.ModExport;
+    } satisfies ModExport;
 }

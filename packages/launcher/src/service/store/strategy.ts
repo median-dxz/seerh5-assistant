@@ -1,3 +1,4 @@
+import type { Strategy } from '@/sea-launcher';
 import type { MoveStrategy } from '@sea/core';
 
 export interface StrategyInstance {
@@ -8,7 +9,7 @@ export interface StrategyInstance {
 
 export const store = new Map<string, StrategyInstance>();
 
-export function add(mod: string, _strategy: SEAL.Strategy) {
+export function add(mod: string, _strategy: Strategy) {
     const { name, resolveMove, resolveNoBlood } = _strategy;
     const instance: StrategyInstance = { strategy: { resolveMove, resolveNoBlood }, ownerMod: mod, name };
     store.set(name, instance);

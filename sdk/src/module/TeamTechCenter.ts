@@ -1,9 +1,10 @@
 import { SEAEventSource, socket } from '@sea/core';
+import type { CreateModContext, ModExport } from '@sea/launcher';
 
 declare var Alarm: any;
 
 // team.TeamTech
-export default async function TeamTechCenter(createContext: SEAL.createModContext) {
+export default async function TeamTechCenter(createContext: CreateModContext) {
     const { meta } = await createContext({
         meta: {
             id: 'teamTechCenter',
@@ -64,5 +65,5 @@ export default async function TeamTechCenter(createContext: SEAL.createModContex
         meta,
         install,
         uninstall,
-    } satisfies SEAL.ModExport;
+    } satisfies ModExport;
 }

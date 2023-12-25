@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import type { TaskRunner } from '@/sea-launcher';
 import { levelManager, SEAEventSource, Subscription } from '@sea/core';
 import { produce } from 'immer';
 import React, { useCallback, useEffect, useReducer, useRef, type PropsWithChildren, type Reducer } from 'react';
 import { TaskScheduler, type TaskState } from './useTaskScheduler';
-
-type TaskRunner = SEAL.TaskRunner;
 
 type ActionType = {
     enqueue: { runner: TaskRunner };

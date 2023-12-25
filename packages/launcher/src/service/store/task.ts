@@ -1,13 +1,15 @@
+import type { Task } from '@/sea-launcher';
+
 export interface TaskInstance {
     id: string;
     name: string;
-    task: SEAL.Task;
+    task: Task;
     ownerMod: string;
 }
 
 export const store = new Map<string, TaskInstance>();
 
-export function add(mod: string, task: SEAL.Task) {
+export function add(mod: string, task: Task) {
     const name = task.meta.name;
     const id = task.meta.id;
 

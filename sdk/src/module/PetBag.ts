@@ -1,4 +1,5 @@
 import { Pet, SEAEventSource, Subscription, debounce, engine, hookFn, hookPrototype } from '@sea/core';
+import type { CreateModContext, ModExport } from '@sea/launcher';
 
 declare module '@sea/core' {
     interface GameModuleMap {
@@ -6,7 +7,7 @@ declare module '@sea/core' {
     }
 }
 
-export default async function PetBag(createContext: SEAL.createModContext) {
+export default async function PetBag(createContext: CreateModContext) {
     const { meta, logger } = await createContext({
         meta: {
             id: 'petBag',
@@ -73,5 +74,5 @@ export default async function PetBag(createContext: SEAL.createModContext) {
         meta,
         install,
         uninstall,
-    } satisfies SEAL.ModExport;
+    } satisfies ModExport;
 }

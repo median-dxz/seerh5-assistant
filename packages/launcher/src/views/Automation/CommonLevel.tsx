@@ -8,6 +8,7 @@ import { SeaTableRow } from '@/components/styled/TableRow';
 import { MOD_SCOPE_BUILTIN } from '@/constants';
 import { useModStore } from '@/context/useModStore';
 import { useTaskScheduler } from '@/context/useTaskScheduler';
+import type { Task } from '@/sea-launcher';
 import * as Endpoints from '@/service/endpoints';
 import { LevelAction } from '@sea/core';
 import { produce } from 'immer';
@@ -65,7 +66,7 @@ import { produce } from 'immer';
 // });
 
 type Row = {
-    taskClass: SEAL.Task;
+    taskClass: Task;
     config: Record<string, unknown>;
 };
 

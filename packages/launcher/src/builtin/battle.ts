@@ -1,7 +1,8 @@
 import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
+import type { Battle, CreateModContext, ModExport } from '@/sea-launcher';
 import { engine } from '@sea/core';
 
-export default async function builtinBattle(createContext: SEAL.createModContext) {
+export default async function builtinBattle(createContext: CreateModContext) {
     const context = await createContext({
         meta: {
             id: 'builtin-battle',
@@ -14,7 +15,7 @@ export default async function builtinBattle(createContext: SEAL.createModContext
 
     const { ct, meta } = context;
 
-    const battle: SEAL.Battle[] = [
+    const battle: Battle[] = [
         {
             name: '潘蒂表必先',
             pets: ['潘克多斯', '蒂朵', '帝皇之御', '魔钰', '月照星魂', '时空界皇'],
@@ -95,5 +96,5 @@ export default async function builtinBattle(createContext: SEAL.createModContext
         exports: {
             battle,
         },
-    } satisfies SEAL.ModExport;
+    } satisfies ModExport;
 }

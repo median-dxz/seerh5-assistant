@@ -5,16 +5,15 @@ import { Button, ButtonGroup, CircularProgress } from '@mui/material';
 
 import { SeaTableRow } from '@/components/styled/TableRow';
 import { useModStore } from '@/context/useModStore';
+import type { TaskRunner } from '@/sea-launcher';
 import type { TaskInstance } from '@/service/store/task';
 import { LevelAction, delay } from '@sea/core';
 import useSWR from 'swr';
 
-type Sign = SEAL.TaskRunner;
-
 export function DailySign() {
     const { taskStore } = useModStore();
     const signs = Array.from(taskStore.values()).filter(
-        (i) => (Object.getPrototypeOf(i.task) as SEAL.TaskRunner).selectLevelBattle
+        (i) => (Object.getPrototypeOf(i.task) as TaskRunner).selectLevelBattle
     );
 
     const columns: PanelColumns = React.useMemo(
@@ -56,11 +55,7 @@ const PanelRow = () => {
     const { ownerMod, name, task: taskClass } = ins;
     const task = new taskClass();
 
-    const {
-        data: state,
-        isLoading,
-        mutate,
-    } = useSWR(task, async (sign: Sign) => {
+    const { data: state, mutate } = useSWR(task, async (sign: TaskRunner) => {
         await sign.update();
         return sign.data;
     });
@@ -70,7 +65,11 @@ const PanelRow = () => {
             <PanelField field="name">{name}</PanelField>
             <PanelField field="mod">{ownerMod}</PanelField>
             <PanelField field="state">
-                {isLoading ? <CircularProgress /> : `# ${state?.remainingTimes} / ${task.meta.maxTimes}`}
+                {!state ? (
+                    <CircularProgress />
+                ) : (
+                    `# ${task.meta.maxTimes - state.remainingTimes} / ${task.meta.maxTimes}`
+                )}
             </PanelField>
             <PanelField field="execute">
                 <ButtonGroup>

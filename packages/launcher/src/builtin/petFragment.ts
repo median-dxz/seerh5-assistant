@@ -1,4 +1,5 @@
 import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
+import type { CreateModContext, LevelMeta, ModExport, LevelData as SEALevelData, TaskRunner } from '@/sea-launcher';
 import type { IPetFragmentRunner, PetFragmentOption } from '@/views/Automation/PetFragmentLevel';
 import {
     PetFragmentLevelDifficulty as Difficulty,
@@ -8,8 +9,6 @@ import {
     engine,
     socket,
     type IPFLevelBoss,
-    type LevelMeta,
-    type LevelData as SEALevelData,
 } from '@sea/core';
 
 interface LevelData extends SEALevelData {
@@ -21,7 +20,7 @@ interface LevelData extends SEALevelData {
     bosses: IPFLevelBoss[];
 }
 
-export default async function (createModContext: SEAL.createModContext) {
+export default async function (createModContext: CreateModContext) {
     const { meta, logger } = await createModContext({
         meta: {
             id: 'PetFragmentLevel',
@@ -32,7 +31,7 @@ export default async function (createModContext: SEAL.createModContext) {
         },
     });
 
-    class PetFragmentRunner implements SEAL.TaskRunner<LevelData>, IPetFragmentRunner {
+    class PetFragmentRunner implements TaskRunner<LevelData>, IPetFragmentRunner {
         static readonly meta: LevelMeta = {
             maxTimes: 3,
             name: '精灵因子',
@@ -145,5 +144,5 @@ export default async function (createModContext: SEAL.createModContext) {
         exports: {
             task: [PetFragmentRunner],
         },
-    } satisfies SEAL.ModExport;
+    } satisfies ModExport;
 }

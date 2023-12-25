@@ -22,6 +22,7 @@ import React, { useEffect, useState } from 'react';
 
 import { SwordLine } from '@/components/icons/SwordLine';
 import { Paper } from '@/components/styled/Paper';
+import type { TaskRunner } from '@/sea-launcher';
 import CheckCircleOutline from '@mui/icons-material/CheckCircleOutlineRounded';
 import Close from '@mui/icons-material/Close';
 import Delete from '@mui/icons-material/DeleteOutlineRounded';
@@ -77,7 +78,7 @@ const timePrintFormatter = Intl.DateTimeFormat('zh-cn', {
 export function TaskStateListItem({ state }: LevelStateListItemProps) {
     const [dialogOpen, setDialogOpen] = useState(false);
     const { dequeue, enqueue, stopCurrentRunner } = useTaskScheduler();
-    const runner = state.runner as SEAL.TaskRunner;
+    const runner = state.runner as TaskRunner;
     const { status, error } = state;
 
     const isRunning = status === 'running';

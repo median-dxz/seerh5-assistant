@@ -1,4 +1,5 @@
 import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
+import type { CreateModContext, ModExport } from '@/sea-launcher';
 import LevelCourageTower from './LevelCourageTower';
 import LevelElfKingsTrial from './LevelElfKingsTrial';
 import LevelExpTraining from './LevelExpTraining';
@@ -6,7 +7,7 @@ import LevelStudyTraining from './LevelStudyTraining';
 import LevelTitanHole from './LevelTitanHole';
 import LevelXTeamRoom from './LevelXTeamRoom';
 
-export default async function realm(createModContext: SEAL.createModContext) {
+export default async function realm(createModContext: CreateModContext) {
     const { meta, logger, battle } = await createModContext({
         meta: {
             id: 'Realm',
@@ -67,5 +68,5 @@ export default async function realm(createModContext: SEAL.createModContext) {
                 LevelXTeamRoom(logger, battle),
             ],
         },
-    } as SEAL.ModExport;
+    } as ModExport;
 }

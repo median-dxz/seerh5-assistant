@@ -1,9 +1,10 @@
 import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
+import type { CreateModContext, ModExport, Strategy } from '@/sea-launcher';
 import { PotionId, battle, strategy as sg } from '@sea/core';
 
 const { name, rotating, auto, round, match } = sg;
 
-export default async function builtinStrategy(createContext: SEAL.createModContext) {
+export default async function builtinStrategy(createContext: CreateModContext) {
     const { meta } = await createContext({
         meta: {
             id: 'builtin-strategy',
@@ -14,7 +15,7 @@ export default async function builtinStrategy(createContext: SEAL.createModConte
         },
     });
 
-    const strategies: Array<SEAL.Strategy> = [
+    const strategies: Array<Strategy> = [
         {
             name: '圣谱单挑',
             resolveMove: (state, skills, pets) => {
@@ -153,5 +154,5 @@ export default async function builtinStrategy(createContext: SEAL.createModConte
         exports: {
             strategy: strategies,
         },
-    } satisfies SEAL.ModExport;
+    } satisfies ModExport;
 }

@@ -1,6 +1,7 @@
+import type { LevelMeta, LevelData as SEALevelData, TaskRunner } from '@/sea-launcher';
 import { LevelAction, socket } from '@sea/core';
 
-import type { AnyFunction, ILevelBattle, LevelMeta, LevelData as SEALevelData } from '@sea/core';
+import type { AnyFunction, ILevelBattle } from '@sea/core';
 
 interface LevelData extends SEALevelData {
     stimulation: boolean;
@@ -16,7 +17,7 @@ interface LevelOption {
 }
 
 export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => {
-    return class LevelElfKingsTrial implements SEAL.TaskRunner<LevelData> {
+    return class LevelElfKingsTrial implements TaskRunner<LevelData> {
         data: LevelData = {
             progress: 0,
             remainingTimes: 0,

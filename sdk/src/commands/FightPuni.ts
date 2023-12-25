@@ -1,7 +1,8 @@
 import { engine } from '@sea/core';
+import type { Command, CreateModContext, ModExport } from '@sea/launcher';
 import Icon from './all_inclusive.svg?raw';
 
-export default async function FightPuni(createContext: SEAL.createModContext) {
+export default async function FightPuni(createContext: CreateModContext) {
     const { meta } = await createContext({
         meta: {
             id: '对战谱尼',
@@ -10,7 +11,7 @@ export default async function FightPuni(createContext: SEAL.createModContext) {
         },
     });
 
-    const FightPuni: SEAL.Command = {
+    const FightPuni: Command = {
         name: 'FightPuni',
         icon: Icon,
         description: '对战谱尼',
@@ -24,5 +25,5 @@ export default async function FightPuni(createContext: SEAL.createModContext) {
         exports: {
             command: [FightPuni],
         },
-    } satisfies SEAL.ModExport;
+    } satisfies ModExport;
 }
