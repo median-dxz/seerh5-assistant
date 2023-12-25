@@ -30,7 +30,7 @@ export const daily: Task[] = [
         };
 
         async update(): Promise<void> {
-            this.data.remainingTimes = (await socket.multiValue(MULTI_QUERY.刻印抽奖次数))[0];
+            this.data.remainingTimes = this.meta.maxTimes - (await socket.multiValue(MULTI_QUERY.刻印抽奖次数))[0];
         }
     },
     class WishBottle extends SignBase implements TaskRunner {
@@ -40,14 +40,11 @@ export const daily: Task[] = [
             name: '许愿',
         };
 
-        get name(): string {
-            return WishBottle.meta.name;
-        }
+        maxTimes = 10;
 
-        data: LevelData = {
-            progress: 0,
-            remainingTimes: 0,
-        };
+        get meta(): LevelMeta {
+            return { ...WishBottle.meta, maxTimes: this.maxTimes };
+        }
 
         actions: Record<string, (this: ILevelRunner<LevelData>) => Promise<void>> = {
             [LevelAction.AWARD]: async () => {
@@ -64,30 +61,24 @@ export const daily: Task[] = [
             times = Math.floor(times / 60);
 
             let 可许愿次数 = 0;
-            switch (true) {
-                case times >= 120:
-                    可许愿次数 = 10;
+            const timesMap = new Map([
+                [120, 10],
+                [90, 7],
+                [60, 5],
+                [30, 3],
+                [15, 2],
+                [5, 1],
+                [0, 0],
+            ]);
+
+            for (const [time, count] of timesMap) {
+                if (times >= time) {
+                    可许愿次数 = count;
                     break;
-                case times >= 90:
-                    可许愿次数 = 7;
-                    break;
-                case times >= 60:
-                    可许愿次数 = 5;
-                    break;
-                case times >= 30:
-                    可许愿次数 = 3;
-                    break;
-                case times >= 15:
-                    可许愿次数 = 2;
-                    break;
-                case times >= 5:
-                    可许愿次数 = 1;
-                    break;
-                default:
-                    可许愿次数 = 0;
+                }
             }
 
-            this.meta.maxTimes = 可许愿次数;
+            this.maxTimes = 可许愿次数;
             this.data.remainingTimes = 可许愿次数 - (await socket.multiValue(MULTI_QUERY.已许愿次数))[0];
         }
     },
@@ -115,7 +106,7 @@ export const daily: Task[] = [
         };
 
         async update(): Promise<void> {
-            this.data.remainingTimes = (await socket.multiValue(MULTI_QUERY.许愿签到))[0];
+            this.data.remainingTimes = this.meta.maxTimes - (await socket.multiValue(MULTI_QUERY.许愿签到))[0];
         }
     },
 ];

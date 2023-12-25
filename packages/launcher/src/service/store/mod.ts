@@ -19,7 +19,6 @@ export class ModInstance {
     strategy: string[] = [];
     battle: string[] = [];
     level: string[] = [];
-    sign: string[] = [];
     command: string[] = [];
 
     constructor(meta: ModMeta) {

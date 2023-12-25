@@ -12,9 +12,7 @@ import useSWR from 'swr';
 
 export function DailySign() {
     const { taskStore } = useModStore();
-    const signs = Array.from(taskStore.values()).filter(
-        (i) => (Object.getPrototypeOf(i.task) as TaskRunner).selectLevelBattle
-    );
+    const signs = Array.from(taskStore.values()).filter((i) => !(i.task.prototype as TaskRunner).selectLevelBattle);
 
     const columns: PanelColumns = React.useMemo(
         () => [
@@ -55,28 +53,29 @@ const PanelRow = () => {
     const { ownerMod, name, task: taskClass } = ins;
     const task = new taskClass();
 
-    const { data: state, mutate } = useSWR(task, async (sign: TaskRunner) => {
-        await sign.update();
-        return sign.data;
-    });
+    const { data: state, mutate } = useSWR(
+        `ds://mod/sign/${ownerMod}/${name}`,
+        async () => {
+            await task.update();
+            return { timesHaveRun: task.meta.maxTimes - task.data.remainingTimes, maxTimes: task.meta.maxTimes };
+        },
+        { revalidateOnFocus: false, revalidateOnMount: true }
+    );
 
     return (
         <SeaTableRow>
             <PanelField field="name">{name}</PanelField>
             <PanelField field="mod">{ownerMod}</PanelField>
             <PanelField field="state">
-                {!state ? (
-                    <CircularProgress />
-                ) : (
-                    `# ${task.meta.maxTimes - state.remainingTimes} / ${task.meta.maxTimes}`
-                )}
+                {!state ? <CircularProgress /> : `# ${state.timesHaveRun} / ${state.maxTimes}`}
             </PanelField>
             <PanelField field="execute">
                 <ButtonGroup>
                     <Button
                         onClick={async () => {
                             console.log(`正在执行${name}`);
-                            while (task.next() === LevelAction.AWARD) {
+                            await task.update();
+                            while (task.data.remainingTimes > 0) {
                                 task.actions[LevelAction.AWARD].call(task);
                                 await delay(50).then(() => task.update());
                             }

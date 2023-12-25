@@ -33,9 +33,6 @@ export function ModListItem({ mod }: ModListItemProps) {
                 {mod.level.length ? `关卡: ${mod.level.length}` : ''}
             </Typography>
             <Typography component="span" color="GrayText" sx={{ float: 'right' }} fontSize={16}>
-                {mod.sign.length ? `发包: ${mod.sign.length}` : ''}
-            </Typography>
-            <Typography component="span" color="GrayText" sx={{ float: 'right' }} fontSize={16}>
                 {mod.command.length ? `命令: ${mod.command.length}` : ''}
             </Typography>
         </>

@@ -24,22 +24,25 @@ export const teamSign = (exchangeId: number) =>
                 maxTimes: 5,
             };
 
+            maxTimes = 5;
+
             get meta(): LevelMeta {
-                return ProductResource.meta;
+                return { ...ProductResource.meta, maxTimes: this.maxTimes };
             }
 
             actions: Record<string, (this: ILevelRunner<LevelData>) => Promise<void>> = {
                 [LevelAction.AWARD]: async () => {
-                    if (MainManager.actorInfo.teamInfo && MainManager.actorInfo.teamInfo.id > 0) {
-                        const times = (await socket.multiValue(MULTI_QUERY.资源生产次数))[0];
-                        this.data.remainingTimes = 5 - times;
-                    }
-                    this.data.remainingTimes = 0;
+                    await socket.sendByQueue(CommandID.RES_PRODUCTORBUY, [2, 0]);
                 },
             };
 
             async update(): Promise<void> {
-                await socket.sendByQueue(CommandID.RES_PRODUCTORBUY, [2, 0]);
+                if (MainManager.actorInfo.teamInfo && MainManager.actorInfo.teamInfo.id > 0) {
+                    const times = (await socket.multiValue(MULTI_QUERY.资源生产次数))[0];
+                    this.data.remainingTimes = this.maxTimes - times;
+                } else {
+                    this.data.remainingTimes = this.maxTimes = 0;
+                }
             }
         },
         class ExchangeItem extends SignBase implements TaskRunner {
@@ -49,8 +52,10 @@ export const teamSign = (exchangeId: number) =>
                 maxTimes: 3,
             };
 
+            maxTimes = 3;
+
             get meta(): LevelMeta {
-                return ExchangeItem.meta;
+                return { ...ExchangeItem.meta, maxTimes: this.maxTimes };
             }
 
             actions: Record<string, (this: ILevelRunner<LevelData>) => Promise<void>> = {
@@ -67,8 +72,9 @@ export const teamSign = (exchangeId: number) =>
                         return Boolean(bytes.getUint32(4));
                     });
                     this.data.remainingTimes = open ? 3 - times : 0;
+                } else {
+                    this.data.remainingTimes = this.maxTimes = 0;
                 }
-                this.data.remainingTimes = 0;
             }
         },
     ] satisfies Task[];
