@@ -1,7 +1,7 @@
 import { LabeledLinearProgress } from '@/components/LabeledProgress';
 import { Paper } from '@/components/styled/Paper';
 import { Row } from '@/components/styled/Row';
-import { useLevelScheduler } from '@/context/useLevelScheduler';
+import { useTaskScheduler } from '@/context/useTaskScheduler';
 import Pause from '@mui/icons-material/PauseRounded';
 import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 import { Button, Chip, Stack, Typography } from '@mui/material';
@@ -18,7 +18,7 @@ export interface SidebarProps {
 }
 
 export function Sidebar({ height }: SidebarProps) {
-    const { isPaused, pause, resume, status, queue } = useLevelScheduler();
+    const { isPaused, pause, resume, status, queue } = useTaskScheduler();
 
     const handlePauseScheduler = () => {
         if (isPaused) {

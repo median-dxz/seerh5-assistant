@@ -6,11 +6,10 @@ type ModModuleExport = (createContext: typeof createModContext) => Promise<Mod>;
 
 import type { AnyFunction } from '@sea/core';
 import { getNamespace } from '../mod/createContext';
-import * as battleStore from '../store/battle';
-import * as commandStore from '../store/command';
-import * as levelStore from '../store/level';
-import * as signStore from '../store/sign';
-import * as strategyStore from '../store/strategy';
+import * as battleStore from './battle';
+import * as commandStore from './command';
+import * as strategyStore from './strategy';
+import * as taskStore from './task';
 
 export class ModInstance {
     meta: SEAL.Meta & { namespace: string };
@@ -56,29 +55,16 @@ export class ModInstance {
         });
     }
 
-    tryRegisterLevel(level?: SEAL.Level[]) {
+    tryRegisterTask(level?: SEAL.Task[]) {
         if (!level) return;
 
         level.forEach((level) => {
-            levelStore.add(this.meta.namespace, level);
+            taskStore.add(this.meta.namespace, level);
             this.level.push(level.meta.name);
         });
 
         this.finalizers.push(() => {
-            this.level.forEach((name) => levelStore.tryRemove(name));
-        });
-    }
-
-    tryRegisterSign(sign?: SEAL.Sign[]) {
-        if (!sign) return;
-
-        sign.forEach((sign) => {
-            signStore.add(this.meta.namespace, sign);
-            this.sign.push(sign.name);
-        });
-
-        this.finalizers.push(() => {
-            this.sign.forEach((name) => signStore.tryRemove(name));
+            this.level.forEach((name) => taskStore.tryRemove(name));
         });
     }
 
@@ -167,9 +153,8 @@ export function setup({ install, uninstall, meta, exports }: Mod) {
     // 加载导出的内容
     ins.tryRegisterStrategy(exports?.strategy);
     ins.tryRegisterBattle(exports?.battle);
-    ins.tryRegisterLevel(exports?.level);
+    ins.tryRegisterTask(exports?.task);
     ins.tryRegisterCommand(exports?.command);
-    ins.tryRegisterSign(exports?.sign);
 
     store.set(ins.meta.namespace, ins);
 }

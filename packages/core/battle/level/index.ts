@@ -5,16 +5,7 @@ import { manager } from '../manager.js';
 import { LevelAction } from './action.js';
 import type { ILevelRunner } from './type.js';
 
-export class LevelManager {
-    // 单例模式
-    private static _instance: LevelManager;
-    public static get ins() {
-        return LevelManager._instance || (LevelManager._instance = new LevelManager());
-    }
-    private constructor() {
-        // constructor
-    }
-
+class LevelManager {
     private runner: ILevelRunner | null = null;
     lock: Promise<void> | null = null;
 
@@ -44,15 +35,18 @@ export class LevelManager {
         if (this.running) throw new Error('你必须先停止当前Runner的运行!');
 
         this.runner = runner;
-        const { logger, beforeAll, afterAll } = runner;
+        const { logger } = runner;
 
         const lockFn = async () => {
-            logger('预处理');
-            await beforeAll?.();
             const autoCureState = await engine.autoCureState();
 
             const battle = async () => {
-                const { strategy, pets, beforeBattle } = runner.selectLevelBattle();
+                const levelBattle = runner.selectLevelBattle?.();
+                if (!levelBattle) {
+                    throw new Error('获取对战模型失败');
+                }
+
+                const { strategy, pets, beforeBattle } = levelBattle;
 
                 logger('准备对战');
                 await engine.switchBag(pets);
@@ -85,13 +79,16 @@ export class LevelManager {
 
             while (this.runner) {
                 logger('更新关卡信息');
-                const nextAction = await runner.update();
+                await runner.update();
+                if (!this.runner) break;
+                const nextAction = runner.next();
                 logger(`next action: ${nextAction}`);
                 switch (nextAction) {
                     case LevelAction.BATTLE:
                         await battle();
                         break;
                     case LevelAction.STOP:
+                        await runner.actions['stop'].call(runner);
                         this.runner = null;
                         break;
                     default:
@@ -99,14 +96,12 @@ export class LevelManager {
                         break;
                 }
                 await delay(100);
-                if (!this.runner) break;
             }
             logger('正在停止关卡');
             // 恢复自动治疗状态
             await engine.toggleAutoCure(autoCureState);
             // TODO
             engine.cureAllPet();
-            await afterAll?.();
 
             logger('关卡完成');
             this.lock = this.runner = null;
@@ -115,3 +110,5 @@ export class LevelManager {
         this.lock = lockFn();
     }
 }
+
+export const levelManager = new LevelManager();

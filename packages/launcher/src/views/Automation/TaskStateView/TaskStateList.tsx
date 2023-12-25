@@ -1,5 +1,5 @@
 import { LabeledLinearProgress } from '@/components/LabeledProgress';
-import { useLevelScheduler, type LevelRunnerState } from '@/context/useLevelScheduler';
+import { useTaskScheduler, type TaskState } from '@/context/useTaskScheduler';
 import {
     Chip,
     Dialog,
@@ -58,7 +58,7 @@ const StatusActionsMap = {
 };
 
 interface LevelStateListItemProps {
-    state: LevelRunnerState;
+    state: TaskState;
 }
 
 const timeFormatter = (n: number) => {
@@ -74,10 +74,10 @@ const timePrintFormatter = Intl.DateTimeFormat('zh-cn', {
     second: '2-digit',
 });
 
-export function LevelStateListItem({ state }: LevelStateListItemProps) {
+export function TaskStateListItem({ state }: LevelStateListItemProps) {
     const [dialogOpen, setDialogOpen] = useState(false);
-    const { dequeue, enqueue, stopCurrentRunner } = useLevelScheduler();
-    const runner = state.runner as SEAL.LevelRunner;
+    const { dequeue, enqueue, stopCurrentRunner } = useTaskScheduler();
+    const runner = state.runner as SEAL.TaskRunner;
     const { status, error } = state;
 
     const isRunning = status === 'running';
@@ -251,12 +251,12 @@ export function LevelStateListItem({ state }: LevelStateListItemProps) {
 }
 
 export function LevelStateList(listProps: ListProps) {
-    const { queue } = useLevelScheduler();
+    const { queue } = useTaskScheduler();
     return (
         <>
             <List {...listProps}>
                 {queue.map((state, index) => {
-                    return <LevelStateListItem key={index} state={state} />;
+                    return <TaskStateListItem key={index} state={state} />;
                 })}
             </List>
             {queue.length === 0 && (
@@ -272,7 +272,7 @@ export function LevelStateList(listProps: ListProps) {
 export interface RunnerDetailDialogProps {
     open: boolean;
     close(): void;
-    runnerState: LevelRunnerState;
+    runnerState: TaskState;
 }
 
 function RunnerDetailDialog({ open, close, runnerState }: RunnerDetailDialogProps) {

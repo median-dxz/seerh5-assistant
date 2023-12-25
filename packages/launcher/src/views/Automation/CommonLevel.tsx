@@ -6,8 +6,8 @@ import { PanelField, useIndex, useRowData } from '@/components/PanelTable';
 import { PanelTable, type PanelColumns } from '@/components/PanelTable/PanelTable';
 import { SeaTableRow } from '@/components/styled/TableRow';
 import { MOD_SCOPE_BUILTIN } from '@/constants';
-import { useLevelScheduler } from '@/context/useLevelScheduler';
 import { useModStore } from '@/context/useModStore';
+import { useTaskScheduler } from '@/context/useTaskScheduler';
 import * as Endpoints from '@/service/endpoints';
 import { LevelAction } from '@sea/core';
 import { produce } from 'immer';
@@ -65,12 +65,12 @@ import { produce } from 'immer';
 // });
 
 type Row = {
-    levelClass: SEAL.Level;
+    taskClass: SEAL.Task;
     config: Record<string, unknown>;
 };
 
 export function CommonLevelPanel() {
-    const { store, levelStore } = useModStore();
+    const { store, taskStore: levelStore } = useModStore();
     const [taskCompleted, setTaskCompleted] = React.useState<Array<boolean>>([]);
 
     const {
@@ -89,7 +89,7 @@ export function CommonLevelPanel() {
             Object.entries(config).forEach(([key, value]) => {
                 if (levelStore.has(key)) {
                     const levelInstance = levelStore.get(key)!;
-                    r.push({ levelClass: levelInstance.level, config: value as Record<string, unknown> });
+                    r.push({ taskClass: levelInstance.task, config: value as Record<string, unknown> });
                 }
             });
         });
@@ -118,7 +118,7 @@ export function CommonLevelPanel() {
         []
     );
 
-    const toRowKey = useCallback((row: Row) => row.levelClass.meta.name, []);
+    const toRowKey = useCallback((row: Row) => row.taskClass.meta.name, []);
 
     if (isLoading)
         return (
@@ -152,22 +152,24 @@ interface PanelRowProps {
 }
 
 const PanelRow = React.memo(({ taskCompleted, setTaskCompleted }: PanelRowProps) => {
-    const { enqueue } = useLevelScheduler();
-    const { config, levelClass } = useRowData<Row>();
+    const { enqueue } = useTaskScheduler();
+    const { config, taskClass: levelClass } = useRowData<Row>();
     const runner = React.useMemo(() => new levelClass(config), [levelClass, config]);
     const index = useIndex();
     const completed = taskCompleted[index];
 
-    const levelUpdater = runner.update.bind(runner);
-    runner.update = async () => {
-        const r = await levelUpdater();
-        setTaskCompleted(
-            produce((draft) => {
-                draft[index] = r === LevelAction.STOP;
-            })
-        );
-        return r;
-    };
+    runner.next = new Proxy(runner.next.bind(runner), {
+        apply(target, thisArg, argArray) {
+            const r = Reflect.apply(target, thisArg, argArray);
+            setTaskCompleted(
+                produce((draft) => {
+                    draft[index] = r === LevelAction.STOP;
+                })
+            );
+            return r;
+        },
+    });
+    
     runner.update();
 
     return (

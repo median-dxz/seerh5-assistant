@@ -16,7 +16,7 @@ interface LevelOption {
 }
 
 export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => {
-    return class LevelElfKingsTrial implements SEAL.LevelRunner<LevelData> {
+    return class LevelElfKingsTrial implements SEAL.TaskRunner<LevelData> {
         data: LevelData = {
             progress: 0,
             remainingTimes: 0,
@@ -58,7 +58,9 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             this.data.unlockHard = Boolean(levelStage & (1 << (stageElfId + 2)));
             this.data.remainingTimes = this.meta.maxTimes - values[2];
             this.data.weeklyChallengeCount = values[3];
+        }
 
+        next(): string {
             if (!this.data.unlockHard) {
                 this.logger(`${this.meta.name}: 未解锁困难难度`);
                 return LevelAction.STOP;

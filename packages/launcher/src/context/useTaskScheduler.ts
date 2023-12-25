@@ -1,10 +1,10 @@
 import { createContext, useContext } from 'react';
-type LevelRunner = SEAL.LevelRunner;
+type TaskRunner = SEAL.TaskRunner;
 
-export interface LevelRunnerState {
+export interface TaskState {
     status: 'pending' | 'running' | 'completed' | 'error' | 'stopped';
     error?: Error;
-    runner: LevelRunner;
+    runner: TaskRunner;
     startTime?: number;
     endTime?: number;
     // TODO
@@ -12,21 +12,21 @@ export interface LevelRunnerState {
     battleCount: number;
 }
 
-export interface LevelScheduler {
-    queue: Array<LevelRunnerState>;
+export interface TaskScheduler {
+    queue: Array<TaskState>;
     currentIndex?: number;
     /** 注意不是LevelManager的状态, 而是调度器自身的, ready表示队列为空或者被暂停 */
     status: 'ready' | 'running' | 'waitingForStop';
     isPaused: boolean;
-    enqueue: (runner: LevelRunner) => void;
-    dequeue: (runner: LevelRunner) => void;
+    enqueue: (runner: TaskRunner) => void;
+    dequeue: (runner: TaskRunner) => void;
     pause: () => void;
     resume: () => void;
     stopCurrentRunner: () => void;
 }
 
-export const LevelScheduler = createContext<LevelScheduler>({} as LevelScheduler);
+export const TaskScheduler = createContext<TaskScheduler>({} as TaskScheduler);
 
-export function useLevelScheduler() {
-    return useContext(LevelScheduler);
+export function useTaskScheduler() {
+    return useContext(TaskScheduler);
 }

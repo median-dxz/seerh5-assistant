@@ -1,18 +1,18 @@
-export interface LevelInstance {
+export interface TaskInstance {
     id: string;
     name: string;
-    level: SEAL.Level;
+    task: SEAL.Task;
     ownerMod: string;
 }
 
-export const store = new Map<string, LevelInstance>();
+export const store = new Map<string, TaskInstance>();
 
-export function add(mod: string, level: SEAL.Level) {
-    const name = level.meta.name;
-    const id = level.meta.id;
+export function add(mod: string, task: SEAL.Task) {
+    const name = task.meta.name;
+    const id = task.meta.id;
 
-    const instance: LevelInstance = {
-        level,
+    const instance: TaskInstance = {
+        task: task,
         id,
         name,
         ownerMod: mod,

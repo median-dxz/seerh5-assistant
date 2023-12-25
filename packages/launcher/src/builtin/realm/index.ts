@@ -58,7 +58,7 @@ export default async function realm(createModContext: SEAL.createModContext) {
     return {
         meta,
         exports: {
-            level: [
+            task: [
                 LevelCourageTower(logger, battle),
                 LevelElfKingsTrial(logger, battle),
                 LevelExpTraining(logger, battle),

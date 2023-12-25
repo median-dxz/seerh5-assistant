@@ -1,15 +1,15 @@
 import React, { type PropsWithChildren } from 'react';
 
-import { LevelSchedulerProvider } from './LevelSchedulerProvider';
 import { MainStateProvider } from './MainStateProvider';
 import { ModStoreProvider } from './ModStoreProvider';
+import { TaskSchedulerProvider } from './TaskSchedulerProvider';
 
 export function SEALContextProvider({ children }: PropsWithChildren<object>) {
     return (
         <ModStoreProvider>
-            <LevelSchedulerProvider>
+            <TaskSchedulerProvider>
                 <MainStateProvider>{children}</MainStateProvider>
-            </LevelSchedulerProvider>
+            </TaskSchedulerProvider>
         </ModStoreProvider>
     );
 }

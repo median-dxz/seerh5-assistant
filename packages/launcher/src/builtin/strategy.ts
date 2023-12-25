@@ -47,7 +47,7 @@ export default async function builtinStrategy(createContext: SEAL.createModConte
                         skills,
                         pets
                     )(
-                        round((r) => r === 0, name('落花')),
+                        round((r) => r === 0, name('时空牵绊')),
                         rotating('朵·盛夏咏叹', '灵籁之愿')
                     )
                 );

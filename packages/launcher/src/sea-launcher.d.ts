@@ -31,7 +31,7 @@ declare global {
             options: CreateContextOptions<TConfig>
         ) => Promise<ModContext<TConfig>>;
 
-        interface LevelRunner<TData extends LevelData = LevelData> extends ILevelRunner<TData> {
+        interface TaskRunner<TData extends LevelData = LevelData> extends ILevelRunner<TData> {
             get meta(): LevelMeta;
             get name(): string;
         }
@@ -41,9 +41,8 @@ declare global {
             exports?: {
                 strategy?: Array<Strategy>;
                 battle?: Array<Battle>;
-                level?: Array<Level>;
+                task?: Array<Task>;
                 command?: Array<Command>;
-                sign?: Array<Sign>;
             };
             install?(): void;
             uninstall?(): void;
@@ -59,19 +58,13 @@ declare global {
         };
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        type Level = { new (option: any): LevelRunner; readonly meta: LevelMeta };
+        type Task = { new (option?: any): TaskRunner; readonly meta: LevelMeta };
 
         type Command = {
             name: string;
             icon?: string;
             description?: string | (() => string);
             handler: (...args: string[]) => unknown;
-        };
-
-        type Sign = {
-            name: string;
-            check: () => Promise<number>;
-            run: () => Promise<void>;
         };
     }
 

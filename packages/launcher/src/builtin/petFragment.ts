@@ -32,7 +32,7 @@ export default async function (createModContext: SEAL.createModContext) {
         },
     });
 
-    class PetFragmentRunner implements SEAL.LevelRunner<LevelData>, IPetFragmentRunner {
+    class PetFragmentRunner implements SEAL.TaskRunner<LevelData>, IPetFragmentRunner {
         static readonly meta: LevelMeta = {
             maxTimes: 3,
             name: '精灵因子',
@@ -99,25 +99,26 @@ export default async function (createModContext: SEAL.createModContext) {
                     data.bosses = frag.level.ease;
                     break;
                 case Difficulty.Normal:
-                    data.bosses = frag.level.ease;
+                    data.bosses = frag.level.normal;
                     break;
                 case Difficulty.Hard:
-                    data.bosses = frag.level.ease;
+                    data.bosses = frag.level.hard;
                     break;
                 default:
                     break;
             }
-            this.data = { ...this.data };
+        }
 
+        next(): string {
+            const data = this.data;
             if (data.isChallenge || data.remainingTimes > 0) {
                 if (this.option.sweep) {
                     return 'sweep';
                 } else {
                     return LevelAction.BATTLE;
                 }
-            } else {
-                return LevelAction.STOP;
             }
+            return LevelAction.STOP;
         }
 
         readonly actions: Record<string, () => Promise<void>> = {
@@ -142,7 +143,7 @@ export default async function (createModContext: SEAL.createModContext) {
     return {
         meta,
         exports: {
-            level: [PetFragmentRunner],
+            task: [PetFragmentRunner],
         },
     } satisfies SEAL.ModExport;
 }

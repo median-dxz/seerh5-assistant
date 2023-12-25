@@ -1,9 +1,4 @@
-import type {
-    AnyFunction,
-    ILevelBattle,
-    LevelData as SEALevelData,
-    LevelMeta as SEALevelMeta
-} from '@sea/core';
+import type { AnyFunction, ILevelBattle, LevelData as SEALevelData, LevelMeta as SEALevelMeta } from '@sea/core';
 import { LevelAction, delay, socket } from '@sea/core';
 
 interface LevelOption {
@@ -26,7 +21,7 @@ interface LevelMeta extends SEALevelMeta {
 }
 
 export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => {
-    return class LevelTitanHole implements SEAL.LevelRunner<LevelData> {
+    return class LevelTitanHole implements SEAL.TaskRunner<LevelData> {
         data: LevelData = {
             remainingTimes: 0,
             progress: 0,
@@ -67,7 +62,9 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             this.data.levelOpen = this.data.step > 0;
             this.data.step2Count = (values[2] >> 8) & 255;
             this.data.step3Count = values[3] & 255;
+        }
 
+        next(): string {
             if (this.data.levelOpenCount < this.meta.maxTimes || this.data.levelOpen) {
                 if (!this.data.levelOpen) {
                     return 'open_level';

@@ -14,7 +14,7 @@ export interface LevelOption {
 }
 
 export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => {
-    class LevelCourageTower implements SEAL.LevelRunner<LevelData> {
+    class LevelCourageTower implements SEAL.TaskRunner<LevelData> {
         data: LevelData = {
             remainingTimes: 0,
             progress: 0,
@@ -48,16 +48,17 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             this.data.stimulation = bits[0];
             this.data.rewardReceived = bits[1];
             this.data.remainingTimes = this.meta.maxTimes - realmInfo.getUint32(8);
+        }
 
+        next(): string {
             if (!this.data.rewardReceived) {
                 if (this.data.remainingTimes > 0) {
                     return LevelAction.BATTLE;
                 } else {
                     return LevelAction.AWARD;
                 }
-            } else {
-                return LevelAction.STOP;
             }
+            return LevelAction.STOP;
         }
 
         selectLevelBattle() {

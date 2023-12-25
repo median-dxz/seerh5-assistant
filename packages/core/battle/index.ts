@@ -16,4 +16,5 @@ export const battle = {
 };
 
 export { LevelAction } from './level/action.js';
-export { LevelManager } from './level/index.js';
+export { levelManager } from './level/index.js';
+

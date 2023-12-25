@@ -1,10 +1,9 @@
 import * as ctService from '@/service/store/CatchTimeBinding';
 import * as battleService from '@/service/store/battle';
 import * as commandService from '@/service/store/command';
-import * as levelService from '@/service/store/level';
 import * as modService from '@/service/store/mod';
-import * as signService from '@/service/store/sign';
 import * as strategyService from '@/service/store/strategy';
+import * as taskService from '@/service/store/task';
 
 import React, { useCallback, useEffect, useState, type PropsWithChildren } from 'react';
 import { ModStore } from './useModStore';
@@ -67,9 +66,8 @@ export function ModStoreProvider({ children }: PropsWithChildren<object>) {
                 ctStore: ctService.store,
                 strategyStore: strategyService.store,
                 battleStore: battleService.store,
-                levelStore: levelService.store,
+                taskStore: taskService.store,
                 commandStore: commandService.store,
-                signStore: signService.store,
             }}
         >
             {children}

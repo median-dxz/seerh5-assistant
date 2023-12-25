@@ -1,11 +1,11 @@
 import { Box, Grid, useMediaQuery, useTheme } from '@mui/material';
 import React from 'react';
-import { LevelStateList } from './LevelStateList';
 import { Sidebar } from './Sidebar';
+import { LevelStateList as TaskStateList } from './TaskStateList';
 
 const sidebarHeight = '156px';
 
-export function StateView() {
+export function TaskStateView() {
     const theme = useTheme();
     const matchMd = useMediaQuery(theme.breakpoints.up('md'));
 
@@ -17,7 +17,7 @@ export function StateView() {
                 </Box>
             </Grid>
             <Grid item xs={12} md={8}>
-                <LevelStateList
+                <TaskStateList
                     disablePadding
                     sx={{
                         width: '100%',

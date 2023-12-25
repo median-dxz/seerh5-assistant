@@ -15,7 +15,7 @@ interface LevelOption {
 }
 
 export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => {
-    return class LevelXTeamRoom implements SEAL.LevelRunner<LevelData> {
+    return class LevelXTeamRoom implements SEAL.TaskRunner<LevelData> {
         data: LevelData = {
             remainingTimes: 0,
             progress: 0,
@@ -55,7 +55,9 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             this.data.remainingTimes = this.meta.maxTimes - values[0];
             this.data.dailyMinRound = values[1];
             this.data.weeklyCompletedCount = values[2];
+        }
 
+        next(): string {
             if (this.data.weeklyRewardReceived) {
                 return LevelAction.STOP;
             }

@@ -1,17 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { LevelManager, SEAEventSource, Subscription } from '@sea/core';
+import { levelManager, SEAEventSource, Subscription } from '@sea/core';
 import { produce } from 'immer';
 import React, { useCallback, useEffect, useReducer, useRef, type PropsWithChildren, type Reducer } from 'react';
-import { LevelScheduler, type LevelRunnerState } from './useLevelScheduler';
-const { ins: levelManager } = LevelManager;
+import { TaskScheduler, type TaskState } from './useTaskScheduler';
 
-type LevelRunner = SEAL.LevelRunner;
+type TaskRunner = SEAL.TaskRunner;
 
 type ActionType = {
-    enqueue: { runner: LevelRunner };
-    dequeue: { runner: LevelRunner };
+    enqueue: { runner: TaskRunner };
+    dequeue: { runner: TaskRunner };
     moveNext: undefined;
-    changeRunnerStatus: { status: LevelRunnerState['status']; error?: Error };
+    changeRunnerStatus: { status: TaskState['status']; error?: Error };
     changeSchedulerStatus: { status: LevelSchedulerState['status'] };
     addRunnerBattleCount: undefined;
     logWithRunner: { message: string };
@@ -23,7 +22,7 @@ type Action = {
     payload?: unknown;
 };
 
-type LevelSchedulerState = Pick<LevelScheduler, 'queue' | 'currentIndex' | 'status' | 'isPaused'>;
+type LevelSchedulerState = Pick<TaskScheduler, 'queue' | 'currentIndex' | 'status' | 'isPaused'>;
 
 const reducer: Reducer<LevelSchedulerState, Action> = (state, { type, payload }) => {
     function enqueue(prev: LevelSchedulerState, payload: ActionType['enqueue']) {
@@ -142,7 +141,7 @@ const reducer: Reducer<LevelSchedulerState, Action> = (state, { type, payload })
     }
 };
 
-export const LevelSchedulerProvider = ({ children }: PropsWithChildren<object>) => {
+export const TaskSchedulerProvider = ({ children }: PropsWithChildren<object>) => {
     const [state, dispatch] = useReducer(reducer, { queue: [], status: 'ready', isPaused: false });
     const updateRequest = useRef<boolean>(false);
 
@@ -153,7 +152,7 @@ export const LevelSchedulerProvider = ({ children }: PropsWithChildren<object>) 
         });
     }, []);
 
-    const changeRunnerState = useCallback((status: LevelRunnerState['status'], error?: Error) => {
+    const changeRunnerState = useCallback((status: TaskState['status'], error?: Error) => {
         dispatch({
             type: 'changeRunnerStatus',
             payload: { status, error } as ActionType['changeRunnerStatus'],
@@ -240,13 +239,13 @@ export const LevelSchedulerProvider = ({ children }: PropsWithChildren<object>) 
             });
     }, [changeRunnerState, changeSchedulerState, state.status]);
 
-    const handleEnqueue = useCallback((runner: LevelRunner) => {
+    const handleEnqueue = useCallback((runner: TaskRunner) => {
         dispatch({ type: 'enqueue', payload: { runner } });
         updateRequest.current = true;
     }, []);
 
     const handleDequeue = useCallback(
-        async (runner: LevelRunner) => {
+        async (runner: TaskRunner) => {
             if (state.queue.findIndex((r) => r.runner === runner) === state.currentIndex) {
                 await tryStopCurrentRunner();
                 dispatch({ type: 'dequeue', payload: { runner } });
@@ -274,7 +273,7 @@ export const LevelSchedulerProvider = ({ children }: PropsWithChildren<object>) 
     }, [tryStopCurrentRunner]);
 
     return (
-        <LevelScheduler.Provider
+        <TaskScheduler.Provider
             value={{
                 queue: state.queue,
                 currentIndex: state.currentIndex,
@@ -288,6 +287,6 @@ export const LevelSchedulerProvider = ({ children }: PropsWithChildren<object>) 
             }}
         >
             {children}
-        </LevelScheduler.Provider>
+        </TaskScheduler.Provider>
     );
 };
