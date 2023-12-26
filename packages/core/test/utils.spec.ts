@@ -6,8 +6,8 @@ import {
     assertIsHookedFunction,
     assertIsWrappedFunction,
     type HookedFunction,
-} from '../dist/common/utils';
-import { hookFn, wrapper } from '../dist/index';
+} from '../common/utils';
+import { hookFn, wrapper } from '../index';
 
 const createFn = () => () => {};
 

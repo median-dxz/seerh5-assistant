@@ -24,12 +24,13 @@ type SEAPet = {
 
 const ChainableSymbol = Symbol('CaughtPetChainable');
 
-function chainable(value: any, ctx: ClassMethodDecoratorContext) {
-    (value as any)[ChainableSymbol] = true;
-    return value;
-}
-
 export class CaughtPet extends Pet {
+    static {
+        (this.prototype.usePotion as any)[ChainableSymbol] = true;
+        (this.prototype.cure as any)[ChainableSymbol] = true;
+        (this.prototype.useItem as any)[ChainableSymbol] = true;
+    }
+
     constructor(i: PetInfo) {
         super(i);
     }
@@ -86,7 +87,6 @@ export class CaughtPet extends Pet {
     /**
      * @chainable
      */
-    @chainable
     async cure() {
         await socket.sendByQueue(CommandID.PET_ONE_CURE, [this.catchTime]);
         return ins.query(this.catchTime);
@@ -105,7 +105,6 @@ export class CaughtPet extends Pet {
      * Attention: 该发包不具备收包resolve的条件! 请手动添加延迟
      * @chainable
      */
-    @chainable
     async useItem(item: Item | number) {
         const itemId = EntityBase.inferId(item);
         const info = await PetManager.UpdateBagPetInfoAsynce(this.catchTime);
@@ -117,7 +116,6 @@ export class CaughtPet extends Pet {
      * @description 对精灵使用药品
      * @chainable
      */
-    @chainable
     async usePotion(potion: Item | number) {
         const itemId = EntityBase.inferId(potion);
         await socket.sendByQueue(CommandID.USE_PET_ITEM_OUT_OF_FIGHT, [this.catchTime, itemId]);
