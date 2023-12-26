@@ -1,5 +1,5 @@
 import { SkillType } from '../constant/index.js';
-import type { Pet, Skill } from '../entity/index.js';
+import type { Pet, PetRoundInfo, Skill } from '../entity/index.js';
 import { executor } from './executor.js';
 import type { RoundData } from './provider.js';
 
@@ -50,6 +50,13 @@ function attack(): Matcher {
     return (_, skill) => skill.find((skill) => skill.pp > 0 && skill.category !== SkillType.属性攻击)?.id;
 }
 
+function pet(predicate: (pet: PetRoundInfo) => boolean, ...operators: Matcher[]): Matcher {
+    return (state, ...rest) => {
+        if (predicate(state.self)) return group(...operators)(state, ...rest);
+        return undefined;
+    };
+}
+
 // pet matchers
 function linkList(...pets: string[]): Matcher {
     return ({ self: { catchtime } }, _2, allPets) => {
@@ -63,7 +70,7 @@ function linkList(...pets: string[]): Matcher {
     };
 }
 
-export { attack, fifth, group, linkList, match, name, rotating, round };
+export { attack, fifth, group, linkList, match, name, pet, rotating, round };
 
 export const auto = {
     move(skills?: string[]): MoveHandler {

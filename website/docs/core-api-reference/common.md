@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# common 模块
+# Common 模块
 
 你会用到的！
 

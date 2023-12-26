@@ -10,9 +10,9 @@ sidebar_position: 1
 
 这些教程假设你有：
 
-- node.js 基础，基于 npm 包的项目管理与开发能力，会使用 npm 生态的相关工具
+- Node.js 基础，基于 npm 包的项目管理与开发能力，会使用 npm 生态的相关工具
 - 较强的现代 ECMAScript（ES7 以上）能力
-- typescript 基础
+- TypeScript 基础
 
 :::
 
@@ -37,18 +37,26 @@ SEAC 采用的即第四种方案，方案的具体实现方式并不适合展开
 
 下面开始正式介绍在 SEA 的核心之下到底进行了哪些工作。
 
-## 游戏修改 - common 模块
+## 游戏修改 - Common 模块
 
 工具函数与钩子，SEAC 提供的最基础能力。
 
-请参阅[common 模块](./common.md)了解 SEAC 提供的工具函数集。
+请参阅[Common 模块](./common.md)了解 SEAC 提供的工具函数集。
 
 另外请务必查看[Hook 教程](./hook.md)。
 
-## 游戏常量与 TypeMaps - constant 模块
+## 游戏常量与 TypeMaps - Constant 模块
 
-一些常用枚举，以及扩展点所用到的TypeMaps。
+一些常用枚举，以及扩展点所用到的 TypeMaps。
 
-请参阅[constant 模块](./constant.md)查看所用可用的常量。
+请参阅[Constant 模块](./constant.md)查看所用可用的常量。
 
 另请参阅：[扩展点教程](./extend-core.md)
+
+## 内置功能集合 - Engine 模块
+
+SEAC 提供的内置游戏功能合集。SEAC 的职能是对下进行封装，对上提供接口与抽象。这个模块就是最直接实践这一职能的部分。
+
+请参阅[Engine 模块](./engine.md)查看这些基本的功能函数。
+
+以及和 Engine 模块配套的[收发包教程](./socket.md)。

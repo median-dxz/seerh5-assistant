@@ -2,9 +2,9 @@
 sidebar_position: 4
 ---
 
-# constant 模块
+# Constant 模块
 
-本不应存在于此处的某物
+本不应存在于此的某物
 
 ## 基础常量
 

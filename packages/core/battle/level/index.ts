@@ -102,8 +102,8 @@ class LevelManager {
             logger('正在停止关卡');
             // 恢复自动治疗状态
             await engine.toggleAutoCure(autoCureState);
-            // TODO
             engine.cureAllPet();
+            await delay(200);
 
             logger('关卡完成');
             this.lock = this.runner = null;
