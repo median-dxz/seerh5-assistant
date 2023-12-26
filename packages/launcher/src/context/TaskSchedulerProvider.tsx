@@ -2,7 +2,7 @@
 import type { TaskRunner } from '@/sea-launcher';
 import { levelManager, SEAEventSource, Subscription } from '@sea/core';
 import { produce } from 'immer';
-import React, { useCallback, useEffect, useReducer, useRef, type PropsWithChildren, type Reducer } from 'react';
+import React, { useCallback, useEffect, useReducer, type PropsWithChildren, type Reducer } from 'react';
 import { TaskScheduler, type TaskState } from './useTaskScheduler';
 
 type ActionType = {
@@ -142,7 +142,7 @@ const reducer: Reducer<LevelSchedulerState, Action> = (state, { type, payload })
 
 export const TaskSchedulerProvider = ({ children }: PropsWithChildren<object>) => {
     const [state, dispatch] = useReducer(reducer, { queue: [], status: 'ready', isPaused: false });
-    const updateRequest = useRef<boolean>(false);
+    // const updateRequest = useRef<boolean>(false);
 
     const changeSchedulerState = useCallback((status: LevelSchedulerState['status']) => {
         dispatch({
@@ -202,16 +202,17 @@ export const TaskSchedulerProvider = ({ children }: PropsWithChildren<object>) =
                 }
                 changeSchedulerState('ready');
                 dispatch({ type: 'moveNext' });
-                updateRequest.current = true;
             });
     }, [changeSchedulerState, changeRunnerState, state]);
 
     useEffect(() => {
-        if (!updateRequest.current) {
+        const { queue, isPaused, status, currentIndex } = state;
+        if (isPaused || currentIndex == undefined || status !== 'ready') {
             return;
         }
-        updateRequest.current = false;
-        tryStartNextRunner();
+        if (queue[currentIndex].status === 'pending') {
+            tryStartNextRunner();
+        }
     });
 
     useEffect(() => {
@@ -240,7 +241,6 @@ export const TaskSchedulerProvider = ({ children }: PropsWithChildren<object>) =
 
     const handleEnqueue = useCallback((runner: TaskRunner) => {
         dispatch({ type: 'enqueue', payload: { runner } });
-        updateRequest.current = true;
     }, []);
 
     const handleDequeue = useCallback(
@@ -248,7 +248,6 @@ export const TaskSchedulerProvider = ({ children }: PropsWithChildren<object>) =
             if (state.queue.findIndex((r) => r.runner === runner) === state.currentIndex) {
                 await tryStopCurrentRunner();
                 dispatch({ type: 'dequeue', payload: { runner } });
-                updateRequest.current = true;
             } else {
                 dispatch({ type: 'dequeue', payload: { runner } });
             }
@@ -263,12 +262,10 @@ export const TaskSchedulerProvider = ({ children }: PropsWithChildren<object>) =
 
     const handleResume = useCallback(() => {
         dispatch({ type: 'setPause', payload: false });
-        updateRequest.current = true;
     }, []);
 
     const handleStopCurrentRunner = useCallback(async () => {
         await tryStopCurrentRunner();
-        updateRequest.current = true;
     }, [tryStopCurrentRunner]);
 
     return (
