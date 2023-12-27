@@ -10,7 +10,7 @@ beforeEach(() => {
 
 describe("levelManagerTest", () => {
     class NoBattleLevelRunner implements ILevelRunner<object> {
-        actions: Record<string, () => Promise<void>>;
+        actions: Record<string, (self: NoBattleLevelRunner) => Promise<void>>;
         data: object;
 
         logger(args: any): any {
@@ -35,12 +35,12 @@ describe("levelManagerTest", () => {
     }
 
     let simpleAction = {
-        "a": async () => {
+        "a": async (self: NoBattleLevelRunner) => {
 
         }
     };
 
-    function simplyRun(action: Record<string, () => Promise<void>> = simpleAction) {
+    function simplyRun(action: Record<string, (self: NoBattleLevelRunner) => Promise<void>> = simpleAction) {
         const myLevelRunner = new NoBattleLevelRunner();
         myLevelRunner.actions = action
         levelManager.run(myLevelRunner);
@@ -75,9 +75,51 @@ describe("levelManagerTest", () => {
         }
     });
 
-    /*test("stop when running should set runner to null", async () => {
+    test("levelManager should invoke all actions", async () => {
         simplyRun();
+        let shouldAwaitLock = false;
+        levelManager.lock = (async () => {
+            shouldAwaitLock = true;
+        })();
         await levelManager.stop();
         expect(levelManager.getRunner()).toBe(null);
-    });*/
+        expect(shouldAwaitLock).toBe(true, "stop should await lock");
+    });
+
+    test("stop should throw error threw by runner's action", async () => {
+        let actionAInvoked = false;
+        let actionBInvoked = false;
+        let actionStopInvoked = false;
+        let actions: Record<string, (self: NoBattleLevelRunner) => Promise<void>> = {
+            "a": async (self: NoBattleLevelRunner) => {
+                actionAInvoked = true;
+            },
+            "b": async (self: NoBattleLevelRunner) => {
+                actionBInvoked = true;
+            },
+            [LevelAction.STOP]: async (self: NoBattleLevelRunner) => {
+                actionStopInvoked = true;
+            }
+        };
+        let noBattleLevelRunner = new NoBattleLevelRunner();
+        let now = "";
+        noBattleLevelRunner.next = function () {
+            if (now == "") {
+                now = "a";
+            } else if (now == "a") {
+                now = "b";
+            } else if (now == "b") {
+                now = LevelAction.STOP;
+            } else {
+                now = LevelAction.STOP;
+            }
+            return now;
+        }
+        noBattleLevelRunner.actions = actions;
+        levelManager.run(noBattleLevelRunner);
+        await levelManager.lock;
+        expect(actionAInvoked).toBe(true);
+        expect(actionBInvoked).toBe(true);
+        expect(actionStopInvoked).toBe(true);
+    });
 });
