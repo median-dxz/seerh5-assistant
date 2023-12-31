@@ -1,11 +1,14 @@
-import {levelManager, ILevelRunner, LevelAction} from "../../battle";
+import {levelManager, ILevelRunner, LevelAction, ILevelBattle} from "../../battle";
 import {beforeEach, describe, expect, test, vi} from 'vitest';
-import {Mock_KTool, Mock_SocketConnection} from "../mock";
+import {Mock_KTool, mockSocket, mockEngine} from "../mock";
 
-beforeEach(() => {
+
+beforeEach(async () => {
     vi.stubGlobal("KTool", Mock_KTool);
-    vi.stubGlobal("SocketConnection", Mock_SocketConnection);
-    levelManager.stop().then();
+    mockSocket();
+    mockEngine();
+    levelManager.lock = null;
+    await levelManager.stop();
 });
 
 describe("levelManagerTest", () => {
@@ -70,36 +73,31 @@ describe("levelManagerTest", () => {
         try {
             levelManager.run(myLevelRunner);
             expect.fail("run when running should throw error");
-        } catch (e: Error) {
-            console.log(e.message);
+        } catch (e: unknown) {
+            if (e instanceof Error) {
+                console.log(e.message);
+            } else {
+                throw e;
+            }
         }
     });
 
     test("levelManager should invoke all actions", async () => {
-        simplyRun();
-        let shouldAwaitLock = false;
-        levelManager.lock = (async () => {
-            shouldAwaitLock = true;
-        })();
+        let mockLock = vi.fn((async () => {}));
+        levelManager.lock = mockLock();
         await levelManager.stop();
         expect(levelManager.getRunner()).toBe(null);
-        expect(shouldAwaitLock).toBe(true, "stop should await lock");
+        expect(mockLock).toHaveBeenCalled();
     });
 
     test("stop should throw error threw by runner's action", async () => {
-        let actionAInvoked = false;
-        let actionBInvoked = false;
-        let actionStopInvoked = false;
+        let actionA = vi.fn(async (self: NoBattleLevelRunner) => {});
+        let actionB = vi.fn(async (self: NoBattleLevelRunner) => {});
+        let actionStop = vi.fn(async (self: NoBattleLevelRunner) => {});
         let actions: Record<string, (self: NoBattleLevelRunner) => Promise<void>> = {
-            "a": async (self: NoBattleLevelRunner) => {
-                actionAInvoked = true;
-            },
-            "b": async (self: NoBattleLevelRunner) => {
-                actionBInvoked = true;
-            },
-            [LevelAction.STOP]: async (self: NoBattleLevelRunner) => {
-                actionStopInvoked = true;
-            }
+            "a": actionA,
+            "b": actionB,
+            [LevelAction.STOP]: actionStop
         };
         let noBattleLevelRunner = new NoBattleLevelRunner();
         let now = "";
@@ -118,8 +116,48 @@ describe("levelManagerTest", () => {
         noBattleLevelRunner.actions = actions;
         levelManager.run(noBattleLevelRunner);
         await levelManager.lock;
-        expect(actionAInvoked).toBe(true);
-        expect(actionBInvoked).toBe(true);
-        expect(actionStopInvoked).toBe(true);
+        expect(actionA).toHaveBeenCalled();
+        expect(actionB).toHaveBeenCalled();
+        expect(actionStop).toHaveBeenCalled();
+    });
+
+    test("run no battle action should throw error", async () => {
+        let noBattleLevelRunner = new NoBattleLevelRunner();
+        let actionA = vi.fn(async (self: NoBattleLevelRunner) => {});
+        let actionBattle = vi.fn(async (self: NoBattleLevelRunner) => {});
+        let actionStop = vi.fn(async (self: NoBattleLevelRunner) => {});
+        let actions: Record<string, (self: NoBattleLevelRunner) => Promise<void>> = {
+            "a": actionA,
+            [LevelAction.BATTLE]: actionBattle,
+            [LevelAction.STOP]: actionStop
+        };
+        let now = "";
+        noBattleLevelRunner.next = function () {
+            if (now == "") {
+                now = "a";
+            } else if (now == "a") {
+                now = LevelAction.BATTLE;
+            } else if (now == "b") {
+                now = LevelAction.STOP;
+            } else {
+                now = LevelAction.STOP;
+            }
+            return now;
+        }
+        noBattleLevelRunner.actions = actions;
+        levelManager.run(noBattleLevelRunner);
+        try {
+            await levelManager.lock;
+            expect.fail("run no battle action should throw error");
+        } catch (e: unknown) {
+            if (e instanceof Error) {
+                console.log(e.message);
+            } else {
+                throw e;
+            }
+        }
+        expect(actionA).toHaveBeenCalled();
+        expect(actionBattle).not.toHaveBeenCalled();
+        expect(actionStop).not.toHaveBeenCalled();
     });
 });
