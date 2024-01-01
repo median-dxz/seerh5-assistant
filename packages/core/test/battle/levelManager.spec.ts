@@ -1,20 +1,76 @@
+import { Mock_KTool, mockEngine, Mock_SocketConnection, mockPet} from '../mock';
 import { levelManager, ILevelRunner, LevelAction, ILevelBattle, MoveStrategy } from '../../battle';
-import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { Mock_KTool, mockEngine, Mock_SocketConnection } from '../mock';
-import { SEAPetStore, CaughtPet } from '../../pet-helper';
+import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { SEAPetStore, CaughtPet, PetLocation } from '../../pet-helper';
 import { engine } from '../../internal';
+import { hookFn, restoreHookedFn } from '../../common/utils';
+import { Item } from '../../entity';
 
 vi.stubGlobal('KTool', Mock_KTool);
 vi.stubGlobal('SocketConnection', Mock_SocketConnection);
 mockEngine();
-SEAPetStore.query = async (): Promise<CaughtPet> => {
-    return new CaughtPet(undefined);
-}
+mockPet();
+
+beforeAll(() => {
+    hookFn(SEAPetStore, 'query', async (): Promise<CaughtPet> => {
+        const info: CaughtPet = {
+            __type: undefined,
+            baseCurHp: 0,
+            baseMaxHp: 0,
+            catchTime: 0,
+            dv: 0,
+            element: undefined,
+            hasFifthSkill: false,
+            hp: 0,
+            id: 0,
+            level: 0,
+            maxHp: 0,
+            name: '',
+            nature: 0,
+            skills: [],
+            async cure(): Promise<CaughtPet> {
+                return Promise.resolve(undefined);
+            },
+            default(): Promise<boolean> {
+                return Promise.resolve(undefined);
+            },
+            get hasEffect(): boolean {
+                return false;
+            },
+            get isDefault(): boolean {
+                return false;
+            },
+            async location(): Promise<PetLocation> {
+                return Promise.resolve(undefined);
+            },
+            async popFromBag(): Promise<void> {
+                return Promise.resolve(undefined);
+            },
+            async setLocation(newLocation: PetLocation): Promise<boolean> {
+                return Promise.resolve(undefined);
+            },
+            async useItem(item: Item | number): Promise<CaughtPet> {
+                return Promise.resolve(undefined);
+            },
+            async usePotion(potion: Item | number): Promise<CaughtPet> {
+                return Promise.resolve(undefined);
+            }
+
+        };
+        return info;
+    });
+});
 
 beforeEach(async () => {
-    console.log(engine);
-    console.log(SocketConnection);
-    await levelManager.stop();
+    try {
+        await levelManager.stop();
+    } catch (e) {
+        // 上个测试引发的错误，直接忽略
+    }
+});
+
+afterAll(() => {
+    restoreHookedFn(SEAPetStore, 'query');
 });
 
 describe('levelManagerTest', () => {
@@ -40,13 +96,10 @@ describe('levelManagerTest', () => {
         update(): Promise<void> {
             return Promise.resolve(undefined);
         }
-
     }
 
     class MyBattle implements ILevelBattle {
-        beforeBattle(): Promise<void> {
-            return Promise.resolve(undefined);
-        }
+        async beforeBattle() {}
 
         pets: number[] = [0, 1, 2, 3];
         strategy: MoveStrategy;
@@ -70,6 +123,22 @@ describe('levelManagerTest', () => {
         myLevelRunner.actions = action;
         levelManager.run(myLevelRunner);
         return myLevelRunner;
+    }
+
+    function setNextWithBattle(battleLevelRunner: ILevelRunner<object>) {
+        let now = '';
+        battleLevelRunner.next = function() {
+            if (now == '') {
+                now = 'a';
+            } else if (now == 'a') {
+                now = LevelAction.BATTLE;
+            } else if (now == 'b') {
+                now = LevelAction.STOP;
+            } else {
+                now = LevelAction.STOP;
+            }
+            return now;
+        };
     }
 
     test('running without runner should return false', () => {
@@ -113,13 +182,16 @@ describe('levelManagerTest', () => {
         expect(mockLock).toHaveBeenCalled();
     });
 
-    test("stop should throw error threw by runner's action", async () => {
-        let actionA = vi.fn(async () => {});
-        let actionB = vi.fn(async () => {});
-        let actionStop = vi.fn(async () => {});
+    test('stop should throw error threw by runner\'s action', async () => {
+        let actionA = vi.fn(async () => {
+        });
+        let actionB = vi.fn(async () => {
+        });
+        let actionStop = vi.fn(async () => {
+        });
         let actions: Record<string, (this: ILevelRunner<object>) => Promise<void>> = {
-            "a": actionA,
-            "b": actionB,
+            'a': actionA,
+            'b': actionB,
             [LevelAction.STOP]: actionStop
         };
         let noBattleLevelRunner = new NoBattleLevelRunner();
@@ -146,27 +218,18 @@ describe('levelManagerTest', () => {
 
     test('run no battle action should throw error', async () => {
         let noBattleLevelRunner = new NoBattleLevelRunner();
-        let actionA = vi.fn(async () => {});
-        let actionBattle = vi.fn(async () => {});
-        let actionStop = vi.fn(async () => {});
+        let actionA = vi.fn(async () => {
+        });
+        let actionBattle = vi.fn(async () => {
+        });
+        let actionStop = vi.fn(async () => {
+        });
         let actions: Record<string, (this: ILevelRunner<object>) => Promise<void>> = {
-            "a": actionA,
+            'a': actionA,
             [LevelAction.BATTLE]: actionBattle,
             [LevelAction.STOP]: actionStop
         };
-        let now = '';
-        noBattleLevelRunner.next = function() {
-            if (now == '') {
-                now = 'a';
-            } else if (now == 'a') {
-                now = LevelAction.BATTLE;
-            } else if (now == 'b') {
-                now = LevelAction.STOP;
-            } else {
-                now = LevelAction.STOP;
-            }
-            return now;
-        };
+        setNextWithBattle(noBattleLevelRunner);
         noBattleLevelRunner.actions = actions;
         levelManager.run(noBattleLevelRunner);
         try {
@@ -186,28 +249,19 @@ describe('levelManagerTest', () => {
 
     test('run battle action should success', async () => {
         let battleLevelRunner = new BattleLevelRunner();
-        let actionA = vi.fn(async () => {});
-        let actionBattle = vi.fn(async () => {});
-        let actionStop = vi.fn(async () => {});
+        let actionA = vi.fn(async () => {
+        });
+        let actionBattle = vi.fn(async () => {
+        });
+        let actionStop = vi.fn(async () => {
+        });
         battleLevelRunner.selectLevelBattle = vi.fn(battleLevelRunner.selectLevelBattle);
         let actions: Record<string, (this: ILevelRunner<object>) => Promise<void>> = {
             'a': actionA,
             [LevelAction.BATTLE]: actionBattle,
             [LevelAction.STOP]: actionStop
         };
-        let now = '';
-        battleLevelRunner.next = function() {
-            if (now == '') {
-                now = 'a';
-            } else if (now == 'a') {
-                now = LevelAction.BATTLE;
-            } else if (now == 'b') {
-                now = LevelAction.STOP;
-            } else {
-                now = LevelAction.STOP;
-            }
-            return now;
-        };
+        setNextWithBattle(battleLevelRunner);
         battleLevelRunner.actions = actions;
         levelManager.run(battleLevelRunner);
         await levelManager.lock;

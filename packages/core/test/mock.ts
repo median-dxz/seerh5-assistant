@@ -1,4 +1,5 @@
 import { vi } from 'vitest';
+import { spet } from '../pet-helper';
 
 export let Mock_KTool = {
     getBitSetAsync: vi.fn(async () => {
@@ -24,5 +25,39 @@ export function mockEngine() {
             }
         };
         return { engine };
+    });
+}
+
+export function mockPet() {
+    vi.mock('../pet-helper/pet', () => {
+        return {
+            spet() {
+                return {
+                    async default() {
+
+                    }
+                };
+            }
+        };
+    });
+}
+
+export function mockCore() {
+    vi.mock('../battle/manager', () => {
+        return {
+            context: {
+                strategy: undefined,
+                triggerLock: null,
+                delayTimeout: null
+            },
+            manager: {
+                takeover() {
+                },
+                resolveStrategy() {
+                },
+                clear() {
+                }
+            }
+        };
     });
 }
