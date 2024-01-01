@@ -1,27 +1,18 @@
-import {vi} from "vitest";
-import type {SocketConnection} from "@seerh5/socket";
-import {Pet} from "../entity";
+import { vi } from 'vitest';
 
-export {Mock_KTool};
-
-let Mock_KTool = {
-    getBitSetAsync: vi.fn(async (...values) => {
+export let Mock_KTool = {
+    getBitSetAsync: vi.fn(async () => {
         return [true, true];
-    }),
-}
-export function mockSocket() {
-    vi.mock("../../internal/socket.js", () => {
-        return {
-            sendByQueue: (cmd: number, data: Parameters<SocketConnection['sendByQueue']>[1] = []) => {
-                return (async () => {
-                })();
-            }
-        }
-    });
-}
+    })
+};
+
+export let Mock_SocketConnection = {
+    sendByQueue: async () => {
+    }
+};
 
 export function mockEngine() {
-    vi.mock("../../internal/index.js", () => {
+    vi.mock('../internal/index', () => {
         const engine = {
             cureAllPet: () => {
             },
@@ -29,9 +20,9 @@ export function mockEngine() {
             },
             toggleAutoCure: async () => {
             },
-            switchBag: async (pets: number[] | Pet[]) => {
+            switchBag: async () => {
             }
         };
-        return {engine};
+        return { engine };
     });
 }
