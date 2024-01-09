@@ -192,9 +192,10 @@ export function hookPrototype<T extends HasPrototype, K extends keyof T['prototy
 
 export function experiment_hookConstructor<TClass extends Constructor<any>>(
     classType: TClass,
+    className: string,
     override: (ins: InstanceType<TClass>, ...args: ConstructorParameters<TClass>) => void
 ) {
-    hookFn(globalThis as any, classType.name, (_, ...args) => {
+    hookFn(globalThis as any, className, (_, ...args) => {
         const ins = new classType(...args);
         override(ins, ...(args as ConstructorParameters<TClass>));
         return ins;

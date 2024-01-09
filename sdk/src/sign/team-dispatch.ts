@@ -6,9 +6,8 @@ import {
     socket,
     spet,
     type ILevelRunner,
-    type LevelData,
 } from '@sea/core';
-import type { LevelMeta, Task, TaskRunner } from '@sea/launcher';
+import type { LevelData, LevelMeta, Task, TaskRunner } from '@sea/launcher';
 import { SignBase } from './SignBase';
 
 declare class MainManager {

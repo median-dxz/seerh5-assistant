@@ -27,6 +27,7 @@ export function ListMenu<T, P extends object>(props: ListMenuProps<T, P>) {
         RenderItem?: React.JSXElementConstructor<{ index: number; item: T }>;
         renderItemProps?: object;
     } & Omit<MenuProps, 'open' | 'onClose' | 'onClick'>;
+
     const { sx: MenuListSx, ...MenuListProps } = allMenuListProps ?? {};
     const open = Boolean(anchorEl);
 

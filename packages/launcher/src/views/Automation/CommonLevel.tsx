@@ -85,15 +85,15 @@ export function CommonLevelPanel() {
         );
         const allConfigs = await Promise.all(
             mods.map(({ meta }) => Endpoints.getModConfig(meta.scope, meta.id) as Promise<Record<string, unknown>>)
-        );
+        ).then((configs) => configs.map((config) => Object.entries(config)).flat());
 
         levelStore.forEach((levelInstance, levelKey) => {
             if (levelInstance.ownerMod === `${MOD_SCOPE_BUILTIN}::PetFragmentLevel`) {
                 return;
             }
             if (Object.hasOwn(levelInstance.task.prototype, 'selectLevelBattle')) {
-                const config = Object.entries(allConfigs).find(([key]) => key === levelKey)?.[1] ?? {};
-                r.push({ taskClass: levelInstance.task, config });
+                const config = allConfigs.find(([key]) => key === levelKey)?.[1] ?? {};
+                r.push({ taskClass: levelInstance.task, config: config as Record<string, unknown> });
             }
         });
 

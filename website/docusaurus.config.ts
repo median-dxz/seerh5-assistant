@@ -39,7 +39,7 @@ const config: Config = {
                     // Please change this to your repo.
                     // Remove this to remove the "edit this page" links.
                     editUrl:
-                        'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+                        'https://github.com/median-dxz/seerh5-assistant/tree/master/website/docs/',
                 },
                 blog: {
                     showReadingTime: true,
