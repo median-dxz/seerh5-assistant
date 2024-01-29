@@ -43,7 +43,7 @@ export function enableFastStaticAnimation() {
         }
     });
 
-    experiment_hookConstructor(RenewPPEffect, function (ins) {
+    experiment_hookConstructor(RenewPPEffect, 'RenewPPEffect', function (ins) {
         if (FightManager.fightAnimateMode === 1) {
             ins.timer?.removeEventListener(egret.TimerEvent.TIMER, ins.closeTxt, ins);
             ins.timer?.stop();

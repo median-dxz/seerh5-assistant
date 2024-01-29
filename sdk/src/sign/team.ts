@@ -1,5 +1,5 @@
-import { LevelAction, socket, type ILevelRunner, type LevelData } from '@sea/core';
-import type { LevelMeta, Task, TaskRunner } from '@sea/launcher';
+import { LevelAction, socket, type ILevelRunner } from '@sea/core';
+import type { LevelData, LevelMeta, Task, TaskRunner } from '@sea/launcher';
 import { SignBase } from './SignBase';
 
 const MULTI_QUERY = {

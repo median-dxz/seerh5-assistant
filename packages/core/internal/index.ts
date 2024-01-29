@@ -1,5 +1,5 @@
 export type { GameConfigQuery, GameConfigRegistryEntity } from './GameConfig.js';
-export type { SEAC, VERSION } from './core.js';
+export type { SEAC, SetupFn, VERSION } from './core.js';
 export type { SEAEngine } from './engine.js';
 
 export { GameConfigRegistry, query } from './GameConfig.js';

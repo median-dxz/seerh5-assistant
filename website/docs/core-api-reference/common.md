@@ -68,7 +68,7 @@ obj.fn();
 
 2. 目标函数在顶级作用域
 
-那么这个游戏对象一定被挂载在 `globalThis` 或者说 `window` 上了，因为游戏模块是使用 IIFE 加载的。
+说明这个函数被挂载在 `globalThis` 或者说 `window` 上了，因为游戏中的模块是使用 IIFE 加载的。
 
 1. 目标函数是一个 getter
 
@@ -78,7 +78,7 @@ obj.fn();
 
 如果目标函数只用 `hookFn` 修改过，那么之前的所有更改都会被**丢弃**（SEAC 会在出现丢弃修改行为的时候发出警告），在你的`override` 中传入的，**是最初的原函数**。
 
-请务必查看[hook 教程](./hook.md#互操作性)中对 `hookFn` 和 `wrapper` 两者**互操作性**的描述。
+另请务必参阅[hook 教程](./hook.md#互操作性)中对 `hookFn` 和 `wrapper` 两者**互操作性**的描述。
 
 ### hookPrototype
 
@@ -153,7 +153,7 @@ f('1');
 
 如果你传入了一个已经被 `hookFn` 或 `wrapper` 修改过的函数，那么 `wrapper` 会在**修改后的基础**上进行包装。另外， `wrapper` 、 `after` 和 `before`调用后保证返回一个全新的函数。换而言之，这三个操作都是纯函数操作。因此你可以放心的使用 `wrapper` 包装函数并添加装饰器。
 
-另请务必查看[hook 教程](./hook.md#互操作性)中对两者**互操作性**的描述。
+另请务必参阅[hook 教程](./hook.md#互操作性)中对两者**互操作性**的描述。
 
 - `this` 的处理
 
@@ -207,6 +207,7 @@ object.f();
 ```ts
 function experiment_hookConstructor<TClass extends Constructor<any>>(
   classType: TClass,
+  className: string,
   override: (ins: InstanceType<TClass>, ...args: ConstructorParameters<TClass>) => void
 ): void;
 ```

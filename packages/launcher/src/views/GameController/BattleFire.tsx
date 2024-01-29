@@ -7,7 +7,7 @@ import { Stack } from '@mui/system';
 import { BattleFireType, SEAEventSource, Subscription, engine, socket, throttle } from '@sea/core';
 import { produce } from 'immer';
 import { useSnackbar } from 'notistack';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import type { SWRSubscriptionOptions } from 'swr/subscription';
 import useSWRSubscription from 'swr/subscription';
 
@@ -28,18 +28,18 @@ const { setInterval } = window;
 
 export function BattleFire() {
     const { enqueueSnackbar } = useSnackbar();
+    const timer = useRef<null | number>(null);
     const { data: battleFire } = useSWRSubscription(
         DS.multiValue.battleFire,
         (_, { next }: SWRSubscriptionOptions<BattleFireInfo, Error>) => {
-            let timer: null | number = null;
             const update = async () => {
                 const i = await engine.updateBattleFireInfo();
 
                 next(null, i);
                 if (!i.valid || i.timeLeft <= 0) return;
-                timer && clearInterval(timer);
+                timer.current && clearInterval(timer.current);
 
-                timer = setInterval(() => {
+                timer.current = setInterval(() => {
                     next(
                         null,
                         produce((draft) => {
@@ -47,8 +47,8 @@ export function BattleFire() {
                                 draft.timeLeft -= 1;
                             } else {
                                 draft.valid = false;
-                                timer && clearInterval(timer);
-                                timer = null;
+                                timer.current && clearInterval(timer.current);
+                                timer.current = null;
                             }
                         })
                     );
@@ -57,10 +57,11 @@ export function BattleFire() {
 
             const sub = new Subscription();
             sub.on(SEAEventSource.egret('battleFireUpdateInfo'), update);
-            engine.updateBattleFireInfo().then((data) => next(null, data));
+            update();
 
             return () => {
                 sub.dispose();
+                timer.current && clearInterval(timer.current);
             };
         },
         { fallbackData: { valid: false, timeLeft: 0 } as BattleFireInfo }

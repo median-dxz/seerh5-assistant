@@ -1,5 +1,5 @@
-import { LevelAction, NOOP, type LevelData } from '@sea/core';
-import type { LevelMeta } from '@sea/launcher';
+import { LevelAction, NOOP } from '@sea/core';
+import type { LevelData, LevelMeta } from '@sea/launcher';
 
 export class SignBase {
     get meta() {

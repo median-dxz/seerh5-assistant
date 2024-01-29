@@ -116,7 +116,7 @@ export default async function ItemWareHouse(createContext: CreateModContext) {
                             const notActivatedEffect = !(await engine.isPetEffectActivated(pet));
                             return {
                                 id: pet.id,
-                                notActivatedHideSkill: Boolean(pet.fifthSkill),
+                                notActivatedHideSkill: Boolean(!pet.fifthSkill),
                                 notActivatedEffect,
                             };
                         })
@@ -130,7 +130,7 @@ export default async function ItemWareHouse(createContext: CreateModContext) {
 
                         const { notActivatedEffect, notActivatedHideSkill } = pet;
 
-                        return itemCount > 0 && (notActivatedEffect || notActivatedHideSkill);
+                        return itemCount && itemCount > 0 && (notActivatedEffect || notActivatedHideSkill);
                     })
                 );
                 this.currList = r.filter((_, i) => filterResults[i]);
