@@ -6,9 +6,9 @@ import { coreSetup, coreSetupBasic } from './features/index.js';
 const VERSION = '1.0.0-rc.1';
 const SEER_READY_EVENT = 'seerh5_ready';
 
-interface SetupFn {
+export interface SetupFn {
     type: 'beforeGameCoreInit' | 'afterFirstShowMainPanel';
-    fn: AnyFunction;
+    setup: AnyFunction | { flag?: unknown; fn: AnyFunction };
 }
 
 const checkEnv = () => typeof window !== 'undefined' && window === window.self && typeof window.sea === 'undefined';
@@ -22,7 +22,11 @@ export class SEAC {
         this.setupFns
             .filter(({ type: _type }) => _type === type)
             .forEach((i) => {
-                i.fn();
+                if (typeof i.setup === 'function') {
+                    i.setup();
+                } else if (typeof i.setup === 'object' && i.setup.flag) {
+                    i.setup.fn();
+                }
             });
     }
 
@@ -51,8 +55,8 @@ export class SEAC {
         }
     }
 
-    addSetupFn(type: SetupFn['type'], fn: SetupFn['fn']) {
-        this.setupFns.push({ type, fn });
+    addSetupFn(type: SetupFn['type'], fn: SetupFn['setup']) {
+        this.setupFns.push({ type, setup: fn });
     }
 
     async load() {
