@@ -1,4 +1,4 @@
-# Seerh5 Assistant
+# SEA Project
 
 赛尔号 H5 端登陆器 && api 封装接口
 
@@ -14,6 +14,8 @@
 **IMPORTANT：项目全部开源，仅供学习使用，禁止用于任何商业和非法行为。项目内全部功能不涉及付费相关和 pvp 相关，项目内全部通信仅涉及淘米官方服务器，不涉及任何第三方。**
 
 # 近期公告
+
+请在SEA Project网站上查看: [SEA Project](https://median-dxz.github.io/sea-project-website/)
 
 **全面暂停SEAL的开发（目前版本已经具备初步可用性）**，开始对`sea-core`模块进行一系列调整，准备进行`1.0.0-rc.1`版本的发布
 
@@ -38,8 +40,6 @@
 - `launcher`: 目前的登录器应用程序原型，同时负责e2e测试
 - `server`: 登陆器后端，负责登陆器服务，游戏资源反代以及用户配置的存储（参见~~现在还不存在的~~文档了解为什么使用后端服务而不是直接使用Electron来实现这些）
 - `sdk`: 适用于本登录器的模组开发框架
-
-关于近期的更新计划和正在进行的进度，请参阅：[SEA-Project](https://github.com/users/median-dxz/projects/2)
 
 项目简称: SEA，登录器简称：SEAL
 
