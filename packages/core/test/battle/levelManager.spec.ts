@@ -1,10 +1,10 @@
-import { Mock_KTool, mockEngine, Mock_SocketConnection, mockPet } from '../mock';
-import { levelManager, ILevelRunner, LevelAction, ILevelBattle, MoveStrategy } from '../../battle';
+import { Mock_KTool, Mock_SocketConnection, mockEngine, mockPet } from '../mock';
+
 import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-import { SEAPetStore, CaughtPet, PetLocation } from '../../pet-helper';
-import { engine } from '../../internal';
+import { ILevelBattle, ILevelRunner, LevelAction, MoveStrategy, levelManager } from '../../battle';
 import { hookFn, restoreHookedFn } from '../../common/utils';
 import { Item } from '../../entity';
+import { CaughtPet, PetLocation, SEAPetStore } from '../../pet-helper';
 
 vi.stubGlobal('KTool', Mock_KTool);
 vi.stubGlobal('SocketConnection', Mock_SocketConnection);
@@ -60,20 +60,19 @@ beforeAll(() => {
     });
 });
 
-vi.mock('../../internal/index.js', () => {
-    const engine = {
-        cureAllPet: () => {},
-        autoCureState: async () => {},
-        toggleAutoCure: async () => {}
-    };
-    return { engine };
+beforeEach(async () => {
+    try {
+        await levelManager.stop();
+    } catch (e) {
+        // 上个测试引发的错误，直接忽略
+    }
 });
 
 afterAll(() => {
     restoreHookedFn(SEAPetStore, 'query');
 });
 
-describe('levelManagerTest', () => {
+describe.sequential('levelManagerTest', () => {
     class NoBattleLevelRunner implements ILevelRunner<object> {
         actions!: Record<string, (this: ILevelRunner<object>) => Promise<void>>;
         data!: object;
@@ -177,7 +176,7 @@ describe('levelManagerTest', () => {
         expect(mockLock).toHaveBeenCalled();
     });
 
-    test("stop should throw error threw by runner's action", async () => {
+    test("stop should throw error by runner's action", async () => {
         const actions = {
             a: vi.fn(async () => {}),
             b: vi.fn(async () => {}),
@@ -200,9 +199,9 @@ describe('levelManagerTest', () => {
         noBattleLevelRunner.actions = actions;
         levelManager.run(noBattleLevelRunner);
         await levelManager.lock;
-        expect(actionA).toHaveBeenCalled();
-        expect(actionB).toHaveBeenCalled();
-        expect(actionStop).toHaveBeenCalled();
+        expect(actions.a).toHaveBeenCalled();
+        expect(actions.b).toHaveBeenCalled();
+        expect(actions['stop']).toHaveBeenCalled();
     });
 
     test('run no battle action should throw error', async () => {

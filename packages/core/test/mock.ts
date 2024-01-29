@@ -1,13 +1,12 @@
 import { vi } from 'vitest';
-import { spet } from '../pet-helper';
 
-export let Mock_KTool = {
+export const Mock_KTool = {
     getBitSetAsync: vi.fn(async () => {
         return [true, true];
     })
 };
 
-const Mock_SocketConnection = {
+export const Mock_SocketConnection = {
     sendByQueue(
         cmd: number,
         data: (number | egret.ByteArray)[],

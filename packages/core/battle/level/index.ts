@@ -32,7 +32,6 @@ class LevelManager {
     }
 
     run(runner: ILevelRunner) {
-        console.log(engine);
         if (this.running) throw new Error('你必须先停止当前Runner的运行!');
 
         this.runner = runner;

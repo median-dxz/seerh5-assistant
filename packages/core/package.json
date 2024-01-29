@@ -21,6 +21,7 @@
     "watch": "tsc --watch",
     "clean": "rimraf ./dist && rimraf ../../.tsbuildinfo/core.tsbuildinfo",
     "format": "prettier . --write",
+    "lint": "eslint . --ext .ts --fix",
     "test": "vitest"
   },
   "files": [
