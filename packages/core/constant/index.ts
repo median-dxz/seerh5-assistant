@@ -4,25 +4,25 @@ export enum PetPosType {
     bag1 = 1,
     secondBag1 = 7,
     elite = 4,
-    storage = 0,
+    storage = 0
 }
 
 export enum BattleFireType {
     绿火 = 6,
-    金火 = 9,
+    金火 = 9
 }
 
 export enum PetFragmentLevelDifficulty {
     NotSelected = 0,
     Ease = 1,
     Normal = 2,
-    Hard = 3,
+    Hard = 3
 }
 
 export enum SkillType {
     特殊攻击 = 2,
     物理攻击 = 1,
-    属性攻击 = 4,
+    属性攻击 = 4
 }
 
 export enum ItemId {
@@ -49,7 +49,7 @@ export enum ItemId {
     精灵还原药剂Ω = 300075,
     全面提升药剂 = 300697,
     '全面提升药剂-龙' = 300810,
-    友谊之星 = 1400154,
+    友谊之星 = 1400154
 }
 
 /** 精灵药剂 */
@@ -59,5 +59,5 @@ export enum PotionId {
     高级体力药剂 = 300013,
     超级体力药剂 = 300014,
     中级活力药剂 = 300017,
-    高级活力药剂 = 300018,
+    高级活力药剂 = 300018
 }

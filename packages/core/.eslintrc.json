@@ -1,53 +1,46 @@
 {
-    "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking"
+  ],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "_"
+      }
     ],
-    "rules": {
-        "@typescript-eslint/no-unused-vars": [
-            "error",
-            {
-                "argsIgnorePattern": "^_",
-                "varsIgnorePattern": "_"
-            }
-        ],
-        "arrow-body-style": [
-            "error",
-            "as-needed"
-        ],
-        "@typescript-eslint/no-non-null-assertion": "off",
-        "@typescript-eslint/no-floating-promises": "off",
-        "@typescript-eslint/no-explicit-any": "warn",
-        "@typescript-eslint/consistent-type-imports": "error",
-        "@typescript-eslint/restrict-template-expressions": [
-            "error",
-            {
-                "allowNumber": true,
-                "allowBoolean": true,
-                "allowNullish": true
-            }
-        ],
-        "@typescript-eslint/no-misused-promises": [
-            "error",
-            {
-                "checksConditionals": true,
-                "checksVoidReturn": false,
-                "checksSpreads": true
-            }
-        ],
-        "@typescript-eslint/no-namespace": [
-            "error",
-            {
-                "allowDeclarations": true,
-                "allowDefinitionFiles": true
-            }
-        ]
-    },
-    "reportUnusedDisableDirectives": true,
-    "ignorePatterns": [
-        "/dist",
-        "/test",
-        "vitest.config.*"
+    "arrow-body-style": ["error", "as-needed"],
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-floating-promises": "off",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/consistent-type-imports": "error",
+    "@typescript-eslint/restrict-template-expressions": [
+      "error",
+      {
+        "allowNumber": true,
+        "allowBoolean": true,
+        "allowNullish": true
+      }
+    ],
+    "@typescript-eslint/no-misused-promises": [
+      "error",
+      {
+        "checksConditionals": true,
+        "checksVoidReturn": false,
+        "checksSpreads": true
+      }
+    ],
+    "@typescript-eslint/no-namespace": [
+      "error",
+      {
+        "allowDeclarations": true,
+        "allowDefinitionFiles": true
+      }
     ]
+  },
+  "reportUnusedDisableDirectives": true,
+  "ignorePatterns": ["/dist", "/test", "vitest.config.*"]
 }

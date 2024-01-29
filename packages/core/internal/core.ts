@@ -41,7 +41,7 @@ export class SEAC {
             window.sea = {
                 SEER_READY_EVENT,
                 SeerH5Ready: false,
-                seac: this,
+                seac: this
             };
 
             this.addSetupFn('beforeGameCoreInit', coreSetupBasic);

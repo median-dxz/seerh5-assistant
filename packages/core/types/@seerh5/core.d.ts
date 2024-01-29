@@ -462,5 +462,4 @@ declare global {
     const PetUpdateCmdListener: PetUpdateCmdListener;
 }
 
-export { };
-
+export {};

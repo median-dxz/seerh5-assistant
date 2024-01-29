@@ -25,10 +25,13 @@ function rotating(...skills: string[]): Matcher {
 
 function group(...operators: Matcher[]): Matcher {
     return (...states): number | undefined =>
-        operators.reduce((r, op) => {
-            if (r) return r;
-            return op(...states);
-        }, undefined as undefined | number);
+        operators.reduce(
+            (r, op) => {
+                if (r) return r;
+                return op(...states);
+            },
+            undefined as undefined | number
+        );
 }
 
 function name(...skills: string[]): Matcher {
@@ -92,5 +95,5 @@ export const auto = {
             !r && executor.auto();
             return Promise.resolve(true);
         };
-    },
+    }
 };

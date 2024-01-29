@@ -36,7 +36,7 @@ export class Skill extends EntityBase {
             this.pp,
             this.maxPP,
             tempEffects,
-            this.mustHit,
+            this.mustHit
         ] = [
             obj.ID,
             obj.Name,
@@ -48,7 +48,7 @@ export class Skill extends EntityBase {
             obj.pp ?? 0,
             obj.MaxPP,
             [obj.SideEffect, obj.SideEffectArg],
-            Boolean(obj.MustHit),
+            Boolean(obj.MustHit)
         ];
         const argSplit = (arg: SkillEffectArgs) => {
             if (typeof arg === 'string') {
@@ -94,6 +94,8 @@ export class Skill extends EntityBase {
     }
 
     get isFifth() {
-        return Object.values(SkillXMLInfo.hideMovesMap).flat().find((v) => v.id === this.id);
+        return Object.values(SkillXMLInfo.hideMovesMap)
+            .flat()
+            .find((v) => v.id === this.id);
     }
 }

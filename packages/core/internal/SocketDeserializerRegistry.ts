@@ -18,7 +18,9 @@ export const SocketDeserializerRegistry = {
         deserializer: DataDeserializer<TData>
     ) {
         if (DeserializerMap.has(cmd)) {
-            logger.warn(`[error]: 用于 ${cmd} 的反序列化器已经被注册, 这将导致之前的反序列化器被覆盖, 请检查可能的冲突问题`);
+            logger.warn(
+                `[error]: 用于 ${cmd} 的反序列化器已经被注册, 这将导致之前的反序列化器被覆盖, 请检查可能的冲突问题`
+            );
         }
         DeserializerMap.set(cmd, deserializer);
     },
@@ -33,5 +35,5 @@ export const SocketDeserializerRegistry = {
         } else {
             return IDENTITY;
         }
-    },
+    }
 };

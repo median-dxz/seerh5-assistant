@@ -42,5 +42,5 @@ export const HookPointRegistry = {
             subscription.unsubscribe();
             hookDataSubscriptionMap.delete(name);
         }
-    },
+    }
 };

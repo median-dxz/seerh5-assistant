@@ -22,5 +22,5 @@ export const getLogger = (module: string) => ({
     },
     error: (msg?: string) => {
         event$.next({ module, level: 'error', time: Date.now(), msg, stack: Error().stack });
-    },
+    }
 });

@@ -5,7 +5,7 @@ export default defineConfig({
         environment: 'happy-dom',
         watchExclude: ['**/node_modules/**'],
         coverage: {
-            reportsDirectory: 'test/coverage',
-        },
-    },
+            reportsDirectory: 'test/coverage'
+        }
+    }
 });

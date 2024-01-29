@@ -12,9 +12,8 @@ export * as strategy from './strategy.js';
 export const battle = {
     executor,
     provider,
-    manager,
+    manager
 };
 
 export { LevelAction } from './level/action.js';
 export { levelManager } from './level/index.js';
-

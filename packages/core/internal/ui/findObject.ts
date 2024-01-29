@@ -2,7 +2,7 @@ import type { Constructor } from '../../common/utils.js';
 
 /**
  * 获取EgretObject, 以stage作为root寻找所有符合断言的obj, 不会查找stage本身
- * 
+ *
  * @param classType obj的类对象
  * @param predicate 断言函数
  */

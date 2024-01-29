@@ -97,5 +97,5 @@ export const executor = {
     useSkill,
     escape,
     useItem,
-    switchPet,
+    switchPet
 };

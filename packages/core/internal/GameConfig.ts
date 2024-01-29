@@ -89,13 +89,13 @@ export const GameConfigRegistry = {
             filterByName,
             find,
             findByName,
-            getIdByName,
+            getIdByName
         } satisfies GameConfigQuery<GameConfigMap[T]>);
     },
 
     unregister<T extends keyof GameConfigMap>(type: T) {
         return gameConfigRegistryEntityMap.delete(type);
-    },
+    }
 };
 
 // eslint-disable-next-line @typescript-eslint/unbound-method

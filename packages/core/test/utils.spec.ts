@@ -5,7 +5,7 @@ import {
     HookedSymbol,
     assertIsHookedFunction,
     assertIsWrappedFunction,
-    type HookedFunction,
+    type HookedFunction
 } from '../common/utils';
 import { hookFn, wrapper } from '../index';
 
@@ -119,7 +119,7 @@ describe('hookFn', () => {
         context.target = {
             func: vi.fn(function (...args: unknown[]) {
                 return this;
-            }),
+            })
         };
     });
 
@@ -142,7 +142,7 @@ describe('hookFn', () => {
         expect(r).toEqual({
             this: target,
             args: [1, 2, 3],
-            thisBind: true,
+            thisBind: true
         });
         expect(assertIsHookedFunction(target.func)).toBe(true);
     });

@@ -45,7 +45,7 @@ export class Pet extends EntityBase {
             this.hp,
             this.maxHp,
             this.baseCurHp,
-            this.baseMaxHp,
+            this.baseMaxHp
         ] = [
             obj.id,
             obj.name,
@@ -57,7 +57,7 @@ export class Pet extends EntityBase {
             obj.hp,
             obj.maxHp,
             obj.base_curHp,
-            obj.base_hp_total,
+            obj.base_hp_total
         ];
 
         this.skills = [...obj.skillArray, obj.hideSKill].filter(Boolean).map((v) => {
@@ -87,7 +87,7 @@ export class Pet extends EntityBase {
                 id: obj.id,
                 name: obj.name,
                 catchTime: obj.catchTime,
-                level: obj.level,
+                level: obj.level
             } as PetInfo);
         } else {
             return new Pet({ ...obj } as PetInfo);

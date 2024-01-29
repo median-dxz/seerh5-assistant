@@ -48,27 +48,27 @@ export class PetFragmentLevel extends EntityBase {
         this.values = {
             openTimes: Configure.TimeValue,
             failTimes: Configure.FailTimes,
-            progress: Configure.ProgressValue,
+            progress: Configure.ProgressValue
         };
         this.level = {
             ease: EasyBattle.Task.map((o) => ({
                 id: o.ID,
                 BattleBoss: o.BattleBoss,
                 description: o.Desc,
-                pet: o.BossID,
+                pet: o.BossID
             })),
             normal: NormalBattle.Task.map((o) => ({
                 id: o.ID,
                 BattleBoss: o.BattleBoss,
                 description: o.Desc,
-                pet: o.BossID,
+                pet: o.BossID
             })),
             hard: HardBattle.Task.map((o) => ({
                 id: o.ID,
                 BattleBoss: o.BattleBoss,
                 description: o.Desc,
-                pet: o.BossID,
-            })),
+                pet: o.BossID
+            }))
         };
     }
 }

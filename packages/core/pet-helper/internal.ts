@@ -38,7 +38,7 @@ export default () => {
             apply: (target, thisArg, argArray: [[CaughtPet[], CaughtPet[]]]) => {
                 resolve(...argArray);
                 return Reflect.apply(target, thisArg, argArray);
-            },
+            }
         });
     });
 
@@ -48,7 +48,7 @@ export default () => {
             apply: (target, thisArg, argArray) => {
                 resolve();
                 return void Reflect.apply(target, thisArg, argArray);
-            },
+            }
         });
     });
 };

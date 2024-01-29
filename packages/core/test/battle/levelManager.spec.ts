@@ -1,4 +1,4 @@
-import { Mock_KTool, mockEngine, Mock_SocketConnection, mockPet} from '../mock';
+import { Mock_KTool, mockEngine, Mock_SocketConnection, mockPet } from '../mock';
 import { levelManager, ILevelRunner, LevelAction, ILevelBattle, MoveStrategy } from '../../battle';
 import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { SEAPetStore, CaughtPet, PetLocation } from '../../pet-helper';
@@ -55,18 +55,18 @@ beforeAll(() => {
             async usePotion(potion: Item | number): Promise<CaughtPet> {
                 return Promise.resolve(undefined);
             }
-
         };
         return info;
     });
 });
 
-beforeEach(async () => {
-    try {
-        await levelManager.stop();
-    } catch (e) {
-        // 上个测试引发的错误，直接忽略
-    }
+vi.mock('../../internal/index.js', () => {
+    const engine = {
+        cureAllPet: () => {},
+        autoCureState: async () => {},
+        toggleAutoCure: async () => {}
+    };
+    return { engine };
 });
 
 afterAll(() => {
@@ -78,8 +78,7 @@ describe('levelManagerTest', () => {
         actions!: Record<string, (this: ILevelRunner<object>) => Promise<void>>;
         data!: object;
 
-        logger(): any {
-        }
+        logger(): any {}
 
         x = 1;
 
@@ -103,7 +102,6 @@ describe('levelManagerTest', () => {
 
         pets: number[] = [0, 1, 2, 3];
         strategy: MoveStrategy;
-
     }
 
     class BattleLevelRunner extends NoBattleLevelRunner {
@@ -113,9 +111,7 @@ describe('levelManagerTest', () => {
     }
 
     let simpleAction = {
-        async a() {
-
-        }
+        a: async () => {}
     };
 
     function simplyRun(action: Record<string, (this: ILevelRunner<object>) => Promise<void>> = simpleAction) {
@@ -127,7 +123,7 @@ describe('levelManagerTest', () => {
 
     function setNextWithBattle(battleLevelRunner: ILevelRunner<object>) {
         let now = '';
-        battleLevelRunner.next = function() {
+        battleLevelRunner.next = function () {
             if (now == '') {
                 now = 'a';
             } else if (now == 'a') {
@@ -174,29 +170,22 @@ describe('levelManagerTest', () => {
     });
 
     test('levelManager should invoke all actions', async () => {
-        let mockLock = vi.fn((async () => {
-        }));
+        let mockLock = vi.fn(async () => {});
         levelManager.lock = mockLock();
         await levelManager.stop();
         expect(levelManager.getRunner()).toBe(null);
         expect(mockLock).toHaveBeenCalled();
     });
 
-    test('stop should throw error threw by runner\'s action', async () => {
-        let actionA = vi.fn(async () => {
-        });
-        let actionB = vi.fn(async () => {
-        });
-        let actionStop = vi.fn(async () => {
-        });
-        let actions: Record<string, (this: ILevelRunner<object>) => Promise<void>> = {
-            'a': actionA,
-            'b': actionB,
-            [LevelAction.STOP]: actionStop
+    test("stop should throw error threw by runner's action", async () => {
+        const actions = {
+            a: vi.fn(async () => {}),
+            b: vi.fn(async () => {}),
+            [LevelAction.STOP]: vi.fn(async () => {})
         };
         let noBattleLevelRunner = new NoBattleLevelRunner();
         let now = '';
-        noBattleLevelRunner.next = function() {
+        noBattleLevelRunner.next = function () {
             if (now == '') {
                 now = 'a';
             } else if (now == 'a') {
@@ -218,14 +207,11 @@ describe('levelManagerTest', () => {
 
     test('run no battle action should throw error', async () => {
         let noBattleLevelRunner = new NoBattleLevelRunner();
-        let actionA = vi.fn(async () => {
-        });
-        let actionBattle = vi.fn(async () => {
-        });
-        let actionStop = vi.fn(async () => {
-        });
+        let actionA = vi.fn(async () => {});
+        let actionBattle = vi.fn(async () => {});
+        let actionStop = vi.fn(async () => {});
         let actions: Record<string, (this: ILevelRunner<object>) => Promise<void>> = {
-            'a': actionA,
+            a: actionA,
             [LevelAction.BATTLE]: actionBattle,
             [LevelAction.STOP]: actionStop
         };
@@ -249,15 +235,12 @@ describe('levelManagerTest', () => {
 
     test('run battle action should success', async () => {
         let battleLevelRunner = new BattleLevelRunner();
-        let actionA = vi.fn(async () => {
-        });
-        let actionBattle = vi.fn(async () => {
-        });
-        let actionStop = vi.fn(async () => {
-        });
+        let actionA = vi.fn(async () => {});
+        let actionBattle = vi.fn(async () => {});
+        let actionStop = vi.fn(async () => {});
         battleLevelRunner.selectLevelBattle = vi.fn(battleLevelRunner.selectLevelBattle);
         let actions: Record<string, (this: ILevelRunner<object>) => Promise<void>> = {
-            'a': actionA,
+            a: actionA,
             [LevelAction.BATTLE]: actionBattle,
             [LevelAction.STOP]: actionStop
         };

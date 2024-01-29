@@ -54,7 +54,7 @@ class SEAPetStore {
                 this.bag.deactivate();
             });
 
-                SEAEventSource.socket(CommandID.PET_ONE_CURE, 'receive').on(() => {
+            SEAEventSource.socket(CommandID.PET_ONE_CURE, 'receive').on(() => {
                 this.bag.deactivate();
             });
 
@@ -178,4 +178,3 @@ class SEAPetStore {
 const ins = new SEAPetStore();
 
 export { ins as SEAPetStore };
-

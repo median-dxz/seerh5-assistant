@@ -636,11 +636,16 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static get(target: any, props?: {
-            loop?: boolean;
-            onChange?: Function;
-            onChangeObj?: any;
-        }, pluginData?: any, override?: boolean): Tween;
+        static get(
+            target: any,
+            props?: {
+                loop?: boolean;
+                onChange?: Function;
+                onChangeObj?: any;
+            },
+            pluginData?: any,
+            override?: boolean
+        ): Tween;
         /**
          * Delete all Tween animations from an object
          * @param target The object whose Tween to be deleted
@@ -941,7 +946,35 @@ declare namespace egret {
     }
 }
 declare namespace egret.tween {
-    type EaseType = 'quadIn' | 'quadOut' | 'quadOut' | 'quadInOut' | 'cubicIn' | 'cubicOut' | 'cubicInOut' | 'quartIn' | 'quartOut' | 'quartInOut' | 'quintIn' | 'quintOut' | 'quintInOut' | 'sineIn' | 'sineOut' | 'sineInOut' | 'backIn' | 'backOut' | 'backInOut' | 'circIn' | 'circOut' | 'circInOut' | 'bounceIn' | 'bounceOut' | 'bounceInOut' | 'elasticIn' | 'elasticOut' | 'elasticInOut';
+    type EaseType =
+        | 'quadIn'
+        | 'quadOut'
+        | 'quadOut'
+        | 'quadInOut'
+        | 'cubicIn'
+        | 'cubicOut'
+        | 'cubicInOut'
+        | 'quartIn'
+        | 'quartOut'
+        | 'quartInOut'
+        | 'quintIn'
+        | 'quintOut'
+        | 'quintInOut'
+        | 'sineIn'
+        | 'sineOut'
+        | 'sineInOut'
+        | 'backIn'
+        | 'backOut'
+        | 'backInOut'
+        | 'circIn'
+        | 'circOut'
+        | 'circInOut'
+        | 'bounceIn'
+        | 'bounceOut'
+        | 'bounceInOut'
+        | 'elasticIn'
+        | 'elasticOut'
+        | 'elasticInOut';
     /**
      * Abstract class, Indicate the base action.
      * @version Egret 3.1.8

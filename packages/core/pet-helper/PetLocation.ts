@@ -8,7 +8,7 @@ export enum PetLocation {
     Unknown = 'Unknown',
     Storage = 'Storage',
     Elite = 'Elite',
-    OnDispatching = 'OnDispatching',
+    OnDispatching = 'OnDispatching'
 }
 
 export const LocationTransformTable: {
@@ -24,7 +24,7 @@ export const LocationTransformTable: {
         },
         async Elite(ct) {
             return PetManager.bagToStorage(ct).then(() => true);
-        },
+        }
     },
     Bag: {
         async Default(ct) {
@@ -40,7 +40,7 @@ export const LocationTransformTable: {
         },
         async Elite(ct) {
             return PetManager.bagToStorage(ct).then(() => true);
-        },
+        }
     },
     SecondBag: {
         async Default(ct) {
@@ -58,7 +58,7 @@ export const LocationTransformTable: {
         },
         async Elite(ct) {
             return PetManager.secondBagToStorage(ct).then(() => true);
-        },
+        }
     },
     Elite: {
         async Default(ct) {
@@ -77,7 +77,7 @@ export const LocationTransformTable: {
         },
         async Storage(ct) {
             PetManager.curRetrieveLovePetInfo = {
-                catchTime: ct,
+                catchTime: ct
             } as PetListInfo;
 
             await socket.sendByQueue(CommandID.DEL_LOVE_PET, [ct]).then(() => {
@@ -85,7 +85,7 @@ export const LocationTransformTable: {
                 PetStorage2015InfoManager.changePetPosi(ct, PetPosType.elite);
             });
             return true;
-        },
+        }
     },
     Storage: {
         async Default(ct) {
@@ -108,7 +108,7 @@ export const LocationTransformTable: {
         },
         async Elite(ct) {
             PetManager.curLovePetInfo = {
-                catchTime: ct,
+                catchTime: ct
             } as PetListInfo;
 
             await socket.sendByQueue(CommandID.ADD_LOVE_PET, [ct]).then(() => {
@@ -116,8 +116,8 @@ export const LocationTransformTable: {
                 PetStorage2015InfoManager.changePetPosi(ct, PetPosType.elite);
             });
             return true;
-        },
+        }
     },
     Unknown: {},
-    OnDispatching: {},
+    OnDispatching: {}
 };

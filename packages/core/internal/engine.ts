@@ -61,7 +61,7 @@ export const engine: SEAEngine = {
             }
             Object.assign(engine, func);
         }
-    },
+    }
 };
 
 export interface SEAEngine {

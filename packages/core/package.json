@@ -20,7 +20,7 @@
     "build": "tsc --build",
     "watch": "tsc --watch",
     "clean": "rimraf ./dist && rimraf ../../.tsbuildinfo/core.tsbuildinfo",
-    "lint": "eslint --fix . && tsc --noEmit",
+    "format": "prettier . --write",
     "test": "vitest"
   },
   "files": [
@@ -31,7 +31,7 @@
     "common",
     "constant",
     "internal",
-    "data-source",
+    "event-source",
     "entity",
     "pet-helper"
   ],

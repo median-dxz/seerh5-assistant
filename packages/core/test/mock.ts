@@ -7,22 +7,24 @@ export let Mock_KTool = {
     })
 };
 
-export let Mock_SocketConnection = {
-    sendByQueue: async () => {
+const Mock_SocketConnection = {
+    sendByQueue(
+        cmd: number,
+        data: (number | egret.ByteArray)[],
+        resolver?: CallableFunction,
+        rejecter?: CallableFunction
+    ) {
+        resolver?.({ data: null });
     }
 };
 
 export function mockEngine() {
     vi.mock('../internal/index', () => {
         const engine = {
-            cureAllPet: () => {
-            },
-            autoCureState: async () => {
-            },
-            toggleAutoCure: async () => {
-            },
-            switchBag: async () => {
-            }
+            cureAllPet: () => {},
+            autoCureState: async () => {},
+            toggleAutoCure: async () => {},
+            switchBag: async () => {}
         };
         return { engine };
     });
@@ -33,9 +35,7 @@ export function mockPet() {
         return {
             spet() {
                 return {
-                    async default() {
-
-                    }
+                    async default() {}
                 };
             }
         };
@@ -51,14 +51,10 @@ export function mockCore() {
                 delayTimeout: null
             },
             manager: {
-                takeover() {
-                },
-                resolveStrategy() {
-                },
-                clear() {
-                }
+                takeover() {},
+                resolveStrategy() {},
+                clear() {}
             }
         };
     });
 }
-

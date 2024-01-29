@@ -30,7 +30,7 @@ const $fromGameModule = {
             filter((_module) => _module === module),
             map(() => undefined)
         );
-    },
+    }
 };
 
 export function fromGameModule(module: string, event: ModuleEvent): SEAEventSource<unknown>;

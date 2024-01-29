@@ -11,8 +11,8 @@ type SEAPet = {
         ? R extends Promise<CaughtPet>
             ? (...args: A) => SEAPet
             : R extends Promise<unknown>
-            ? CaughtPet[P]
-            : (...args: A) => Promise<R>
+              ? CaughtPet[P]
+              : (...args: A) => Promise<R>
         : Promise<CaughtPet[P]>;
 } & {
     get<TResult1 = CaughtPet, TResult2 = never>(
@@ -154,7 +154,7 @@ export function spet(pet: Pet | CatchTime) {
             }
 
             return target.then((pet) => pet[prop as keyof CaughtPet]);
-        },
+        }
     }) as unknown as SEAPet;
 
     return proxyPet;

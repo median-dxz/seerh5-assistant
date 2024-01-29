@@ -11,7 +11,7 @@ const context: {
 } = {
     strategy: undefined,
     triggerLock: null,
-    delayTimeout: null,
+    delayTimeout: null
 };
 
 function takeover(trigger: Trigger, _strategy?: MoveStrategy): Promise<boolean> {
@@ -68,8 +68,7 @@ function clear() {
 const manager = {
     takeover,
     resolveStrategy,
-    clear,
+    clear
 };
 
 export { context, manager };
-

@@ -8,5 +8,4 @@ declare global {
     class PopView extends eui.Component {}
 }
 
-export { };
-
+export {};

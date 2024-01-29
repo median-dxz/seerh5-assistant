@@ -91,7 +91,7 @@ export async function lowerHp(
                 return operator.escape();
             }
             return operator.switchPet(nextPet);
-        },
+        }
     };
 
     await manager.takeover(() => {
