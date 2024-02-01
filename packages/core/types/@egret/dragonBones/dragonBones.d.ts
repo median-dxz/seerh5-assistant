@@ -348,7 +348,7 @@ declare namespace dragonBones {
          * @version DragonBones 4.5
          * @language zh_CN
          */
-        static setMaxCount(objectConstructor: (typeof BaseObject) | null, maxCount: number): void;
+        static setMaxCount(objectConstructor: typeof BaseObject | null, maxCount: number): void;
         /**
          * - Clear the cached instances of a specify object pool.
          * @param objectConstructor - Specify class. (Clear all cached instances if not set)
@@ -361,7 +361,7 @@ declare namespace dragonBones {
          * @version DragonBones 4.5
          * @language zh_CN
          */
-        static clearPool(objectConstructor?: (typeof BaseObject) | null): void;
+        static clearPool(objectConstructor?: typeof BaseObject | null): void;
         /**
          * - Get an instance of the specify class from object pool.
          * @param objectConstructor - The specify class.
@@ -374,9 +374,7 @@ declare namespace dragonBones {
          * @version DragonBones 4.5
          * @language zh_CN
          */
-        static borrowObject<T extends BaseObject>(objectConstructor: {
-            new (): T;
-        }): T;
+        static borrowObject<T extends BaseObject>(objectConstructor: { new (): T }): T;
         /**
          * - A unique identification number assigned to the object.
          * @version DragonBones 4.5
@@ -583,19 +581,27 @@ declare namespace dragonBones {
          * @version DragonBones 3.0
          * @language zh_CN
          */
-        transformPoint(x: number, y: number, result: {
-            x: number;
-            y: number;
-        }, delta?: boolean): void;
+        transformPoint(
+            x: number,
+            y: number,
+            result: {
+                x: number;
+                y: number;
+            },
+            delta?: boolean
+        ): void;
         /**
          * @private
          */
-        transformRectangle(rectangle: {
-            x: number;
-            y: number;
-            width: number;
-            height: number;
-        }, delta?: boolean): void;
+        transformRectangle(
+            rectangle: {
+                x: number;
+                y: number;
+                width: number;
+                height: number;
+            },
+            delta?: boolean
+        ): void;
     }
 }
 /**
@@ -792,7 +798,16 @@ declare namespace dragonBones {
         redOffset: number;
         greenOffset: number;
         blueOffset: number;
-        constructor(alphaMultiplier?: number, redMultiplier?: number, greenMultiplier?: number, blueMultiplier?: number, alphaOffset?: number, redOffset?: number, greenOffset?: number, blueOffset?: number);
+        constructor(
+            alphaMultiplier?: number,
+            redMultiplier?: number,
+            greenMultiplier?: number,
+            blueMultiplier?: number,
+            alphaOffset?: number,
+            redOffset?: number,
+            greenOffset?: number,
+            blueOffset?: number
+        );
         copyFrom(value: ColorTransform): void;
         identity(): void;
     }
@@ -1917,16 +1932,24 @@ declare namespace dragonBones {
          * @version DragonBones 5.0
          * @language zh_CN
          */
-        abstract intersectsSegment(xA: number, yA: number, xB: number, yB: number, intersectionPointA: {
-            x: number;
-            y: number;
-        } | null, intersectionPointB: {
-            x: number;
-            y: number;
-        } | null, normalRadians: {
-            x: number;
-            y: number;
-        } | null): number;
+        abstract intersectsSegment(
+            xA: number,
+            yA: number,
+            xB: number,
+            yB: number,
+            intersectionPointA: {
+                x: number;
+                y: number;
+            } | null,
+            intersectionPointB: {
+                x: number;
+                y: number;
+            } | null,
+            normalRadians: {
+                x: number;
+                y: number;
+            } | null
+        ): number;
     }
     /**
      * - The rectangle bounding box data.
@@ -1947,16 +1970,28 @@ declare namespace dragonBones {
         /**
          * @private
          */
-        static rectangleIntersectsSegment(xA: number, yA: number, xB: number, yB: number, xMin: number, yMin: number, xMax: number, yMax: number, intersectionPointA?: {
-            x: number;
-            y: number;
-        } | null, intersectionPointB?: {
-            x: number;
-            y: number;
-        } | null, normalRadians?: {
-            x: number;
-            y: number;
-        } | null): number;
+        static rectangleIntersectsSegment(
+            xA: number,
+            yA: number,
+            xB: number,
+            yB: number,
+            xMin: number,
+            yMin: number,
+            xMax: number,
+            yMax: number,
+            intersectionPointA?: {
+                x: number;
+                y: number;
+            } | null,
+            intersectionPointB?: {
+                x: number;
+                y: number;
+            } | null,
+            normalRadians?: {
+                x: number;
+                y: number;
+            } | null
+        ): number;
         protected _onClear(): void;
         /**
          * @inheritDoc
@@ -1965,16 +2000,24 @@ declare namespace dragonBones {
         /**
          * @inheritDoc
          */
-        intersectsSegment(xA: number, yA: number, xB: number, yB: number, intersectionPointA?: {
-            x: number;
-            y: number;
-        } | null, intersectionPointB?: {
-            x: number;
-            y: number;
-        } | null, normalRadians?: {
-            x: number;
-            y: number;
-        } | null): number;
+        intersectsSegment(
+            xA: number,
+            yA: number,
+            xB: number,
+            yB: number,
+            intersectionPointA?: {
+                x: number;
+                y: number;
+            } | null,
+            intersectionPointB?: {
+                x: number;
+                y: number;
+            } | null,
+            normalRadians?: {
+                x: number;
+                y: number;
+            } | null
+        ): number;
     }
     /**
      * - The ellipse bounding box data.
@@ -1991,16 +2034,28 @@ declare namespace dragonBones {
         /**
          * @private
          */
-        static ellipseIntersectsSegment(xA: number, yA: number, xB: number, yB: number, xC: number, yC: number, widthH: number, heightH: number, intersectionPointA?: {
-            x: number;
-            y: number;
-        } | null, intersectionPointB?: {
-            x: number;
-            y: number;
-        } | null, normalRadians?: {
-            x: number;
-            y: number;
-        } | null): number;
+        static ellipseIntersectsSegment(
+            xA: number,
+            yA: number,
+            xB: number,
+            yB: number,
+            xC: number,
+            yC: number,
+            widthH: number,
+            heightH: number,
+            intersectionPointA?: {
+                x: number;
+                y: number;
+            } | null,
+            intersectionPointB?: {
+                x: number;
+                y: number;
+            } | null,
+            normalRadians?: {
+                x: number;
+                y: number;
+            } | null
+        ): number;
         protected _onClear(): void;
         /**
          * @inheritDoc
@@ -2009,16 +2064,24 @@ declare namespace dragonBones {
         /**
          * @inheritDoc
          */
-        intersectsSegment(xA: number, yA: number, xB: number, yB: number, intersectionPointA?: {
-            x: number;
-            y: number;
-        } | null, intersectionPointB?: {
-            x: number;
-            y: number;
-        } | null, normalRadians?: {
-            x: number;
-            y: number;
-        } | null): number;
+        intersectsSegment(
+            xA: number,
+            yA: number,
+            xB: number,
+            yB: number,
+            intersectionPointA?: {
+                x: number;
+                y: number;
+            } | null,
+            intersectionPointB?: {
+                x: number;
+                y: number;
+            } | null,
+            normalRadians?: {
+                x: number;
+                y: number;
+            } | null
+        ): number;
     }
     /**
      * - The polygon bounding box data.
@@ -2035,16 +2098,25 @@ declare namespace dragonBones {
         /**
          * @private
          */
-        static polygonIntersectsSegment(xA: number, yA: number, xB: number, yB: number, vertices: Array<number>, intersectionPointA?: {
-            x: number;
-            y: number;
-        } | null, intersectionPointB?: {
-            x: number;
-            y: number;
-        } | null, normalRadians?: {
-            x: number;
-            y: number;
-        } | null): number;
+        static polygonIntersectsSegment(
+            xA: number,
+            yA: number,
+            xB: number,
+            yB: number,
+            vertices: Array<number>,
+            intersectionPointA?: {
+                x: number;
+                y: number;
+            } | null,
+            intersectionPointB?: {
+                x: number;
+                y: number;
+            } | null,
+            normalRadians?: {
+                x: number;
+                y: number;
+            } | null
+        ): number;
         /**
          * @private
          */
@@ -2072,16 +2144,24 @@ declare namespace dragonBones {
         /**
          * @inheritDoc
          */
-        intersectsSegment(xA: number, yA: number, xB: number, yB: number, intersectionPointA?: {
-            x: number;
-            y: number;
-        } | null, intersectionPointB?: {
-            x: number;
-            y: number;
-        } | null, normalRadians?: {
-            x: number;
-            y: number;
-        } | null): number;
+        intersectsSegment(
+            xA: number,
+            yA: number,
+            xB: number,
+            yB: number,
+            intersectionPointA?: {
+                x: number;
+                y: number;
+            } | null,
+            intersectionPointB?: {
+                x: number;
+                y: number;
+            } | null,
+            normalRadians?: {
+                x: number;
+                y: number;
+            } | null
+        ): number;
     }
 }
 /**
@@ -2914,16 +2994,24 @@ declare namespace dragonBones {
          * @version DragonBones 5.0
          * @language zh_CN
          */
-        intersectsSegment(xA: number, yA: number, xB: number, yB: number, intersectionPointA?: {
-            x: number;
-            y: number;
-        } | null, intersectionPointB?: {
-            x: number;
-            y: number;
-        } | null, normalRadians?: {
-            x: number;
-            y: number;
-        } | null): Slot | null;
+        intersectsSegment(
+            xA: number,
+            yA: number,
+            xB: number,
+            yB: number,
+            intersectionPointA?: {
+                x: number;
+                y: number;
+            } | null,
+            intersectionPointB?: {
+                x: number;
+                y: number;
+            } | null,
+            normalRadians?: {
+                x: number;
+                y: number;
+            } | null
+        ): Slot | null;
         /**
          * - Get a specific bone.
          * @param name - The bone name.
@@ -3464,8 +3552,7 @@ declare namespace dragonBones {
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-declare namespace dragonBones {
-}
+declare namespace dragonBones {}
 /**
  * The MIT License (MIT)
  *
@@ -3671,16 +3758,24 @@ declare namespace dragonBones {
          * @version DragonBones 5.0
          * @language zh_CN
          */
-        intersectsSegment(xA: number, yA: number, xB: number, yB: number, intersectionPointA?: {
-            x: number;
-            y: number;
-        } | null, intersectionPointB?: {
-            x: number;
-            y: number;
-        } | null, normalRadians?: {
-            x: number;
-            y: number;
-        } | null): number;
+        intersectsSegment(
+            xA: number,
+            yA: number,
+            xB: number,
+            yB: number,
+            intersectionPointA?: {
+                x: number;
+                y: number;
+            } | null,
+            intersectionPointB?: {
+                x: number;
+                y: number;
+            } | null,
+            normalRadians?: {
+                x: number;
+                y: number;
+            } | null
+        ): number;
         /**
          * @private
          */
@@ -3889,8 +3984,7 @@ declare namespace dragonBones {
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-declare namespace dragonBones {
-}
+declare namespace dragonBones {}
 /**
  * The MIT License (MIT)
  *
@@ -4290,7 +4384,14 @@ declare namespace dragonBones {
          * @version DragonBones 4.5
          * @language zh_CN
          */
-        fadeIn(animationName: string, fadeInTime?: number, playTimes?: number, layer?: number, group?: string | null, fadeOutMode?: AnimationFadeOutMode): AnimationState | null;
+        fadeIn(
+            animationName: string,
+            fadeInTime?: number,
+            playTimes?: number,
+            layer?: number,
+            group?: string | null,
+            fadeOutMode?: AnimationFadeOutMode
+        ): AnimationState | null;
         /**
          * - Play a specific animation from the specific time.
          * @param animationName - The name of animation data.
@@ -4986,8 +5087,7 @@ declare namespace dragonBones {
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-declare namespace dragonBones {
-}
+declare namespace dragonBones {}
 /**
  * The MIT License (MIT)
  *
@@ -5010,8 +5110,7 @@ declare namespace dragonBones {
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-declare namespace dragonBones {
-}
+declare namespace dragonBones {}
 /**
  * The MIT License (MIT)
  *
@@ -5281,7 +5380,17 @@ declare namespace dragonBones {
     /**
      * @private
      */
-    type EventStringType = string | "start" | "loopComplete" | "complete" | "fadeIn" | "fadeInComplete" | "fadeOut" | "fadeOutComplete" | "frameEvent" | "soundEvent";
+    type EventStringType =
+        | string
+        | 'start'
+        | 'loopComplete'
+        | 'complete'
+        | 'fadeIn'
+        | 'fadeInComplete'
+        | 'fadeOut'
+        | 'fadeOutComplete'
+        | 'frameEvent'
+        | 'soundEvent';
     /**
      * - The event dispatcher interface.
      * Dragonbones event dispatch usually relies on docking engine to implement, which defines the event method to be implemented when docking the engine.
@@ -5627,7 +5736,16 @@ declare namespace dragonBones {
         protected _parseBoundingBox(rawData: any): BoundingBoxData | null;
         protected _parsePolygonBoundingBox(rawData: any): PolygonBoundingBoxData;
         protected _parseAnimation(rawData: any): AnimationData;
-        protected _parseTimeline(rawData: any, rawFrames: Array<any> | null, framesKey: string, timelineType: TimelineType, frameValueType: FrameValueType, frameValueCount: number, frameParser: (rawData: any, frameStart: number, frameCount: number) => number, timeline?: TimelineData | null): TimelineData | null;
+        protected _parseTimeline(
+            rawData: any,
+            rawFrames: Array<any> | null,
+            framesKey: string,
+            timelineType: TimelineType,
+            frameValueType: FrameValueType,
+            frameValueCount: number,
+            frameParser: (rawData: any, frameStart: number, frameCount: number) => number,
+            timeline?: TimelineData | null
+        ): TimelineData | null;
         protected _parseBoneTimeline(rawData: any): void;
         protected _parseSlotTimeline(rawData: any): void;
         protected _parseFrame(rawData: any, frameStart: number, frameCount: number): number;
@@ -5644,7 +5762,12 @@ declare namespace dragonBones {
         protected _parseSlotColorFrame(rawData: any, frameStart: number, frameCount: number): number;
         protected _parseSlotDeformFrame(rawData: any, frameStart: number, frameCount: number): number;
         protected _parseIKConstraintFrame(rawData: any, frameStart: number, frameCount: number): number;
-        protected _parseActionData(rawData: any, type: ActionType, bone: BoneData | null, slot: SlotData | null): Array<ActionData>;
+        protected _parseActionData(
+            rawData: any,
+            type: ActionType,
+            bone: BoneData | null,
+            slot: SlotData | null
+        ): Array<ActionData>;
         protected _parseDeformFrame(rawData: any, frameStart: number, frameCount: number): number;
         protected _parseTransform(rawData: any, transform: Transform, scale: number): void;
         protected _parseColorTransform(rawData: any, color: ColorTransform): void;
@@ -5796,16 +5919,29 @@ declare namespace dragonBones {
         constructor(dataParser?: DataParser | null);
         protected _isSupportMesh(): boolean;
         protected _getTextureData(textureAtlasName: string, textureName: string): TextureData | null;
-        protected _fillBuildArmaturePackage(dataPackage: BuildArmaturePackage, dragonBonesName: string, armatureName: string, skinName: string, textureAtlasName: string): boolean;
+        protected _fillBuildArmaturePackage(
+            dataPackage: BuildArmaturePackage,
+            dragonBonesName: string,
+            armatureName: string,
+            skinName: string,
+            textureAtlasName: string
+        ): boolean;
         protected _buildBones(dataPackage: BuildArmaturePackage, armature: Armature): void;
         /**
          * @private
          */
         protected _buildSlots(dataPackage: BuildArmaturePackage, armature: Armature): void;
         protected _buildConstraints(dataPackage: BuildArmaturePackage, armature: Armature): void;
-        protected _buildChildArmature(dataPackage: BuildArmaturePackage | null, _slot: Slot, displayData: ArmatureDisplayData): Armature | null;
+        protected _buildChildArmature(
+            dataPackage: BuildArmaturePackage | null,
+            _slot: Slot,
+            displayData: ArmatureDisplayData
+        ): Armature | null;
         protected _getSlotDisplay(dataPackage: BuildArmaturePackage | null, displayData: DisplayData, slot: Slot): any;
-        protected abstract _buildTextureAtlasData(textureAtlasData: TextureAtlasData | null, textureAtlas: any): TextureAtlasData;
+        protected abstract _buildTextureAtlasData(
+            textureAtlasData: TextureAtlasData | null,
+            textureAtlas: any
+        ): TextureAtlasData;
         protected abstract _buildArmature(dataPackage: BuildArmaturePackage): Armature;
         protected abstract _buildSlot(dataPackage: BuildArmaturePackage, slotData: SlotData, armature: Armature): Slot;
         /**
@@ -6079,7 +6215,12 @@ declare namespace dragonBones {
          * @version DragonBones 3.0
          * @language zh_CN
          */
-        buildArmature(armatureName: string, dragonBonesName?: string, skinName?: string, textureAtlasName?: string): Armature | null;
+        buildArmature(
+            armatureName: string,
+            dragonBonesName?: string,
+            skinName?: string,
+            textureAtlasName?: string
+        ): Armature | null;
         /**
          * @private
          */
@@ -6118,11 +6259,23 @@ declare namespace dragonBones {
          * @version DragonBones 4.5
          * @language zh_CN
          */
-        replaceSlotDisplay(dragonBonesName: string, armatureName: string, slotName: string, displayName: string, slot: Slot, displayIndex?: number): boolean;
+        replaceSlotDisplay(
+            dragonBonesName: string,
+            armatureName: string,
+            slotName: string,
+            displayName: string,
+            slot: Slot,
+            displayIndex?: number
+        ): boolean;
         /**
          * @private
          */
-        replaceSlotDisplayList(dragonBonesName: string | null, armatureName: string, slotName: string, slot: Slot): boolean;
+        replaceSlotDisplayList(
+            dragonBonesName: string | null,
+            armatureName: string,
+            slotName: string,
+            slot: Slot
+        ): boolean;
         /**
          * - Share specific skin data with specific armature.
          * @param armature - The armature.
@@ -6543,7 +6696,10 @@ declare namespace dragonBones {
          */
         constructor(dataParser?: DataParser | null);
         protected _isSupportMesh(): boolean;
-        protected _buildTextureAtlasData(textureAtlasData: EgretTextureAtlasData | null, textureAtlas: egret.Texture | HTMLImageElement | null): EgretTextureAtlasData;
+        protected _buildTextureAtlasData(
+            textureAtlasData: EgretTextureAtlasData | null,
+            textureAtlas: egret.Texture | HTMLImageElement | null
+        ): EgretTextureAtlasData;
         protected _buildArmature(dataPackage: BuildArmaturePackage): Armature;
         protected _buildSlot(_dataPackage: BuildArmaturePackage, slotData: SlotData, armature: Armature): Slot;
         /**
@@ -6580,7 +6736,12 @@ declare namespace dragonBones {
          * </pre>
          * @language zh_CN
          */
-        buildArmatureDisplay(armatureName: string, dragonBonesName?: string, skinName?: string, textureAtlasName?: string): EgretArmatureDisplay | null;
+        buildArmatureDisplay(
+            armatureName: string,
+            dragonBonesName?: string,
+            skinName?: string,
+            textureAtlasName?: string
+        ): EgretArmatureDisplay | null;
         /**
          * - Create the display object with the specified texture.
          * @param textureName - The texture data name.

@@ -4,7 +4,7 @@ export class PetRoundInfo extends EntityBase {
     id: undefined;
     name: undefined;
     readonly __type: EntityType = 'PetRoundInfo';
-    
+
     round: number;
     userId: number;
     skillId: number;
@@ -38,7 +38,7 @@ export class PetRoundInfo extends EntityBase {
             this.priority,
             this.effectName,
             this.status,
-            this.sideEffects,
+            this.sideEffects
         ] = [
             attackValue.round,
             attackValue.userID,
@@ -47,14 +47,14 @@ export class PetRoundInfo extends EntityBase {
             {
                 gain: attackValue.gainHP,
                 remain: attackValue.remainHP,
-                max: attackValue.maxHp,
+                max: attackValue.maxHp
             },
             attackValue.lostHP,
             Boolean(attackValue.isCrit),
             attackValue.priority,
             attackValue.effectName,
             attackValue.status,
-            attackValue.sideEffects,
+            attackValue.sideEffects
         ];
     }
 }

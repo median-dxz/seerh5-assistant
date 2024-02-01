@@ -1,4 +1,4 @@
-import { delay, Engine } from 'sea-core';
+import { delay, engine } from '@sea/core';
 
 export const idList = [
     1, //赛尔豆
@@ -32,7 +32,7 @@ declare namespace baseMenuComponent {
 
 const showPveResourcePanel = async (itemValue: string) => {
     await ModuleManager.showModuleByID(18);
-    const curModule = Engine.inferCurrentModule<pveEnterPanel.PveEnterPanel>();
+    const curModule = engine.inferCurrentModule<pveEnterPanel.PveEnterPanel>();
     const panelName = 'pveEnterPanel.PveResourceCollection';
     curModule.service.openPanel(panelName);
     await delay(1500);

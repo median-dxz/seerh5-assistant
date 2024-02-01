@@ -1,4 +1,4 @@
-import react from '@vitejs/plugin-react';
+import react from '@vitejs/plugin-react-swc';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig, loadEnv } from 'vite';
@@ -39,13 +39,10 @@ export default defineConfig(({ command, mode }) => {
             port: 1234,
         },
         plugins: [
-            react({ jsxImportSource: '@emotion/react' }),
+            react({ jsxImportSource: '@emotion/react', devTarget: 'es2022' }),
             importMap({
                 options: {
-                    'sea-core': {
-                        path: path.resolve(dirname, '../core/dist/index.js'),
-                        extras: ['sea-core/battle', 'sea-core/constant', 'sea-core/engine', 'sea-core/entity'],
-                    },
+                    '@sea/core': path.resolve(dirname, '../core/dist/index.js'),
                 },
             }),
             // 抑制vite在html中以相对路径引用外部脚本报错 ([vite #11854](https://github.com/vitejs/vite/pull/11854))

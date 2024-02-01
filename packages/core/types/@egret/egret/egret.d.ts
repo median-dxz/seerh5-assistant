@@ -153,7 +153,13 @@ declare namespace egret {
          * @version Egret 2.4
          * @platform Web,Native
          */
-        addEventListener(type: string, listener: Function, thisObject: any, useCapture?: boolean, priority?: number): void;
+        addEventListener(
+            type: string,
+            listener: Function,
+            thisObject: any,
+            useCapture?: boolean,
+            priority?: number
+        ): void;
         /**
          * @inheritDoc
          * @version Egret 2.4
@@ -163,8 +169,23 @@ declare namespace egret {
         /**
          * @private
          */
-        $addListener(type: string, listener: Function, thisObject: any, useCapture?: boolean, priority?: number, dispatchOnce?: boolean): void;
-        $insertEventBin(list: any[], type: string, listener: Function, thisObject: any, useCapture?: boolean, priority?: number, dispatchOnce?: boolean): boolean;
+        $addListener(
+            type: string,
+            listener: Function,
+            thisObject: any,
+            useCapture?: boolean,
+            priority?: number,
+            dispatchOnce?: boolean
+        ): void;
+        $insertEventBin(
+            list: any[],
+            type: string,
+            listener: Function,
+            thisObject: any,
+            useCapture?: boolean,
+            priority?: number,
+            dispatchOnce?: boolean
+        ): boolean;
         /**
          * @inheritDoc
          * @version Egret 2.4
@@ -259,7 +280,7 @@ declare namespace egret {
         NONE = 1,
         FILTER = 2,
         CLIP = 3,
-        SCROLLRECT = 4,
+        SCROLLRECT = 4
     }
     /**
      * The DisplayObject class is the base class for all objects that can be placed on the display list. The display list
@@ -1202,7 +1223,14 @@ declare namespace egret {
         /**
          * @private
          */
-        $addListener(type: string, listener: Function, thisObject: any, useCapture?: boolean, priority?: number, dispatchOnce?: boolean): void;
+        $addListener(
+            type: string,
+            listener: Function,
+            thisObject: any,
+            useCapture?: boolean,
+            priority?: number,
+            dispatchOnce?: boolean
+        ): void;
         /**
          * @inheritDoc
          * @version Egret 2.4
@@ -1484,7 +1512,17 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        createTexture(name: string, bitmapX: number, bitmapY: number, bitmapWidth: number, bitmapHeight: number, offsetX?: number, offsetY?: number, textureWidth?: number, textureHeight?: number): Texture;
+        createTexture(
+            name: string,
+            bitmapX: number,
+            bitmapY: number,
+            bitmapWidth: number,
+            bitmapHeight: number,
+            offsetX?: number,
+            offsetY?: number,
+            textureWidth?: number,
+            textureHeight?: number
+        ): Texture;
         /**
          * dispose texture
          * @version Egret 2.4
@@ -2107,10 +2145,15 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static create<T extends Event>(EventClass: {
-            new (type: string, bubbles?: boolean, cancelable?: boolean): T;
-            eventPool?: Event[];
-        }, type: string, bubbles?: boolean, cancelable?: boolean): T;
+        static create<T extends Event>(
+            EventClass: {
+                new (type: string, bubbles?: boolean, cancelable?: boolean): T;
+                eventPool?: Event[];
+            },
+            type: string,
+            bubbles?: boolean,
+            cancelable?: boolean
+        ): T;
         /**
          * Releases an event object and cache it into the object pool.We highly recommend using the Event.create()
          * and Event.release() methods to create and release an event object,it can reduce the number of reallocate objects,
@@ -2964,7 +3007,19 @@ declare namespace egret {
         /**
          * @private
          */
-        private setImageData(bitmapData, bitmapX, bitmapY, bitmapWidth, bitmapHeight, offsetX, offsetY, textureWidth, textureHeight, sourceWidth, sourceHeight);
+        private setImageData(
+            bitmapData,
+            bitmapX,
+            bitmapY,
+            bitmapWidth,
+            bitmapHeight,
+            offsetX,
+            offsetY,
+            textureWidth,
+            textureHeight,
+            sourceWidth,
+            sourceHeight
+        );
         /**
          * @private
          */
@@ -3153,7 +3208,16 @@ declare namespace egret {
          * @platform Web
          * @language zh_CN
          */
-        constructor(color?: number, alpha?: number, blurX?: number, blurY?: number, strength?: number, quality?: number, inner?: boolean, knockout?: boolean);
+        constructor(
+            color?: number,
+            alpha?: number,
+            blurX?: number,
+            blurY?: number,
+            strength?: number,
+            quality?: number,
+            inner?: boolean,
+            knockout?: boolean
+        );
         /**
          * @private
          */
@@ -3456,11 +3520,11 @@ declare namespace egret {
          */
         bitmapData: BitmapData;
         /**
-        * Set the BitmapData object.
-        * @version Egret 3.2.1
-        * @platform Web,Native
-        * @language en_US
-        */
+         * Set the BitmapData object.
+         * @version Egret 3.2.1
+         * @platform Web,Native
+         * @language en_US
+         */
         /**
          * 设置 BitmapData 对象。
          * @version Egret 3.2.1
@@ -3470,10 +3534,10 @@ declare namespace egret {
         _setBitmapData(value: BitmapData): void;
         /**
          * The KTX object being referenced.
-        * @version Egret 5.2.21
-        * @platform Web,Native
-        * @language en_US
-        */
+         * @version Egret 5.2.21
+         * @platform Web,Native
+         * @language en_US
+         */
         /**
          * 被引用的 KTXData 对象。
          * @version Egret 5.2.21
@@ -3482,11 +3546,11 @@ declare namespace egret {
          */
         ktxData: ArrayBuffer;
         /**
-        * Set the KTXData object.
-        * @version Egret 3.2.1
-        * @platform Web,Native
-        * @language en_US
-        */
+         * Set the KTXData object.
+         * @version Egret 3.2.1
+         * @platform Web,Native
+         * @language en_US
+         */
         /**
          * 设置 KTXData 对象。
          * @version Egret 3.2.1
@@ -3508,7 +3572,19 @@ declare namespace egret {
          * @param sourceWidth
          * @param sourceHeight
          */
-        $initData(bitmapX: number, bitmapY: number, bitmapWidth: number, bitmapHeight: number, offsetX: number, offsetY: number, textureWidth: number, textureHeight: number, sourceWidth: number, sourceHeight: number, rotated?: boolean): void;
+        $initData(
+            bitmapX: number,
+            bitmapY: number,
+            bitmapWidth: number,
+            bitmapHeight: number,
+            offsetX: number,
+            offsetY: number,
+            textureWidth: number,
+            textureHeight: number,
+            sourceWidth: number,
+            sourceHeight: number,
+            rotated?: boolean
+        ): void;
         /**
          * @deprecated
          */
@@ -3620,7 +3696,7 @@ declare namespace egret.sys {
         /**
          * 普通位图渲染节点
          */
-        NormalBitmapNode = 6,
+        NormalBitmapNode = 6
     }
     /**
      * @private
@@ -3663,7 +3739,7 @@ declare namespace egret.sys {
         /**
          * 线条路径
          */
-        Stroke = 3,
+        Stroke = 3
     }
     /**
      * @private
@@ -3673,7 +3749,7 @@ declare namespace egret.sys {
         MoveTo = 1,
         LineTo = 2,
         CurveTo = 3,
-        CubicCurveTo = 4,
+        CubicCurveTo = 4
     }
     /**
      * @private
@@ -3729,7 +3805,14 @@ declare namespace egret.sys {
          * @param anchorX 指定锚点相对于父显示对象的注册点的水平位置。
          * @param anchorY 指定锚点相对于父显示对象的注册点的垂直位置。
          */
-        cubicCurveTo(controlX1: number, controlY1: number, controlX2: number, controlY2: number, anchorX: number, anchorY: number): void;
+        cubicCurveTo(
+            controlX1: number,
+            controlY1: number,
+            controlX2: number,
+            controlY2: number,
+            anchorX: number,
+            anchorY: number
+        ): void;
         /**
          * 绘制一个矩形
          * @param x 圆心相对于父显示对象注册点的 x 位置（以像素为单位）。
@@ -3747,7 +3830,14 @@ declare namespace egret.sys {
          * @param ellipseWidth 用于绘制圆角的椭圆的宽度（以像素为单位）。
          * @param ellipseHeight 用于绘制圆角的椭圆的高度（以像素为单位）。 （可选）如果未指定值，则默认值与为 ellipseWidth 参数提供的值相匹配。
          */
-        drawRoundRect(x: number, y: number, width: number, height: number, ellipseWidth: number, ellipseHeight?: number): void;
+        drawRoundRect(
+            x: number,
+            y: number,
+            width: number,
+            height: number,
+            ellipseWidth: number,
+            ellipseHeight?: number
+        ): void;
         /**
          * 绘制一个圆。
          * @param x 圆心相对于父显示对象注册点的 x 位置（以像素为单位）。
@@ -3774,7 +3864,14 @@ declare namespace egret.sys {
          * 注意，必须在0~2π之间。
          * @param anticlockwise 如果为 true，逆时针绘制圆弧，反之，顺时针绘制。
          */
-        drawArc(x: number, y: number, radius: number, startAngle: number, endAngle: number, anticlockwise: boolean): void;
+        drawArc(
+            x: number,
+            y: number,
+            radius: number,
+            startAngle: number,
+            endAngle: number,
+            anticlockwise: boolean
+        ): void;
         /**
          * 绘制一段圆弧路径
          * @param x 圆弧中心（圆心）的 x 轴坐标。
@@ -3867,7 +3964,15 @@ declare namespace egret_native {
     function nrInit(): void;
     function nrDownloadBuffers(callback: (displayCmdBuffer: Float32Array) => void): void;
     function nrSetRenderMode(mode: number): void;
-    function nrRenderDisplayObject(id: number, scale: number, useClip: boolean, clipX: number, clipY: number, clipW: number, clipH: number): void;
+    function nrRenderDisplayObject(
+        id: number,
+        scale: number,
+        useClip: boolean,
+        clipX: number,
+        clipY: number,
+        clipW: number,
+        clipH: number
+    ): void;
     function nrRenderDisplayObject2(id: number, offsetX: number, offsetY: number, forHitTest: boolean): void;
     function nrLocalToGlobal(id: number, localX: number, localY: number): string;
     function nrGlobalToLocal(id: number, globalX: number, globalY: number): string;
@@ -3884,7 +3989,14 @@ declare namespace egret_native {
     function nrActiveBuffer(id: number, width: number, height: number): void;
     function nrGetPixels(x: number, y: number, width: number, height: number, pixels: Uint8Array): void;
     function nrGetCustomImageId(type: number): number;
-    function nrSetCustomImageData(customImageId: number, pvrtcData: any, width: any, height: any, mipmapsCount: any, format: any): void;
+    function nrSetCustomImageData(
+        customImageId: number,
+        pvrtcData: any,
+        width: any,
+        height: any,
+        mipmapsCount: any,
+        format: any
+    ): void;
     class NrNode {
         constructor(id: number, type: number);
     }
@@ -3948,7 +4060,13 @@ declare namespace egret_native {
         setScrollRect(x: number, y: number, w: number, h: number): void;
         setFilters(filters: Array<egret.Filter>): void;
         static createFilter(filter: egret.Filter): void;
-        static setFilterPadding(filterId: number, paddingTop: number, paddingBottom: number, paddingLeft: number, paddingRight: number): void;
+        static setFilterPadding(
+            filterId: number,
+            paddingTop: number,
+            paddingBottom: number,
+            paddingLeft: number,
+            paddingRight: number
+        ): void;
         setMask(value: number): void;
         static setSourceToNativeBitmapData(nativeBitmapData: egret_native.NativeBitmapData, source: any): any;
         setTexture(texture: egret.Texture): void;
@@ -3992,18 +4110,55 @@ declare namespace egret_native {
         setBackgroundColor(value: number): void;
         setInputType(value: string): void;
         setBeginFill(color: number, alpha?: number): void;
-        setBeginGradientFill(type: string, colors: number[], alphas: number[], ratios: number[], matrix: egret.Matrix): void;
+        setBeginGradientFill(
+            type: string,
+            colors: number[],
+            alphas: number[],
+            ratios: number[],
+            matrix: egret.Matrix
+        ): void;
         setEndFill(): void;
-        setLineStyle(thickness?: number, color?: number, alpha?: number, pixelHinting?: boolean, scaleMode?: string, caps?: string, joints?: string, miterLimit?: number, lineDash?: number[]): void;
+        setLineStyle(
+            thickness?: number,
+            color?: number,
+            alpha?: number,
+            pixelHinting?: boolean,
+            scaleMode?: string,
+            caps?: string,
+            joints?: string,
+            miterLimit?: number,
+            lineDash?: number[]
+        ): void;
         setDrawRect(x: number, y: number, width: number, height: number): void;
-        setDrawRoundRect(x: number, y: number, width: number, height: number, ellipseWidth: number, ellipseHeight?: number): void;
+        setDrawRoundRect(
+            x: number,
+            y: number,
+            width: number,
+            height: number,
+            ellipseWidth: number,
+            ellipseHeight?: number
+        ): void;
         setDrawCircle(x: number, y: number, radius: number): void;
         setDrawEllipse(x: number, y: number, width: number, height: number): void;
         setMoveTo(x: number, y: number): void;
         setLineTo(x: number, y: number): void;
         setCurveTo(controlX: number, controlY: number, anchorX: number, anchorY: number): void;
-        setCubicCurveTo(controlX1: number, controlY1: number, controlX2: number, controlY2: number, anchorX: number, anchorY: number): void;
-        setDrawArc(x: number, y: number, radius: number, startAngle: number, endAngle: number, anticlockwise?: boolean): void;
+        setCubicCurveTo(
+            controlX1: number,
+            controlY1: number,
+            controlX2: number,
+            controlY2: number,
+            anchorX: number,
+            anchorY: number
+        ): void;
+        setDrawArc(
+            x: number,
+            y: number,
+            radius: number,
+            startAngle: number,
+            endAngle: number,
+            anticlockwise?: boolean
+        ): void;
         setGraphicsClear(): void;
         setZIndex(value: number): void;
         sortChildren(): void;
@@ -4063,7 +4218,7 @@ declare namespace egret_native {
         /**
          * 舞台（根容器）
          */
-        STAGE = 13,
+        STAGE = 13
     }
 }
 declare namespace egret {
@@ -4566,7 +4721,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        BUBBLING_PHASE = 3,
+        BUBBLING_PHASE = 3
     }
 }
 declare namespace egret {
@@ -4597,7 +4752,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static FOCUS_IN: "focusIn";
+        static FOCUS_IN: 'focusIn';
         /**
          * Loses focus
          * @version Egret 2.4
@@ -4610,7 +4765,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static FOCUS_OUT: "focusOut";
+        static FOCUS_OUT: 'focusOut';
         /**
          * Create a egret.FocusEvent objects
          * @param type  The type of the event, accessible as Event.type.
@@ -4634,8 +4789,20 @@ declare namespace egret {
 }
 declare namespace egret {
     interface Geolocation {
-        addEventListener<Z>(type: "ioError", listener: (this: Z, e: GeolocationEvent) => void, thisObject: Z, useCapture?: boolean, priority?: number): any;
-        addEventListener(type: string, listener: Function, thisObject: any, useCapture?: boolean, priority?: number): any;
+        addEventListener<Z>(
+            type: 'ioError',
+            listener: (this: Z, e: GeolocationEvent) => void,
+            thisObject: Z,
+            useCapture?: boolean,
+            priority?: number
+        ): any;
+        addEventListener(
+            type: string,
+            listener: Function,
+            thisObject: any,
+            useCapture?: boolean,
+            priority?: number
+        ): any;
     }
     /**
      * The GeolocationEvent represents the position and altitude of the device on Earth,
@@ -4840,7 +5007,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static HTTP_STATUS: "httpStatus";
+        static HTTP_STATUS: 'httpStatus';
         /**
          * Create a egret.HTTPStatusEvent objects
          * @param type  The type of the event, accessible as Event.type.
@@ -4991,7 +5158,13 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        addEventListener(type: string, listener: Function, thisObject: any, useCapture?: boolean, priority?: number): void;
+        addEventListener(
+            type: string,
+            listener: Function,
+            thisObject: any,
+            useCapture?: boolean,
+            priority?: number
+        ): void;
         /**
          * Registers an event listener object with an EventDispatcher object so that the listener receives notification of an
          * event. Different from the on() method,the listener receives notification only once,and then it will be removed
@@ -5128,8 +5301,20 @@ declare namespace egret {
 }
 declare namespace egret {
     interface HttpRequest {
-        addEventListener<Z>(type: "ioError", listener: (this: Z, e: IOErrorEvent) => void, thisObject: Z, useCapture?: boolean, priority?: number): any;
-        addEventListener(type: string, listener: Function, thisObject: any, useCapture?: boolean, priority?: number): any;
+        addEventListener<Z>(
+            type: 'ioError',
+            listener: (this: Z, e: IOErrorEvent) => void,
+            thisObject: Z,
+            useCapture?: boolean,
+            priority?: number
+        ): any;
+        addEventListener(
+            type: string,
+            listener: Function,
+            thisObject: any,
+            useCapture?: boolean,
+            priority?: number
+        ): any;
     }
     /**
      * @classdesc IO流事件，当错误导致输入或输出操作失败时调度 IOErrorEvent 对象。
@@ -5158,7 +5343,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static IO_ERROR: "ioError";
+        static IO_ERROR: 'ioError';
         /**
          * Create a egret.IOErrorEvent objects
          * @param type {string} Type of event, accessible as Event.type.
@@ -5326,8 +5511,20 @@ declare namespace egret {
 }
 declare namespace egret {
     interface HttpRequest {
-        addEventListener<Z>(type: "progress", listener: (this: Z, e: ProgressEvent) => void, thisObject: Z, useCapture?: boolean, priority?: number): any;
-        addEventListener(type: string, listener: Function, thisObject: any, useCapture?: boolean, priority?: number): any;
+        addEventListener<Z>(
+            type: 'progress',
+            listener: (this: Z, e: ProgressEvent) => void,
+            thisObject: Z,
+            useCapture?: boolean,
+            priority?: number
+        ): any;
+        addEventListener(
+            type: string,
+            listener: Function,
+            thisObject: any,
+            useCapture?: boolean,
+            priority?: number
+        ): any;
     }
     /**
      * When a load operation has begun or a socket has received data, ProgressEvent object is dispatched.
@@ -5356,7 +5553,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static PROGRESS: "progress";
+        static PROGRESS: 'progress';
         /**
          * Get the data
          * @version Egret 2.4
@@ -5369,7 +5566,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static SOCKET_DATA: "socketData";
+        static SOCKET_DATA: 'socketData';
         /**
          * Number of items or bytes when the listener processes the event。
          * @version Egret 2.4
@@ -5439,13 +5636,30 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static dispatchProgressEvent(target: IEventDispatcher, type: string, bytesLoaded?: number, bytesTotal?: number): boolean;
+        static dispatchProgressEvent(
+            target: IEventDispatcher,
+            type: string,
+            bytesLoaded?: number,
+            bytesTotal?: number
+        ): boolean;
     }
 }
 declare namespace egret {
     interface Stage {
-        addEventListener<Z>(type: "orientationChange", listener: (this: Z, e: StageOrientationEvent) => void, thisObject: Z, useCapture?: boolean, priority?: number): any;
-        addEventListener(type: string, listener: Function, thisObject: any, useCapture?: boolean, priority?: number): any;
+        addEventListener<Z>(
+            type: 'orientationChange',
+            listener: (this: Z, e: StageOrientationEvent) => void,
+            thisObject: Z,
+            useCapture?: boolean,
+            priority?: number
+        ): any;
+        addEventListener(
+            type: string,
+            listener: Function,
+            thisObject: any,
+            useCapture?: boolean,
+            priority?: number
+        ): any;
     }
     /**
      * When the direction of the stage of change, Stage object dispatches StageOrientationEvent object.
@@ -5474,7 +5688,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static ORIENTATION_CHANGE: "orientationChange";
+        static ORIENTATION_CHANGE: 'orientationChange';
         /**
          * Creating contains specific information related to the event and the stage direction of StageOrientationEvent object.
          * @param type Event types:StageOrientationEvent.ORIENTATION_CHANGE
@@ -5562,7 +5776,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static LINK: "link";
+        static LINK: 'link';
         /**
          * In TextEvent.LINK event, event corresponding string.
          * @version Egret 2.4
@@ -5599,8 +5813,20 @@ declare namespace egret {
 }
 declare namespace egret {
     interface Timer {
-        addEventListener<Z>(type: "timer" | "timerComplete", listener: (this: Z, e: TimerEvent) => void, thisObject: Z, useCapture?: boolean, priority?: number): any;
-        addEventListener(type: string, listener: Function, thisObject: any, useCapture?: boolean, priority?: number): any;
+        addEventListener<Z>(
+            type: 'timer' | 'timerComplete',
+            listener: (this: Z, e: TimerEvent) => void,
+            thisObject: Z,
+            useCapture?: boolean,
+            priority?: number
+        ): any;
+        addEventListener(
+            type: string,
+            listener: Function,
+            thisObject: any,
+            useCapture?: boolean,
+            priority?: number
+        ): any;
     }
     /**
      * A Timer object dispatches a TimerEvent objects whenever the Timer object reaches the interval specified by the Timer.delay property.
@@ -5631,7 +5857,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static TIMER: "timer";
+        static TIMER: 'timer';
         /**
          * Dispatched whenever it has completed the number of requests set by Timer.repeatCount.
          * @version Egret 2.4
@@ -5644,7 +5870,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static TIMER_COMPLETE: "timerComplete";
+        static TIMER_COMPLETE: 'timerComplete';
         /**
          * Creates an Event object with specific information relevant to timer events.
          * @param type The type of the event. Event listeners can access this information through the inherited type property.
@@ -5736,7 +5962,12 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static dispatchTimerEvent(target: IEventDispatcher, type: string, bubbles?: boolean, cancelable?: boolean): boolean;
+        static dispatchTimerEvent(
+            target: IEventDispatcher,
+            type: string,
+            bubbles?: boolean,
+            cancelable?: boolean
+        ): boolean;
     }
 }
 declare namespace egret {
@@ -5748,11 +5979,11 @@ declare namespace egret {
         face: number;
         level: number;
     }
-    const etc_alpha_mask = "etc_alpha_mask";
-    const engine_default_empty_texture = "engine_default_empty_texture";
-    const is_compressed_texture = "is_compressed_texture";
-    const glContext = "glContext";
-    const UNPACK_PREMULTIPLY_ALPHA_WEBGL = "UNPACK_PREMULTIPLY_ALPHA_WEBGL";
+    const etc_alpha_mask = 'etc_alpha_mask';
+    const engine_default_empty_texture = 'engine_default_empty_texture';
+    const is_compressed_texture = 'is_compressed_texture';
+    const glContext = 'glContext';
+    const UNPACK_PREMULTIPLY_ALPHA_WEBGL = 'UNPACK_PREMULTIPLY_ALPHA_WEBGL';
     /**
      * A BitmapData object contains an array of pixel data. This data can represent either a fully opaque bitmap or a
      * transparent bitmap that contains alpha channel data. Either type of BitmapData object is stored as a buffer of 32-bit
@@ -5884,8 +6115,8 @@ declare namespace egret {
          */
         constructor(source: any);
         source: any;
-        static create(type: "arraybuffer", data: ArrayBuffer, callback?: (bitmapData: BitmapData) => void): BitmapData;
-        static create(type: "base64", data: string, callback?: (bitmapData: BitmapData) => void): BitmapData;
+        static create(type: 'arraybuffer', data: ArrayBuffer, callback?: (bitmapData: BitmapData) => void): BitmapData;
+        static create(type: 'base64', data: string, callback?: (bitmapData: BitmapData) => void): BitmapData;
         $dispose(): void;
         private static _displayList;
         static $addDisplayObject(displayObject: DisplayObject, bitmapData: BitmapData): void;
@@ -5902,8 +6133,28 @@ declare namespace egret {
 }
 declare namespace egret {
     interface DisplayObject {
-        addEventListener<Z>(type: "touchMove" | "touchBegin" | "touchEnd" | "touchCancel" | "touchTap" | "touchReleaseOutside" | "touchRollOut" | "touchRollOver", listener: (this: Z, e: TouchEvent) => void, thisObject: Z, useCapture?: boolean, priority?: number): any;
-        addEventListener(type: string, listener: Function, thisObject: any, useCapture?: boolean, priority?: number): any;
+        addEventListener<Z>(
+            type:
+                | 'touchMove'
+                | 'touchBegin'
+                | 'touchEnd'
+                | 'touchCancel'
+                | 'touchTap'
+                | 'touchReleaseOutside'
+                | 'touchRollOut'
+                | 'touchRollOver',
+            listener: (this: Z, e: TouchEvent) => void,
+            thisObject: Z,
+            useCapture?: boolean,
+            priority?: number
+        ): any;
+        addEventListener(
+            type: string,
+            listener: Function,
+            thisObject: any,
+            useCapture?: boolean,
+            priority?: number
+        ): any;
     }
     /**
      * The TouchEvent class lets you handle events on devices that detect user contact with the device (such as a finger
@@ -5947,7 +6198,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static TOUCH_MOVE: "touchMove";
+        static TOUCH_MOVE: 'touchMove';
         /**
          * Dispatched when the user first contacts a touch-enabled device (such as touches a finger to a mobile phone or tablet with a touch screen).
          * @version Egret 2.4
@@ -5960,7 +6211,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static TOUCH_BEGIN: "touchBegin";
+        static TOUCH_BEGIN: 'touchBegin';
         /**
          * Dispatched when the user removes contact with a touch-enabled device (such as lifts a finger off a mobile phone
          * or tablet with a touch screen).
@@ -5974,7 +6225,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static TOUCH_END: "touchEnd";
+        static TOUCH_END: 'touchEnd';
         /**
          * Dispatched when an event of some kind occurred that canceled the touch.
          * Such as the eui.Scroller will dispatch 'TOUCH_CANCEL' when it start move, the 'TOUCH_END' and 'TOUCH_TAP' will not be triggered.
@@ -5988,7 +6239,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static TOUCH_CANCEL: "touchCancel";
+        static TOUCH_CANCEL: 'touchCancel';
         /**
          * Dispatched when the user lifts the point of contact over the same DisplayObject instance on which the contact
          * was initiated on a touch-enabled device.
@@ -6002,7 +6253,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static TOUCH_TAP: "touchTap";
+        static TOUCH_TAP: 'touchTap';
         /**
          * Dispatched when the user lifts the point of contact over the different DisplayObject instance on which the contact
          * was initiated on a touch-enabled device (such as presses and releases a finger from a single point over a display
@@ -6017,7 +6268,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static TOUCH_RELEASE_OUTSIDE: "touchReleaseOutside";
+        static TOUCH_RELEASE_OUTSIDE: 'touchReleaseOutside';
         /**
          * Creates an Event object that contains information about touch events.
          * @param type  The type of the event, accessible as Event.type.
@@ -6042,7 +6293,14 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        constructor(type: string, bubbles?: boolean, cancelable?: boolean, stageX?: number, stageY?: number, touchPointID?: number);
+        constructor(
+            type: string,
+            bubbles?: boolean,
+            cancelable?: boolean,
+            stageX?: number,
+            stageY?: number,
+            touchPointID?: number
+        );
         /**
          * @private
          */
@@ -6189,7 +6447,16 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        static dispatchTouchEvent(target: IEventDispatcher, type: string, bubbles?: boolean, cancelable?: boolean, stageX?: number, stageY?: number, touchPointID?: number, touchDown?: boolean): boolean;
+        static dispatchTouchEvent(
+            target: IEventDispatcher,
+            type: string,
+            bubbles?: boolean,
+            cancelable?: boolean,
+            stageX?: number,
+            stageY?: number,
+            touchPointID?: number,
+            touchDown?: boolean
+        ): boolean;
     }
 }
 declare namespace egret {
@@ -6209,8 +6476,7 @@ declare namespace egret {
      * @includeExample egret/external/ExternalInterface.ts
      * @language zh_CN
      */
-    interface ExternalInterface {
-    }
+    interface ExternalInterface {}
     let ExternalInterface: {
         /**
          * Call functionName, and the value passed to the native.
@@ -6267,7 +6533,7 @@ declare namespace egret {
          * @version Egret 2.4
          * @platform Web,Native
          */
-        HIGH = 3,
+        HIGH = 3
     }
 }
 declare namespace egret {
@@ -6582,7 +6848,19 @@ declare namespace egret {
          * @platform Web
          * @language zh_CN
          */
-        constructor(distance?: number, angle?: number, color?: number, alpha?: number, blurX?: number, blurY?: number, strength?: number, quality?: number, inner?: boolean, knockout?: boolean, hideObject?: boolean);
+        constructor(
+            distance?: number,
+            angle?: number,
+            color?: number,
+            alpha?: number,
+            blurX?: number,
+            blurY?: number,
+            strength?: number,
+            quality?: number,
+            inner?: boolean,
+            knockout?: boolean,
+            hideObject?: boolean
+        );
         /**
          * @private
          */
@@ -6805,7 +7083,13 @@ declare namespace egret {
          * @version Egret 2.4
          * @language zh_CN
          */
-        beginGradientFill(type: string, colors: number[], alphas: number[], ratios: number[], matrix?: egret.Matrix): void;
+        beginGradientFill(
+            type: string,
+            colors: number[],
+            alphas: number[],
+            ratios: number[],
+            matrix?: egret.Matrix
+        ): void;
         /**
          * Apply fill to the lines and curves added after the previous calling to the beginFill() method.
          * @version Egret 2.4
@@ -6849,7 +7133,17 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        lineStyle(thickness?: number, color?: number, alpha?: number, pixelHinting?: boolean, scaleMode?: string, caps?: string, joints?: string, miterLimit?: number, lineDash?: number[]): void;
+        lineStyle(
+            thickness?: number,
+            color?: number,
+            alpha?: number,
+            pixelHinting?: boolean,
+            scaleMode?: string,
+            caps?: string,
+            joints?: string,
+            miterLimit?: number,
+            lineDash?: number[]
+        ): void;
         /**
          * Draw a rectangle
          * @param x x position of the center, relative to the registration point of the parent display object (in pixels).
@@ -6895,7 +7189,14 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        drawRoundRect(x: number, y: number, width: number, height: number, ellipseWidth: number, ellipseHeight?: number): void;
+        drawRoundRect(
+            x: number,
+            y: number,
+            width: number,
+            height: number,
+            ellipseWidth: number,
+            ellipseHeight?: number
+        ): void;
         /**
          * Draw a circle.
          * @param x x position of the center, relative to the registration point of the parent display object (in pixels).
@@ -7019,7 +7320,14 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        cubicCurveTo(controlX1: number, controlY1: number, controlX2: number, controlY2: number, anchorX: number, anchorY: number): void;
+        cubicCurveTo(
+            controlX1: number,
+            controlY1: number,
+            controlX2: number,
+            controlY2: number,
+            anchorX: number,
+            anchorY: number
+        ): void;
         /**
          * adds an arc to the path which is centered at (x, y) position with radius r starting at startAngle and ending
          * at endAngle going in the given direction by anticlockwise (defaulting to clockwise).
@@ -7045,7 +7353,14 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        drawArc(x: number, y: number, radius: number, startAngle: number, endAngle: number, anticlockwise?: boolean): void;
+        drawArc(
+            x: number,
+            y: number,
+            radius: number,
+            startAngle: number,
+            endAngle: number,
+            anticlockwise?: boolean
+        ): void;
         private dirty();
         /**
          * @private
@@ -8189,8 +8504,7 @@ declare namespace egret {
      */
     let $TempRectangle: Rectangle;
 }
-declare namespace egret {
-}
+declare namespace egret {}
 declare namespace egret {
     /**
      * The JointStyle class is an enumeration of constant values that specify the joint style to use in drawing lines.
@@ -8213,8 +8527,7 @@ declare namespace egret {
         ROUND: string;
     };
 }
-declare namespace egret {
-}
+declare namespace egret {}
 /**
  * @version Egret 2.4
  * @platform Web,Native
@@ -8472,8 +8785,8 @@ declare namespace egret {
      * @version Egret 2.4
      * @platform Web,Native
      * @includeExample egret/media/Sound.ts
-    * @language zh_CN
-    */
+     * @language zh_CN
+     */
     interface SoundChannel extends IEventDispatcher {
         /**
          * The volume, ranging from 0 (silent) to 1 (full volume).
@@ -8763,7 +9076,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        const GET = "GET";
+        const GET = 'GET';
         /**
          * Specifies that the HttpRequest object is a POST.
          * @version Egret 2.4
@@ -8776,7 +9089,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        const POST = "POST";
+        const POST = 'POST';
     }
 }
 declare namespace egret {
@@ -9436,7 +9749,12 @@ declare namespace egret.pro {
      * @param textureHeight 贴图高度 ，默认为512
      * @param scaleFactor 贴图质量。系数越大，贴图越清晰
      */
-    function createTextureFrom3dScene(scenePath: string, textureWidth?: number, textureHeight?: number, scaleFactor?: number): Promise<egret.Texture>;
+    function createTextureFrom3dScene(
+        scenePath: string,
+        textureWidth?: number,
+        textureHeight?: number,
+        scaleFactor?: number
+    ): Promise<egret.Texture>;
     /**
      * 根据场景地址获取场景，并根据过滤器，获取所有符合条件的相机，渲染为2d贴图并返回
      * 单一场景需要用到多个摄像机时可使用此方法
@@ -9447,7 +9765,13 @@ declare namespace egret.pro {
      * @param textureHeight
      * @param scaleFactor
      */
-    function createTextureForCameras(scenePath: string, filter: (child: TreeNode) => boolean, textureWidth?: number, textureHeight?: number, scaleFactor?: number): Promise<{
+    function createTextureForCameras(
+        scenePath: string,
+        filter: (child: TreeNode) => boolean,
+        textureWidth?: number,
+        textureHeight?: number,
+        scaleFactor?: number
+    ): Promise<{
         [key: string]: egret.Texture;
     }>;
     /**
@@ -9627,7 +9951,13 @@ declare namespace egret.sys {
          * @param contentWidth 初始化内容宽度
          * @param contentHeight 初始化内容高度
          */
-        calculateStageSize(scaleMode: string, screenWidth: number, screenHeight: number, contentWidth: number, contentHeight: number): StageDisplaySize;
+        calculateStageSize(
+            scaleMode: string,
+            screenWidth: number,
+            screenHeight: number,
+            contentWidth: number,
+            contentHeight: number
+        ): StageDisplaySize;
     }
     /**
      * @private
@@ -9678,7 +10008,13 @@ declare namespace egret.sys {
          * @param contentWidth 初始化内容宽度
          * @param contentHeight 初始化内容高度
          */
-        calculateStageSize(scaleMode: string, screenWidth: number, screenHeight: number, contentWidth: number, contentHeight: number): StageDisplaySize;
+        calculateStageSize(
+            scaleMode: string,
+            screenWidth: number,
+            screenHeight: number,
+            contentWidth: number,
+            contentHeight: number
+        ): StageDisplaySize;
     }
 }
 declare namespace egret {
@@ -9824,29 +10160,28 @@ declare namespace egret.sys {
     /**
      *
      */
-    interface RenderContext {
-    }
+    interface RenderContext {}
     /**
      * 创建一个canvas。
      */
     function mainCanvas(width?: number, height?: number): HTMLCanvasElement;
     function createCanvas(width?: number, height?: number): HTMLCanvasElement;
     /**
-    * 重新设置主canvas的大小
-    */
+     * 重新设置主canvas的大小
+     */
     function resizeContext(renderContext: RenderContext, width: number, height: number, useMaxSize?: boolean): void;
     /**
-    * 获得系统的渲染运行时
-    */
+     * 获得系统的渲染运行时
+     */
     function getContextWebGL(surface: HTMLCanvasElement): WebGLRenderingContext;
     function getContext2d(surface: HTMLCanvasElement): CanvasRenderingContext2D;
     /**
-    * 仅通过bitmapData创建纹理
-    */
+     * 仅通过bitmapData创建纹理
+     */
     function createTexture(renderContext: RenderContext, bitmapData: BitmapData | HTMLCanvasElement): WebGLTexture;
     /**
-    * 通过 width, height, data创建纹理
-    */
+     * 通过 width, height, data创建纹理
+     */
     function _createTexture(renderContext: RenderContext, width: number, height: number, data: any): WebGLTexture;
     /**
      * 画texture
@@ -9865,7 +10200,12 @@ declare namespace egret.sys {
      * @param height
      * @param root
      */
-    function createCanvasRenderBufferSurface(defaultFunc: (width?: number, height?: number) => HTMLCanvasElement, width?: number, height?: number, root?: boolean): HTMLCanvasElement;
+    function createCanvasRenderBufferSurface(
+        defaultFunc: (width?: number, height?: number) => HTMLCanvasElement,
+        width?: number,
+        height?: number,
+        root?: boolean
+    ): HTMLCanvasElement;
     /**
      * 改变渲染缓冲的大小并清空缓冲区
      * @param renderContext
@@ -9873,7 +10213,12 @@ declare namespace egret.sys {
      * @param height
      * @param useMaxSize
      */
-    function resizeCanvasRenderBuffer(renderContext: RenderContext, width: number, height: number, useMaxSize?: boolean): void;
+    function resizeCanvasRenderBuffer(
+        renderContext: RenderContext,
+        width: number,
+        height: number,
+        useMaxSize?: boolean
+    ): void;
 }
 declare namespace egret.sys {
     /**
@@ -10181,21 +10526,77 @@ declare namespace egret.sys {
         /**
          * 绘制一次位图
          */
-        drawImage(sourceX: number, sourceY: number, sourceW: number, sourceH: number, drawX: number, drawY: number, drawW: number, drawH: number): void;
+        drawImage(
+            sourceX: number,
+            sourceY: number,
+            sourceW: number,
+            sourceH: number,
+            drawX: number,
+            drawY: number,
+            drawW: number,
+            drawH: number
+        ): void;
         /**
          * 在显示对象的$updateRenderNode()方法被调用前，自动清空自身的drawData数据。
          */
         cleanBeforeRender(): void;
-        static $updateTextureData(node: sys.NormalBitmapNode, image: BitmapData, bitmapX: number, bitmapY: number, bitmapWidth: number, bitmapHeight: number, offsetX: number, offsetY: number, textureWidth: number, textureHeight: number, destW: number, destH: number, sourceWidth: number, sourceHeight: number, fillMode: string, smoothing: boolean): void;
+        static $updateTextureData(
+            node: sys.NormalBitmapNode,
+            image: BitmapData,
+            bitmapX: number,
+            bitmapY: number,
+            bitmapWidth: number,
+            bitmapHeight: number,
+            offsetX: number,
+            offsetY: number,
+            textureWidth: number,
+            textureHeight: number,
+            destW: number,
+            destH: number,
+            sourceWidth: number,
+            sourceHeight: number,
+            fillMode: string,
+            smoothing: boolean
+        ): void;
         /**
          * @private
          * 绘制九宫格位图
          */
-        static $updateTextureDataWithScale9Grid(node: sys.NormalBitmapNode, image: BitmapData, scale9Grid: egret.Rectangle, bitmapX: number, bitmapY: number, bitmapWidth: number, bitmapHeight: number, offsetX: number, offsetY: number, textureWidth: number, textureHeight: number, destW: number, destH: number, sourceWidth: number, sourceHeight: number, smoothing: boolean): void;
+        static $updateTextureDataWithScale9Grid(
+            node: sys.NormalBitmapNode,
+            image: BitmapData,
+            scale9Grid: egret.Rectangle,
+            bitmapX: number,
+            bitmapY: number,
+            bitmapWidth: number,
+            bitmapHeight: number,
+            offsetX: number,
+            offsetY: number,
+            textureWidth: number,
+            textureHeight: number,
+            destW: number,
+            destH: number,
+            sourceWidth: number,
+            sourceHeight: number,
+            smoothing: boolean
+        ): void;
         /**
          * @private
          */
-        private static drawClipImage(node, scale, bitmapX, bitmapY, scaledBitmapW, scaledBitmapH, offsetX, offsetY, destW, destH, startX?, startY?);
+        private static drawClipImage(
+            node,
+            scale,
+            bitmapX,
+            bitmapY,
+            scaledBitmapW,
+            scaledBitmapH,
+            offsetX,
+            offsetY,
+            destW,
+            destH,
+            startX?,
+            startY?
+        );
     }
 }
 declare namespace egret.sys {
@@ -10222,7 +10623,14 @@ declare namespace egret.sys {
          * @param matrix 一个由 egret.Matrix 类定义的转换矩阵。egret.Matrix 类包括 createGradientBox() 方法，通过该方法可以方便地设置矩阵，以便与 beginGradientFill() 方法一起使用
          * @param beforePath 插入在指定的路径命令之前绘制，通常是插入到当前正在绘制的线条路径之前，以确保线条总在填充的上方。
          */
-        beginGradientFill(type: string, colors: number[], alphas: number[], ratios: number[], matrix?: egret.Matrix, beforePath?: Path2D): Path2D;
+        beginGradientFill(
+            type: string,
+            colors: number[],
+            alphas: number[],
+            ratios: number[],
+            matrix?: egret.Matrix,
+            beforePath?: Path2D
+        ): Path2D;
         /**
          * 指定一种线条样式以用于随后对 lineTo() 或 drawCircle() 等 Graphics 方法的调用。
          * @param thickness 一个整数，以点为单位表示线条的粗细，有效值为 0 到 255。如果未指定数字，或者未定义该参数，则不绘制线条。如果传递的值小于 0，则默认值为 0。值 0 表示极细的粗细；最大粗细为 255。如果传递的值大于 255，则默认值为 255。
@@ -10232,7 +10640,15 @@ declare namespace egret.sys {
          * @param joints 指定用于拐角的连接外观的类型。默认值：JointStyle.ROUND
          * @param miterLimit 用于表示剪切斜接的极限值的数字。
          */
-        lineStyle(thickness?: number, color?: number, alpha?: number, caps?: string, joints?: string, miterLimit?: number, lineDash?: number[]): StrokePath;
+        lineStyle(
+            thickness?: number,
+            color?: number,
+            alpha?: number,
+            caps?: string,
+            joints?: string,
+            miterLimit?: number,
+            lineDash?: number[]
+        ): StrokePath;
         /**
          * 清空所有缓存的绘制数据
          */
@@ -10355,7 +10771,16 @@ declare namespace egret.sys {
         /**
          * 绘制一次位图
          */
-        drawMesh(sourceX: number, sourceY: number, sourceW: number, sourceH: number, drawX: number, drawY: number, drawW: number, drawH: number): void;
+        drawMesh(
+            sourceX: number,
+            sourceY: number,
+            sourceW: number,
+            sourceH: number,
+            drawX: number,
+            drawY: number,
+            drawW: number,
+            drawH: number
+        ): void;
         /**
          * 在显示对象的$updateRenderNode()方法被调用前，自动清空自身的drawData数据。
          */
@@ -10400,7 +10825,16 @@ declare namespace egret.sys {
         /**
          * 绘制一次位图
          */
-        drawImage(sourceX: number, sourceY: number, sourceW: number, sourceH: number, drawX: number, drawY: number, drawW: number, drawH: number): void;
+        drawImage(
+            sourceX: number,
+            sourceY: number,
+            sourceW: number,
+            sourceH: number,
+            drawX: number,
+            drawY: number,
+            drawW: number,
+            drawH: number
+        ): void;
         /**
          * 在显示对象的$updateRenderNode()方法被调用前，自动清空自身的drawData数据。
          */
@@ -10484,7 +10918,12 @@ declare namespace egret {
          * @param threeDExpected provision for indicating that data should be a 3D texture, not implemented
          * @param textureArrayExpected provision for indicating that data should be a texture array, not implemented
          */
-        constructor(/** contents of the KTX container file */ arrayBuffer: any, facesExpected: number, threeDExpected?: boolean, textureArrayExpected?: boolean);
+        constructor(
+            /** contents of the KTX container file */ arrayBuffer: any,
+            facesExpected: number,
+            threeDExpected?: boolean,
+            textureArrayExpected?: boolean
+        );
         /**
          * Uploads KTX content to a Babylon Texture.
          * It is assumed that the texture has already been created & is currently bound
@@ -10716,7 +11155,12 @@ interface CanvasRenderingContext2D {
 declare namespace egret {
     class CanvasRenderer {
         private nestLevel;
-        render(displayObject: DisplayObject, buffer: sys.RenderBuffer, matrix: Matrix, forRenderTexture?: boolean): number;
+        render(
+            displayObject: DisplayObject,
+            buffer: sys.RenderBuffer,
+            matrix: Matrix,
+            forRenderTexture?: boolean
+        ): number;
         /**
          * @private
          * 绘制一个显示对象
@@ -10737,7 +11181,23 @@ declare namespace egret {
         private renderNormalBitmap(node, context);
         private renderBitmap(node, context);
         private renderMesh(node, context);
-        private drawMesh(image, sourceX, sourceY, sourceWidth, sourceHeight, offsetX, offsetY, destWidth, destHeight, meshUVs, meshVertices, meshIndices, bounds, rotated, context);
+        private drawMesh(
+            image,
+            sourceX,
+            sourceY,
+            sourceWidth,
+            sourceHeight,
+            offsetX,
+            offsetY,
+            destWidth,
+            destHeight,
+            meshUVs,
+            meshVertices,
+            meshIndices,
+            bounds,
+            rotated,
+            context
+        );
         renderText(node: sys.TextNode, context: CanvasRenderingContext2D): void;
         private renderingMask;
         /**
@@ -11085,7 +11545,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        const WEB = "web";
+        const WEB = 'web';
         /**
          * Running on NATIVE
          * @version Egret 2.4
@@ -11100,7 +11560,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        const NATIVE = "native";
+        const NATIVE = 'native';
         /**
          * Running on Runtime2.0
          * @version Egret 5.1.5
@@ -11113,7 +11573,7 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        const RUNTIME2 = "runtime2";
+        const RUNTIME2 = 'runtime2';
         /**
          * Running on Alipay
          * @version Egret 5.2.33
@@ -11126,7 +11586,7 @@ declare namespace egret {
          * @platform All
          * @language zh_CN
          */
-        const MYGAME = "mygame";
+        const MYGAME = 'mygame';
         /**
          * Running on WeChat mini game
          * @version Egret 5.1.5
@@ -11139,7 +11599,7 @@ declare namespace egret {
          * @platform All
          * @language zh_CN
          */
-        const WXGAME = "wxgame";
+        const WXGAME = 'wxgame';
         /**
          * Running on Baidu mini game
          * @version Egret 5.2.13
@@ -11152,7 +11612,7 @@ declare namespace egret {
          * @platform All
          * @language zh_CN
          */
-        const BAIDUGAME = "baidugame";
+        const BAIDUGAME = 'baidugame';
         /**
          * Running on Xiaomi quick game
          * @version Egret 5.2.14
@@ -11165,7 +11625,7 @@ declare namespace egret {
          * @platform All
          * @language zh_CN
          */
-        const QGAME = "qgame";
+        const QGAME = 'qgame';
         /**
          * Running on OPPO mini game
          * @version Egret 5.2.14
@@ -11178,20 +11638,20 @@ declare namespace egret {
          * @platform All
          * @language zh_CN
          */
-        const OPPOGAME = "oppogame";
+        const OPPOGAME = 'oppogame';
         /**
-        * Running on QQ mini game
-        * @version Egret 5.2.25
-        * @platform All
-        * @language en_US
-        */
+         * Running on QQ mini game
+         * @version Egret 5.2.25
+         * @platform All
+         * @language en_US
+         */
         /**
-        * 运行在 QQ 小游戏上
-        * @version Egret 5.2.25
-        * @platform All
-        * @language zh_CN
-        */
-        const QQGAME = "qqgame";
+         * 运行在 QQ 小游戏上
+         * @version Egret 5.2.25
+         * @platform All
+         * @language zh_CN
+         */
+        const QQGAME = 'qqgame';
         /**
          * Running on vivo mini game
          * @version Egret 5.2.23
@@ -11199,12 +11659,12 @@ declare namespace egret {
          * @language en_US
          */
         /**
-        * 运行在 vivo 小游戏上
-        * @version Egret 5.2.23
-        * @platform All
-        * @language zh_CN
-        */
-        const VIVOGAME = "vivogame";
+         * 运行在 vivo 小游戏上
+         * @version Egret 5.2.23
+         * @platform All
+         * @language zh_CN
+         */
+        const VIVOGAME = 'vivogame';
         /**
          * Running on 360 mini game
          * @version Egret 5.3.5
@@ -11212,12 +11672,12 @@ declare namespace egret {
          * @language en_US
          */
         /**
-        * 运行在 360 小游戏上
-        * @version Egret 5.3.5
-        * @platform All
-        * @language zh_CN
-        */
-        const QHGAME = "qhgame";
+         * 运行在 360 小游戏上
+         * @version Egret 5.3.5
+         * @platform All
+         * @language zh_CN
+         */
+        const QHGAME = 'qhgame';
         /**
          * Running on bytedance mini game
          * @version Egret 5.3.8
@@ -11225,12 +11685,12 @@ declare namespace egret {
          * @language en_US
          */
         /**
-        * 运行在字节跳动小游戏上
-        * @version Egret 5.3.8
-        * @platform All
-        * @language zh_CN
-        */
-        const TTGAME = "ttgame";
+         * 运行在字节跳动小游戏上
+         * @version Egret 5.3.8
+         * @platform All
+         * @language zh_CN
+         */
+        const TTGAME = 'ttgame';
         /**
          * Running on huawei fastgame
          * @version Egret 5.3.9
@@ -11238,25 +11698,25 @@ declare namespace egret {
          * @language en_US
          */
         /**
-        * 运行在华为快游戏上
-        * @version Egret 5.3.9
-        * @platform All
-        * @language zh_CN
-        */
-        const FASTGAME = "fastgame";
+         * 运行在华为快游戏上
+         * @version Egret 5.3.9
+         * @platform All
+         * @language zh_CN
+         */
+        const FASTGAME = 'fastgame';
         /**
-        * Running on taobao creative app
-        * @version Egret 5.3.10
-        * @platform All
-        * @language en_US
-        */
+         * Running on taobao creative app
+         * @version Egret 5.3.10
+         * @platform All
+         * @language en_US
+         */
         /**
-        * 运行在淘宝创意互动上
-        * @version Egret 5.3.10
-        * @platform All
-        * @language zh_CN
-        */
-        const TBCREATIVEAPP = "tbcreativeapp";
+         * 运行在淘宝创意互动上
+         * @version Egret 5.3.10
+         * @platform All
+         * @language zh_CN
+         */
+        const TBCREATIVEAPP = 'tbcreativeapp';
     }
     interface SupportedCompressedTexture {
         pvrtc: boolean;
@@ -12703,7 +13163,7 @@ declare namespace egret.sys {
         /**
          * @private
          */
-        textLinesChangedForNativeRender = 38,
+        textLinesChangedForNativeRender = 38
     }
 }
 declare namespace egret {
@@ -13249,14 +13709,14 @@ declare namespace egret {
         $setMultiline(value: boolean): boolean;
         /**
          * Indicates a user can enter into the text field character set. If you restrict property is null, you can enter any character. If you restrict property is an empty string, you can not enter any character. If you restrict property is a string of characters, you can enter only characters in the string in the text field. The string is scanned from left to right. You can use a hyphen (-) to specify a range. Only restricts user interaction; a script may put any text into the text field. <br/>
-                  * If the string of characters caret (^) at the beginning, all characters are initially accepted, then the string are excluded from receiving ^ character. If the string does not begin with a caret (^) to, any characters are initially accepted and then a string of characters included in the set of accepted characters. <br/>
-                  * The following example allows only uppercase characters, spaces, and numbers in the text field: <br/>
-                  * My_txt.restrict = "A-Z 0-9"; <br/>
-                  * The following example includes all characters except lowercase letters: <br/>
-                  * My_txt.restrict = "^ a-z"; <br/>
-                  * If you need to enter characters \ ^, use two backslash "\\ -" "\\ ^": <br/>
-                  * Can be used anywhere in the string ^ to rule out including characters and switch between characters, but can only be used to exclude a ^. The following code includes only uppercase letters except uppercase Q: <br/>
-                  * My_txt.restrict = "A-Z ^ Q"; <br/>
+         * If the string of characters caret (^) at the beginning, all characters are initially accepted, then the string are excluded from receiving ^ character. If the string does not begin with a caret (^) to, any characters are initially accepted and then a string of characters included in the set of accepted characters. <br/>
+         * The following example allows only uppercase characters, spaces, and numbers in the text field: <br/>
+         * My_txt.restrict = "A-Z 0-9"; <br/>
+         * The following example includes all characters except lowercase letters: <br/>
+         * My_txt.restrict = "^ a-z"; <br/>
+         * If you need to enter characters \ ^, use two backslash "\\ -" "\\ ^": <br/>
+         * Can be used anywhere in the string ^ to rule out including characters and switch between characters, but can only be used to exclude a ^. The following code includes only uppercase letters except uppercase Q: <br/>
+         * My_txt.restrict = "A-Z ^ Q"; <br/>
          * @version Egret 2.4
          * @platform Web,Native
          * @default null
@@ -13537,9 +13997,27 @@ declare namespace egret {
         private onTapHandler(e);
     }
     interface TextField {
-        addEventListener<Z>(type: "link", listener: (this: Z, e: TextEvent) => void, thisObject: Z, useCapture?: boolean, priority?: number): any;
-        addEventListener<Z>(type: "focusIn" | "focusOut", listener: (this: Z, e: FocusEvent) => void, thisObject: Z, useCapture?: boolean, priority?: number): any;
-        addEventListener(type: string, listener: Function, thisObject: any, useCapture?: boolean, priority?: number): any;
+        addEventListener<Z>(
+            type: 'link',
+            listener: (this: Z, e: TextEvent) => void,
+            thisObject: Z,
+            useCapture?: boolean,
+            priority?: number
+        ): any;
+        addEventListener<Z>(
+            type: 'focusIn' | 'focusOut',
+            listener: (this: Z, e: FocusEvent) => void,
+            thisObject: Z,
+            useCapture?: boolean,
+            priority?: number
+        ): any;
+        addEventListener(
+            type: string,
+            listener: Function,
+            thisObject: any,
+            useCapture?: boolean,
+            priority?: number
+        ): any;
     }
 }
 declare namespace egret {
@@ -13806,12 +14284,12 @@ declare namespace egret {
 }
 declare namespace egret {
     /**
-    * @language en_US
-    * The Base64Util class provides methods for encoding and decoding base64.
-    * @version Egret 2.4
-    * @platform Web,Native
-    * @includeExample egret/utils/Base64Util.ts
-    */
+     * @language en_US
+     * The Base64Util class provides methods for encoding and decoding base64.
+     * @version Egret 2.4
+     * @platform Web,Native
+     * @includeExample egret/utils/Base64Util.ts
+     */
     /**
      * @language zh_CN
      * Base64Util 类提供用于编解码base64的方法。
@@ -13905,7 +14383,7 @@ declare namespace egret {
     }
     const enum EndianConst {
         LITTLE_ENDIAN = 0,
-        BIG_ENDIAN = 1,
+        BIG_ENDIAN = 1
     }
     /**
      * The ByteArray class provides methods and attributes for optimized reading and writing as well as dealing with binary data.
@@ -14011,8 +14489,8 @@ declare namespace egret {
         position: number;
         /**
          * The length of the ByteArray object (in bytes).
-                  * If the length is set to be larger than the current length, the right-side zero padding byte array.
-                  * If the length is set smaller than the current length, the byte array is truncated.
+         * If the length is set to be larger than the current length, the right-side zero padding byte array.
+         * If the length is set smaller than the current length, the byte array is truncated.
          * @version Egret 2.4
          * @platform Web,Native
          * @language en_US

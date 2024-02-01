@@ -1,14 +1,12 @@
 {
-  "name": "sea-core",
-  "description": "SeerH5-Assistant SEA 核心库",
+  "name": "@sea/core",
+  "description": "SEA 核心",
   "type": "module",
-  "version": "0.8.1",
+  "version": "1.0.0-rc.1",
   "license": "MPL-2.0",
   "private": true,
   "exports": {
     ".": "./dist/index.js",
-    "./constant": "./dist/constant/index.js",
-    "./entity": "./dist/entity/index.js",
     "./types/seerh5": {
       "types": "./types/@seerh5/index.d.ts"
     },
@@ -18,6 +16,14 @@
   },
   "browser": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --build",
+    "watch": "tsc --watch",
+    "clean": "rimraf ./dist && rimraf ../../.tsbuildinfo/core.tsbuildinfo",
+    "format": "prettier . --write",
+    "lint": "eslint . --ext .ts --fix",
+    "test": "vitest"
+  },
   "files": [
     "dist",
     "types",
@@ -25,23 +31,15 @@
     "battle",
     "common",
     "constant",
-    "engine",
-    "data-source",
+    "internal",
+    "event-source",
     "entity",
-    "pet-helper",
-    "level",
-    "loader"
+    "pet-helper"
   ],
-  "scripts": {
-    "build": "tsc --build",
-    "watch": "tsc --watch",
-    "clean": "rimraf ./dist && rimraf ../../.tsbuildinfo/core.tsbuildinfo",
-    "lint": "eslint --fix . && tsc --noEmit",
-    "test": "vite --config ./test/vite.config.ts"
-  },
   "devDependencies": {
-    "@types/chai": "^4.3.5",
-    "@types/mocha": "^10.0.1"
+    "@vitest/coverage-v8": "^1.1.0",
+    "happy-dom": "^12.10.3",
+    "vitest": "^1.1.0"
   },
   "dependencies": {
     "rxjs": "^7.8.1"

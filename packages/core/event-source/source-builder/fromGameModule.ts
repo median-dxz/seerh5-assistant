@@ -1,6 +1,6 @@
 import { filter, map } from 'rxjs';
-import { type GameModuleMap } from '../../constant/types.js';
-import { Engine } from '../../engine/index.js';
+import { type GameModuleMap } from '../../constant/TypeMaps.js';
+import { engine } from '../../internal/index.js';
 import { SEAEventSource } from '../EventSource.js';
 import { $hook } from './fromHook.js';
 
@@ -22,7 +22,7 @@ const $fromGameModule = {
     mainPanel<TModule extends string>(module: TModule) {
         return $hook('module:openMainPanel').pipe(
             filter(({ module: _module }) => _module === module),
-            map(() => Engine.inferCurrentModule<GameModuleMap[TModule]>())
+            map(() => engine.inferCurrentModule<GameModuleMap[TModule]>())
         );
     },
     destroy<TModule extends string>(module: TModule) {
@@ -30,7 +30,7 @@ const $fromGameModule = {
             filter((_module) => _module === module),
             map(() => undefined)
         );
-    },
+    }
 };
 
 export function fromGameModule(module: string, event: ModuleEvent): SEAEventSource<unknown>;

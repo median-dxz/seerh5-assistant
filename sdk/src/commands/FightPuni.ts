@@ -1,21 +1,22 @@
-import { Engine } from 'sea-core';
+import { engine } from '@sea/core';
+import type { Command, CreateModContext, ModExport } from '@sea/launcher';
 import Icon from './all_inclusive.svg?raw';
 
-export default async function FightPuni(createContext: SEAL.createModContext) {
+export default async function FightPuni(createContext: CreateModContext) {
     const { meta } = await createContext({
         meta: {
             id: '对战谱尼',
             scope: 'median',
-            core: '0.8.1',
+            core: '1.0.0-rc.1',
         },
     });
 
-    const FightPuni: SEAL.Command = {
+    const FightPuni: Command = {
         name: 'FightPuni',
         icon: Icon,
         description: '对战谱尼',
         handler() {
-            Engine.fightBoss(6730);
+            engine.fightBoss(6730);
         },
     };
 
@@ -24,5 +25,5 @@ export default async function FightPuni(createContext: SEAL.createModContext) {
         exports: {
             command: [FightPuni],
         },
-    } satisfies SEAL.ModExport;
+    } satisfies ModExport;
 }

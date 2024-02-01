@@ -1,3 +1,5 @@
+import type { CreateModContext, ModExport } from '@sea/launcher';
+
 import { daily } from './daily';
 import { teamSign } from './team';
 import { teamDispatch } from './team-dispatch';
@@ -13,20 +15,15 @@ const EXCHANGE_LIST = {
         特攻珠: 4,
         攻击珠: 3,
     },
-    vip点数: {
-        特性重组剂: 1,
-        体力上限药: 3,
-        上等体力药剂: 4,
-    },
 };
 
-export default async function Sign(createContext: SEAL.createModContext) {
+export default async function Sign(createContext: CreateModContext) {
     const { meta, config, logger } = await createContext({
         meta: {
             id: 'sign',
             scope: 'median',
             description: '日常签到',
-            core: '0.8.1',
+            core: '1.0.0-rc.1',
         },
         defaultConfig: {
             teamDispatch: {
@@ -35,9 +32,6 @@ export default async function Sign(createContext: SEAL.createModContext) {
             team: {
                 exchangeId: 10,
             },
-            vip: {
-                exchangeId: 3,
-            },
             ...EXCHANGE_LIST,
         },
     });
@@ -45,12 +39,12 @@ export default async function Sign(createContext: SEAL.createModContext) {
     return {
         meta,
         exports: {
-            sign: [
+            task: [
                 ...daily,
                 teamDispatch(config.teamDispatch.ignorePets, logger),
                 ...teamSign(config.team.exchangeId),
-                ...vip(config.vip.exchangeId),
+                ...vip(),
             ],
         },
-    } satisfies SEAL.ModExport;
+    } satisfies ModExport;
 }

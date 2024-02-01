@@ -1,12 +1,11 @@
 import { MOD_SCOPE_DEFAULT } from '@/constants';
+import type { CreateContextOptions, ModContext, ModMeta } from '@/sea-launcher';
 import * as endpoints from '@/service/endpoints';
 import * as ctStore from '@/service/store/CatchTimeBinding';
 import { store as battleStore } from '@/service/store/battle';
 import { CommonLogger, LogStyle } from '@/utils/logger';
 
 type ProxyObjectRef<T extends object> = T & { ref: T };
-type Meta = SEAL.Meta;
-type CreateContextOptions = SEAL.CreateContextOptions<unknown>;
 
 function createProxyObjectRef<T extends object>(initValue: T) {
     const observable = {
@@ -35,16 +34,16 @@ function createProxyObjectRef<T extends object>(initValue: T) {
 
 const getLogger = (id: string) => CommonLogger(id, 'info', LogStyle.mod);
 
-export function buildMeta(meta: Partial<Meta>) {
+export function buildMeta(meta: Partial<ModMeta>) {
     let { scope, version } = meta;
 
     scope = scope ?? MOD_SCOPE_DEFAULT;
     version = version ?? '0.0.0';
 
-    return { ...meta, scope, version } as Meta;
+    return { ...meta, scope, version } as ModMeta;
 }
 
-export function getNamespace(meta: Meta) {
+export function getNamespace(meta: ModMeta) {
     const { scope, id } = meta;
     return `${scope}::${id}`;
 }
@@ -71,7 +70,7 @@ async function buildConfig({ scope, id }: { id: string; scope: string }, default
     return {};
 }
 
-export async function createModContext(options: CreateContextOptions) {
+export async function createModContext(options: CreateContextOptions<unknown>) {
     const ct = (...pets: string[]) => {
         const r = pets.map((pet) => ctStore.ctByName(pet));
         if (r.some((v) => v === undefined)) {
@@ -94,5 +93,5 @@ export async function createModContext(options: CreateContextOptions) {
     const logger = getLogger(meta.id);
     const config = await buildConfig(meta, options.defaultConfig);
 
-    return { meta, logger, ct, battle, ...config } as SEAL.ModContext<unknown>;
+    return { meta, logger, ct, battle, ...config } as ModContext<unknown>;
 }

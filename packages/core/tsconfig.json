@@ -1,33 +1,30 @@
 {
-    "extends": "../../tsconfig.json",
-    "compilerOptions": {
-        "module": "NodeNext",
-        "target": "es2022",
-        "outDir": "dist",
-        "rootDir": ".",
-        "baseUrl": ".",
-        "tsBuildInfoFile": "../../.tsbuildinfo/core.tsbuildinfo",
-        "declaration": true,
-        "inlineSourceMap": true,
-        "declarationMap": true,
-        "incremental": true,
-        "composite": true,
-        // "skipLibCheck": false,
-        "types": []
-    },
-    "include": [
-        "./types",
-        "./battle",
-        "./common",
-        "./constant",
-        "./engine",
-        "./entity",
-        "./event-source",
-        "./functions",
-        "./loader",
-        "./pet-helper",
-        "./level",
-        "index.ts",
-        "package.json"
-    ],
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "target": "es2022",
+    "outDir": "dist",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "tsBuildInfoFile": "../../.tsbuildinfo/core.tsbuildinfo",
+    "declaration": true,
+    "inlineSourceMap": true,
+    "declarationMap": true,
+    "incremental": true,
+    "composite": true,
+    // "skipLibCheck": false,
+    "types": []
+  },
+  "include": [
+    "./types",
+    "./battle",
+    "./common",
+    "./constant",
+    "./entity",
+    "./event-source",
+    "./internal",
+    "./pet-helper",
+    "index.ts",
+    "package.json"
+  ]
 }

@@ -399,8 +399,8 @@ declare namespace egret {
      * @version Egret 2.4
      * @platform Web,Native
      * @includeExample egret/media/Sound.ts
-    * @language zh_CN
-    */
+     * @language zh_CN
+     */
     interface SoundChannel extends IEventDispatcher {
         /**
          * The volume, ranging from 0 (silent) to 1 (full volume).

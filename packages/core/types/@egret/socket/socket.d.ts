@@ -54,7 +54,13 @@ declare namespace egret {
          * @platform Web,Native
          * @language zh_CN
          */
-        addCallBacks(onConnect: Function, onClose: Function, onSocketData: Function, onError: Function, thisObject: any): void;
+        addCallBacks(
+            onConnect: Function,
+            onClose: Function,
+            onSocketData: Function,
+            onError: Function,
+            thisObject: any
+        ): void;
         /**
          *
          * @param message
@@ -389,7 +395,7 @@ declare namespace egret {
          * @language zh_CN
          */
         type: string;
-        static URI: "ws://" | "wss://";
+        static URI: 'ws://' | 'wss://';
     }
 }
 declare namespace egret.web {
@@ -404,7 +410,13 @@ declare namespace egret.web {
         private onSocketData;
         private onError;
         private thisObject;
-        addCallBacks(onConnect: Function, onClose: Function, onSocketData: Function, onError: Function, thisObject: any): void;
+        addCallBacks(
+            onConnect: Function,
+            onClose: Function,
+            onSocketData: Function,
+            onError: Function,
+            thisObject: any
+        ): void;
         private host;
         private port;
         connect(host: string, port?: number): void;

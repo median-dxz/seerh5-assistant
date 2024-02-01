@@ -2,23 +2,23 @@ import { PanelField, useIndex, useRowData } from '@/components/PanelTable';
 import { PanelTable, type PanelColumns } from '@/components/PanelTable/PanelTable';
 import { SeaTableRow } from '@/components/styled/TableRow';
 import * as endpoints from '@/service/endpoints';
-import { theme } from '@/style';
 
-import { Box, Button, CircularProgress, Typography, alpha } from '@mui/material';
+import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import { produce } from 'immer';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import useSWR from 'swr';
 
 import {
     LevelAction,
     type PetFragmentLevelDifficulty as Difficulty,
     type ILevelBattle,
-    type PetFragmentLevel
-} from 'sea-core';
+    type PetFragmentLevel,
+} from '@sea/core';
 
-import { useLevelScheduler } from '@/context/useLevelScheduler';
 import { useMainState } from '@/context/useMainState';
 import { useModStore } from '@/context/useModStore';
+import { useTaskScheduler } from '@/context/useTaskScheduler';
+import type { TaskRunner } from '@/sea-launcher';
 import { store } from '@/service/store/battle';
 
 export interface PetFragmentOption {
@@ -36,7 +36,7 @@ export interface IPetFragmentRunner {
     option: PetFragmentOption;
 }
 
-type RunnerInstance = IPetFragmentRunner & SEAL.LevelRunner;
+type RunnerInstance = IPetFragmentRunner & TaskRunner;
 
 const loadOption = async (option: PetFragmentOptionRaw) => {
     return {
@@ -52,7 +52,7 @@ const loadOption = async (option: PetFragmentOptionRaw) => {
 };
 
 export function PetFragmentLevelPanel() {
-    const { levelStore } = useModStore();
+    const { taskStore: levelStore } = useModStore();
 
     const PetFragmentRunner = levelStore.get('PetFragmentLevel')!;
     const [taskCompleted, setTaskCompleted] = React.useState<Array<boolean>>([]);
@@ -64,25 +64,22 @@ export function PetFragmentLevelPanel() {
     } = useSWR('ds://configs/level/petFragment', async () => {
         const allConfig = await endpoints.getPetFragmentConfig();
         const options = await Promise.all(allConfig.map(loadOption));
-        return options.map((option) => new PetFragmentRunner.level(option) as RunnerInstance);
+        return options.map((option) => new PetFragmentRunner.task(option) as RunnerInstance);
     });
 
     rows.forEach((runner, index) => {
-        const levelUpdater = runner.update.bind(runner);
-        runner.update = async () => {
-            const r = await levelUpdater();
-            setTaskCompleted(
-                produce((draft) => {
-                    draft[index] = r === LevelAction.STOP;
-                })
-            );
-            return r;
-        };
+        runner.next = new Proxy(runner.next.bind(runner), {
+            apply(target, thisArg, argArray) {
+                const r = Reflect.apply(target, thisArg, argArray);
+                setTaskCompleted(
+                    produce((draft) => {
+                        draft[index] = r === LevelAction.STOP;
+                    })
+                );
+                return r;
+            },
+        });
     });
-
-    React.useEffect(() => {
-        rows.forEach((level) => level.update());
-    }, [rows]);
 
     const col: PanelColumns = React.useMemo(
         () => [
@@ -140,17 +137,17 @@ interface PanelRowProps {
 
 const PanelRow = React.memo(({ taskCompleted }: PanelRowProps) => {
     const { setOpen } = useMainState();
-    const { enqueue } = useLevelScheduler();
+    const { enqueue } = useTaskScheduler();
     const runner = useRowData<RunnerInstance>();
     const index = useIndex();
     const completed = taskCompleted[index];
 
+    useEffect(() => {
+        runner.update().then(() => runner.next());
+    }, [runner]);
+
     return (
-        <SeaTableRow
-            sx={{
-                backgroundColor: completed ? `${alpha(theme.palette.primary.main, 0.18)}` : 'transparent',
-            }}
-        >
+        <SeaTableRow>
             <PanelField field="name">{runner.frag.name}</PanelField>
             <PanelField field="state">
                 <Typography color={completed ? '#eeff41' : 'inherited'}>{completed ? '已完成' : '未完成'}</Typography>
@@ -161,6 +158,7 @@ const PanelRow = React.memo(({ taskCompleted }: PanelRowProps) => {
                     onClick={() => {
                         enqueue(runner);
                     }}
+                    disabled={completed}
                 >
                     启动
                 </Button>

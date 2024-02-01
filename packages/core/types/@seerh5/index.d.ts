@@ -224,12 +224,11 @@ declare global {
         static readonly CHANGE_PET: 'changePet';
         constructor(type: string, obj?: any);
     }
-    
+
     class UserInfoEvent extends egret.Event {
         static readonly EVENT_CHANGE_TITLE: 'event_change_title';
         static readonly EVENT_CHANGE_CLOTHERS: 'event_change_clothers';
     }
 }
 
-export { };
-
+export {};

@@ -1,3 +1,4 @@
+import type { SkillType } from '../constant/index.js';
 import { EntityBase, type EntityType } from './EntityBase.js';
 import { PetElement } from './PetElement.js';
 
@@ -9,7 +10,7 @@ export class Skill extends EntityBase {
     readonly name: string;
     readonly __type: EntityType = 'Skill';
     element: PetElement;
-    category: number;
+    category: SkillType;
     power: number;
     priority: number;
     accuracy: number;
@@ -35,7 +36,7 @@ export class Skill extends EntityBase {
             this.pp,
             this.maxPP,
             tempEffects,
-            this.mustHit,
+            this.mustHit
         ] = [
             obj.ID,
             obj.Name,
@@ -47,7 +48,7 @@ export class Skill extends EntityBase {
             obj.pp ?? 0,
             obj.MaxPP,
             [obj.SideEffect, obj.SideEffectArg],
-            Boolean(obj.MustHit),
+            Boolean(obj.MustHit)
         ];
         const argSplit = (arg: SkillEffectArgs) => {
             if (typeof arg === 'string') {
@@ -90,5 +91,11 @@ export class Skill extends EntityBase {
 
     get categoryName() {
         return SkillXMLInfo.getCategoryName(this.id);
+    }
+
+    get isFifth() {
+        return Object.values(SkillXMLInfo.hideMovesMap)
+            .flat()
+            .find((v) => v.id === this.id);
     }
 }

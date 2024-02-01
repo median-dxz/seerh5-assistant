@@ -1,31 +1,35 @@
-/* eslint-disable */
-export type AnyFunction = (...args: any[]) => unknown;
-export type Constructor<T extends new (...args: any) => unknown> = { new (...args: any[]): InstanceType<T> };
-export type ValueOf<T> = T[keyof T];
-export type Handler<T> = (data: T) => void;
-export type withClass<T> = T & { __class__: string };
+import { getLogger as logger } from './log.js';
 
-class HookedSymbol {
+/* eslint-disable */
+export type AnyFunction = (...args: any[]) => any;
+export type Constructor<T> = { new (...args: any[]): T };
+export type ValueOf<T> = T[keyof T];
+export type WithClass<T> = T & { __class__: string };
+export const NOOP = () => {};
+
+export class HookedSymbol {
     static readonly original = Symbol('originalFunction');
     static readonly before = Symbol('beforeDecorators');
     static readonly after = Symbol('afterDecorators');
 }
 
+/** 延时 */
 export function delay(time: number): Promise<void> {
     return new Promise((resolver) => setTimeout(resolver, time));
 }
-
-export function debounce<F extends AnyFunction>(func: F, wait: number) {
+/** 去抖 所有小于指定间隔的调用只会响应最后一个 */
+export function debounce<F extends AnyFunction>(func: F, time: number) {
     let timer: number | undefined;
     return function (this: unknown, ...args: Parameters<F>) {
         timer && clearTimeout(timer);
         timer = window.setTimeout(() => {
             func.apply(this, args);
-        }, wait);
+        }, time);
     };
 }
 
-export function throttle<F extends AnyFunction>(func: F, wait: number) {
+/** 节流 所有小于指定间隔的调用只会响应第一个 */
+export function throttle<F extends AnyFunction>(func: F, time: number) {
     let timer: number | undefined;
     return function (this: unknown, ...args: Parameters<F>) {
         if (timer) return;
@@ -33,7 +37,7 @@ export function throttle<F extends AnyFunction>(func: F, wait: number) {
         timer = window.setTimeout(() => {
             clearTimeout(timer);
             timer = undefined;
-        }, wait);
+        }, time);
     };
 }
 
@@ -46,12 +50,12 @@ type AfterDecorator<F extends AnyFunction> = (
     ...args: Parameters<F>
 ) => void;
 
-interface HookedFunction<F extends AnyFunction> {
+export interface HookedFunction<F extends AnyFunction> {
     (...args: Parameters<F>): ReturnType<F>;
     [HookedSymbol.original]: F;
 }
 
-interface WrappedFunction<F extends AnyFunction> extends HookedFunction<F> {
+export interface WrappedFunction<F extends AnyFunction> extends HookedFunction<F> {
     (...args: Parameters<F>): ReturnType<F>;
     [HookedSymbol.after]: AfterDecorator<F>[];
     [HookedSymbol.before]: BeforeDecorator<F>[];
@@ -73,20 +77,8 @@ export function assertIsWrappedFunction<F extends AnyFunction>(
     );
 }
 
-export function wrapper<F extends (...args: any) => any>(func: F | HookedFunction<F> | WrappedFunction<F>) {
+export function wrapper<F extends AnyFunction>(func: F | HookedFunction<F> | WrappedFunction<F>) {
     if (typeof func !== 'function') return undefined as never;
-
-    let originalFunc;
-
-    if (assertIsWrappedFunction(func)) {
-        return func;
-    }
-
-    if (assertIsHookedFunction(func)) {
-        originalFunc = func[HookedSymbol.original];
-    } else {
-        originalFunc = func;
-    }
 
     const createWrappedFunction = (
         originalFunction: F,
@@ -98,7 +90,7 @@ export function wrapper<F extends (...args: any) => any>(func: F | HookedFunctio
                 decorator.apply(this, args);
             });
 
-            const r = func.apply(this, args);
+            const r = originalFunction.apply(this, args);
 
             afterDecorators.forEach((decorator) => {
                 if (r instanceof Promise) {
@@ -111,8 +103,8 @@ export function wrapper<F extends (...args: any) => any>(func: F | HookedFunctio
         } as WrappedFunction<F>;
 
         wrapped[HookedSymbol.original] = originalFunction;
-        wrapped[HookedSymbol.after] = afterDecorators;
         wrapped[HookedSymbol.before] = beforeDecorators;
+        wrapped[HookedSymbol.after] = afterDecorators;
 
         wrapped.before = function (this: WrappedFunction<F>, decorator: BeforeDecorator<F>) {
             return createWrappedFunction(
@@ -133,30 +125,47 @@ export function wrapper<F extends (...args: any) => any>(func: F | HookedFunctio
         return wrapped;
     };
 
-    return createWrappedFunction(originalFunc, [], []);
+    if (assertIsWrappedFunction(func)) {
+        return createWrappedFunction(
+            func[HookedSymbol.original],
+            [...func[HookedSymbol.before]],
+            [...func[HookedSymbol.after]]
+        );
+    }
+
+    return createWrappedFunction(func as F, [], []);
 }
 
 type HookFunction<T extends object, K extends keyof T> = T[K] extends (...args: infer P) => infer R
     ? (this: T, originalFunc: (...args: P) => R, ...args: P) => R
     : never;
 
-export function hookFn<T extends object, K extends keyof T>(target: T, funcName: K, hookedFunc?: HookFunction<T, K>) {
+/**
+ * 就地修改函数实现
+ * @param target 目标函数的挂载对象
+ * @param funcName 目标函数的名称
+ * @param override 修改后的实现
+ */
+export function hookFn<T extends object, K extends keyof T>(target: T, funcName: K, override: HookFunction<T, K>) {
     let func = target[funcName] as AnyFunction;
     if (typeof func !== 'function') return;
 
     if (assertIsHookedFunction(func)) {
+        logger('hookFn').warn(`检测到对 ${String(funcName)} 的重复hook行为, 这可能导致冲突`);
+    }
+
+    while (assertIsHookedFunction(func)) {
         func = func[HookedSymbol.original];
     }
 
-    if (hookedFunc == undefined) return;
-
     (target[funcName] as any) = function (this: T, ...args: any[]): any {
-        return hookedFunc.call(this, func.bind(this), ...args);
+        return override.call(this, func.bind(this), ...args);
     };
 
     (target[funcName] as any)[HookedSymbol.original] = func;
 }
 
+/** 还原被修改的函数 */
 export function restoreHookedFn<T extends object, K extends keyof T>(target: T, funcName: K) {
     let func = target[funcName] as AnyFunction;
     if (typeof func !== 'function') return;
@@ -175,15 +184,20 @@ interface HasPrototype {
 export function hookPrototype<T extends HasPrototype, K extends keyof T['prototype']>(
     target: T,
     funcName: K,
-    hookedFunc?: HookFunction<T['prototype'], K>
+    override: HookFunction<T['prototype'], K>
 ) {
     const proto = target.prototype;
-    proto && hookFn(proto, funcName, hookedFunc);
+    proto && hookFn(proto, funcName, override);
 }
 
-export const NOOP = () => {};
-
-export { CacheData } from './CacheData.js';
-
-import { disable, enable, setLogger } from './log.js';
-export const LogControl = { disable, enable, setLogger };
+export function experiment_hookConstructor<TClass extends Constructor<any>>(
+    classType: TClass,
+    className: string,
+    override: (ins: InstanceType<TClass>, ...args: ConstructorParameters<TClass>) => void
+) {
+    hookFn(globalThis as any, className, (_, ...args) => {
+        const ins = new classType(...args);
+        override(ins, ...(args as ConstructorParameters<TClass>));
+        return ins;
+    });
+}

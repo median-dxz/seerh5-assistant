@@ -1,15 +1,27 @@
-export * from './common/utils.js';
-export * from './constant/index.js';
+export type { CoreLogEvent } from './common/log.js';
+export type { AnyFunction, Constructor, ValueOf, WithClass } from './common/utils.js';
 
 export * from './battle/index.js';
-export * from './engine/index.js';
+export {
+    NOOP,
+    assertIsHookedFunction,
+    assertIsWrappedFunction,
+    debounce,
+    delay,
+    experiment_hookConstructor,
+    hookFn,
+    hookPrototype,
+    restoreHookedFn,
+    throttle,
+    wrapper
+} from './common/utils.js';
+export * from './constant/index.js';
 export * from './entity/index.js';
 export * from './event-source/index.js';
-export * from './level/index.js';
+export * from './internal/index.js';
 export * from './pet-helper/index.js';
 
-export { CoreLoader } from './loader/index.js';
-export type { VERSION } from './loader/index.js';
+import type { SEAC } from './internal/core.js';
 
 declare global {
     interface Window {
@@ -18,10 +30,8 @@ declare global {
     }
 
     interface SEA {
-        /** SEA 全局单例标志位 */
-        CoreInstanceCreated: {
-            flag: boolean;
-        };
+        /** seac 全局单例 */
+        seac: SEAC;
         /** 游戏核心加载就绪标志位 */
         SeerH5Ready: boolean;
         /**  game core loaded event */

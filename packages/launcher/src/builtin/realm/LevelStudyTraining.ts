@@ -1,6 +1,7 @@
-import { LevelAction, Socket } from 'sea-core';
+import type { LevelMeta, LevelData as SEALevelData, TaskRunner } from '@/sea-launcher';
+import { LevelAction, socket } from '@sea/core';
 
-import type { AnyFunction, ILevelBattle, LevelMeta, LevelData as SEALevelData } from 'sea-core';
+import type { AnyFunction, ILevelBattle } from '@sea/core';
 
 interface LevelData extends SEALevelData {
     stimulation: boolean;
@@ -13,7 +14,7 @@ interface LevelOption {
 }
 
 export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => {
-    return class LevelStudyTraining implements SEAL.LevelRunner<LevelData> {
+    return class LevelStudyTraining implements TaskRunner<LevelData> {
         data: LevelData = {
             remainingTimes: 0,
             progress: 0,
@@ -40,27 +41,24 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
         constructor(public option: LevelOption) {}
 
         async update() {
-            this.logger(`${this.meta.name}: 更新关卡信息...`);
-            const bits = (await Socket.bitSet(637, 1000572)).map(Boolean);
-            const buf = await Socket.sendByQueue(42397, [115]);
+            const bits = (await socket.bitSet(637, 1000572)).map(Boolean);
+            const buf = await socket.sendByQueue(42397, [115]);
             const realmInfo = new DataView(buf!);
 
             this.data.stimulation = bits[0];
             this.data.rewardReceived = bits[1];
             this.data.remainingTimes = this.meta.maxTimes - realmInfo.getUint32(8);
+        }
 
+        next(): string {
             if (!this.data.rewardReceived) {
                 if (this.data.remainingTimes > 0) {
-                    this.logger(`${this.meta.name}: 进入关卡`);
                     return LevelAction.BATTLE;
                 } else {
-                    this.logger(`${this.meta.name}: 领取奖励`);
                     return LevelAction.AWARD;
                 }
-            } else {
-                this.logger(`${this.meta.name}日任完成`);
-                return LevelAction.STOP;
             }
+            return LevelAction.STOP;
         }
 
         selectLevelBattle() {
@@ -69,11 +67,11 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
         readonly actions: Record<string, () => Promise<void>> = {
             battle: async () => {
-                Socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [115, 6, 1]);
+                socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [115, 6, 1]);
             },
 
             award: async () => {
-                await Socket.sendByQueue(42395, [115, 3, 0, 0]);
+                await socket.sendByQueue(42395, [115, 3, 0, 0]);
             },
         };
     };

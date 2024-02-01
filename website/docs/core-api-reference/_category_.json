@@ -1,0 +1,8 @@
+{
+  "label": "SEAC 完全指南",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "查看SEAC提供的所有能力 (其实就是api参考)"
+  }
+}

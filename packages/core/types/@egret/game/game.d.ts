@@ -1513,11 +1513,11 @@ declare namespace egret {
 }
 declare namespace egret {
     /**
-    * @version Egret 2.4
-    * @platform Web,Native
-    * @includeExample extension/game/display/MovieClip.ts
-    * @language en_US
-    */
+     * @version Egret 2.4
+     * @platform Web,Native
+     * @includeExample extension/game/display/MovieClip.ts
+     * @language en_US
+     */
     /**
      * 影片剪辑，可以通过影片剪辑播放序列帧动画。MovieClip 类从以下类继承而来：DisplayObject 和 EventDispatcher。不同于 DisplayObject 对象，MovieClip 对象拥有一个时间轴。
      * @extends egret.DisplayObject
@@ -2136,11 +2136,11 @@ declare namespace egret {
 }
 declare namespace egret {
     /**
-    * @version Egret 2.4
-    * @platform Web,Native
-    * @includeExample extension/game/player/Ticker.ts
-    * @language en_US
-    */
+     * @version Egret 2.4
+     * @platform Web,Native
+     * @includeExample extension/game/player/Ticker.ts
+     * @language en_US
+     */
     /**
      * @version Egret 2.4
      * @platform Web,Native

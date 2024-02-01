@@ -1,7 +1,7 @@
 import { filter, map, zip, type Observable } from 'rxjs';
 import { type SocketResponseMap } from '../../constant/index.js';
+import { SocketDeserializerRegistry } from '../../internal/index.js';
 import { SEAEventSource } from '../EventSource.js';
-import { SocketDeserializerRegistry } from '../SocketDeserializerRegistry.js';
 import { $hook } from './fromHook.js';
 
 type SocketEvent = 'send' | 'receive' | undefined;
@@ -20,7 +20,7 @@ const $fromSocket = {
             map(({ buffer }) => buffer),
             map(SocketDeserializerRegistry.getDeserializer(cmd))
         );
-    },
+    }
 };
 
 export function $socket<TCmd extends CMD>(
@@ -51,10 +51,10 @@ export function $socket<TCmd extends CMD>(cmd: TCmd, event?: SocketEvent) {
 type InferFromSocketReturnType<TCmd extends CMD, Event extends SocketEvent | undefined> = Event extends 'send'
     ? seerh5.SocketRequestData
     : Event extends 'receive'
-    ? SocketResponseMap[TCmd]
-    : Event extends undefined
-    ? [seerh5.SocketRequestData, SocketResponseMap[TCmd]]
-    : never;
+      ? SocketResponseMap[TCmd]
+      : Event extends undefined
+        ? [seerh5.SocketRequestData, SocketResponseMap[TCmd]]
+        : never;
 
 export function fromSocket<TCmd extends CMD, TEvent extends SocketEvent = undefined>(cmd: TCmd, event?: TEvent) {
     return new SEAEventSource($socket(cmd, event) as Observable<InferFromSocketReturnType<TCmd, TEvent>>);

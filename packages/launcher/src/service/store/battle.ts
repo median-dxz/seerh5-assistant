@@ -1,5 +1,6 @@
-import type { ILevelBattle } from 'sea-core';
+import type { ILevelBattle } from '@sea/core';
 
+import type { Battle } from '@/sea-launcher';
 import { ctByName } from './CatchTimeBinding';
 import { store as strategyStore } from './strategy';
 
@@ -13,7 +14,7 @@ export interface BattleInstance {
 
 export const store = new Map<string, BattleInstance>();
 
-export function add(mod: string, _battle: SEAL.Battle) {
+export function add(mod: string, _battle: Battle) {
     const { name, pets, strategy: _strategy, beforeBattle } = _battle;
     const instance: BattleInstance = {
         battle: () => {

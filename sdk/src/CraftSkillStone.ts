@@ -1,4 +1,5 @@
-import { GameConfigRegistry, SEAEventSource, SEAPet, Socket, delay } from 'sea-core';
+import { GameConfigRegistry, SEAEventSource, delay, socket, spet } from '@sea/core';
+import type { Command, CreateModContext, ModExport } from '@sea/launcher';
 
 const rate = [
     [0, 24, 5.8, 1.4, 0.3],
@@ -11,13 +12,13 @@ function calcProbability(level: number, targetLevel: number) {
     return rate[level][targetLevel];
 }
 
-export default async function CraftSkillStone(createContext: SEAL.createModContext) {
+export default async function CraftSkillStone(createContext: CreateModContext) {
     const { meta, logger } = await createContext({
         meta: {
             id: 'CraftSkillStone',
             scope: 'median',
             version: '1.0.0',
-            core: '0.8.1',
+            core: '1.0.0-rc.1',
             description: 'misc',
         },
     });
@@ -26,7 +27,7 @@ export default async function CraftSkillStone(createContext: SEAL.createModConte
 
     const uninstall = () => {};
 
-    const resetNature: SEAL.Command = {
+    const resetNature: Command = {
         name: 'resetNature',
         description: '刷性格',
         async handler(_ct: string, _nature: string) {
@@ -34,7 +35,7 @@ export default async function CraftSkillStone(createContext: SEAL.createModConte
             const query = GameConfigRegistry.getQuery('nature');
 
             for (; ; await delay(200)) {
-                await SEAPet(ct).useItem(300070).done;
+                await spet(ct).useItem(300070).done;
                 const info = await PetManager.UpdateBagPetInfoAsynce(ct);
 
                 logger(`刷性格: 当前性格: ${query.getName(info.nature)}`);
@@ -57,7 +58,7 @@ export default async function CraftSkillStone(createContext: SEAL.createModConte
         },
     };
 
-    const craftOne: SEAL.Command = {
+    const craftOne: Command = {
         name: 'craftOne',
         async handler() {
             let stones: Array<{
@@ -108,7 +109,7 @@ export default async function CraftSkillStone(createContext: SEAL.createModConte
                 return;
             }
             console.log(getRate(), toCraft);
-            await Socket.sendByQueue(
+            await socket.sendByQueue(
                 CommandID.SKILL_STONE_COMPOSE_ITEM,
                 toCraft.map((v) => v.id)
             );
@@ -121,5 +122,5 @@ export default async function CraftSkillStone(createContext: SEAL.createModConte
         exports: { command: [resetNature, craftOne] },
         install,
         uninstall,
-    } satisfies SEAL.ModExport;
+    } satisfies ModExport;
 }

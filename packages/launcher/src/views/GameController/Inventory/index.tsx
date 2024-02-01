@@ -5,7 +5,7 @@ import { Selector } from './Selector';
 
 import { Paper } from '@/components/styled/Paper';
 import { DS } from '@/constants';
-import { Engine, GameConfigRegistry, SEAEventSource } from 'sea-core';
+import { GameConfigRegistry, SEAEventSource, engine } from '@sea/core';
 
 export function Inventory() {
     const equipmentQuery = GameConfigRegistry.getQuery('equipment');
@@ -68,11 +68,11 @@ export function Inventory() {
                     id="change-title"
                     label={'称号'}
                     dataKey={DS.multiValue.title}
-                    currentItemGetter={Engine.playerTitle}
+                    currentItemGetter={engine.playerTitle}
                     allItemGetter={getAllTitles}
                     descriptionGetter={titleDescription}
                     eventSource={changeTitleEventSource}
-                    mutate={Engine.changeTitle}
+                    mutate={engine.changeTitle}
                     nameGetter={titleQuery.getName}
                 />
                 <Divider />
@@ -80,11 +80,11 @@ export function Inventory() {
                     id="change-suit"
                     label={'套装'}
                     dataKey={DS.multiValue.suit}
-                    currentItemGetter={Engine.playerSuit}
-                    allItemGetter={Engine.playerAbilitySuits}
+                    currentItemGetter={engine.playerSuit}
+                    allItemGetter={engine.playerAbilitySuits}
                     descriptionGetter={suitDescription}
                     eventSource={changeClothesEventSource}
-                    mutate={Engine.changeSuit}
+                    mutate={engine.changeSuit}
                     nameGetter={suitQuery.getName}
                 />
                 <Divider />
@@ -104,10 +104,10 @@ export function Inventory() {
     );
 }
 
-const getAllTitles = () => Engine.playerAbilityTitles;
+const getAllTitles = () => engine.playerAbilityTitles;
 
 const suitDescription = (userSuit: number) => ItemSeXMLInfo.getSuitEff(userSuit);
 
 const changeEyeEquipment = (eyeEquipment: number) => {
-    Engine.changeEquipment('eye', eyeEquipment);
+    engine.changeEquipment('eye', eyeEquipment);
 };

@@ -393,10 +393,7 @@ declare namespace RES {
          * @platform Web,Native
          * @language zh_CN
          */
-        fetchVersion(callback: {
-            onSuccess: (data: any) => any;
-            onFail: (error: number, data: any) => any;
-        }): void;
+        fetchVersion(callback: { onSuccess: (data: any) => any; onFail: (error: number, data: any) => any }): void;
         /**
          * Get all changed files.<br/>
          * The main application in native scene. Changes here include new file, update file (the same file name, but changed files).<br/>
@@ -457,8 +454,7 @@ declare namespace RES {
      * @includeExample extension/version/VersionControl.ts
      * @language zh_CN
      */
-    interface VersionController extends IVersionController {
-    }
+    interface VersionController extends IVersionController {}
     /**
      * @version Egret 2.4
      * @platform Web,Native
@@ -969,7 +965,14 @@ declare namespace RES {
          * @param itemsTotal {number}
          * @private
          */
-        static dispatchResourceEvent(target: egret.IEventDispatcher, type: string, groupName?: string, resItem?: ResourceItem, itemsLoaded?: number, itemsTotal?: number): boolean;
+        static dispatchResourceEvent(
+            target: egret.IEventDispatcher,
+            type: string,
+            groupName?: string,
+            resItem?: ResourceItem,
+            itemsLoaded?: number,
+            itemsTotal?: number
+        ): boolean;
     }
 }
 declare namespace RES.web {
@@ -979,10 +982,7 @@ declare namespace RES.web {
     class Html5VersionController extends egret.EventDispatcher implements VersionController {
         constructor();
         private _versionInfo;
-        fetchVersion(callback: {
-            onSuccess: (data: any) => any;
-            onFail: (error: number, data: any) => any;
-        }): void;
+        fetchVersion(callback: { onSuccess: (data: any) => any; onFail: (error: number, data: any) => any }): void;
         /**
          * 获取所有有变化的文件
          * @returns {any[]}
@@ -1388,7 +1388,13 @@ declare namespace RES {
      * @platform Web,Native
      * @language zh_CN
      */
-    function addEventListener(type: string, listener: (event: egret.Event) => void, thisObject: any, useCapture?: boolean, priority?: number): void;
+    function addEventListener(
+        type: string,
+        listener: (event: egret.Event) => void,
+        thisObject: any,
+        useCapture?: boolean,
+        priority?: number
+    ): void;
     /**
      * Remove event listeners, reference ResourceEvent defined constants.
      * @param type Event name。
@@ -1409,7 +1415,12 @@ declare namespace RES {
      * @platform Web,Native
      * @language zh_CN
      */
-    function removeEventListener(type: string, listener: (event: egret.Event) => void, thisObject: any, useCapture?: boolean): void;
+    function removeEventListener(
+        type: string,
+        listener: (event: egret.Event) => void,
+        thisObject: any,
+        useCapture?: boolean
+    ): void;
     function $getVirtualUrl(url: any): any;
 }
 declare namespace RES {
@@ -1446,7 +1457,5 @@ declare namespace RES {
         private getImageLoader();
     }
 }
-declare namespace egret {
-}
-declare namespace egret {
-}
+declare namespace egret {}
+declare namespace egret {}

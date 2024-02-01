@@ -1103,7 +1103,7 @@ declare namespace eui.sys {
         invalidateDisplayListFlag = 26,
         layoutWidthExplicitlySet = 27,
         layoutHeightExplicitlySet = 28,
-        initialized = 29,
+        initialized = 29
     }
     /**
      * @private
@@ -2056,7 +2056,7 @@ declare namespace eui.sys {
         skinNameExplicitlySet = 5,
         explicitTouchChildren = 6,
         explicitTouchEnabled = 7,
-        skin = 8,
+        skin = 8
     }
 }
 declare namespace eui {
@@ -3403,7 +3403,7 @@ declare namespace eui.sys {
         valueChanged = 6,
         snapInterval = 7,
         snapIntervalChanged = 8,
-        explicitSnapInterval = 9,
+        explicitSnapInterval = 9
     }
 }
 declare namespace eui {
@@ -4054,7 +4054,7 @@ declare namespace eui.sys {
         /**
          * @private
          */
-        touchCancle = 8,
+        touchCancle = 8
     }
 }
 declare namespace eui {
@@ -4755,7 +4755,7 @@ declare namespace eui {
         slideDuration = 6,
         pendingValue = 7,
         slideToValue = 8,
-        liveDragging = 9,
+        liveDragging = 9
     }
     /**
      * The SliderBase class lets users select a value by moving a slider thumb between
@@ -5195,7 +5195,10 @@ declare namespace eui.sys {
          * @param codeText 执行的javascript代码
          * @param classStr 类名
          */
-        $parseCode(codeText: string, classStr: string): {
+        $parseCode(
+            codeText: string,
+            classStr: string
+        ): {
             new (): any;
         };
         /**
@@ -5982,7 +5985,12 @@ declare namespace eui {
          * @platform Web,Native
          * @language zh_CN
          */
-        protected flexChildrenProportionally(spaceForChildren: number, spaceToDistribute: number, totalPercent: number, childInfoArray: any[]): void;
+        protected flexChildrenProportionally(
+            spaceForChildren: number,
+            spaceToDistribute: number,
+            totalPercent: number,
+            childInfoArray: any[]
+        ): void;
     }
 }
 declare namespace eui.sys {
@@ -9205,7 +9213,7 @@ declare namespace eui.sys {
         maxHeight = 5,
         text = 6,
         restrict = 7,
-        inputType = 8,
+        inputType = 8
     }
 }
 declare namespace eui {
@@ -10531,7 +10539,7 @@ declare namespace eui.sys {
     const enum EditableTextKeys {
         promptText = 0,
         textColorUser = 1,
-        asPassword = 2,
+        asPassword = 2
     }
 }
 declare namespace eui {
@@ -10985,7 +10993,11 @@ declare namespace eui.sys {
          * 创建一个 TouchScroll 实例
          * @param updateFunction 滚动位置更新回调函数
          */
-        constructor(updateFunction: (scrollPos: number) => void, endFunction: () => void, target: egret.IEventDispatcher);
+        constructor(
+            updateFunction: (scrollPos: number) => void,
+            endFunction: () => void,
+            target: egret.IEventDispatcher
+        );
         /**
          * @private
          * 当前容器滚动外界可调节的系列
@@ -11735,7 +11747,16 @@ declare namespace eui {
          * @platform Web,Native
          * @language zh_CN
          */
-        constructor(type: string, bubbles?: boolean, cancelable?: boolean, kind?: string, location?: number, oldLocation?: number, items?: any[], oldItems?: any[]);
+        constructor(
+            type: string,
+            bubbles?: boolean,
+            cancelable?: boolean,
+            kind?: string,
+            location?: number,
+            oldLocation?: number,
+            items?: any[],
+            oldItems?: any[]
+        );
         /**
          * @private
          *
@@ -11895,7 +11916,15 @@ declare namespace eui {
          * @platform Web,Native
          * @language zh_CN
          */
-        static dispatchCollectionEvent(target: egret.IEventDispatcher, eventType: string, kind?: string, location?: number, oldLocation?: number, items?: any[], oldItems?: any[]): boolean;
+        static dispatchCollectionEvent(
+            target: egret.IEventDispatcher,
+            eventType: string,
+            kind?: string,
+            location?: number,
+            oldLocation?: number,
+            items?: any[],
+            oldItems?: any[]
+        ): boolean;
     }
 }
 declare namespace eui {
@@ -12127,7 +12156,11 @@ declare namespace eui {
          * @platform Web,Native
          * @language zh_CN
          */
-        static dispatchItemTapEvent(target: egret.IEventDispatcher, eventType: string, itemRenderer?: IItemRenderer): boolean;
+        static dispatchItemTapEvent(
+            target: egret.IEventDispatcher,
+            eventType: string,
+            itemRenderer?: IItemRenderer
+        ): boolean;
     }
 }
 declare namespace eui {
@@ -12408,7 +12441,12 @@ declare namespace eui {
          * @platform Web,Native
          * @language zh_CN
          */
-        static dispatchUIEvent(target: egret.IEventDispatcher, eventType: string, bubbles?: boolean, cancelable?: boolean): boolean;
+        static dispatchUIEvent(
+            target: egret.IEventDispatcher,
+            eventType: string,
+            bubbles?: boolean,
+            cancelable?: boolean
+        ): boolean;
     }
 }
 declare namespace eui.sys {
@@ -13229,11 +13267,21 @@ declare namespace EXML {
      * @platform Web,Native
      * @language zh_CN
      */
-    function load(url: string, callBack?: (clazz: any, url: string) => void, thisObject?: any, useCache?: boolean): void;
+    function load(
+        url: string,
+        callBack?: (clazz: any, url: string) => void,
+        thisObject?: any,
+        useCache?: boolean
+    ): void;
     /**
      * @private
      */
-    function $loadAll(urls: string[], callBack?: (clazz: any[], url: string[]) => void, thisObject?: any, useCache?: boolean): void;
+    function $loadAll(
+        urls: string[],
+        callBack?: (clazz: any[], url: string[]) => void,
+        thisObject?: any,
+        useCache?: boolean
+    ): void;
     function update(url: string, clazz: any): void;
     /**
      * @private
@@ -13289,10 +13337,8 @@ declare namespace eui.sys {
         getPropertyType(property: string, className: string): string;
     }
 }
-declare namespace eui {
-}
-declare namespace eui {
-}
+declare namespace eui {}
+declare namespace eui {}
 declare namespace eui {
     /**
      * The BasicLayout class arranges the layout elements according to their individual settings,
@@ -13379,7 +13425,11 @@ declare namespace eui.sys {
      * @private
      * 一个工具方法，使用BasicLayout规则布局目标对象。
      */
-    function updateDisplayList(target: eui.Group | eui.Component, unscaledWidth: number, unscaledHeight: number): egret.Point;
+    function updateDisplayList(
+        target: eui.Group | eui.Component,
+        unscaledWidth: number,
+        unscaledHeight: number
+    ): egret.Point;
 }
 declare namespace eui {
     /**
@@ -14611,7 +14661,7 @@ declare namespace eui.sys {
          * @private
          * 添加在相对对象之后
          */
-        AFTER = 3,
+        AFTER = 3
     }
 }
 declare namespace eui {
@@ -15045,6 +15095,18 @@ declare namespace eui.sys {
         /**
          * @private
          */
-        static fitBounds(width: number, height: number, matrix: egret.Matrix, explicitWidth: number, explicitHeight: number, preferredWidth: number, preferredHeight: number, minWidth: number, minHeight: number, maxWidth: number, maxHeight: number): egret.Point;
+        static fitBounds(
+            width: number,
+            height: number,
+            matrix: egret.Matrix,
+            explicitWidth: number,
+            explicitHeight: number,
+            preferredWidth: number,
+            preferredHeight: number,
+            minWidth: number,
+            minHeight: number,
+            maxWidth: number,
+            maxHeight: number
+        ): egret.Point;
     }
 }

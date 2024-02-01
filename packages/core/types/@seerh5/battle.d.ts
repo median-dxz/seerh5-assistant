@@ -71,7 +71,7 @@ declare global {
     enum panel_type {
         itemPanel = 2,
         petPanel = 1,
-        skillPanel = 0,
+        skillPanel = 0
     }
 
     class BaseControlPanel extends egret.EventDispatcher {}
@@ -115,5 +115,4 @@ declare global {
     }
 }
 
-export { };
-
+export {};

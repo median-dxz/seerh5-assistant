@@ -1,18 +1,19 @@
-import { Engine, Pet, SEAEventSource, Subscription, debounce, hookFn, hookPrototype } from 'sea-core';
+import { Pet, SEAEventSource, Subscription, debounce, engine, hookFn, hookPrototype } from '@sea/core';
+import type { CreateModContext, ModExport } from '@sea/launcher';
 
-declare module 'sea-core' {
+declare module '@sea/core' {
     interface GameModuleMap {
         petBag: petBag.PetBag;
     }
 }
 
-export default async function PetBag(createContext: SEAL.createModContext) {
+export default async function PetBag(createContext: CreateModContext) {
     const { meta, logger } = await createContext({
         meta: {
             id: 'petBag',
             scope: 'median',
             description: '精灵背包模块注入, 提供UI同步和本地皮肤功能的UI支持',
-            core: '0.8.1',
+            core: '1.0.0-rc.1',
         },
     });
 
@@ -33,7 +34,7 @@ export default async function PetBag(createContext: SEAL.createModContext) {
 
     const mainPanel = (ctx: petBag.PetBag) => {
         const panel = ctx.panelMap['petBag.MainPanel'] as petBag.MainPanel;
-        const listener = Engine.imageButtonListener(panel.btnIntoStorage);
+        const listener = engine.imageButtonListener(panel.btnIntoStorage);
         hookFn(listener, 'callback', function (f) {
             panel.beginPetInfo = panel.arrFirstPet[0].petInfo;
             f.call(listener);
@@ -73,5 +74,5 @@ export default async function PetBag(createContext: SEAL.createModContext) {
         meta,
         install,
         uninstall,
-    } satisfies SEAL.ModExport;
+    } satisfies ModExport;
 }

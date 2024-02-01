@@ -1,10 +1,6 @@
-import type {
-    AnyFunction,
-    ILevelBattle,
-    LevelData as SEALevelData,
-    LevelMeta as SEALevelMeta
-} from 'sea-core';
-import { LevelAction, Socket, delay } from 'sea-core';
+import type { LevelData as SEALevelData, LevelMeta as SEALevelMeta, TaskRunner } from '@/sea-launcher';
+import type { AnyFunction, ILevelBattle } from '@sea/core';
+import { LevelAction, delay, socket } from '@sea/core';
 
 interface LevelOption {
     stimulation: boolean;
@@ -26,7 +22,7 @@ interface LevelMeta extends SEALevelMeta {
 }
 
 export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => {
-    return class LevelTitanHole implements SEAL.LevelRunner<LevelData> {
+    return class LevelTitanHole implements TaskRunner<LevelData> {
         data: LevelData = {
             remainingTimes: 0,
             progress: 0,
@@ -57,8 +53,8 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
         constructor(public option: LevelOption) {}
 
         async update() {
-            const bits = await Socket.bitSet(640);
-            const values = await Socket.multiValue(18724, 18725, 18726, 18727);
+            const bits = await socket.bitSet(640);
+            const values = await socket.multiValue(18724, 18725, 18726, 18727);
 
             this.data.stimulation = bits[0];
 
@@ -67,9 +63,9 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             this.data.levelOpen = this.data.step > 0;
             this.data.step2Count = (values[2] >> 8) & 255;
             this.data.step3Count = values[3] & 255;
+        }
 
-            console.log(this.data);
-
+        next(): string {
             if (this.data.levelOpenCount < this.meta.maxTimes || this.data.levelOpen) {
                 if (!this.data.levelOpen) {
                     return 'open_level';
@@ -78,7 +74,6 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
                 }
                 return LevelAction.BATTLE;
             } else if (this.data.levelOpenCount === this.meta.maxTimes && !this.data.levelOpen) {
-                this.logger(`${this.meta.name}日任完成`);
                 return LevelAction.STOP;
             } else {
                 return LevelAction.AWARD;
@@ -95,7 +90,6 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
         readonly actions: Record<string, () => Promise<void>> = {
             mine_ores: async () => {
-                this.logger('开采矿石');
                 if (this.data.step3Count < 48) {
                     const i = this.data.step3Count + 1;
                     // eslint-disable-next-line prefer-const
@@ -106,20 +100,20 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
                     this.logger('dig', row, col, row * 11 + col);
 
                     // may throw error
-                    await Socket.sendByQueue(42395, [104, 2, row * 11 + col, 0]);
+                    await socket.sendByQueue(42395, [104, 2, row * 11 + col, 0]);
 
                     await delay(Math.random() * 100 + 200);
                 }
             },
             battle: async () => {
-                Socket.sendByQueue(42396, [104, 3, this.data.step]);
+                socket.sendByQueue(42396, [104, 3, this.data.step]);
             },
             award: async () => {
-                await Socket.sendByQueue(42395, [104, 5, 0, 0]);
+                await socket.sendByQueue(42395, [104, 5, 0, 0]);
             },
             open_level: async () => {
                 this.logger('开启泰坦矿洞');
-                await Socket.sendByQueue(42395, [104, 1, 3, 0]);
+                await socket.sendByQueue(42395, [104, 1, 3, 0]);
             },
         };
     };

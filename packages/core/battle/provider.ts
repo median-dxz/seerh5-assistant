@@ -1,4 +1,5 @@
-import { CacheData, NOOP } from '../common/utils.js';
+import { CacheData } from '../common/CacheData.js';
+import { NOOP } from '../common/utils.js';
 import type { PetRoundInfo } from '../entity/index.js';
 import { Pet, Skill } from '../entity/index.js';
 
@@ -19,9 +20,7 @@ function getCurRoundInfo() {
     if (!FighterModelFactory.playerMode || !FighterModelFactory.enemyMode) return null;
     const result = {
         round: PetFightController.roundTimes,
-        isSwitchNoBlood: PetFightController.roundTimes
-            ? FighterModelFactory.playerMode.propView.dispatchNoBlood
-            : false,
+        isSwitchNoBlood: PetFightController.roundTimes ? FighterModelFactory.playerMode.propView.dispatchNoBlood : false
     };
 
     let roundInfo = cachedRoundInfo.getImmediate();
@@ -42,9 +41,9 @@ function getCurRoundInfo() {
         hp: {
             gain: roundInfo[0]?.hp?.gain ?? 0,
             remain: FighterModelFactory.playerMode.info.hp,
-            max: FighterModelFactory.playerMode.info.maxHP,
+            max: FighterModelFactory.playerMode.info.maxHP
         },
-        catchtime: FighterModelFactory.playerMode.info.catchTime,
+        catchtime: FighterModelFactory.playerMode.info.catchTime
     });
 
     roundInfo[1] = Object.assign(roundInfo[1], {
@@ -54,9 +53,9 @@ function getCurRoundInfo() {
         hp: {
             gain: roundInfo[1]?.hp?.gain ?? 0,
             remain: FighterModelFactory.enemyMode.info.hp,
-            max: FighterModelFactory.enemyMode.info.maxHP,
+            max: FighterModelFactory.enemyMode.info.maxHP
         },
-        catchtime: FighterModelFactory.enemyMode.info.catchTime,
+        catchtime: FighterModelFactory.enemyMode.info.catchTime
     });
 
     return { ...result, self: roundInfo[0], other: roundInfo[1] } as RoundData;
@@ -78,5 +77,5 @@ export const provider = {
     isInBattle,
     getCurRoundInfo,
     getCurSkills,
-    getPets,
+    getPets
 };

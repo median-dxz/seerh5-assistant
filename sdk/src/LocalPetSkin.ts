@@ -1,4 +1,5 @@
-import { NOOP, Socket } from 'sea-core';
+import { NOOP, socket } from '@sea/core';
+import type { CreateModContext, ModExport } from '@sea/launcher';
 
 interface SkinInfo {
     skinId: number;
@@ -10,13 +11,13 @@ declare var PetIdTransform: any;
 declare var PetSkinXMLInfo: any;
 declare var PetSkinController: any;
 
-export default async function LocalPetSkin(createContext: SEAL.createModContext) {
+export default async function LocalPetSkin(createContext: CreateModContext) {
     const { meta, config, mutate, logger } = await createContext({
         meta: {
             id: 'LocalPetSkin',
             scope: 'median',
             version: '1.0.0',
-            core: '0.8.1',
+            core: '1.0.0-rc.1',
             description: '本地全皮肤解锁',
         },
         defaultConfig: { changed: new Map<number, SkinInfo>(), original: new Map<number, number>() },
@@ -73,7 +74,7 @@ export default async function LocalPetSkin(createContext: SEAL.createModContext)
 
             if (skinId === 0 || PetSkinController.instance.haveSkin(skinId)) {
                 if (cloth.original.get(petInfo.id) !== skinId) {
-                    await Socket.sendByQueue(47310, [catchTime, skinId]);
+                    await socket.sendByQueue(47310, [catchTime, skinId]);
                 } else {
                     mutate(({ changed, original }) => {
                         changed.delete(petInfo.id);
@@ -104,5 +105,5 @@ export default async function LocalPetSkin(createContext: SEAL.createModContext)
     return {
         meta,
         install,
-    } satisfies SEAL.ModExport;
+    } satisfies ModExport;
 }

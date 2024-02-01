@@ -9,8 +9,8 @@ import { Icon } from '@/service/resource';
 import MoreHoriz from '@mui/icons-material/MoreHoriz';
 import VerticalAlignTop from '@mui/icons-material/VerticalAlignTop';
 import { Box, Checkbox, Popover, Stack, Typography } from '@mui/material';
+import { GameConfigRegistry, Pet, delay, engine, spet } from '@sea/core';
 import React, { useState, type ReactNode } from 'react';
-import { Engine, GameConfigRegistry, Pet, SEAPet, delay } from 'sea-core';
 
 interface PanelRowProps {
     selected: number[];
@@ -30,7 +30,7 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
 
     const handleOpenPetItemUseProp = async (ct: number) => {
         await ModuleManager.showModule('petBag');
-        const petBagModule = Engine.inferCurrentModule<petBag.PetBag>();
+        const petBagModule = engine.inferCurrentModule<petBag.PetBag>();
         await delay(300);
         const petBagPanel = petBagModule.currentPanel!;
         petBagPanel.onSelectPet({ data: PetManager.getPetInfo(ct) });
@@ -98,7 +98,7 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
                             title="首发"
                             onClick={(e) => {
                                 e.stopPropagation();
-                                SEAPet(pet).default();
+                                spet(pet).default();
                             }}
                         >
                             <VerticalAlignTop fontSize="inherit" />
@@ -107,7 +107,7 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
                     <IconButton
                         title="治疗"
                         onClick={() => {
-                            SEAPet(pet).cure();
+                            spet(pet).cure();
                         }}
                     >
                         <HealthBroken />
@@ -115,7 +115,7 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
                     <IconButton
                         title="入库"
                         onClick={() => {
-                            SEAPet(pet).popFromBag();
+                            spet(pet).popFromBag();
                         }}
                     >
                         <MoveToInbox />

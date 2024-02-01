@@ -1,37 +1,72 @@
-import { Socket } from 'sea-core';
+import { LevelAction, socket, type ILevelRunner } from '@sea/core';
+import type { LevelData, LevelMeta, Task, TaskRunner } from '@sea/launcher';
+import { SignBase } from './SignBase';
 
-export const vip = (exchangeId: number) =>
+export const vip = () =>
     [
-        {
-            name: '领取vip每日箱子',
-            check: async () => {
-                const times = (await Socket.multiValue(11516))[0];
-                return Number(!times);
-            },
-            run: async () => {
-                Socket.sendByQueue(CommandID.VIP_BONUS_201409, [1]);
-            },
-        },
+        class VipDailyBox extends SignBase implements TaskRunner {
+            static readonly meta: LevelMeta = {
+                id: 'VipDailyBox',
+                name: '领取vip每日箱子',
+                maxTimes: 1,
+            };
 
-        {
-            name: '领取vip每周箱子',
-            check: async () => {
-                const times = (await Socket.multiValue(20021))[0];
-                return Number(!times);
-            },
-            run: async () => {
-                Socket.sendByQueue(CommandID.VIP_BONUS_201409, [2]);
-            },
-        },
+            get meta(): LevelMeta {
+                return VipDailyBox.meta;
+            }
 
-        {
-            name: '领取vip每月箱子',
-            check: async () => {
-                const times = (await Socket.multiValue(30005))[0];
-                return Number(!times);
-            },
-            run: async () => {
-                Socket.sendByQueue(CommandID.VIP_BONUS_201409, [3]);
-            },
+            actions: Record<string, (this: ILevelRunner<LevelData>) => Promise<void>> = {
+                [LevelAction.AWARD]: async () => {
+                    await socket.sendByQueue(CommandID.VIP_BONUS_201409, [1]);
+                },
+            };
+
+            async update(): Promise<void> {
+                const times = (await socket.multiValue(11516))[0];
+                this.data.remainingTimes = Number(!times);
+            }
         },
-    ] satisfies SEAL.Sign[];
+        class VipWeeklyBox extends SignBase implements TaskRunner {
+            static readonly meta: LevelMeta = {
+                id: 'VipWeeklyBox',
+                name: '领取vip每周箱子',
+                maxTimes: 1,
+            };
+
+            get meta(): LevelMeta {
+                return VipWeeklyBox.meta;
+            }
+
+            actions: Record<string, (this: ILevelRunner<LevelData>) => Promise<void>> = {
+                [LevelAction.AWARD]: async () => {
+                    await socket.sendByQueue(CommandID.VIP_BONUS_201409, [2]);
+                },
+            };
+
+            async update(): Promise<void> {
+                const times = (await socket.multiValue(20021))[0];
+                this.data.remainingTimes = Number(!times);
+            }
+        },
+        class VipMonthlyBox extends SignBase implements TaskRunner {
+            static readonly meta: LevelMeta = {
+                id: 'VipMonthlyBox',
+                name: '领取vip每月箱子',
+                maxTimes: 1,
+            };
+            get meta(): LevelMeta {
+                return VipMonthlyBox.meta;
+            }
+
+            actions: Record<string, (this: ILevelRunner<LevelData>) => Promise<void>> = {
+                [LevelAction.AWARD]: async () => {
+                    await socket.sendByQueue(CommandID.VIP_BONUS_201409, [3]);
+                },
+            };
+
+            async update(): Promise<void> {
+                const times = (await socket.multiValue(30005))[0];
+                this.data.remainingTimes = Number(!times);
+            }
+        },
+    ] satisfies Task[];

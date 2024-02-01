@@ -1,15 +1,16 @@
-import { SEAEventSource, Socket } from 'sea-core';
+import { SEAEventSource, socket } from '@sea/core';
+import type { CreateModContext, ModExport } from '@sea/launcher';
 
 declare var Alarm: any;
 
 // team.TeamTech
-export default async function TeamTechCenter(createContext: SEAL.createModContext) {
+export default async function TeamTechCenter(createContext: CreateModContext) {
     const { meta } = await createContext({
         meta: {
             id: 'teamTechCenter',
             scope: 'median',
             description: '精灵科技中心模块注入, 提供一键强化到满级功能',
-            core: '0.8.1',
+            core: '1.0.0-rc.1',
         },
     });
 
@@ -30,7 +31,8 @@ export default async function TeamTechCenter(createContext: SEAL.createModContex
             }
 
             const updateOnce = (): Promise<void> =>
-                Socket.sendByQueue(CommandID.NEW_TEAM_PET_RISE, [this._petInfo.catchTime, index])
+                socket
+                    .sendByQueue(CommandID.NEW_TEAM_PET_RISE, [this._petInfo.catchTime, index])
                     .then(() => PetManager.UpdateBagPetInfoAsynce(this._petInfo.catchTime))
                     .then((petInfo) => {
                         this._petInfo = petInfo;
@@ -63,5 +65,5 @@ export default async function TeamTechCenter(createContext: SEAL.createModContex
         meta,
         install,
         uninstall,
-    } satisfies SEAL.ModExport;
+    } satisfies ModExport;
 }

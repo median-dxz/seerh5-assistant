@@ -1,6 +1,7 @@
-import { LevelAction, Socket } from 'sea-core';
+import type { LevelMeta, LevelData as SEALevelData, TaskRunner } from '@/sea-launcher';
+import { LevelAction, socket } from '@sea/core';
 
-import type { AnyFunction, ILevelBattle, LevelMeta, LevelData as SEALevelData } from 'sea-core';
+import type { AnyFunction, ILevelBattle } from '@sea/core';
 
 interface LevelData extends SEALevelData {
     stimulation: boolean;
@@ -16,7 +17,7 @@ interface LevelOption {
 }
 
 export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => {
-    return class LevelElfKingsTrial implements SEAL.LevelRunner<LevelData> {
+    return class LevelElfKingsTrial implements TaskRunner<LevelData> {
         data: LevelData = {
             progress: 0,
             remainingTimes: 0,
@@ -45,8 +46,8 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
         constructor(public option: LevelOption) {}
 
         async update() {
-            const bits = (await Socket.bitSet(8832, 2000037)).map(Boolean);
-            const values = await Socket.multiValue(108105, 108106, 18745, 20134);
+            const bits = (await socket.bitSet(8832, 2000037)).map(Boolean);
+            const values = await socket.multiValue(108105, 108106, 18745, 20134);
 
             this.data.stimulation = bits[0];
             this.data.canReceiveReward = !bits[1];
@@ -58,16 +59,16 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             this.data.unlockHard = Boolean(levelStage & (1 << (stageElfId + 2)));
             this.data.remainingTimes = this.meta.maxTimes - values[2];
             this.data.weeklyChallengeCount = values[3];
+        }
 
+        next(): string {
             if (!this.data.unlockHard) {
                 this.logger(`${this.meta.name}: 未解锁困难难度`);
                 return LevelAction.STOP;
             } else if (this.data.remainingTimes > 0) {
-                this.logger(`${this.meta.name}: 进入关卡`);
                 return LevelAction.BATTLE;
             } else {
                 if (this.data.weeklyChallengeCount >= 30 && this.data.canReceiveReward) {
-                    this.logger(`${this.meta.name}: 领取奖励`);
                     return LevelAction.AWARD;
                 }
                 return LevelAction.STOP;
@@ -80,11 +81,11 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
         readonly actions: Record<string, () => Promise<void>> = {
             battle: async () => {
-                Socket.sendByQueue(42396, [106, this.option.elfId, 2]);
+                socket.sendByQueue(42396, [106, this.option.elfId, 2]);
             },
 
             award: async () => {
-                await Socket.sendByQueue(42395, [106, 3, 0, 0]);
+                await socket.sendByQueue(42395, [106, 3, 0, 0]);
             },
         };
     };

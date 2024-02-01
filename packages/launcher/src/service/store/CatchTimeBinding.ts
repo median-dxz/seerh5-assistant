@@ -1,4 +1,4 @@
-import { PetDataManger, PetPosType } from 'sea-core';
+import { PetPosType, SEAPetStore } from '@sea/core';
 import * as Endpoints from '../endpoints';
 
 const JIM_ID = 3582;
@@ -14,8 +14,8 @@ const petFilter = (v: { id: number; level: number; posi: number }) =>
  * 取 (几米往后的近现代精灵 & 等级为100) | 精英收藏和背包中的精灵
  */
 async function sync() {
-    const data1 = Array.from((await PetDataManger.miniInfo.get()).values());
-    const data2 = (await PetDataManger.bag.get()).flat();
+    const data1 = Array.from((await SEAPetStore.miniInfo.get()).values());
+    const data2 = (await SEAPetStore.bag.get()).flat();
     const mapping = (v: { name: string; catchTime: number; id: number; level: number }) => {
         add(v.name, v.catchTime);
     };

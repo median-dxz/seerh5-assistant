@@ -1,15 +1,19 @@
+export type { ILevelBattle, ILevelRunner } from './level/type.js';
 export type { Trigger } from './manager.js';
 export type { RoundData } from './provider.js';
-export type { MoveHandler, MoveStrategy, SwitchNoBloodHandler } from './strategy.js';
+export type { Matcher, MoveHandler, MoveStrategy } from './strategy.js';
 
+import { executor } from './executor.js';
 import { manager } from './manager.js';
-import { operator } from './operator.js';
 import { provider } from './provider.js';
 
-export * as Strategy from './strategy.js';
+export * as strategy from './strategy.js';
 
-export const SEABattle = {
-    operator,
+export const battle = {
+    executor,
     provider,
-    manager,
+    manager
 };
+
+export { LevelAction } from './level/action.js';
+export { levelManager } from './level/index.js';

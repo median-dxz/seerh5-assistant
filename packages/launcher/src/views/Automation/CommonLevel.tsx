@@ -1,17 +1,17 @@
-import { Box, Button, CircularProgress, Typography, alpha } from '@mui/material';
-import React, { useCallback } from 'react';
+import { Box, Button, CircularProgress, Typography } from '@mui/material';
+import React, { useCallback, useEffect } from 'react';
 import useSWR from 'swr';
 
 import { PanelField, useIndex, useRowData } from '@/components/PanelTable';
 import { PanelTable, type PanelColumns } from '@/components/PanelTable/PanelTable';
 import { SeaTableRow } from '@/components/styled/TableRow';
 import { MOD_SCOPE_BUILTIN } from '@/constants';
-import { useLevelScheduler } from '@/context/useLevelScheduler';
 import { useModStore } from '@/context/useModStore';
+import { useTaskScheduler } from '@/context/useTaskScheduler';
+import type { Task } from '@/sea-launcher';
 import * as Endpoints from '@/service/endpoints';
-import { theme } from '@/style';
+import { LevelAction } from '@sea/core';
 import { produce } from 'immer';
-import { LevelAction } from 'sea-core';
 
 // const rows: Array<Level> = React.useMemo(
 //     () => [
@@ -19,10 +19,10 @@ import { LevelAction } from 'sea-core';
 //             name: '泰坦矿洞',
 //             module: <LevelTitanHole setRunning={setRunning} running={running} />,
 //             async sweep() {
-//                 await Socket.sendByQueue(42395, [104, 6, 3, 0]);
+//                 await socket.sendByQueue(42395, [104, 6, 3, 0]);
 //             },
 //             async getState() {
-//                 const [count, step] = await Socket.multiValue(18724, 18725);
+//                 const [count, step] = await socket.multiValue(18724, 18725);
 //                 return count === 2 && step === 0;
 //             },
 //         },
@@ -30,12 +30,12 @@ import { LevelAction } from 'sea-core';
 //         {
 //             name: '六界神王殿',
 //             async sweep() {
-//                 await Socket.sendByQueue(45767, [38, 3]);
+//                 await socket.sendByQueue(45767, [38, 3]);
 //                 return;
 //             },
 //             async getState() {
 //                 let state = true;
-//                 const values = await Socket.multiValue(11411, 11412, 11413, 11414);
+//                 const values = await socket.multiValue(11411, 11412, 11413, 11414);
 //                 for (let i = 1; i <= 7; i++) {
 //                     const group = Math.trunc((i - 1) / 2);
 //                     const v = [values[group] & ((1 << 16) - 1), values[group] >> 16];
@@ -66,12 +66,12 @@ import { LevelAction } from 'sea-core';
 // });
 
 type Row = {
-    levelClass: SEAL.Level;
+    taskClass: Task;
     config: Record<string, unknown>;
 };
 
 export function CommonLevelPanel() {
-    const { store, levelStore } = useModStore();
+    const { store, taskStore: levelStore } = useModStore();
     const [taskCompleted, setTaskCompleted] = React.useState<Array<boolean>>([]);
 
     const {
@@ -85,15 +85,18 @@ export function CommonLevelPanel() {
         );
         const allConfigs = await Promise.all(
             mods.map(({ meta }) => Endpoints.getModConfig(meta.scope, meta.id) as Promise<Record<string, unknown>>)
-        );
-        allConfigs.forEach((config) => {
-            Object.entries(config).forEach(([key, value]) => {
-                if (levelStore.has(key)) {
-                    const levelInstance = levelStore.get(key)!;
-                    r.push({ levelClass: levelInstance.level, config: value as Record<string, unknown> });
-                }
-            });
+        ).then((configs) => configs.map((config) => Object.entries(config)).flat());
+
+        levelStore.forEach((levelInstance, levelKey) => {
+            if (levelInstance.ownerMod === `${MOD_SCOPE_BUILTIN}::PetFragmentLevel`) {
+                return;
+            }
+            if (Object.hasOwn(levelInstance.task.prototype, 'selectLevelBattle')) {
+                const config = allConfigs.find(([key]) => key === levelKey)?.[1] ?? {};
+                r.push({ taskClass: levelInstance.task, config: config as Record<string, unknown> });
+            }
         });
+
         return r;
     });
 
@@ -119,7 +122,7 @@ export function CommonLevelPanel() {
         []
     );
 
-    const toRowKey = useCallback((row: Row) => row.levelClass.meta.name, []);
+    const toRowKey = useCallback((row: Row) => row.taskClass.meta.name, []);
 
     if (isLoading)
         return (
@@ -153,29 +156,30 @@ interface PanelRowProps {
 }
 
 const PanelRow = React.memo(({ taskCompleted, setTaskCompleted }: PanelRowProps) => {
-    const { enqueue } = useLevelScheduler();
-    const { config, levelClass } = useRowData<Row>();
+    const { enqueue } = useTaskScheduler();
+    const { config, taskClass: levelClass } = useRowData<Row>();
     const runner = React.useMemo(() => new levelClass(config), [levelClass, config]);
     const index = useIndex();
     const completed = taskCompleted[index];
 
-    const levelUpdater = runner.update.bind(runner);
-    runner.update = async () => {
-        const r = await levelUpdater();
-        setTaskCompleted(
-            produce((draft) => {
-                draft[index] = r === LevelAction.STOP;
-            })
-        );
-        return r;
-    };
+    runner.next = new Proxy(runner.next.bind(runner), {
+        apply(target, thisArg, argArray) {
+            const r = Reflect.apply(target, thisArg, argArray);
+            setTaskCompleted(
+                produce((draft) => {
+                    draft[index] = r === LevelAction.STOP;
+                })
+            );
+            return r;
+        },
+    });
+
+    useEffect(() => {
+        runner.update().then(() => runner.next());
+    }, [runner]);
 
     return (
-        <SeaTableRow
-            sx={{
-                backgroundColor: completed ? `${alpha(theme.palette.primary.main, 0.18)}` : 'transparent',
-            }}
-        >
+        <SeaTableRow>
             <PanelField field="name">{levelClass.meta.name}</PanelField>
             <PanelField field="state">
                 <Typography color={completed ? '#eeff41' : 'inherited'}>{completed ? '已完成' : '未完成'}</Typography>
@@ -186,6 +190,7 @@ const PanelRow = React.memo(({ taskCompleted, setTaskCompleted }: PanelRowProps)
                         onClick={() => {
                             enqueue(runner);
                         }}
+                        disabled={completed}
                     >
                         启动
                     </Button>

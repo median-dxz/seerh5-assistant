@@ -4,10 +4,10 @@ import { DS } from '@/constants';
 import { useMainState } from '@/context/useMainState';
 import { Button, CircularProgress, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
+import { BattleFireType, SEAEventSource, Subscription, engine, socket, throttle } from '@sea/core';
 import { produce } from 'immer';
 import { useSnackbar } from 'notistack';
-import React, { useState } from 'react';
-import { BattleFireType, Engine, SEAEventSource, Socket, Subscription, throttle } from 'sea-core';
+import React, { useRef, useState } from 'react';
 import type { SWRSubscriptionOptions } from 'swr/subscription';
 import useSWRSubscription from 'swr/subscription';
 
@@ -15,7 +15,7 @@ declare class FriendManager {
     static getFriendList(): Promise<{ itemSend: number; id: number }[]>;
 }
 
-type BattleFireInfo = Awaited<ReturnType<typeof Engine.updateBattleFireInfo>>;
+type BattleFireInfo = Awaited<ReturnType<typeof engine.updateBattleFireInfo>>;
 
 const timeFormatter = (n: number) => {
     const { format } = Intl.NumberFormat(undefined, {
@@ -28,18 +28,18 @@ const { setInterval } = window;
 
 export function BattleFire() {
     const { enqueueSnackbar } = useSnackbar();
+    const timer = useRef<null | number>(null);
     const { data: battleFire } = useSWRSubscription(
         DS.multiValue.battleFire,
         (_, { next }: SWRSubscriptionOptions<BattleFireInfo, Error>) => {
-            let timer: null | number = null;
             const update = async () => {
-                const i = await Engine.updateBattleFireInfo();
+                const i = await engine.updateBattleFireInfo();
 
                 next(null, i);
                 if (!i.valid || i.timeLeft <= 0) return;
-                timer && clearInterval(timer);
+                timer.current && clearInterval(timer.current);
 
-                timer = setInterval(() => {
+                timer.current = setInterval(() => {
                     next(
                         null,
                         produce((draft) => {
@@ -47,8 +47,8 @@ export function BattleFire() {
                                 draft.timeLeft -= 1;
                             } else {
                                 draft.valid = false;
-                                timer && clearInterval(timer);
-                                timer = null;
+                                timer.current && clearInterval(timer.current);
+                                timer.current = null;
                             }
                         })
                     );
@@ -57,10 +57,11 @@ export function BattleFire() {
 
             const sub = new Subscription();
             sub.on(SEAEventSource.egret('battleFireUpdateInfo'), update);
-            Engine.updateBattleFireInfo().then((data) => next(null, data));
+            update();
 
             return () => {
                 sub.dispose();
+                timer.current && clearInterval(timer.current);
             };
         },
         { fallbackData: { valid: false, timeLeft: 0 } as BattleFireInfo }
@@ -96,7 +97,7 @@ export function BattleFire() {
         if (giftingStars) return;
 
         // 可用的每日赠送次数
-        const remainingGifts = 20 - (await Socket.multiValue(12777))[0];
+        const remainingGifts = 20 - (await socket.multiValue(12777))[0];
         if (remainingGifts <= 0) {
             enqueueSnackbar({
                 variant: 'warning',
@@ -120,7 +121,7 @@ export function BattleFire() {
                     buf.writeUnsignedInt(friend.id);
                 });
 
-                return Socket.sendByQueue(47348, [4, 0, buf]);
+                return socket.sendByQueue(47348, [4, 0, buf]);
             })
             .then((r) => {
                 const buf = new egret.ByteArray(r);

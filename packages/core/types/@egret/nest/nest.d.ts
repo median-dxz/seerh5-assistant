@@ -26,8 +26,7 @@ declare module nest {
             debug?: boolean;
         }
     }
-    interface core {
-    }
+    interface core {}
     var core: {
         /**
          * 启动Nest
@@ -118,7 +117,10 @@ declare module nest {
          *     });
          * </pre>
          */
-        var checkLogin: (loginInfo: nest.user.LoginInfo, callback: (resultInfo: nest.user.LoginCallbackInfo) => void) => void;
+        var checkLogin: (
+            loginInfo: nest.user.LoginInfo,
+            callback: (resultInfo: nest.user.LoginCallbackInfo) => void
+        ) => void;
         /**
          * 调用渠道登录接口
          * @param loginInfo
@@ -137,7 +139,10 @@ declare module nest {
          *     });
          * </pre>
          */
-        var login: (loginInfo: nest.user.LoginInfo, callback: (resultInfo: nest.user.LoginCallbackInfo) => void) => void;
+        var login: (
+            loginInfo: nest.user.LoginInfo,
+            callback: (resultInfo: nest.user.LoginCallbackInfo) => void
+        ) => void;
         /**
          * 登出接口
          * @param loginInfo 登出参数,没有可以传递{}
@@ -208,8 +213,7 @@ declare module nest {
             ext?: string;
         }
     }
-    interface iap {
-    }
+    interface iap {}
     var iap: {
         /**
          * 支付
@@ -255,14 +259,12 @@ declare module nest {
              */
             url: string;
         }
-        interface ShareCallbackInfo extends core.ResultCallbackInfo {
-        }
+        interface ShareCallbackInfo extends core.ResultCallbackInfo {}
         interface ShareSupportCallbackInfo extends core.ResultCallbackInfo {
             share: number;
         }
     }
-    interface share {
-    }
+    interface share {}
     var share: {
         /**
          * 是否支持分享
@@ -315,8 +317,7 @@ declare module nest {
             openBBS?: number;
         }
     }
-    interface social {
-    }
+    interface social {}
     var social: {
         /**
          * social接口支持
@@ -380,8 +381,7 @@ declare module nest {
             ext: string;
         }
     }
-    interface app {
-    }
+    interface app {}
     var app: {
         /**
          * 是否支持特定功能
@@ -480,7 +480,10 @@ declare module nest {
          *     });
          * </pre>
          */
-        function login(loginInfo: nest.user.LoginInfo, callback: (resultInfo: nest.user.LoginCallbackInfo) => void): void;
+        function login(
+            loginInfo: nest.user.LoginInfo,
+            callback: (resultInfo: nest.user.LoginCallbackInfo) => void
+        ): void;
         /**
          * 登出接口
          * @param loginInfo 登出参数,没有可以传递{}

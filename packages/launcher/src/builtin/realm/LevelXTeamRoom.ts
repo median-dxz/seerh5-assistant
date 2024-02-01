@@ -1,6 +1,7 @@
-import { LevelAction, Socket } from 'sea-core';
+import type { LevelMeta, LevelData as SEALevelData, TaskRunner } from '@/sea-launcher';
+import { LevelAction, socket } from '@sea/core';
 
-import type { AnyFunction, ILevelBattle, LevelMeta, LevelData as SEALevelData } from 'sea-core';
+import type { AnyFunction, ILevelBattle } from '@sea/core';
 
 interface LevelData extends SEALevelData {
     open: boolean;
@@ -15,7 +16,7 @@ interface LevelOption {
 }
 
 export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => {
-    return class LevelXTeamRoom implements SEAL.LevelRunner<LevelData> {
+    return class LevelXTeamRoom implements TaskRunner<LevelData> {
         data: LevelData = {
             remainingTimes: 0,
             progress: 0,
@@ -44,10 +45,9 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
         constructor(public option: LevelOption) {}
 
         async update() {
-            this.logger(`${this.meta.name}: 更新关卡信息...`);
-            const bits = await Socket.bitSet(1000585, 2000036);
-            const values = await Socket.multiValue(12769, 12774, 20133);
-            const pInfos = await Socket.playerInfo(1197);
+            const bits = await socket.bitSet(1000585, 2000036);
+            const values = await socket.multiValue(12769, 12774, 20133);
+            const pInfos = await socket.playerInfo(1197);
 
             this.data.dailyRewardReceived = bits[0];
             this.data.weeklyRewardReceived = bits[1];
@@ -56,29 +56,26 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             this.data.remainingTimes = this.meta.maxTimes - values[0];
             this.data.dailyMinRound = values[1];
             this.data.weeklyCompletedCount = values[2];
+        }
 
+        next(): string {
             if (this.data.weeklyRewardReceived) {
-                this.logger(`${this.meta.name}: 日任完成`);
                 return LevelAction.STOP;
             }
 
             if (!this.data.weeklyRewardReceived && this.data.weeklyCompletedCount >= 5) {
-                this.logger(`${this.meta.name}: 领取每周奖励`);
                 return 'award_weekly';
             }
 
             if (this.data.dailyRewardReceived) {
-                this.logger(`${this.meta.name}: 日任完成`);
                 return LevelAction.STOP;
             }
 
             if (!this.data.dailyRewardReceived && this.data.dailyMinRound > 0) {
-                this.logger(`${this.meta.name}: 领取每日奖励`);
                 return LevelAction.AWARD;
             }
 
             if (this.data.dailyMinRound === 0 && (this.data.remainingTimes > 0 || this.data.open)) {
-                this.logger(`${this.meta.name}: 进入战斗`);
                 if (this.data.open) {
                     return LevelAction.BATTLE;
                 } else {
@@ -96,19 +93,19 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
         readonly actions: Record<string, () => Promise<void>> = {
             open_level: async () => {
-                await Socket.sendByQueue(42395, [105, 1, 1, 0]);
+                await socket.sendByQueue(42395, [105, 1, 1, 0]);
             },
 
             battle: async () => {
-                Socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [105, 7, 0]);
+                socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [105, 7, 0]);
             },
 
             award: async () => {
-                await Socket.sendByQueue(42395, [105, 2, 0, 0]);
+                await socket.sendByQueue(42395, [105, 2, 0, 0]);
             },
 
             award_weekly: async () => {
-                await Socket.sendByQueue(42395, [105, 3, 0, 0]);
+                await socket.sendByQueue(42395, [105, 3, 0, 0]);
             },
         };
     };

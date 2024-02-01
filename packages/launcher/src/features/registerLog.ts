@@ -1,5 +1,5 @@
 import * as Logger from '@/utils/logger';
-import { SEAEventSource, Subscription, wrapper } from 'sea-core';
+import { SEAEventSource, Subscription, wrapper } from '@sea/core';
 
 export function registerLog() {
     SystemTimerManager.sockettimeout = wrapper(SystemTimerManager.sockettimeout).after(() => {
@@ -35,7 +35,7 @@ export function registerLog() {
         Logger.ModuleLogger.info(`${module}创建主面板: ${panel}`);
     });
 
-    // sub.on(fromSocket(CommandID.NOTE_USE_SKILL, 'receive'), (data) => {
+    // sub.on(fromsocket(CommandID.NOTE_USE_SKILL, 'receive'), (data) => {
     //     const [fi, si] = data;
     //     Logger.BattleManager.info(`对局信息更新:
     //         先手方:${fi.userId}

@@ -1,53 +1,26 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-export interface Logger {
-    info: typeof console.info;
-    warn: typeof console.warn;
+import { Subject } from 'rxjs';
+
+export interface CoreLogEvent {
+    module: string;
+    stack?: string;
+    time: number;
+    level: 'debug' | 'info' | 'warn' | 'error';
+    msg?: string;
 }
 
-const enables = new Set<string>();
+export const event$ = new Subject<CoreLogEvent>();
 
-export enum ModuleName {
-    Battle = 'Battle',
-}
-
-export const enable = (module?: ModuleName) => {
-    if (!module) {
-        enables.add(ModuleName.Battle);
-    } else {
-        enables.add(module);
+export const getLogger = (module: string) => ({
+    debug: (msg?: string) => {
+        event$.next({ module, level: 'debug', time: Date.now(), msg });
+    },
+    info: (msg?: string) => {
+        event$.next({ module, level: 'info', time: Date.now(), msg });
+    },
+    warn: (msg?: string) => {
+        event$.next({ module, level: 'warn', time: Date.now(), msg });
+    },
+    error: (msg?: string) => {
+        event$.next({ module, level: 'error', time: Date.now(), msg, stack: Error().stack });
     }
-};
-
-export const disable = (module?: ModuleName) => {
-    if (!module) {
-        enables.clear();
-    } else {
-        enables.delete(module);
-    }
-};
-
-export const setLogger = ({ info, warn }: Logger) => {
-    Logger.info = info;
-    Logger.warn = warn;
-};
-
-const Logger: Logger = {
-    info: console.info,
-    warn: console.warn,
-};
-
-export const CoreWarning =
-    (module: ModuleName): typeof console.warn =>
-    (...args: Parameters<Logger['warn']>) => {
-        if (enables.has(module)) {
-            Logger.warn('[sea-core][%s]:', module, ...args);
-        }
-    };
-
-export const CoreDevInfo =
-    (module: ModuleName): typeof console.info =>
-    (...args: Parameters<Logger['info']>) => {
-        if (enables.has(module)) {
-            Logger.info('[sea-core][%s]:', module, ...args);
-        }
-    };
+});

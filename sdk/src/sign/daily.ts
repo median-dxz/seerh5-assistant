@@ -1,4 +1,7 @@
-import { Socket } from 'sea-core';
+import type { ILevelRunner } from '@sea/core';
+import { LevelAction, socket } from '@sea/core';
+import type { LevelData, LevelMeta, Task, TaskRunner } from '@sea/launcher';
+import { SignBase } from './SignBase';
 
 const MULTI_QUERY = {
     刻印抽奖次数: 16577,
@@ -8,21 +11,49 @@ const MULTI_QUERY = {
     许愿签到: 201345,
 } as const;
 
-export const daily: SEAL.Sign[] = [
-    {
-        name: '刻印抽奖',
-        async check() {
-            const times = (await Socket.multiValue(MULTI_QUERY.刻印抽奖次数))[0];
-            return Number(!times);
-        },
-        run: async () => {
-            Socket.sendByQueue(46301, [1, 0]);
-        },
+export const daily: Task[] = [
+    class MarkDraw extends SignBase implements TaskRunner {
+        static readonly meta: LevelMeta = {
+            maxTimes: 1,
+            id: 'MarkDraw',
+            name: '刻印抽奖',
+        };
+
+        get meta(): LevelMeta {
+            return MarkDraw.meta;
+        }
+
+        actions: Record<string, (this: ILevelRunner<LevelData>) => Promise<void>> = {
+            [LevelAction.AWARD]: async () => {
+                socket.sendByQueue(46301, [1, 0]);
+            },
+        };
+
+        async update(): Promise<void> {
+            this.data.remainingTimes = this.meta.maxTimes - (await socket.multiValue(MULTI_QUERY.刻印抽奖次数))[0];
+        }
     },
-    {
-        name: '许愿',
-        async check() {
-            let times = (await Socket.multiValue(MULTI_QUERY.登录时长))[0];
+    class WishBottle extends SignBase implements TaskRunner {
+        static readonly meta: LevelMeta = {
+            id: 'WishBottle',
+            maxTimes: 10,
+            name: '许愿',
+        };
+
+        maxTimes = 10;
+
+        get meta(): LevelMeta {
+            return { ...WishBottle.meta, maxTimes: this.maxTimes };
+        }
+
+        actions: Record<string, (this: ILevelRunner<LevelData>) => Promise<void>> = {
+            [LevelAction.AWARD]: async () => {
+                await socket.sendByQueue(45801, [2, 1]);
+            },
+        };
+
+        async update(): Promise<void> {
+            let times = (await socket.multiValue(MULTI_QUERY.登录时长))[0];
             times =
                 times +
                 Math.floor(SystemTimerManager.sysBJDate.getTime() / 1e3) -
@@ -30,45 +61,52 @@ export const daily: SEAL.Sign[] = [
             times = Math.floor(times / 60);
 
             let 可许愿次数 = 0;
-            switch (true) {
-                case times >= 120:
-                    可许愿次数 = 10;
+            const timesMap = new Map([
+                [120, 10],
+                [90, 7],
+                [60, 5],
+                [30, 3],
+                [15, 2],
+                [5, 1],
+                [0, 0],
+            ]);
+
+            for (const [time, count] of timesMap) {
+                if (times >= time) {
+                    可许愿次数 = count;
                     break;
-                case times >= 90:
-                    可许愿次数 = 7;
-                    break;
-                case times >= 60:
-                    可许愿次数 = 5;
-                    break;
-                case times >= 30:
-                    可许愿次数 = 3;
-                    break;
-                case times >= 15:
-                    可许愿次数 = 2;
-                    break;
-                case times >= 5:
-                    可许愿次数 = 1;
-                    break;
-                default:
-                    可许愿次数 = 0;
+                }
             }
 
-            可许愿次数 -= (await Socket.multiValue(MULTI_QUERY.已许愿次数))[0];
-            return 可许愿次数;
-        },
-        run: async () => {
-            await Socket.sendByQueue(45801, [2, 1]);
-        },
+            this.maxTimes = 可许愿次数;
+            this.data.remainingTimes = 可许愿次数 - (await socket.multiValue(MULTI_QUERY.已许愿次数))[0];
+        }
     },
-    {
-        name: '许愿签到',
-        async check() {
-            const times = (await Socket.multiValue(MULTI_QUERY.许愿签到))[0];
-            return Number(!times);
-        },
-        async run() {
-            const day = (await Socket.multiValue(MULTI_QUERY.许愿签到天数))[0];
-            Socket.sendByQueue(45801, [1, day + 1]);
-        },
+    class WishSign extends SignBase implements TaskRunner {
+        static readonly meta: LevelMeta = {
+            id: 'WishSign',
+            maxTimes: 1,
+            name: '许愿签到',
+        };
+
+        get meta(): LevelMeta {
+            return WishSign.meta;
+        }
+
+        data: LevelData = {
+            progress: 0,
+            remainingTimes: 0,
+        };
+
+        actions: Record<string, (this: ILevelRunner<LevelData>) => Promise<void>> = {
+            [LevelAction.AWARD]: async () => {
+                const day = (await socket.multiValue(MULTI_QUERY.许愿签到天数))[0];
+                socket.sendByQueue(45801, [1, day + 1]);
+            },
+        };
+
+        async update(): Promise<void> {
+            this.data.remainingTimes = this.meta.maxTimes - (await socket.multiValue(MULTI_QUERY.许愿签到))[0];
+        }
     },
 ];

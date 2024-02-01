@@ -1,14 +1,15 @@
-import type { Pet } from 'sea-core';
+import type { Pet } from '@sea/core';
 import {
-    Engine,
     GameConfigRegistry,
-    PetDataManger,
     SEAEventSource,
-    SEAPet,
+    SEAPetStore,
+    engine,
     hookPrototype,
     restoreHookedFn,
+    spet,
     wrapper,
-} from 'sea-core';
+} from '@sea/core';
+import type { CreateModContext, ModExport } from '@sea/launcher';
 
 interface PetFragment {
     EffectMsglog: number;
@@ -51,22 +52,22 @@ declare global {
 }
 
 export async function findPetById(id: number): Promise<Pet | null> {
-    const data = await PetDataManger.getAllPets();
+    const data = await SEAPetStore.getAllPets();
     const r = data.find((pet) => pet.id === id);
     if (r) {
-        return SEAPet(r.catchTime).get();
+        return spet(r.catchTime).get();
     } else {
         return null;
     }
 }
 
-export default async function ItemWareHouse(createContext: SEAL.createModContext) {
+export default async function ItemWareHouse(createContext: CreateModContext) {
     const { meta } = await createContext({
         meta: {
             id: 'itemWarehouse',
             scope: 'median',
             description: '物品仓库修改, 提供更换的精灵因子界面交互',
-            core: '0.8.1',
+            core: '1.0.0-rc.1',
         },
     });
 
@@ -92,7 +93,7 @@ export default async function ItemWareHouse(createContext: SEAL.createModContext
                 })
                 .filter(({ Rarity }) => this._curRarity.includes(Rarity)); // 筛选品质
 
-            const allPets = await PetDataManger.getAllPets();
+            const allPets = await SEAPetStore.getAllPets();
 
             // 未拥有
             if (this.allType === 3) {
@@ -110,12 +111,12 @@ export default async function ItemWareHouse(createContext: SEAL.createModContext
                         .filter((pet) => {
                             return r.some(({ MonsterID }) => MonsterID === pet.id);
                         })
-                        .map(async (pet) => {
-                            const spet = await SEAPet(pet.catchTime).get();
-                            const notActivatedEffect = !(await Engine.isPetEffectActivated(spet));
+                        .map(async (pet_) => {
+                            const pet = await spet(pet_.catchTime).done;
+                            const notActivatedEffect = !(await engine.isPetEffectActivated(pet));
                             return {
                                 id: pet.id,
-                                notActivatedHideSkill: spet.hideSkillActivated === false,
+                                notActivatedHideSkill: Boolean(!pet.fifthSkill),
                                 notActivatedEffect,
                             };
                         })
@@ -129,7 +130,7 @@ export default async function ItemWareHouse(createContext: SEAL.createModContext
 
                         const { notActivatedEffect, notActivatedHideSkill } = pet;
 
-                        return itemCount > 0 && (notActivatedEffect || notActivatedHideSkill);
+                        return itemCount && itemCount > 0 && (notActivatedEffect || notActivatedHideSkill);
                     })
                 );
                 this.currList = r.filter((_, i) => filterResults[i]);
@@ -165,7 +166,7 @@ export default async function ItemWareHouse(createContext: SEAL.createModContext
                 check = data.PetConsume <= itemCount;
             } else if (this._petFactorPage === 2) {
                 if (pet?.hasEffect) {
-                    const activated = await Engine.isPetEffectActivated(pet);
+                    const activated = await engine.isPetEffectActivated(pet);
                     this.txtTexing.text = `专属特性: ${activated ? '已开启' : '未开启'}`;
                     check = data.NewseConsume <= itemCount && !activated;
                 }
@@ -173,12 +174,12 @@ export default async function ItemWareHouse(createContext: SEAL.createModContext
                     check = false;
                 }
             } else if (this._petFactorPage === 3) {
-                if (pet?.hideSkillActivated != undefined) {
-                    const hideSkillId = data.MoveID;
-                    this.txtMsg_kb_3.text = `${skillQuery.getName(hideSkillId)} ${
-                        pet.hideSkillActivated ? '(已开启)' : '(未开启)'
+                if (pet?.hasFifthSkill != undefined) {
+                    const fifthSkillId = data.MoveID;
+                    this.txtMsg_kb_3.text = `${skillQuery.getName(fifthSkillId)} ${
+                        pet.fifthSkill ? '(已开启)' : '(未开启)'
                     }`;
-                    check = data.MovesConsume <= itemCount && !pet.hideSkillActivated;
+                    check = data.MovesConsume <= itemCount && !pet.fifthSkill;
                 }
                 if (!pet) {
                     check = false;
@@ -205,9 +206,9 @@ export default async function ItemWareHouse(createContext: SEAL.createModContext
             const pet = await findPetById(MonsterID);
 
             if (this._petFactorPage === 1 && NeedmonID && needPet) {
-                await SEAPet(needPet).default();
+                await spet(needPet).default();
             } else if (this._petFactorPage > 1 && pet) {
-                await SEAPet(pet).default();
+                await spet(pet).default();
             }
 
             fn();
@@ -236,5 +237,5 @@ export default async function ItemWareHouse(createContext: SEAL.createModContext
         meta,
         install,
         uninstall,
-    } satisfies SEAL.ModExport;
+    } satisfies ModExport;
 }

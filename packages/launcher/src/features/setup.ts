@@ -1,4 +1,4 @@
-import { GameConfigRegistry, SEABattle, SEAEventSource } from 'sea-core';
+import { GameConfigRegistry, SEAEventSource, battle, hookPrototype } from '@sea/core';
 import { IS_DEV } from '../constants';
 import { extendCoreEngine } from './engine';
 import { registerLog } from './registerLog';
@@ -22,9 +22,8 @@ export function setupForLauncher() {
     }
 
     // 自动战斗需要在Launcher层通过对应hook启用
-    const { manager } = SEABattle;
-    start$.on(manager.resolveStrategy);
-    roundEnd$.on(manager.resolveStrategy);
+    start$.on(battle.manager.resolveStrategy);
+    roundEnd$.on(battle.manager.resolveStrategy);
 
     GameConfigRegistry.register('nature', {
         objectId: (obj) => obj.id,
@@ -85,7 +84,7 @@ declare var Alert: any;
 
 /** cancel alert before use item for pet */
 function cancelAlertForUsePetItem() {
-    ItemUseManager.prototype.useItem = function (t, e) {
+    hookPrototype(ItemUseManager, 'useItem', function (_, t, e) {
         if (!t) return void BubblerManager.getInstance().showText('使用物品前，请先选择一只精灵');
         e = Number(e);
 
@@ -101,5 +100,5 @@ function cancelAlertForUsePetItem() {
                 use();
             }
         }
-    };
+    });
 }

@@ -1,16 +1,15 @@
 import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
+import type { CreateModContext, LevelMeta, ModExport, LevelData as SEALevelData, TaskRunner } from '@/sea-launcher';
 import type { IPetFragmentRunner, PetFragmentOption } from '@/views/Automation/PetFragmentLevel';
 import {
     PetFragmentLevelDifficulty as Difficulty,
-    Engine,
     LevelAction,
     PetFragmentLevel,
-    Socket,
     delay,
+    engine,
+    socket,
     type IPFLevelBoss,
-    type LevelMeta,
-    type LevelData as SEALevelData,
-} from 'sea-core';
+} from '@sea/core';
 
 interface LevelData extends SEALevelData {
     pieces: number;
@@ -21,7 +20,7 @@ interface LevelData extends SEALevelData {
     bosses: IPFLevelBoss[];
 }
 
-export default async function (createModContext: SEAL.createModContext) {
+export default async function (createModContext: CreateModContext) {
     const { meta, logger } = await createModContext({
         meta: {
             id: 'PetFragmentLevel',
@@ -32,7 +31,7 @@ export default async function (createModContext: SEAL.createModContext) {
         },
     });
 
-    class PetFragmentRunner implements SEAL.LevelRunner<LevelData>, IPetFragmentRunner {
+    class PetFragmentRunner implements TaskRunner<LevelData>, IPetFragmentRunner {
         static readonly meta: LevelMeta = {
             maxTimes: 3,
             name: '精灵因子',
@@ -80,9 +79,9 @@ export default async function (createModContext: SEAL.createModContext) {
 
         async update() {
             const { frag, data } = this;
-            const values = await Socket.multiValue(frag.values.openTimes, frag.values.failTimes, frag.values.progress);
+            const values = await socket.multiValue(frag.values.openTimes, frag.values.failTimes, frag.values.progress);
 
-            data.pieces = await Engine.itemNum(frag.petFragmentItem);
+            data.pieces = await engine.itemNum(frag.petFragmentItem);
 
             data.remainingTimes = this.meta.maxTimes - values[0];
             data.failedTimes = values[1];
@@ -99,37 +98,38 @@ export default async function (createModContext: SEAL.createModContext) {
                     data.bosses = frag.level.ease;
                     break;
                 case Difficulty.Normal:
-                    data.bosses = frag.level.ease;
+                    data.bosses = frag.level.normal;
                     break;
                 case Difficulty.Hard:
-                    data.bosses = frag.level.ease;
+                    data.bosses = frag.level.hard;
                     break;
                 default:
                     break;
             }
-            this.data = { ...this.data };
+        }
 
+        next(): string {
+            const data = this.data;
             if (data.isChallenge || data.remainingTimes > 0) {
                 if (this.option.sweep) {
                     return 'sweep';
                 } else {
                     return LevelAction.BATTLE;
                 }
-            } else {
-                return LevelAction.STOP;
             }
+            return LevelAction.STOP;
         }
 
         readonly actions: Record<string, () => Promise<void>> = {
             sweep: async () => {
-                await Socket.sendByQueue(41283, [this.designId, 4 + this.data.curDifficulty]);
+                await socket.sendByQueue(41283, [this.designId, 4 + this.data.curDifficulty]);
                 this.logger('执行一次扫荡');
             },
             battle: async () => {
-                const checkData = await Socket.sendByQueue(41284, [this.designId, this.data.curDifficulty]);
+                const checkData = await socket.sendByQueue(41284, [this.designId, this.data.curDifficulty]);
                 const check = new DataView(checkData!).getUint32(0);
                 if (check === 0) {
-                    Socket.sendByQueue(41282, [this.designId, this.data.curDifficulty]);
+                    socket.sendByQueue(41282, [this.designId, this.data.curDifficulty]);
                 } else {
                     const err = `出战情况不合法: ${check}`;
                     BubblerManager.getInstance().showText(err);
@@ -142,7 +142,7 @@ export default async function (createModContext: SEAL.createModContext) {
     return {
         meta,
         exports: {
-            level: [PetFragmentRunner],
+            task: [PetFragmentRunner],
         },
-    } satisfies SEAL.ModExport;
+    } satisfies ModExport;
 }
