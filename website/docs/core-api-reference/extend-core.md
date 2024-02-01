@@ -54,4 +54,54 @@ declare module '@sea/core' {
 
 要扩展接口定义，需要模块提供可以进行声明合并的接口。下面是一份完整的 SEAC 中可扩展接口的列表，你可以从中了解所有 SEAC 中需要进行扩展接口定义的情况，以及如何处理。
 
-请注意，这个教程**不是**如何扩展 SEAC 的功能，而是如何扩展 SEAC 提供的类型定义。请前往相关章节了解这些定义所关联的功能的内容。
+请注意，这个教程**不是**如何扩展 SEAC 的功能，而是如何扩展 SEAC 提供的类型定义，即完全为编写 typescript 的类型所需。请前往相关章节了解这些定义所关联的功能的内容。
+
+### engine.extend
+
+[engine.extend](./engine.md#engine.extend)
+
+函数签名：
+
+```ts
+SEAEngine.extend(func: AnyFunction | Record<string, AnyFunction>): void
+```
+
+`engine` 实质是一个对象，该对象的类型为：
+
+```ts
+export interface SEAEngine {
+  lowerHp: typeof lowerHp;
+  // ...
+  extend(func: AnyFunction | Record<string, AnyFunction>): void;
+}
+```
+
+因此你需要扩展 `SEAEngine` 来配合 engine.extend， 告诉其他用户 `engine` 上存在某个方法。
+
+例如：
+
+```ts
+engine.extend({
+  async updateBattleFireInfo() {
+    // ...
+  },
+  changeEquipment(type: Parameters<UserInfo['requestChangeClothes']>[0], itemId: number) {
+    // ...
+  }
+});
+```
+
+那么就需要在添加对应的：
+
+```ts
+declare module '@sea/core' {
+  export interface SEAEngine {
+    updateBattleFireInfo(): Promise<{
+      type: number;
+      valid: boolean;
+      timeLeft: number;
+    }>;
+    changeEquipment(type: Parameters<UserInfo['requestChangeClothes']>[0], itemId: number): Promise<void>;
+  }
+}
+```

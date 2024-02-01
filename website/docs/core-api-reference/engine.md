@@ -14,7 +14,7 @@ Engine 模块其实并不是一个比较高层次的模块，该模块提供了�
 
 ## engine 命名空间
 
-engine 命名空间下提供了一个扩展方法 `extend` 和四大类功能：
+engine命名空间实质就是一个对象，提供了一个扩展方法 `extend` 和四大类功能：
 
 - ui：ui 控制相关
 - query：查询玩家信息相关
@@ -23,11 +23,41 @@ engine 命名空间下提供了一个扩展方法 `extend` 和四大类功能：
 
 ### engine.extend
 
+函数签名：
+
+```ts
+SEAEngine.extend(func: AnyFunction | Record<string, AnyFunction>): void
+```
+
+传入一个函数或者包含若干方法的对象，这些函数将以函数名作为键被复制到engine上，然后engine上就可以调用这些函数了。
+
 ### function 类
 
 提供由一组功能组成的高级功能。
 
 ### engine.lowerHp
+
+自动使用谱尼第三封印进行压血，需要调用方保证第三封印已经开启，同时确保ct的合法性。
+
+```ts
+function lowerHp(pets: number[], healPotionId?: ValueOf<typeof PotionId>, hpLimit?: number): Promise<void>;
+```
+
+- `pets`: 精灵的[ct](../concepts-and-words.md#catchtime)数组，压血目标，若长度超过6则截断。会自动进行背包的切换。
+- `healPotionId`: 回血药的id，默认使用50血药。
+- `hpLimit`: 压血上限，该功能执行完毕后保证精灵血量**小于**此数值，默认200。
+
+注意该方法会自动进行若干次对战，且会调用core中的战斗调度器。同时还会对进行自动使用中级活力药剂进行pp的回复并且关闭自动治疗等。
+
+返回一个 Promise，该 Promise 会在压血全部完成后 resolve。
+
+### engine.switchBag
+
+切换背包，需要调用方确保ct的合法性。
+
+```ts
+function switchBag(pets: number[] | Pet[]): Promise<void>;
+```
 
 ## socket 命名空间
 

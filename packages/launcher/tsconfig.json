@@ -1,41 +1,30 @@
 {
-    "extends": "../../tsconfig.json",
-    "compilerOptions": {
-        "tsBuildInfoFile": "../../.tsbuildinfo/app.tsbuildinfo",
-        "moduleResolution": "bundler",
-        "module": "esnext",
-        "isolatedModules": true,
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "allowArbitraryExtensions": true,
-        "allowImportingTsExtensions": true,
-        "resolveJsonModule": true,
-        "noLib": false,
-        // "skipLibCheck": false,
-        "jsx": "react",
-        "noEmit": true,
-        "composite": true,
-        "paths": {
-            "@": [
-                "./src"
-            ],
-            "@/*": [
-                "./src/*"
-            ],
-        },
-        "types": [
-            "vite/client",
-            "@sea/core/types/seerh5",
-            "@sea/core/types/egret"
-        ]
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "../../.tsbuildinfo/app.tsbuildinfo",
+    "moduleResolution": "bundler",
+    "module": "esnext",
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "allowArbitraryExtensions": true,
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "noLib": false,
+    // "skipLibCheck": false,
+    "jsx": "react",
+    "noEmit": true,
+    "composite": true,
+    "paths": {
+      "@": ["./src"],
+      "@/*": ["./src/*"]
     },
-    "include": [
-        "./src/sea-launcher.d.ts",
-        "./src/**/*"
-    ],
-    "references": [
-        {
-            "path": "../core"
-        }
-    ]
+    "types": ["vite/client", "@sea/core/types/seerh5", "@sea/core/types/egret"]
+  },
+  "include": ["./src/**/*"],
+  "references": [
+    {
+      "path": "../core"
+    }
+  ]
 }
