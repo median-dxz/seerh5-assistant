@@ -1,4 +1,4 @@
-import type { ILevelBattle, ILevelRunner, LevelData, LevelMeta, MoveStrategy, VERSION } from '@sea/core';
+import type { ILevelBattle, ILevelRunner, MoveStrategy, VERSION } from '@sea/core';
 
 export interface ModContext<TConfig> {
     meta: ModMeta;

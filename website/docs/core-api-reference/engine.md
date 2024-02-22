@@ -59,6 +59,13 @@ function lowerHp(pets: number[], healPotionId?: ValueOf<typeof PotionId>, hpLimi
 function switchBag(pets: number[] | Pet[]): Promise<void>;
 ```
 
+- `pets`: 精灵的[ct](../concepts-and-words.md#catchtime)数组，压血目标，若长度超过6则截断。
+
+需要注意两点：
+
+1. 数组的第一个元素不一定会设置为首发
+2. 执行该功能会在一个开始先清空现有背包，因此除了指定精灵外，背包内不会有其他精灵。如果传入数组长度为0则可以起到清空背包的效果。
+
 ## socket 命名空间
 
 请参阅[收发包教程](./socket.md)了解如何使用 `socket` 进行收发包。
