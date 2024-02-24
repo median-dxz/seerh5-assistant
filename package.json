@@ -10,7 +10,7 @@
     "name": "median-dxz",
     "url": "https://median-dxz.xyz/"
   },
-  "packageManager": "pnpm@8.15.0",
+  "packageManager": "pnpm@8.15.3",
   "scripts": {
     "dev": "conc pnpm:core:watch pnpm:launcher:dev",
     "server:run": "pnpm -C ./packages/server run start",
@@ -19,20 +19,20 @@
     "core:build": "pnpm --filter \"@sea/core\" run build",
     "workspace:sync": "node ./scripts/sync.js",
     "release:core": "node ./scripts/release.js",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "devDependencies": {
-    "@types/node": "^20.10.4",
-    "@typescript-eslint/eslint-plugin": "^6.14.0",
-    "@typescript-eslint/parser": "^6.14.0",
+    "@types/node": "^20.11.19",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
     "concurrently": "^8.2.2",
     "eslint": "^8.56.0",
-    "husky": "^9.0.6",
-    "lint-staged": "^15.2.0",
-    "prettier": "^3.2.4",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "prettier": "^3.2.5",
     "rimraf": "^5.0.5",
     "typescript": "^5.3.3",
-    "vite": "^5.0.10"
+    "vite": "^5.1.4"
   },
   "engines": {
     "node": ">=20.0.0"
