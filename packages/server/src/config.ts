@@ -1,7 +1,8 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const base = path.dirname(fileURLToPath(import.meta.url));
+const base = import.meta?.url ? path.dirname(fileURLToPath(import.meta.url)) : process.cwd() ?? __dirname;
+console.log(`base: ${base}`);
 const envPath = path.resolve(base, '../.env');
 
 const schema = {
@@ -10,20 +11,20 @@ const schema = {
     properties: {
         PORT: {
             type: 'string',
-            default: 2147,
+            default: 2147
         },
         APP_ROOT: {
             type: 'string',
-            default: path.resolve(base, '../'),
+            default: path.resolve(base, '../')
         }
-    },
+    }
 };
 
 const envOptions = {
     schema,
     dotenv: {
-        path: envPath,
-    },
+        path: envPath
+    }
 };
 
 export { envOptions };

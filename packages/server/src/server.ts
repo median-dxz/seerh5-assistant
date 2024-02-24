@@ -26,9 +26,9 @@ export async function createServer() {
         logger: {
             level: 'trace',
             transport: {
-                target: '@fastify/one-line-logger',
-            },
-        },
+                target: '@fastify/one-line-logger'
+            }
+        }
     });
 
     await server.register(fastifyEnv, envOptions);
@@ -36,7 +36,11 @@ export async function createServer() {
     const root = server.config.APP_ROOT;
     const folders = ['mods', 'dist', 'config', 'logs'];
     folders.forEach((folder) => {
-        if (!fs.statSync(path.resolve(root, folder)).isDirectory) {
+        try {
+            if (!fs.statSync(path.resolve(root, folder)).isDirectory) {
+                fs.mkdirSync(path.resolve(root, folder));
+            }
+        } catch (error) {
             fs.mkdirSync(path.resolve(root, folder));
         }
     });
@@ -56,7 +60,7 @@ export async function createServer() {
             }
             // Generate an error on other origins, disabling access
             cb(new Error('Not allowed'), false);
-        },
+        }
     });
 
     void server.use('/seerh5.61.com/', createAssetsProxy(server.config.APP_ROOT));
@@ -70,21 +74,21 @@ export async function createServer() {
         prefix: '/mods',
         extensions: ['js', 'json'],
         index: false,
-        list: true,
+        list: true
     });
 
     void server.register(fastifyStatic, {
         root: path.resolve(server.config.APP_ROOT, 'dist'),
         prefix: '/',
         index: 'index.html',
-        decorateReply: false,
+        decorateReply: false
     });
 
     void server.register(ws);
     void server.register(fastifyTRPCPlugin, {
         prefix: '/api',
         useWSS: true,
-        trpcOptions: { router: apiRouter, createContext: buildSEALContext({ appRoot: server.config.APP_ROOT }) },
+        trpcOptions: { router: apiRouter, createContext: buildSEALContext({ appRoot: server.config.APP_ROOT }) }
     });
 
     const stop = async () => {
