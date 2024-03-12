@@ -5,3 +5,6 @@
 
 /launcher/**/*
 /bin/**/*
+
+# 这是构建产物
+/src/index.cjs
