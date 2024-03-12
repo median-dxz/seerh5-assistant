@@ -17,27 +17,33 @@
     "launcher:dev": "pnpm -C ./packages/launcher run dev",
     "core:watch": "pnpm --filter \"@sea/core\" run watch",
     "core:build": "pnpm --filter \"@sea/core\" run build",
+    "build": "node ./scripts/build-server.js",
     "workspace:sync": "node ./scripts/sync.js",
     "release:core": "node ./scripts/release.js",
     "prepare": "husky"
   },
   "devDependencies": {
-    "@types/node": "^20.11.19",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
+    "@types/node": "^20.11.26",
+    "@typescript-eslint/eslint-plugin": "^7.2.0",
+    "@typescript-eslint/parser": "^7.2.0",
     "concurrently": "^8.2.2",
-    "eslint": "^8.56.0",
+    "eslint": "^8.57.0",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.2",
     "prettier": "^3.2.5",
     "rimraf": "^5.0.5",
-    "typescript": "^5.3.3",
-    "vite": "^5.1.4"
+    "typescript": "^5.4.2",
+    "vite": "^5.1.6"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=20.10.0"
   },
   "lint-staged": {
     "*.{ts,tsx,json,css,md}": "prettier --write"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "thread-stream@2.4.1": "patches/thread-stream@2.4.1.patch"
+    }
   }
 }
