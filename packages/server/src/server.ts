@@ -34,12 +34,10 @@ export async function createServer() {
     await server.register(fastifyEnv, envOptions);
 
     const root = server.config.APP_ROOT;
-    const folders = ['mods', 'dist', 'config', 'logs'];
+    const folders = ['mods', 'launcher', 'config', 'logs'];
     folders.forEach((folder) => {
         try {
-            if (!fs.statSync(path.resolve(root, folder)).isDirectory) {
-                fs.mkdirSync(path.resolve(root, folder));
-            }
+            fs.accessSync(path.resolve(root, folder));
         } catch (error) {
             fs.mkdirSync(path.resolve(root, folder));
         }
@@ -78,7 +76,7 @@ export async function createServer() {
     });
 
     void server.register(fastifyStatic, {
-        root: path.resolve(server.config.APP_ROOT, 'dist'),
+        root: path.resolve(server.config.APP_ROOT, 'launcher'),
         prefix: '/',
         index: 'index.html',
         decorateReply: false

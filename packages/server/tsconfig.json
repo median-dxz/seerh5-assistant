@@ -1,34 +1,27 @@
 {
-    "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "target": "es2022",
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "incremental": true,
+    "tsBuildInfoFile": "../../.tsbuildinfo/server.tsbuildinfo",
+    "composite": true
+  },
+  "include": ["src"],
+  "ts-node": {
+    // It is faster to skip typechecking.
+    // Remove if you want ts-node to do typechecking.
+    "transpileOnly": true,
+    "files": true,
+    "swc": true,
+    "esm": true,
     "compilerOptions": {
-        "module": "nodenext",
-        "moduleResolution": "nodenext",
-        "target": "es2022",
-        "resolveJsonModule": true,
-        "allowImportingTsExtensions": true,
-        "noEmit": true,
-        "incremental": true,
-        "tsBuildInfoFile": "../../.tsbuildinfo/server.tsbuildinfo",
-        "composite": true
-    },
-    "include": [
-        "src",
-    ],
-    "exclude": [
-        "/mods/**",
-        "/entry/**",
-        "/config/**"
-    ],
-    "ts-node": {
-        // It is faster to skip typechecking.
-        // Remove if you want ts-node to do typechecking.
-        "transpileOnly": true,
-        "files": true,
-        "swc": true,
-        "esm": true,
-        "compilerOptions": {
-            "esModuleInterop": true,
-            "importsNotUsedAsValues": "error"
-        }
-    },
+      "esModuleInterop": true,
+      "importsNotUsedAsValues": "error"
+    }
+  }
 }

@@ -18,32 +18,32 @@ export default defineConfig(({ command, mode }) => {
                 '/api': `http://localhost:${env['VITE_BACKEND_PORT']}`,
                 '/seerh5.61.com': `http://localhost:${env['VITE_BACKEND_PORT']}`,
                 '/account-co.61.com': `http://localhost:${env['VITE_BACKEND_PORT']}`,
-                '/mods': `http://localhost:${env['VITE_BACKEND_PORT']}`,
-            },
+                '/mods': `http://localhost:${env['VITE_BACKEND_PORT']}`
+            }
         },
         build: {
             target: 'esnext',
-            outDir: '../server/dist',
+            outDir: '../server/launcher',
             rollupOptions: {
                 input: {
-                    index: path.resolve(dirname, 'index.html'),
+                    index: path.resolve(dirname, 'index.html')
                 },
                 output: {
                     manualChunks: {
-                        'mui-material': ['@mui/material'],
-                    },
-                },
-            },
+                        'mui-material': ['@mui/material']
+                    }
+                }
+            }
         },
         preview: {
-            port: 1234,
+            port: 1234
         },
         plugins: [
             react({ jsxImportSource: '@emotion/react', devTarget: 'es2022' }),
             importMap({
                 options: {
-                    '@sea/core': path.resolve(dirname, '../core/dist/index.js'),
-                },
+                    '@sea/core': path.resolve(dirname, '../core/dist/index.js')
+                }
             }),
             // 抑制vite在html中以相对路径引用外部脚本报错 ([vite #11854](https://github.com/vitejs/vite/pull/11854))
             // 这是一个特殊的用例, 在这边的情况是因为对入口脚本使用了后端代理, 该请求实际上由后端接管
@@ -51,10 +51,10 @@ export default defineConfig(({ command, mode }) => {
             VitePWA({
                 manifest: false,
                 injectManifest: {
-                    injectionPoint: undefined,
+                    injectionPoint: undefined
                 },
                 devOptions: {
-                    enabled: true,
+                    enabled: true
                 },
                 workbox: {
                     skipWaiting: true,
@@ -68,19 +68,19 @@ export default defineConfig(({ command, mode }) => {
                             options: {
                                 cacheName: 'seerh5-game-cache',
                                 expiration: {
-                                    maxAgeSeconds: 60 * 60 * 24 * 7,
-                                },
-                            },
-                        },
-                    ],
-                },
+                                    maxAgeSeconds: 60 * 60 * 24 * 7
+                                }
+                            }
+                        }
+                    ]
+                }
             }),
-            Inspect(),
+            Inspect()
         ],
         resolve: {
             alias: {
-                '@': path.resolve(dirname, 'src'),
-            },
-        },
+                '@': path.resolve(dirname, 'src')
+            }
+        }
     };
 });

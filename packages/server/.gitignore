@@ -2,3 +2,6 @@
 /config
 /entry/official.js
 /logs
+
+/launcher/**/*
+/bin/**/*
