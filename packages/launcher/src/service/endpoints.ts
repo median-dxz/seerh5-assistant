@@ -1,15 +1,14 @@
 import type { PetFragmentOptionRaw } from '@/views/Automation/PetFragmentLevel';
 import type { ApiRouter } from '@sea/server';
-import { createTRPCProxyClient, createWSClient, wsLink } from '@trpc/client';
+import { createTRPCClient, createWSClient, wsLink } from '@trpc/client';
 import superjson from 'superjson';
 
 const wsClient = createWSClient({
-    url: `ws://localhost:${import.meta.env.VITE_BACKEND_PORT}/api`,
+    url: `ws://localhost:${import.meta.env.VITE_BACKEND_PORT}/api`
 });
 
-const trpcClient = createTRPCProxyClient<ApiRouter>({
-    links: [wsLink({ client: wsClient })],
-    transformer: superjson,
+const trpcClient = createTRPCClient<ApiRouter>({
+    links: [wsLink({ client: wsClient, transformer: superjson })]
 });
 
 export type ModPathList = Array<{ path: string }>;
