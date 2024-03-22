@@ -10,7 +10,6 @@
     "allowArbitraryExtensions": true,
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
-    "noLib": false,
     // "skipLibCheck": false,
     "jsx": "react",
     "noEmit": true,
