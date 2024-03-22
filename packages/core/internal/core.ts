@@ -1,9 +1,10 @@
 import { event$ } from '../common/log.js';
 import type { AnyFunction } from '../common/utils.js';
 import { SEAEventSource } from '../event-source/index.js';
-import { coreSetup, coreSetupBasic } from './features/index.js';
+import { fixSoundLoad } from './features/fixSoundLoad.js';
+import { coreSetup } from './features/index.js';
 
-const VERSION = '1.0.0-rc.1';
+const VERSION = '1.0.0-rc.2';
 const SEER_READY_EVENT = 'seerh5_ready';
 
 export interface SetupFn {
@@ -44,7 +45,7 @@ export class SEAC {
                 seac: this
             };
 
-            this.addSetupFn('beforeGameCoreInit', coreSetupBasic);
+            this.addSetupFn('beforeGameCoreInit', fixSoundLoad);
             this.addSetupFn('afterFirstShowMainPanel', coreSetup);
         } else {
             if (window.sea !== undefined) {

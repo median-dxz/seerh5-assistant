@@ -10,7 +10,7 @@ export const createAssetsProxy = (appRoot: string) =>
         selfHandleResponse: true,
         headers: {
             Origin: 'http://seerh5.61.com/',
-            Referer: 'http://seerh5.61.com/',
+            Referer: 'http://seerh5.61.com/'
         },
         on: {
             proxyRes: (proxyRes, req, res) => {
@@ -39,10 +39,19 @@ export const createAssetsProxy = (appRoot: string) =>
                         res.setHeader('cache-control', 'no-store, no-cache');
                     } else if (url.includes('sentry.js')) {
                         respBuf = zlib.gzipSync('var Sentry = {init: ()=>{}, configureScope: ()=>{}}');
+                    } else if (url.match(/resource\/app\/.*\/.*\.js/)) {
+                        // 反混淆
+                        let script = zlib.gunzipSync(rawBuf).toString();
+                        while (script.startsWith('eval')) {
+                            script = eval(script.match(/eval([^)].*)/)![1]) as string;
+                        }
+                        script = script.replaceAll(/console\.log/g, 'logFilter');
+                        script = script.replaceAll(/console\.warn/g, 'warnFilter');
+                        respBuf = zlib.gzipSync(`//@ sourceURL=http://seerh5.61.com/${url + '\n'}${script}`);
                     }
                     // console.log(`[Proxy]: --> ${req.url}`);
                     res.end(respBuf);
                 });
-            },
-        },
+            }
+        }
     });
