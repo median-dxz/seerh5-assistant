@@ -6,68 +6,40 @@ import * as strategyService from '@/service/store/strategy';
 import * as taskService from '@/service/store/task';
 
 import React, { useCallback, useEffect, useState, type PropsWithChildren } from 'react';
+
 import { ModStore } from './useModStore';
 
-export function ModStoreProvider({ children }: PropsWithChildren<object>) {
+export function ModStoreProvider({ children }: PropsWithChildren) {
     const [_, setSyncSignal] = useState({});
-    const [reloadSignal, setReloadSignal] = useState<{ mods?: string[] }>({});
 
     const sync = useCallback(() => {
         setSyncSignal({});
     }, []);
 
-    const reload = useCallback((mods?: string[]) => {
-        setReloadSignal({
-            mods,
-        });
-    }, []);
-
+    // 初始化时由该组件主动 fetch 一次 mods
     useEffect(() => {
-        // 加载模组
         let active = true;
-        const service = modService;
-        const signal = reloadSignal;
-
-        ctService
-            .sync()
-            .then(() => {
-                if (!active) return;
-                if (signal.mods) {
-                    return service.fetchMods(
-                        signal.mods.map((mod) => {
-                            return {
-                                path: mod,
-                            };
-                        })
-                    );
-                } else {
-                    return service.fetchMods();
-                }
-            })
-            .then((mods) => {
-                if (!active || !mods) return;
-                mods.forEach(service.setup);
-                setSyncSignal({});
-            });
-
+        modService.fetchMods().then((modExports) => {
+            if (active) {
+                // mod service 会判断当前阶段只能加载 preload 类型的 mod
+                modExports.forEach(modService.setup);
+            }
+        });
         return () => {
             active = false;
-            service.teardown();
-            setSyncSignal({});
         };
-    }, [reloadSignal]);
+    }, []);
 
     return (
         <ModStore.Provider
             value={{
-                store: modService.store,
                 sync,
-                reload,
                 ctStore: ctService.store,
+                modStore: modService.store,
                 strategyStore: strategyService.store,
                 battleStore: battleService.store,
                 taskStore: taskService.store,
-                commandStore: commandService.store,
+                commandStore: commandService.store
             }}
         >
             {children}

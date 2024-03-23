@@ -18,6 +18,7 @@ export type ModMeta = {
     version: string;
     core: VERSION;
     description?: string;
+    preload?: boolean;
 };
 
 export interface CreateContextOptions<TConfig> {

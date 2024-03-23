@@ -13,8 +13,8 @@ const EXCHANGE_LIST = {
         特防珠: 6,
         防御珠: 5,
         特攻珠: 4,
-        攻击珠: 3,
-    },
+        攻击珠: 3
+    }
 };
 
 export default async function Sign(createContext: CreateModContext) {
@@ -23,17 +23,17 @@ export default async function Sign(createContext: CreateModContext) {
             id: 'sign',
             scope: 'median',
             description: '日常签到',
-            core: '1.0.0-rc.1',
+            core: '1.0.0-rc.2'
         },
         defaultConfig: {
             teamDispatch: {
-                ignorePets: [],
+                ignorePets: []
             },
             team: {
-                exchangeId: 10,
+                exchangeId: 10
             },
-            ...EXCHANGE_LIST,
-        },
+            ...EXCHANGE_LIST
+        }
     });
 
     return {
@@ -43,8 +43,8 @@ export default async function Sign(createContext: CreateModContext) {
                 ...daily,
                 teamDispatch(config.teamDispatch.ignorePets, logger),
                 ...teamSign(config.team.exchangeId),
-                ...vip(),
-            ],
-        },
+                ...vip()
+            ]
+        }
     } satisfies ModExport;
 }

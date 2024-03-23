@@ -7,8 +7,8 @@ export default async function FightPuni(createContext: CreateModContext) {
         meta: {
             id: '对战谱尼',
             scope: 'median',
-            core: '1.0.0-rc.1',
-        },
+            core: '1.0.0-rc.2'
+        }
     });
 
     const FightPuni: Command = {
@@ -17,13 +17,13 @@ export default async function FightPuni(createContext: CreateModContext) {
         description: '对战谱尼',
         handler() {
             engine.fightBoss(6730);
-        },
+        }
     };
 
     return {
         meta,
         exports: {
-            command: [FightPuni],
-        },
+            command: [FightPuni]
+        }
     } satisfies ModExport;
 }

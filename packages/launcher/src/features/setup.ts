@@ -14,7 +14,6 @@ export function setupForLauncher() {
     extendCoreEngine();
     backgroundHeartBeatCheck();
     cancelAlertForUsePetItem();
-    disableNewSkillPanel(start$, end$);
 
     // 启用开发调试输出
     if (IS_DEV) {
@@ -25,14 +24,7 @@ export function setupForLauncher() {
     start$.on(battle.manager.resolveStrategy);
     roundEnd$.on(battle.manager.resolveStrategy);
 
-    GameConfigRegistry.register('nature', {
-        objectId: (obj) => obj.id,
-        objectName: (obj) => obj.name,
-        objectMap: new Map(Object.values(NatureXMLInfo._dataMap).map((obj) => [obj.id, obj])),
-    });
-}
-
-function disableNewSkillPanel(start$: SEAEventSource<void>, end$: SEAEventSource<void>) {
+    // 屏蔽战斗结束后的获取新技能收发包, 从而屏蔽新技能面板的弹出
     start$.on(() => {
         SocketConnection.removeCmdListener(
             CommandID.NOTE_UPDATE_SKILL,
@@ -46,6 +38,12 @@ function disableNewSkillPanel(start$: SEAEventSource<void>, end$: SEAEventSource
             PetUpdateCmdListener.onUpdateSkill,
             PetUpdateCmdListener
         );
+    });
+
+    GameConfigRegistry.register('nature', {
+        objectId: (obj) => obj.id,
+        objectName: (obj) => obj.name,
+        objectMap: new Map(Object.values(NatureXMLInfo._dataMap).map((obj) => [obj.id, obj]))
     });
 }
 
@@ -73,10 +71,13 @@ function backgroundHeartBeatCheck() {
         EventManager.dispatchEventWith(LifeCycleManager.LIFE_CYCLE_RESUME);
     };
 
-    setInterval(() => {
-        if (!SocketConnection.mainSocket.connected) return;
-        SystemTimerManager.queryTime();
-    }, 4000 + Math.trunc(Math.random() * 1000));
+    setInterval(
+        () => {
+            if (!SocketConnection.mainSocket.connected) return;
+            SystemTimerManager.queryTime();
+        },
+        4000 + Math.trunc(Math.random() * 1000)
+    );
 }
 
 /* eslint-disable-next-line */

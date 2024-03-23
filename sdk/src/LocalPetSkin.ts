@@ -17,10 +17,10 @@ export default async function LocalPetSkin(createContext: CreateModContext) {
             id: 'LocalPetSkin',
             scope: 'median',
             version: '1.0.0',
-            core: '1.0.0-rc.1',
-            description: '本地全皮肤解锁',
+            core: '1.0.0-rc.2',
+            description: '本地全皮肤解锁'
         },
-        defaultConfig: { changed: new Map<number, SkinInfo>(), original: new Map<number, number>() },
+        defaultConfig: { changed: new Map<number, SkinInfo>(), original: new Map<number, number>() }
     });
 
     function install() {
@@ -51,7 +51,7 @@ export default async function LocalPetSkin(createContext: CreateModContext) {
                     r.hideSKill && this.add2List(this._petSkillIDArr, r.hideSKill.id, o);
                     r.hp > 0 && this._aliveNum++;
                 }
-            },
+            }
         });
 
         Object.defineProperty(FightPetInfo.prototype, 'skinId', {
@@ -59,13 +59,13 @@ export default async function LocalPetSkin(createContext: CreateModContext) {
                 return cloth.changed.has(this._petID) && this.userID == MainManager.actorID
                     ? cloth.changed.get(this._petID)!.skinId
                     : this._skinId ?? 0;
-            },
+            }
         });
 
         Object.defineProperty(PetInfo.prototype, 'skinId', {
             get: function (this: PetInfo) {
                 return cloth.changed.has(this.id) ? cloth.changed.get(this.id)!.skinId : this._skinId ?? 0;
-            },
+            }
         });
 
         PetManager.equipSkin = async (catchTime, skinId = 0, callback = NOOP) => {
@@ -93,7 +93,7 @@ export default async function LocalPetSkin(createContext: CreateModContext) {
                 mutate(({ changed }) => {
                     changed.set(petInfo.id, {
                         skinId: skinId,
-                        petSkinId: PetSkinXMLInfo.getSkinPetId(skinId, petInfo.id),
+                        petSkinId: PetSkinXMLInfo.getSkinPetId(skinId, petInfo.id)
                     });
                 });
             }
@@ -104,6 +104,6 @@ export default async function LocalPetSkin(createContext: CreateModContext) {
 
     return {
         meta,
-        install,
+        install
     } satisfies ModExport;
 }

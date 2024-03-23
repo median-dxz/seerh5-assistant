@@ -1,7 +1,7 @@
 import type { VERSION as _CORE_VERSION } from '@sea/core';
 
-export const VERSION = '0.6.6';
-export const CORE_VERSION: _CORE_VERSION = '1.0.0-rc.1';
+export const VERSION = '0.6.7';
+export const CORE_VERSION: _CORE_VERSION = '1.0.0-rc.2';
 export const IS_DEV = import.meta.env.DEV;
 export const CMD_MASK = [
     1002, // SYSTEM_TIME
@@ -11,7 +11,7 @@ export const CMD_MASK = [
     2441, // LOAD_PERCENT
     9019, // NONO_FOLLOW_OR_HOOM
     9274, //PET_GET_LEVEL_UP_EXP
-    41228, // SYSTEM_TIME_CHECK
+    41228 // SYSTEM_TIME_CHECK
 ];
 
 export const MOD_SCOPE_DEFAULT = 'external';
@@ -23,11 +23,11 @@ export const DS = {
         battleFire: 'swr://multiValue/battleFire',
         eyeEquipment: 'swr://multiValue/eyeEquipment',
         title: 'swr://multiValue/title',
-        suit: 'swr://multiValue/suit',
+        suit: 'swr://multiValue/suit'
     },
-    petBag: 'ds://PetBag',
+    petBag: 'ds://PetBag'
 };
 
 export const SEA_CONFIG = {
-    PetGroups: 'PetGroups',
+    PetGroups: 'PetGroups'
 };

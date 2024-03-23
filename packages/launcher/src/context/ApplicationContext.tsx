@@ -6,6 +6,7 @@ import { enableMapSet } from 'immer';
 import { MaterialDesignContent, SnackbarProvider } from 'notistack';
 import React, { type PropsWithChildren } from 'react';
 import { SWRConfig, type SWRConfiguration } from 'swr';
+import { ModStoreProvider } from './ModStoreProvider';
 
 const StyledMaterialDesignContent = styled(MaterialDesignContent)`
     &.notistack-MuiContent-default {
@@ -29,7 +30,7 @@ export function ApplicationContext({ children }: PropsWithChildren<object>) {
                         maxSnack={1}
                         Components={{ default: StyledMaterialDesignContent }}
                     >
-                        {children}
+                        <ModStoreProvider>{children}</ModStoreProvider>
                     </SnackbarProvider>
                 </SWRConfig>
             </ThemeProvider>

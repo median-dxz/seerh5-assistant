@@ -5,7 +5,7 @@ import type { Battle, Command, ModExport, ModMeta, Strategy, Task } from '@/sea-
 type Mod = ModExport;
 type ModModuleExport = (createContext: typeof createModContext) => Promise<Mod>;
 
-import type { AnyFunction } from '@sea/core';
+import { seac, type AnyFunction } from '@sea/core';
 import { getNamespace } from '../mod/createContext';
 import * as battleStore from './battle';
 import * as commandStore from './command';
@@ -91,60 +91,55 @@ export const store = new Map<string, ModInstance>();
 export async function fetchMods(mods?: EndPoints.ModPathList) {
     const modList = mods ?? (await EndPoints.getAllMods());
 
-    const promises = modList.map(({ path }) =>
-        import(/* @vite-ignore */ `/mods/${path}?r=${Math.random()}`)
-            .then((module) => module.default as ModModuleExport)
-            .then((mod) => mod(createModContext))
-            .then()
-    );
+    const promises = modList.map(({ path }) => import(/* @vite-ignore */ `/mods/${path}?r=${Math.random()}`));
 
-    // builtin strategy
-    promises.push(
-        import('@/builtin/strategy')
-            .then((module) => module.default as ModModuleExport)
-            .then((mod) => mod(createModContext))
-    );
+    if (typeof window != 'undefined' && window.sea.SeerH5Ready === false) {
+        // builtin preload mod
+        promises.push(import('@/builtin/preload'));
+    } else {
+        // builtin strategy
+        promises.push(import('@/builtin/strategy'));
 
-    // builtin battle
-    promises.push(
-        import('@/builtin/battle')
-            .then((module) => module.default as ModModuleExport)
-            .then((mod) => mod(createModContext))
-    );
+        // builtin battle
+        promises.push(import('@/builtin/battle'));
 
-    // builtin level
-    promises.push(
-        import('@/builtin/realm')
-            .then((module) => module.default as ModModuleExport)
-            .then((mod) => mod(createModContext))
-    );
+        // builtin level
+        promises.push(import('@/builtin/realm'));
 
-    promises.push(
-        import('@/builtin/petFragment')
-            .then((module) => module.default as ModModuleExport)
-            .then((mod) => mod(createModContext))
-    );
+        promises.push(import('@/builtin/petFragment'));
 
-    // builtin command
-    promises.push(
-        import('@/builtin/command')
-            .then((module) => module.default as ModModuleExport)
-            .then((mod) => mod(createModContext))
-    );
+        // builtin command
+        promises.push(import('@/builtin/command'));
+    }
 
-    return Promise.all(promises);
+    return Promise.all(
+        promises.map((promise) =>
+            promise.then((module) => module.default as ModModuleExport).then((mod) => mod(createModContext))
+        )
+    );
 }
 
 export function setup({ install, uninstall, meta, exports }: Mod) {
     // 确保meta合法
     meta = buildMeta(meta);
 
+    // 检查preload标志是否和当前状态对应
+    if ((typeof window != 'undefined' && window.sea.SeerH5Ready === false) !== Boolean(meta.preload)) {
+        return;
+    }
+
     const ins = new ModInstance(meta);
 
     // 执行副作用
     try {
         ins.setUninstall(uninstall);
-        install?.();
+
+        if (meta.preload && install) {
+            seac.addSetupFn('beforeGameCoreInit', install);
+        } else {
+            install?.();
+        }
+
         console.log(`模组安装中: ${ins.meta.namespace}`);
     } catch (error) {
         console.error(`模组安装失败: ${ins.meta.namespace}`, error);
@@ -161,12 +156,16 @@ export function setup({ install, uninstall, meta, exports }: Mod) {
 
 export function teardown() {
     store.forEach((mod) => {
+        if (mod.finalizers.length === 0) {
+            // need reload app
+            return;
+        }
         try {
+            store.delete(mod.meta.namespace);
             mod.dispose();
             console.log(`卸载模组: ${mod.meta.namespace}`);
         } catch (error) {
             console.error(`模组卸载失败: ${mod.meta.namespace}`, error);
         }
     });
-    store.clear();
 }

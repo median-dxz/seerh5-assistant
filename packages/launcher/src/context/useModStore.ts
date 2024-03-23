@@ -7,9 +7,8 @@ import type { TaskInstance } from '@/service/store/task';
 import { createContext, useContext } from 'react';
 
 export interface Store {
-    store: Map<string, ModInstance>;
     sync: () => void;
-    reload: (mods?: string[]) => void;
+    modStore: Map<string, ModInstance>;
     ctStore: Map<string, number>;
     strategyStore: Map<string, StrategyInstance>;
     battleStore: Map<string, BattleInstance>;

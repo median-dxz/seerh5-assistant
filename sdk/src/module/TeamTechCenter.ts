@@ -10,8 +10,8 @@ export default async function TeamTechCenter(createContext: CreateModContext) {
             id: 'teamTechCenter',
             scope: 'median',
             description: '精灵科技中心模块注入, 提供一键强化到满级功能',
-            core: '1.0.0-rc.1',
-        },
+            core: '1.0.0-rc.2'
+        }
     });
 
     const load = () => {
@@ -64,6 +64,6 @@ export default async function TeamTechCenter(createContext: CreateModContext) {
     return {
         meta,
         install,
-        uninstall,
+        uninstall
     } satisfies ModExport;
 }

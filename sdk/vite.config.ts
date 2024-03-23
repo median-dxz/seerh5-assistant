@@ -14,14 +14,15 @@ export default defineConfig({
                 resolve(__dirname, 'src/sign/sign.ts'),
                 resolve(__dirname, 'src/LocalPetSkin.ts'),
                 resolve(__dirname, 'src/CraftSkillStone.ts'),
+                resolve(__dirname, 'src/DisableSentry.ts')
             ],
             formats: ['es'],
             fileName: (format, entry) => {
                 return entry + '.js';
-            },
+            }
         },
         rollupOptions: {
-            external: /@sea\/core/,
-        },
-    },
+            external: /@sea\/core/
+        }
+    }
 });

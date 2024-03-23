@@ -71,13 +71,13 @@ type Row = {
 };
 
 export function CommonLevelPanel() {
-    const { store, taskStore: levelStore } = useModStore();
+    const { modStore: store, taskStore: levelStore } = useModStore();
     const [taskCompleted, setTaskCompleted] = React.useState<Array<boolean>>([]);
 
     const {
         data: rows = [],
         isLoading,
-        error,
+        error
     } = useSWR('ds://configs/level', async () => {
         const r: Row[] = [];
         const mods = Array.from(store.values()).filter(
@@ -104,20 +104,20 @@ export function CommonLevelPanel() {
         () => [
             {
                 field: 'name',
-                columnName: '关卡名称',
+                columnName: '关卡名称'
             },
             {
                 field: 'state',
-                columnName: '完成状态',
+                columnName: '完成状态'
             },
             {
                 field: 'action',
-                columnName: '操作',
+                columnName: '操作'
             },
             {
                 field: 'config',
-                columnName: '配置',
-            },
+                columnName: '配置'
+            }
         ],
         []
     );
@@ -171,7 +171,7 @@ const PanelRow = React.memo(({ taskCompleted, setTaskCompleted }: PanelRowProps)
                 })
             );
             return r;
-        },
+        }
     });
 
     useEffect(() => {

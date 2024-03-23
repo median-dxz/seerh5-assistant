@@ -13,8 +13,8 @@ export default async function PetBag(createContext: CreateModContext) {
             id: 'petBag',
             scope: 'median',
             description: '精灵背包模块注入, 提供UI同步和本地皮肤功能的UI支持',
-            core: '1.0.0-rc.1',
-        },
+            core: '1.0.0-rc.2'
+        }
     });
 
     const sub = new Subscription();
@@ -73,6 +73,6 @@ export default async function PetBag(createContext: CreateModContext) {
     return {
         meta,
         install,
-        uninstall,
+        uninstall
     } satisfies ModExport;
 }

@@ -5,7 +5,7 @@ const rate = [
     [0, 24, 5.8, 1.4, 0.3],
     [0, 0, 23, 5.5, 1.3],
     [0, 0, 0, 22, 5.3],
-    [0, 0, 0, 0, 21],
+    [0, 0, 0, 0, 21]
 ];
 
 function calcProbability(level: number, targetLevel: number) {
@@ -18,9 +18,9 @@ export default async function CraftSkillStone(createContext: CreateModContext) {
             id: 'CraftSkillStone',
             scope: 'median',
             version: '1.0.0',
-            core: '1.0.0-rc.1',
-            description: 'misc',
-        },
+            core: '1.0.0-rc.2',
+            description: 'misc'
+        }
     });
 
     const install = () => {};
@@ -55,7 +55,7 @@ export default async function CraftSkillStone(createContext: CreateModContext) {
                     break;
                 }
             }
-        },
+        }
     };
 
     const craftOne: Command = {
@@ -81,7 +81,7 @@ export default async function CraftSkillStone(createContext: CreateModContext) {
                     name: stoneName.replace('系技能', ''),
                     level: ItemXMLInfo.getSkillStoneRank(stone.itemID) - 1,
                     id: stone.itemID,
-                    num: stone.itemNum,
+                    num: stone.itemNum
                 });
             });
             stones.sort((a, b) => a.level - b.level);
@@ -114,13 +114,13 @@ export default async function CraftSkillStone(createContext: CreateModContext) {
                 toCraft.map((v) => v.id)
             );
             // await this.init();
-        },
+        }
     };
 
     return {
         meta,
         exports: { command: [resetNature, craftOne] },
         install,
-        uninstall,
+        uninstall
     } satisfies ModExport;
 }

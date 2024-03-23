@@ -55,14 +55,14 @@ export function ModListItem({ mod }: ModListItemProps) {
 }
 
 export function ModList(listProps: ListProps) {
-    const { store: _store } = useModStore();
+    const { modStore: _store } = useModStore();
     const store = Array.from(_store.values());
     return (
         <List
             sx={{
                 width: '100%',
                 paddingTop: '16px',
-                paddingLeft: '16px',
+                paddingLeft: '16px'
             }}
             {...listProps}
         >
