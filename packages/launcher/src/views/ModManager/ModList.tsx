@@ -5,11 +5,11 @@ import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 import { useModStore } from '@/context/useModStore';
 import type { ModInstance } from '@/service/store/mod';
 
-import Settings from '@mui/icons-material/Settings';
-import Refresh from '@mui/icons-material/RefreshRounded';
 import Delete from '@mui/icons-material/DeleteOutlineRounded';
-import RadioButtonUnchecked from '@mui/icons-material/RadioButtonUnchecked';
 import RadioButtonChecked from '@mui/icons-material/RadioButtonChecked';
+import RadioButtonUnchecked from '@mui/icons-material/RadioButtonUnchecked';
+import Refresh from '@mui/icons-material/RefreshRounded';
+import Settings from '@mui/icons-material/Settings';
 
 interface ModListItemProps {
     mod: ModInstance;
@@ -106,25 +106,25 @@ export function ModListItem({ mod }: ModListItemProps) {
             >
                 <MenuItem sx={{ maxWidth: '25vw', fontSize: '1rem' }}>
                     <RadioButtonUnchecked fontSize="inherit" />
-                    <Typography sx={{ ml: 2 }} fontSize="inherit">
+                    <Typography sx={{ ml: 2, mr: 2 }} fontSize="inherit">
                         启用
                     </Typography>
                 </MenuItem>
                 <MenuItem sx={{ maxWidth: '25vw', fontSize: '1rem' }}>
                     <RadioButtonChecked fontSize="inherit" />
-                    <Typography sx={{ ml: 2 }} fontSize="inherit">
+                    <Typography sx={{ ml: 2, mr: 2 }} fontSize="inherit">
                         禁用
                     </Typography>
                 </MenuItem>
                 <MenuItem sx={{ maxWidth: '25vw', fontSize: '1rem' }}>
                     <Refresh fontSize="inherit" />
-                    <Typography sx={{ ml: 2 }} fontSize="inherit">
+                    <Typography sx={{ ml: 2, mr: 2 }} fontSize="inherit">
                         重载
                     </Typography>
                 </MenuItem>
                 <MenuItem sx={{ maxWidth: '25vw', fontSize: '1rem' }}>
                     <Delete fontSize="inherit" />
-                    <Typography sx={{ ml: 2 }} fontSize="inherit">
+                    <Typography sx={{ ml: 2, mr: 2 }} fontSize="inherit">
                         删除
                     </Typography>
                 </MenuItem>
