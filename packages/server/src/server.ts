@@ -24,7 +24,6 @@ import { apiRouter } from './router/index.ts';
 export async function createServer() {
     const server = fastify({
         logger: {
-            level: 'trace',
             transport: {
                 target: '@fastify/one-line-logger'
             }
@@ -86,7 +85,10 @@ export async function createServer() {
     void server.register(fastifyTRPCPlugin, {
         prefix: '/api',
         useWSS: true,
-        trpcOptions: { router: apiRouter, createContext: buildSEALContext({ appRoot: server.config.APP_ROOT }) }
+        trpcOptions: {
+            router: apiRouter,
+            createContext: buildSEALContext({ appRoot: server.config.APP_ROOT })
+        }
     });
 
     const stop = async () => {
