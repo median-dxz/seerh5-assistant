@@ -10,6 +10,9 @@ import RadioButtonChecked from '@mui/icons-material/RadioButtonChecked';
 import RadioButtonUnchecked from '@mui/icons-material/RadioButtonUnchecked';
 import Refresh from '@mui/icons-material/RefreshRounded';
 import Settings from '@mui/icons-material/Settings';
+import Feed from '@mui/icons-material/FeedRounded';
+import Build from '@mui/icons-material/BuildRounded';
+import { Box } from '@mui/system';
 
 interface ModListItemProps {
     mod: ModInstance;
@@ -89,9 +92,24 @@ export function ModListItem({ mod }: ModListItemProps) {
                 primaryTypographyProps={{ fontFamily: ['Open Sans', 'MFShangHei'] }}
                 sx={{ paddingRight: 4, paddingLeft: 4 }}
             />
-            <IconButtonNoRipple title="设置" sx={{ marginInline: '2rem' }} onClick={handleClick}>
-                <Settings />
-            </IconButtonNoRipple>
+            <Box
+                sx={{
+                    marginInline: '2rem',
+                    '&>*': {
+                        marginInline: '0.5rem'
+                    }
+                }}
+            >
+                <IconButtonNoRipple title="详情">
+                    <Feed />
+                </IconButtonNoRipple>
+                <IconButtonNoRipple title="配置">
+                    <Settings />
+                </IconButtonNoRipple>
+                <IconButtonNoRipple title="管理" onClick={handleClick}>
+                    <Build />
+                </IconButtonNoRipple>
+            </Box>
             <Menu
                 anchorEl={anchor}
                 MenuListProps={{

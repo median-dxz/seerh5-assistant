@@ -15,46 +15,82 @@ export default async function realm(createModContext: CreateModContext) {
             scope: MOD_SCOPE_BUILTIN,
             version: VERSION,
             core: CORE_VERSION,
-            description: '日常关卡',
+            description: '日常关卡'
         },
-        defaultConfig: {
-            ELF_KING_ID: {
-                光王斯嘉丽: 2,
-                水王沧岚: 8,
-                自然王莫妮卡: 17,
-                龙妈乔特鲁德: 6,
-                草王茉蕊儿: 15,
-                海瑟薇: 12,
-                邪灵王摩哥斯: 14,
-                格劳瑞: 9,
-                战王: 13,
-                秘王: 7,
+        config: {
+            'LevelElfKingsTrial.elfKing': {
+                name: '精灵王',
+                type: 'select',
+                description: '自动日任要挑战的精灵王',
+                list: {
+                    光王斯嘉丽: '2',
+                    水王沧岚: '8',
+                    自然王莫妮卡: '17',
+                    龙妈乔特鲁德: '6',
+                    草王茉蕊儿: '15',
+                    海瑟薇: '12',
+                    邪灵王摩哥斯: '14',
+                    格劳瑞: '9',
+                    战王: '13',
+                    秘王: '7'
+                }
             },
-            LevelCourageTower: {
-                stimulation: false,
-                sweep: false,
+            'LevelElfKingsTrial.elfKingStimulation': {
+                name: '精灵王双倍',
+                type: 'checkbox',
+                default: false
             },
-            LevelElfKingsTrial: {
-                stimulation: false,
-                sweep: false,
-                elfId: 15,
+            'LevelElfKingsTrial.sweep': {
+                name: '精灵王扫荡',
+                type: 'checkbox',
+                default: false
             },
-            LevelExpTraining: {
-                stimulation: false,
-                sweep: false,
+            'LevelCourageTower.stimulation': {
+                name: '勇者之塔双倍',
+                type: 'checkbox',
+                default: false
             },
-            LevelStudyTraining: {
-                stimulation: false,
-                sweep: false,
+            'LevelCourageTower.sweep': {
+                name: '勇者之塔扫荡',
+                type: 'checkbox',
+                default: false
             },
-            LevelTitanHole: {
-                stimulation: false,
-                sweep: false,
+            'LevelExpTraining.stimulation': {
+                name: '经验双倍',
+                type: 'checkbox',
+                default: false
             },
-            LevelXTeamRoom: {
-                sweep: false,
+            'LevelExpTraining.sweep': {
+                name: '经验扫荡',
+                type: 'checkbox',
+                default: false
             },
-        },
+            'LevelStudyTraining.stimulation': {
+                name: '学习力双倍',
+                type: 'checkbox',
+                default: false
+            },
+            'LevelStudyTraining.sweep': {
+                name: '学习力扫荡',
+                type: 'checkbox',
+                default: false
+            },
+            'LevelTitanHole.stimulation': {
+                name: '泰坦矿洞双倍',
+                type: 'checkbox',
+                default: false
+            },
+            'LevelTitanHole.sweep': {
+                name: '泰坦矿洞扫荡',
+                type: 'checkbox',
+                default: false
+            },
+            'LevelXTeamRoom.sweep': {
+                name: 'X战队扫荡',
+                type: 'checkbox',
+                default: false
+            }
+        }
     });
 
     return {
@@ -71,7 +107,7 @@ export default async function realm(createModContext: CreateModContext) {
                     static readonly meta: LevelMeta = {
                         id: 'Test',
                         name: '测试',
-                        maxTimes: 1,
+                        maxTimes: 1
                     };
                     get meta(): LevelMeta {
                         return Test.meta;
@@ -84,7 +120,7 @@ export default async function realm(createModContext: CreateModContext) {
                         run: async () => {
                             this.data.progress++;
                             await delay(3000);
-                        },
+                        }
                     };
                     async update() {}
                     next(): string {
@@ -97,8 +133,8 @@ export default async function realm(createModContext: CreateModContext) {
                         return battle('');
                     }
                     logger = NOOP;
-                },
-            ],
-        },
+                }
+            ]
+        }
     } as ModExport;
 }

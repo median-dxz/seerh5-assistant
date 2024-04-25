@@ -1,12 +1,39 @@
 import type { ILevelBattle, ILevelRunner, MoveStrategy, VERSION } from '@sea/core';
 
-export interface ModContext<TConfig> {
+export type SEAConfigSchema = (
+    | {
+          type: 'input';
+          default?: string;
+      }
+    | {
+          type: 'select';
+          list: Record<string, string>;
+          default?: string;
+      }
+    | {
+          type: 'checkbox';
+          default?: boolean;
+      }
+) & {
+    name: string;
+    description?: string;
+};
+
+export type SEAConfig<TConfig extends Record<string, SEAConfigSchema> | undefined> = TConfig extends undefined
+    ? undefined
+    : {
+          [Key in keyof TConfig]: string;
+      };
+
+export interface ModContext<TCustomData, TConfig extends Record<string, string> | undefined> {
     meta: ModMeta;
 
     logger: typeof console.log;
 
     config: TConfig;
-    mutate: (recipe: (draft: TConfig) => void) => void;
+
+    data: TCustomData;
+    mutate: TCustomData extends undefined ? undefined : (recipe: (draft: TCustomData) => void) => void;
 
     ct(...pets: string[]): number[];
     battle(name: string): ILevelBattle;
@@ -21,14 +48,18 @@ export type ModMeta = {
     preload?: boolean;
 };
 
-export interface CreateContextOptions<TConfig> {
+export interface CreateContextOptions<TCustomData, TConfig extends Record<string, SEAConfigSchema> | undefined> {
     meta: Omit<Partial<ModMeta>, 'id' | 'core'> & { id: string; core: VERSION };
-    defaultConfig?: TConfig;
+    config?: TConfig;
+    defaultData?: TCustomData;
 }
 
-export type CreateModContext = <TConfig extends undefined | object = undefined>(
-    options: CreateContextOptions<TConfig>
-) => Promise<ModContext<TConfig>>;
+export type CreateModContext = <
+    TCustomData extends undefined | unknown = undefined,
+    TConfig extends undefined | Record<string, SEAConfigSchema> = undefined
+>(
+    options: CreateContextOptions<TCustomData, TConfig>
+) => Promise<ModContext<TCustomData, SEAConfig<TConfig>>>;
 
 export interface TaskRunner<TData extends LevelData = LevelData> extends ILevelRunner<TData> {
     get meta(): LevelMeta;

@@ -9,9 +9,10 @@ import { MOD_SCOPE_BUILTIN } from '@/constants';
 import { useModStore } from '@/context/useModStore';
 import { useTaskScheduler } from '@/context/useTaskScheduler';
 import type { Task } from '@/sea-launcher';
-import * as Endpoints from '@/service/endpoints';
 import { LevelAction } from '@sea/core';
 import { produce } from 'immer';
+
+// import * as Endpoints from '@/service/endpoints';
 
 // const rows: Array<Level> = React.useMemo(
 //     () => [
@@ -52,26 +53,13 @@ import { produce } from 'immer';
 //     [running]
 // );
 
-// levelConfigs.forEach((config, index) => {
-//     const levelUpdater = runner.updater.bind(runner);
-//     runner.updater = async () => {
-//         const r = await levelUpdater();
-//         setTaskCompleted(
-//             produce((draft) => {
-//                 draft[index] = r === LevelState.STOP;
-//             })
-//         );
-//         return r;
-//     };
-// });
-
 type Row = {
     taskClass: Task;
-    config: Record<string, unknown>;
+    config?: Record<string, unknown>;
 };
 
 export function CommonLevelPanel() {
-    const { modStore: store, taskStore: levelStore } = useModStore();
+    const { taskStore: levelStore } = useModStore();
     const [taskCompleted, setTaskCompleted] = React.useState<Array<boolean>>([]);
 
     const {
@@ -80,20 +68,12 @@ export function CommonLevelPanel() {
         error
     } = useSWR('ds://configs/level', async () => {
         const r: Row[] = [];
-        const mods = Array.from(store.values()).filter(
-            (mod) => mod.level.length > 0 && mod.meta.namespace !== `${MOD_SCOPE_BUILTIN}::PetFragmentLevel`
-        );
-        const allConfigs = await Promise.all(
-            mods.map(({ meta }) => Endpoints.getModConfig(meta.scope, meta.id) as Promise<Record<string, unknown>>)
-        ).then((configs) => configs.map((config) => Object.entries(config)).flat());
-
-        levelStore.forEach((levelInstance, levelKey) => {
+        levelStore.forEach((levelInstance) => {
             if (levelInstance.ownerMod === `${MOD_SCOPE_BUILTIN}::PetFragmentLevel`) {
                 return;
             }
             if (Object.hasOwn(levelInstance.task.prototype, 'selectLevelBattle')) {
-                const config = allConfigs.find(([key]) => key === levelKey)?.[1] ?? {};
-                r.push({ taskClass: levelInstance.task, config: config as Record<string, unknown> });
+                r.push({ taskClass: levelInstance.task });
             }
         });
 

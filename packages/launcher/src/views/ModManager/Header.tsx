@@ -17,6 +17,7 @@ export function Header() {
                 borderBottom: (theme) => `1px solid ${alpha(theme.palette.divider, 0.12)}`
             }}
         >
+            <Button>从文件安装</Button>
             <Button
                 onClick={() => {
                     teardown();

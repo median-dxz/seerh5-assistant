@@ -1,8 +1,10 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const base = import.meta?.url ? path.dirname(fileURLToPath(import.meta.url)) : process.cwd() ?? __dirname;
+const base = (import.meta?.url ? path.dirname(fileURLToPath(import.meta.url)) : __dirname) ?? process.cwd();
+
 console.log(`base: ${base}`);
+
 const envPath = path.resolve(base, '../.env');
 
 const schema = {

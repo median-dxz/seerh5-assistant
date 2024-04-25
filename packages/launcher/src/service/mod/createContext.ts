@@ -9,7 +9,7 @@ type ProxyObjectRef<T extends object> = T & { ref: T };
 
 function createProxyObjectRef<T extends object>(initValue: T) {
     const observable = {
-        ref: initValue,
+        ref: initValue
     } as ProxyObjectRef<T>;
 
     const proxy = new Proxy(observable, {
@@ -26,7 +26,7 @@ function createProxyObjectRef<T extends object>(initValue: T) {
             } else {
                 return Reflect.set(target.ref, prop, value, receiver);
             }
-        },
+        }
     });
 
     return proxy;
@@ -48,29 +48,29 @@ export function getNamespace(meta: ModMeta) {
     return `${scope}::${id}`;
 }
 
-async function buildConfig({ scope, id }: { id: string; scope: string }, defaultConfig?: unknown) {
-    if (defaultConfig) {
-        let config;
+async function buildCustomData({ scope, id }: { id: string; scope: string }, defaultData?: unknown) {
+    if (defaultData) {
+        let data;
 
-        config = await endpoints.getModConfig(scope, id);
-        if (!config) {
-            await endpoints.setModConfig(scope, id, defaultConfig);
-            config = defaultConfig;
+        data = await endpoints.getModCustomData(scope, id);
+        if (!data) {
+            await endpoints.setModCustomData(scope, id, defaultData);
+            data = defaultData;
         }
 
-        const proxyConfig = createProxyObjectRef(config);
+        const proxyData = createProxyObjectRef(data);
 
         const mutate = (recipe: (draft: unknown) => void) => {
-            recipe(proxyConfig.ref);
-            endpoints.setModConfig(scope, id, proxyConfig.ref);
+            recipe(proxyData.ref);
+            endpoints.setModCustomData(scope, id, proxyData.ref);
         };
 
-        return { config: proxyConfig, mutate };
+        return { data: proxyData, mutate };
     }
     return {};
 }
 
-export async function createModContext(options: CreateContextOptions<unknown>) {
+export async function createModContext(options: CreateContextOptions<unknown, undefined>) {
     const ct = (...pets: string[]) => {
         const r = pets.map((pet) => ctStore.ctByName(pet));
         if (r.some((v) => v === undefined)) {
@@ -91,7 +91,7 @@ export async function createModContext(options: CreateContextOptions<unknown>) {
     options.meta = meta;
 
     const logger = getLogger(meta.id);
-    const config = await buildConfig(meta, options.defaultConfig);
+    const data = await buildCustomData(meta, options.defaultData);
 
-    return { meta, logger, ct, battle, ...config } as ModContext<unknown>;
+    return { meta, logger, ct, battle, ...data } as ModContext<unknown, undefined>;
 }

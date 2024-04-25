@@ -11,47 +11,56 @@ const trpcClient = createTRPCClient<ApiRouter>({
     links: [wsLink({ client: wsClient, transformer: superjson })]
 });
 
-export type ModPathList = Array<{ path: string }>;
+const { modRouter, configRouter } = trpcClient;
 
-type AllMods = () => Promise<ModPathList>;
-export const getAllMods: AllMods = async () => {
-    return trpcClient.allMods.query();
+export type ModInfo = { id: string; scope: string };
+export const getAllModList = async (): Promise<Array<ModInfo>> => {
+    return modRouter.modList.query();
+};
+
+export const getModCustomData = async (scope: string, id: string) => {
+    return modRouter.customData.query({ scope, id });
+};
+
+export const setModCustomData = async (scope: string, id: string, data: unknown) => {
+    return modRouter.saveCustomData.mutate({ scope, id, data });
 };
 
 export const getModConfig = async (scope: string, id: string) => {
-    return trpcClient.modConfig.query({ scope, id });
+    return modRouter.config.query({ scope, id });
 };
 
-export const setModConfig = async (scope: string, id: string, config: unknown) => {
-    return trpcClient.setModConfig.mutate({ scope, id, config });
+export const setModConfig = async (scope: string, id: string, data: unknown) => {
+    return modRouter.setConfig.mutate({ scope, id, data });
 };
 
-export const getConfig = async (key: string) => {
-    return trpcClient.launcherConfig.query(key) as Promise<unknown>;
+export type ConfigKey = 'PetGroups';
+export const getConfig = async (key: ConfigKey) => {
+    return configRouter.launcherConfig.query(key) as Promise<unknown>;
 };
 
-export const setConfig = async (key: string, value: unknown) => {
-    return trpcClient.setLauncherConfig.mutate({ key, value });
+export const setConfig = async (key: ConfigKey, value: unknown) => {
+    return configRouter.setLauncherConfig.mutate({ key, value });
 };
 
 export async function queryCatchTime(name: string): Promise<[string, number]>;
 export async function queryCatchTime(): Promise<Map<string, number>>;
 export async function queryCatchTime(name?: string) {
-    return trpcClient.pets.query(name);
+    return configRouter.allCatchTime.query(name);
 }
 
-export const cacheCatchTime = async (data: Map<string, number>) => {
-    return trpcClient.cachePets.mutate(data);
+export const updateAllCatchTime = async (data: Map<string, number>) => {
+    return configRouter.updateAllCatchTime.mutate(data);
 };
 
 export const deleteCatchTime = async (name: string) => {
-    return trpcClient.removeCachePet.mutate(name);
+    return configRouter.deleteCatchTime.mutate(name);
 };
 
 export const addCatchTime = async (name: string, time: number) => {
-    return trpcClient.addCachePet.mutate([name, time]);
+    return configRouter.setCatchTime.mutate([name, time]);
 };
 
 export const getPetFragmentConfig = async () => {
-    return trpcClient.petFragmentLevel.query() as Promise<PetFragmentOptionRaw[]>;
+    return configRouter.petFragmentLevel.query() as Promise<PetFragmentOptionRaw[]>;
 };

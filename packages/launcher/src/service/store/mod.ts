@@ -88,10 +88,12 @@ export class ModInstance {
 
 export const store = new Map<string, ModInstance>();
 
-export async function fetchMods(mods?: EndPoints.ModPathList) {
-    const modList = mods ?? (await EndPoints.getAllMods());
+export async function fetchMods(mods?: Array<{ id: string; scope: string }>) {
+    const modList = mods ?? (await EndPoints.getAllModList());
 
-    const promises = modList.map(({ path }) => import(/* @vite-ignore */ `/mods/${path}?r=${Math.random()}`));
+    const promises = modList.map(
+        ({ id, scope }) => import(/* @vite-ignore */ `/mods/${scope}/${id}/${id}.js?r=${Math.random()}`)
+    );
 
     if (typeof window != 'undefined' && window.sea.SeerH5Ready === false) {
         // builtin preload mod

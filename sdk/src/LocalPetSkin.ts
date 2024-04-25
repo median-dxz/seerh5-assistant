@@ -12,7 +12,7 @@ declare var PetSkinXMLInfo: any;
 declare var PetSkinController: any;
 
 export default async function LocalPetSkin(createContext: CreateModContext) {
-    const { meta, config, mutate, logger } = await createContext({
+    const { meta, data, mutate, logger } = await createContext({
         meta: {
             id: 'LocalPetSkin',
             scope: 'median',
@@ -20,11 +20,11 @@ export default async function LocalPetSkin(createContext: CreateModContext) {
             core: '1.0.0-rc.2',
             description: '本地全皮肤解锁'
         },
-        defaultConfig: { changed: new Map<number, SkinInfo>(), original: new Map<number, number>() }
+        defaultData: { changed: new Map<number, SkinInfo>(), original: new Map<number, number>() }
     });
 
     function install() {
-        const cloth = config;
+        const cloth = data;
 
         Object.defineProperty(FighterUserInfo.prototype, 'petInfoArr', {
             set: function (t) {

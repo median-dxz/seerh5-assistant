@@ -2,31 +2,27 @@ import * as endpoints from '@/service/endpoints';
 import { produce, type Draft } from 'immer';
 import useSWR from 'swr';
 
-export function usePersistentConfig<T>(key: string, initValue: T) {
+export function usePersistentConfig<T>(key: endpoints.ConfigKey, initValue: T) {
     const {
         data,
         isLoading,
-        mutate: persistenceMutate,
+        mutate: persistenceMutate
     } = useSWR(
         key,
-        (key: string) =>
+        (key: endpoints.ConfigKey) =>
             endpoints.getConfig(key).then((v) => {
                 return (v as T) ?? initValue;
             }),
         {
-            fallbackData: initValue,
+            fallbackData: initValue
         }
     );
 
     const mutate = (recipe: (draft: Draft<T>) => void) => {
         persistenceMutate(async () => {
             const nextData = produce(data, recipe);
-            const r = await endpoints.setConfig(key, nextData);
-            if (r.success) {
-                return nextData;
-            } else {
-                throw new Error('更新配置失败');
-            }
+            await endpoints.setConfig(key, nextData);
+            return nextData;
         });
     };
 

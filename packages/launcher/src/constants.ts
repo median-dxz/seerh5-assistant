@@ -27,7 +27,3 @@ export const DS = {
     },
     petBag: 'ds://PetBag'
 };
-
-export const SEA_CONFIG = {
-    PetGroups: 'PetGroups'
-};
