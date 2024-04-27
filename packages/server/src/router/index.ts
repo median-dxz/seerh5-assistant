@@ -6,5 +6,3 @@ export const apiRouter = router({
     modRouter,
     configRouter
 });
-
-export type ApiRouter = typeof apiRouter;

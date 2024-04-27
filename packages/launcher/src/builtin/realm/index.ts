@@ -9,7 +9,7 @@ import LevelTitanHole from './LevelTitanHole';
 import LevelXTeamRoom from './LevelXTeamRoom';
 
 export default async function realm(createModContext: CreateModContext) {
-    const { meta, logger, battle } = await createModContext({
+    const { meta, logger, battle, configSchemas } = await createModContext({
         meta: {
             id: 'Realm',
             scope: MOD_SCOPE_BUILTIN,
@@ -95,6 +95,7 @@ export default async function realm(createModContext: CreateModContext) {
 
     return {
         meta,
+        configSchemas,
         exports: {
             task: [
                 LevelCourageTower(logger, battle),

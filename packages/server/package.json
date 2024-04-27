@@ -6,7 +6,7 @@
   "main": "./src/index.ts",
   "exports": {
     ".": {
-      "types": "./src/router/index.ts"
+      "types": "./src/client-types.ts"
     }
   },
   "scripts": {

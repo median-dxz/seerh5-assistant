@@ -1,5 +1,5 @@
 import { NOOP, socket } from '@sea/core';
-import type { CreateModContext, ModExport } from '@sea/launcher';
+import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/launcher';
 
 interface SkinInfo {
     skinId: number;
@@ -11,18 +11,16 @@ declare var PetIdTransform: any;
 declare var PetSkinXMLInfo: any;
 declare var PetSkinController: any;
 
-export default async function LocalPetSkin(createContext: CreateModContext) {
-    const { meta, data, mutate, logger } = await createContext({
-        meta: {
-            id: 'LocalPetSkin',
-            scope: 'median',
-            version: '1.0.0',
-            core: '1.0.0-rc.2',
-            description: '本地全皮肤解锁'
-        },
-        defaultData: { changed: new Map<number, SkinInfo>(), original: new Map<number, number>() }
-    });
+export const metadata = {
+    id: 'LocalPetSkin',
+    scope: 'median',
+    version: '1.0.0',
+    core: '1.0.0-rc.2',
+    description: '本地全皮肤解锁',
+    data: { changed: new Map<number, SkinInfo>(), original: new Map<number, number>() }
+} satisfies SEAModMetadata;
 
+export default async function LocalPetSkin({ data, mutate, logger }: SEAModContext<typeof metadata>) {
     function install() {
         const cloth = data;
 
@@ -103,7 +101,6 @@ export default async function LocalPetSkin(createContext: CreateModContext) {
     }
 
     return {
-        meta,
         install
-    } satisfies ModExport;
+    } satisfies SEAModExport;
 }

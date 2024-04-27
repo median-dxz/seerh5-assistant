@@ -1,5 +1,5 @@
 import { Pet, SEAEventSource, Subscription, debounce, engine, hookFn, hookPrototype } from '@sea/core';
-import type { CreateModContext, ModExport } from '@sea/launcher';
+import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/launcher';
 
 declare module '@sea/core' {
     interface GameModuleMap {
@@ -7,16 +7,15 @@ declare module '@sea/core' {
     }
 }
 
-export default async function PetBag(createContext: CreateModContext) {
-    const { meta, logger } = await createContext({
-        meta: {
-            id: 'petBag',
-            scope: 'median',
-            description: '精灵背包模块注入, 提供UI同步和本地皮肤功能的UI支持',
-            core: '1.0.0-rc.2'
-        }
-    });
+export const metadata = {
+    id: 'petBag',
+    scope: 'median',
+    description: '精灵背包模块注入, 提供UI同步和本地皮肤功能的UI支持',
+    core: '1.0.0-rc.2',
+    version: '1.0.0'
+} satisfies SEAModMetadata;
 
+export default async function PetBag({ logger }: SEAModContext<typeof metadata>) {
     const sub = new Subscription();
     const lifeCycleSub = new Subscription();
 
@@ -71,8 +70,7 @@ export default async function PetBag(createContext: CreateModContext) {
     };
 
     return {
-        meta,
         install,
         uninstall
-    } satisfies ModExport;
+    } satisfies SEAModExport;
 }

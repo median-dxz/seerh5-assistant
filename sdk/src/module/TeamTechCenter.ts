@@ -1,19 +1,18 @@
 import { SEAEventSource, socket } from '@sea/core';
-import type { CreateModContext, ModExport } from '@sea/launcher';
+import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/launcher';
 
 declare var Alarm: any;
 
-// team.TeamTech
-export default async function TeamTechCenter(createContext: CreateModContext) {
-    const { meta } = await createContext({
-        meta: {
-            id: 'teamTechCenter',
-            scope: 'median',
-            description: '精灵科技中心模块注入, 提供一键强化到满级功能',
-            core: '1.0.0-rc.2'
-        }
-    });
+export const metadata = {
+    id: 'teamTechCenter',
+    scope: 'median',
+    description: '精灵科技中心模块注入, 提供一键强化到满级功能',
+    core: '1.0.0-rc.2',
+    version: '1.0.0'
+} satisfies SEAModMetadata;
 
+// team.TeamTech
+export default async function TeamTechCenter(ctx: SEAModContext<typeof metadata>) {
     const load = () => {
         team.TeamTech.prototype.onClickEnhance = async function () {
             const index = this.list_attr.selectedIndex;
@@ -62,8 +61,7 @@ export default async function TeamTechCenter(createContext: CreateModContext) {
     };
 
     return {
-        meta,
         install,
         uninstall
-    } satisfies ModExport;
+    } satisfies SEAModExport;
 }

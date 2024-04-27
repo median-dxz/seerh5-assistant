@@ -9,7 +9,7 @@ import {
     spet,
     wrapper
 } from '@sea/core';
-import type { CreateModContext, ModExport } from '@sea/launcher';
+import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/launcher';
 
 interface PetFragment {
     EffectMsglog: number;
@@ -61,16 +61,15 @@ export async function findPetById(id: number): Promise<Pet | null> {
     }
 }
 
-export default async function ItemWareHouse(createContext: CreateModContext) {
-    const { meta } = await createContext({
-        meta: {
-            id: 'itemWarehouse',
-            scope: 'median',
-            description: '物品仓库修改, 提供更换的精灵因子界面交互',
-            core: '1.0.0-rc.2'
-        }
-    });
+export const metadata = {
+    id: 'itemWarehouse',
+    scope: 'median',
+    description: '物品仓库修改, 提供更换的精灵因子界面交互',
+    core: '1.0.0-rc.2',
+    version: '1.0.0'
+} satisfies SEAModMetadata;
 
+export default async function ItemWareHouse(ctx: SEAModContext<typeof metadata>) {
     const load = () => {
         const skillQuery = GameConfigRegistry.getQuery('skill');
         const petQuery = GameConfigRegistry.getQuery('pet');
@@ -234,8 +233,7 @@ export default async function ItemWareHouse(createContext: CreateModContext) {
     };
 
     return {
-        meta,
         install,
         uninstall
-    } satisfies ModExport;
+    } satisfies SEAModExport;
 }

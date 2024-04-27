@@ -2,80 +2,82 @@ import type { ILevelBattle, ILevelRunner, MoveStrategy, VERSION } from '@sea/cor
 
 export type SEAConfigSchema = (
     | {
-          type: 'input';
-          default?: string;
+          type: 'textInput';
+          default: string;
+      }
+    | {
+          type: 'numberInput';
+          default: number;
       }
     | {
           type: 'select';
           list: Record<string, string>;
-          default?: string;
+          default: string;
       }
     | {
           type: 'checkbox';
-          default?: boolean;
+          default: boolean;
       }
 ) & {
     name: string;
     description?: string;
 };
 
-export type SEAConfig<TConfig extends Record<string, SEAConfigSchema> | undefined> = TConfig extends undefined
-    ? undefined
-    : {
-          [Key in keyof TConfig]: string;
-      };
+export type ModConfigSchema = Record<string, SEAConfigSchema>;
 
-export interface ModContext<TCustomData, TConfig extends Record<string, string> | undefined> {
-    meta: ModMeta;
-
-    logger: typeof console.log;
-
-    config: TConfig;
-
-    data: TCustomData;
-    mutate: TCustomData extends undefined ? undefined : (recipe: (draft: TCustomData) => void) => void;
-
-    ct(...pets: string[]): number[];
-    battle(name: string): ILevelBattle;
-}
-
-export type ModMeta = {
+export type SEAModMetadata = {
     id: string;
     scope: string;
     version: string;
     core: VERSION;
     description?: string;
     preload?: boolean;
+    data?: object;
+    configSchema?: ModConfigSchema;
 };
 
-export interface CreateContextOptions<TCustomData, TConfig extends Record<string, SEAConfigSchema> | undefined> {
-    meta: Omit<Partial<ModMeta>, 'id' | 'core'> & { id: string; core: VERSION };
-    config?: TConfig;
-    defaultData?: TCustomData;
+export type SEAModContext<TMetadata extends SEAModMetadata> = TMetadata extends {
+    data?: infer TData extends object;
+    configSchema?: infer TConfigSchemas extends ModConfigSchema;
 }
+    ? InnerModContext<TMetadata, TConfigSchemas, TData>
+    : InnerModContext<TMetadata>;
 
-export type CreateModContext = <
-    TCustomData extends undefined | unknown = undefined,
-    TConfig extends undefined | Record<string, SEAConfigSchema> = undefined
->(
-    options: CreateContextOptions<TCustomData, TConfig>
-) => Promise<ModContext<TCustomData, SEAConfig<TConfig>>>;
+export type InnerModContext<
+    TMetadata extends SEAModMetadata,
+    TConfigSchemas extends ModConfigSchema | undefined = undefined,
+    TCustomData extends object | undefined = undefined
+> = {
+    meta: TMetadata;
+
+    logger: typeof console.log;
+
+    config: TConfigSchemas extends ModConfigSchema
+        ? {
+              [item in keyof TConfigSchemas]: TConfigSchemas[item]['default'];
+          }
+        : undefined;
+    configSchemas?: TConfigSchemas;
+
+    data: TCustomData;
+    mutate: TCustomData extends undefined ? undefined : (recipe: (draft: TCustomData) => void) => void;
+
+    ct(...pets: string[]): number[];
+    battle(name: string): ILevelBattle;
+};
+
+export interface SEAModExport {
+    strategies?: Array<Strategy>;
+    battles?: Array<Battle>;
+    tasks?: Array<Task>;
+    commands?: Array<Command>;
+    install?(): void;
+    uninstall?(): void;
+}
 
 export interface TaskRunner<TData extends LevelData = LevelData> extends ILevelRunner<TData> {
     get meta(): LevelMeta;
     get name(): string;
-}
-
-export interface ModExport {
-    meta: ModMeta;
-    exports?: {
-        strategy?: Array<Strategy>;
-        battle?: Array<Battle>;
-        task?: Array<Task>;
-        command?: Array<Command>;
-    };
-    install?(): void;
-    uninstall?(): void;
 }
 
 export type Strategy = MoveStrategy & { name: string };

@@ -3,14 +3,14 @@ import { SEASDatabase } from './db.ts';
 
 export interface ModState {
     enable: boolean;
-    config: boolean;
-    customData: boolean;
+    requireConfig: boolean;
+    requireData: boolean;
 }
 
 const initialModState: ModState = {
     enable: true,
-    config: false,
-    customData: false
+    requireConfig: false,
+    requireData: false
 } as const;
 
 class ModList extends SEASDatabase<Record<string, ModState>> {

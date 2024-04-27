@@ -1,15 +1,18 @@
 import { NOOP } from '@sea/core';
-import type { CreateModContext, ModExport } from '../lib/launcher';
+import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/launcher';
 
-export default async function DisableSentry(createContext: CreateModContext) {
-    const { meta } = await createContext({
-        meta: { core: '1.0.0-rc.2', id: 'DisableSentry', scope: 'median', preload: true }
-    });
-    const install = () => {
-        OnlineManager.prototype.setSentryScope = NOOP;
-    };
+export const metadata = {
+    core: '1.0.0-rc.2',
+    id: 'DisableSentry',
+    scope: 'median',
+    version: '1.0.0',
+    preload: true
+} satisfies SEAModMetadata;
+
+export default async function DisableSentry(ctx: SEAModContext<typeof metadata>) {
     return {
-        meta,
-        install
-    } satisfies ModExport;
+        install() {
+            OnlineManager.prototype.setSentryScope = NOOP;
+        }
+    } satisfies SEAModExport;
 }

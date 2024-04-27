@@ -1,5 +1,5 @@
 import { GameConfigRegistry, SEAEventSource, delay, socket, spet } from '@sea/core';
-import type { Command, CreateModContext, ModExport } from '@sea/launcher';
+import type { Command, SEAModContext, SEAModExport, SEAModMetadata } from '@sea/launcher';
 
 const rate = [
     [0, 24, 5.8, 1.4, 0.3],
@@ -12,17 +12,15 @@ function calcProbability(level: number, targetLevel: number) {
     return rate[level][targetLevel];
 }
 
-export default async function CraftSkillStone(createContext: CreateModContext) {
-    const { meta, logger } = await createContext({
-        meta: {
-            id: 'CraftSkillStone',
-            scope: 'median',
-            version: '1.0.0',
-            core: '1.0.0-rc.2',
-            description: 'misc'
-        }
-    });
+export const metadata = {
+    id: 'CraftSkillStone',
+    scope: 'median',
+    version: '1.0.0',
+    core: '1.0.0-rc.2',
+    description: 'misc'
+} satisfies SEAModMetadata;
 
+export default async function CraftSkillStone({ logger }: SEAModContext<typeof metadata>) {
     const install = () => {};
 
     const uninstall = () => {};
@@ -118,9 +116,8 @@ export default async function CraftSkillStone(createContext: CreateModContext) {
     };
 
     return {
-        meta,
-        exports: { command: [resetNature, craftOne] },
+        commands: [resetNature, craftOne],
         install,
         uninstall
-    } satisfies ModExport;
+    } satisfies SEAModExport;
 }

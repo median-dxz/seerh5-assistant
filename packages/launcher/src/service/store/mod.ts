@@ -1,9 +1,10 @@
 import * as EndPoints from '../endpoints';
 import { buildMeta, createModContext } from '../mod/createContext';
 
-import type { Battle, Command, ModExport, ModMeta, Strategy, Task } from '@/sea-launcher';
-type Mod = ModExport;
-type ModModuleExport = (createContext: typeof createModContext) => Promise<Mod>;
+import type { Battle, Command, SEAModContext, SEAModExport, SEAModMetadata, Strategy, Task } from '@/sea-launcher';
+import type { ModState } from '@sea/server';
+type Mod = SEAModExport;
+type ModModuleExport<TMetadata extends SEAModMetadata> = (context: SEAModContext<TMetadata>) => Promise<Mod>;
 
 import { seac, type AnyFunction } from '@sea/core';
 import { getNamespace } from '../mod/createContext';
@@ -13,7 +14,11 @@ import * as strategyStore from './strategy';
 import * as taskStore from './task';
 
 export class ModInstance {
-    meta: ModMeta & { namespace: string };
+    meta: SEAModMetadata & {
+        namespace: string;
+    };
+    state: ModState;
+
     finalizers: AnyFunction[] = [];
 
     strategy: string[] = [];
@@ -21,8 +26,9 @@ export class ModInstance {
     level: string[] = [];
     command: string[] = [];
 
-    constructor(meta: ModMeta) {
+    constructor(meta: SEAModMetadata, state: ModState) {
         this.meta = { ...meta, namespace: getNamespace(meta) };
+        this.state = state;
     }
 
     setUninstall(uninstall?: AnyFunction) {
@@ -115,13 +121,19 @@ export async function fetchMods(mods?: Array<{ id: string; scope: string }>) {
     }
 
     return Promise.all(
-        promises.map((promise) =>
-            promise.then((module) => module.default as ModModuleExport).then((mod) => mod(createModContext))
+        promises.map(
+            (promise) =>
+                promise.then((module) => module.default as ModModuleExport).then((mod) => mod(createModContext))
+            // TODO .then(mod=>{getModState()}) 向meta中添加state信息
         )
     );
 }
 
-export function setup({ install, uninstall, meta, exports }: Mod) {
+export function setup(
+    meta: SEAModMetadata,
+    state: ModState,
+    { install, uninstall, strategies, battles, tasks, commands }: Mod
+) {
     // 确保meta合法
     meta = buildMeta(meta);
 
@@ -130,7 +142,7 @@ export function setup({ install, uninstall, meta, exports }: Mod) {
         return;
     }
 
-    const ins = new ModInstance(meta);
+    const ins = new ModInstance(meta, state);
 
     // 执行副作用
     try {
@@ -148,10 +160,10 @@ export function setup({ install, uninstall, meta, exports }: Mod) {
     }
 
     // 加载导出的内容
-    ins.tryRegisterStrategy(exports?.strategy);
-    ins.tryRegisterBattle(exports?.battle);
-    ins.tryRegisterTask(exports?.task);
-    ins.tryRegisterCommand(exports?.command);
+    ins.tryRegisterStrategy(strategies);
+    ins.tryRegisterBattle(battles);
+    ins.tryRegisterTask(tasks);
+    ins.tryRegisterCommand(commands);
 
     store.set(ins.meta.namespace, ins);
 }
@@ -170,4 +182,15 @@ export function teardown() {
             console.error(`模组卸载失败: ${mod.meta.namespace}`, error);
         }
     });
+}
+
+export function install(files: FileList) {
+    console.log(files);
+    // const reader = new FileReader();
+    // reader.onload = async () => {
+    //     const buffer = reader.result as ArrayBuffer;
+    //     const mod = await EndPoints.installMod(buffer);
+    //     setup(mod);
+    // };
+    // reader.readAsArrayBuffer(file);
 }

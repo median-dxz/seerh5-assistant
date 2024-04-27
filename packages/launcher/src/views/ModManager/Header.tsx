@@ -1,10 +1,25 @@
 import { useModStore } from '@/context/useModStore';
-import { fetchMods, setup, teardown } from '@/service/store/mod';
-import { Box, Button, alpha } from '@mui/material';
+import { fetchMods, install, setup, teardown } from '@/service/store/mod';
+import CloudUpload from '@mui/icons-material/CloudUploadRounded';
+import { Box, Button, alpha, styled } from '@mui/material';
+import { useRef } from 'react';
 import React from 'react';
+
+const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1
+});
 
 export function Header() {
     const { sync } = useModStore();
+    const fileInputRef = useRef<HTMLInputElement>(null);
     return (
         <Box
             sx={{
@@ -17,7 +32,26 @@ export function Header() {
                 borderBottom: (theme) => `1px solid ${alpha(theme.palette.divider, 0.12)}`
             }}
         >
-            <Button>从文件安装</Button>
+            <Button
+                component="label"
+                role={undefined}
+                variant="contained"
+                tabIndex={-1}
+                startIcon={<CloudUpload />}
+                onClick={() => {
+                    if (fileInputRef.current?.files) {
+                        install(fileInputRef.current.files);
+                    }
+                }}
+            >
+                从文件安装
+                <VisuallyHiddenInput
+                    ref={fileInputRef}
+                    type="file"
+                    name="upload-mod"
+                    accept="application/json, application/javascript"
+                />
+            </Button>
             <Button
                 onClick={() => {
                     teardown();

@@ -1,16 +1,15 @@
 import { engine } from '@sea/core';
-import type { Command, CreateModContext, ModExport } from '@sea/launcher';
+import type { Command, SEAModContext, SEAModExport, SEAModMetadata } from '@sea/launcher';
 import Icon from './all_inclusive.svg?raw';
 
-export default async function FightPuni(createContext: CreateModContext) {
-    const { meta } = await createContext({
-        meta: {
-            id: '对战谱尼',
-            scope: 'median',
-            core: '1.0.0-rc.2'
-        }
-    });
+export const metadata = {
+    id: '对战谱尼',
+    scope: 'median',
+    core: '1.0.0-rc.2',
+    version: '1.0.0'
+} satisfies SEAModMetadata;
 
+export default async function FightPuni(ctx: SEAModContext<typeof metadata>) {
     const FightPuni: Command = {
         name: 'FightPuni',
         icon: Icon,
@@ -21,9 +20,6 @@ export default async function FightPuni(createContext: CreateModContext) {
     };
 
     return {
-        meta,
-        exports: {
-            command: [FightPuni]
-        }
-    } satisfies ModExport;
+        commands: [FightPuni]
+    } satisfies SEAModExport;
 }

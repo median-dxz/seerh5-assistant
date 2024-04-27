@@ -1,5 +1,5 @@
 import { MOD_SCOPE_DEFAULT } from '@/constants';
-import type { CreateContextOptions, ModContext, ModMeta } from '@/sea-launcher';
+import type { CreateContextOptions, ModContext, ModMeta, SEAConfigSchema } from '@/sea-launcher';
 import * as endpoints from '@/service/endpoints';
 import * as ctStore from '@/service/store/CatchTimeBinding';
 import { store as battleStore } from '@/service/store/battle';
@@ -70,6 +70,41 @@ async function buildCustomData({ scope, id }: { id: string; scope: string }, def
     return {};
 }
 
+async function buildConfig(
+    { scope, id }: { id: string; scope: string },
+    configSchemas?: Record<string, SEAConfigSchema>
+) {
+    if (configSchemas) {
+        let config;
+        config = await endpoints.getModConfig(scope, id);
+        if (!config) {
+            const keys = Object.keys(configSchemas);
+            const defaultConfig: Record<string, string | number | boolean> = {};
+            keys.forEach((key) => {
+                const item = configSchemas[key];
+                switch (item.type) {
+                    case 'textInput':
+                        defaultConfig[key] = item.default ?? '';
+                        break;
+                    case 'numberInput':
+                        defaultConfig[key] = item.default ?? 0;
+                        break;
+                    case 'select':
+                        defaultConfig[key] = item.default ?? Object.values(item.list)[0];
+                        break;
+                    case 'checkbox':
+                        defaultConfig[key] = item.default ?? false;
+                        break;
+                }
+            });
+            await endpoints.setModConfig(scope, id, defaultConfig);
+            config = defaultConfig;
+        }
+        return { config, configSchemas };
+    }
+    return {};
+}
+
 export async function createModContext(options: CreateContextOptions<unknown, undefined>) {
     const ct = (...pets: string[]) => {
         const r = pets.map((pet) => ctStore.ctByName(pet));
@@ -92,6 +127,7 @@ export async function createModContext(options: CreateContextOptions<unknown, un
 
     const logger = getLogger(meta.id);
     const data = await buildCustomData(meta, options.defaultData);
+    const config = await buildConfig(meta, options.config);
 
-    return { meta, logger, ct, battle, ...data } as ModContext<unknown, undefined>;
+    return { meta, logger, ct, battle, ...data, ...config } as ModContext<unknown, undefined>;
 }

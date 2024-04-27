@@ -29,41 +29,56 @@ export class ModConfig extends SEASDatabase<unknown> {
 export const ModManager = {
     root: '.',
     modData: new Map<string, ModCustomData>(),
-    modConfig: new Map<string, unknown>(),
+    modConfig: new Map<string, ModConfig>(),
     async init(root: string) {
         this.root = root;
         const mods = await modList.getModListWithState();
-        mods.filter(({ state: { customData } }) => customData).forEach(({ id, scope }) => {
-            this.modData.set(getNamespace(scope, id), new ModCustomData(this.root, scope, id));
+        mods.forEach(({ id, scope, state }) => {
+            if (state.requireData) {
+                this.modData.set(getNamespace(scope, id), new ModCustomData(this.root, scope, id));
+            }
+            if (state.requireConfig) {
+                this.modConfig.set(getNamespace(scope, id), new ModConfig(this.root, scope, id));
+            }
         });
     },
     async saveCustomData(scope: string, id: string, data: unknown) {
-        const mod = this.modData.get(getNamespace(scope, id));
-        if (!mod) {
+        const dataStore = this.modData.get(getNamespace(scope, id));
+        if (!dataStore) {
             return {
                 success: false
             };
         }
-        await mod.save(data);
+        await dataStore.save(data);
         return {
             success: true
         };
     },
     async customData(scope: string, id: string) {
-        const mod = this.modData.get(getNamespace(scope, id));
-        if (!mod) {
+        const dataStore = this.modData.get(getNamespace(scope, id));
+        if (!dataStore) {
             return undefined;
         }
-        return mod.get();
+        return dataStore.get();
     },
     async saveConfig(scope: string, id: string, data: unknown) {
-        this.modConfig.set(getNamespace(scope, id), data);
+        const configStore = this.modConfig.get(getNamespace(scope, id));
+        if (!configStore) {
+            return {
+                success: false
+            };
+        }
+        await configStore.save(data);
         return {
             success: true
         };
     },
     async config(scope: string, id: string) {
-        return this.modConfig.get(getNamespace(scope, id));
+        const configStore = this.modConfig.get(getNamespace(scope, id));
+        if (!configStore) {
+            return undefined;
+        }
+        return configStore.get();
     },
     async install() {
         return {
