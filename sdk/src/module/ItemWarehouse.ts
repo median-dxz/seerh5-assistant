@@ -9,7 +9,7 @@ import {
     spet,
     wrapper
 } from '@sea/core';
-import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/launcher';
+import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 
 interface PetFragment {
     EffectMsglog: number;

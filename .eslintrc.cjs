@@ -12,6 +12,7 @@ module.exports = {
             './packages/launcher/tsconfig.json',
             './packages/core/tsconfig.json',
             './packages/server/tsconfig.json',
+            './packages/mod-type/tsconfig.json',
         ],
     },
     plugins: ['@typescript-eslint'],

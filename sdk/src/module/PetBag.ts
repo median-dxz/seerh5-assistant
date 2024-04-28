@@ -1,5 +1,5 @@
 import { Pet, SEAEventSource, Subscription, debounce, engine, hookFn, hookPrototype } from '@sea/core';
-import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/launcher';
+import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 
 declare module '@sea/core' {
     interface GameModuleMap {

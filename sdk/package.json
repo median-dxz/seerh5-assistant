@@ -12,7 +12,7 @@
     "watch:tsc": "tsc --watch --noEmit"
   },
   "devDependencies": {
-    "@sea/core": "file:lib/sea-core-1.0.0-rc.2.tgz",
+    "@sea/core": "file:lib/sea-core-1.0.0-rc.3.tgz",
     "typescript": "^5.4.5",
     "vite": "^5.2.10"
   },

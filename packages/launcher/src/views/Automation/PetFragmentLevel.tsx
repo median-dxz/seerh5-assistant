@@ -12,14 +12,14 @@ import {
     LevelAction,
     type PetFragmentLevelDifficulty as Difficulty,
     type ILevelBattle,
-    type PetFragmentLevel,
+    type PetFragmentLevel
 } from '@sea/core';
 
 import { useMainState } from '@/context/useMainState';
 import { useModStore } from '@/context/useModStore';
 import { useTaskScheduler } from '@/context/useTaskScheduler';
-import type { TaskRunner } from '@/sea-launcher';
 import { store } from '@/service/store/battle';
+import type { TaskRunner } from '@sea/mod-type';
 
 export interface PetFragmentOption {
     id: number;
@@ -47,7 +47,7 @@ const loadOption = async (option: PetFragmentOptionRaw) => {
                 return b.battle();
             }
             throw new Error(`Battle ${n} not found`);
-        }),
+        })
     } as PetFragmentOption;
 };
 
@@ -60,7 +60,7 @@ export function PetFragmentLevelPanel() {
     const {
         data: rows = [],
         isLoading,
-        error,
+        error
     } = useSWR('ds://configs/level/petFragment', async () => {
         const allConfig = await endpoints.getPetFragmentConfig();
         const options = await Promise.all(allConfig.map(loadOption));
@@ -77,7 +77,7 @@ export function PetFragmentLevelPanel() {
                     })
                 );
                 return r;
-            },
+            }
         });
     });
 
@@ -85,20 +85,20 @@ export function PetFragmentLevelPanel() {
         () => [
             {
                 field: 'name',
-                columnName: '关卡名称',
+                columnName: '关卡名称'
             },
             {
                 field: 'state',
-                columnName: '完成状态',
+                columnName: '完成状态'
             },
             {
                 field: 'action',
-                columnName: '操作',
+                columnName: '操作'
             },
             {
                 field: 'config',
-                columnName: '配置',
-            },
+                columnName: '配置'
+            }
         ],
         []
     );

@@ -36,11 +36,9 @@ export async function createServer() {
     await server.register(fastifyEnv, envOptions);
 
     const root = server.config.APP_ROOT;
-    const folders = [configsRoot, launcherRoot, logsRoot, modsRoot];
+    const folders = [configsRoot, launcherRoot, logsRoot, modsRoot, configsRoot + '/' + modsRoot];
     folders.forEach((folder) => {
-        try {
-            fs.accessSync(path.resolve(root, folder));
-        } catch (error) {
+        if (!fs.existsSync(path.resolve(root, folder))) {
             fs.mkdirSync(path.resolve(root, folder));
         }
     });
@@ -67,7 +65,7 @@ export async function createServer() {
     void server.use('/account-co.61.com/', loginProxy);
     void server.register(createAppJsProxy);
 
-    initConfigs(server.config.APP_ROOT);
+    await initConfigs(server.config.APP_ROOT);
     await ModManager.init(server.config.APP_ROOT);
 
     void server.register(fastifyStatic, {

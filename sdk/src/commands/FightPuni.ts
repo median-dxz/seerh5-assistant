@@ -1,5 +1,5 @@
 import { engine } from '@sea/core';
-import type { Command, SEAModContext, SEAModExport, SEAModMetadata } from '@sea/launcher';
+import type { Command, SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 import Icon from './all_inclusive.svg?raw';
 
 export const metadata = {

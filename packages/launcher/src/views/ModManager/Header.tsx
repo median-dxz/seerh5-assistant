@@ -1,9 +1,10 @@
 import { useModStore } from '@/context/useModStore';
-import { fetchMods, install, setup, teardown } from '@/service/store/mod';
+import { deploymentHandlers, fetchList } from '@/service/mod/handler';
+import { installModFromUrl } from '@/service/mod/install';
+import { teardown } from '@/service/store/mod';
 import CloudUpload from '@mui/icons-material/CloudUploadRounded';
 import { Box, Button, alpha, styled } from '@mui/material';
-import { useRef } from 'react';
-import React from 'react';
+import React, { useRef } from 'react';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -40,27 +41,24 @@ export function Header() {
                 startIcon={<CloudUpload />}
                 onClick={() => {
                     if (fileInputRef.current?.files) {
-                        install(fileInputRef.current.files);
+                        console.log(fileInputRef.current.files);
+                        // installModFromUrl(URL.createObjectURL(fileInputRef.current.files[0]));
                     }
                 }}
             >
                 从文件安装
-                <VisuallyHiddenInput
-                    ref={fileInputRef}
-                    type="file"
-                    name="upload-mod"
-                    accept="application/json, application/javascript"
-                />
+                <VisuallyHiddenInput ref={fileInputRef} type="file" name="upload-mod" accept="application/javascript" />
             </Button>
             <Button
                 onClick={() => {
                     teardown();
-                    fetchMods().then((mods) => {
-                        mods.forEach((mod) => {
-                            setup(mod);
-                        });
-                        sync();
-                    });
+                    fetchList()
+                        .then(() =>
+                            Promise.all(
+                                deploymentHandlers.map((handler) => handler.fetch().then(() => handler.deploy()))
+                            )
+                        )
+                        .then(sync);
                 }}
             >
                 重载所有模组

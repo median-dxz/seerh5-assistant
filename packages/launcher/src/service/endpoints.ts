@@ -1,5 +1,6 @@
 import type { PetFragmentOptionRaw } from '@/views/Automation/PetFragmentLevel';
-import type { ApiRouter } from '@sea/server';
+import type { DataObject } from '@sea/mod-type';
+import type { ApiRouter, ModInstallOptions } from '@sea/server';
 import { createTRPCClient, createWSClient, wsLink } from '@trpc/client';
 import superjson from 'superjson';
 
@@ -13,25 +14,16 @@ const trpcClient = createTRPCClient<ApiRouter>({
 
 const { modRouter, configRouter } = trpcClient;
 
-export type ModInfo = { id: string; scope: string };
-export const getAllModList = async (): Promise<Array<ModInfo>> => {
-    return modRouter.modList.query();
-};
-
-export const getModCustomData = async (scope: string, id: string) => {
-    return modRouter.customData.query({ scope, id });
-};
-
-export const setModCustomData = async (scope: string, id: string, data: unknown) => {
-    return modRouter.saveCustomData.mutate({ scope, id, data });
-};
-
-export const getModConfig = async (scope: string, id: string) => {
-    return modRouter.config.query({ scope, id });
-};
-
-export const setModConfig = async (scope: string, id: string, data: unknown) => {
-    return modRouter.setConfig.mutate({ scope, id, data });
+export const mod = {
+    fetchList: async () => modRouter.modList.query(),
+    data: async (scope: string, id: string) => modRouter.data.query({ scope, id }),
+    setData: async (scope: string, id: string, data: DataObject) => modRouter.saveData.mutate({ scope, id, data }),
+    config: async (scope: string, id: string) => modRouter.config.query({ scope, id }),
+    setConfig: async (scope: string, id: string, data: DataObject) => modRouter.setConfig.mutate({ scope, id, data }),
+    install: async (scope: string, id: string, options: ModInstallOptions) => {
+        return modRouter.install.mutate({ scope, id, options });
+    },
+    upload: async (scope: string, id: string, modBlob: Blob, modMapBlob?: Blob) => {}
 };
 
 export type ConfigKey = 'PetGroups';

@@ -1,6 +1,6 @@
 import type { ILevelBattle } from '@sea/core';
 
-import type { Battle } from '@/sea-launcher';
+import type { Battle } from '@sea/mod-type';
 import { ctByName } from './CatchTimeBinding';
 import { store as strategyStore } from './strategy';
 
@@ -29,13 +29,13 @@ export function add(mod: string, _battle: Battle) {
                 name,
                 pets: pets.map(ctByName) as number[],
                 strategy: strategyInstance.strategy,
-                beforeBattle,
+                beforeBattle
             };
         },
         name,
         ownerMod: mod,
         pets,
-        strategy: _strategy,
+        strategy: _strategy
     };
     store.set(name, instance);
 }

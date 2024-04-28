@@ -2,7 +2,7 @@
   "name": "@sea/launcher",
   "private": true,
   "type": "module",
-  "version": "0.6.7",
+  "version": "0.7.0",
   "main": "./src/index.tsx",
   "scripts": {
     "dev": "vite --open",
@@ -20,7 +20,6 @@
     "@mui/material": "^5.15.15",
     "@mui/system": "^5.15.15",
     "@sea/core": "workspace:*",
-    "@sea/server": "workspace:*",
     "@trpc/client": "npm:@trpc/client@next",
     "@trpc/server": "npm:@trpc/server@next",
     "chalk": "^5.3.0",
@@ -31,12 +30,15 @@
     "react-dom": "^18.3.1",
     "react-transition-group": "^4.4.5",
     "superjson": "^2.2.1",
-    "swr": "^2.2.5"
+    "swr": "^2.2.5",
+    "zod": "^3.22.5"
   },
   "devDependencies": {
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
     "@types/react-transition-group": "^4.4.10",
+    "@sea/mod-type": "workspace:*",
+    "@sea/server": "workspace:*",
     "@vitejs/plugin-react-swc": "^3.6.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.6",

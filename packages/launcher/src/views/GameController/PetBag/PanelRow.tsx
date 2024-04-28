@@ -63,25 +63,25 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
                 onClose={handleClose}
                 anchorOrigin={{
                     vertical: 'bottom',
-                    horizontal: 'center',
+                    horizontal: 'center'
                 }}
                 transformOrigin={{
                     vertical: 'top',
-                    horizontal: 'center',
+                    horizontal: 'center'
                 }}
                 slotProps={{
                     paper: {
                         sx: {
-                            backdropFilter: 'blur(12px)',
-                        },
-                    },
+                            backdropFilter: 'blur(12px)'
+                        }
+                    }
                 }}
             >
-                {petDetails}
+                s{petDetails}
             </Popover>
             <SeaTableRow>
                 <PanelField field="select" onClick={handleSelect}>
-                    <Checkbox checked={selected.includes(pet.catchTime)} />
+                    <Checkbox name="pet-checkbox" checked={selected.includes(pet.catchTime)} />
                 </PanelField>
                 <PanelField field="name" sx={{ userSelect: 'none' }} onClick={handleSelect}>
                     <Stack flexDirection="row" alignItems="center">

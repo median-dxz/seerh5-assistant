@@ -1,0 +1,15 @@
+{
+  "name": "@sea/mod-type",
+  "private": true,
+  "type": "module",
+  "version": "0.7.0",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts"
+    }
+  },
+  "scripts": {},
+  "devDependencies": {
+    "@sea/core": "workspace:*"
+  }
+}

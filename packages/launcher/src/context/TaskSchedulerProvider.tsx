@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { TaskRunner } from '@/sea-launcher';
 import { levelManager, SEAEventSource, Subscription } from '@sea/core';
+import type { TaskRunner } from '@sea/mod-type';
 import { produce } from 'immer';
 import React, { useCallback, useEffect, useReducer, type PropsWithChildren, type Reducer } from 'react';
 import { TaskScheduler, type TaskState } from './useTaskScheduler';
@@ -147,14 +147,14 @@ export const TaskSchedulerProvider = ({ children }: PropsWithChildren<object>) =
     const changeSchedulerState = useCallback((status: LevelSchedulerState['status']) => {
         dispatch({
             type: 'changeSchedulerStatus',
-            payload: { status } as ActionType['changeSchedulerStatus'],
+            payload: { status } as ActionType['changeSchedulerStatus']
         });
     }, []);
 
     const changeRunnerState = useCallback((status: TaskState['status'], error?: Error) => {
         dispatch({
             type: 'changeRunnerStatus',
-            payload: { status, error } as ActionType['changeRunnerStatus'],
+            payload: { status, error } as ActionType['changeRunnerStatus']
         });
     }, []);
 
@@ -180,7 +180,7 @@ export const TaskSchedulerProvider = ({ children }: PropsWithChildren<object>) =
             apply(target, thisArg, argArray) {
                 dispatch({ type: 'logWithRunner', payload: { message: argArray[0] } });
                 return Reflect.apply(target, thisArg, argArray);
-            },
+            }
         });
 
         levelManager.run(runner);
@@ -279,7 +279,7 @@ export const TaskSchedulerProvider = ({ children }: PropsWithChildren<object>) =
                 dequeue: handleDequeue,
                 pause: handlePause,
                 resume: handleResume,
-                stopCurrentRunner: handleStopCurrentRunner,
+                stopCurrentRunner: handleStopCurrentRunner
             }}
         >
             {children}

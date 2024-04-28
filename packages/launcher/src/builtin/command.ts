@@ -1,29 +1,25 @@
 /* eslint-disable */
 import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
-import type { Command, CreateModContext, ModExport } from '@/sea-launcher';
 import { PetElement, SEAPetStore, delay, socket } from '@sea/core';
+import type { Command, SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 
 declare var pvePetYinzi: any;
 
-export default async function builtinCommand(createContext: CreateModContext) {
-    const context = await createContext({
-        meta: {
-            id: 'builtin-command',
-            scope: MOD_SCOPE_BUILTIN,
-            version: VERSION,
-            core: CORE_VERSION,
-            description: '内置命令组',
-        },
-    });
+export const metadata = {
+    id: 'builtin-command',
+    scope: MOD_SCOPE_BUILTIN,
+    version: VERSION,
+    core: CORE_VERSION,
+    description: '内置命令组'
+} satisfies SEAModMetadata;
 
-    const { meta, logger } = context;
-
-    const command: Command[] = [
+export default async function builtinCommand({ logger }: SEAModContext<typeof metadata>) {
+    const commands: Command[] = [
         {
             name: 'getCurPanelInfo',
             handler() {
                 logger(pvePetYinzi.DataManager._instance.curYinziData);
-            },
+            }
         },
         {
             name: 'logDataByName',
@@ -32,7 +28,7 @@ export default async function builtinCommand(createContext: CreateModContext) {
                     .getAnyRes('new_super_design')
                     .Root.Design.find((r: any) => (r.Desc as string).match(petName));
                 logger(data);
-            },
+            }
         },
         {
             name: 'calcAllEfficientPet',
@@ -51,12 +47,12 @@ export default async function builtinCommand(createContext: CreateModContext) {
                             elementId: eid,
                             element: SkillXMLInfo.typeMap[eid].cn,
                             id: v.id,
-                            ratio: PetElement.formatById(eid).calcRatio(e),
+                            ratio: PetElement.formatById(eid).calcRatio(e)
                         };
                     })
                 );
             },
-            description: '计算可用的高倍克制精灵',
+            description: '计算可用的高倍克制精灵'
         },
         {
             name: 'updateBatteryTime',
@@ -66,7 +62,7 @@ export default async function builtinCommand(createContext: CreateModContext) {
                     (MainManager.actorInfo.timeToday +
                         Math.floor(Date.now() / 1000 - MainManager.actorInfo.logintimeThisTime));
                 BatteryController.Instance._leftTime = Math.max(0, leftTime);
-            },
+            }
         },
         {
             name: 'delCounterMark',
@@ -93,38 +89,35 @@ export default async function builtinCommand(createContext: CreateModContext) {
                     }
                 }
             },
-            description: '删除多余刻印',
+            description: '删除多余刻印'
         },
         {
             name: 'getClickTarget',
             handler() {
                 LevelManager.stage.once(egret.TouchEvent.TOUCH_BEGIN, (e: egret.TouchEvent) => logger(e.target), null);
-            },
+            }
         },
         {
             name: '关闭主页(挂机模式)',
             handler() {
                 ModuleManager.currModule.hide();
-            },
+            }
         },
         {
             name: '开启主页(恢复)',
             handler() {
                 ModuleManager.currModule.show();
-            },
+            }
         },
         {
             name: '返回主页(关闭所有模块)',
             handler() {
                 ModuleManager.CloseAll();
-            },
-        },
+            }
+        }
     ];
 
     return {
-        meta,
-        exports: {
-            command,
-        },
-    } satisfies ModExport;
+        commands
+    } satisfies SEAModExport;
 }

@@ -6,7 +6,7 @@ var logFilter = new Proxy(console.log, {
         } else {
             Reflect.apply(target, _this, args);
         }
-    },
+    }
 });
 
 var warnFilter = new Proxy(console.warn, {
@@ -17,7 +17,7 @@ var warnFilter = new Proxy(console.warn, {
         } else {
             Reflect.apply(target, _this, args);
         }
-    },
+    }
 });
 
 var sea = Object.assign(window.sea, {
@@ -29,7 +29,7 @@ var sea = Object.assign(window.sea, {
         /i destroy/,
         /color:.*; font-size:.*;$/,
         /打开.*%c.*/,
-        /关闭.*%c.*/,
+        /关闭.*%c.*/
     ],
     filterWarnText: [
         /开始执行战斗动画/,
@@ -37,8 +37,8 @@ var sea = Object.assign(window.sea, {
         /=.*?onUseSkill=.*=/,
         />.*?>面板.*?还没有.*$/,
         /battleResultPanel/,
-        /GuideManager.isCompleted/,
-    ],
+        /GuideManager.isCompleted/
+    ]
 });
 
 var __reflect =
@@ -156,7 +156,7 @@ var __generator =
                     return s[1];
                 },
                 trys: [],
-                ops: [],
+                ops: []
             };
         return (
             (a = { next: n(0), throw: n(1), return: n(2) }),
@@ -213,14 +213,12 @@ var Driver = (function () {
                             document.head.appendChild(script).parentNode.removeChild(script);
                             if (config.action === 'Core.init') {
                                 // dispatch event begin
-                                window.dispatchEvent(new CustomEvent(sea.SEER_READY_EVENT));
                                 sea.SeerH5Ready = true;
+                                window.dispatchEvent(new CustomEvent(sea.SEER_READY_EVENT));
                                 // dispatch event end
-                                Driver.doAction();
-                            } else {
-                                config.action && config.action.length > 0 && eval(config.action + '()'),
-                                    Driver.doAction();
                             }
+                            config.action && config.action.length > 0 && eval(config.action + '()'), Driver.doAction();
+
                             // loader modify end
                         },
                         this,
@@ -332,7 +330,7 @@ var Main = (function (e) {
                                         r.open(i, egret.HttpMethod.GET),
                                         r.send();
                                 } else t(null);
-                            }),
+                            })
                         ]
                     );
                 });
@@ -859,7 +857,7 @@ __reflect(ThemeAdapter.prototype, 'ThemeAdapter', ['eui.IThemeAdapter']), (windo
         'eui.ToggleSwitch': 'resource/eui_skins/ToggleSwitchSkin.exml',
         'eui.VScrollBar': 'resource/eui_skins/VScrollBarSkin.exml',
         'eui.VSlider': 'resource/eui_skins/VSliderSkin.exml',
-        'eui.ItemRenderer': 'resource/eui_skins/ItemRendererSkin.exml',
+        'eui.ItemRenderer': 'resource/eui_skins/ItemRendererSkin.exml'
     }),
     (generateEUI.paths['resource/eui_skins/ButtonSkin.exml'] = window.skins.ButtonSkin =
         (function (e) {
@@ -872,7 +870,7 @@ __reflect(ThemeAdapter.prototype, 'ThemeAdapter', ['eui.IThemeAdapter']), (windo
                     (this.states = [
                         new eui.State('up', []),
                         new eui.State('down', [new eui.SetProperty('_Image1', 'source', 'button_down_png')]),
-                        new eui.State('disabled', [new eui.SetProperty('_Image1', 'alpha', 0.5)]),
+                        new eui.State('disabled', [new eui.SetProperty('_Image1', 'alpha', 0.5)])
                     ]);
             }
             __extends(t, e);
@@ -922,14 +920,14 @@ __reflect(ThemeAdapter.prototype, 'ThemeAdapter', ['eui.IThemeAdapter']), (windo
                         new eui.State('down', [new eui.SetProperty('_Image1', 'alpha', 0.7)]),
                         new eui.State('disabled', [new eui.SetProperty('_Image1', 'alpha', 0.5)]),
                         new eui.State('upAndSelected', [
-                            new eui.SetProperty('_Image1', 'source', 'checkbox_select_up_png'),
+                            new eui.SetProperty('_Image1', 'source', 'checkbox_select_up_png')
                         ]),
                         new eui.State('downAndSelected', [
-                            new eui.SetProperty('_Image1', 'source', 'checkbox_select_down_png'),
+                            new eui.SetProperty('_Image1', 'source', 'checkbox_select_down_png')
                         ]),
                         new eui.State('disabledAndSelected', [
-                            new eui.SetProperty('_Image1', 'source', 'checkbox_select_disabled_png'),
-                        ]),
+                            new eui.SetProperty('_Image1', 'source', 'checkbox_select_disabled_png')
+                        ])
                     ]);
             }
             __extends(t, e);
@@ -1043,7 +1041,7 @@ __reflect(ThemeAdapter.prototype, 'ThemeAdapter', ['eui.IThemeAdapter']), (windo
                     (this.states = [
                         new eui.State('up', []),
                         new eui.State('down', [new eui.SetProperty('_Image1', 'source', 'button_down_png')]),
-                        new eui.State('disabled', [new eui.SetProperty('_Image1', 'alpha', 0.5)]),
+                        new eui.State('disabled', [new eui.SetProperty('_Image1', 'alpha', 0.5)])
                     ]),
                     eui.Binding.$bindProperties(this, ['hostComponent.data'], [0], this.labelDisplay, 'text');
             }
@@ -1202,14 +1200,14 @@ __reflect(ThemeAdapter.prototype, 'ThemeAdapter', ['eui.IThemeAdapter']), (windo
                         new eui.State('down', [new eui.SetProperty('_Image1', 'alpha', 0.7)]),
                         new eui.State('disabled', [new eui.SetProperty('_Image1', 'alpha', 0.5)]),
                         new eui.State('upAndSelected', [
-                            new eui.SetProperty('_Image1', 'source', 'radiobutton_select_up_png'),
+                            new eui.SetProperty('_Image1', 'source', 'radiobutton_select_up_png')
                         ]),
                         new eui.State('downAndSelected', [
-                            new eui.SetProperty('_Image1', 'source', 'radiobutton_select_down_png'),
+                            new eui.SetProperty('_Image1', 'source', 'radiobutton_select_down_png')
                         ]),
                         new eui.State('disabledAndSelected', [
-                            new eui.SetProperty('_Image1', 'source', 'radiobutton_select_disabled_png'),
-                        ]),
+                            new eui.SetProperty('_Image1', 'source', 'radiobutton_select_disabled_png')
+                        ])
                     ]);
             }
             __extends(t, e);
@@ -1276,7 +1274,7 @@ __reflect(ThemeAdapter.prototype, 'ThemeAdapter', ['eui.IThemeAdapter']), (windo
                         new eui.State('normal', []),
                         new eui.State('disabled', [new eui.SetProperty('textDisplay', 'textColor', 16711680)]),
                         new eui.State('normalWithPrompt', [new eui.AddItems('promptDisplay', '', 1, '')]),
-                        new eui.State('disabledWithPrompt', [new eui.AddItems('promptDisplay', '', 1, '')]),
+                        new eui.State('disabledWithPrompt', [new eui.AddItems('promptDisplay', '', 1, '')])
                     ]);
             }
             __extends(t, e);
@@ -1340,7 +1338,7 @@ __reflect(ThemeAdapter.prototype, 'ThemeAdapter', ['eui.IThemeAdapter']), (windo
                         new eui.State('disabled', [new eui.SetProperty('_Image1', 'source', 'off_png')]),
                         new eui.State('upAndSelected', [new eui.SetProperty('_Image2', 'horizontalCenter', 18)]),
                         new eui.State('downAndSelected', [new eui.SetProperty('_Image2', 'horizontalCenter', 18)]),
-                        new eui.State('disabledAndSelected', [new eui.SetProperty('_Image2', 'horizontalCenter', 18)]),
+                        new eui.State('disabledAndSelected', [new eui.SetProperty('_Image2', 'horizontalCenter', 18)])
                     ]);
             }
             __extends(t, e);

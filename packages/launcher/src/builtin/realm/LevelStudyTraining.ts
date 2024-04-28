@@ -1,14 +1,14 @@
-import type { LevelMeta, LevelData as SEALevelData, TaskRunner } from '@/sea-launcher';
 import { LevelAction, socket } from '@sea/core';
+import type { LevelMeta, LevelData as SEALevelData, TaskRunner } from '@sea/mod-type';
 
 import type { AnyFunction, ILevelBattle } from '@sea/core';
 
-interface LevelData extends SEALevelData {
+export interface LevelData extends SEALevelData {
     stimulation: boolean;
     rewardReceived: boolean;
 }
 
-interface LevelOption {
+export interface LevelOption {
     stimulation: boolean;
     sweep: boolean;
 }
@@ -19,13 +19,13 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             remainingTimes: 0,
             progress: 0,
             rewardReceived: false,
-            stimulation: false,
+            stimulation: false
         };
 
         static readonly meta: LevelMeta = {
             name: '学习力训练场',
             maxTimes: 6,
-            id: 'LevelStudyTraining',
+            id: 'LevelStudyTraining'
         };
 
         get meta() {
@@ -72,7 +72,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
             award: async () => {
                 await socket.sendByQueue(42395, [115, 3, 0, 0]);
-            },
+            }
         };
     };
 };

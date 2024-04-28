@@ -1,5 +1,4 @@
 import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
-import type { CreateModContext, LevelMeta, ModExport, LevelData as SEALevelData, TaskRunner } from '@/sea-launcher';
 import type { IPetFragmentRunner, PetFragmentOption } from '@/views/Automation/PetFragmentLevel';
 import {
     PetFragmentLevelDifficulty as Difficulty,
@@ -8,8 +7,16 @@ import {
     delay,
     engine,
     socket,
-    type IPFLevelBoss,
+    type IPFLevelBoss
 } from '@sea/core';
+import type {
+    LevelMeta,
+    LevelData as SEALevelData,
+    SEAModContext,
+    SEAModExport,
+    SEAModMetadata,
+    TaskRunner
+} from '@sea/mod-type';
 
 interface LevelData extends SEALevelData {
     pieces: number;
@@ -20,22 +27,20 @@ interface LevelData extends SEALevelData {
     bosses: IPFLevelBoss[];
 }
 
-export default async function (createModContext: CreateModContext) {
-    const { meta, logger } = await createModContext({
-        meta: {
-            id: 'PetFragmentLevel',
-            scope: MOD_SCOPE_BUILTIN,
-            version: VERSION,
-            core: CORE_VERSION,
-            description: '精灵因子',
-        },
-    });
+export const metadata = {
+    id: 'PetFragmentLevel',
+    scope: MOD_SCOPE_BUILTIN,
+    version: VERSION,
+    core: CORE_VERSION,
+    description: '精灵因子'
+} satisfies SEAModMetadata;
 
+export default async function ({ logger, meta }: SEAModContext<typeof metadata>) {
     class PetFragmentRunner implements TaskRunner<LevelData>, IPetFragmentRunner {
         static readonly meta: LevelMeta = {
             maxTimes: 3,
             name: '精灵因子',
-            id: meta.id,
+            id: meta.id
         };
 
         get meta() {
@@ -135,14 +140,11 @@ export default async function (createModContext: CreateModContext) {
                     BubblerManager.getInstance().showText(err);
                     throw new Error(err);
                 }
-            },
+            }
         };
     }
 
     return {
-        meta,
-        exports: {
-            task: [PetFragmentRunner],
-        },
-    } satisfies ModExport;
+        tasks: [PetFragmentRunner]
+    } satisfies SEAModExport;
 }

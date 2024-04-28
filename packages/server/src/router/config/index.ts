@@ -32,11 +32,11 @@ export const configRouter = router({
         if (name) {
             return [name, await petCatchTimeMap.getCatchTime(name)] as const;
         } else {
-            return petCatchTimeMap.get();
+            return petCatchTimeMap.query();
         }
     }),
     updateAllCatchTime: procedure.input(z.map(z.string(), z.number())).mutation(({ input }) => {
-        return petCatchTimeMap.save(input);
+        return petCatchTimeMap.mutate(() => input);
     }),
     setCatchTime: procedure.input(z.tuple([z.string(), z.number()])).mutation(({ input }) => {
         const [name, ct] = input;
@@ -46,6 +46,6 @@ export const configRouter = router({
         return petCatchTimeMap.deleteCatchTime(input);
     }),
     petFragmentLevel: procedure.query(() => {
-        return petFragmentLevel.get();
+        return petFragmentLevel.query();
     })
 });

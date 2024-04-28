@@ -1,32 +1,20 @@
 {
-    "compilerOptions": {
-        "target": "es2022",
-        "module": "esnext",
-        "moduleResolution": "bundler",
-        "esModuleInterop": true,
-        "isolatedModules": true,
-        "verbatimModuleSyntax": true,
-        "outDir": "./dist",
-        "skipLibCheck": true,
-        "noEmit": true,
-        "strict": true,
-        "lib": [
-            "esnext",
-            "dom"
-        ],
-        "types": [
-            "vite/client",
-            "@sea/core/types/seerh5",
-            "@sea/core/types/egret",
-        ],
-        "paths": {
-            "@sea/launcher": [
-                "./lib/launcher.d.ts"
-            ],
-        }
-    },
-    "include": [
-        "./src",
-        "./lib/launcher.d.ts"
-    ]
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "outDir": "./dist",
+    "skipLibCheck": true,
+    "noEmit": true,
+    "strict": true,
+    "lib": ["esnext", "dom"],
+    "types": ["vite/client", "@sea/core/types/seerh5", "@sea/core/types/egret"],
+    "paths": {
+      "@sea/mod-type": ["./lib/launcher.d.ts"]
+    }
+  },
+  "include": ["./src", "./lib/launcher.d.ts"]
 }

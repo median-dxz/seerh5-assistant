@@ -1,5 +1,5 @@
-import type { Strategy } from '@/sea-launcher';
 import type { MoveStrategy } from '@sea/core';
+import type { Strategy } from '@sea/mod-type';
 
 export interface StrategyInstance {
     name: string;

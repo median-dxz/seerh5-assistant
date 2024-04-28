@@ -1,4 +1,4 @@
-import { SEASDatabase } from './db.ts';
+import { SEASConfigData } from '../utils/SEASConfigData.ts';
 
 export interface PetFragmentLevelConfigType {
     name: string;
@@ -8,9 +8,12 @@ export interface PetFragmentLevelConfigType {
     difficulty: number;
 }
 
-class PetFragmentLevel extends SEASDatabase<Array<PetFragmentLevelConfigType>> {
+class PetFragmentLevel extends SEASConfigData<Array<PetFragmentLevelConfigType>> {
     constructor() {
-        super([]);
+        super();
+    }
+    async loadWithDefault(configFile: string) {
+        return super.loadWithDefault(configFile, []);
     }
 }
 

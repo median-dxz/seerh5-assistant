@@ -1,8 +1,8 @@
-import type { LevelMeta, LevelData as SEALevelData, TaskRunner } from '@/sea-launcher';
 import type { AnyFunction, ILevelBattle } from '@sea/core';
 import { LevelAction, socket } from '@sea/core';
+import type { LevelMeta, LevelData as SEALevelData, TaskRunner } from '@sea/mod-type';
 
-interface LevelData extends SEALevelData {
+export interface LevelData extends SEALevelData {
     stimulation: boolean;
     rewardReceived: boolean;
 }
@@ -18,13 +18,13 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             remainingTimes: 0,
             progress: 0,
             rewardReceived: false,
-            stimulation: false,
+            stimulation: false
         };
 
         static readonly meta: LevelMeta = {
             name: '勇者之塔',
             maxTimes: 5,
-            id: 'LevelCourageTower',
+            id: 'LevelCourageTower'
         };
 
         get meta() {
@@ -71,7 +71,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
             award: async () => {
                 await socket.sendByQueue(42395, [117, 4, 0, 0]);
-            },
+            }
         };
     }
 

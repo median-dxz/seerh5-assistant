@@ -33,6 +33,7 @@
   "devDependencies": {
     "@swc/core": "^1.4.16",
     "@types/connect": "^3.4.38",
+    "@sea/mod-type": "workspace:*",
     "@yao-pkg/pkg": "^5.11.5",
     "esbuild": "0.20.1",
     "nodemon": "^3.1.0",

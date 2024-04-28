@@ -1,4 +1,4 @@
-import type { Task } from '@/sea-launcher';
+import type { Task } from '@sea/mod-type';
 
 export interface TaskInstance {
     id: string;
@@ -17,7 +17,7 @@ export function add(mod: string, task: Task) {
         task: task,
         id,
         name,
-        ownerMod: mod,
+        ownerMod: mod
     };
     store.set(id, instance);
 }

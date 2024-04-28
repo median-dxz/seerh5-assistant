@@ -1,4 +1,4 @@
-import type { TaskRunner } from '@/sea-launcher';
+import type { TaskRunner } from '@sea/mod-type';
 import { createContext, useContext } from 'react';
 
 export interface TaskState {

@@ -1,6 +1,12 @@
 import type { ILevelBattle, ILevelRunner, MoveStrategy, VERSION } from '@sea/core';
 
-export type SEAConfigSchema = (
+export type DataObject =
+    | {
+          [k: string]: unknown;
+      }
+    | NonNullable<object>;
+
+export type SEAConfigItemSchema = (
     | {
           type: 'textInput';
           default: string;
@@ -23,44 +29,47 @@ export type SEAConfigSchema = (
     description?: string;
 };
 
-export type ModConfigSchema = Record<string, SEAConfigSchema>;
-
 export type SEAModMetadata = {
     id: string;
-    scope: string;
-    version: string;
     core: VERSION;
+    scope?: string;
+    version?: string;
     description?: string;
     preload?: boolean;
-    data?: object;
-    configSchema?: ModConfigSchema;
+    data?: DataObject;
+    configSchema?: Record<string, SEAConfigItemSchema>;
 };
 
-export type SEAModContext<TMetadata extends SEAModMetadata> = TMetadata extends {
-    data?: infer TData extends object;
-    configSchema?: infer TConfigSchemas extends ModConfigSchema;
-}
-    ? InnerModContext<TMetadata, TConfigSchemas, TData>
-    : InnerModContext<TMetadata>;
+export type SEAModContext<TMetadata extends SEAModMetadata> = InnerModContext<
+    TMetadata,
+    TMetadata['configSchema'] extends Record<string, SEAConfigItemSchema> ? TMetadata['configSchema'] : undefined,
+    TMetadata['data'] extends DataObject ? TMetadata['data'] : undefined
+>;
 
 export type InnerModContext<
     TMetadata extends SEAModMetadata,
-    TConfigSchemas extends ModConfigSchema | undefined = undefined,
-    TCustomData extends object | undefined = undefined
+    TConfigSchema extends Record<string, SEAConfigItemSchema> | undefined = undefined,
+    TData extends DataObject | undefined = undefined
 > = {
     meta: TMetadata;
 
     logger: typeof console.log;
 
-    config: TConfigSchemas extends ModConfigSchema
+    config: TConfigSchema extends Record<string, SEAConfigItemSchema>
         ? {
-              [item in keyof TConfigSchemas]: TConfigSchemas[item]['default'];
+              [item in keyof TConfigSchema]: TConfigSchema[item]['type'] extends 'textInput' | 'select'
+                  ? string
+                  : TConfigSchema[item]['type'] extends 'numberInput'
+                    ? number
+                    : TConfigSchema[item]['type'] extends 'checkbox'
+                      ? boolean
+                      : never;
           }
         : undefined;
-    configSchemas?: TConfigSchemas;
+    configSchemas?: TConfigSchema;
 
-    data: TCustomData;
-    mutate: TCustomData extends undefined ? undefined : (recipe: (draft: TCustomData) => void) => void;
+    data: TData;
+    mutate: TData extends undefined ? undefined : (recipe: (draft: TData) => void) => void;
 
     ct(...pets: string[]): number[];
     battle(name: string): ILevelBattle;

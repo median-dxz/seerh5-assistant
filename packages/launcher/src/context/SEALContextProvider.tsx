@@ -1,8 +1,8 @@
 import React, { useEffect, type PropsWithChildren } from 'react';
 
 import * as ctService from '@/service/store/CatchTimeBinding';
-import * as modService from '@/service/store/mod';
 
+import { deploymentHandlers } from '@/service/mod/handler';
 import { MainStateProvider } from './MainStateProvider';
 import { TaskSchedulerProvider } from './TaskSchedulerProvider';
 import { useModStore } from './useModStore';
@@ -17,13 +17,16 @@ export function SEALContextProvider({ children }: PropsWithChildren<object>) {
             .sync()
             .then(() => {
                 if (!active) return;
-                return modService.fetchMods();
+                return Promise.all(
+                    deploymentHandlers.map(async (handler) => {
+                        if (handler.state.enable && !handler.state.preload) {
+                            await handler.fetch();
+                            await handler.deploy();
+                        }
+                    })
+                );
             })
-            .then((mods) => {
-                if (!active || !mods) return;
-                mods.forEach(modService.setup);
-                sync();
-            });
+            .then(sync);
 
         return () => {
             active = false;

@@ -5,13 +5,13 @@ import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 import { useModStore } from '@/context/useModStore';
 import type { ModInstance } from '@/service/store/mod';
 
+import Build from '@mui/icons-material/BuildRounded';
 import Delete from '@mui/icons-material/DeleteOutlineRounded';
+import Feed from '@mui/icons-material/FeedRounded';
 import RadioButtonChecked from '@mui/icons-material/RadioButtonChecked';
 import RadioButtonUnchecked from '@mui/icons-material/RadioButtonUnchecked';
 import Refresh from '@mui/icons-material/RefreshRounded';
 import Settings from '@mui/icons-material/Settings';
-import Feed from '@mui/icons-material/FeedRounded';
-import Build from '@mui/icons-material/BuildRounded';
 import { Box } from '@mui/system';
 
 interface ModListItemProps {
@@ -81,10 +81,6 @@ export function ModListItem({ mod }: ModListItemProps) {
                     }
                 }
             }}
-            onClick={() => {
-                console.log(mod);
-                //TODO open mod detail
-            }}
         >
             <ListItemText
                 primary={title}
@@ -100,7 +96,13 @@ export function ModListItem({ mod }: ModListItemProps) {
                     }
                 }}
             >
-                <IconButtonNoRipple title="详情">
+                <IconButtonNoRipple
+                    title="详情"
+                    onClick={() => {
+                        console.log(mod);
+                        //TODO open mod detail
+                    }}
+                >
                     <Feed />
                 </IconButtonNoRipple>
                 <IconButtonNoRipple title="配置">

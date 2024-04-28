@@ -75,9 +75,6 @@ export class SEAC {
             const beforeGameCoreInit = () => {
                 EventManager.addEventListener('event_first_show_main_panel', afterFirstShowMainPanel, null);
                 this.setup('beforeGameCoreInit');
-
-                // eslint-disable-next-line
-                Core.init();
             };
 
             const afterFirstShowMainPanel = () => {
@@ -85,8 +82,8 @@ export class SEAC {
                 this.setup('afterFirstShowMainPanel');
                 resolve();
                 this.setupFns = [];
-                this.event$.source$.subscribe(({ module, msg: msg_, level }) => {
-                    const msg = `[${module}] ${msg_}`;
+                this.event$.source$.subscribe(({ module, msg, level }) => {
+                    msg = `[${module}] ${msg}`;
                     switch (level) {
                         case 'error':
                             console.error(msg);

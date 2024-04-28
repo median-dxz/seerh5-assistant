@@ -1,5 +1,5 @@
 import { NOOP, socket } from '@sea/core';
-import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/launcher';
+import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 
 interface SkinInfo {
     skinId: number;

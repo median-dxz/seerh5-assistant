@@ -5,9 +5,9 @@ import { Button, ButtonGroup, CircularProgress } from '@mui/material';
 
 import { SeaTableRow } from '@/components/styled/TableRow';
 import { useModStore } from '@/context/useModStore';
-import type { TaskRunner } from '@/sea-launcher';
 import type { TaskInstance } from '@/service/store/task';
 import { LevelAction, delay } from '@sea/core';
+import type { TaskRunner } from '@sea/mod-type';
 import useSWR from 'swr';
 
 export function DailySign() {
@@ -18,20 +18,20 @@ export function DailySign() {
         () => [
             {
                 field: 'name',
-                columnName: '名称',
+                columnName: '名称'
             },
             {
                 field: 'mod',
-                columnName: '模组',
+                columnName: '模组'
             },
             {
                 field: 'state',
-                columnName: '状态',
+                columnName: '状态'
             },
             {
                 field: 'execute',
-                columnName: '执行',
-            },
+                columnName: '执行'
+            }
         ],
         []
     );

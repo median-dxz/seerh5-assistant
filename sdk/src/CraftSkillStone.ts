@@ -1,5 +1,5 @@
 import { GameConfigRegistry, SEAEventSource, delay, socket, spet } from '@sea/core';
-import type { Command, SEAModContext, SEAModExport, SEAModMetadata } from '@sea/launcher';
+import type { Command, SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 
 const rate = [
     [0, 24, 5.8, 1.4, 0.3],

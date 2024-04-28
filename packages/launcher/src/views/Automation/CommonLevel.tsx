@@ -8,8 +8,8 @@ import { SeaTableRow } from '@/components/styled/TableRow';
 import { MOD_SCOPE_BUILTIN } from '@/constants';
 import { useModStore } from '@/context/useModStore';
 import { useTaskScheduler } from '@/context/useTaskScheduler';
-import type { Task } from '@/sea-launcher';
 import { LevelAction } from '@sea/core';
+import type { Task } from '@sea/mod-type';
 import { produce } from 'immer';
 
 // import * as Endpoints from '@/service/endpoints';

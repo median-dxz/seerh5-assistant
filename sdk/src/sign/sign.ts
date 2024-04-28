@@ -1,4 +1,4 @@
-import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/launcher';
+import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 
 import { daily } from './daily';
 import { teamSign } from './team';

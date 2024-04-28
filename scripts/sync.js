@@ -7,6 +7,7 @@ const cwd = path.resolve(fileURLToPath(import.meta.url), '../..');
 
 const coreDir = path.join(cwd, 'packages', 'core');
 const launcherDir = path.join(cwd, 'packages', 'launcher');
+const modTypeDir = path.join(cwd, 'packages', 'mod-type');
 const sdkDir = path.join(cwd, 'sdk');
 
 // 同步版本字段
@@ -30,4 +31,4 @@ syncVersion(path.join(coreDir, 'package.json'), path.join(coreDir, 'internal', '
 syncVersion(path.join(launcherDir, 'package.json'), path.join(launcherDir, 'src', 'constants.ts'));
 
 // 同步api定义到sdk
-copyFileSync(path.join(launcherDir, 'src', 'sea-launcher.d.ts'), path.join(sdkDir, 'lib', 'launcher.d.ts'));
+copyFileSync(path.join(modTypeDir, 'index.d.ts'), path.join(sdkDir, 'lib', 'launcher.d.ts'));

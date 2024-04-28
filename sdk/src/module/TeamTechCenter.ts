@@ -1,5 +1,5 @@
 import { SEAEventSource, socket } from '@sea/core';
-import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/launcher';
+import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 
 declare var Alarm: any;
 

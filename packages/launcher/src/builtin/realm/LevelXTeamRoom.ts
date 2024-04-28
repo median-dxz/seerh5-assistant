@@ -1,9 +1,9 @@
-import type { LevelMeta, LevelData as SEALevelData, TaskRunner } from '@/sea-launcher';
 import { LevelAction, socket } from '@sea/core';
+import type { LevelMeta, LevelData as SEALevelData, TaskRunner } from '@sea/mod-type';
 
 import type { AnyFunction, ILevelBattle } from '@sea/core';
 
-interface LevelData extends SEALevelData {
+export interface LevelData extends SEALevelData {
     open: boolean;
     dailyMinRound: number;
     dailyRewardReceived: boolean;
@@ -11,7 +11,7 @@ interface LevelData extends SEALevelData {
     weeklyCompletedCount: number;
 }
 
-interface LevelOption {
+export interface LevelOption {
     sweep: boolean;
 }
 
@@ -24,13 +24,13 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             dailyMinRound: 0,
             dailyRewardReceived: false,
             weeklyRewardReceived: false,
-            weeklyCompletedCount: 0,
+            weeklyCompletedCount: 0
         };
 
         static readonly meta: LevelMeta = {
             id: 'LevelXTeamRoom',
             name: 'X战队密室',
-            maxTimes: 3,
+            maxTimes: 3
         };
 
         get meta() {
@@ -106,7 +106,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
             award_weekly: async () => {
                 await socket.sendByQueue(42395, [105, 3, 0, 0]);
-            },
+            }
         };
     };
 };

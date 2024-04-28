@@ -16,13 +16,12 @@ import {
     Typography,
     alpha,
     useTheme,
-    type ListProps,
+    type ListProps
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
 import { SwordLine } from '@/components/icons/SwordLine';
 import { Paper } from '@/components/styled/Paper';
-import type { TaskRunner } from '@/sea-launcher';
 import CheckCircleOutline from '@mui/icons-material/CheckCircleOutlineRounded';
 import Close from '@mui/icons-material/Close';
 import Delete from '@mui/icons-material/DeleteOutlineRounded';
@@ -33,13 +32,14 @@ import Pending from '@mui/icons-material/PendingOutlined';
 import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 import RestartAlt from '@mui/icons-material/RestartAltRounded';
 import Stop from '@mui/icons-material/StopOutlined';
+import type { TaskRunner } from '@sea/mod-type';
 
 const StatusIconMap = {
     pending: <Pending fontSize="inherit" />,
     running: <PlayArrow color="primary" fontSize="inherit" />,
     completed: <CheckCircleOutline color="success" fontSize="inherit" />,
     error: <ErrorOutline color="error" fontSize="inherit" />,
-    stopped: <Stop fontSize="inherit" />,
+    stopped: <Stop fontSize="inherit" />
 };
 
 const StatusTextMap = {
@@ -47,7 +47,7 @@ const StatusTextMap = {
     running: '正在运行',
     completed: '已完成',
     error: '错误',
-    stopped: '已停止',
+    stopped: '已停止'
 };
 
 const StatusActionsMap = {
@@ -55,7 +55,7 @@ const StatusActionsMap = {
     running: { del: false, stop: true, retry: false },
     completed: { del: true, stop: false, retry: false },
     error: { del: true, stop: false, retry: true },
-    stopped: { del: true, stop: false, retry: true },
+    stopped: { del: true, stop: false, retry: true }
 };
 
 interface LevelStateListItemProps {
@@ -64,7 +64,7 @@ interface LevelStateListItemProps {
 
 const timeFormatter = (n: number) => {
     const { format } = Intl.NumberFormat(undefined, {
-        minimumIntegerDigits: 2,
+        minimumIntegerDigits: 2
     });
     return `${format(Math.trunc(n / 1000 / 60))}:${format(Math.trunc(n / 1000) % 60)}`;
 };
@@ -72,7 +72,7 @@ const timeFormatter = (n: number) => {
 const timePrintFormatter = Intl.DateTimeFormat('zh-cn', {
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit',
+    second: '2-digit'
 });
 
 export function TaskStateListItem({ state }: LevelStateListItemProps) {
@@ -118,8 +118,8 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                             return alpha(theme.palette.secondary.main, 0.18);
                         }
                         return alpha(theme.palette.primary.main, 0.12);
-                    },
-                },
+                    }
+                }
             }}
         >
             <ListItemIcon sx={{ fontSize: '24px' }}>{StatusIconMap[status]}</ListItemIcon>
@@ -128,8 +128,8 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                 sx={{
                     width: '18rem',
                     '&:hover > *': {
-                        overflow: 'visible',
-                    },
+                        overflow: 'visible'
+                    }
                 }}
                 primaryTypographyProps={{ sx: { whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' } }}
                 primary={`${runner.name}`}
@@ -144,8 +144,8 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                         display: 'flex',
                         flexDirection: 'row',
                         alignItems: 'baseline',
-                        gap: 2,
-                    },
+                        gap: 2
+                    }
                 }}
             />
 
@@ -157,8 +157,8 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                                 whiteSpace: 'nowrap',
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
-                                fontSize: '1rem',
-                            },
+                                fontSize: '1rem'
+                            }
                         }}
                         labelPosition="top-center"
                         overridePrompt={`${runner.data.progress}%`}
@@ -171,8 +171,8 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                                 whiteSpace: 'nowrap',
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
-                                fontSize: '1rem',
-                            },
+                                fontSize: '1rem'
+                            }
                         }}
                         prompt={`进度`}
                         labelPosition="top-center"
@@ -208,8 +208,8 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                             display: 'flex',
                             flexDirection: 'row',
                             alignItems: 'center',
-                            gap: 2,
-                        },
+                            gap: 2
+                        }
                     }}
                 />
             )}
@@ -289,8 +289,8 @@ function RunnerDetailDialog({ open, close, runnerState }: RunnerDetailDialogProp
                     backgroundImage: 'none',
                     bgcolor: ({ palette }) => alpha(palette.popup.background, 0.88),
                     minWidth: '18rem',
-                    maxWidth: '60vw',
-                },
+                    maxWidth: '60vw'
+                }
             }}
         >
             <DialogTitle>Runner详情</DialogTitle>
@@ -300,7 +300,7 @@ function RunnerDetailDialog({ open, close, runnerState }: RunnerDetailDialogProp
                 sx={{
                     position: 'absolute',
                     right: 8,
-                    top: 8,
+                    top: 8
                 }}
             >
                 <Close />
@@ -313,14 +313,14 @@ function RunnerDetailDialog({ open, close, runnerState }: RunnerDetailDialogProp
                     {runnerState.endTime && runnerState.startTime
                         ? timePrintFormatter.formatRange(runnerState.startTime, runnerState.endTime)
                         : runnerState.startTime
-                        ? timePrintFormatter.format(runnerState.startTime)
-                        : '未启动'}
+                          ? timePrintFormatter.format(runnerState.startTime)
+                          : '未启动'}
                 </Typography>
                 <Typography>元数据: {JSON.stringify(runnerState.runner.meta)}</Typography>
                 {Boolean(runnerState.error) && (
                     <Paper
                         sx={{
-                            bgcolor: (theme) => alpha(theme.palette.background.default, 0.88),
+                            bgcolor: (theme) => alpha(theme.palette.background.default, 0.88)
                         }}
                     >
                         ERROR: <Typography fontFamily={fonts.input}>{runnerState.error?.message}</Typography>
@@ -330,7 +330,7 @@ function RunnerDetailDialog({ open, close, runnerState }: RunnerDetailDialogProp
                 <Paper
                     sx={{
                         bgcolor: (theme) => alpha(theme.palette.background.default, 0.88),
-                        overflow: 'auto',
+                        overflow: 'auto'
                     }}
                 >
                     <TextField
@@ -340,8 +340,8 @@ function RunnerDetailDialog({ open, close, runnerState }: RunnerDetailDialogProp
                         InputProps={{
                             readOnly: true,
                             sx: {
-                                fontFamily: ['Open Sans', 'Noto Sans SC'],
-                            },
+                                fontFamily: ['Open Sans', 'Noto Sans SC']
+                            }
                         }}
                         fullWidth
                         defaultValue={JSON.stringify(runnerState.runner, undefined, 2)}
@@ -350,7 +350,7 @@ function RunnerDetailDialog({ open, close, runnerState }: RunnerDetailDialogProp
                 <Typography>日志详情: </Typography>
                 <Paper
                     sx={{
-                        bgcolor: (theme) => alpha(theme.palette.background.default, 0.88),
+                        bgcolor: (theme) => alpha(theme.palette.background.default, 0.88)
                     }}
                 >
                     <TextField
@@ -360,8 +360,8 @@ function RunnerDetailDialog({ open, close, runnerState }: RunnerDetailDialogProp
                         InputProps={{
                             readOnly: true,
                             sx: {
-                                fontFamily: fonts.input,
-                            },
+                                fontFamily: fonts.input
+                            }
                         }}
                         fullWidth
                         value={runnerState.logs.join('\n')}

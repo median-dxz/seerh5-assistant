@@ -1,13 +1,13 @@
-import type { LevelData as SEALevelData, LevelMeta as SEALevelMeta, TaskRunner } from '@/sea-launcher';
 import type { AnyFunction, ILevelBattle } from '@sea/core';
 import { LevelAction, delay, socket } from '@sea/core';
+import type { LevelData as SEALevelData, LevelMeta as SEALevelMeta, TaskRunner } from '@sea/mod-type';
 
-interface LevelOption {
+export interface LevelOption {
     stimulation: boolean;
     sweep: boolean;
 }
 
-interface LevelData extends SEALevelData {
+export interface LevelData extends SEALevelData {
     stimulation: boolean;
     levelOpen: boolean;
     levelOpenCount: number;
@@ -16,7 +16,7 @@ interface LevelData extends SEALevelData {
     step3Count: number;
 }
 
-interface LevelMeta extends SEALevelMeta {
+export interface LevelMeta extends SEALevelMeta {
     step2MaxCount: number;
     step3MaxCount: number;
 }
@@ -31,14 +31,14 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             levelOpenCount: 0,
             step: 0,
             step2Count: 0,
-            step3Count: 0,
+            step3Count: 0
         };
         static readonly meta: LevelMeta = {
             id: 'LevelTitanHole',
             name: '泰坦矿洞',
             maxTimes: 2,
             step2MaxCount: 6,
-            step3MaxCount: 48,
+            step3MaxCount: 48
         };
         logger = logger;
 
@@ -114,7 +114,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             open_level: async () => {
                 this.logger('开启泰坦矿洞');
                 await socket.sendByQueue(42395, [104, 1, 3, 0]);
-            },
+            }
         };
     };
 };

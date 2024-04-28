@@ -1,16 +1,16 @@
-import type { LevelMeta, LevelData as SEALevelData, TaskRunner } from '@/sea-launcher';
 import { LevelAction, socket } from '@sea/core';
+import type { LevelMeta, LevelData as SEALevelData, TaskRunner } from '@sea/mod-type';
 
 import type { AnyFunction, ILevelBattle } from '@sea/core';
 
-interface LevelData extends SEALevelData {
+export interface LevelData extends SEALevelData {
     stimulation: boolean;
     unlockHard: boolean;
     canReceiveReward: boolean;
     weeklyChallengeCount: number;
 }
 
-interface LevelOption {
+export interface LevelOption {
     stimulation: boolean;
     sweep: boolean;
     elfId: number;
@@ -24,13 +24,13 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
             stimulation: false,
             unlockHard: false,
             canReceiveReward: false,
-            weeklyChallengeCount: 0,
+            weeklyChallengeCount: 0
         };
 
         static readonly meta: LevelMeta = {
             name: '精灵王的试炼',
             maxTimes: 6,
-            id: 'LevelElfKingsTrial',
+            id: 'LevelElfKingsTrial'
         };
 
         get meta() {
@@ -86,7 +86,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
             award: async () => {
                 await socket.sendByQueue(42395, [106, 3, 0, 0]);
-            },
+            }
         };
     };
 };
