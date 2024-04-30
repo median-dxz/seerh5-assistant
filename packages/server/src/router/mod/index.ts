@@ -49,9 +49,6 @@ export const modRouter = router({
         .input(ModIdentifierSchema.and(z.object({ options: ModInstallOptionsSchema })))
         .mutation(({ input }) => {
             const { id, scope, options } = input;
-            if (!options.builtin) {
-                // move file to mod folder
-            }
             return ModManager.install(scope, id, options);
         }),
 

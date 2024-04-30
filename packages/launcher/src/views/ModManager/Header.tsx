@@ -4,7 +4,7 @@ import { installModFromUrl } from '@/service/mod/install';
 import { teardown } from '@/service/store/mod';
 import CloudUpload from '@mui/icons-material/CloudUploadRounded';
 import { Box, Button, alpha, styled } from '@mui/material';
-import React, { useRef } from 'react';
+import React from 'react';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -20,7 +20,7 @@ const VisuallyHiddenInput = styled('input')({
 
 export function Header() {
     const { sync } = useModStore();
-    const fileInputRef = useRef<HTMLInputElement>(null);
+
     return (
         <Box
             sx={{
@@ -33,21 +33,20 @@ export function Header() {
                 borderBottom: (theme) => `1px solid ${alpha(theme.palette.divider, 0.12)}`
             }}
         >
-            <Button
-                component="label"
-                role={undefined}
-                variant="contained"
-                tabIndex={-1}
-                startIcon={<CloudUpload />}
-                onClick={() => {
-                    if (fileInputRef.current?.files) {
-                        console.log(fileInputRef.current.files);
-                        // installModFromUrl(URL.createObjectURL(fileInputRef.current.files[0]));
-                    }
-                }}
-            >
+            <Button component="label" role={undefined} variant="contained" tabIndex={-1} startIcon={<CloudUpload />}>
                 从文件安装
-                <VisuallyHiddenInput ref={fileInputRef} type="file" name="upload-mod" accept="application/javascript" />
+                <VisuallyHiddenInput
+                    type="file"
+                    name="upload-mod"
+                    accept="text/javascript"
+                    onChange={async (v) => {
+                        if (v.target.files && v.target.files.length > 0) {
+                            const url = URL.createObjectURL(v.target.files[0]);
+                            await installModFromUrl(url);
+                            URL.revokeObjectURL(url);
+                        }
+                    }}
+                />
             </Button>
             <Button
                 onClick={() => {

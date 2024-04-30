@@ -1,5 +1,4 @@
-import type { FastifyPluginAsync } from 'fastify';
-import type { RouteOptions } from 'fastify/types/route.js';
+import type { FastifyPluginAsync, RouteOptions } from 'fastify';
 
 export const createAppJsProxy: FastifyPluginAsync = async (fastify, _opts) => {
     const options: RouteOptions = {
@@ -19,7 +18,7 @@ export const createAppJsProxy: FastifyPluginAsync = async (fastify, _opts) => {
                 // console.log(`[Proxy]: --> ${url}`);
                 return fetch(url, {
                     headers: request.headers as HeadersInit,
-                    referrer: 'http://seerh5.61.com/',
+                    referrer: 'http://seerh5.61.com/'
                 })
                     .then(async (r) => {
                         // 设置响应头
@@ -83,7 +82,7 @@ export const createAppJsProxy: FastifyPluginAsync = async (fastify, _opts) => {
                     break;
             }
             await reply;
-        },
+        }
     };
     fastify.route(options);
 };

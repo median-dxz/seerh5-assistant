@@ -23,7 +23,12 @@ export const mod = {
     install: async (scope: string, id: string, options: ModInstallOptions) => {
         return modRouter.install.mutate({ scope, id, options });
     },
-    upload: async (scope: string, id: string, modBlob: Blob, modMapBlob?: Blob) => {}
+    upload: async (scope: string, id: string, modBlob: Blob, modMapBlob?: Blob) => {
+        return fetch('api/upload/mods?' + new URLSearchParams({ scope, id }).toString(), {
+            body: modBlob,
+            method: 'POST'
+        }).then((r) => r.json());
+    }
 };
 
 export type ConfigKey = 'PetGroups';

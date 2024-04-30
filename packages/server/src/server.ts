@@ -23,6 +23,7 @@ import { apiRouter } from './router/index.ts';
 import { initConfigs } from './data/init.ts';
 import { configsRoot, launcherRoot, logsRoot, modsRoot } from './paths.ts';
 import { ModManager } from './router/mod/manager.ts';
+import { uploadModsRouter } from './router/mod/upload-mods.ts';
 
 export async function createServer() {
     const server = fastify({
@@ -92,6 +93,8 @@ export async function createServer() {
             createContext: buildSEALContext({ appRoot: server.config.APP_ROOT })
         }
     });
+
+    void server.register(uploadModsRouter);
 
     const stop = async () => {
         await server.close();

@@ -31,12 +31,17 @@ function createProxyObjectRef<T extends NonNullable<object>>(initValue: T) {
 export const getLogger = (id: string) => CommonLogger(id, 'info', LogStyle.mod);
 
 export function buildMetadata(metadata: SEAModMetadata) {
-    let { scope, version } = metadata;
+    let { scope, version, preload } = metadata;
 
     scope = scope ?? MOD_SCOPE_DEFAULT;
     version = version ?? '0.0.0';
+    preload = preload ?? false;
 
-    return { ...metadata, scope, version } as SEAModMetadata & { version: string; scope: string };
+    return { ...metadata, scope, version, preload } as SEAModMetadata & {
+        version: string;
+        scope: string;
+        preload: boolean;
+    };
 }
 
 export function getNamespace(meta: SEAModMetadata) {
