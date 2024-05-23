@@ -63,7 +63,7 @@ pnpm i
 在`packages/core`下执行：
 
 ```
-pnpm core:build
+pnpm build
 ```
 
 因为`launcher`是使用工作区链接来安装`sea-core`的，因此现在登录器就能使用了。
@@ -76,7 +76,7 @@ pnpm core:build
 pnpm start
 ```
 
-然后在`package/launcher`下创建`.evn.local`文件，详情见vite的环境变量配置文档：
+然后在`package/launcher`下创建`.env.local`文件，详情见vite的环境变量配置文档：
 
 ```
 VITE_BACKEND_PORT={你的后端端口号，默认是2147}
