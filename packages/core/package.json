@@ -37,9 +37,9 @@
     "pet-helper"
   ],
   "devDependencies": {
-    "@vitest/coverage-v8": "^1.4.0",
-    "happy-dom": "^12.10.3",
-    "vitest": "^1.4.0"
+    "@vitest/coverage-v8": "2.0.0-beta.11",
+    "happy-dom": "^14.12.3",
+    "vitest": "2.0.0-beta.11"
   },
   "dependencies": {
     "rxjs": "^7.8.1"

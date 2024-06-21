@@ -10,7 +10,7 @@
     "name": "median-dxz",
     "url": "https://median-dxz.xyz/"
   },
-  "packageManager": "pnpm@9.0.6",
+  "packageManager": "pnpm@9.4.0+sha256.b6fd0bfda555e7e584ad7e56b30c68b01d5a04f9ee93989f4b93ca8473c49c74",
   "scripts": {
     "dev": "conc pnpm:core:watch pnpm:launcher:dev",
     "server:run": "pnpm -C ./packages/server run start",
@@ -23,17 +23,17 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@types/node": "^20.12.7",
-    "@typescript-eslint/eslint-plugin": "^7.7.1",
-    "@typescript-eslint/parser": "^7.7.1",
+    "@types/node": "^20.14.7",
+    "@typescript-eslint/eslint-plugin": "8.0.0-alpha.30",
+    "@typescript-eslint/parser": "8.0.0-alpha.30",
     "concurrently": "^8.2.2",
-    "eslint": "^8.57.0",
+    "eslint": "^9.5.0",
     "husky": "^9.0.11",
-    "lint-staged": "^15.2.2",
-    "prettier": "^3.2.5",
-    "rimraf": "^5.0.5",
-    "typescript": "^5.4.5",
-    "vite": "^5.2.10"
+    "lint-staged": "^15.2.7",
+    "prettier": "^3.3.2",
+    "rimraf": "^5.0.7",
+    "typescript": "^5.5.2",
+    "vite": "^5.3.1"
   },
   "engines": {
     "node": ">=20.10.0"
@@ -42,8 +42,9 @@
     "*.{ts,tsx,json,css,md}": "prettier --write"
   },
   "pnpm": {
-    "patchedDependencies": {
-      "thread-stream@2.4.1": "patches/thread-stream@2.4.1.patch"
+    "overrides": {
+      "braces@<3.0.3": ">=3.0.3",
+      "ws@>=8.0.0 <8.17.1": ">=8.17.1"
     }
   }
 }
