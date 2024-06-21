@@ -23,7 +23,13 @@ export const mod = {
     install: async (scope: string, id: string, options: ModInstallOptions) => {
         return modRouter.install.mutate({ scope, id, options });
     },
-    upload: async (scope: string, id: string, modBlob: Blob, modMapBlob?: Blob) => {
+    upload: async (scope: string, id: string, modUrl: string, modMapUrl?: string) => {
+        const modBlob = await fetch(modUrl).then((r) => r.blob());
+        const mapBlob = modMapUrl ? await fetch(modMapUrl).then((r) => r.blob()) : undefined;
+
+        const modFile = new File([modBlob], 'mod.zip', { type: 'application/zip' });
+        const mapFile = mapBlob ? new File([mapBlob], 'mod.map', { type: 'application/json' }) : undefined;
+
         return fetch('api/upload/mods?' + new URLSearchParams({ scope, id }).toString(), {
             body: modBlob,
             method: 'POST'
