@@ -8,9 +8,9 @@ export type WithClass<T> = T & { __class__: string };
 export const NOOP = () => {};
 
 export class HookedSymbol {
-    static readonly original = Symbol('originalFunction');
-    static readonly before = Symbol('beforeDecorators');
-    static readonly after = Symbol('afterDecorators');
+    static readonly kOriginal = Symbol('originalFunction');
+    static readonly kBefore = Symbol('beforeDecorators');
+    static readonly kAfter = Symbol('afterDecorators');
 }
 
 /** 延时 */
@@ -52,27 +52,27 @@ type AfterDecorator<F extends AnyFunction> = (
 
 export interface HookedFunction<F extends AnyFunction> {
     (...args: Parameters<F>): ReturnType<F>;
-    [HookedSymbol.original]: F;
+    [HookedSymbol.kOriginal]: F;
 }
 
 export interface WrappedFunction<F extends AnyFunction> extends HookedFunction<F> {
     (...args: Parameters<F>): ReturnType<F>;
-    [HookedSymbol.after]: AfterDecorator<F>[];
-    [HookedSymbol.before]: BeforeDecorator<F>[];
+    [HookedSymbol.kAfter]: AfterDecorator<F>[];
+    [HookedSymbol.kBefore]: BeforeDecorator<F>[];
     after(this: WrappedFunction<F>, decorator: AfterDecorator<F>): WrappedFunction<F>;
     before(this: WrappedFunction<F>, decorator: BeforeDecorator<F>): WrappedFunction<F>;
 }
 
 export function assertIsHookedFunction<F extends AnyFunction>(func: F | HookedFunction<F>): func is HookedFunction<F> {
-    return Object.hasOwn(func, HookedSymbol.original);
+    return Object.hasOwn(func, HookedSymbol.kOriginal);
 }
 
 export function assertIsWrappedFunction<F extends AnyFunction>(
     func: F | WrappedFunction<F>
 ): func is WrappedFunction<F> {
     return (
-        Object.hasOwn(func, HookedSymbol.before) &&
-        Object.hasOwn(func, HookedSymbol.after) &&
+        Object.hasOwn(func, HookedSymbol.kBefore) &&
+        Object.hasOwn(func, HookedSymbol.kAfter) &&
         assertIsHookedFunction(func)
     );
 }
@@ -102,23 +102,23 @@ export function wrapper<F extends AnyFunction>(func: F | HookedFunction<F> | Wra
             return r;
         } as WrappedFunction<F>;
 
-        wrapped[HookedSymbol.original] = originalFunction;
-        wrapped[HookedSymbol.before] = beforeDecorators;
-        wrapped[HookedSymbol.after] = afterDecorators;
+        wrapped[HookedSymbol.kOriginal] = originalFunction;
+        wrapped[HookedSymbol.kBefore] = beforeDecorators;
+        wrapped[HookedSymbol.kAfter] = afterDecorators;
 
         wrapped.before = function (this: WrappedFunction<F>, decorator: BeforeDecorator<F>) {
             return createWrappedFunction(
-                this[HookedSymbol.original],
-                this[HookedSymbol.before].concat(decorator),
-                Array.from(this[HookedSymbol.after])
+                this[HookedSymbol.kOriginal],
+                this[HookedSymbol.kBefore].concat(decorator),
+                Array.from(this[HookedSymbol.kAfter])
             );
         }.bind(wrapped);
 
         wrapped.after = function (this: WrappedFunction<F>, decorator: AfterDecorator<F>) {
             return createWrappedFunction(
-                this[HookedSymbol.original],
-                Array.from(this[HookedSymbol.before]),
-                this[HookedSymbol.after].concat(decorator)
+                this[HookedSymbol.kOriginal],
+                Array.from(this[HookedSymbol.kBefore]),
+                this[HookedSymbol.kAfter].concat(decorator)
             );
         }.bind(wrapped);
 
@@ -127,9 +127,9 @@ export function wrapper<F extends AnyFunction>(func: F | HookedFunction<F> | Wra
 
     if (assertIsWrappedFunction(func)) {
         return createWrappedFunction(
-            func[HookedSymbol.original],
-            [...func[HookedSymbol.before]],
-            [...func[HookedSymbol.after]]
+            func[HookedSymbol.kOriginal],
+            [...func[HookedSymbol.kBefore]],
+            [...func[HookedSymbol.kAfter]]
         );
     }
 
@@ -155,14 +155,14 @@ export function hookFn<T extends object, K extends keyof T>(target: T, funcName:
     }
 
     while (assertIsHookedFunction(func)) {
-        func = func[HookedSymbol.original];
+        func = func[HookedSymbol.kOriginal];
     }
 
     (target[funcName] as any) = function (this: T, ...args: any[]): any {
         return override.call(this, func.bind(this), ...args);
     };
 
-    (target[funcName] as any)[HookedSymbol.original] = func;
+    (target[funcName] as any)[HookedSymbol.kOriginal] = func;
 }
 
 /** 还原被修改的函数 */
@@ -171,7 +171,7 @@ export function restoreHookedFn<T extends object, K extends keyof T>(target: T, 
     if (typeof func !== 'function') return;
 
     while (assertIsHookedFunction(func)) {
-        func = func[HookedSymbol.original];
+        func = func[HookedSymbol.kOriginal];
     }
 
     (target[funcName] as any) = func;

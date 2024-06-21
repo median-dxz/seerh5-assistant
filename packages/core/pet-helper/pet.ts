@@ -22,13 +22,13 @@ type SEAPet = {
     done: Promise<CaughtPet>;
 };
 
-const ChainableSymbol = Symbol('CaughtPetChainable');
+const kChainable = Symbol('CaughtPetChainable');
 
 export class CaughtPet extends Pet {
     static {
-        (this.prototype.usePotion as any)[ChainableSymbol] = true;
-        (this.prototype.cure as any)[ChainableSymbol] = true;
-        (this.prototype.useItem as any)[ChainableSymbol] = true;
+        (this.prototype.usePotion as any)[kChainable] = true;
+        (this.prototype.cure as any)[kChainable] = true;
+        (this.prototype.useItem as any)[kChainable] = true;
     }
 
     constructor(i: PetInfo) {
@@ -150,7 +150,7 @@ export function spet(pet: Pet | CatchTime) {
             const fn = CaughtPet.prototype[prop as keyof CaughtPet];
 
             if (fn && typeof fn === 'function') {
-                return extractPromiseWrapper(target, fn, Boolean(ChainableSymbol in fn));
+                return extractPromiseWrapper(target, fn, Boolean(kChainable in fn));
             }
 
             return target.then((pet) => pet[prop as keyof CaughtPet]);

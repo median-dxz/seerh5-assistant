@@ -26,13 +26,13 @@ describe('wrapper', () => {
 
         expect(assertIsWrappedFunction(wrapped3)).toBe(true);
 
-        expect(wrapped1[HookedSymbol.original]).toBe(originalFunc);
-        expect(wrapped2[HookedSymbol.original]).toBe(originalFunc);
-        expect(wrapped3[HookedSymbol.original]).toBe(originalFunc);
+        expect(wrapped1[HookedSymbol.kOriginal]).toBe(originalFunc);
+        expect(wrapped2[HookedSymbol.kOriginal]).toBe(originalFunc);
+        expect(wrapped3[HookedSymbol.kOriginal]).toBe(originalFunc);
 
         expect(wrapped1).not.toEqual(wrapped2);
         expect(wrapped2).not.toEqual(wrapped3);
-        expect(wrapped3[HookedSymbol.after]).toEqual(wrapped2[HookedSymbol.after]);
+        expect(wrapped3[HookedSymbol.kAfter]).toEqual(wrapped2[HookedSymbol.kAfter]);
     });
 
     test('测试 before 和 after 钩子', () => {
@@ -41,9 +41,9 @@ describe('wrapper', () => {
         const afterDecorator = vi.fn();
         const wrappedFunc = wrapper(originalFunc).before(beforeDecorator).after(afterDecorator);
 
-        expect(wrappedFunc[HookedSymbol.original]).toBe(originalFunc);
-        expect(wrappedFunc[HookedSymbol.before]).toEqual([beforeDecorator]);
-        expect(wrappedFunc[HookedSymbol.after]).toEqual([afterDecorator]);
+        expect(wrappedFunc[HookedSymbol.kOriginal]).toBe(originalFunc);
+        expect(wrappedFunc[HookedSymbol.kBefore]).toEqual([beforeDecorator]);
+        expect(wrappedFunc[HookedSymbol.kAfter]).toEqual([afterDecorator]);
 
         const args = [1, 2, 3];
         const returnValue = wrappedFunc(...args);
@@ -56,16 +56,16 @@ describe('wrapper', () => {
         const f = createFn();
         const hookedFunc1 = createFn() as HookedFunction<() => void>;
         const hookedFunc2 = createFn() as HookedFunction<() => void>;
-        hookedFunc1[HookedSymbol.original] = f;
-        hookedFunc2[HookedSymbol.original] = hookedFunc1;
+        hookedFunc1[HookedSymbol.kOriginal] = f;
+        hookedFunc2[HookedSymbol.kOriginal] = hookedFunc1;
 
         const result1 = wrapper(hookedFunc1);
-        expect(result1[HookedSymbol.original]).toBe(hookedFunc1); // original 指向 HookedFunction
+        expect(result1[HookedSymbol.kOriginal]).toBe(hookedFunc1); // original 指向 HookedFunction
 
         const result2 = wrapper(hookedFunc2);
-        expect(result2[HookedSymbol.original]).toBe(hookedFunc2); // original 指向 HookedFunction
+        expect(result2[HookedSymbol.kOriginal]).toBe(hookedFunc2); // original 指向 HookedFunction
 
-        expect(result2[HookedSymbol.original][HookedSymbol.original]).toBe(hookedFunc1);
+        expect(result2[HookedSymbol.kOriginal][HookedSymbol.kOriginal]).toBe(hookedFunc1);
     });
 
     test('wrap 一个 WrappedFunction', () => {
@@ -75,9 +75,9 @@ describe('wrapper', () => {
         const wrapped = wrapper(f).after(after[0]).before(before[0]);
         const rewrapped = wrapper(wrapped).after(after[1]).before(before[1]);
 
-        expect(rewrapped[HookedSymbol.original]).toBe(f); // original 指向 originalFunction
-        expect(rewrapped[HookedSymbol.before]).toEqual(before);
-        expect(rewrapped[HookedSymbol.after]).toEqual(after);
+        expect(rewrapped[HookedSymbol.kOriginal]).toBe(f); // original 指向 originalFunction
+        expect(rewrapped[HookedSymbol.kBefore]).toEqual(before);
+        expect(rewrapped[HookedSymbol.kAfter]).toEqual(after);
     });
 
     test('测试对异步返回值的处理', async () => {
@@ -88,7 +88,7 @@ describe('wrapper', () => {
         const afterDecorator2 = vi.fn();
         const wrappedFunc = wrapper(originalFunc).after(afterDecorator1).after(afterDecorator2);
 
-        expect(wrappedFunc[HookedSymbol.after]).toEqual([afterDecorator1, afterDecorator2]);
+        expect(wrappedFunc[HookedSymbol.kAfter]).toEqual([afterDecorator1, afterDecorator2]);
 
         const args = [1, 2, 3];
         const returnValue = wrappedFunc(...args);
@@ -132,7 +132,7 @@ describe('hookFn', () => {
         hookFn(target, 'func', override);
 
         expect(target.func).not.toBe(originalFunc);
-        expect(target.func[HookedSymbol.original]).toBe(originalFunc);
+        expect(target.func[HookedSymbol.kOriginal]).toBe(originalFunc);
 
         const args = [1, 2, 3];
         const r = target.func(...args);
@@ -157,7 +157,7 @@ describe('hookFn', () => {
 
         expect(override1).not.toHaveBeenCalled();
         expect(override2).toHaveBeenCalled();
-        expect(target.func[HookedSymbol.original]).toBe(originalFunc); // original 指向 originalFunction
+        expect(target.func[HookedSymbol.kOriginal]).toBe(originalFunc); // original 指向 originalFunction
         expect(r).toBe(target); // this === target
     });
 
@@ -173,9 +173,9 @@ describe('hookFn', () => {
         expect(decorator).not.toHaveBeenCalled();
 
         // 验证是否了清空之前的修改
-        expect(target.func[HookedSymbol.original]).toBe(originalFunc);
-        expect(target.func[HookedSymbol.before]).toBeUndefined();
-        expect(target.func[HookedSymbol.after]).toBeUndefined();
+        expect(target.func[HookedSymbol.kOriginal]).toBe(originalFunc);
+        expect(target.func[HookedSymbol.kBefore]).toBeUndefined();
+        expect(target.func[HookedSymbol.kAfter]).toBeUndefined();
         expect(assertIsWrappedFunction(target.func)).toBe(false);
     });
 
@@ -194,9 +194,9 @@ describe('hookFn', () => {
         expect(decorator).not.toHaveBeenCalled();
 
         // 验证是否了清空之前的修改
-        expect(target.func[HookedSymbol.original]).toBe(originalFunc);
-        expect(target.func[HookedSymbol.before]).toBeUndefined();
-        expect(target.func[HookedSymbol.after]).toBeUndefined();
+        expect(target.func[HookedSymbol.kOriginal]).toBe(originalFunc);
+        expect(target.func[HookedSymbol.kBefore]).toBeUndefined();
+        expect(target.func[HookedSymbol.kAfter]).toBeUndefined();
         expect(assertIsWrappedFunction(target.func)).toBe(false);
     });
 });
