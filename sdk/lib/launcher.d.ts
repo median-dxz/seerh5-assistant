@@ -1,5 +1,11 @@
 import type { ILevelBattle, ILevelRunner, MoveStrategy, VERSION } from '@sea/core';
 
+export type DataObject =
+    | {
+          [k: string]: unknown;
+      }
+    | NonNullable<object>;
+
 export type SEAConfigItemSchema = (
     | {
           type: 'textInput';
@@ -30,20 +36,20 @@ export type SEAModMetadata = {
     version?: string;
     description?: string;
     preload?: boolean;
-    data?: NonNullable<object>;
+    data?: DataObject;
     configSchema?: Record<string, SEAConfigItemSchema>;
 };
 
 export type SEAModContext<TMetadata extends SEAModMetadata> = InnerModContext<
     TMetadata,
     TMetadata['configSchema'] extends Record<string, SEAConfigItemSchema> ? TMetadata['configSchema'] : undefined,
-    TMetadata['data'] extends NonNullable<object> ? TMetadata['data'] : undefined
+    TMetadata['data'] extends DataObject ? TMetadata['data'] : undefined
 >;
 
 export type InnerModContext<
     TMetadata extends SEAModMetadata,
     TConfigSchema extends Record<string, SEAConfigItemSchema> | undefined = undefined,
-    TData extends NonNullable<object> | undefined = undefined
+    TData extends DataObject | undefined = undefined
 > = {
     meta: TMetadata;
 

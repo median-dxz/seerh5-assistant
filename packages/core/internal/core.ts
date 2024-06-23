@@ -4,7 +4,7 @@ import { SEAEventSource } from '../event-source/index.js';
 import { fixSoundLoad } from './features/fixSoundLoad.js';
 import { coreSetup } from './features/index.js';
 
-const VERSION = '1.0.0-rc.2';
+const VERSION = '1.0.0-rc.4';
 const SEER_READY_EVENT = 'seerh5_ready';
 
 export interface SetupFn {

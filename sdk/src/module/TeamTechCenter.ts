@@ -7,7 +7,7 @@ export const metadata = {
     id: 'teamTechCenter',
     scope: 'median',
     description: '精灵科技中心模块注入, 提供一键强化到满级功能',
-    core: '1.0.0-rc.2',
+    core: '1.0.0-rc.4',
     version: '1.0.0'
 } satisfies SEAModMetadata;
 

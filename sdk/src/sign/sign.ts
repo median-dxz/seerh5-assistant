@@ -19,7 +19,7 @@ export const metadata = {
     id: 'sign',
     scope: 'median',
     version: '1.0.0',
-    core: '1.0.0-rc.2',
+    core: '1.0.0-rc.4',
     description: '日常签到',
     configSchema: {
         'teamDispatch.ignorePets': {

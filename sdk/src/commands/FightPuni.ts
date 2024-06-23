@@ -5,7 +5,7 @@ import Icon from './all_inclusive.svg?raw';
 export const metadata = {
     id: '对战谱尼',
     scope: 'median',
-    core: '1.0.0-rc.2',
+    core: '1.0.0-rc.4',
     version: '1.0.0'
 } satisfies SEAModMetadata;
 
