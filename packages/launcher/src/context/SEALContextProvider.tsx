@@ -1,8 +1,8 @@
 import React, { useEffect, type PropsWithChildren } from 'react';
 
-import * as ctService from '@/service/store/CatchTimeBinding';
+import * as ctService from '@/services/store/CatchTimeBinding';
 
-import { deploymentHandlers } from '@/service/mod/handler';
+import { deploymentHandlers } from '@/services/mod/handler';
 import { MainStateProvider } from './MainStateProvider';
 import { TaskSchedulerProvider } from './TaskSchedulerProvider';
 import { useModStore } from './useModStore';

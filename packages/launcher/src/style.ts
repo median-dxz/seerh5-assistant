@@ -41,7 +41,7 @@ const colors = {
     primary: deepPurple[200],
     secondary: deepPurple[500],
     text: '#e1f5fe',
-    paper: '#211d22',
+    paper: '#211d22'
 };
 
 const border = `1px solid ${alpha(colors.primary, 0.24)}`;
@@ -49,7 +49,7 @@ const border = `1px solid ${alpha(colors.primary, 0.24)}`;
 const fonts = {
     input: `"Noto Sans SC", "Open Sans", consolas, monospace`,
     main: `MFShangHei, "Open Sans", "Noto Sans SC", Helvetica, Arial, sans-serif`,
-    header: `"Noto Sans SC", system-ui, -apple-system, "Open Sans", "Helvetica Neue", sans-serif`,
+    header: `"Noto Sans SC", system-ui, -apple-system, "Open Sans", "Helvetica Neue", sans-serif`
 };
 
 export const theme = createTheme({
@@ -61,22 +61,22 @@ export const theme = createTheme({
     palette: {
         mode: 'dark',
         primary: {
-            main: colors.primary,
+            main: colors.primary
         },
         secondary: {
-            main: colors.secondary,
+            main: colors.secondary
         },
         text: {
-            primary: colors.text,
+            primary: colors.text
         },
         background: {
             default: alpha(colors.paper, 0.24),
-            paper: alpha(colors.primary, 0.08),
+            paper: alpha(colors.primary, 0.08)
         },
         divider: alpha(colors.primary, 0.16),
         popup: {
-            background: alpha(colors.secondary, 0.36),
-        },
+            background: alpha(colors.secondary, 0.36)
+        }
     },
     typography: {
         fontSize: 16,
@@ -85,57 +85,57 @@ export const theme = createTheme({
             fontSize: 20,
             fontFamily: fonts.header,
             fontWeight: 'bold',
-            whiteSpace: 'nowrap',
-        },
+            whiteSpace: 'nowrap'
+        }
     },
     components: {
         MuiCssBaseline: {
             styleOverrides: {
                 '::-webkit-scrollbar': {
                     width: '12px',
-                    height: '12px',
+                    height: '12px'
                 },
                 '::-webkit-scrollbar-track': {
-                    backgroundColor: 'transparent',
+                    backgroundColor: 'transparent'
                 },
                 '::-webkit-scrollbar-thumb': {
                     backgroundColor: alpha(colors.primary, 0.24),
                     borderRadius: '12px',
                     border: '4px solid transparent',
-                    backgroundClip: 'content-box',
+                    backgroundClip: 'content-box'
                 },
                 '::-webkit-scrollbar-thumb:hover': {
-                    backgroundColor: alpha(colors.primary, 0.48),
-                },
-            },
+                    backgroundColor: alpha(colors.primary, 0.48)
+                }
+            }
         },
         MuiBackdrop: {
             styleOverrides: {
-                root: { backgroundColor: alpha('#000', 0.24) },
-            },
+                root: { backgroundColor: alpha('#000', 0.24) }
+            }
         },
         MuiTooltip: {
             styleOverrides: {
                 tooltip: {
                     backgroundColor: alpha(colors.primary, 0.6),
-                    backdropFilter: 'blur(4px)',
-                },
-            },
+                    backdropFilter: 'blur(4px)'
+                }
+            }
         },
         MuiLinearProgress: {
             styleOverrides: {
                 root: {
-                    backgroundColor: alpha(colors.primary, 0.24),
-                },
-            },
+                    backgroundColor: alpha(colors.primary, 0.24)
+                }
+            }
         },
         MuiPaper: {
             styleOverrides: {
                 root: {
                     boxShadow: `0 8px 16px rgba(0 0 0 / 24%)`,
-                    display: 'flex',
-                },
-            },
+                    display: 'flex'
+                }
+            }
         },
         MuiButton: {
             styleOverrides: {
@@ -144,45 +144,46 @@ export const theme = createTheme({
                     border,
                     ':hover': {
                         backgroundColor: alpha(colors.primary, 0.24),
-                        border,
-                    },
+                        border
+                    }
                 },
                 contained: {
                     color: colors.text,
                     border,
                     backgroundColor: alpha(colors.secondary, 0.48),
                     ':hover': {
-                        backgroundColor: alpha(darken(colors.secondary, 0.15), 0.48),
+                        backgroundColor: alpha(darken(colors.secondary, 0.15), 0.48)
                     },
                     ':active': {
-                        backgroundColor: alpha(lighten(colors.secondary, 0.15), 0.48),
+                        backgroundColor: alpha(lighten(colors.secondary, 0.15), 0.48)
                     },
+                    boxShadow: `0 0 4px rgba(0 0 0 / 24%)`
                 },
                 outlinedInherit: {
                     border: `1px solid ${alpha(colors.text, 0.24)}`,
                     ':hover': {
-                        border: `1px solid ${alpha(colors.text, 0.48)}`,
-                    },
-                },
-            },
+                        border: `1px solid ${alpha(colors.text, 0.48)}`
+                    }
+                }
+            }
         },
         MuiTypography: {
             defaultProps: {
                 variantMapping: {
-                    subtitle1: 'h2',
-                },
-            },
+                    subtitle1: 'h2'
+                }
+            }
         },
         MuiChip: {
             styleOverrides: {
                 root: {
                     backgroundColor: alpha(colors.primary, 0.18),
                     border: `1px solid ${alpha(colors.text, 0.24)}`,
-                    fontFamily: fonts.input,
-                },
-            },
-        },
-    },
+                    fontFamily: fonts.input
+                }
+            }
+        }
+    }
 });
 
 export const componentStyles: Record<string, SxProps> = {};

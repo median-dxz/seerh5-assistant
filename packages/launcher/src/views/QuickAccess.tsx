@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 
 import { SeaQuickAccess } from '@/components/styled/QuickAccess';
 import { useModStore } from '@/context/useModStore';
-import type { CommandInstance } from '@/service/store/command';
+import type { CommandInstance } from '@/services/store/command';
 import type { AnyFunction } from '@sea/core';
 
 const SvgMaker = ({ url, children: _, ...rest }: React.SVGProps<SVGSVGElement> & { url: string }) => {
@@ -61,8 +61,8 @@ const QuickAccessPluginAction: React.FC<
                 disableFocusRipple: true,
                 disableTouchRipple: true,
                 sx: {
-                    color: (theme) => theme.palette.primary.main,
-                },
+                    color: (theme) => theme.palette.primary.main
+                }
             }}
             icon={<SvgIcon component={SvgWrapper(plugin.icon!)} inheritViewBox></SvgIcon>}
             tooltipTitle={title}
@@ -97,8 +97,8 @@ export function QuickAccess(props: SpeedDialProps) {
                 disableRipple: true,
                 disableFocusRipple: true,
                 sx: {
-                    color: 'primary.main',
-                },
+                    color: 'primary.main'
+                }
             }}
             open={open}
             onOpen={(evt, reason) => {

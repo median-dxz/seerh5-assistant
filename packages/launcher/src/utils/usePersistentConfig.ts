@@ -1,4 +1,4 @@
-import * as endpoints from '@/service/endpoints';
+import * as endpoints from '@/services/endpoints';
 import { produce, type Draft } from 'immer';
 import useSWR from 'swr';
 

@@ -6,7 +6,7 @@ import { Button, Typography } from '@mui/material';
 
 import { LabeledLinearProgress } from '@/components/LabeledProgress';
 import { PanelField, PanelTable, useRowData, type PanelColumns } from '@/components/PanelTable';
-import { Icon } from '@/service/resource';
+import { Icon } from '@/services/resource';
 
 import { SeaTableRow } from '@/components/styled/TableRow';
 import { useMainState } from '@/context/useMainState';
@@ -25,7 +25,7 @@ const columns: PanelColumns = [
     { field: 'icon', columnName: '' },
     { field: 'name', columnName: '名称' },
     { field: 'amount', columnName: '数量' },
-    { field: 'exchange', columnName: '兑换' },
+    { field: 'exchange', columnName: '兑换' }
 ];
 
 export function CommonValue() {
