@@ -10,9 +10,7 @@ import { petFragmentLevel } from '../../data/PetFragmentLevel.ts';
 import { procedure, router } from '../trpc.ts';
 
 export const configRouter = router({
-    launcherConfig: procedure.input(z.enum(LauncherConfigKeys)).query(({ input: key }) => {
-        return launcherConfig.getItem(key);
-    }),
+    launcherConfig: procedure.input(z.enum(LauncherConfigKeys)).query(({ input: key }) => launcherConfig.getItem(key)),
     setLauncherConfig: procedure
         .input(
             z.object({ key: z.enum(LauncherConfigKeys), value: z.unknown() }).refine((input) => {
@@ -35,17 +33,13 @@ export const configRouter = router({
             return petCatchTimeMap.query();
         }
     }),
-    updateAllCatchTime: procedure.input(z.map(z.string(), z.number())).mutation(({ input }) => {
-        return petCatchTimeMap.mutate(() => input);
-    }),
+    updateAllCatchTime: procedure
+        .input(z.map(z.string(), z.number()))
+        .mutation(({ input }) => petCatchTimeMap.mutate(() => input)),
     setCatchTime: procedure.input(z.tuple([z.string(), z.number()])).mutation(({ input }) => {
         const [name, ct] = input;
         return petCatchTimeMap.updateCatchTime(name, ct);
     }),
-    deleteCatchTime: procedure.input(z.string()).mutation(({ input }) => {
-        return petCatchTimeMap.deleteCatchTime(input);
-    }),
-    petFragmentLevel: procedure.query(() => {
-        return petFragmentLevel.query();
-    })
+    deleteCatchTime: procedure.input(z.string()).mutation(({ input }) => petCatchTimeMap.deleteCatchTime(input)),
+    petFragmentLevel: procedure.query(() => petFragmentLevel.query())
 });

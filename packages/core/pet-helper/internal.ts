@@ -37,7 +37,7 @@ export default () => {
         SEAPetStore.bag.update = new Proxy(SEAPetStore.bag.update, {
             apply: (target, thisArg, argArray: [[CaughtPet[], CaughtPet[]]]) => {
                 resolve(...argArray);
-                return Reflect.apply(target, thisArg, argArray);
+                Reflect.apply(target, thisArg, argArray);
             }
         });
     });
@@ -47,7 +47,7 @@ export default () => {
         SEAPetStore.bag.deactivate = new Proxy(SEAPetStore.bag.deactivate, {
             apply: (target, thisArg, argArray) => {
                 resolve();
-                return void Reflect.apply(target, thisArg, argArray);
+                void Reflect.apply(target, thisArg, argArray);
             }
         });
     });

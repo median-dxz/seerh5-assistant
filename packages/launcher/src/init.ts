@@ -6,7 +6,7 @@ import { IS_DEV } from './constants';
 
 // register service work
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register(import.meta.env.MODE === 'production' ? '/sw.js' : '/dev-sw.js?dev-sw');
+    await navigator.serviceWorker.register(import.meta.env.MODE === 'production' ? '/sw.js' : '/dev-sw.js?dev-sw');
 }
 
 seac.devMode = IS_DEV;

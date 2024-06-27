@@ -8,10 +8,7 @@ export interface PetFragmentLevelConfigType {
     difficulty: number;
 }
 
-class PetFragmentLevel extends SEASConfigData<Array<PetFragmentLevelConfigType>> {
-    constructor() {
-        super();
-    }
+class PetFragmentLevel extends SEASConfigData<PetFragmentLevelConfigType[]> {
     async loadWithDefault(configFile: string) {
         return super.loadWithDefault(configFile, []);
     }

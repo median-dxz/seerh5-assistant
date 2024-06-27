@@ -4,10 +4,10 @@ import { executor } from './executor.js';
 import type { RoundData } from './provider.js';
 
 export type MoveHandler = (battleState: RoundData, skills: Skill[], pets: Pet[]) => Promise<boolean>;
-export type MoveStrategy = {
+export interface MoveStrategy {
     resolveNoBlood: MoveHandler;
     resolveMove: MoveHandler;
-};
+}
 
 export type Matcher = (...args: Parameters<MoveHandler>) => number | undefined;
 
@@ -25,13 +25,10 @@ function rotating(...skills: string[]): Matcher {
 
 function group(...operators: Matcher[]): Matcher {
     return (...states): number | undefined =>
-        operators.reduce(
-            (r, op) => {
-                if (r) return r;
-                return op(...states);
-            },
-            undefined as undefined | number
-        );
+        operators.reduce<undefined | number>((r, op) => {
+            if (r) return r;
+            return op(...states);
+        }, undefined);
 }
 
 function name(...skills: string[]): Matcher {
@@ -67,9 +64,7 @@ function linkList(...pets: string[]): Matcher {
         if (!r) return -1;
 
         const checkName = pets[pets.indexOf(r.name) + 1];
-        const index = allPets.findIndex((pet) => pet.name === checkName && pet.hp > 0);
-
-        return index ?? -1;
+        return allPets.findIndex((pet) => pet.name === checkName && pet.hp > 0);
     };
 }
 

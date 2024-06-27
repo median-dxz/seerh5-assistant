@@ -1,6 +1,6 @@
-import type { FastifyPluginAsync, RouteOptions } from 'fastify';
+import type { FastifyPluginCallback, RouteOptions } from 'fastify';
 
-export const createAppJsProxy: FastifyPluginAsync = async (fastify, _opts) => {
+export const createAppJsProxy: FastifyPluginCallback = (fastify, _opts, done) => {
     const options: RouteOptions = {
         method: 'GET',
         url: '/api/js/:domain/*',
@@ -44,7 +44,7 @@ export const createAppJsProxy: FastifyPluginAsync = async (fastify, _opts) => {
                     url.search = new URLSearchParams({ t: Date.now().toString() }).toString();
                     void fetcher(url, (script) => {
                         const matcher = /eval([^)].*)/;
-                        for (let mr = script.match(matcher); mr; mr = script.match(matcher)) {
+                        for (let mr = matcher.exec(script); mr; mr = matcher.exec(script)) {
                             script = eval(mr[1]) as string;
                         }
                         return script
@@ -58,18 +58,18 @@ export const createAppJsProxy: FastifyPluginAsync = async (fastify, _opts) => {
                     break;
                 case 'opensdk.61.com':
                     url.search = new URLSearchParams({ v: '1' }).toString();
-                    void fetcher(url, (script) => {
-                        return script
+                    void fetcher(url, (script) =>
+                        script
                             .replace(`window.location.protocol+u.b`, `window.location.origin+u.b.replace("//","/")`)
                             .replace(`t&&t[0]===i.a`, `((t && t[0] === i.a) || (i.a === 'localhost'))`)
-                            .replace(`//support-res.61.com`, `api/js/support-res.61.com`);
-                    });
+                            .replace(`//support-res.61.com`, `api/js/support-res.61.com`)
+                    );
                     break;
                 case 'support-res.61.com':
                     url.search = new URLSearchParams({ v: '5' }).toString();
                     void fetcher(url, (script) => {
                         const matcher = /eval([^)].*)/;
-                        for (let mr = script.match(matcher); mr; mr = script.match(matcher)) {
+                        for (let mr = matcher.exec(script); mr; mr = matcher.exec(script)) {
                             script = eval(mr[1]) as string;
                         }
                         return script
@@ -85,4 +85,5 @@ export const createAppJsProxy: FastifyPluginAsync = async (fastify, _opts) => {
         }
     };
     fastify.route(options);
+    done();
 };

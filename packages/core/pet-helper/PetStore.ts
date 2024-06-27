@@ -15,11 +15,8 @@ class SEAPetStore {
     private queryQueue = new Map<CatchTime, Array<(value: CaughtPet) => void>>();
 
     defaultCt: CatchTime = -1;
-    bag: CacheData<[CaughtPet[], CaughtPet[]]> = new CacheData([[], []], NOOP);
-    miniInfo: CacheData<Map<CatchTime, PetStorage2015PetInfo>> = new CacheData(
-        new Map<CatchTime, PetStorage2015PetInfo>(),
-        NOOP
-    );
+    bag = new CacheData<[CaughtPet[], CaughtPet[]]>([[], []], NOOP);
+    miniInfo = new CacheData<Map<CatchTime, PetStorage2015PetInfo>>(new Map<CatchTime, PetStorage2015PetInfo>(), NOOP);
 
     cache = new Map<CatchTime, CaughtPet>();
 
@@ -83,15 +80,18 @@ class SEAPetStore {
 
             this.bag = new CacheData(
                 [PetManager.infos.map((p) => new CaughtPet(p)), PetManager.secondInfos.map((p) => new CaughtPet(p))],
-                () => PetManager.updateBagInfo()
+                () => {
+                    PetManager.updateBagInfo();
+                }
             );
 
-            const updateMiniInfo = () =>
+            const updateMiniInfo = () => {
                 PetStorage2015InfoManager.getMiniInfo(() => {
                     const info = new Map<number, PetStorage2015PetInfo>();
                     PetStorage2015InfoManager.allInfo.forEach((i) => info.set(i.catchTime, i));
                     this.miniInfo.update(info);
                 });
+            };
 
             this.miniInfo = new CacheData<Map<number, PetStorage2015PetInfo>>(new Map(), updateMiniInfo);
 
@@ -103,7 +103,7 @@ class SEAPetStore {
         this.hasInit = true;
     }
 
-    async getAllPets(): Promise<{ catchTime: number; name: string; id: number }[]> {
+    async getAllPets(): Promise<Array<{ catchTime: number; name: string; id: number }>> {
         const data1 = (await this.bag.get()).flat();
         const data2 = Array.from((await this.miniInfo.get()).values());
         return [...data1, ...data2];
@@ -141,7 +141,9 @@ class SEAPetStore {
 
         if (this.queryQueue.has(pet.catchTime)) {
             const resolvers = this.queryQueue.get(pet.catchTime)!;
-            resolvers.forEach((resolver) => resolver(pet));
+            resolvers.forEach((resolver) => {
+                resolver(pet);
+            });
             this.queryQueue.delete(pet.catchTime);
         }
     }

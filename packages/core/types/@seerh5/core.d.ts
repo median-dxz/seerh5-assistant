@@ -81,9 +81,9 @@ declare global {
         level: number;
         dv: number;
         nature: number;
-        hideSKill: PetSkillInfo;
+        hideSkill: PetSkillInfo;
         skillArray: Array<PetSkillInfo>;
-        effectList: Array<PetEffectInfo>;
+        effectList?: Array<PetEffectInfo>;
         isDefault: boolean;
         base_hp_total: number;
         base_curHp: number;

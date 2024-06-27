@@ -9,7 +9,9 @@ export default () => {
         ModuleManager.loadScript = wrapper(ModuleManager.loadScript).after((_, script) => {
             resolve(script);
         });
-        return () => void restoreHookedFn(ModuleManager, 'loadScript');
+        return () => {
+            restoreHookedFn(ModuleManager, 'loadScript');
+        };
     });
 
     HookPointRegistry.register('module:openMainPanel', (resolve) => {
@@ -17,7 +19,9 @@ export default () => {
             await this.openPanel(this._mainPanelName);
             resolve({ module: this.moduleName, panel: this._mainPanelName });
         });
-        return () => void restoreHookedFn(BasicMultPanelModule.prototype, 'onShowMainPanel');
+        return () => {
+            restoreHookedFn(BasicMultPanelModule.prototype, 'onShowMainPanel');
+        };
     });
 
     HookPointRegistry.register('module:show', (resolve) => {
@@ -30,7 +34,9 @@ export default () => {
                 resolve({ module, moduleInstance: currModule });
             }
         });
-        return () => void restoreHookedFn(ModuleManager, 'beginShow');
+        return () => {
+            restoreHookedFn(ModuleManager, 'beginShow');
+        };
     });
 
     HookPointRegistry.register('battle:showEndProp', (resolve) => {
@@ -45,7 +51,9 @@ export default () => {
                 map(() => void null)
             )
             .subscribe(resolve);
-        return () => subscription.unsubscribe();
+        return () => {
+            subscription.unsubscribe();
+        };
     });
 
     HookPointRegistry.register('module:destroy', (resolve) => {
@@ -55,17 +63,22 @@ export default () => {
                 resolve(module.moduleName);
                 const config = module.getModuleConfig();
                 this._addModuleToFreeRes(module.moduleName, module.resList, module.resEffectList, config);
+                // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
                 delete this._modules[key];
             }
         });
-        return () => void restoreHookedFn(ModuleManager, 'removeModuleInstance');
+        return () => {
+            restoreHookedFn(ModuleManager, 'removeModuleInstance');
+        };
     });
 
     HookPointRegistry.register('pop_view:open', (resolve) => {
         PopViewManager.prototype.openView = wrapper(PopViewManager.prototype.openView).after((r, view) => {
             resolve((Object.getPrototypeOf(view) as WithClass<PopView>).__class__);
         });
-        return () => restoreHookedFn(PopViewManager.prototype, 'openView');
+        return () => {
+            restoreHookedFn(PopViewManager.prototype, 'openView');
+        };
     });
 
     HookPointRegistry.register('pop_view:close', (resolve) => {
@@ -77,12 +90,15 @@ export default () => {
             if (typeof id !== 'number') {
                 id = id.hashCode;
             }
-            const popView = this.__viewMap__['key_' + id];
+            const popView = this.__viewMap__['key_' + id.toString()];
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (popView) {
                 resolve((Object.getPrototypeOf(popView) as WithClass<PopView>).__class__);
             }
         });
-        return () => restoreHookedFn(PopViewManager.prototype, 'hideView');
+        return () => {
+            restoreHookedFn(PopViewManager.prototype, 'hideView');
+        };
     });
 
     HookPointRegistry.register('award:show', (resolve) => {
@@ -94,14 +110,18 @@ export default () => {
             await delay(500);
             this.destroy();
         });
-        return () => restoreHookedFn(AwardItemDialog.prototype, 'startEvent');
+        return () => {
+            restoreHookedFn(AwardItemDialog.prototype, 'startEvent');
+        };
     });
 
     HookPointRegistry.register('award:receive', (resolve) => {
         AwardManager.showDialog = wrapper(AwardManager.showDialog).after((_, _dialog, items) => {
             resolve({ items });
         });
-        return () => restoreHookedFn(AwardManager, 'showDialog');
+        return () => {
+            restoreHookedFn(AwardManager, 'showDialog');
+        };
     });
 
     HookPointRegistry.register('battle:roundEnd', (resolve) => {
@@ -116,7 +136,9 @@ export default () => {
             };
             playerMode.nextRound = wrapper(playerMode.nextRound.bind(playerMode)).after(resolve);
         });
-        return () => restoreHookedFn(PetFightController, 'onStartFight');
+        return () => {
+            restoreHookedFn(PetFightController, 'onStartFight');
+        };
     });
 
     HookPointRegistry.register('battle:start', (resolve) => {
@@ -150,14 +172,18 @@ export default () => {
 
     HookPointRegistry.register('battle:end', (resolve) => {
         EventManager.addEventListener(PetFightEvent.ALARM_CLICK, resolve, null);
-        return () => EventManager.removeEventListener(PetFightEvent.ALARM_CLICK, resolve, null);
+        return () => {
+            EventManager.removeEventListener(PetFightEvent.ALARM_CLICK, resolve, null);
+        };
     });
 
     HookPointRegistry.register('socket:send', (resolve) => {
         SocketConnection.mainSocket.send = wrapper(SocketConnection.mainSocket.send).before((cmd, data) => {
             resolve({ cmd, data });
         });
-        return () => restoreHookedFn(SocketConnection.mainSocket, 'send');
+        return () => {
+            restoreHookedFn(SocketConnection.mainSocket, 'send');
+        };
     });
 
     HookPointRegistry.register('socket:receive', (resolve) => {
@@ -166,6 +192,8 @@ export default () => {
                 resolve({ cmd, buffer });
             }
         );
-        return () => restoreHookedFn(SocketConnection.mainSocket, 'dispatchCmd');
+        return () => {
+            restoreHookedFn(SocketConnection.mainSocket, 'dispatchCmd');
+        };
     });
 };

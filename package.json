@@ -23,16 +23,20 @@
     "prepare": "husky"
   },
   "devDependencies": {
+    "@eslint/js": "^9.5.0",
+    "@types/eslint__js": "^8.42.3",
     "@types/node": "^20.14.7",
-    "@typescript-eslint/eslint-plugin": "8.0.0-alpha.30",
-    "@typescript-eslint/parser": "8.0.0-alpha.30",
     "concurrently": "^8.2.2",
     "eslint": "^9.5.0",
+    "eslint-plugin-react-hooks": "5.1.0-rc-8971381549-20240625",
+    "eslint-plugin-react-refresh": "^0.4.7",
+    "globals": "^15.6.0",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.7",
     "prettier": "^3.3.2",
     "rimraf": "^5.0.7",
     "typescript": "^5.5.2",
+    "typescript-eslint": "8.0.0-alpha.34",
     "vite": "^5.3.1"
   },
   "engines": {

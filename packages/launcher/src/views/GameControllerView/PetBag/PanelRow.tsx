@@ -9,7 +9,8 @@ import { Icon } from '@/services/resource';
 import MoreHoriz from '@mui/icons-material/MoreHoriz';
 import VerticalAlignTop from '@mui/icons-material/VerticalAlignTop';
 import { Box, Checkbox, Popover, Stack, Typography } from '@mui/material';
-import { GameConfigRegistry, Pet, delay, engine, spet } from '@sea/core';
+import type { Pet } from '@sea/core';
+import { GameConfigRegistry, delay, engine, spet } from '@sea/core';
 import React, { useState, type ReactNode } from 'react';
 
 interface PanelRowProps {
@@ -77,7 +78,7 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
                     }
                 }}
             >
-                s{petDetails}
+                {petDetails}
             </Popover>
             <SeaTableRow>
                 <PanelField field="select" onClick={handleSelect}>
@@ -98,7 +99,7 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
                             title="首发"
                             onClick={(e) => {
                                 e.stopPropagation();
-                                spet(pet).default();
+                                void spet(pet).default();
                             }}
                         >
                             <VerticalAlignTop fontSize="inherit" />
@@ -115,7 +116,7 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
                     <IconButton
                         title="入库"
                         onClick={() => {
-                            spet(pet).popFromBag();
+                            void spet(pet).popFromBag();
                         }}
                     >
                         <MoveToInbox />
@@ -123,7 +124,7 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
                     <IconButton
                         title="使用道具"
                         onClick={() => {
-                            handleOpenPetItemUseProp(pet.catchTime);
+                            void handleOpenPetItemUseProp(pet.catchTime);
                         }}
                     >
                         <Pill />

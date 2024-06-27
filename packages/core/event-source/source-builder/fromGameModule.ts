@@ -37,14 +37,8 @@ export function fromGameModule(module: string, event: ModuleEvent): SEAEventSour
 export function fromGameModule<TModule extends string>(module: TModule, event: 'load'): SEAEventSource<undefined>;
 export function fromGameModule<TModule extends string>(
     module: TModule,
-    event: 'show'
+    event: 'show' | 'mainPanel' | 'destroy'
 ): SEAEventSource<GameModuleMap[TModule]>;
-export function fromGameModule<TModule extends string>(
-    module: TModule,
-    event: 'mainPanel'
-): SEAEventSource<GameModuleMap[TModule]>;
-export function fromGameModule<TModule extends string>(module: TModule, event: 'destroy'): SEAEventSource<undefined>;
-
 export function fromGameModule<TModule extends string, TEvent extends ModuleEvent>(module: TModule, event: TEvent) {
     switch (event) {
         case 'load':
@@ -56,6 +50,8 @@ export function fromGameModule<TModule extends string, TEvent extends ModuleEven
         case 'destroy':
             return new SEAEventSource($fromGameModule.destroy(module));
         default:
-            throw `Invalid type ${event as string}, type could only be 'load' | 'show' | 'mainPanel' | 'destroy'`;
+            throw new Error(
+                `Invalid type ${event as string}, type could only be 'load' | 'show' | 'mainPanel' | 'destroy'`
+            );
     }
 }

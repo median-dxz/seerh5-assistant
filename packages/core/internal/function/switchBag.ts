@@ -9,6 +9,7 @@ import { PetLocation, SEAPetStore, spet } from '../../pet-helper/index.js';
  * @param pets 要切换的精灵列表, 可以是ct或者Pet实例
  */
 export async function switchBag(pets: number[] | Pet[]) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!pets) return;
     pets = pets.slice(0, 6);
 

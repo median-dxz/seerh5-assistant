@@ -19,7 +19,7 @@ export const createAssetsProxy = (appRoot: string) =>
 
                 const headers = { ...proxyRes.headers };
                 delete headers['content-length'];
-                headers['date'] = new Date().toUTCString();
+                headers.date = new Date().toUTCString();
 
                 proxyRes.on('end', () => {
                     res.statusCode = proxyRes.statusCode ?? 200;
@@ -39,11 +39,11 @@ export const createAssetsProxy = (appRoot: string) =>
                         res.setHeader('cache-control', 'no-store, no-cache');
                     } else if (url.includes('sentry.js')) {
                         respBuf = zlib.gzipSync('var Sentry = {init: ()=>{}, configureScope: ()=>{}}');
-                    } else if (url.match(/resource\/app\/.*\/.*\.js/)) {
+                    } else if (/resource\/app\/.*\/.*\.js/.exec(url)) {
                         // 反混淆
                         let script = zlib.gunzipSync(rawBuf).toString();
                         while (script.startsWith('eval')) {
-                            script = eval(script.match(/eval([^)].*)/)![1]) as string;
+                            script = eval(/eval([^)].*)/.exec(script)![1]) as string;
                         }
                         script = script.replaceAll(/console\.log/g, 'logFilter');
                         script = script.replaceAll(/console\.warn/g, 'warnFilter');

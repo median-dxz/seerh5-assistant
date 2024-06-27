@@ -14,13 +14,13 @@ export default () => {
     /** better switch pet handler */
     PetBtnView.prototype.autoUse = function () {
         this.getMC().selected = !0;
-        if (this.locked) throw '[warn] 切换精灵失败: 该精灵已被放逐，无法出战';
+        if (this.locked) throw new Error('[warn] 切换精灵失败: 该精灵已被放逐，无法出战');
         if (this.mc.selected) {
-            if (this.hp <= 0) throw '[warn] 切换精灵失败: 该精灵已阵亡';
+            if (this.hp <= 0) throw new Error('[warn] 切换精灵失败: 该精灵已阵亡');
             if (this.info.catchTime == FighterModelFactory.playerMode?.info.catchTime)
-                throw '[warn] 切换精灵失败: 该精灵已经出战';
+                throw new Error('[warn] 切换精灵失败: 该精灵已经出战');
             this.dispatchEvent(new PetFightEvent(PetFightEvent.CHANGE_PET, this.catchTime));
-        } else if (!this.mc.selected) {
+        } else {
             this.dispatchEvent(new PetFightEvent('selectPet', this.catchTime));
         }
         this.getMC().selected = !1;
@@ -60,8 +60,8 @@ export default () => {
                     context.triggerLock?.(isWin);
                     manager.clear();
                 })
-                .catch((e) => {
-                    console.error(e);
+                .catch((err: unknown) => {
+                    console.error(err);
                 });
         }
     });

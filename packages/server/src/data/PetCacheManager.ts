@@ -7,7 +7,7 @@ class PetCatchTimeMap extends SEASConfigData<Map<string, number>> {
 
     async getCatchTime(name: string) {
         const data = super.query();
-        return data.get(name);
+        return Promise.resolve(data.get(name));
     }
 
     async updateCatchTime(name: string, time: number) {

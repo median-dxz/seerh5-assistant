@@ -1,7 +1,7 @@
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
-const base = (import.meta?.url ? path.dirname(fileURLToPath(import.meta.url)) : __dirname) ?? process.cwd();
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+const base = import.meta.dirname ?? __dirname ?? process.cwd();
 
 console.log(`base: ${base}`);
 

@@ -18,7 +18,7 @@ class LauncherConfig extends SEASConfigData<LauncherConfigType> {
 
     async getItem<TKey extends keyof LauncherConfigType>(key: TKey) {
         const data = super.query();
-        return data[key];
+        return Promise.resolve(data[key]);
     }
 
     async setItem<TKey extends keyof LauncherConfigType>(key: TKey, value: LauncherConfigType[TKey]) {

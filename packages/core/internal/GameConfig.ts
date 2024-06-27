@@ -28,7 +28,7 @@ export const GameConfigRegistry = {
         const entity = gameConfigRegistryEntityMap.get(type) as GameConfigQuery<GameConfigMap[T]> | undefined;
 
         if (entity == undefined) {
-            throw `不支持的查询集合 ${type}`;
+            throw new Error(`不支持的查询集合 ${type}`);
         }
 
         return entity;
@@ -74,7 +74,7 @@ export const GameConfigRegistry = {
         }
 
         function filterByName(name: string | RegExp) {
-            return filter((v) => Boolean(objectName(v)?.match(name)));
+            return filter((v) => Boolean(objectName(v).match(name)));
         }
 
         function getIdByName(name: string) {

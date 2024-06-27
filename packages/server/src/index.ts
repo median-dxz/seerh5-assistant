@@ -2,7 +2,8 @@ import closeWithGrace from 'close-with-grace';
 import { enableMapSet, enablePatches } from 'immer';
 import { createServer } from './server.ts';
 
-enableMapSet(), enablePatches();
+enableMapSet();
+enablePatches();
 
 async function main() {
     const server = await createServer();
@@ -13,7 +14,7 @@ async function main() {
         if (err) console.error(err);
 
         console.log(`Detected ${signal}, progress is shutting down...`);
-        void server.stop().then(() => process.exit(0));
+        return server.stop().then(() => process.exit(0));
     });
 }
 

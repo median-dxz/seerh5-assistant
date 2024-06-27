@@ -6,11 +6,11 @@ interface BuildSEALContextOptions {
 
 export function buildSEALContext(opts: BuildSEALContextOptions) {
     const { appRoot } = opts;
-    return async function createContext(opts: CreateFastifyContextOptions) {
+    return function createContext(opts: CreateFastifyContextOptions) {
         return {
             req: opts.req,
             res: opts.res,
-            appRoot,
+            appRoot
         };
     };
 }

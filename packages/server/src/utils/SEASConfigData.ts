@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import * as superjson from 'superjson';
 
 export class SEASConfigData<TData extends NonNullable<object> = NonNullable<object>> {
-    private configFile: string = '';
+    private configFile = '';
     private data?: TData;
 
     private get loaded() {
@@ -41,7 +41,7 @@ export class SEASConfigData<TData extends NonNullable<object> = NonNullable<obje
         throw new Error(`Config file does not exist: ${configFile}`);
     }
 
-    async mutate(recipe: (data: TData) => void | TData) {
+    async mutate(recipe: ((data: TData) => void) | ((data: TData) => TData)) {
         if (!this.loaded) {
             throw new Error("Data hasn't been loaded yet");
         }

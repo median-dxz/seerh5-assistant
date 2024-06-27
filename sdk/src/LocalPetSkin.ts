@@ -15,7 +15,7 @@ export const metadata = {
     id: 'LocalPetSkin',
     scope: 'median',
     version: '1.0.0',
-    core: '1.0.0-rc.4',
+    core: '1.0.0-rc.5',
     description: '本地全皮肤解锁',
     data: { changed: new Map<number, SkinInfo>(), original: new Map<number, number>() }
 } satisfies SEAModMetadata;

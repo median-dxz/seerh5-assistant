@@ -24,7 +24,7 @@ export class Pet extends EntityBase {
     readonly baseCurHp: number;
     readonly baseMaxHp: number;
 
-    readonly unwrapped_effect?: Array<PetEffectInfo>;
+    readonly unwrapped_effect?: PetEffectInfo[];
     readonly hasFifthSkill: boolean;
     readonly fifthSkill?: Skill;
 
@@ -60,18 +60,17 @@ export class Pet extends EntityBase {
             obj.base_hp_total
         ];
 
-        this.skills = [...obj.skillArray, obj.hideSKill].filter(Boolean).map((v) => {
+        this.skills = [...obj.skillArray, obj.hideSkill].filter(Boolean).map((v) => {
             const o = Skill.formatById(v.id);
             o.pp = v.pp;
             return o;
         });
 
         this.hasFifthSkill = Boolean(SkillXMLInfo.hideMovesMap[this.id]);
-        this.fifthSkill = Object.hasOwn(obj, 'hideSKill') ? Skill.formatById(obj.hideSKill.id) : undefined;
+        this.fifthSkill = Object.hasOwn(obj, 'hideSkill') ? Skill.formatById(obj.hideSkill.id) : undefined;
         if (this.fifthSkill) {
-            this.fifthSkill.pp = obj.hideSKill.pp;
+            this.fifthSkill.pp = obj.hideSkill.pp;
         }
-
         if (obj.effectList && obj.effectList.length > 0) {
             this.unwrapped_effect = obj.effectList;
         }

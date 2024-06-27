@@ -7,7 +7,7 @@ export interface ILevelRunner<TData extends object = object> {
     data: TData;
 
     /** 关卡能做出的动作 */
-    actions: Record<string, <T extends TData, R extends ILevelRunner<T>>(this: R) => Promise<void>>;
+    actions: Record<string, (<T extends TData, R extends ILevelRunner<T>>(this: R) => Promise<void>) | undefined>;
 
     /** 更新关卡动态数据 */
     update(): Promise<void>;

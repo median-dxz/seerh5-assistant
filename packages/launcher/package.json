@@ -9,7 +9,7 @@
     "watch:tsc": "tsc --watch",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
+    "lint": "eslint src/**.{ts,tsx} --fix",
     "clean": "rimraf ./dist && rimraf ./build && rimraf ../../.tsbuildinfo/launcher.tsbuildinfo"
   },
   "dependencies": {
@@ -40,8 +40,6 @@
     "@types/react-dom": "^18.3.0",
     "@types/react-transition-group": "^4.4.10",
     "@vitejs/plugin-react-swc": "^3.7.0",
-    "eslint-plugin-react-hooks": "npm:eslint-plugin-react-hooks@beta",
-    "eslint-plugin-react-refresh": "^0.4.7",
     "vite-plugin-inspect": "^0.8.4",
     "vite-plugin-pwa": "^0.20.0"
   }

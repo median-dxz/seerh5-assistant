@@ -65,7 +65,7 @@ export const metadata = {
     id: 'itemWarehouse',
     scope: 'median',
     description: '物品仓库修改, 提供更换的精灵因子界面交互',
-    core: '1.0.0-rc.4',
+    core: '1.0.0-rc.5',
     version: '1.0.0'
 } satisfies SEAModMetadata;
 

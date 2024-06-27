@@ -9,23 +9,27 @@ export async function sendByQueue(cmd: number, data: Parameters<SocketConnection
         SocketConnection.sendByQueue(
             cmd,
             data,
-            (v: SocketEvent) => resolve(v.data?.rawBuffer),
-            (err: SocketErrorEvent) => reject(err.data)
+            (v: SocketEvent) => {
+                resolve(v.data?.rawBuffer);
+            },
+            (err: SocketErrorEvent) => {
+                reject(err.data);
+            }
         );
     });
 }
 
 export async function multiValue(...values: number[]): Promise<number[]> {
-    if (!values) return [];
+    if (values.length === 0) return [];
     return KTool.getMultiValueAsync(values);
 }
 
 export async function bitSet(...values: number[]): Promise<boolean[]> {
-    if (!values) return [];
+    if (values.length === 0) return [];
     return KTool.getBitSetAsync(values).then((r) => r.map(Boolean));
 }
 
 export async function playerInfo(...values: number[]): Promise<number[]> {
-    if (!values) return [];
+    if (values.length === 0) return [];
     return KTool.getPlayerInfoValueAsync(values);
 }

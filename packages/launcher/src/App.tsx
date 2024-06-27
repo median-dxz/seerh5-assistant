@@ -27,7 +27,7 @@ export default function App() {
             .then(() => {
                 setInit(true);
             })
-            .catch((_) => {
+            .catch((e: unknown) => {
                 // React严格模式下导致的重复调用CoreLoader, 可以忽略
             });
     }, [init]);
@@ -63,7 +63,7 @@ export default function App() {
                     sx={{
                         position: 'absolute',
                         bottom: '64px',
-                        left: '64px',
+                        left: '64px'
                     }}
                 />
             )}
@@ -75,7 +75,7 @@ export default function App() {
                         top: '64px',
                         width: '40vw',
                         minWidth: '240px',
-                        zIndex: (theme) => theme.zIndex.snackbar,
+                        zIndex: (theme) => theme.zIndex.snackbar
                     }}
                 />
             </Grow>

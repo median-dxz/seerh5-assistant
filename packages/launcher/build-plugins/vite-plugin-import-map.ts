@@ -1,4 +1,4 @@
-import { HtmlTagDescriptor, PluginOption } from 'vite';
+import type { HtmlTagDescriptor, PluginOption } from 'vite';
 
 const useAsyncData = <T>() => {
     let resolver: (value: T) => void;
@@ -8,11 +8,9 @@ const useAsyncData = <T>() => {
     return [resolver!, data] as const;
 };
 
-type ImportMapOptions = {
-    options: {
-        [module: string]: string | { path: string; extras: string[] };
-    };
-};
+interface ImportMapOptions {
+    options: Record<string, string | { path: string; extras: string[] }>;
+}
 
 /**
  * @important
@@ -38,7 +36,7 @@ export default function importMap({ options }: ImportMapOptions) {
             name: 'import-map:config',
             enforce: 'post',
             async config(config) {
-                type InferArrayType<T extends unknown[] | unknown> = (T extends (infer U)[] ? U : never) | never;
+                type InferArrayType<T extends unknown[] | unknown> = (T extends Array<infer U> ? U : never) | never;
 
                 let output = config.build?.rollupOptions?.output ?? {};
                 type RollupOutputOptions = InferArrayType<typeof output>;
@@ -52,7 +50,7 @@ export default function importMap({ options }: ImportMapOptions) {
                         ...output,
                         manualChunks,
                         minifyInternalExports: false,
-                        format: 'es',
+                        format: 'es'
                     } as RollupOutputOptions;
                 };
 
@@ -78,18 +76,18 @@ export default function importMap({ options }: ImportMapOptions) {
                         rollupOptions: {
                             input,
                             output,
-                            preserveEntrySignatures: 'strict',
-                        },
-                    },
+                            preserveEntrySignatures: 'strict'
+                        }
+                    }
                 };
-            },
+            }
         },
         {
             name: 'import-map:get-env',
             enforce: 'post',
             configResolved(config) {
                 dev = config.command === 'serve';
-            },
+            }
         },
         {
             name: 'import-map:collect-id',
@@ -106,7 +104,7 @@ export default function importMap({ options }: ImportMapOptions) {
                     resolver(entryId);
                     this.info(`${module} entry id: ${entryId}`);
                 }
-            },
+            }
         },
         {
             name: 'import-map:collect-id',
@@ -129,7 +127,7 @@ export default function importMap({ options }: ImportMapOptions) {
                     const [resolver] = bundleFiles.get(module)!;
                     resolver(chunk);
                 }
-            },
+            }
         },
         {
             name: 'import-map:injected-html',
@@ -141,9 +139,9 @@ export default function importMap({ options }: ImportMapOptions) {
                     const scriptTag: HtmlTagDescriptor = {
                         tag: 'script',
                         attrs: {
-                            type: 'importmap',
+                            type: 'importmap'
                         },
-                        injectTo: 'head-prepend',
+                        injectTo: 'head-prepend'
                     };
 
                     const buildTag = async (module: string) => {
@@ -164,8 +162,8 @@ export default function importMap({ options }: ImportMapOptions) {
                                 tag: 'link',
                                 attrs: {
                                     rel: 'modulepreload',
-                                    href: resolvedURL,
-                                },
+                                    href: resolvedURL
+                                }
                             });
                         }
 
@@ -180,17 +178,17 @@ export default function importMap({ options }: ImportMapOptions) {
                     await Promise.all(modules.map(buildTag));
 
                     scriptTag.children = JSON.stringify({
-                        imports,
+                        imports
                     });
 
                     tags.push(scriptTag);
 
                     return {
                         html,
-                        tags,
+                        tags
                     };
-                },
-            },
-        },
+                }
+            }
+        }
     ] as PluginOption[];
 }

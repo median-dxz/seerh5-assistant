@@ -10,12 +10,13 @@ export function findObject<T>(classType: Constructor<T>, predicate?: (obj: egret
     const root = LevelManager.stage;
 
     function find(parent: egret.DisplayObject) {
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (parent.$children == null) {
             return [];
         }
         let result: T[] = [];
         for (const child of parent.$children) {
-            if (child instanceof classType && (predicate == undefined || predicate(child) === true)) {
+            if (child instanceof classType && (predicate == undefined || predicate(child))) {
                 result.push(child);
             }
             result = result.concat(find(child));

@@ -7,20 +7,20 @@ export const loginProxy = createProxyMiddleware({
     selfHandleResponse: true,
     headers: {
         Origin: 'http://seerh5.61.com/',
-        Referer: 'http://seerh5.61.com/',
+        Referer: 'http://seerh5.61.com/'
     },
     on: {
         proxyRes: (proxyRes, req, res) => {
             console.log(req.method, req.url);
 
             if (proxyRes.headers['set-cookie']) {
-                proxyRes.headers['set-cookie'] = proxyRes.headers['set-cookie'].map((cookie) => {
-                    return cookie.replace('domain=61.com', '') + 'SameSite=None; Secure;';
-                });
+                proxyRes.headers['set-cookie'] = proxyRes.headers['set-cookie'].map(
+                    (cookie) => cookie.replace('domain=61.com', '') + 'SameSite=None; Secure;'
+                );
             }
 
-            if (proxyRes.statusCode === 302 && proxyRes.headers['location']) {
-                proxyRes.headers['location'] = proxyRes.headers['location'].replace(
+            if (proxyRes.statusCode === 302 && proxyRes.headers.location) {
+                proxyRes.headers.location = proxyRes.headers.location.replace(
                     'http://account-co.61.com',
                     '/account-co.61.com'
                 );
@@ -57,6 +57,6 @@ export const loginProxy = createProxyMiddleware({
                 res.writeHead(proxyRes.statusCode ?? 200, headers);
                 res.end(rawBuf);
             });
-        },
-    },
+        }
+    }
 });

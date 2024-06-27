@@ -13,7 +13,8 @@
     "start": "nodemon ./src/index.ts",
     "build": "esbuild ./src/index.ts --bundle --platform=node --target=node20.11.1 --outfile=./src/index.cjs --allow-overwrite --external:thread-stream",
     "executable": "pkg ./src/index.cjs -c package.json -o ./bin/server.exe",
-    "watch:tsc": "tsc -w"
+    "watch:tsc": "tsc -w",
+    "lint": "eslint . --fix"
   },
   "dependencies": {
     "@fastify/cors": "^9.0.1",

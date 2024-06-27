@@ -4,7 +4,7 @@ import { SEAEventSource } from '../event-source/index.js';
 import { fixSoundLoad } from './features/fixSoundLoad.js';
 import { coreSetup } from './features/index.js';
 
-const VERSION = '1.0.0-rc.4';
+const VERSION = '1.0.0-rc.5';
 const SEER_READY_EVENT = 'seerh5_ready';
 
 export interface SetupFn {
@@ -18,7 +18,7 @@ export class SEAC {
     readonly version = VERSION;
 
     private loadCalled: boolean;
-    private setupFns: Array<SetupFn> = [];
+    private setupFns: SetupFn[] = [];
     private setup(type: SetupFn['type']) {
         this.setupFns
             .filter(({ type: _type }) => _type === type)
@@ -32,7 +32,7 @@ export class SEAC {
     }
 
     readonly event$ = new SEAEventSource(event$);
-    devMode: boolean = false;
+    devMode = false;
 
     constructor() {
         if (checkEnv()) {
@@ -48,6 +48,7 @@ export class SEAC {
             this.addSetupFn('beforeGameCoreInit', fixSoundLoad);
             this.addSetupFn('afterFirstShowMainPanel', coreSetup);
         } else {
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (window.sea !== undefined) {
                 throw new Error('There can be only one instance of SEA Core');
             } else {

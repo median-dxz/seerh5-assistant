@@ -22,6 +22,7 @@ export async function lowerHp(
     hpLimit = 200
 ): Promise<void> {
     pets = pets.slice(0, 6);
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!pets || pets.length === 0) {
         return;
     }
@@ -65,8 +66,8 @@ export async function lowerHp(
         return;
     }
 
-    buyPetItem(PotionId.中级活力药剂, remains.length);
-    buyPetItem(healPotionId, remains.length);
+    await buyPetItem(PotionId.中级活力药剂, remains.length);
+    await buyPetItem(healPotionId, remains.length);
     await spet(remains[0]).default();
     await toggleAutoCure(false);
 

@@ -8,6 +8,8 @@ import type { Item } from '../../entity/Item.js';
  */
 export async function itemNum(item: number | Item) {
     const id = EntityBase.inferId(item);
-    await new Promise((res) => ItemManager.updateItems([id], res));
+    await new Promise((res) => {
+        ItemManager.updateItems([id], res);
+    });
     return ItemManager.getNumByID(id);
 }

@@ -9,9 +9,7 @@ const ModIdentifierSchema = z.object({
     id: z.string()
 });
 
-const NonNullObjectSchema = z.custom<DataObject>((data) => {
-    return data !== null && typeof data === 'object';
-});
+const NonNullObjectSchema = z.custom<DataObject>((data) => data !== null && typeof data === 'object');
 
 const ModInstallOptionsSchema = z.object({
     builtin: z.boolean().optional(),
@@ -22,9 +20,7 @@ const ModInstallOptionsSchema = z.object({
 });
 
 export const modRouter = router({
-    modList: procedure.query(() => {
-        return modIndexes.getModList();
-    }),
+    modList: procedure.query(() => modIndexes.getModList()),
     config: procedure.input(ModIdentifierSchema).query(({ input }) => {
         const { id, scope } = input;
         return ModManager.config(scope, id);
@@ -52,12 +48,8 @@ export const modRouter = router({
             return ModManager.install(scope, id, options);
         }),
 
-    uninstall: procedure.mutation(() => {
-        return ModManager.uninstall();
-    }),
-    toggleDisable: procedure.mutation(() => {
-        return {
-            success: true
-        };
-    })
+    uninstall: procedure.mutation(() => ModManager.uninstall()),
+    toggleDisable: procedure.mutation(() => ({
+        success: true
+    }))
 });

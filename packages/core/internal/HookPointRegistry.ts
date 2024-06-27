@@ -4,14 +4,17 @@ import { getLogger } from '../common/log.js';
 import type { AnyFunction, ValueOf } from '../common/utils.js';
 import type { HookPointDataMap } from '../constant/TypeMaps.js';
 
-type DataSteam<TEvents extends object> = {
+interface DataSteam<TEvents extends object> {
     type: keyof TEvents;
     data: ValueOf<TEvents>;
-};
+}
+
+type VoidResolver = (data?: undefined) => void;
+type DataResolver<T> = (data: T) => void;
 
 type HookResolver<T extends ValueOf<HookPointDataMap>> = T extends undefined
-    ? (resolve: (data?: undefined) => void) => AnyFunction | void
-    : (resolve: (data: T) => void) => AnyFunction | void;
+    ? ((resolve: VoidResolver) => AnyFunction) | ((resolve: VoidResolver) => void)
+    : ((resolve: DataResolver<T>) => AnyFunction) | ((resolve: DataResolver<T>) => void);
 
 type HookEventData = DataSteam<HookPointDataMap>;
 

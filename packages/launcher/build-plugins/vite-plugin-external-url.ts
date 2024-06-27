@@ -1,4 +1,4 @@
-import { HtmlTagDescriptor, PluginOption } from 'vite';
+import type { HtmlTagDescriptor, PluginOption } from 'vite';
 
 type ExternalURLs = string[];
 
@@ -7,18 +7,16 @@ export default function externalURL(urls: ExternalURLs) {
         name: 'external-url',
         transformIndexHtml: {
             handler(html) {
-                const tags: HtmlTagDescriptor[] = urls.map((url) => {
-                    return {
-                        tag: 'script',
-                        attrs: {
-                            src: url,
-                            defer: true,
-                        },
-                        injectTo: 'body',
-                    };
-                });
+                const tags: HtmlTagDescriptor[] = urls.map((url) => ({
+                    tag: 'script',
+                    attrs: {
+                        src: url,
+                        defer: true
+                    },
+                    injectTo: 'body'
+                }));
                 return { html, tags };
-            },
-        },
+            }
+        }
     } as PluginOption;
 }

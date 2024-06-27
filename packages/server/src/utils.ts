@@ -6,6 +6,4 @@ export const praseNamespace = (ns: string) => {
     } as const;
 };
 
-export const getNamespace = (scope: string, id: string) => {
-    return `${scope}::${id}`;
-};
+export const getNamespace = (scope: string, id: string) => `${scope}::${id}`;

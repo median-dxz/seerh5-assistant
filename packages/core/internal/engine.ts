@@ -52,7 +52,7 @@ export const engine: SEAEngine = {
             if (Object.hasOwn(engine, func.name)) {
                 logger.warn(`engine 已经存在 ${func.name} 方法, 该方法将被覆盖, 请检查潜在的冲突问题`);
             }
-            (engine as unknown as { [method: string]: AnyFunction })[func.name] = func;
+            (engine as unknown as Record<string, AnyFunction>)[func.name] = func;
         } else {
             for (const key of Object.keys(func)) {
                 if (Object.hasOwn(engine, key)) {

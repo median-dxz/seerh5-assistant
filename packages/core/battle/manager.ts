@@ -35,7 +35,7 @@ async function resolveStrategy(strategy?: MoveStrategy) {
     if (!strategy || !provider.isInBattle()) return;
 
     if (FighterModelFactory.playerMode == null) {
-        throw `[error] 当前playerMode为空`;
+        throw new Error(`resolve strategy failed: 当前playerMode为空`);
     }
 
     await delay(200);
@@ -44,7 +44,7 @@ async function resolveStrategy(strategy?: MoveStrategy) {
 
     if (battleContext[0].isSwitchNoBlood) {
         const r = await strategy.resolveNoBlood(...battleContext);
-        if (!r) throw `[error] 死切失败`;
+        if (!r) throw new Error(`resolve strategy failed: 死切失败`);
 
         await delay(200);
 
@@ -57,7 +57,7 @@ async function resolveStrategy(strategy?: MoveStrategy) {
     }
 
     const r = await strategy.resolveMove(...battleContext);
-    if (!r) throw `[error] 执行策略失败`;
+    if (!r) throw new Error(`resolve strategy failed: 执行策略失败`);
 }
 
 function clear() {

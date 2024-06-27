@@ -24,7 +24,7 @@ class LevelManager {
         try {
             await this.lock;
         } catch (e) {
-            throw `关卡运行失败: ${e as string}`;
+            throw new Error(`关卡运行失败: ${e as string}`);
         } finally {
             this.lock = null;
             manager.clear();
@@ -51,7 +51,7 @@ class LevelManager {
                 logger('准备对战');
                 await engine.switchBag(pets);
 
-                engine.toggleAutoCure(false);
+                void engine.toggleAutoCure(false);
                 engine.cureAllPet();
 
                 await delay(100);
@@ -62,10 +62,11 @@ class LevelManager {
 
                 logger('进入对战');
                 try {
-                    if (!this.runner) throw '关卡已停止运行';
+                    if (!this.runner) throw new Error('关卡已停止运行');
+                    if (!runner.actions.battle) throw new Error('未找指定battle动作');
 
                     await manager.takeover(() => {
-                        runner.actions['battle'].call(runner);
+                        void runner.actions.battle!.call(runner);
                     }, strategy);
 
                     logger('对战完成');
@@ -80,7 +81,6 @@ class LevelManager {
             while (this.runner) {
                 logger('更新关卡信息');
                 await runner.update();
-                if (!this.runner) break;
                 const nextAction = runner.next();
                 logger(`next action: ${nextAction}`);
                 switch (nextAction) {
@@ -94,7 +94,7 @@ class LevelManager {
                         this.runner = null;
                         break;
                     default:
-                        await runner.actions[nextAction].call(runner);
+                        await runner.actions[nextAction]?.call(runner);
                         break;
                 }
                 await delay(100);

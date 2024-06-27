@@ -1,12 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-import {
-    AnyFunction,
-    HookedSymbol,
-    assertIsHookedFunction,
-    assertIsWrappedFunction,
-    type HookedFunction
-} from '../common/utils';
+import type { AnyFunction } from '../common/utils';
+import { HookedSymbol, assertIsHookedFunction, assertIsWrappedFunction, type HookedFunction } from '../common/utils';
 import { hookFn, wrapper } from '../index';
 
 const createFn = () => () => {};
@@ -81,9 +76,7 @@ describe('wrapper', () => {
     });
 
     test('测试对异步返回值的处理', async () => {
-        const originalFunc = async (...args: number[]) => {
-            return 'result';
-        };
+        const originalFunc = async (...args: number[]) => 'result';
         const afterDecorator1 = vi.fn();
         const afterDecorator2 = vi.fn();
         const wrappedFunc = wrapper(originalFunc).after(afterDecorator1).after(afterDecorator2);

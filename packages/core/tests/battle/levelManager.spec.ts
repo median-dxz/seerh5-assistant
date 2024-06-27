@@ -1,10 +1,12 @@
 import { Mock_KTool, Mock_SocketConnection, mockEngine, mockPet } from '../mock';
 
 import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-import { ILevelBattle, ILevelRunner, LevelAction, MoveStrategy, levelManager } from '../../battle';
+import type { ILevelBattle, ILevelRunner, MoveStrategy } from '../../battle';
+import { LevelAction, levelManager } from '../../battle';
 import { hookFn, restoreHookedFn } from '../../common/utils';
-import { Item } from '../../entity';
-import { CaughtPet, PetLocation, SEAPetStore } from '../../pet-helper';
+import type { Item } from '../../entity';
+import type { CaughtPet, PetLocation } from '../../pet-helper';
+import { SEAPetStore } from '../../pet-helper';
 
 vi.stubGlobal('KTool', Mock_KTool);
 vi.stubGlobal('SocketConnection', Mock_SocketConnection);
@@ -73,8 +75,8 @@ afterAll(() => {
 });
 
 describe.sequential('levelManagerTest', () => {
-    class NoBattleLevelRunner implements ILevelRunner<object> {
-        actions!: Record<string, (this: ILevelRunner<object>) => Promise<void>>;
+    class NoBattleLevelRunner implements ILevelRunner {
+        actions!: Record<string, (this: ILevelRunner) => Promise<void>>;
         data!: object;
 
         logger(): any {}
@@ -109,18 +111,18 @@ describe.sequential('levelManagerTest', () => {
         }
     }
 
-    let simpleAction = {
+    const simpleAction = {
         a: async () => {}
     };
 
-    function simplyRun(action: Record<string, (this: ILevelRunner<object>) => Promise<void>> = simpleAction) {
+    function simplyRun(action: Record<string, (this: ILevelRunner) => Promise<void>> = simpleAction) {
         const myLevelRunner = new NoBattleLevelRunner();
         myLevelRunner.actions = action;
         levelManager.run(myLevelRunner);
         return myLevelRunner;
     }
 
-    function setNextWithBattle(battleLevelRunner: ILevelRunner<object>) {
+    function setNextWithBattle(battleLevelRunner: ILevelRunner) {
         let now = '';
         battleLevelRunner.next = function () {
             if (now == '') {
@@ -169,7 +171,7 @@ describe.sequential('levelManagerTest', () => {
     });
 
     test('levelManager should invoke all actions', async () => {
-        let mockLock = vi.fn(async () => {});
+        const mockLock = vi.fn(async () => {});
         levelManager.lock = mockLock();
         await levelManager.stop();
         expect(levelManager.getRunner()).toBe(null);
@@ -182,7 +184,7 @@ describe.sequential('levelManagerTest', () => {
             b: vi.fn(async () => {}),
             [LevelAction.STOP]: vi.fn(async () => {})
         };
-        let noBattleLevelRunner = new NoBattleLevelRunner();
+        const noBattleLevelRunner = new NoBattleLevelRunner();
         let now = '';
         noBattleLevelRunner.next = function () {
             if (now == '') {
@@ -201,15 +203,15 @@ describe.sequential('levelManagerTest', () => {
         await levelManager.lock;
         expect(actions.a).toHaveBeenCalled();
         expect(actions.b).toHaveBeenCalled();
-        expect(actions['stop']).toHaveBeenCalled();
+        expect(actions.stop).toHaveBeenCalled();
     });
 
     test('run no battle action should throw error', async () => {
-        let noBattleLevelRunner = new NoBattleLevelRunner();
-        let actionA = vi.fn(async () => {});
-        let actionBattle = vi.fn(async () => {});
-        let actionStop = vi.fn(async () => {});
-        let actions: Record<string, (this: ILevelRunner<object>) => Promise<void>> = {
+        const noBattleLevelRunner = new NoBattleLevelRunner();
+        const actionA = vi.fn(async () => {});
+        const actionBattle = vi.fn(async () => {});
+        const actionStop = vi.fn(async () => {});
+        const actions: Record<string, (this: ILevelRunner) => Promise<void>> = {
             a: actionA,
             [LevelAction.BATTLE]: actionBattle,
             [LevelAction.STOP]: actionStop
@@ -233,12 +235,12 @@ describe.sequential('levelManagerTest', () => {
     });
 
     test('run battle action should success', async () => {
-        let battleLevelRunner = new BattleLevelRunner();
-        let actionA = vi.fn(async () => {});
-        let actionBattle = vi.fn(async () => {});
-        let actionStop = vi.fn(async () => {});
+        const battleLevelRunner = new BattleLevelRunner();
+        const actionA = vi.fn(async () => {});
+        const actionBattle = vi.fn(async () => {});
+        const actionStop = vi.fn(async () => {});
         battleLevelRunner.selectLevelBattle = vi.fn(battleLevelRunner.selectLevelBattle);
-        let actions: Record<string, (this: ILevelRunner<object>) => Promise<void>> = {
+        const actions: Record<string, (this: ILevelRunner) => Promise<void>> = {
             a: actionA,
             [LevelAction.BATTLE]: actionBattle,
             [LevelAction.STOP]: actionStop

@@ -6,13 +6,13 @@ import { configsRoot, modsRoot } from '../../paths.ts';
 import { getNamespace } from '../../utils.ts';
 import { SEASConfigData } from '../../utils/SEASConfigData.ts';
 
-export type ModInstallOptions = {
+export interface ModInstallOptions {
     builtin?: boolean;
     preload?: boolean;
     update?: boolean;
     config?: DataObject;
     data?: DataObject;
-};
+}
 
 export const ModManager = {
     root: '.',
@@ -42,7 +42,7 @@ export const ModManager = {
         if (!dataStore) {
             return undefined;
         }
-        return dataStore.query();
+        return Promise.resolve(dataStore.query());
     },
 
     async saveConfig(scope: string, id: string, data: object) {
@@ -63,7 +63,7 @@ export const ModManager = {
         if (!configStore) {
             return undefined;
         }
-        return configStore.query();
+        return Promise.resolve(configStore.query());
     },
 
     async install(scope: string, id: string, options: ModInstallOptions = {}) {
@@ -120,8 +120,8 @@ export const ModManager = {
     },
 
     async uninstall() {
-        return {
+        return Promise.resolve({
             success: true
-        };
+        });
     }
 };

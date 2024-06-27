@@ -45,6 +45,4 @@ export interface GameConfigMap {
     equipment: seerh5.EquipmentObj;
 }
 
-export interface GameModuleMap {
-    [module: string]: BaseModule;
-}
+export type GameModuleMap = Record<string, BaseModule>;

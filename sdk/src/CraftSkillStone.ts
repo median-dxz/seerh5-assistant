@@ -16,7 +16,7 @@ export const metadata = {
     id: 'CraftSkillStone',
     scope: 'median',
     version: '1.0.0',
-    core: '1.0.0-rc.4',
+    core: '1.0.0-rc.5',
     description: 'misc'
 } satisfies SEAModMetadata;
 
