@@ -1,4 +1,5 @@
 import { IS_DEV } from '@/constants';
+import { installModFromUrl } from '@/services/mod/install';
 import Close from '@mui/icons-material/Close';
 import CloudUpload from '@mui/icons-material/CloudUploadRounded';
 import {
@@ -14,6 +15,7 @@ import {
     InputLabel,
     styled
 } from '@mui/material';
+import { useSnackbar } from 'notistack';
 import { useCallback, useRef, useState } from 'react';
 
 const VisuallyHiddenInput = styled('input')({
@@ -35,6 +37,7 @@ export function InstallFromLocalForm() {
     const [uploading, setUploading] = useState(false);
     const uploadModRef = useRef<HTMLInputElement>(null);
     const uploadModSourceMapRef = useRef<HTMLInputElement>(null);
+    const { enqueueSnackbar } = useSnackbar();
 
     const handleClose = useCallback(() => {
         setOpen(false);
@@ -73,7 +76,7 @@ export function InstallFromLocalForm() {
                     if (reason === 'backdropClick') {
                         return;
                     } else if (uploading) {
-                        // snackbar
+                        enqueueSnackbar('模组安装中...', { variant: 'warning' });
                     } else {
                         handleClose();
                     }
@@ -83,22 +86,36 @@ export function InstallFromLocalForm() {
                     onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
                         event.preventDefault();
 
-                        // 校验
-                        // uploading ->
-                        // 上传
-                        // uploading <-
-                        // 获取安装结果？直接安装？
-                        // snackbar
+                        if (!modFile) {
+                            enqueueSnackbar('请选择模组文件...', { variant: 'info' });
+                            return;
+                        }
 
-                        console.log('here');
-                        handleClose();
+                        setUploading(true);
+
+                        const modUrl = URL.createObjectURL(modFile);
+                        const mapUrl = modSourceMapFile ? URL.createObjectURL(modSourceMapFile) : undefined;
+
+                        installModFromUrl(modUrl, mapUrl)
+                            .then(() => {
+                                enqueueSnackbar(`模组安装成功!`, { variant: 'success' });
+                            })
+                            .catch(() => {
+                                enqueueSnackbar('模组安装失败, 查看日志获取详情', { variant: 'error' });
+                            })
+                            .finally(() => {
+                                URL.revokeObjectURL(modUrl);
+                                mapUrl && URL.revokeObjectURL(mapUrl);
+                                setUploading(false);
+                                handleClose();
+                            });
                     }
                 }}
             >
                 <DialogTitle>从本地安装</DialogTitle>
                 <IconButton
                     aria-label="close"
-                    disabled={!uploading}
+                    disabled={uploading}
                     onClick={handleClose}
                     sx={{
                         position: 'absolute',
@@ -160,8 +177,8 @@ export function InstallFromLocalForm() {
                     </FormControl>
                 </DialogContent>
                 <DialogActions sx={{ display: 'flex', justifyContent: 'center' }}>
-                    <Button variant="contained" type="submit">
-                        安装
+                    <Button variant="contained" type="submit" disabled={!modFile && !uploading}>
+                        {uploading ? '安装中...' : '安装'}
                     </Button>
                 </DialogActions>
             </Dialog>

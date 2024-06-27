@@ -1,22 +1,35 @@
-import type { FastifyPluginAsync, FastifyRequest } from 'fastify';
-import { writeFileSync } from 'fs';
+import fastifyMultipart from '@fastify/multipart';
+import type { FastifyPluginAsync } from 'fastify';
+import { createWriteStream } from 'fs';
 import path from 'path';
+import { pipeline } from 'stream/promises';
 import { modsRoot } from '../../paths.ts';
 
 export const uploadModsRouter: FastifyPluginAsync<never> = async (server) => {
-    if (!server.hasContentTypeParser('text/javascript')) {
-        server.addContentTypeParser(
-            'text/javascript',
-            { parseAs: 'string' },
-            async (req: FastifyRequest, body: string) => {
-                return body;
-            }
-        );
-    }
+    server.register(fastifyMultipart);
     server.post('/api/upload/mods', async (req, res) => {
-        const file = req.body as string;
         const { scope, id } = req.query as { id: string; scope: string };
-        writeFileSync(path.join(server.config.APP_ROOT, modsRoot, `${scope}.${id}.js`), file, { encoding: 'utf-8' });
+        const parts = req.files();
+        for await (const part of parts) {
+            if (part.type === 'file') {
+                if (part.filename.endsWith('.js')) {
+                    await pipeline(
+                        part.file,
+                        createWriteStream(path.join(server.config.APP_ROOT, modsRoot, `${scope}.${id}.js`))
+                    );
+                }
+                if (part.filename.endsWith('.js.map')) {
+                    await pipeline(
+                        part.file,
+                        createWriteStream(path.join(server.config.APP_ROOT, modsRoot, `${scope}.${id}.js.map`))
+                    );
+                }
+            } else {
+                // part.type === 'field
+                console.log(part);
+            }
+        }
+
         return res.code(200).send({ success: true });
     });
 };

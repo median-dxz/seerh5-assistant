@@ -47,6 +47,12 @@ export function ModListItem({ mod }: ModListItemProps) {
             <Typography component="span" fontSize={16} sx={{ paddingRight: '1em' }}>
                 {meta.namespace} {meta.description}
             </Typography>
+
+            {meta.scope === 'builtin' && (
+                <Typography sx={{ pr: 1 }} component="span" color="GrayText" fontSize={16}>
+                    预置
+                </Typography>
+            )}
             {meta.preload && (
                 <Typography component="span" color="GrayText" fontSize={16}>
                     预加载

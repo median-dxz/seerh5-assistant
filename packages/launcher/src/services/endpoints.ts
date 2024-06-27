@@ -28,10 +28,16 @@ export const mod = {
         const mapBlob = modMapUrl ? await fetch(modMapUrl).then((r) => r.blob()) : undefined;
 
         const modFile = new File([modBlob], 'mod.js', { type: 'text/javascript' });
-        const mapFile = mapBlob ? new File([mapBlob], 'mod.map', { type: 'application/json' }) : undefined;
+        const mapFile = mapBlob ? new File([mapBlob], 'mod.js.map', { type: 'application/json' }) : undefined;
+
+        const data = new FormData();
+        data.append('mod', modFile);
+        if (mapFile) {
+            data.append('map', mapFile);
+        }
 
         return fetch('api/upload/mods?' + new URLSearchParams({ scope, id }).toString(), {
-            body: modBlob,
+            body: data,
             method: 'POST'
         }).then((r) => r.json());
     }

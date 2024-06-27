@@ -21,7 +21,10 @@ export async function installModFromUrl(url: string, mapUrl?: string) {
         };
 
         await endpoints.mod.upload(metadata.scope, metadata.id, url, mapUrl);
-        await endpoints.mod.install(metadata.scope, metadata.id, options);
+        const r = await endpoints.mod.install(metadata.scope, metadata.id, options);
+        if (r.success === false) {
+            throw new Error(r.reason);
+        }
     } catch (err) {
         SEAModLogger.error(`Failed to install mod: ${url}`, err);
     }
