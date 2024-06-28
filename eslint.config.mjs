@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-check
 
 import eslint from '@eslint/js';
 import globals from 'globals';
@@ -7,7 +7,7 @@ import tsEslint from 'typescript-eslint';
 import reactRefresh from 'eslint-plugin-react-refresh';
 // TODO: 等待以下插件的FlatConfig与ESLint9支持
 // import react from "eslint-plugin-react"
-// import reactHooks from 'eslint-plugin-react-hooks';
+import reactHooks from 'eslint-plugin-react-hooks';
 // import reactJsxA11y from "eslint-plugin-jsx-a11y"
 
 export default tsEslint.config(
@@ -19,7 +19,7 @@ export default tsEslint.config(
             '**/dist/',
             '**/\\.*rc',
             '**/*.config.*',
-            'packages/core/tests/',
+            'packages/**/tests/',
             'packages/core/types/',
             'packages/launcher/core-e2e-test/',
             'packages/launcher/build-plugins/',
@@ -31,7 +31,7 @@ export default tsEslint.config(
     },
     eslint.configs.recommended,
     ...tsEslint.configs.strictTypeChecked,
-    ...tsEslint.configs.stylisticTypeChecked,
+    tsEslint.configs.stylisticTypeChecked[2],
     {
         files: ['packages/**/*.ts', 'packages/**/*.tsx'],
         languageOptions: {
@@ -41,7 +41,7 @@ export default tsEslint.config(
             }
         },
         linterOptions: {
-            reportUnusedDisableDirectives: true
+            reportUnusedDisableDirectives: true,
         },
         rules: {
             'arrow-body-style': ['error', 'as-needed'],
@@ -49,7 +49,6 @@ export default tsEslint.config(
                 'error',
                 {
                     argsIgnorePattern: '^_',
-
                     varsIgnorePattern: '_',
                     caughtErrors: 'none'
                 }
@@ -99,11 +98,15 @@ export default tsEslint.config(
             }
         },
         plugins: {
-            'react-refresh': reactRefresh
-            // 'react-hooks': reactHooks,
+            'react-refresh': reactRefresh,
+            // @ts-expect-error
+            'react-hooks': reactHooks
             // 'jsx-a11y': reactJsxA11y,
+            // 'react': react
         },
+        // @ts-expect-error
         rules: {
+            ...reactHooks.configs.recommended.rules,
             'react-refresh/only-export-components': 'warn'
         }
     },
