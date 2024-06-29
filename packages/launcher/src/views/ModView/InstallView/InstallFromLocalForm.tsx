@@ -13,7 +13,8 @@ import {
     Input,
     InputAdornment,
     InputLabel,
-    styled
+    styled,
+    Typography
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { useCallback, useRef, useState } from 'react';
@@ -33,16 +34,13 @@ const VisuallyHiddenInput = styled('input')({
 export function InstallFromLocalForm() {
     const [open, setOpen] = useState(false);
     const [modFile, setModFile] = useState<File | null>(null);
-    const [modSourceMapFile, setModSourceMapFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
     const uploadModRef = useRef<HTMLInputElement>(null);
-    const uploadModSourceMapRef = useRef<HTMLInputElement>(null);
     const { enqueueSnackbar } = useSnackbar();
 
     const handleClose = useCallback(() => {
         setOpen(false);
         setModFile(null);
-        setModSourceMapFile(null);
     }, []);
 
     const handleSelectFile = useCallback((v: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,8 +48,6 @@ export function InstallFromLocalForm() {
             const file = v.target.files[0];
             if (file.name.endsWith('.js')) {
                 setModFile(file);
-            } else if (file.name.endsWith('.js.map')) {
-                setModSourceMapFile(file);
             }
         }
     }, []);
@@ -94,9 +90,8 @@ export function InstallFromLocalForm() {
                         setUploading(true);
 
                         const modUrl = URL.createObjectURL(modFile);
-                        const mapUrl = modSourceMapFile ? URL.createObjectURL(modSourceMapFile) : undefined;
 
-                        installModFromUrl(modUrl, mapUrl)
+                        installModFromUrl(modUrl, true)
                             .then(() => {
                                 enqueueSnackbar(`模组安装成功!`, { variant: 'success' });
                             })
@@ -105,7 +100,6 @@ export function InstallFromLocalForm() {
                             })
                             .finally(() => {
                                 URL.revokeObjectURL(modUrl);
-                                mapUrl && URL.revokeObjectURL(mapUrl);
                                 setUploading(false);
                                 handleClose();
                             });
@@ -133,13 +127,14 @@ export function InstallFromLocalForm() {
                         gap: 4
                     }}
                 >
+                    <Typography>注意: 本地上传模组为开发者功能, 将覆盖安装现有模组</Typography>
                     <FormControl variant="standard">
                         <InputLabel htmlFor="mod-file">模组文件</InputLabel>
                         <Input
                             id="mod-file"
-                            title="mod file"
+                            title="模组文件"
                             autoComplete="off"
-                            value={modFile?.name || ''}
+                            value={modFile?.name ?? ''}
                             endAdornment={
                                 <UploadEndAdornment file={modFile} fileInputRef={uploadModRef} setFile={setModFile} />
                             }
@@ -152,32 +147,9 @@ export function InstallFromLocalForm() {
                             onChange={handleSelectFile}
                         />
                     </FormControl>
-                    <FormControl variant="standard">
-                        <InputLabel htmlFor="mod-sourcemap-file">模组源映射（可选）</InputLabel>
-                        <Input
-                            id="mod-sourcemap-file"
-                            title="mod sourcemap file"
-                            autoComplete="off"
-                            value={modSourceMapFile?.name || ''}
-                            endAdornment={
-                                <UploadEndAdornment
-                                    file={modSourceMapFile}
-                                    fileInputRef={uploadModSourceMapRef}
-                                    setFile={setModSourceMapFile}
-                                />
-                            }
-                        />
-                        <VisuallyHiddenInput
-                            ref={uploadModSourceMapRef}
-                            type="file"
-                            name="upload-mod-sourcemap"
-                            accept=".js.map"
-                            onChange={handleSelectFile}
-                        />
-                    </FormControl>
                 </DialogContent>
                 <DialogActions sx={{ display: 'flex', justifyContent: 'center' }}>
-                    <Button variant="contained" type="submit" disabled={!modFile && !uploading}>
+                    <Button variant="contained" type="submit" disabled={!modFile || uploading}>
                         {uploading ? '安装中...' : '安装'}
                     </Button>
                 </DialogActions>
@@ -192,34 +164,32 @@ interface UploadEndAdornmentProps {
     fileInputRef: React.RefObject<HTMLInputElement>;
 }
 
-const UploadEndAdornment = ({ file, fileInputRef, setFile }: UploadEndAdornmentProps) => {
-    return (
-        <InputAdornment position="end">
-            {file && (
-                <IconButton
-                    color="primary"
-                    aria-label="clear"
-                    onMouseDown={(e) => {
-                        e.preventDefault();
-                    }}
-                    onClick={() => {
-                        setFile(null);
-                    }}
-                >
-                    <Close fontSize="small" />
-                </IconButton>
-            )}
+const UploadEndAdornment = ({ file, fileInputRef, setFile }: UploadEndAdornmentProps) => (
+    <InputAdornment position="end">
+        {file && (
             <IconButton
                 color="primary"
+                aria-label="clear"
                 onMouseDown={(e) => {
                     e.preventDefault();
                 }}
                 onClick={() => {
-                    fileInputRef.current?.click();
+                    setFile(null);
                 }}
             >
-                <CloudUpload fontSize="small" />
+                <Close fontSize="small" />
             </IconButton>
-        </InputAdornment>
-    );
-};
+        )}
+        <IconButton
+            color="primary"
+            onMouseDown={(e) => {
+                e.preventDefault();
+            }}
+            onClick={() => {
+                fileInputRef.current?.click();
+            }}
+        >
+            <CloudUpload fontSize="small" />
+        </IconButton>
+    </InputAdornment>
+);

@@ -3,7 +3,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
     build: {
-        sourcemap: true,
+        sourcemap: 'inline',
         lib: {
             entry: [
                 resolve(__dirname, 'src/module/PetBag.ts'),

@@ -70,7 +70,7 @@ export const ModManager = {
         if (modIndexes.get(scope, id) != undefined && !options.update) {
             return {
                 success: false,
-                reason: 'there exists a mod with the same id and scope'
+                reason: 'there has existed a mod with the same id and scope already'
             };
         }
 
@@ -85,12 +85,12 @@ export const ModManager = {
         await modIndexes.set(scope, id, state);
         const ns = getNamespace(scope, id);
 
-        if (options.data) {
+        if (options.data && (!this.modData.has(ns) || options.update === false)) {
             const dataStore = new SEASConfigData();
             await dataStore.create(path.join(this.root, modsRoot, `${scope}.${id}.data.json`), options.data);
             this.modData.set(ns, dataStore);
         }
-        if (options.config) {
+        if (options.config && (!this.modConfig.has(ns) || options.update === false)) {
             const configStore = new SEASConfigData();
             await configStore.create(
                 path.join(this.root, configsRoot, modsRoot, `${scope}.${id}.json`),

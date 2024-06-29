@@ -8,6 +8,7 @@ import fastifyStatic from '@fastify/static';
 import ws from '@fastify/websocket';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import fastify from 'fastify';
+import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
 
 import { envOptions } from './config.ts';
 
@@ -22,8 +23,8 @@ import { apiRouter } from './router/index.ts';
 
 import { initConfigs } from './data/init.ts';
 import { configsRoot, launcherRoot, logsRoot, modsRoot } from './paths.ts';
+import { modDownloadRouter } from './router/mod/download.ts';
 import { ModManager } from './router/mod/manager.ts';
-import { uploadModsRouter } from './router/mod/upload-mods.ts';
 
 export async function createServer() {
     const server = fastify({
@@ -33,6 +34,9 @@ export async function createServer() {
             }
         }
     });
+
+    server.setValidatorCompiler(validatorCompiler);
+    server.setSerializerCompiler(serializerCompiler);
 
     await server.register(fastifyEnv, envOptions);
 
@@ -94,7 +98,7 @@ export async function createServer() {
         }
     });
 
-    void server.register(uploadModsRouter);
+    void server.register(modDownloadRouter);
 
     const stop = async () => {
         await server.close();

@@ -1,1 +1,0 @@
-cp -r dist/* ../packages/server/mods/official_presets/

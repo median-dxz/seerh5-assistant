@@ -1,23 +1,8 @@
-import type { DataObject } from '@sea/mod-type';
 import { z } from 'zod';
 import { modIndexes } from '../../data/ModIndexes.ts';
 import { procedure, router } from '../trpc.ts';
 import { ModManager } from './manager.ts';
-
-const ModIdentifierSchema = z.object({
-    scope: z.string(),
-    id: z.string()
-});
-
-const NonNullObjectSchema = z.custom<DataObject>((data) => data !== null && typeof data === 'object');
-
-const ModInstallOptionsSchema = z.object({
-    builtin: z.boolean().optional(),
-    preload: z.boolean().optional(),
-    update: z.boolean().optional(),
-    config: NonNullObjectSchema.optional(),
-    data: NonNullObjectSchema.optional()
-});
+import { ModIdentifierSchema, ModInstallOptionsSchema, NonNullObjectSchema } from './schemas.ts';
 
 export const modRouter = router({
     modList: procedure.query(() => modIndexes.getModList()),
@@ -47,7 +32,6 @@ export const modRouter = router({
             const { id, scope, options } = input;
             return ModManager.install(scope, id, options);
         }),
-
     uninstall: procedure.mutation(() => ModManager.uninstall()),
     toggleDisable: procedure.mutation(() => ({
         success: true

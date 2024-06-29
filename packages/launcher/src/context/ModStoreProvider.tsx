@@ -27,9 +27,7 @@ export function ModStoreProvider({ children }: PropsWithChildren) {
                 await fetchList();
                 await Promise.all(
                     deploymentHandlers
-                        .filter((handler) => {
-                            return handler.state.enable && handler.state.preload;
-                        })
+                        .filter((handler) => handler.state.enable && handler.state.preload)
                         .map(async (handler) => {
                             await handler.fetch();
                             return handler.deploy();

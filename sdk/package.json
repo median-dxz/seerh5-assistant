@@ -8,7 +8,7 @@
     ".": "./dist/index.js"
   },
   "scripts": {
-    "build": "vite build && copy.sh",
+    "build": "vite build && node ./scripts/install.js",
     "watch:tsc": "tsc --watch --noEmit"
   },
   "devDependencies": {
@@ -17,6 +17,10 @@
     "vite": "^5.2.10"
   },
   "dependencies": {
+    "@types/node": "^20.11.0",
     "dayjs": "^1.11.10"
+  },
+  "engines": {
+    "node": ">=20.11.0"
   }
 }

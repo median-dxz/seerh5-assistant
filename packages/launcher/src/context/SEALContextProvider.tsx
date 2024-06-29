@@ -13,7 +13,7 @@ export function SEALContextProvider({ children }: PropsWithChildren<object>) {
     useEffect(() => {
         let active = true;
 
-        ctService
+        void ctService
             .sync()
             .then(() => {
                 if (!active) return;
