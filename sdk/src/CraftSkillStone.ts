@@ -1,5 +1,6 @@
 import { GameConfigRegistry, SEAEventSource, delay, socket, spet } from '@sea/core';
 import type { Command, SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
+import { coreVersion } from './common/coreVersion';
 
 const rate = [
     [0, 24, 5.8, 1.4, 0.3],
@@ -16,7 +17,7 @@ export const metadata = {
     id: 'CraftSkillStone',
     scope: 'median',
     version: '1.0.0',
-    core: '1.0.0-rc.5',
+    core: coreVersion,
     description: 'misc'
 } satisfies SEAModMetadata;
 

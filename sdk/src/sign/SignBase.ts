@@ -1,5 +1,5 @@
 import { LevelAction, NOOP } from '@sea/core';
-import type { LevelData, LevelMeta } from '@sea/launcher';
+import type { LevelData, LevelMeta } from '@sea/mod-type';
 
 export class SignBase {
     get meta() {
@@ -12,7 +12,7 @@ export class SignBase {
 
     data: LevelData = {
         progress: 0,
-        remainingTimes: 0,
+        remainingTimes: 0
     };
 
     next() {

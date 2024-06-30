@@ -1,7 +1,7 @@
 import type { Battle, Command, SEAModExport, SEAModMetadata, Strategy, Task } from '@sea/mod-type';
 
-import { seac, type AnyFunction } from '@sea/core';
-import { getNamespace } from '../mod/utils';
+import { type AnyFunction } from '@sea/core';
+import { getNamespace } from '../mod/metadata';
 import * as battleStore from './battle';
 import * as commandStore from './command';
 import * as strategyStore from './strategy';

@@ -5,7 +5,7 @@ export default defineConfig({
         environment: 'happy-dom',
         exclude: ['**/node_modules/**'],
         coverage: {
-            reportsDirectory: 'tests/coverage'
+            reportsDirectory: 'test/coverage'
         }
     }
 });

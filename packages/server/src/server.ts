@@ -23,8 +23,8 @@ import { apiRouter } from './router/index.ts';
 
 import { initConfigs } from './data/init.ts';
 import { configsRoot, launcherRoot, logsRoot, modsRoot } from './paths.ts';
-import { modDownloadRouter } from './router/mod/download.ts';
 import { ModManager } from './router/mod/manager.ts';
+import { modUploadAndInstallRouter } from './router/mod/uploadAndInstall.ts';
 
 export async function createServer() {
     const server = fastify({
@@ -98,7 +98,7 @@ export async function createServer() {
         }
     });
 
-    void server.register(modDownloadRouter);
+    void server.register(modUploadAndInstallRouter);
 
     const stop = async () => {
         await server.close();

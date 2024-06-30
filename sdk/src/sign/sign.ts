@@ -1,5 +1,6 @@
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 
+import { coreVersion } from '../common/coreVersion';
 import { daily } from './daily';
 import { teamSign } from './team';
 import { teamDispatch } from './team-dispatch';
@@ -19,7 +20,7 @@ export const metadata = {
     id: 'sign',
     scope: 'median',
     version: '1.0.0',
-    core: '1.0.0-rc.5',
+    core: coreVersion,
     description: '日常签到',
     configSchema: {
         'teamDispatch.ignorePets': {

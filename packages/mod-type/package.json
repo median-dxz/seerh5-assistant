@@ -8,8 +8,14 @@
       "types": "./index.d.ts"
     }
   },
+  "files": [
+    "index.d.ts"
+  ],
   "scripts": {},
   "devDependencies": {
     "@sea/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "@sea/core": "^1.0.0-rc"
   }
 }

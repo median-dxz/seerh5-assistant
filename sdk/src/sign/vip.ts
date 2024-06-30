@@ -1,5 +1,5 @@
 import { LevelAction, socket, type ILevelRunner } from '@sea/core';
-import type { LevelData, LevelMeta, Task, TaskRunner } from '@sea/launcher';
+import type { LevelData, LevelMeta, Task, TaskRunner } from '@sea/mod-type';
 import { SignBase } from './SignBase';
 
 export const vip = () =>
@@ -8,7 +8,7 @@ export const vip = () =>
             static readonly meta: LevelMeta = {
                 id: 'VipDailyBox',
                 name: '领取vip每日箱子',
-                maxTimes: 1,
+                maxTimes: 1
             };
 
             get meta(): LevelMeta {
@@ -18,7 +18,7 @@ export const vip = () =>
             actions: Record<string, (this: ILevelRunner<LevelData>) => Promise<void>> = {
                 [LevelAction.AWARD]: async () => {
                     await socket.sendByQueue(CommandID.VIP_BONUS_201409, [1]);
-                },
+                }
             };
 
             async update(): Promise<void> {
@@ -30,7 +30,7 @@ export const vip = () =>
             static readonly meta: LevelMeta = {
                 id: 'VipWeeklyBox',
                 name: '领取vip每周箱子',
-                maxTimes: 1,
+                maxTimes: 1
             };
 
             get meta(): LevelMeta {
@@ -40,7 +40,7 @@ export const vip = () =>
             actions: Record<string, (this: ILevelRunner<LevelData>) => Promise<void>> = {
                 [LevelAction.AWARD]: async () => {
                     await socket.sendByQueue(CommandID.VIP_BONUS_201409, [2]);
-                },
+                }
             };
 
             async update(): Promise<void> {
@@ -52,7 +52,7 @@ export const vip = () =>
             static readonly meta: LevelMeta = {
                 id: 'VipMonthlyBox',
                 name: '领取vip每月箱子',
-                maxTimes: 1,
+                maxTimes: 1
             };
             get meta(): LevelMeta {
                 return VipMonthlyBox.meta;
@@ -61,12 +61,12 @@ export const vip = () =>
             actions: Record<string, (this: ILevelRunner<LevelData>) => Promise<void>> = {
                 [LevelAction.AWARD]: async () => {
                     await socket.sendByQueue(CommandID.VIP_BONUS_201409, [3]);
-                },
+                }
             };
 
             async update(): Promise<void> {
                 const times = (await socket.multiValue(30005))[0];
                 this.data.remainingTimes = Number(!times);
             }
-        },
+        }
     ] satisfies Task[];

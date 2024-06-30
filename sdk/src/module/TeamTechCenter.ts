@@ -1,5 +1,6 @@
 import { SEAEventSource, socket } from '@sea/core';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
+import { coreVersion } from '../common/coreVersion';
 
 declare var Alarm: any;
 
@@ -7,7 +8,7 @@ export const metadata = {
     id: 'teamTechCenter',
     scope: 'median',
     description: '精灵科技中心模块注入, 提供一键强化到满级功能',
-    core: '1.0.0-rc.5',
+    core: coreVersion,
     version: '1.0.0'
 } satisfies SEAModMetadata;
 

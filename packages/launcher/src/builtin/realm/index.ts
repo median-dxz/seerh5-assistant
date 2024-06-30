@@ -92,7 +92,7 @@ export const metadata = {
 } satisfies SEAModMetadata;
 
 export default async function realm({ logger, battle }: SEAModContext<typeof metadata>) {
-    return {
+    return Promise.resolve({
         tasks: [
             LevelCourageTower(logger, battle),
             LevelElfKingsTrial(logger, battle),
@@ -100,7 +100,10 @@ export default async function realm({ logger, battle }: SEAModContext<typeof met
             LevelStudyTraining(logger, battle),
             LevelTitanHole(logger, battle),
             LevelXTeamRoom(logger, battle),
-            class Test implements TaskRunner<LevelData> {
+            class Test implements TaskRunner {
+                async update() {
+                    // empty
+                }
                 static readonly meta: LevelMeta = {
                     id: 'Test',
                     name: '测试',
@@ -119,7 +122,7 @@ export default async function realm({ logger, battle }: SEAModContext<typeof met
                         await delay(3000);
                     }
                 };
-                async update() {}
+
                 next(): string {
                     if (this.data.progress === 3) {
                         return 'stop';
@@ -131,6 +134,6 @@ export default async function realm({ logger, battle }: SEAModContext<typeof met
                 }
                 logger = NOOP;
             }
-        ]
-    } satisfies SEAModExport;
+        ] as const
+    } satisfies SEAModExport);
 }

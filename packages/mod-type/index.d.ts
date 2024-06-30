@@ -1,10 +1,6 @@
 import type { ILevelBattle, ILevelRunner, MoveStrategy, VERSION } from '@sea/core';
 
-export type DataObject =
-    | {
-          [k: string]: unknown;
-      }
-    | NonNullable<object>;
+export type DataObject = Record<string, unknown> | NonNullable<object>;
 
 export type SEAConfigItemSchema = (
     | {
@@ -29,7 +25,7 @@ export type SEAConfigItemSchema = (
     description?: string;
 };
 
-export type SEAModMetadata = {
+export interface SEAModMetadata {
     id: string;
     core: VERSION;
     scope?: string;
@@ -38,7 +34,7 @@ export type SEAModMetadata = {
     preload?: boolean;
     data?: DataObject;
     configSchema?: Record<string, SEAConfigItemSchema>;
-};
+}
 
 export type SEAModContext<TMetadata extends SEAModMetadata> = InnerModContext<
     TMetadata,
@@ -46,11 +42,11 @@ export type SEAModContext<TMetadata extends SEAModMetadata> = InnerModContext<
     TMetadata['data'] extends DataObject ? TMetadata['data'] : undefined
 >;
 
-export type InnerModContext<
+export interface InnerModContext<
     TMetadata extends SEAModMetadata,
     TConfigSchema extends Record<string, SEAConfigItemSchema> | undefined = undefined,
     TData extends DataObject | undefined = undefined
-> = {
+> {
     meta: TMetadata;
 
     logger: typeof console.log;
@@ -73,13 +69,13 @@ export type InnerModContext<
 
     ct(...pets: string[]): number[];
     battle(name: string): ILevelBattle;
-};
+}
 
 export interface SEAModExport {
-    strategies?: Array<Strategy>;
-    battles?: Array<Battle>;
-    tasks?: Array<Task>;
-    commands?: Array<Command>;
+    strategies?: Strategy[];
+    battles?: Battle[];
+    tasks?: Task[];
+    commands?: Command[];
     install?(): void;
     uninstall?(): void;
 }
@@ -91,22 +87,25 @@ export interface TaskRunner<TData extends LevelData = LevelData> extends ILevelR
 
 export type Strategy = MoveStrategy & { name: string };
 
-export type Battle = {
+export interface Battle {
     name: string;
     strategy: string;
     pets: string[];
     beforeBattle?: () => Promise<void>;
-};
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Task = { new (option?: any): TaskRunner; readonly meta: LevelMeta };
+export interface Task {
+    new (option?: any): TaskRunner;
+    readonly meta: LevelMeta;
+}
 
-export type Command = {
+export interface Command {
     name: string;
     icon?: string;
     description?: string | (() => string);
     handler: (...args: string[]) => unknown;
-};
+}
 
 /** 关卡的静态数据, 实现时可以使用getter来方便获取 */
 export interface LevelMeta {

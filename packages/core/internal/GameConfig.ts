@@ -10,13 +10,13 @@ export interface GameConfigRegistryEntity<T extends object> {
 }
 
 export interface GameConfigQuery<T extends GameConfigMap[keyof GameConfigMap]> {
-    get(id: number): T | undefined;
-    find(predicate: PredicateFn<T>): T | undefined;
-    filter(predicate: PredicateFn<T>): T[];
-    getName(id: number): string | undefined;
-    findByName(name: string): T | undefined;
-    filterByName(name: string | RegExp): T[];
-    getIdByName(name: string): number | undefined;
+    get(this: void, id: number): T | undefined;
+    find(this: void, predicate: PredicateFn<T>): T | undefined;
+    filter(this: void, predicate: PredicateFn<T>): T[];
+    getName(this: void, id: number): string | undefined;
+    findByName(this: void, name: string): T | undefined;
+    filterByName(this: void, name: string | RegExp): T[];
+    getIdByName(this: void, name: string): number | undefined;
 }
 
 const gameConfigRegistryEntityMap = new Map<string, GameConfigQuery<GameConfigMap[keyof GameConfigMap]>>();

@@ -19,7 +19,7 @@
     "core:build": "pnpm --filter \"@sea/core\" run build",
     "build": "node ./scripts/build-server.js",
     "workspace:sync": "node ./scripts/sync.js",
-    "release:core": "node ./scripts/release.js",
+    "release": "node ./scripts/release.js",
     "prepare": "husky"
   },
   "devDependencies": {

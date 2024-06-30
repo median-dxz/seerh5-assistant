@@ -44,15 +44,18 @@ export function Inventory() {
         return clothesIds.map(itemQuery.get).find((clothes) => clothes?.type === 'eye')?.ID;
     }, [itemQuery]);
 
-    const getAllEyeEquipment = useCallback(() => {
-        return ItemManager.getClothIDs()
-            .map((v) => parseInt(v))
-            .map(itemQuery.get)
-            .filter(
-                (item) => item && item.type === 'eye' && equipmentQuery.find((e) => e.ItemID === item.ID && !e.SuitID)
-            )
-            .map((item) => item!.ID);
-    }, [equipmentQuery, itemQuery]);
+    const getAllEyeEquipment = useCallback(
+        () =>
+            ItemManager.getClothIDs()
+                .map((v) => parseInt(v))
+                .map(itemQuery.get)
+                .filter(
+                    (item) =>
+                        item && item.type === 'eye' && equipmentQuery.find((e) => e.ItemID === item.ID && !e.SuitID)
+                )
+                .map((item) => item!.ID),
+        [equipmentQuery, itemQuery]
+    );
 
     const eyeEquipmentDescription = useCallback(
         (userEyeEquipment: number) => equipmentQuery.find((e) => e.ItemID === userEyeEquipment)?.Desc,
@@ -109,5 +112,5 @@ const getAllTitles = () => engine.playerAbilityTitles;
 const suitDescription = (userSuit: number) => ItemSeXMLInfo.getSuitEff(userSuit);
 
 const changeEyeEquipment = (eyeEquipment: number) => {
-    engine.changeEquipment('eye', eyeEquipment);
+    void engine.changeEquipment('eye', eyeEquipment);
 };

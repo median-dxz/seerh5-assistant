@@ -1,5 +1,6 @@
 import { NOOP, socket } from '@sea/core';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
+import { coreVersion } from './common/coreVersion';
 
 interface SkinInfo {
     skinId: number;
@@ -15,7 +16,7 @@ export const metadata = {
     id: 'LocalPetSkin',
     scope: 'median',
     version: '1.0.0',
-    core: '1.0.0-rc.5',
+    core: coreVersion,
     description: '本地全皮肤解锁',
     data: { changed: new Map<number, SkinInfo>(), original: new Map<number, number>() }
 } satisfies SEAModMetadata;

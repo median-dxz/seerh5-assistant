@@ -17,7 +17,7 @@ const checkEnv = () => typeof window !== 'undefined' && window === window.self &
 export class SEAC {
     readonly version = VERSION;
 
-    private loadCalled: boolean;
+    private loadCalled = false;
     private setupFns: SetupFn[] = [];
     private setup(type: SetupFn['type']) {
         this.setupFns
@@ -37,8 +37,6 @@ export class SEAC {
     constructor() {
         if (checkEnv()) {
             console.log(`%c[SEAC] Version: %c${VERSION}`, 'color: #ff00ff', 'color: #4527a0');
-            this.loadCalled = false;
-
             window.sea = {
                 SEER_READY_EVENT,
                 SeerH5Ready: false,
@@ -48,12 +46,7 @@ export class SEAC {
             this.addSetupFn('beforeGameCoreInit', fixSoundLoad);
             this.addSetupFn('afterFirstShowMainPanel', coreSetup);
         } else {
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (window.sea !== undefined) {
-                throw new Error('There can be only one instance of SEA Core');
-            } else {
-                throw new Error('Not in browser environment');
-            }
+            console.warn(`[SEAC] Check runtime failed. Core will not be loaded.`);
         }
     }
 

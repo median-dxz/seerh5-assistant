@@ -1,5 +1,5 @@
 pnpm-lock.yaml
 package-lock.json
 
-// 核心tarball
-lib/sea-core-*
+// tarball
+lib/*.tgz

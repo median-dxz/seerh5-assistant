@@ -5,7 +5,7 @@ export default defineConfig({
         environment: 'node',
         exclude: ['**/node_modules/**'],
         coverage: {
-            reportsDirectory: 'tests/coverage'
+            reportsDirectory: 'test/coverage'
         }
     }
 });

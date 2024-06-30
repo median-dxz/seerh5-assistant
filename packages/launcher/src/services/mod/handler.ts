@@ -4,7 +4,8 @@ import { store as battleStore } from '@/services/store/battle';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 import type { ModState } from '@sea/server';
 import { ModInstance, store } from '../store/mod';
-import { buildMetadata, getLogger, getModConfig, getModData, getNamespace } from './utils';
+import { buildMetadata, getNamespace } from './metadata';
+import { getLogger, getModConfig, getModData } from './utils';
 
 type ModFactory = (context: SEAModContext<SEAModMetadata>) => Promise<SEAModExport>;
 
@@ -12,7 +13,7 @@ export async function createModContext(metadata: SEAModMetadata) {
     const ct = (...pets: string[]) => {
         const r = pets.map((pet) => ctStore.ctByName(pet));
         if (r.some((v) => v === undefined)) {
-            throw new Error(`Pet ${pets} not found`);
+            throw new Error(`Pet ${pets.toString()} not found`);
         }
         return r as number[];
     };
@@ -40,7 +41,13 @@ class ModDeploymentHandler {
         public state: ModState
     ) {}
 
-    metadata: SEAModMetadata | undefined;
+    metadata:
+        | (SEAModMetadata & {
+              version: string;
+              scope: string;
+              preload: boolean;
+          })
+        | undefined;
     factory: ModFactory | undefined;
 
     async fetch() {
@@ -66,7 +73,7 @@ class ModDeploymentHandler {
                     break;
                 case 'realm':
                     await import('@/builtin/realm').then(({ default: factory, metadata }) => {
-                        this.factory = factory as ModFactory;
+                        this.factory = factory as unknown as ModFactory;
                         this.metadata = buildMetadata(metadata);
                     });
                     break;
@@ -87,7 +94,7 @@ class ModDeploymentHandler {
             }
         } else {
             await import(/* @vite-ignore */ `/mods/${this.scope}.${this.id}.js?r=${Math.random()}`).then(
-                ({ default: factory, metadata }) => {
+                ({ default: factory, metadata }: { default: ModFactory; metadata: SEAModMetadata }) => {
                     this.factory = factory;
                     this.metadata = buildMetadata(metadata);
                 }
@@ -100,7 +107,7 @@ class ModDeploymentHandler {
             throw new Error(`模组: ${this.scope}::${this.id} 还未拉取代码`);
         }
 
-        const namespace = getNamespace(this.metadata!);
+        const namespace = getNamespace(this.metadata);
         try {
             const context = await createModContext(this.metadata);
             const exports = await this.factory(context);

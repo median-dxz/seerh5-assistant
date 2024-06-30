@@ -30,6 +30,7 @@ export const modRouter = router({
         .input(ModIdentifierSchema.and(z.object({ options: ModInstallOptionsSchema })))
         .mutation(({ input }) => {
             const { id, scope, options } = input;
+            // ATTENTION: this endpoint is for builtin mods ONLY
             return ModManager.install(scope, id, options);
         }),
     uninstall: procedure.mutation(() => ModManager.uninstall()),

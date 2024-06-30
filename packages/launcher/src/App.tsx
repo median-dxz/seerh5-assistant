@@ -27,7 +27,7 @@ export default function App() {
             .then(() => {
                 setInit(true);
             })
-            .catch((e: unknown) => {
+            .catch((err: unknown) => {
                 // React严格模式下导致的重复调用CoreLoader, 可以忽略
             });
     }, [init]);

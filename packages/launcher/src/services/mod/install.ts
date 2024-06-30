@@ -3,8 +3,8 @@ import * as endpoints from '@/services/endpoints';
 import { SEAModLogger } from '@/utils/logger';
 import type { SEAModMetadata } from '@sea/mod-type';
 import type { ModInstallOptions } from '@sea/server';
+import { buildDefaultConfig, buildMetadata } from './metadata';
 import { ModMetadataSchema } from './schema';
-import { buildDefaultConfig, buildMetadata } from './utils';
 
 export async function prefetchModMetadata(url: string) {
     const modImport = (await import(/* @vite-ignore */ url)) as { metadata: SEAModMetadata };
@@ -25,12 +25,7 @@ export async function installModFromUrl(url: string, update = false) {
             update
         };
 
-        const r = await endpoints.mod.install(metadata.scope, metadata.id, options);
-        if (!r.success) {
-            throw new Error(r.reason);
-        }
-
-        await endpoints.mod.upload(metadata.scope, metadata.id, url);
+        await endpoints.mod.uploadAndInstall(metadata.scope, metadata.id, url, options);
     } catch (err) {
         SEAModLogger.error(`Failed to install mod: ${url}`, err);
         throw err;

@@ -1,28 +1,29 @@
-import { resolve } from 'path';
-import { defineConfig } from 'vite';
+import type { ConfigEnv } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
+import { SEAModInstall } from './build-plugins/vite-plugin-sea-mod-install';
 
-export default defineConfig({
-    build: {
-        sourcemap: 'inline',
-        lib: {
-            entry: [
-                resolve(__dirname, 'src/module/PetBag.ts'),
-                resolve(__dirname, 'src/module/TeamTechCenter.ts'),
-                resolve(__dirname, 'src/module/ItemWareHouse.ts'),
-                resolve(__dirname, 'src/commands/FightPuni.ts'),
-                resolve(__dirname, 'src/sign/sign.ts'),
-                resolve(__dirname, 'src/LocalPetSkin.ts'),
-                resolve(__dirname, 'src/CraftSkillStone.ts'),
-                resolve(__dirname, 'src/DisableSentry.ts')
-            ],
-            formats: ['es'],
-            fileName: (format, entry) => {
-                return entry + '.js';
+export default defineConfig(({ command, mode }: ConfigEnv) => {
+    const dirname = import.meta.dirname!;
+    const env = loadEnv(mode, dirname, '');
+
+    return {
+        build: {
+            sourcemap: 'inline',
+            lib: {
+                entry: [],
+                fileName: (_, entry) => {
+                    return entry + '.js';
+                }
+            },
+            rollupOptions: {
+                external: /@sea\/core/
             }
         },
-        rollupOptions: {
-            external: /@sea\/core/
-        }
-    },
-    plugins: []
+
+        plugins: [
+            SEAModInstall({
+                server: env['VITE_SEA_SERVER_URL']
+            })
+        ]
+    };
 });

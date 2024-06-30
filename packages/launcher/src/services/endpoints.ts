@@ -22,14 +22,20 @@ export const mod = {
     setConfig: async (scope: string, id: string, data: DataObject) => modRouter.setConfig.mutate({ scope, id, data }),
     install: async (scope: string, id: string, options: ModInstallOptions) =>
         modRouter.install.mutate({ scope, id, options }),
-    upload: async (scope: string, id: string, modUrl: string) => {
+    uploadAndInstall: async (scope: string, id: string, modUrl: string, options: ModInstallOptions) => {
         const modBlob = await fetch(modUrl).then((r) => r.blob());
         const modFile = new File([modBlob], `${scope}.${id}.js`, { type: 'text/javascript' });
 
         const data = new FormData();
         data.append('mod', modFile);
+        data.append('options', JSON.stringify(options));
 
-        return fetch('api/upload/mods', {
+        const query = new URLSearchParams({
+            id,
+            scope
+        });
+
+        return fetch('/api/mods/install?' + query.toString(), {
             body: data,
             method: 'POST'
         }).then((r) => r.json());

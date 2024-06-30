@@ -72,14 +72,16 @@ const PanelRow = () => {
             <PanelField field="execute">
                 <ButtonGroup>
                     <Button
-                        onClick={async () => {
-                            console.log(`正在执行${name}`);
-                            await task.update();
-                            while (task.data.remainingTimes > 0) {
-                                task.actions[LevelAction.AWARD].call(task);
-                                await delay(50).then(() => task.update());
-                            }
-                            mutate();
+                        onClick={() => {
+                            void (async () => {
+                                console.log(`正在执行${name}`);
+                                await task.update();
+                                while (task.data.remainingTimes > 0) {
+                                    await task.actions[LevelAction.AWARD]?.call(task);
+                                    await delay(50).then(() => task.update());
+                                }
+                                await mutate();
+                            })();
                         }}
                     >
                         执行

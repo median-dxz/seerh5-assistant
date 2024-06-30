@@ -10,6 +10,7 @@ import {
     wrapper
 } from '@sea/core';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
+import { coreVersion } from '../common/coreVersion';
 
 interface PetFragment {
     EffectMsglog: number;
@@ -65,7 +66,7 @@ export const metadata = {
     id: 'itemWarehouse',
     scope: 'median',
     description: '物品仓库修改, 提供更换的精灵因子界面交互',
-    core: '1.0.0-rc.5',
+    core: coreVersion,
     version: '1.0.0'
 } satisfies SEAModMetadata;
 

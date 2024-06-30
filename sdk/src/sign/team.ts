@@ -1,10 +1,10 @@
 import { LevelAction, socket, type ILevelRunner } from '@sea/core';
-import type { LevelData, LevelMeta, Task, TaskRunner } from '@sea/launcher';
+import type { LevelData, LevelMeta, Task, TaskRunner } from '@sea/mod-type';
 import { SignBase } from './SignBase';
 
 const MULTI_QUERY = {
     资源生产次数: 12470,
-    道具兑换次数: 12471,
+    道具兑换次数: 12471
 } as const;
 
 declare class MainManager {
@@ -21,7 +21,7 @@ export const teamSign = (exchangeId: number) =>
             static readonly meta: LevelMeta = {
                 id: 'ProductResource',
                 name: '生产资源',
-                maxTimes: 5,
+                maxTimes: 5
             };
 
             maxTimes = 5;
@@ -33,7 +33,7 @@ export const teamSign = (exchangeId: number) =>
             actions: Record<string, (this: ILevelRunner<LevelData>) => Promise<void>> = {
                 [LevelAction.AWARD]: async () => {
                     await socket.sendByQueue(CommandID.RES_PRODUCTORBUY, [2, 0]);
-                },
+                }
             };
 
             async update(): Promise<void> {
@@ -49,7 +49,7 @@ export const teamSign = (exchangeId: number) =>
             static readonly meta: LevelMeta = {
                 id: 'ExchangeItem',
                 name: '兑换道具',
-                maxTimes: 3,
+                maxTimes: 3
             };
 
             maxTimes = 3;
@@ -61,7 +61,7 @@ export const teamSign = (exchangeId: number) =>
             actions: Record<string, (this: ILevelRunner<LevelData>) => Promise<void>> = {
                 [LevelAction.AWARD]: async () => {
                     await socket.sendByQueue(CommandID.NEW_TEAM_EXCHANGE_ITEMS, [1, exchangeId]);
-                },
+                }
             };
 
             async update(): Promise<void> {
@@ -76,5 +76,5 @@ export const teamSign = (exchangeId: number) =>
                     this.data.remainingTimes = this.maxTimes = 0;
                 }
             }
-        },
+        }
     ] satisfies Task[];

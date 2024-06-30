@@ -1,8 +1,9 @@
 import { NOOP } from '@sea/core';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
+import { coreVersion } from './common/coreVersion';
 
 export const metadata = {
-    core: '1.0.0-rc.5',
+    core: coreVersion,
     id: 'DisableSentry',
     scope: 'median',
     version: '1.0.0',

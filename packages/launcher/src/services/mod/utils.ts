@@ -1,7 +1,7 @@
-import { MOD_SCOPE_DEFAULT } from '@/constants';
 import * as endpoints from '@/services/endpoints';
 import { CommonLogger, LogStyle } from '@/utils/logger';
-import type { SEAConfigItemSchema, SEAModMetadata } from '@sea/mod-type';
+import type { SEAModMetadata } from '@sea/mod-type';
+import { buildDefaultConfig } from './metadata';
 
 type ProxyObjectRef<T extends NonNullable<object>> = T & { ref: T };
 function createProxyObjectRef<T extends NonNullable<object>>(initValue: T) {
@@ -30,28 +30,9 @@ function createProxyObjectRef<T extends NonNullable<object>>(initValue: T) {
 }
 export const getLogger = (id: string) => CommonLogger(id, 'info', LogStyle.mod);
 
-export function buildMetadata(metadata: SEAModMetadata) {
-    let { scope, version, preload } = metadata;
-
-    scope = scope ?? MOD_SCOPE_DEFAULT;
-    version = version ?? '0.0.0';
-    preload = preload ?? false;
-
-    return { ...metadata, scope, version, preload } as SEAModMetadata & {
-        version: string;
-        scope: string;
-        preload: boolean;
-    };
-}
-
-export function getNamespace(meta: SEAModMetadata) {
-    const { scope, id } = meta;
-    return `${scope}::${id}`;
-}
-
 export async function getModData({ scope, id, data: defaultData }: SEAModMetadata & { scope: string }) {
     if (defaultData) {
-        let data = await endpoints.mod.data(scope!, id);
+        let data = await endpoints.mod.data(scope, id);
 
         if (!data) {
             await endpoints.mod.setData(scope, id, defaultData);
@@ -62,7 +43,7 @@ export async function getModData({ scope, id, data: defaultData }: SEAModMetadat
 
         const mutate = (recipe: (draft: unknown) => void) => {
             recipe(proxyData.ref);
-            endpoints.mod.setData(scope, id, proxyData.ref);
+            void endpoints.mod.setData(scope, id, proxyData.ref);
         };
 
         return { data: proxyData, mutate };
@@ -81,14 +62,4 @@ export async function getModConfig({ scope, id, configSchema }: SEAModMetadata &
         return { config };
     }
     return {};
-}
-
-export function buildDefaultConfig(configSchema: Record<string, SEAConfigItemSchema>) {
-    const keys = Object.keys(configSchema);
-    const defaultConfig: Record<string, string | number | boolean> = {};
-    keys.forEach((key) => {
-        const item = configSchema[key];
-        defaultConfig[key] = item.default;
-    });
-    return defaultConfig;
 }

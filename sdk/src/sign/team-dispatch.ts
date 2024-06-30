@@ -5,9 +5,9 @@ import {
     SEAPetStore,
     socket,
     spet,
-    type ILevelRunner,
+    type ILevelRunner
 } from '@sea/core';
-import type { LevelData, LevelMeta, Task, TaskRunner } from '@sea/launcher';
+import type { LevelData, LevelMeta, Task, TaskRunner } from '@sea/mod-type';
 import { SignBase } from './SignBase';
 
 declare class MainManager {
@@ -23,7 +23,7 @@ export const teamDispatch = (ignorePets: string[], logger: any) => {
         static readonly meta: LevelMeta = {
             id: 'TeamDispatch',
             name: '战队派遣',
-            maxTimes: 1,
+            maxTimes: 1
         };
 
         maxTimes = 1;
@@ -74,7 +74,7 @@ export const teamDispatch = (ignorePets: string[], logger: any) => {
                     } = {
                         petIds: [],
                         cts: [],
-                        levels: [],
+                        levels: []
                     };
                     for (let r = 0; r < a; r++) {
                         e.cts.push(data.getUint32(8 + r * 12));
@@ -102,7 +102,7 @@ export const teamDispatch = (ignorePets: string[], logger: any) => {
                         socket.sendByQueue(45808, [tid, e.cts[0], e.cts[1], e.cts[2], e.cts[3], e.cts[4]]);
                     }
                 }
-            },
+            }
         };
 
         async update(): Promise<void> {

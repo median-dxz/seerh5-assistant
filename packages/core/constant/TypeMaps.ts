@@ -45,4 +45,7 @@ export interface GameConfigMap {
     equipment: seerh5.EquipmentObj;
 }
 
-export type GameModuleMap = Record<string, BaseModule>;
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
+export interface GameModuleMap {
+    [module: string]: BaseModule;
+}

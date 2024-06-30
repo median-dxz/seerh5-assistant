@@ -17,9 +17,9 @@ export default tsEslint.config(
             'sdk/',
             'website/',
             '**/dist/',
+            '**/test/',
             '**/\\.*rc',
             '**/*.config.*',
-            'packages/**/tests/',
             'packages/core/types/',
             'packages/launcher/core-e2e-test/',
             'packages/launcher/build-plugins/',
@@ -41,7 +41,7 @@ export default tsEslint.config(
             }
         },
         linterOptions: {
-            reportUnusedDisableDirectives: true,
+            reportUnusedDisableDirectives: true
         },
         rules: {
             'arrow-body-style': ['error', 'as-needed'],
@@ -68,7 +68,8 @@ export default tsEslint.config(
             '@typescript-eslint/prefer-promise-reject-errors': 'off',
             '@typescript-eslint/dot-notation': ['error', { allowIndexSignaturePropertyAccess: true }],
             '@typescript-eslint/array-type': ['error', { default: 'array-simple' }],
-            '@typescript-eslint/no-unnecessary-condition': ['error', { allowConstantLoopConditions: true }]
+            '@typescript-eslint/no-unnecessary-condition': ['error', { allowConstantLoopConditions: true }],
+            '@typescript-eslint/no-invalid-void-type': ['error', { allowAsThisParameter: true }]
         }
     },
     {
@@ -128,6 +129,12 @@ export default tsEslint.config(
                     }
                 }
             ]
+        }
+    },
+    {
+        files: ['packages/mod-type/*.d.ts'],
+        rules: {
+            '@typescript-eslint/no-extraneous-class': 'off'
         }
     }
 );

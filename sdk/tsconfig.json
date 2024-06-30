@@ -11,10 +11,7 @@
     "noEmit": true,
     "strict": true,
     "lib": ["esnext", "dom"],
-    "types": ["vite/client", "@sea/core/types/seerh5", "@sea/core/types/egret"],
-    "paths": {
-      "@sea/mod-type": ["./lib/launcher.d.ts"]
-    }
+    "types": ["vite/client", "@sea/core/types/seerh5", "@sea/core/types/egret"]
   },
-  "include": ["./src", "./lib/launcher.d.ts"]
+  "include": ["./src"]
 }

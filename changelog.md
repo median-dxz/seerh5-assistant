@@ -7,10 +7,10 @@
 - [ ] sdk 中 core 版本兼容性检测, 添加 core 版本字段(必填), 并规范 launcher 的 core 实例和 sdk 使用的 api 之间的关系
   - [ ] 需要一次性提供 Launcher Api 版本，Core 版本和自身版本
   - [ ] launcher api 版本和 launcher 版本之间的关系？
+  - [ ] 同步server launcher mod-type的版本，保持统一
 - [x] 统一签到模组(`sign`)到关卡, 将无战斗纯发包的也视为关卡的一种
   - [x] 可能需要重新设计关卡的整体接口
   - [ ] 顺便解决关卡进度指示器的问题
-- [ ] sdk 中的同步 core 版本号脚本 | 构建插件
 - [ ] 战斗日志保存
 - [ ] script 通过语法树进行高级反混淆, 暂定主要目标是升级 async/await
 - [ ] 后端日志管理
@@ -63,7 +63,6 @@
 - [ ] 对等依赖<->dts定义(例如注册查询表)(可参考：next模块定义，mui对样式引擎的定义依赖)
 - [ ] 模组定义新增标志位，表明不支持热重载
 - [ ] 取消对http-proxy-middleware的依赖
-- [ ]
 
 # Core 当前版本 v1.0.0-rc.5
 

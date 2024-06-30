@@ -33,7 +33,6 @@ const $fromGameModule = {
     }
 };
 
-export function fromGameModule(module: string, event: ModuleEvent): SEAEventSource<unknown>;
 export function fromGameModule<TModule extends string>(module: TModule, event: 'load'): SEAEventSource<undefined>;
 export function fromGameModule<TModule extends string>(
     module: TModule,
