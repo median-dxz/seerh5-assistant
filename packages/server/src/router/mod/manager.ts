@@ -85,6 +85,9 @@ export const ModManager = {
         await modIndexes.set(scope, id, state);
         const ns = getNamespace(scope, id);
 
+        // 在满足该模组请求数据存储的前提下:
+        // 1. 当前数据存在但更新选项为false
+        // 2. 当前数据不存在
         if (options.data && (!this.modData.has(ns) || options.update === false)) {
             const dataStore = new SEASConfigData();
             await dataStore.create(path.join(this.root, modsRoot, `${scope}.${id}.data.json`), options.data);

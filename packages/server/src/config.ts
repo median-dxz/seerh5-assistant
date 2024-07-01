@@ -1,7 +1,8 @@
 import path from 'node:path';
 
+// 对应 node 环境(未打包) 与 pkg 环境(带snapshot的CJS)
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-const base = import.meta.dirname ?? __dirname ?? process.cwd();
+const base = import.meta?.dirname ?? process.cwd();
 
 console.log(`base: ${base}`);
 

@@ -14,7 +14,8 @@
     "build": "esbuild ./src/index.ts --bundle --platform=node --target=node20.11.1 --outfile=./src/index.cjs --allow-overwrite --external:thread-stream",
     "executable": "pkg ./src/index.cjs -c package.json -o ./bin/server.exe",
     "watch:tsc": "tsc -w",
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "test": "vitest"
   },
   "dependencies": {
     "@fastify/cors": "^9.0.1",
@@ -24,10 +25,10 @@
     "@fastify/one-line-logger": "^1.4.0",
     "@fastify/static": "^7.0.4",
     "@fastify/websocket": "^10.0.1",
-    "fastify-type-provider-zod": "^2.0.0",
     "@trpc/server": "11.0.0-rc.417",
     "close-with-grace": "^1.3.0",
     "fastify": "^4.28.0",
+    "fastify-type-provider-zod": "^2.0.0",
     "http-proxy-middleware": "3.0.0",
     "rotating-file-stream": "^3.2.3",
     "superjson": "^2.2.1",
@@ -36,9 +37,9 @@
   "devDependencies": {
     "@sea/mod-type": "workspace:*",
     "@swc/core": "^1.6.3",
-    "@types/connect": "^3.4.38",
     "@yao-pkg/pkg": "^5.12.0",
     "esbuild": "0.21.5",
+    "form-data": "^4.0.0",
     "nodemon": "^3.1.4",
     "pino-pretty": "^11.2.1",
     "ts-node": "^10.9.2"
@@ -55,10 +56,6 @@
     }
   },
   "pkg": {
-    "scripts": [
-      "../../node_modules/thread-stream/lib/**/*.js",
-      "../../node_modules/thread-stream/index.js"
-    ],
     "targets": [
       "node20-win-x64"
     ]

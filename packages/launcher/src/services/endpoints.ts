@@ -27,8 +27,8 @@ export const mod = {
         const modFile = new File([modBlob], `${scope}.${id}.js`, { type: 'text/javascript' });
 
         const data = new FormData();
+        data.append('options', new Blob([JSON.stringify(options)], { type: 'application/json' }));
         data.append('mod', modFile);
-        data.append('options', JSON.stringify(options));
 
         const query = new URLSearchParams({
             id,

@@ -12,12 +12,10 @@
   },
   "packageManager": "pnpm@9.4.0+sha256.b6fd0bfda555e7e584ad7e56b30c68b01d5a04f9ee93989f4b93ca8473c49c74",
   "scripts": {
-    "dev": "conc pnpm:core:watch pnpm:launcher:dev",
     "server:run": "pnpm -C ./packages/server run start",
     "launcher:dev": "pnpm -C ./packages/launcher run dev",
-    "core:watch": "pnpm --filter \"@sea/core\" run watch",
     "core:build": "pnpm --filter \"@sea/core\" run build",
-    "build": "node ./scripts/build-server.js",
+    "workspace:build": "node ./scripts/build-server.js",
     "workspace:sync": "node ./scripts/sync.js",
     "release": "node ./scripts/release.js",
     "prepare": "husky"
