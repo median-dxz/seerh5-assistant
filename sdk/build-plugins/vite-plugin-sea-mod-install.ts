@@ -38,21 +38,32 @@ export function SEAModInstall({ server }: SEAModBuilderOptions) {
                     update: true
                 };
 
-                const data = new FormData();
-                data.append('mod', new File([file], `${scope}.${id}.js`, { type: 'text/javascript' }));
-                data.append('options', JSON.stringify(options));
+                if (server.endsWith('/')) server = server.slice(0, -1);
+                if (!server.startsWith('http')) server = 'http://' + server;
+
+                try {
+                    await fetch(`${server}/api/mods`);
+                } catch (e) {
+                    console.error('Failed to connect to server:', e.message);
+                    return;
+                }
 
                 const query = new URLSearchParams({
                     id,
                     scope
                 });
 
-                if (server.endsWith('/')) server = server.slice(0, -1);
+                const data = new FormData();
+                data.append('options', new Blob([JSON.stringify(options)], { type: 'application/json' }));
+                data.append('mod', new File([file], `${scope}.${id}.js`, { type: 'text/javascript' }));
 
-                return fetch(`${server}/api/mods/install?` + query.toString(), {
+                const r = await fetch(`${server}/api/mods/install?` + query.toString(), {
                     body: data,
                     method: 'POST'
                 }).then((r) => r.json());
+
+                console.log('install result:', r);
+                return;
             }
         }
     ] as PluginOption[];
