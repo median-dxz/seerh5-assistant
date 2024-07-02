@@ -35,7 +35,7 @@ export const modUploadAndInstallRouter: FastifyPluginAsync<never> = async (serve
         async (req, res) => {
             const { options } = req.body;
             const { id, scope } = req.query;
-            const r = await ModManager.install(id, scope, options);
+            const r = await ModManager.install(scope, id, options);
             return res.code(200).send(r);
         }
     );

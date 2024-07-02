@@ -39,8 +39,8 @@ describe('uploadAndInstall', () => {
     const installSpy = vi.spyOn(ModManager, 'install');
     installSpy.mockImplementation(() => Promise.resolve({ success: true }));
 
-    const scope = 'test';
-    const id = 'test';
+    const scope = 'scope_test';
+    const id = 'id_test';
     const filename = `${scope}.${id}.js`;
     const contentType = 'application/javascript';
 
@@ -100,7 +100,7 @@ describe('uploadAndInstall', () => {
 
         const response = await server.inject({
             method: 'POST',
-            url: { pathname: '/api/mods/install', query: { id: 'test', scope: 'test' } },
+            url: { pathname: '/api/mods/install', query: { id, scope } },
             payload: data,
             headers: data.getHeaders()
         });
@@ -141,7 +141,7 @@ describe('uploadAndInstall', () => {
     });
 
     test('install mod', async () => {
-        installSpy.mockClear();
+        vi.clearAllMocks();
 
         // data
         const options: ModInstallOptions = {
@@ -161,7 +161,7 @@ describe('uploadAndInstall', () => {
         // action
         const response = await server.inject({
             method: 'POST',
-            url: { pathname: '/api/mods/install', query: { id: 'test', scope: 'test' } },
+            url: { pathname: '/api/mods/install', query: { id, scope } },
             payload: data,
             headers: data.getHeaders()
         });
