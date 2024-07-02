@@ -8,7 +8,6 @@ import fastifyStatic from '@fastify/static';
 import ws from '@fastify/websocket';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import fastify from 'fastify';
-import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
 
 import { envOptions } from './config.ts';
 
@@ -34,10 +33,6 @@ export async function createServer() {
             }
         }
     });
-
-    server.setValidatorCompiler(validatorCompiler);
-    server.setSerializerCompiler(serializerCompiler);
-
     await server.register(fastifyEnv, envOptions);
 
     const root = server.config.APP_ROOT;

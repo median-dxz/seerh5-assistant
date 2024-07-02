@@ -26,16 +26,26 @@ export const mod = {
         const modBlob = await fetch(modUrl).then((r) => r.blob());
         const modFile = new File([modBlob], `${scope}.${id}.js`, { type: 'text/javascript' });
 
-        const data = new FormData();
-        data.append('options', new Blob([JSON.stringify(options)], { type: 'application/json' }));
-        data.append('mod', modFile);
-
         const query = new URLSearchParams({
             id,
             scope
         });
 
-        return fetch('/api/mods/install?' + query.toString(), {
+        let modSerializedData: string | undefined = undefined;
+        if (options.data !== undefined) {
+            modSerializedData = superjson.stringify(options.data);
+        }
+
+        const data = new FormData();
+        data.append(
+            'options',
+            new Blob([JSON.stringify({ ...options, data: modSerializedData })], {
+                type: 'application/json'
+            })
+        );
+        data.append('mod', new File([modFile], `${scope}.${id}.js`, { type: 'text/javascript' }));
+
+        return fetch(`/api/mods/install?` + query.toString(), {
             body: data,
             method: 'POST'
         }).then((r) => r.json());

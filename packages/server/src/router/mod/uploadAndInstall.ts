@@ -1,9 +1,11 @@
 import fastifyMultipart from '@fastify/multipart';
+import type { DataObject } from '@sea/mod-type';
 import type { FastifyPluginAsync } from 'fastify';
-import type { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { serializerCompiler, validatorCompiler, type ZodTypeProvider } from 'fastify-type-provider-zod';
 import { createWriteStream } from 'node:fs';
 import path from 'node:path';
 import { pipeline } from 'node:stream/promises';
+import superjson from 'superjson';
 import { z } from 'zod';
 import { modsRoot } from '../../paths.ts';
 import { ModManager } from './manager.ts';
@@ -22,12 +24,14 @@ export const modUploadAndInstallRouter: FastifyPluginAsync<never> = async (serve
         }
     });
 
+    server.setValidatorCompiler(validatorCompiler);
+    server.setSerializerCompiler(serializerCompiler);
     server.withTypeProvider<ZodTypeProvider>().post(
         '/api/mods/install',
         {
             schema: {
                 body: z.object({
-                    options: ModInstallOptionsSchema
+                    options: ModInstallOptionsSchema.merge(z.object({ data: z.string().optional() }))
                 }),
                 querystring: ModIdentifierSchema
             }
@@ -35,7 +39,9 @@ export const modUploadAndInstallRouter: FastifyPluginAsync<never> = async (serve
         async (req, res) => {
             const { options } = req.body;
             const { id, scope } = req.query;
-            const r = await ModManager.install(scope, id, options);
+            const data = options.data == undefined ? undefined : superjson.parse<DataObject>(options.data);
+
+            const r = await ModManager.install(scope, id, { ...options, data });
             return res.code(200).send(r);
         }
     );

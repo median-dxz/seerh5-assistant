@@ -35,7 +35,7 @@ export const metadata = {
     description: '精灵因子'
 } satisfies SEAModMetadata;
 
-export default async function ({ logger, meta }: SEAModContext<typeof metadata>) {
+export default function ({ logger, meta }: SEAModContext<typeof metadata>) {
     class PetFragmentRunner implements TaskRunner<LevelData>, IPetFragmentRunner {
         static readonly meta: LevelMeta = {
             maxTimes: 3,

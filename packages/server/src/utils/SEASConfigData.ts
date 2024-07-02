@@ -34,8 +34,8 @@ export class SEASConfigData<TData extends NonNullable<object> = NonNullable<obje
             const content = await fs.readFile(configFile, {
                 encoding: 'utf-8'
             });
-            const config = superjson.parse(content);
-            this.data = config as TData;
+            const config = superjson.parse<TData>(content);
+            this.data = config;
             return;
         }
         throw new Error(`Config file does not exist: ${configFile}`);

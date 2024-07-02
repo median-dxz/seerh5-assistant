@@ -13,7 +13,7 @@ export const metadata = {
     description: '内置命令组'
 } satisfies SEAModMetadata;
 
-export default async function builtinCommand({ logger }: SEAModContext<typeof metadata>) {
+export default function builtinCommand({ logger }: SEAModContext<typeof metadata>) {
     const commands: Command[] = [
         {
             name: 'getCurPanelInfo',

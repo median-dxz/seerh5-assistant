@@ -91,8 +91,8 @@ export const metadata = {
     }
 } satisfies SEAModMetadata;
 
-export default async function realm({ logger, battle }: SEAModContext<typeof metadata>) {
-    return Promise.resolve({
+export default function realm({ logger, battle }: SEAModContext<typeof metadata>) {
+    return {
         tasks: [
             LevelCourageTower(logger, battle),
             LevelElfKingsTrial(logger, battle),
@@ -135,5 +135,5 @@ export default async function realm({ logger, battle }: SEAModContext<typeof met
                 logger = NOOP;
             }
         ] as const
-    } satisfies SEAModExport);
+    } satisfies SEAModExport;
 }

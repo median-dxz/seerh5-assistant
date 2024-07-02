@@ -53,14 +53,14 @@ import { produce } from 'immer';
 //     [running]
 // );
 
-type Row = {
+interface Row {
     taskClass: Task;
     config?: Record<string, unknown>;
-};
+}
 
 export function CommonLevelView() {
     const { taskStore: levelStore } = useModStore();
-    const [taskCompleted, setTaskCompleted] = React.useState<Array<boolean>>([]);
+    const [taskCompleted, setTaskCompleted] = React.useState<boolean[]>([]);
 
     const {
         data: rows = [],

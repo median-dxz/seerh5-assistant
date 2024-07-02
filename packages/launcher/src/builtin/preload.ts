@@ -10,7 +10,7 @@ export const metadata = {
     preload: true
 } satisfies SEAModMetadata;
 
-export default async function (_context: SEAModContext<typeof metadata>) {
+export default function (_context: SEAModContext<typeof metadata>) {
     return {
         install() {
             GameInfo.online_gate = GameInfo.online_gate.replace('is_ssl=0', 'is_ssl=1');

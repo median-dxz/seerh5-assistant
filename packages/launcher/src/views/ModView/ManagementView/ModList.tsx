@@ -151,7 +151,7 @@ export function ModListItem({ mod }: ModListItemProps) {
                 <MenuItem sx={{ maxWidth: '25vw', fontSize: '1rem' }}>
                     <Delete fontSize="inherit" />
                     <Typography sx={{ ml: 2, mr: 2 }} fontSize="inherit">
-                        删除
+                        卸载
                     </Typography>
                 </MenuItem>
             </Menu>

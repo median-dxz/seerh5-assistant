@@ -66,7 +66,7 @@ export default (logger: AnyFunction, battle: (name: string) => ILevelBattle) => 
 
         readonly actions: Record<string, () => Promise<void>> = {
             battle: async () => {
-                socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [117, 30, 1]);
+                await socket.sendByQueue(CommandID.FIGHT_H5_PVE_BOSS, [117, 30, 1]);
             },
 
             award: async () => {

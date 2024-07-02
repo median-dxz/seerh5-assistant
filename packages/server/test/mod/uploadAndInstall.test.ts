@@ -4,6 +4,7 @@ import FormData from 'form-data';
 import { createWriteStream } from 'node:fs';
 import path from 'node:path';
 import { Writable } from 'node:stream';
+import superjson from 'superjson';
 import { modsRoot } from '../../src/paths';
 import { ModManager, type ModInstallOptions } from '../../src/router/mod/manager';
 import { createServer } from '../../src/server';
@@ -147,7 +148,9 @@ describe('uploadAndInstall', () => {
         const options: ModInstallOptions = {
             builtin: false,
             config: {},
-            data: {},
+            data: {
+                nonSerializedData: new Map()
+            },
             preload: false,
             update: false
         };
@@ -156,7 +159,9 @@ describe('uploadAndInstall', () => {
             filename,
             contentType
         });
-        data.append('options', JSON.stringify(options), { contentType: 'application/json' });
+        data.append('options', JSON.stringify({ ...options, data: superjson.stringify(options.data) }), {
+            contentType: 'application/json'
+        });
 
         // action
         const response = await server.inject({

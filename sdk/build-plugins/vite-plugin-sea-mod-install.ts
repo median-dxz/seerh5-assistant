@@ -48,10 +48,17 @@ export function SEAModInstall({ server }: SEAModBuilderOptions) {
                     scope
                 });
 
+                let modSerializedData: string | undefined = undefined;
+                if (metadata.data !== undefined) {
+                    modSerializedData = superjson.stringify(metadata.data);
+                }
+
                 const data = new FormData();
                 data.append(
                     'options',
-                    new Blob([superjson.stringify(modInstallOptions)], { type: 'application/json' })
+                    new Blob([JSON.stringify({ ...modInstallOptions, data: modSerializedData })], {
+                        type: 'application/json'
+                    })
                 );
                 data.append('mod', new File([file], `${scope}.${id}.js`, { type: 'text/javascript' }));
 

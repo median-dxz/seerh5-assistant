@@ -12,7 +12,7 @@ export const metadata = {
     description: '内置战斗策略模型'
 } satisfies SEAModMetadata;
 
-export default async function builtinStrategy(_context: SEAModContext<typeof metadata>) {
+export default function builtinStrategy(_context: SEAModContext<typeof metadata>) {
     const strategies: Array<Strategy> = [
         {
             name: '圣谱单挑',
