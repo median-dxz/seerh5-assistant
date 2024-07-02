@@ -13,7 +13,6 @@ const ConfigItemSchema = z
 
 export const ModMetadataSchema = z.object({
     id: z.string(),
-    core: z.string(),
     scope: z.string().optional(),
     version: z.string().optional(),
     description: z.string().optional(),

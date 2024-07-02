@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
+import { MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
 import { PetElement, SEAPetStore, delay, socket } from '@sea/core';
 import type { Command, SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 
@@ -9,7 +9,6 @@ export const metadata = {
     id: 'builtin-command',
     scope: MOD_SCOPE_BUILTIN,
     version: VERSION,
-    core: CORE_VERSION,
     description: '内置命令组'
 } satisfies SEAModMetadata;
 

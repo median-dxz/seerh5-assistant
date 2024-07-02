@@ -1,11 +1,10 @@
-import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
+import { MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 
 export const metadata = {
     id: 'builtin-preload',
     scope: MOD_SCOPE_BUILTIN,
     version: VERSION,
-    core: CORE_VERSION,
     description: '预加载脚本',
     preload: true
 } satisfies SEAModMetadata;

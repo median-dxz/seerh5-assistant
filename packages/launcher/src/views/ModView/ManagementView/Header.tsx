@@ -21,7 +21,7 @@ export function Header() {
             <Button
                 onClick={() => {
                     teardown();
-                    fetchList()
+                    void fetchList()
                         .then(() =>
                             Promise.all(
                                 deploymentHandlers.map((handler) => handler.fetch().then(() => handler.deploy()))

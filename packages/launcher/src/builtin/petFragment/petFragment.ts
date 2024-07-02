@@ -1,4 +1,4 @@
-import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
+import { MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
 import {
     PetFragmentLevelDifficulty as Difficulty,
     LevelAction,
@@ -31,7 +31,6 @@ export const metadata = {
     id: 'PetFragmentLevel',
     scope: MOD_SCOPE_BUILTIN,
     version: VERSION,
-    core: CORE_VERSION,
     description: '精灵因子'
 } satisfies SEAModMetadata;
 

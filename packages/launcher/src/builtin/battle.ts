@@ -1,4 +1,4 @@
-import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
+import { MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
 import { engine } from '@sea/core';
 import type { Battle, SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 
@@ -6,7 +6,6 @@ export const metadata = {
     id: 'builtin-battle',
     scope: MOD_SCOPE_BUILTIN,
     version: VERSION,
-    core: CORE_VERSION,
     description: '内置战斗模型'
 } satisfies SEAModMetadata;
 
@@ -15,9 +14,7 @@ export default function builtinBattle({ ct }: SEAModContext<typeof metadata>) {
         {
             name: '潘蒂表必先',
             pets: ['潘克多斯', '蒂朵', '帝皇之御', '魔钰', '月照星魂', '时空界皇'],
-            beforeBattle: () => {
-                return engine.lowerHp(ct('潘克多斯', '蒂朵', '帝皇之御', '魔钰', '月照星魂', '时空界皇'));
-            },
+            beforeBattle: () => engine.lowerHp(ct('潘克多斯', '蒂朵', '帝皇之御', '魔钰', '月照星魂', '时空界皇')),
             strategy: '潘蒂表必先'
         },
         {

@@ -1,4 +1,4 @@
-import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
+import { MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
 import { PotionId, battle, strategy as sg } from '@sea/core';
 import type { SEAModContext, SEAModExport, SEAModMetadata, Strategy } from '@sea/mod-type';
 
@@ -8,39 +8,35 @@ export const metadata = {
     id: 'builtin-strategy',
     scope: MOD_SCOPE_BUILTIN,
     version: VERSION,
-    core: CORE_VERSION,
     description: '内置战斗策略模型'
 } satisfies SEAModMetadata;
 
 export default function builtinStrategy(_context: SEAModContext<typeof metadata>) {
-    const strategies: Array<Strategy> = [
+    const strategies: Strategy[] = [
         {
             name: '圣谱单挑',
-            resolveMove: (state, skills, pets) => {
-                return battle.executor.useSkill(match(state, skills, pets)(rotating('光荣之梦', '神灵救世光')));
-            },
+            resolveMove: (state, skills, pets) =>
+                battle.executor.useSkill(match(state, skills, pets)(rotating('光荣之梦', '神灵救世光'))),
             resolveNoBlood: auto.noBlood()
         },
         {
             name: '圣谱先手',
-            resolveMove: (state, skills, pets) => {
-                return battle.executor.useSkill(match(state, skills, pets)(rotating('光荣之梦', '神灵之触')));
-            },
+            resolveMove: (state, skills, pets) =>
+                battle.executor.useSkill(match(state, skills, pets)(rotating('光荣之梦', '神灵之触'))),
             resolveNoBlood: auto.noBlood()
         },
         {
             name: '王哈单挑',
-            resolveMove: (state, skills, pets) => {
-                return battle.executor.useSkill(
+            resolveMove: (state, skills, pets) =>
+                battle.executor.useSkill(
                     match(state, skills, pets)(rotating('狂龙击杀', '龙子诞生'), name('王·龙子盛威决'))
-                );
-            },
+                ),
             resolveNoBlood: auto.noBlood()
         },
         {
             name: '蒂朵单挑',
-            resolveMove: (state, skills, pets) => {
-                return battle.executor.useSkill(
+            resolveMove: (state, skills, pets) =>
+                battle.executor.useSkill(
                     match(
                         state,
                         skills,
@@ -49,8 +45,7 @@ export default function builtinStrategy(_context: SEAModContext<typeof metadata>
                         round((r) => r === 0, name('时空牵绊')),
                         rotating('朵·盛夏咏叹', '灵籁之愿')
                     )
-                );
-            },
+                ),
             resolveNoBlood: auto.noBlood()
         },
         {
@@ -117,7 +112,7 @@ export default function builtinStrategy(_context: SEAModContext<typeof metadata>
             name: 'LevelCourageTower',
             async resolveMove(state, skills, pets) {
                 const matcher = match(state, skills, pets);
-                const r = battle.executor.useSkill(
+                const r = await battle.executor.useSkill(
                     matcher(
                         name('竭血残蝶', '时空牵绊'),
                         rotating('光荣之梦', '神灵救世光'),

@@ -1,4 +1,4 @@
-import { CORE_VERSION, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
+import { MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
 import { NOOP, delay, type ILevelBattle, type ILevelRunner } from '@sea/core';
 import type { LevelData, LevelMeta, SEAModContext, SEAModExport, SEAModMetadata, TaskRunner } from '@sea/mod-type';
 import LevelCourageTower from './LevelCourageTower';
@@ -12,7 +12,6 @@ export const metadata = {
     id: 'realm',
     scope: MOD_SCOPE_BUILTIN,
     version: VERSION,
-    core: CORE_VERSION,
     description: '日常关卡',
     configSchema: {
         'LevelElfKingsTrial.elfKing': {
