@@ -7,7 +7,7 @@ import { ModInstance, store } from '../store/mod';
 import { buildMetadata, getNamespace } from './metadata';
 import { getLogger, getModConfig, getModData } from './utils';
 
-type ModFactory = (context: SEAModContext<SEAModMetadata>) => Promise<SEAModExport>;
+type ModFactory = (context: SEAModContext<SEAModMetadata>) => Promise<SEAModExport> | SEAModExport;
 
 export async function createModContext(metadata: SEAModMetadata) {
     const ct = (...pets: string[]) => {

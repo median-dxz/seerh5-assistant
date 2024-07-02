@@ -6,12 +6,16 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
+    "resolveJsonModule": true,
     "outDir": "./dist",
     "skipLibCheck": true,
     "noEmit": true,
     "strict": true,
     "lib": ["esnext", "dom"],
-    "types": ["vite/client", "@sea/core/types/seerh5", "@sea/core/types/egret"]
+    "types": ["vite/client", "@sea/core/types/seerh5", "@sea/core/types/egret"],
+    "paths": {
+      "@/*": ["./mods/*"]
+    }
   },
-  "include": ["./src"]
+  "include": ["mods"]
 }

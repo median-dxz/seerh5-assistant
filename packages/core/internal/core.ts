@@ -100,5 +100,4 @@ export class SEAC {
     }
 }
 
-export type VERSION = typeof VERSION;
 export const seac = new SEAC();

@@ -1,3 +1,4 @@
+import { scope } from '@/common/constants.json';
 import type { Pet } from '@sea/core';
 import {
     GameConfigRegistry,
@@ -10,7 +11,6 @@ import {
     wrapper
 } from '@sea/core';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
-import { coreVersion } from '../common/coreVersion';
 
 interface PetFragment {
     EffectMsglog: number;
@@ -64,9 +64,8 @@ export async function findPetById(id: number): Promise<Pet | null> {
 
 export const metadata = {
     id: 'ItemWarehouse',
-    scope: 'median',
+    scope,
     description: '物品仓库修改, 提供更好的精灵因子界面交互',
-    core: coreVersion,
     version: '1.0.0'
 } satisfies SEAModMetadata;
 

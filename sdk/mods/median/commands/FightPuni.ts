@@ -1,13 +1,12 @@
 import { engine } from '@sea/core';
 import type { Command, SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 
-import { coreVersion } from '../common/coreVersion';
+import { scope } from '@/common/constants.json';
 import Icon from './all_inclusive.svg?raw';
 
 export const metadata = {
     id: '对战谱尼',
-    scope: 'median',
-    core: coreVersion,
+    scope,
     version: '1.0.0'
 } satisfies SEAModMetadata;
 

@@ -15,7 +15,6 @@
     "noEmit": true,
     "composite": true,
     "paths": {
-      "@": ["./src"],
       "@/*": ["./src/*"]
     },
     "types": ["vite/client", "@sea/core/types/seerh5", "@sea/core/types/egret"]

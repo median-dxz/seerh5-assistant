@@ -1,4 +1,4 @@
-import type { ILevelBattle, ILevelRunner, MoveStrategy, VERSION } from '@sea/core';
+import type { ILevelBattle, ILevelRunner, MoveStrategy } from '@sea/core';
 
 export type DataObject = Record<string, unknown> | NonNullable<object>;
 
@@ -27,7 +27,6 @@ export type SEAConfigItemSchema = (
 
 export interface SEAModMetadata {
     id: string;
-    core: VERSION;
     scope?: string;
     version?: string;
     description?: string;
@@ -94,8 +93,8 @@ export interface Battle {
     beforeBattle?: () => Promise<void>;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface Task {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     new (option?: any): TaskRunner;
     readonly meta: LevelMeta;
 }

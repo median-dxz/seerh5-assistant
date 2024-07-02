@@ -1,6 +1,6 @@
+import { scope } from '@/common/constants.json';
 import { Pet, SEAEventSource, Subscription, debounce, engine, hookFn, hookPrototype } from '@sea/core';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
-import { coreVersion } from '../common/coreVersion';
 
 declare module '@sea/core' {
     interface GameModuleMap {
@@ -10,9 +10,8 @@ declare module '@sea/core' {
 
 export const metadata = {
     id: 'PetBag',
-    scope: 'median',
+    scope,
     description: '精灵背包模块注入, 提供UI同步和本地皮肤功能的UI支持',
-    core: coreVersion,
     version: '1.0.0'
 } satisfies SEAModMetadata;
 

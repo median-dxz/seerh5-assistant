@@ -1,6 +1,6 @@
+import { scope } from '@/common/constants.json';
 import { GameConfigRegistry, SEAEventSource, delay, socket, spet } from '@sea/core';
 import type { Command, SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
-import { coreVersion } from './common/coreVersion';
 
 const rate = [
     [0, 24, 5.8, 1.4, 0.3],
@@ -15,9 +15,8 @@ function calcProbability(level: number, targetLevel: number) {
 
 export const metadata = {
     id: 'CraftSkillStone',
-    scope: 'median',
+    scope,
     version: '1.0.0',
-    core: coreVersion,
     description: 'misc'
 } satisfies SEAModMetadata;
 
