@@ -5,7 +5,7 @@ import { coreVersion } from '../common/coreVersion';
 declare var Alarm: any;
 
 export const metadata = {
-    id: 'teamTechCenter',
+    id: 'TeamTechCenter',
     scope: 'median',
     description: '精灵科技中心模块注入, 提供一键强化到满级功能',
     core: coreVersion,

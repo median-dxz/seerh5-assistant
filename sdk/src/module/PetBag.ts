@@ -9,7 +9,7 @@ declare module '@sea/core' {
 }
 
 export const metadata = {
-    id: 'petBag',
+    id: 'PetBag',
     scope: 'median',
     description: '精灵背包模块注入, 提供UI同步和本地皮肤功能的UI支持',
     core: coreVersion,

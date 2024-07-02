@@ -2,6 +2,7 @@ import type { SEAConfigItemSchema, SEAModMetadata } from '@sea/mod-type';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import superjson from 'superjson';
 import type { PluginOption } from 'vite';
 
 interface SEAModBuilderOptions {
@@ -9,28 +10,23 @@ interface SEAModBuilderOptions {
 }
 
 export function SEAModInstall({ server }: SEAModBuilderOptions) {
-    let filename: string;
     return [
         {
-            name: 'mod:collect-output',
+            name: 'mod:install',
             async writeBundle(options, bundle) {
                 let { dir } = options;
                 if (!dir) dir = path.resolve(process.cwd(), 'dist');
-                filename = bundle[Object.keys(bundle)[0]].fileName;
+                let filename = bundle[Object.keys(bundle)[0]].fileName;
                 filename = path.resolve(dir, filename);
-            }
-        },
-        {
-            name: 'mod:install',
-            async buildEnd() {
-                if (!filename) return;
                 const modImport = (await import(pathToFileURL(filename).toString())) as { metadata: SEAModMetadata };
                 const metadata = buildMetadata(modImport.metadata);
                 const { scope, id } = metadata;
                 const file = await fs.readFile(filename);
 
+                this.info('metadata:');
                 console.log(metadata);
-                const options = {
+
+                const modInstallOptions = {
                     builtin: false,
                     preload: metadata.preload,
                     config: metadata.configSchema ? buildDefaultConfig(metadata.configSchema) : undefined,
@@ -44,8 +40,7 @@ export function SEAModInstall({ server }: SEAModBuilderOptions) {
                 try {
                     await fetch(`${server}/api/mods`);
                 } catch (e) {
-                    console.error('Failed to connect to server:', e.message);
-                    return;
+                    this.error(`Failed to connect to server: ${e.message}`);
                 }
 
                 const query = new URLSearchParams({
@@ -54,7 +49,10 @@ export function SEAModInstall({ server }: SEAModBuilderOptions) {
                 });
 
                 const data = new FormData();
-                data.append('options', new Blob([JSON.stringify(options)], { type: 'application/json' }));
+                data.append(
+                    'options',
+                    new Blob([superjson.stringify(modInstallOptions)], { type: 'application/json' })
+                );
                 data.append('mod', new File([file], `${scope}.${id}.js`, { type: 'text/javascript' }));
 
                 const r = await fetch(`${server}/api/mods/install?` + query.toString(), {
@@ -62,8 +60,8 @@ export function SEAModInstall({ server }: SEAModBuilderOptions) {
                     method: 'POST'
                 }).then((r) => r.json());
 
-                console.log('install result:', r);
-                return;
+                this.info(`install result:`);
+                console.log(r);
             }
         }
     ] as PluginOption[];

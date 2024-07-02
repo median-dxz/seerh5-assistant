@@ -1,7 +1,7 @@
 // @ts-check
 
 import path from 'node:path';
-import { build, defineConfig, loadConfigFromFile, mergeConfig } from 'vite';
+import { build, loadConfigFromFile } from 'vite';
 
 const dirname = import.meta.dirname;
 
@@ -23,20 +23,16 @@ if (loadResult) {
     let cleanOutput = true;
     for (const entry of entries) {
         // https://github.com/rollup/rollup/issues/2756
-        await build(
-            mergeConfig(
-                config,
-                defineConfig({
-                    build: {
-                        lib: {
-                            entry: [entry],
-                            formats: ['es']
-                        },
-                        emptyOutDir: cleanOutput
-                    }
-                })
-            )
-        );
+        // 另外注意在没有设置configFile的时候, 默认会从vite.config.ts中读取配置并合并
+        await build({
+            build: {
+                lib: {
+                    entry: [entry],
+                    formats: ['es']
+                },
+                emptyOutDir: cleanOutput
+            }
+        });
         cleanOutput = false;
     }
 }

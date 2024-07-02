@@ -63,9 +63,9 @@ export async function findPetById(id: number): Promise<Pet | null> {
 }
 
 export const metadata = {
-    id: 'itemWarehouse',
+    id: 'ItemWarehouse',
     scope: 'median',
-    description: '物品仓库修改, 提供更换的精灵因子界面交互',
+    description: '物品仓库修改, 提供更好的精灵因子界面交互',
     core: coreVersion,
     version: '1.0.0'
 } satisfies SEAModMetadata;

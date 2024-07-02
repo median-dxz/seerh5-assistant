@@ -2,8 +2,13 @@ import { delay } from '../../common/utils.js';
 import { engine } from '../../internal/index.js';
 import { spet } from '../../pet-helper/index.js';
 import { manager } from '../manager.js';
-import { LevelAction } from './action.js';
-import type { ILevelRunner } from './type.js';
+import type { ILevelRunner } from './types.js';
+
+export const LevelAction = {
+    BATTLE: 'battle' as const,
+    AWARD: 'award' as const,
+    STOP: 'stop' as const
+};
 
 class LevelManager {
     private runner: ILevelRunner | null = null;

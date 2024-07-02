@@ -1,4 +1,4 @@
-export type { ILevelBattle, ILevelRunner } from './level/type.js';
+export type { ILevelBattle, ILevelRunner } from './level/types.js';
 export type { Trigger } from './manager.js';
 export type { RoundData } from './provider.js';
 export type { Matcher, MoveHandler, MoveStrategy } from './strategy.js';
@@ -15,5 +15,4 @@ export const battle = {
     manager
 };
 
-export { LevelAction } from './level/action.js';
-export { levelManager } from './level/index.js';
+export { LevelAction, levelManager } from './level/index.js';
