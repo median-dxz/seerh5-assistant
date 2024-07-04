@@ -1,7 +1,6 @@
+import { scope } from '@/common/constants.json';
 import { engine } from '@sea/core';
 import type { Command, SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
-
-import { scope } from '@/common/constants.json';
 import Icon from './all_inclusive.svg?raw';
 
 export const metadata = {

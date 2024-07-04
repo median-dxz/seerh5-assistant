@@ -1,4 +1,3 @@
-import type { DataObject } from '@sea/mod-type';
 import { z } from 'zod';
 
 export const ModIdentifierSchema = z.object({
@@ -15,3 +14,13 @@ export const ModInstallOptionsSchema = z.object({
     config: NonNullObjectSchema.optional(),
     data: NonNullObjectSchema.optional()
 });
+
+export type DataObject = object & {};
+
+export interface ModInstallOptions {
+    builtin?: boolean;
+    preload?: boolean;
+    update?: boolean;
+    config?: DataObject;
+    data?: DataObject;
+}

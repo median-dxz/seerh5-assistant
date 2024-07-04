@@ -17,13 +17,13 @@ export default defineConfig(({ command, mode }) => {
                         injectTo: 'body',
                         attrs: {
                             src: '/api/js/seerh5.61.com/app.js',
-                            defer: true,
-                        },
-                    },
+                            defer: true
+                        }
+                    }
                 ];
                 return { html, tags };
-            },
-        },
+            }
+        }
     };
 
     return {
@@ -33,9 +33,9 @@ export default defineConfig(({ command, mode }) => {
             proxy: {
                 '/api': `http://localhost:${env['VITE_BACKEND_PORT']}`,
                 '/seerh5.61.com': `http://localhost:${env['VITE_BACKEND_PORT']}`,
-                '/account-co.61.com': `http://localhost:${env['VITE_BACKEND_PORT']}`,
-            },
+                '/account-co.61.com': `http://localhost:${env['VITE_BACKEND_PORT']}`
+            }
         },
-        plugins: [loadAppJs],
+        plugins: [loadAppJs]
     };
 });

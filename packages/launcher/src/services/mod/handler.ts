@@ -4,7 +4,7 @@ import { store as battleStore } from '@/services/store/battle';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 import type { ModState } from '@sea/server';
 import { ModInstance, store } from '../store/mod';
-import { buildMetadata, getNamespace } from './metadata';
+import { buildMetadata, getNamespace, type DefinedModMetadata } from './metadata';
 import { getLogger, getModConfig, getModData } from './utils';
 
 type ModFactory = (context: SEAModContext<SEAModMetadata>) => Promise<SEAModExport> | SEAModExport;
@@ -41,14 +41,9 @@ class ModDeploymentHandler {
         public state: ModState
     ) {}
 
-    metadata:
-        | (SEAModMetadata & {
-              version: string;
-              scope: string;
-              preload: boolean;
-          })
-        | undefined;
-    factory: ModFactory | undefined;
+    metadata?: DefinedModMetadata;
+
+    factory?: ModFactory;
 
     async fetch() {
         if (this.state.builtin) {

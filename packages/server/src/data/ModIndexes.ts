@@ -1,5 +1,5 @@
-import { getNamespace, praseNamespace } from '../utils.ts';
 import { SEASConfigData } from '../utils/SEASConfigData.ts';
+import { getNamespace, praseNamespace } from '../utils/index.ts';
 
 export interface ModState {
     enable: boolean;

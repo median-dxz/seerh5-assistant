@@ -1,14 +1,16 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.common.json",
   "compilerOptions": {
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "target": "es2022",
     "noEmit": true,
+    "strict": true,
     "skipLibCheck": false,
+    "tsBuildInfoFile": "../../.tsbuildinfo/mod-type.tsbuildinfo",
     "types": ["@sea/core/types/seerh5", "@sea/core/types/egret"]
   },
-  "include": ["./index.d.ts"],
+  "include": ["index.ts"],
   "references": [
     {
       "path": "../core"

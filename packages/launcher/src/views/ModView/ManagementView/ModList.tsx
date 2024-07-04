@@ -59,16 +59,16 @@ export function ModListItem({ mod }: ModListItemProps) {
                 </Typography>
             )}
             <Typography component="span" color="GrayText" sx={{ float: 'right' }} fontSize={16}>
-                {mod.strategy.length ? `策略: ${mod.strategy.length}` : ''}
+                {mod.strategies.length ? `策略: ${mod.strategies.length}` : ''}
             </Typography>
             <Typography component="span" color="GrayText" sx={{ float: 'right' }} fontSize={16}>
-                {mod.battle.length ? `战斗: ${mod.battle.length}` : ''}
+                {mod.battles.length ? `战斗: ${mod.battles.length}` : ''}
             </Typography>
             <Typography component="span" color="GrayText" sx={{ float: 'right' }} fontSize={16}>
-                {mod.level.length ? `关卡: ${mod.level.length}` : ''}
+                {mod.tasks.length ? `关卡: ${mod.tasks.length}` : ''}
             </Typography>
             <Typography component="span" color="GrayText" sx={{ float: 'right' }} fontSize={16}>
-                {mod.command.length ? `命令: ${mod.command.length}` : ''}
+                {mod.commands.length ? `命令: ${mod.commands.length}` : ''}
             </Typography>
         </>
     );

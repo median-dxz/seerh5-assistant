@@ -1,15 +1,13 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.common.json",
   "compilerOptions": {
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "target": "es2022",
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     "noEmit": true,
-    "incremental": true,
     "tsBuildInfoFile": "../../.tsbuildinfo/server.tsbuildinfo",
-    "composite": true
+    "lib": ["ESNext"]
   },
   "include": ["src"],
   "ts-node": {
@@ -20,6 +18,7 @@
     "swc": true,
     "esm": true,
     "compilerOptions": {
+      "target": "ESNext",
       "esModuleInterop": true,
       "importsNotUsedAsValues": "error"
     }

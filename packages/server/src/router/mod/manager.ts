@@ -1,18 +1,10 @@
 import path from 'path';
 
-import type { DataObject } from '@sea/mod-type';
 import { modIndexes, type ModState } from '../../data/ModIndexes.ts';
 import { configsRoot, modsRoot } from '../../paths.ts';
-import { getNamespace } from '../../utils.ts';
 import { SEASConfigData } from '../../utils/SEASConfigData.ts';
-
-export interface ModInstallOptions {
-    builtin?: boolean;
-    preload?: boolean;
-    update?: boolean;
-    config?: DataObject;
-    data?: DataObject;
-}
+import { getNamespace } from '../../utils/index.ts';
+import type { ModInstallOptions } from './schemas.ts';
 
 export const ModManager = {
     root: '.',

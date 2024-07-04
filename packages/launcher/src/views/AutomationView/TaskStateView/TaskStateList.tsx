@@ -32,7 +32,6 @@ import Pending from '@mui/icons-material/PendingOutlined';
 import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 import RestartAlt from '@mui/icons-material/RestartAltRounded';
 import Stop from '@mui/icons-material/StopOutlined';
-import type { TaskRunner } from '@sea/mod-type';
 
 const StatusIconMap = {
     pending: <Pending fontSize="inherit" />,

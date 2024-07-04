@@ -2,7 +2,7 @@ import { delay } from '../../common/utils.js';
 import { engine } from '../../internal/index.js';
 import { spet } from '../../pet-helper/index.js';
 import { manager } from '../manager.js';
-import type { ILevelRunner } from './types.js';
+import type { LevelRunner } from './types.js';
 
 export const LevelAction = {
     BATTLE: 'battle' as const,
@@ -11,7 +11,7 @@ export const LevelAction = {
 };
 
 class LevelManager {
-    private runner: ILevelRunner | null = null;
+    private runner: LevelRunner | null = null;
     lock: Promise<void> | null = null;
 
     get running() {
@@ -19,7 +19,7 @@ class LevelManager {
     }
 
     /** 获取当前正在运行的Runner */
-    getRunner(): ILevelRunner | null {
+    getRunner(): LevelRunner | null {
         return this.runner;
     }
 
@@ -36,7 +36,7 @@ class LevelManager {
         }
     }
 
-    run(runner: ILevelRunner) {
+    run(runner: LevelRunner) {
         if (this.running) throw new Error('你必须先停止当前Runner的运行!');
 
         this.runner = runner;
@@ -68,10 +68,10 @@ class LevelManager {
                 logger('进入对战');
                 try {
                     if (!this.runner) throw new Error('关卡已停止运行');
-                    if (!runner.actions.battle) throw new Error('未找指定battle动作');
 
                     await manager.takeover(() => {
-                        void runner.actions.battle!.call(runner);
+                        if (!runner.actions['battle']) throw new Error('未指定战斗动作');
+                        void runner.actions['battle'].call(runner);
                     }, strategy);
 
                     logger('对战完成');

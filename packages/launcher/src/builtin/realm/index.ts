@@ -1,6 +1,7 @@
 import { MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
-import { NOOP, delay, type ILevelBattle, type ILevelRunner } from '@sea/core';
-import type { LevelData, LevelMeta, SEAModContext, SEAModExport, SEAModMetadata, TaskRunner } from '@sea/mod-type';
+import { delay, NOOP } from '@sea/core';
+import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
+import { task } from '@sea/mod-type';
 import LevelCourageTower from './LevelCourageTower';
 import LevelElfKingsTrial from './LevelElfKingsTrial';
 import LevelExpTraining from './LevelExpTraining';
@@ -13,126 +14,49 @@ export const metadata = {
     scope: MOD_SCOPE_BUILTIN,
     version: VERSION,
     description: '日常关卡',
-    configSchema: {
-        'LevelElfKingsTrial.elfKing': {
-            name: '精灵王',
-            type: 'select',
-            description: '自动日任要挑战的精灵王',
-            default: '15',
-            list: {
-                光王斯嘉丽: '2',
-                水王沧岚: '8',
-                自然王莫妮卡: '17',
-                龙妈乔特鲁德: '6',
-                草王茉蕊儿: '15',
-                海瑟薇: '12',
-                邪灵王摩哥斯: '14',
-                格劳瑞: '9',
-                战王: '13',
-                秘王: '7'
-            }
-        },
-        'LevelElfKingsTrial.elfKingStimulation': {
-            name: '精灵王双倍',
-            type: 'checkbox',
-            default: false
-        },
-        'LevelElfKingsTrial.sweep': {
-            name: '精灵王扫荡',
-            type: 'checkbox',
-            default: false
-        },
-        'LevelCourageTower.stimulation': {
-            name: '勇者之塔双倍',
-            type: 'checkbox',
-            default: false
-        },
-        'LevelCourageTower.sweep': {
-            name: '勇者之塔扫荡',
-            type: 'checkbox',
-            default: false
-        },
-        'LevelExpTraining.stimulation': {
-            name: '经验双倍',
-            type: 'checkbox',
-            default: false
-        },
-        'LevelExpTraining.sweep': {
-            name: '经验扫荡',
-            type: 'checkbox',
-            default: false
-        },
-        'LevelStudyTraining.stimulation': {
-            name: '学习力双倍',
-            type: 'checkbox',
-            default: false
-        },
-        'LevelStudyTraining.sweep': {
-            name: '学习力扫荡',
-            type: 'checkbox',
-            default: false
-        },
-        'LevelTitanHole.stimulation': {
-            name: '泰坦矿洞双倍',
-            type: 'checkbox',
-            default: false
-        },
-        'LevelTitanHole.sweep': {
-            name: '泰坦矿洞扫荡',
-            type: 'checkbox',
-            default: false
-        },
-        'LevelXTeamRoom.sweep': {
-            name: 'X战队扫荡',
-            type: 'checkbox',
-            default: false
-        }
-    }
+    configSchema: {}
 } satisfies SEAModMetadata;
 
 export default function realm({ logger, battle }: SEAModContext<typeof metadata>) {
     return {
         tasks: [
-            LevelCourageTower(logger, battle),
             LevelElfKingsTrial(logger, battle),
+            LevelCourageTower(logger, battle),
             LevelExpTraining(logger, battle),
             LevelStudyTraining(logger, battle),
             LevelTitanHole(logger, battle),
             LevelXTeamRoom(logger, battle),
-            class Test implements TaskRunner {
-                async update() {
-                    // empty
+            task({
+                meta: { id: 'Test', name: '测试', maxTimes: 1 },
+                runner() {
+                    return {
+                        data: {
+                            progress: 0,
+                            remainingTimes: 0,
+                            customField: 'string'
+                        },
+                        selectLevelBattle() {
+                            return battle('');
+                        },
+                        async update() {
+                            await Promise.resolve(this.data.customField + '1');
+                        },
+                        logger: NOOP,
+                        next() {
+                            if (this.data.progress === 3) {
+                                return 'stop';
+                            }
+                            return 'run';
+                        },
+                        actions: {
+                            async run() {
+                                this.data.customField = 'custom';
+                                await delay(3000);
+                            }
+                        }
+                    };
                 }
-                static readonly meta: LevelMeta = {
-                    id: 'Test',
-                    name: '测试',
-                    maxTimes: 1
-                };
-                get meta(): LevelMeta {
-                    return Test.meta;
-                }
-                get name(): string {
-                    return Test.meta.name;
-                }
-                data: LevelData = { remainingTimes: 0, progress: 0 };
-                actions: Record<string, <T extends object, R extends ILevelRunner<T>>(this: R) => Promise<void>> = {
-                    run: async () => {
-                        this.data.progress++;
-                        await delay(3000);
-                    }
-                };
-
-                next(): string {
-                    if (this.data.progress === 3) {
-                        return 'stop';
-                    }
-                    return 'run';
-                }
-                selectLevelBattle?(): ILevelBattle {
-                    return battle('');
-                }
-                logger = NOOP;
-            }
+            })
         ] as const
     } satisfies SEAModExport;
 }

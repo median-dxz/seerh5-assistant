@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "es2022",
+    "target": "esnext",
+    "moduleResolution": "bundler",
+    "lib": ["esnext", "dom"],
+    "allowUmdGlobalAccess": true,
+    "resolveJsonModule": true,
+    "checkJs": true,
+    "noEmit": true,
+    "typeRoots": ["../node_modules/@types", "../types"]
+  },
+  "include": ["suites/**/*", "env/**/*"],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
+}

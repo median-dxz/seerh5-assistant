@@ -21,7 +21,6 @@ export default tsEslint.config(
             '**/\\.*rc',
             '**/*.config.*',
             'packages/core/types/',
-            'packages/launcher/core-e2e-test/',
             'packages/launcher/build-plugins/',
             'packages/server/entry/',
             'packages/server/mods/',

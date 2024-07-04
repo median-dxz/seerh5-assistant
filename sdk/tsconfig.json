@@ -11,7 +11,7 @@
     "skipLibCheck": true,
     "noEmit": true,
     "strict": true,
-    "lib": ["esnext", "dom"],
+    "lib": ["ESNext", "DOM"],
     "types": ["vite/client", "@sea/core/types/seerh5", "@sea/core/types/egret"],
     "paths": {
       "@/*": ["./mods/*"]

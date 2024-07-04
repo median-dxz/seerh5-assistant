@@ -3,6 +3,8 @@
 
 当前更新内容 模组安装与管理（2024.6）
 
+- [ ] https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-5.html#the-configdir-template-variable-for-configuration-files
+- [ ] 升级sdk的ts版本
 - [ ] 验证第五和魂印判断的正确性
 - [ ] sdk 中 core 版本兼容性检测, 添加 core 版本字段(必填), 并规范 launcher 的 core 实例和 sdk 使用的 api 之间的关系
   - [ ] 需要一次性提供 Launcher Api 版本，Core 版本和自身版本

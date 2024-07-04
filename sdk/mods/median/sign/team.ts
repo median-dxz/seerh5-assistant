@@ -1,6 +1,6 @@
-import { LevelAction, socket, type ILevelRunner } from '@sea/core';
-import type { LevelData, LevelMeta, Task, TaskRunner } from '@sea/mod-type';
-import { SignBase } from './SignBase';
+import { LevelAction, socket } from '@sea/core';
+import { task } from '@sea/mod-type';
+import { data, signBase } from './SignBase';
 
 const MULTI_QUERY = {
     资源生产次数: 12470,
@@ -15,56 +15,61 @@ declare class MainManager {
     };
 }
 
-export const teamSign = (exchangeId: number) =>
-    [
-        class ProductResource extends SignBase implements TaskRunner {
-            static readonly meta: LevelMeta = {
-                id: 'ProductResource',
-                name: '生产资源',
-                maxTimes: 5
-            };
+const EXCHANGE_LIST = {
+    不灭能量珠: '10',
+    愤怒珠子: '9',
+    战队加成遗忘药: '8',
+    特防珠: '6',
+    防御珠: '5',
+    特攻珠: '4',
+    攻击珠: '3'
+};
 
-            maxTimes = 5;
-
-            get meta(): LevelMeta {
-                return { ...ProductResource.meta, maxTimes: this.maxTimes };
-            }
-
-            actions: Record<string, (this: ILevelRunner<LevelData>) => Promise<void>> = {
+export const teamSign = [
+    task({
+        meta: {
+            id: 'ProductResource',
+            name: '生产资源',
+            maxTimes: 5
+        },
+        runner: (meta) => ({
+            ...signBase,
+            data: { ...data },
+            async update() {
+                if (MainManager.actorInfo.teamInfo && MainManager.actorInfo.teamInfo.id > 0) {
+                    const times = (await socket.multiValue(MULTI_QUERY.资源生产次数))[0];
+                    this.data.remainingTimes = meta.maxTimes - times;
+                } else {
+                    this.data.remainingTimes = meta.maxTimes = 0;
+                }
+            },
+            actions: {
                 [LevelAction.AWARD]: async () => {
                     await socket.sendByQueue(CommandID.RES_PRODUCTORBUY, [2, 0]);
                 }
-            };
+            }
+        })
+    }),
 
-            async update(): Promise<void> {
-                if (MainManager.actorInfo.teamInfo && MainManager.actorInfo.teamInfo.id > 0) {
-                    const times = (await socket.multiValue(MULTI_QUERY.资源生产次数))[0];
-                    this.data.remainingTimes = this.maxTimes - times;
-                } else {
-                    this.data.remainingTimes = this.maxTimes = 0;
-                }
+    task({
+        meta: {
+            id: 'ExchangeItem',
+            name: '兑换道具',
+            maxTimes: 3
+        },
+        configSchema: {
+            exchangeId: {
+                name: '战队兑换',
+                type: 'select',
+                description: '在战队商店中兑换的物品',
+                default: '10',
+                list: EXCHANGE_LIST
             }
         },
-        class ExchangeItem extends SignBase implements TaskRunner {
-            static readonly meta: LevelMeta = {
-                id: 'ExchangeItem',
-                name: '兑换道具',
-                maxTimes: 3
-            };
-
-            maxTimes = 3;
-
-            get meta(): LevelMeta {
-                return { ...ExchangeItem.meta, maxTimes: this.maxTimes };
-            }
-
-            actions: Record<string, (this: ILevelRunner<LevelData>) => Promise<void>> = {
-                [LevelAction.AWARD]: async () => {
-                    await socket.sendByQueue(CommandID.NEW_TEAM_EXCHANGE_ITEMS, [1, exchangeId]);
-                }
-            };
-
-            async update(): Promise<void> {
+        runner: (meta, options) => ({
+            ...signBase,
+            data: { ...data },
+            async update() {
                 if (MainManager.actorInfo.teamInfo && MainManager.actorInfo.teamInfo.id > 0) {
                     const times = (await socket.multiValue(MULTI_QUERY.道具兑换次数))[0];
                     const open = await socket.sendByQueue(CommandID.GET_TEAM_DEVICE_STATUS, [1, 2]).then((buf) => {
@@ -73,8 +78,14 @@ export const teamSign = (exchangeId: number) =>
                     });
                     this.data.remainingTimes = open ? 3 - times : 0;
                 } else {
-                    this.data.remainingTimes = this.maxTimes = 0;
+                    this.data.remainingTimes = meta.maxTimes = 0;
+                }
+            },
+            actions: {
+                [LevelAction.AWARD]: async () => {
+                    await socket.sendByQueue(CommandID.NEW_TEAM_EXCHANGE_ITEMS, [1, Number(options.exchangeId)]);
                 }
             }
-        }
-    ] satisfies Task[];
+        })
+    })
+];

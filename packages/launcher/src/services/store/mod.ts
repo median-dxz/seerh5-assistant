@@ -1,28 +1,26 @@
-import type { Battle, Command, SEAModExport, SEAModMetadata, Strategy, Task } from '@sea/mod-type';
+import type { Battle, Command, SEAModExport, Strategy, Task } from '@sea/mod-type';
 
 import { type AnyFunction } from '@sea/core';
-import { getNamespace } from '../mod/metadata';
+import { getNamespace, type DefinedModMetadata } from '../mod/metadata';
 import * as battleStore from './battle';
 import * as commandStore from './command';
 import * as strategyStore from './strategy';
 import * as taskStore from './task';
 
 export class ModInstance {
-    meta: SEAModMetadata & {
-        namespace: string;
-    };
-
     finalizers: AnyFunction[] = [];
 
-    strategy: string[] = [];
-    battle: string[] = [];
-    level: string[] = [];
-    command: string[] = [];
+    strategies: string[] = [];
+    battles: string[] = [];
+    tasks: string[] = [];
+    commands: string[] = [];
 
-    constructor(meta: SEAModMetadata, { battles, commands, install, strategies, tasks, uninstall }: SEAModExport) {
-        this.meta = { ...meta, namespace: getNamespace(meta) };
+    constructor(
+        public meta: DefinedModMetadata,
+        { battles, commands, install, strategies, tasks, uninstall }: SEAModExport
+    ) {
         // 加载导出的内容
-        this.tryRegisterStrategy(strategies);
+        this.tryRegisterStrategies(strategies);
         this.tryRegisterBattle(battles);
         this.tryRegisterTask(tasks);
         this.tryRegisterCommand(commands);
@@ -33,64 +31,78 @@ export class ModInstance {
         uninstall && this.addFinalizer(uninstall);
     }
 
+    get namespace() {
+        return getNamespace(this.meta);
+    }
+
     addFinalizer(finalizer: AnyFunction) {
         this.finalizers.push(finalizer);
     }
 
-    private tryRegisterStrategy(strategy?: Strategy[]) {
-        if (!strategy) return;
+    private tryRegisterStrategies(strategies?: Strategy[]) {
+        if (!strategies) return;
 
-        strategy.forEach((strategy) => {
-            strategyStore.add(this.meta.namespace, strategy);
-            this.strategy.push(strategy.name);
+        strategies.forEach((strategy) => {
+            strategyStore.add(this.namespace, strategy);
+            this.strategies.push(strategy.name);
         });
 
         this.finalizers.push(() => {
-            this.strategy.forEach((name) => strategyStore.tryRemove(name));
+            this.strategies.forEach((name) => {
+                strategyStore.tryRemove(name);
+            });
         });
     }
 
-    private tryRegisterBattle(battle?: Battle[]) {
-        if (!battle) return;
+    private tryRegisterBattle(battles?: Battle[]) {
+        if (!battles) return;
 
-        battle.forEach((battle) => {
-            battleStore.add(this.meta.namespace, battle);
-            this.battle.push(battle.name);
+        battles.forEach((battle) => {
+            battleStore.add(this.namespace, battle);
+            this.battles.push(battle.name);
         });
 
         this.finalizers.push(() => {
-            this.battle.forEach((name) => battleStore.tryRemove(name));
+            this.battles.forEach((name) => {
+                battleStore.tryRemove(name);
+            });
         });
     }
 
-    private tryRegisterTask(level?: Task[]) {
-        if (!level) return;
+    private tryRegisterTask(tasks?: Task[]) {
+        if (!tasks) return;
 
-        level.forEach((level) => {
-            taskStore.add(this.meta.namespace, level);
-            this.level.push(level.meta.name);
+        tasks.forEach((task) => {
+            taskStore.add(this.namespace, task);
+            this.tasks.push(task.meta.name);
         });
 
         this.finalizers.push(() => {
-            this.level.forEach((name) => taskStore.tryRemove(name));
+            this.tasks.forEach((name) => {
+                taskStore.tryRemove(name);
+            });
         });
     }
 
-    private tryRegisterCommand(command?: Command[]) {
-        if (!command) return;
+    private tryRegisterCommand(commands?: Command[]) {
+        if (!commands) return;
 
-        command.forEach((command) => {
-            commandStore.add(this.meta.namespace, command);
-            this.command.push(command.name);
+        commands.forEach((command) => {
+            commandStore.add(this.namespace, command);
+            this.commands.push(command.name);
         });
 
         this.finalizers.push(() => {
-            this.command.forEach((name) => commandStore.tryRemove(name));
+            this.commands.forEach((name) => {
+                commandStore.tryRemove(name);
+            });
         });
     }
 
     dispose() {
-        this.finalizers.forEach((finalizer) => finalizer());
+        this.finalizers.forEach((finalizer) => {
+            finalizer();
+        });
     }
 }
 
@@ -103,11 +115,11 @@ export function teardown() {
             return;
         }
         try {
-            store.delete(mod.meta.namespace);
+            store.delete(mod.namespace);
             mod.dispose();
-            console.log(`卸载模组: ${mod.meta.namespace}`);
+            console.log(`卸载模组: ${mod.namespace}`);
         } catch (error) {
-            console.error(`模组卸载失败: ${mod.meta.namespace}`, error);
+            console.error(`模组卸载失败: ${mod.namespace}`, error);
         }
     });
 }

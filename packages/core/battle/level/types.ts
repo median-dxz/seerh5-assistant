@@ -1,14 +1,8 @@
-import type { AnyFunction } from 'index.js';
+import type { AnyFunction } from '../../common/utils.js';
 import type { MoveStrategy } from '../strategy.js';
 
 /** 关卡状态机, 由LevelManager来运行 */
-export interface ILevelRunner<TData extends object = object> {
-    /** 关卡的动态数据 */
-    data: TData;
-
-    /** 关卡能做出的动作 */
-    actions: Record<string, (<T extends TData, R extends ILevelRunner<T>>(this: R) => Promise<void>) | undefined>;
-
+export interface LevelRunner {
     /** 更新关卡动态数据 */
     update(): Promise<void>;
 
@@ -16,13 +10,16 @@ export interface ILevelRunner<TData extends object = object> {
     next(): string;
 
     /** 选择对战模型 */
-    selectLevelBattle?(): ILevelBattle;
+    selectLevelBattle?(): LevelBattle;
 
     logger: AnyFunction;
+
+    /** 关卡能做出的动作 */
+    actions: Record<string, (() => Promise<void> | void) | undefined> & ThisType<LevelRunner>;
 }
 
 /** 对战模型 */
-export interface ILevelBattle {
+export interface LevelBattle {
     /** 行动策略 */
     strategy: MoveStrategy;
     /** 精灵列表 */

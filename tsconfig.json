@@ -1,27 +1,18 @@
 {
-  "compilerOptions": {
-    "target": "es2022",
-    "strict": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "skipLibCheck": true,
-    "verbatimModuleSyntax": true,
-    "forceConsistentCasingInFileNames": true,
-    "lib": ["esnext", "dom"]
-  },
-  "include": [],
+  "extends": "./tsconfig.common.json",
+  "files": [],
   "references": [
     {
-      "path": "packages/server/tsconfig.json"
+      "path": "./packages/core/tsconfig.json"
     },
     {
-      "path": "packages/launcher/tsconfig.json"
+      "path": "./packages/server/tsconfig.json"
     },
     {
-      "path": "packages/core/tsconfig.json"
+      "path": "./packages/launcher/tsconfig.json"
     },
     {
-      "path": "packages/mod-type/tsconfig.json"
+      "path": "./packages/mod-type/tsconfig.json"
     }
   ]
 }

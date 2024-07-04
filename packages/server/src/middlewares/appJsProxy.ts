@@ -17,7 +17,7 @@ export const createAppJsProxy: FastifyPluginCallback = (fastify, _opts, done) =>
             async function fetcher(url: URL, modifier: (script: string) => string) {
                 // console.log(`[Proxy]: --> ${url}`);
                 return fetch(url, {
-                    headers: request.headers as HeadersInit,
+                    headers: request.headers as RequestInit['headers'],
                     referrer: 'http://seerh5.61.com/'
                 })
                     .then(async (r) => {

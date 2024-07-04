@@ -1,22 +1,12 @@
 import { LevelAction, NOOP } from '@sea/core';
-import type { LevelData, LevelMeta } from '@sea/mod-type';
+import type { LevelData } from '@sea/mod-type';
 
-export class SignBase {
-    get meta() {
-        return {} as LevelMeta;
-    }
+export const signBase = {
+    next: () => LevelAction.AWARD,
+    logger: NOOP
+};
 
-    get name() {
-        return this.meta.name;
-    }
-
-    data: LevelData = {
-        progress: 0,
-        remainingTimes: 0
-    };
-
-    next() {
-        return LevelAction.AWARD;
-    }
-    logger = NOOP;
-}
+export const data: LevelData = {
+    remainingTimes: 0,
+    progress: 0
+};

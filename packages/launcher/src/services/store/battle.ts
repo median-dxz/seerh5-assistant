@@ -1,4 +1,4 @@
-import type { ILevelBattle } from '@sea/core';
+import type { LevelBattle } from '@sea/core';
 
 import type { Battle } from '@sea/mod-type';
 import { ctByName } from './CatchTimeBinding';
@@ -6,7 +6,7 @@ import { store as strategyStore } from './strategy';
 
 export interface BattleInstance {
     name: string;
-    battle: () => ILevelBattle;
+    battle: () => LevelBattle;
     ownerMod: string;
     pets: string[];
     strategy: string;

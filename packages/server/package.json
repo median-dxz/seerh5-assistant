@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@fastify/cors": "^9.0.1",
-    "@fastify/env": "^4.3.0",
+    "@fastify/env": "^4.4.0",
     "@fastify/middie": "^8.3.1",
     "@fastify/multipart": "^8.3.0",
     "@fastify/one-line-logger": "^1.4.0",
@@ -27,7 +27,7 @@
     "@fastify/websocket": "^10.0.1",
     "@trpc/server": "11.0.0-rc.417",
     "close-with-grace": "^1.3.0",
-    "fastify": "^4.28.0",
+    "fastify": "^4.28.1",
     "fastify-type-provider-zod": "^2.0.0",
     "http-proxy-middleware": "3.0.0",
     "rotating-file-stream": "^3.2.3",
@@ -35,8 +35,8 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@sea/mod-type": "workspace:*",
-    "@swc/core": "^1.6.3",
+    "@swc/core": "^1.6.6",
+    "@types/node": "^20.14.9",
     "@yao-pkg/pkg": "^5.12.0",
     "esbuild": "0.21.5",
     "form-data": "^4.0.0",

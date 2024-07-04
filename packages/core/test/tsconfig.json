@@ -6,5 +6,10 @@
     "baseUrl": ".",
     "noEmit": true
   },
-  "include": ["./**/*.ts", "../types"]
+  "include": ["./**/*.ts", "../types"],
+  "references": [
+    {
+      "path": "../"
+    }
+  ]
 }

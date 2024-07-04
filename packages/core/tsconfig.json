@@ -1,8 +1,7 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.common.json",
   "compilerOptions": {
-    "module": "NodeNext",
-    "target": "es2022",
+    "module": "nodenext",
     "outDir": "dist",
     "rootDir": ".",
     "baseUrl": ".",
@@ -10,10 +9,8 @@
     "declaration": true,
     "inlineSourceMap": true,
     "declarationMap": true,
-    "incremental": true,
-    "composite": true,
+    "lib": ["ESNext", "DOM"]
     // "skipLibCheck": false,
-    "types": []
   },
   "include": [
     "./types",

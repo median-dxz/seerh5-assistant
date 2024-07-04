@@ -1,5 +1,5 @@
 import fastifyMultipart from '@fastify/multipart';
-import type { DataObject } from '@sea/mod-type';
+import type { DataObject } from './schemas.ts';
 import type { FastifyPluginAsync } from 'fastify';
 import { serializerCompiler, validatorCompiler, type ZodTypeProvider } from 'fastify-type-provider-zod';
 import { createWriteStream } from 'node:fs';
