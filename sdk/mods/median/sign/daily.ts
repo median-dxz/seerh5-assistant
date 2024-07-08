@@ -12,7 +12,7 @@ const MULTI_QUERY = {
 
 export const daily = [
     task({
-        meta: { maxTimes: 1, id: 'MarkDraw', name: '刻印抽奖' },
+        metadata: { maxTimes: 1, id: 'MarkDraw', name: '刻印抽奖' },
         runner(meta) {
             return {
                 ...signBase,
@@ -29,7 +29,7 @@ export const daily = [
         }
     }),
     task({
-        meta: { id: 'WishBottle', maxTimes: 10, name: '许愿' },
+        metadata: { id: 'WishBottle', maxTimes: 10, name: '许愿' },
         runner(meta) {
             return {
                 ...signBase,
@@ -72,7 +72,7 @@ export const daily = [
         }
     }),
     task({
-        meta: { id: 'WishSign', maxTimes: 1, name: '许愿签到' },
+        metadata: { id: 'WishSign', maxTimes: 1, name: '许愿签到' },
         runner(meta) {
             return {
                 ...signBase,

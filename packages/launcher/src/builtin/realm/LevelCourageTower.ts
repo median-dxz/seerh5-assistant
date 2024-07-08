@@ -11,7 +11,7 @@ export interface Data extends LevelData {
 
 export default (logger: AnyFunction, battle: (name: string) => LevelBattle) =>
     task({
-        meta: {
+        metadata: {
             name: '勇者之塔',
             maxTimes: 5,
             id: 'LevelCourageTower'

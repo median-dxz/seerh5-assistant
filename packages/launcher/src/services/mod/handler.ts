@@ -31,7 +31,7 @@ export async function createModContext(metadata: SEAModMetadata) {
     const data = await getModData(meta);
     const config = await getModConfig(meta);
 
-    return { meta, logger, ct, battle, ...data, ...config } as SEAModContext<SEAModMetadata>;
+    return { meta, logger, ct, battle, ...data, ...config } as SEAModContext<DefinedModMetadata>;
 }
 
 class ModDeploymentHandler {
@@ -73,7 +73,7 @@ class ModDeploymentHandler {
                     });
                     break;
                 case 'PetFragmentLevel':
-                    await import('@/builtin/petFragment/petFragment').then(({ default: factory, metadata }) => {
+                    await import('@/builtin/petFragment').then(({ default: factory, metadata }) => {
                         this.factory = factory as ModFactory;
                         this.metadata = buildMetadata(metadata);
                     });
@@ -106,7 +106,7 @@ class ModDeploymentHandler {
         try {
             const context = await createModContext(this.metadata);
             const exports = await this.factory(context);
-            const ins = new ModInstance(this.metadata, exports);
+            const ins = new ModInstance(context, exports);
             store.set(namespace, ins);
             console.log(`模组: ${namespace} 部署成功`);
         } catch (err) {

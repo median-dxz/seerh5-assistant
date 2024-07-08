@@ -19,7 +19,7 @@ export interface Meta extends LevelMeta {
 
 export default (logger: AnyFunction, battle: (name: string) => LevelBattle) =>
     task({
-        meta: {
+        metadata: {
             id: 'LevelTitanHole',
             name: '泰坦矿洞',
             maxTimes: 2,
@@ -109,7 +109,7 @@ export default (logger: AnyFunction, battle: (name: string) => LevelBattle) =>
                     await socket.sendByQueue(42395, [104, 1, 3, 0]);
                 },
                 async sweep() {
-                    // TODO
+                    await socket.sendByQueue(42395, [104, 6, 3, 0]);
                 }
             }
         })

@@ -17,7 +17,7 @@ export class HookedSymbol {
 export function delay(time: number): Promise<void> {
     return new Promise((resolver) => setTimeout(resolver, time));
 }
-/** 去抖 所有小于指定间隔的调用只会响应最后一个 */
+/** 去抖 所有小于指定间隔的调用只会在最后一个超时后响应 */
 export function debounce<F extends AnyFunction>(func: F, time: number) {
     let timer: number | undefined;
     return function (this: unknown, ...args: Parameters<F>) {

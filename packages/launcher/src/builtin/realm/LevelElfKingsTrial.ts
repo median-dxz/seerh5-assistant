@@ -52,7 +52,7 @@ export default (logger: AnyFunction, battle: (name: string) => LevelBattle) => {
     } satisfies SEAConfigSchema;
 
     return task({
-        meta,
+        metadata: meta,
         configSchema,
         runner: (meta, options) => {
             const elfKingId = Number(options.elfKingId);

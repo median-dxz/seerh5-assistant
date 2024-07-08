@@ -90,17 +90,13 @@ export const LocationTransformTable: {
     Storage: {
         async Default(ct) {
             if (PetManager.isBagFull) return false;
-            return new Promise((res) => {
-                PetManager.storageToBag(ct, res);
-            })
+            return new Promise((res) => PetManager.storageToBag(ct, res))
                 .then(() => PetManager.setDefault(ct))
                 .then(() => true);
         },
         async Bag(ct) {
             if (PetManager.isBagFull) return false;
-            return new Promise((res) => {
-                PetManager.storageToBag(ct, res);
-            }).then(() => true);
+            return new Promise((res) => PetManager.storageToBag(ct, res)).then(() => true);
         },
         async SecondBag(ct) {
             if (PetManager.isSecondBagFull) return false;

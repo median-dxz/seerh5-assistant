@@ -20,10 +20,8 @@ export const metadata = {
     data: { changed: new Map<number, SkinInfo>(), original: new Map<number, number>() }
 } satisfies SEAModMetadata;
 
-export default async function LocalPetSkin({ data, mutate, logger }: SEAModContext<typeof metadata>) {
+export default async function LocalPetSkin({ data: cloth, logger }: SEAModContext<typeof metadata>) {
     function install() {
-        const cloth = data;
-
         Object.defineProperty(FighterUserInfo.prototype, 'petInfoArr', {
             set: function (t) {
                 const skinId = (r: PetInfo) => (this.id == MainManager.actorID ? r.skinId : r._skinId ?? 0);
@@ -74,25 +72,18 @@ export default async function LocalPetSkin({ data, mutate, logger }: SEAModConte
                 if (cloth.original.get(petInfo.id) !== skinId) {
                     await socket.sendByQueue(47310, [catchTime, skinId]);
                 } else {
-                    mutate(({ changed, original }) => {
-                        changed.delete(petInfo.id);
-                        original.delete(petInfo.id);
-                    });
+                    cloth.changed.delete(petInfo.id);
+                    cloth.original.delete(petInfo.id);
                 }
-                mutate(({ changed }) => {
-                    changed.delete(petInfo.id);
-                });
+                cloth.changed.delete(petInfo.id);
             } else {
                 if (!cloth.original.has(petInfo.id)) {
-                    mutate(({ original }) => {
-                        original.set(petInfo.id, petInfo.skinId);
-                    });
+                    cloth.original.set(petInfo.id, petInfo.skinId);
                 }
-                mutate(({ changed }) => {
-                    changed.set(petInfo.id, {
-                        skinId: skinId,
-                        petSkinId: PetSkinXMLInfo.getSkinPetId(skinId, petInfo.id)
-                    });
+
+                cloth.changed.set(petInfo.id, {
+                    skinId: skinId,
+                    petSkinId: PetSkinXMLInfo.getSkinPetId(skinId, petInfo.id)
                 });
             }
             PetManager.dispatchEvent(new PetEvent(PetEvent.EQUIP_SKIN, catchTime, skinId));

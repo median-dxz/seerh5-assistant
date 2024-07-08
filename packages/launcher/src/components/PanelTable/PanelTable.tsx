@@ -2,7 +2,7 @@ import type { TableCellProps, TableProps } from '@mui/material';
 import { Table, TableBody, TableCell, TableHead, TableRow, alpha } from '@mui/material';
 import React from 'react';
 
-import { useCachedReturn } from '@/utils/hooks/useCachedReturn';
+import { useCachedReturn } from '@/shared/hooks';
 import { RowDataContext, RowIndexContext } from './usePanelTableData';
 
 export type PanelColumns = Array<{ field: string; columnName: string } & TableCellProps>;
@@ -20,9 +20,7 @@ export function PanelTable<TData>(props: PanelTableProps<TData>) {
     const { toRowKey, data, columns, rowElement, ...tableProps } = props;
 
     const keyRef = useCachedReturn(data, toRowKey, (r, data) => r ?? JSON.stringify(data));
-    const dataRef = useCachedReturn(data, undefined, (r, data, index) => {
-        return { data, index };
-    });
+    const dataRef = useCachedReturn(data, undefined, (r, data, index) => ({ data, index }));
 
     return (
         <Table size="small" {...tableProps}>

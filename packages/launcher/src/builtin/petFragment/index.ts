@@ -5,47 +5,30 @@ import {
     PetFragmentLevel,
     delay,
     engine,
-    socket,
-    type IPFLevelBoss
+    socket
 } from '@sea/core';
-import type {
-    LevelMeta,
-    LevelData as SEALevelData,
-    SEAModContext,
-    SEAModExport,
-    SEAModMetadata,
-    TaskRunner
-} from '@sea/mod-type';
-import type { IPetFragmentRunner, PetFragmentOption } from './types';
+import type { LevelMeta, SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
+import { task } from '@sea/mod-type';
+import type { IPetFragmentRunner, PetFragmentLevelData, PetFragmentOption } from './types';
 
-interface LevelData extends SEALevelData {
-    pieces: number;
-    failedTimes: number;
-    curDifficulty: Difficulty;
-    curPosition: number;
-    isChallenge: boolean;
-    bosses: IPFLevelBoss[];
-}
+export const PET_FRAGMENT_LEVEL_ID = 'PetFragmentLevel';
 
 export const metadata = {
-    id: 'PetFragmentLevel',
+    id: PET_FRAGMENT_LEVEL_ID,
     scope: MOD_SCOPE_BUILTIN,
     version: VERSION,
-    description: '精灵因子'
+    description: '精灵因子',
+    data: [] as PetFragmentOption[]
 } satisfies SEAModMetadata;
 
-export default function ({ logger, meta }: SEAModContext<typeof metadata>) {
-    class PetFragmentRunner implements TaskRunner<LevelData>, IPetFragmentRunner {
-        static readonly meta: LevelMeta = {
-            maxTimes: 3,
-            name: '精灵因子',
-            id: meta.id
-        };
+export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
+    const taskMetadata: LevelMeta = {
+        maxTimes: 3,
+        name: '精灵因子',
+        id: PET_FRAGMENT_LEVEL_ID
+    };
 
-        get meta() {
-            return PetFragmentRunner.meta;
-        }
-
+    class PetFragmentRunner implements IPetFragmentRunner {
         get name() {
             return `精灵因子-${this.frag.name}`;
         }
@@ -53,32 +36,28 @@ export default function ({ logger, meta }: SEAModContext<typeof metadata>) {
         readonly designId: number;
         readonly frag: PetFragmentLevel;
 
-        data: LevelData;
+        data: PetFragmentLevelData;
         logger = logger;
 
-        constructor(public option: PetFragmentOption) {
-            this.option = option;
-            this.option.battle = this.option.battle.map((strategy) => {
-                const beforeBattle = async () => {
-                    await delay(Math.round(Math.random() * 1000) + 5000);
-                    return strategy.beforeBattle?.();
-                };
-                return { ...strategy, beforeBattle };
-            });
+        constructor(public options: PetFragmentOption) {
+            const LevelObj = engine.getPetFragmentLevelObj(options.id);
 
-            const LevelObj: seerh5.PetFragmentLevelObj = config.xml
-                .getAnyRes('new_super_design')
-                .Root.Design.find((r: seerh5.PetFragmentLevelObj) => r.ID === option.id);
+            if (!LevelObj) throw new Error(`未找到精灵因子关卡: ${options.id}`);
 
             this.frag = new PetFragmentLevel(LevelObj);
             this.designId = this.frag.id;
 
-            this.data = {} as LevelData;
+            this.data = {} as PetFragmentLevelData;
             this.logger = logger.bind(logger, this.name);
         }
 
         selectLevelBattle() {
-            return this.option.battle.at(this.data.curPosition)!;
+            const battleStrategy = battle(this.options.battle.at(this.data.curPosition)!);
+            const beforeBattle = async () => {
+                await delay(Math.round(Math.random() * 1000) + 5000);
+                return battleStrategy.beforeBattle?.();
+            };
+            return { ...battleStrategy, beforeBattle };
         }
 
         async update() {
@@ -87,14 +66,14 @@ export default function ({ logger, meta }: SEAModContext<typeof metadata>) {
 
             data.pieces = await engine.itemNum(frag.petFragmentItem);
 
-            data.remainingTimes = this.meta.maxTimes - values[0];
+            data.remainingTimes = taskMetadata.maxTimes - values[0];
             data.failedTimes = values[1];
             data.curDifficulty = (values[2] >> 8) & 255;
-            if (data.curDifficulty === Difficulty.NotSelected && this.option.difficulty) {
-                data.curDifficulty = this.option.difficulty;
+            if (data.curDifficulty === Difficulty.NotSelected && this.options.difficulty) {
+                data.curDifficulty = this.options.difficulty;
             }
             data.curPosition = values[2] >> 16;
-            data.isChallenge = data.curDifficulty !== 0 && data.curPosition !== 0;
+            data.isChallenge = data.curDifficulty !== Difficulty.NotSelected && data.curPosition !== 0;
             data.progress = (data.curPosition / 5) * 100;
 
             switch (data.curDifficulty) {
@@ -112,10 +91,10 @@ export default function ({ logger, meta }: SEAModContext<typeof metadata>) {
             }
         }
 
-        next(): string {
+        next() {
             const data = this.data;
             if (data.isChallenge || data.remainingTimes > 0) {
-                if (this.option.sweep) {
+                if (this.options.sweep) {
                     return 'sweep';
                 } else {
                     return LevelAction.BATTLE;
@@ -124,7 +103,7 @@ export default function ({ logger, meta }: SEAModContext<typeof metadata>) {
             return LevelAction.STOP;
         }
 
-        readonly actions: Record<string, () => Promise<void>> = {
+        readonly actions = {
             sweep: async () => {
                 await socket.sendByQueue(41283, [this.designId, 4 + this.data.curDifficulty]);
                 this.logger('执行一次扫荡');
@@ -133,7 +112,7 @@ export default function ({ logger, meta }: SEAModContext<typeof metadata>) {
                 const checkData = await socket.sendByQueue(41284, [this.designId, this.data.curDifficulty]);
                 const check = new DataView(checkData!).getUint32(0);
                 if (check === 0) {
-                    socket.sendByQueue(41282, [this.designId, this.data.curDifficulty]);
+                    await socket.sendByQueue(41282, [this.designId, this.data.curDifficulty]);
                 } else {
                     const err = `出战情况不合法: ${check}`;
                     BubblerManager.getInstance().showText(err);
@@ -143,7 +122,16 @@ export default function ({ logger, meta }: SEAModContext<typeof metadata>) {
         };
     }
 
+    const tasks = [
+        task({
+            metadata: taskMetadata,
+            runner(_, options) {
+                return new PetFragmentRunner(options as unknown as PetFragmentOption);
+            }
+        })
+    ];
+
     return {
-        tasks: [PetFragmentRunner]
-    } satisfies SEAModExport;
+        tasks
+    } as SEAModExport;
 }

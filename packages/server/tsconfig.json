@@ -5,11 +5,13 @@
     "moduleResolution": "nodenext",
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
+    "rootDir": ".",
+    "baseUrl": ".",
     "noEmit": true,
     "tsBuildInfoFile": "../../.tsbuildinfo/server.tsbuildinfo",
     "lib": ["ESNext"]
   },
-  "include": ["src"],
+  "include": ["./src"],
   "ts-node": {
     // It is faster to skip typechecking.
     // Remove if you want ts-node to do typechecking.

@@ -20,7 +20,7 @@ declare class MainManager {
 
 export const teamDispatch = (logger: AnyFunction) =>
     task({
-        meta: {
+        metadata: {
             id: 'TeamDispatch',
             name: '战队派遣',
             maxTimes: 1

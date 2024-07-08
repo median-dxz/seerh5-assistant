@@ -27,7 +27,7 @@ const EXCHANGE_LIST = {
 
 export const teamSign = [
     task({
-        meta: {
+        metadata: {
             id: 'ProductResource',
             name: '生产资源',
             maxTimes: 5
@@ -52,7 +52,7 @@ export const teamSign = [
     }),
 
     task({
-        meta: {
+        metadata: {
             id: 'ExchangeItem',
             name: '兑换道具',
             maxTimes: 3

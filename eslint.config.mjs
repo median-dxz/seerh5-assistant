@@ -68,7 +68,18 @@ export default tsEslint.config(
             '@typescript-eslint/dot-notation': ['error', { allowIndexSignaturePropertyAccess: true }],
             '@typescript-eslint/array-type': ['error', { default: 'array-simple' }],
             '@typescript-eslint/no-unnecessary-condition': ['error', { allowConstantLoopConditions: true }],
-            '@typescript-eslint/no-invalid-void-type': ['error', { allowAsThisParameter: true }]
+            '@typescript-eslint/no-invalid-void-type': ['error', { allowAsThisParameter: true }],
+            '@typescript-eslint/no-confusing-void-expression': [
+                'error',
+                { ignoreArrowShorthand: true, ignoreVoidOperator: true }
+            ],
+            '@typescript-eslint/no-misused-promises': [
+                'error',
+                {
+                    checksVoidReturn: false
+                }
+            ],
+            '@typescript-eslint/no-extraneous-class': 'off'
         }
     },
     {
@@ -107,7 +118,8 @@ export default tsEslint.config(
         // @ts-expect-error
         rules: {
             ...reactHooks.configs.recommended.rules,
-            'react-refresh/only-export-components': 'warn'
+            'react-refresh/only-export-components': 'warn',
+            '@typescript-eslint/no-unsafe-assignment': 'warn' // swr 当前版本解构出的 error 只能推导出 any
         }
     },
     // @sea/server
@@ -117,17 +129,6 @@ export default tsEslint.config(
             globals: {
                 ...globals.node
             }
-        },
-        rules: {
-            '@typescript-eslint/no-misused-promises': [
-                'error',
-                {
-                    checksVoidReturn: {
-                        arguments: false,
-                        attributes: false
-                    }
-                }
-            ]
         }
     },
     {

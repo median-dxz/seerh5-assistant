@@ -1,33 +1,41 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { levelManager, SEAEventSource, Subscription } from '@sea/core';
-import type { TaskRunner } from '@sea/mod-type';
+import { dateTime2hhmmss } from '@/shared';
+import { LevelAction, levelManager, SEAEventSource, Subscription } from '@sea/core';
+import type { LevelData, Task } from '@sea/mod-type';
 import { produce } from 'immer';
-import React, { useCallback, useEffect, useReducer, type PropsWithChildren, type Reducer } from 'react';
+import React, { useCallback, useEffect, useReducer, useState, type PropsWithChildren, type Reducer } from 'react';
 import { TaskScheduler, type TaskState } from './useTaskScheduler';
 
-type ActionType = {
-    enqueue: { runner: TaskRunner };
-    dequeue: { runner: TaskRunner };
+interface ActionType {
+    enqueue: { task: Task; runnerId: number; options?: Record<string, unknown> };
+    dequeue: { runnerId: number };
     moveNext: undefined;
     changeRunnerStatus: { status: TaskState['status']; error?: Error };
     changeSchedulerStatus: { status: LevelSchedulerState['status'] };
     addRunnerBattleCount: undefined;
-    logWithRunner: { message: string };
+    addRunnerLog: { message: string };
+    updateRunnerData: { data: LevelData };
     setPause: boolean;
-};
+}
 
-type Action = {
+interface Action {
     type: keyof ActionType;
     payload?: unknown;
-};
+}
 
 type LevelSchedulerState = Pick<TaskScheduler, 'queue' | 'currentIndex' | 'status' | 'isPaused'>;
 
-const reducer: Reducer<LevelSchedulerState, Action> = (state, { type, payload }) => {
-    function enqueue(prev: LevelSchedulerState, payload: ActionType['enqueue']) {
-        return produce(prev, (state) => {
+const reducer: Reducer<LevelSchedulerState, Action> = (prev, { type, payload }) =>
+    produce(prev, (state) => {
+        function enqueue({ task, options, runnerId }: ActionType['enqueue']) {
             const { queue } = state;
-            queue.push({ runner: payload.runner, status: 'pending', logs: [], battleCount: 0 });
+            queue.push({
+                status: 'pending',
+                logs: [],
+                battleCount: 0,
+                options,
+                task,
+                runnerId
+            });
             if (state.currentIndex == undefined) {
                 for (let i = 0; i < queue.length; i++) {
                     if (queue[i].status === 'pending') {
@@ -36,13 +44,11 @@ const reducer: Reducer<LevelSchedulerState, Action> = (state, { type, payload })
                     }
                 }
             }
-        });
-    }
+        }
 
-    function dequeue(prev: LevelSchedulerState, payload: ActionType['dequeue']) {
-        return produce(prev, (state) => {
+        function dequeue(payload: ActionType['dequeue']) {
             const { queue } = state;
-            const index = queue.findIndex((item) => item.runner === payload.runner);
+            const index = queue.findIndex((item) => item.runnerId === payload.runnerId);
             if (index !== -1) {
                 if (state.currentIndex && index < state.currentIndex) {
                     state.currentIndex = state.currentIndex - 1;
@@ -52,11 +58,9 @@ const reducer: Reducer<LevelSchedulerState, Action> = (state, { type, payload })
                     state.currentIndex = undefined;
                 }
             }
-        });
-    }
+        }
 
-    function moveNext(prev: LevelSchedulerState) {
-        return produce(prev, (state) => {
+        function moveNext() {
             if (state.currentIndex == undefined) {
                 return;
             }
@@ -64,11 +68,9 @@ const reducer: Reducer<LevelSchedulerState, Action> = (state, { type, payload })
             if (state.currentIndex >= state.queue.length) {
                 state.currentIndex = undefined;
             }
-        });
-    }
+        }
 
-    function changeRunnerStatus(prev: LevelSchedulerState, payload: ActionType['changeRunnerStatus']) {
-        return produce(prev, (state) => {
+        function changeRunnerState(payload: ActionType['changeRunnerStatus']) {
             const { queue, currentIndex } = state;
             if (currentIndex != undefined) {
                 const item = queue[currentIndex];
@@ -83,127 +85,151 @@ const reducer: Reducer<LevelSchedulerState, Action> = (state, { type, payload })
                     item.endTime = Date.now();
                 }
             }
-        });
-    }
+        }
 
-    function addRunnerBattleCount(prev: LevelSchedulerState) {
-        return produce(prev, (state) => {
+        function addRunnerBattleCount() {
             const { queue, currentIndex } = state;
             if (currentIndex != undefined) {
                 const item = queue[currentIndex];
                 item.battleCount++;
             }
-        });
-    }
+        }
 
-    function logWithRunner(prev: LevelSchedulerState, payload: ActionType['logWithRunner']) {
-        return produce(prev, (state) => {
+        function addRunnerLog(payload: ActionType['addRunnerLog']) {
             const { queue, currentIndex } = state;
             if (currentIndex != undefined) {
                 const item = queue[currentIndex];
-                item.logs.push(payload.message);
+                item.logs.push(`[${dateTime2hhmmss.format(new Date())}] ${payload.message}`);
             }
-        });
-    }
+        }
 
-    function changeSchedulerStatus(prev: LevelSchedulerState, payload: ActionType['changeSchedulerStatus']) {
-        return produce(prev, (state) => {
+        function changeSchedulerState(payload: ActionType['changeSchedulerStatus']) {
             state.status = payload.status;
-        });
-    }
+        }
 
-    function setPaused(prev: LevelSchedulerState, payload: ActionType['setPause']) {
-        return produce(prev, (state) => {
+        function updateRunnerData(payload: ActionType['updateRunnerData']) {
+            const { queue, currentIndex } = state;
+            if (currentIndex != undefined) {
+                const item = queue[currentIndex];
+                item.runnerData = JSON.parse(JSON.stringify(payload.data)) as LevelData;
+            }
+        }
+
+        function setPaused(payload: ActionType['setPause']) {
             state.isPaused = payload;
-        });
-    }
+        }
 
-    switch (type) {
-        case 'enqueue':
-            return enqueue(state, payload as ActionType[typeof type]);
-        case 'dequeue':
-            return dequeue(state, payload as ActionType[typeof type]);
-        case 'moveNext':
-            return moveNext(state);
-        case 'changeRunnerStatus':
-            return changeRunnerStatus(state, payload as ActionType[typeof type]);
-        case 'changeSchedulerStatus':
-            return changeSchedulerStatus(state, payload as ActionType[typeof type]);
-        case 'setPause':
-            return setPaused(state, payload as ActionType[typeof type]);
-        case 'addRunnerBattleCount':
-            return addRunnerBattleCount(state);
-        case 'logWithRunner':
-            return logWithRunner(state, payload as ActionType[typeof type]);
-        default:
-            return state;
-    }
-};
+        switch (type) {
+            case 'enqueue':
+                enqueue(payload as ActionType[typeof type]);
+                break;
+            case 'dequeue':
+                dequeue(payload as ActionType[typeof type]);
+                break;
+            case 'moveNext':
+                moveNext();
+                break;
+            case 'changeRunnerStatus':
+                changeRunnerState(payload as ActionType[typeof type]);
+                break;
+            case 'changeSchedulerStatus':
+                changeSchedulerState(payload as ActionType[typeof type]);
+                break;
+            case 'setPause':
+                setPaused(payload as ActionType[typeof type]);
+                break;
+            case 'addRunnerBattleCount':
+                addRunnerBattleCount();
+                break;
+            case 'addRunnerLog':
+                addRunnerLog(payload as ActionType[typeof type]);
+                break;
+            case 'updateRunnerData':
+                updateRunnerData(payload as ActionType[typeof type]);
+                break;
+            default:
+                break;
+        }
+    });
 
 export const TaskSchedulerProvider = ({ children }: PropsWithChildren<object>) => {
+    const [counter, setCounter] = useState(0);
     const [state, dispatch] = useReducer(reducer, { queue: [], status: 'ready', isPaused: false });
-    // const updateRequest = useRef<boolean>(false);
 
     const changeSchedulerState = useCallback((status: LevelSchedulerState['status']) => {
         dispatch({
             type: 'changeSchedulerStatus',
-            payload: { status } as ActionType['changeSchedulerStatus']
+            payload: { status } satisfies ActionType['changeSchedulerStatus']
         });
     }, []);
 
     const changeRunnerState = useCallback((status: TaskState['status'], error?: Error) => {
         dispatch({
             type: 'changeRunnerStatus',
-            payload: { status, error } as ActionType['changeRunnerStatus']
+            payload: { status, error } satisfies ActionType['changeRunnerStatus']
         });
     }, []);
 
     const tryStartNextRunner = useCallback(() => {
         const { isPaused, queue, status, currentIndex } = state;
-        console.log(`tryStartNextRunner`, levelManager.running, state);
+        console.log(`关卡调度器: [tryStartNextRunner]: `, levelManager.running, state);
         if (isPaused || currentIndex == undefined || status !== 'ready') {
             return;
         }
 
         if (levelManager.running) {
-            console.error(`关卡调度器: 不合理的State: ${state}`);
+            console.error(`关卡调度器: [tryStartNextRunner]: 不合理的State: ${JSON.stringify(state)}`);
             console.error(`LevelManger的上一次运行未释放`);
         }
 
-        changeRunnerState('running');
-        changeSchedulerState('running');
+        const { task, options } = queue[currentIndex];
+        const metadata = task.metadata;
+        const runner = task.runner(metadata, options as undefined);
+        const sub = new Subscription();
 
-        const { runner } = queue[currentIndex];
-
-        // TODO! 在后端日志功能完善后 重新设计该部分
-        runner.logger = new Proxy(runner.logger, {
-            apply(target, thisArg, argArray) {
-                dispatch({ type: 'logWithRunner', payload: { message: argArray[0] } });
-                return Reflect.apply(target, thisArg, argArray);
+        sub.on(SEAEventSource.levelManger('update'), () => {
+            dispatch({
+                type: 'updateRunnerData',
+                payload: { data: runner.data } satisfies ActionType['updateRunnerData']
+            });
+        });
+        sub.on(SEAEventSource.levelManger('nextAction'), (action) => {
+            if (action === 'battle') {
+                dispatch({ type: 'addRunnerBattleCount' });
             }
+        });
+        sub.on(SEAEventSource.levelManger('log'), (message) => {
+            dispatch({ type: 'addRunnerLog', payload: { message } satisfies ActionType['addRunnerLog'] });
         });
 
         levelManager.run(runner);
 
-        const { lock } = levelManager;
+        dispatch({
+            type: 'updateRunnerData',
+            payload: { data: runner.data }
+        });
+        changeRunnerState('running');
+        changeSchedulerState('running');
 
+        const { lock } = levelManager;
         lock!
             .then(() => {
                 changeRunnerState('completed');
             })
-            .catch((e) => {
-                changeRunnerState('error', e);
+            .catch((e: unknown) => {
+                changeRunnerState('error', e as Error);
             })
-            .finally(async () => {
-                try {
-                    await levelManager.stop();
-                } catch (e) {
-                    console.error(e);
+            .finally(() => {
+                if (runner.next() === LevelAction.STOP) {
+                    changeRunnerState('completed');
+                } else {
+                    changeRunnerState('stopped');
                 }
+                sub.dispose();
                 changeSchedulerState('ready');
                 dispatch({ type: 'moveNext' });
             });
-    }, [changeSchedulerState, changeRunnerState, state]);
+    }, [changeRunnerState, changeSchedulerState, state]);
 
     useEffect(() => {
         const { queue, isPaused, status, currentIndex } = state;
@@ -215,58 +241,48 @@ export const TaskSchedulerProvider = ({ children }: PropsWithChildren<object>) =
         }
     });
 
-    useEffect(() => {
-        const sub = new Subscription();
-        sub.on(SEAEventSource.hook('battle:start'), () => {
-            dispatch({ type: 'addRunnerBattleCount' });
-        });
-        return () => sub.dispose();
-    }, []);
-
-    const tryStopCurrentRunner = useCallback(() => {
+    const tryStopCurrentRunner = useCallback(async () => {
         if (state.status !== 'running') {
             return;
         }
         changeSchedulerState('waitingForStop');
-        return levelManager
-            .stop()
-            .catch((err) => {
-                console.error(`停止关卡失败: ${err}`);
-            })
-            .finally(() => {
-                changeSchedulerState('ready');
-                changeRunnerState('stopped');
-            });
-    }, [changeRunnerState, changeSchedulerState, state.status]);
 
-    const handleEnqueue = useCallback((runner: TaskRunner) => {
-        dispatch({ type: 'enqueue', payload: { runner } });
-    }, []);
+        return levelManager.stop().catch((e: unknown) => {
+            if (e instanceof Error) {
+                console.error(`停止关卡失败: ${e.message}`);
+            } else {
+                console.error(`停止关卡失败: ${JSON.stringify(e)}`);
+            }
+        });
+    }, [changeSchedulerState, state.status]);
+
+    const handleEnqueue = useCallback(
+        (task: Task, options?: Record<string, unknown>) => {
+            const runnerId = counter;
+            dispatch({ type: 'enqueue', payload: { task, options, runnerId } satisfies ActionType['enqueue'] });
+            setCounter((counter) => counter + 1);
+        },
+        [counter]
+    );
 
     const handleDequeue = useCallback(
-        async (runner: TaskRunner) => {
-            if (state.queue.findIndex((r) => r.runner === runner) === state.currentIndex) {
+        async (runnerId: number) => {
+            if (state.queue.findIndex((r) => r.runnerId === runnerId) === state.currentIndex) {
                 await tryStopCurrentRunner();
-                dispatch({ type: 'dequeue', payload: { runner } });
-            } else {
-                dispatch({ type: 'dequeue', payload: { runner } });
             }
+            dispatch({ type: 'dequeue', payload: { runnerId } satisfies ActionType['dequeue'] });
         },
         [state, tryStopCurrentRunner]
     );
 
-    const handlePause = useCallback(async () => {
+    const handlePause = useCallback(() => {
         dispatch({ type: 'setPause', payload: true });
-        await tryStopCurrentRunner();
+        void tryStopCurrentRunner();
     }, [tryStopCurrentRunner]);
 
     const handleResume = useCallback(() => {
         dispatch({ type: 'setPause', payload: false });
     }, []);
-
-    const handleStopCurrentRunner = useCallback(async () => {
-        await tryStopCurrentRunner();
-    }, [tryStopCurrentRunner]);
 
     return (
         <TaskScheduler.Provider
@@ -279,7 +295,7 @@ export const TaskSchedulerProvider = ({ children }: PropsWithChildren<object>) =
                 dequeue: handleDequeue,
                 pause: handlePause,
                 resume: handleResume,
-                stopCurrentRunner: handleStopCurrentRunner
+                stopCurrentRunner: tryStopCurrentRunner
             }}
         >
             {children}

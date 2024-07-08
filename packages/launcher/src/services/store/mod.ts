@@ -1,6 +1,9 @@
-import type { Battle, Command, SEAModExport, Strategy, Task } from '@sea/mod-type';
+import { debounce, type AnyFunction } from '@sea/core';
+import type { Battle, Command, SEAModContext, SEAModExport, Strategy, Task } from '@sea/mod-type';
+import { effect, stop, toRaw } from '@vue/reactivity';
 
-import { type AnyFunction } from '@sea/core';
+import { dequal } from 'dequal';
+import * as endpoints from '../endpoints';
 import { getNamespace, type DefinedModMetadata } from '../mod/metadata';
 import * as battleStore from './battle';
 import * as commandStore from './command';
@@ -16,7 +19,7 @@ export class ModInstance {
     commands: string[] = [];
 
     constructor(
-        public meta: DefinedModMetadata,
+        public ctx: SEAModContext<DefinedModMetadata>,
         { battles, commands, install, strategies, tasks, uninstall }: SEAModExport
     ) {
         // 加载导出的内容
@@ -28,11 +31,27 @@ export class ModInstance {
         // 执行副作用
         install && install();
 
+        // 声明data的模组需要注册响应式更新以及清理函数
+        if (ctx.data) {
+            const mutate = debounce(
+                () => void endpoints.mod.setData(ctx.meta.scope, ctx.meta.id, toRaw(ctx.data)!),
+                10000
+            );
+            const effectRunner = effect(() => {
+                dequal(ctx.data, toRaw(ctx.data));
+                mutate();
+            });
+
+            this.addFinalizer(() => {
+                stop(effectRunner);
+            });
+        }
+
         uninstall && this.addFinalizer(uninstall);
     }
 
     get namespace() {
-        return getNamespace(this.meta);
+        return getNamespace(this.ctx.meta);
     }
 
     addFinalizer(finalizer: AnyFunction) {
@@ -74,7 +93,7 @@ export class ModInstance {
 
         tasks.forEach((task) => {
             taskStore.add(this.namespace, task);
-            this.tasks.push(task.meta.name);
+            this.tasks.push(task.metadata.name);
         });
 
         this.finalizers.push(() => {
@@ -110,16 +129,12 @@ export const store = new Map<string, ModInstance>();
 
 export function teardown() {
     store.forEach((mod) => {
-        if (mod.finalizers.length === 0) {
-            // need reload app
-            return;
-        }
         try {
             store.delete(mod.namespace);
             mod.dispose();
-            console.log(`卸载模组: ${mod.namespace}`);
+            console.log(`撤销模组部署: ${mod.namespace}`);
         } catch (error) {
-            console.error(`模组卸载失败: ${mod.namespace}`, error);
+            console.error(`撤销模组部署失败: ${mod.namespace}`, error);
         }
     });
 }

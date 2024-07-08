@@ -1,18 +1,41 @@
 import { PanelField, PanelTable, useRowData, type PanelColumns } from '@/components/PanelTable';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { Button, ButtonGroup, CircularProgress } from '@mui/material';
 
 import { SeaTableRow } from '@/components/styled/TableRow';
+import { MOD_SCOPE_BUILTIN } from '@/constants';
 import { useModStore } from '@/context/useModStore';
+import { getNamespace as ns } from '@/services/mod/metadata';
 import type { TaskInstance } from '@/services/store/task';
+import { useTaskConfig } from '@/services/useTaskConfig';
+import { getTaskCurrentOptions } from '@/shared';
+import type { AnyTask } from '@/shared/types';
 import { LevelAction, delay } from '@sea/core';
-import type { TaskRunner } from '@sea/mod-type';
 import useSWR from 'swr';
 
 export function DailySignView() {
     const { taskStore } = useModStore();
-    const signs = Array.from(taskStore.values()).filter((i) => !(i.task.prototype as TaskRunner).selectLevelBattle);
+    const { data: taskConfig } = useTaskConfig();
+
+    const signs = useMemo(
+        () =>
+            Array.from(taskStore.values()).filter(({ ownerMod, task: _task, id }) => {
+                if (!taskConfig) {
+                    return false;
+                }
+
+                if (ownerMod === ns({ scope: MOD_SCOPE_BUILTIN, id: 'PetFragmentLevel' })) {
+                    return false;
+                }
+
+                const task = _task as AnyTask;
+
+                const runner = task.runner(task.metadata, getTaskCurrentOptions(task, taskConfig.get(id)));
+                return !runner.selectLevelBattle;
+            }),
+        [taskConfig, taskStore]
+    );
 
     const columns: PanelColumns = React.useMemo(
         () => [
@@ -50,14 +73,18 @@ export function DailySignView() {
 
 const PanelRow = () => {
     const ins = useRowData<TaskInstance>();
-    const { ownerMod, name, task: taskClass } = ins;
-    const task = new taskClass();
+    const { ownerMod, name, task: _task } = ins;
+    const task = _task as AnyTask;
+    const runner = task.runner(task.metadata, getTaskCurrentOptions(task));
 
     const { data: state, mutate } = useSWR(
         `ds://mod/sign/${ownerMod}/${name}`,
         async () => {
-            await task.update();
-            return { timesHaveRun: task.meta.maxTimes - task.data.remainingTimes, maxTimes: task.meta.maxTimes };
+            await runner.update();
+            return {
+                timesHaveRun: task.metadata.maxTimes - runner.data.remainingTimes,
+                maxTimes: task.metadata.maxTimes
+            };
         },
         { revalidateOnFocus: false, revalidateOnMount: true }
     );
@@ -75,10 +102,10 @@ const PanelRow = () => {
                         onClick={() => {
                             void (async () => {
                                 console.log(`正在执行${name}`);
-                                await task.update();
-                                while (task.data.remainingTimes > 0) {
-                                    await task.actions[LevelAction.AWARD]?.call(task);
-                                    await delay(50).then(() => task.update());
+                                await runner.update();
+                                while (runner.data.remainingTimes > 0) {
+                                    await runner.actions[LevelAction.AWARD]?.call(task);
+                                    await delay(50).then(() => runner.update());
                                 }
                                 await mutate();
                             })();

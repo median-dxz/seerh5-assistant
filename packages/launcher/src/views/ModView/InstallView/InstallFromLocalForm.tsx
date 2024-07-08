@@ -3,6 +3,7 @@ import { installModFromUrl } from '@/services/mod/install';
 import Close from '@mui/icons-material/Close';
 import CloudUpload from '@mui/icons-material/CloudUploadRounded';
 import {
+    alpha,
     Button,
     Dialog,
     DialogActions,
@@ -78,6 +79,10 @@ export function InstallFromLocalForm() {
                     }
                 }}
                 PaperProps={{
+                    sx: {
+                        backgroundImage: 'none',
+                        bgcolor: ({ palette }) => alpha(palette.popup.background, 0.8)
+                    },
                     component: 'form',
                     onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
                         event.preventDefault();

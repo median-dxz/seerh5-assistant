@@ -1,10 +1,11 @@
 import { MOD_BUILTIN_UPDATE_STRATEGY, MOD_SCOPE_BUILTIN } from '@/constants';
 import * as endpoints from '@/services/endpoints';
-import { SEAModLogger } from '@/utils/logger';
+import { buildDefaultConfig } from '@/shared/index';
+import { SEAModLogger } from '@/shared/logger';
 import type { SEAModMetadata } from '@sea/mod-type';
 import type { ModInstallOptions } from '@sea/server';
-import { buildDefaultConfig, buildMetadata } from './metadata';
-import { ModMetadataSchema } from './schema';
+import { buildMetadata } from './metadata';
+import { ModMetadataSchema } from './schemas';
 
 export async function prefetchModMetadata(url: string) {
     const modImport = (await import(/* @vite-ignore */ url)) as { metadata: SEAModMetadata };
@@ -38,7 +39,7 @@ export async function installBuiltinMods() {
         import('@/builtin/strategy'),
         import('@/builtin/battle'),
         import('@/builtin/realm'),
-        import('@/builtin/petFragment/petFragment'),
+        import('@/builtin/petFragment'),
         import('@/builtin/command')
     ]);
 

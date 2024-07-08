@@ -1,4 +1,4 @@
-import { useCachedReturn } from '@/utils/hooks/useCachedReturn';
+import { useCachedReturn } from '@/shared/hooks';
 import { Menu, MenuItem, alpha, type MenuItemProps, type MenuProps } from '@mui/material';
 import React from 'react';
 
@@ -59,8 +59,8 @@ export function ListMenu<T, P extends object>(props: ListMenuProps<T, P>) {
                     maxHeight: '50vh',
                     overflowY: 'auto',
                     bgcolor: (theme) => alpha(theme.palette.secondary.main, 0.88),
-                    ...MenuListSx,
-                },
+                    ...MenuListSx
+                }
             }}
             open={open}
             onClose={handleCloseMenu}

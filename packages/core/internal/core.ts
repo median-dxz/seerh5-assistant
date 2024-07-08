@@ -4,7 +4,7 @@ import { SEAEventSource } from '../event-source/index.js';
 import { fixSoundLoad } from './features/fixSoundLoad.js';
 import { coreSetup } from './features/index.js';
 
-const VERSION = '1.0.0-rc.6';
+const VERSION = '1.0.0-rc.7';
 const SEER_READY_EVENT = 'seerh5_ready';
 
 export interface SetupFn {
@@ -18,7 +18,6 @@ export class SEAC {
     readonly version = VERSION;
 
     private loadCalled = false;
-    private setupFns: SetupFn[] = [];
     private setup(type: SetupFn['type']) {
         this.setupFns
             .filter(({ type: _type }) => _type === type)
@@ -49,6 +48,8 @@ export class SEAC {
             console.warn(`[SEAC] Check runtime failed. Core will not be loaded.`);
         }
     }
+
+    public setupFns: SetupFn[] = [];
 
     addSetupFn(type: SetupFn['type'], fn: SetupFn['setup']) {
         this.setupFns.push({ type, setup: fn });

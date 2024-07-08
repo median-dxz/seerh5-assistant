@@ -32,7 +32,10 @@ export function ModListItem({ mod }: ModListItemProps) {
 
     const open = Boolean(anchor);
 
-    const { meta } = mod;
+    const {
+        ctx: { meta },
+        namespace
+    } = mod;
     const title = (
         <>
             <Typography component="span" sx={{ paddingRight: '1em' }} fontSize={24}>
@@ -45,7 +48,7 @@ export function ModListItem({ mod }: ModListItemProps) {
     const description = (
         <>
             <Typography component="span" fontSize={16} sx={{ paddingRight: '1em' }}>
-                {meta.namespace} {meta.description}
+                {namespace} {meta.description}
             </Typography>
 
             {meta.scope === 'builtin' && (
@@ -79,12 +82,11 @@ export function ModListItem({ mod }: ModListItemProps) {
                 borderRadius: '6px',
                 border: (theme) => `1px solid ${alpha(theme.palette.primary.main, 0.12)}`,
                 '&:hover': {
-                    backgroundColor: (theme) => {
+                    backgroundColor: (theme) =>
                         // if (error) {
                         //     return alpha(theme.palette.error.main, 0.18);
                         // }
-                        return alpha(theme.palette.primary.main, 0.12);
-                    }
+                        alpha(theme.palette.primary.main, 0.12)
                 }
             }}
         >
@@ -167,9 +169,9 @@ export function ModList(listProps: ListProps) {
             sx={{ width: '100%', overflow: 'auto', paddingRight: 1, '& > *:not(:first-child)': { marginTop: '8px' } }}
             {...listProps}
         >
-            {store.map((mod) => {
-                return <ModListItem key={mod.meta.id} mod={mod} />;
-            })}
+            {store.map((mod) => (
+                <ModListItem key={mod.ctx.meta.id} mod={mod} />
+            ))}
         </List>
     );
 }

@@ -1,4 +1,4 @@
-import * as Logger from '@/utils/logger';
+import * as Logger from '@/shared/logger';
 import { SEAEventSource, Subscription, wrapper } from '@sea/core';
 
 export function registerLog() {

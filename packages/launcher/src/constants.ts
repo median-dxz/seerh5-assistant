@@ -1,6 +1,6 @@
 import type { seac } from '@sea/core';
 
-export const VERSION = '0.7.0';
+export const VERSION = '0.8.0';
 export const CORE_VERSION: typeof seac.version = '1.0.0-rc.6';
 export const IS_DEV = import.meta.env.DEV;
 export const CMD_MASK = [
@@ -17,15 +17,17 @@ export const CMD_MASK = [
 export const MOD_SCOPE_DEFAULT = 'external';
 export const MOD_SCOPE_BUILTIN = 'builtin';
 
-export const DS = {
+export const QueryKey = {
     multiValue: {
-        autoCure: 'swr://multiValue/autoCure',
-        battleFire: 'swr://multiValue/battleFire',
-        eyeEquipment: 'swr://multiValue/eyeEquipment',
-        title: 'swr://multiValue/title',
-        suit: 'swr://multiValue/suit'
+        autoCure: 'game://multiValue/autoCure',
+        battleFire: 'game://multiValue/battleFire',
+        eyeEquipment: 'game://multiValue/eyeEquipment',
+        title: 'game://multiValue/title',
+        suit: 'game://multiValue/suit'
     },
-    petBag: 'ds://PetBag'
+    petBag: 'db://PetBag',
+    taskConfig: 'db://taskConfig',
+    taskIsCompleted: 'task://isCompleted'
 };
 
 export const MOD_BUILTIN_UPDATE_STRATEGY: 'always' | 'never' | 'version' = 'always';

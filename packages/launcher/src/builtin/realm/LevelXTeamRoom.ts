@@ -14,7 +14,7 @@ export interface Data extends LevelData {
 
 export default (logger: AnyFunction, battle: (name: string) => LevelBattle) =>
     task({
-        meta: {
+        metadata: {
             id: 'LevelXTeamRoom',
             name: 'X战队密室',
             maxTimes: 3

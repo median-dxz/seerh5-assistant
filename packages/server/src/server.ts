@@ -21,7 +21,7 @@ import { fastifyLogRotate } from './logger/index.ts';
 import { apiRouter } from './router/index.ts';
 
 import { initConfigs } from './data/init.ts';
-import { configsRoot, customStrategyRoot, launcherRoot, logsRoot, modsRoot } from './paths.ts';
+import { configsRoot, launcherRoot, logsRoot, modsRoot } from './paths.ts';
 import { ModManager } from './router/mod/manager.ts';
 import { modUploadAndInstallRouter } from './router/mod/uploadAndInstall.ts';
 
@@ -36,14 +36,7 @@ export async function createServer() {
     await server.register(fastifyEnv, envOptions);
 
     const root = server.config.APP_ROOT;
-    const folders = [
-        configsRoot,
-        launcherRoot,
-        logsRoot,
-        modsRoot,
-        configsRoot + '/' + modsRoot,
-        configsRoot + '/' + customStrategyRoot
-    ];
+    const folders = [configsRoot, launcherRoot, logsRoot, modsRoot, configsRoot + '/' + modsRoot];
     folders.forEach((folder) => {
         if (!fs.existsSync(path.resolve(root, folder))) {
             fs.mkdirSync(path.resolve(root, folder));

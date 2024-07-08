@@ -2,8 +2,8 @@ import path from 'path';
 
 import { modIndexes, type ModState } from '../../data/ModIndexes.ts';
 import { configsRoot, modsRoot } from '../../paths.ts';
-import { SEASConfigData } from '../../utils/SEASConfigData.ts';
-import { getNamespace } from '../../utils/index.ts';
+import { SEASConfigData } from '../../shared/SEASConfigData.ts';
+import { getNamespace } from '../../shared/index.ts';
 import type { ModInstallOptions } from './schemas.ts';
 
 export const ModManager = {
@@ -12,7 +12,7 @@ export const ModManager = {
     modConfig: new Map<string, SEASConfigData>(),
     async init(root: string) {
         this.root = root;
-        const mods = modIndexes.getModList();
+        const mods = modIndexes.stateList();
         await Promise.all(mods.map(async ({ id, scope, state }) => this.load(scope, id, state)));
     },
 
@@ -59,7 +59,7 @@ export const ModManager = {
     },
 
     async install(scope: string, id: string, options: ModInstallOptions = {}) {
-        if (modIndexes.get(scope, id) != undefined && !options.update) {
+        if (modIndexes.state(scope, id) != undefined && !options.update) {
             return {
                 success: false,
                 reason: 'there has existed a mod with the same id and scope already'

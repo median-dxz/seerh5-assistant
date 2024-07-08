@@ -1,11 +1,11 @@
-import { SEASConfigData } from '../utils/SEASConfigData.ts';
+import { SEASConfigData } from '../shared/SEASConfigData.ts';
 
 class PetCatchTimeMap extends SEASConfigData<Map<string, number>> {
     async loadWithDefault(configFile: string) {
         return super.loadWithDefault(configFile, new Map());
     }
 
-    async getCatchTime(name: string) {
+    async catchTime(name: string) {
         const data = super.query();
         return Promise.resolve(data.get(name));
     }

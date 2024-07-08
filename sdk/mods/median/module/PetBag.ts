@@ -60,9 +60,7 @@ export default async function PetBag({ logger }: SEAModContext<typeof metadata>)
     const install = () => {
         lifeCycleSub.on(SEAEventSource.gameModule('petBag', 'load'), load);
         lifeCycleSub.on(SEAEventSource.gameModule('petBag', 'mainPanel'), mainPanel);
-        lifeCycleSub.on(SEAEventSource.gameModule('petBag', 'destroy'), () => {
-            sub.dispose();
-        });
+        lifeCycleSub.on(SEAEventSource.gameModule('petBag', 'destroy'), () => sub.dispose());
     };
 
     const uninstall = () => {

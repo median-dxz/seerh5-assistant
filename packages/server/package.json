@@ -2,7 +2,7 @@
   "name": "@sea/server",
   "private": true,
   "type": "module",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "main": "./src/index.ts",
   "exports": {
     ".": {
@@ -13,7 +13,7 @@
     "start": "nodemon ./src/index.ts",
     "build": "esbuild ./src/index.ts --bundle --platform=node --target=node20.11.1 --outfile=./src/index.cjs --allow-overwrite --external:thread-stream",
     "executable": "pkg ./src/index.cjs -c package.json -o ./bin/server.exe",
-    "watch:tsc": "tsc -w",
+    "watch:tsc": "tsc --watch",
     "lint": "eslint . --fix",
     "test": "vitest"
   },

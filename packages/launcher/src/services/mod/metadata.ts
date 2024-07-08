@@ -1,12 +1,12 @@
 import { MOD_SCOPE_DEFAULT } from '@/constants';
-import type { SEAFormItemSchema, SEAModMetadata } from '@sea/mod-type';
+import type { SEAModMetadata } from '@sea/mod-type';
 
 export type DefinedModMetadata = Required<Omit<SEAModMetadata, 'configSchema' | 'data'>> &
     Pick<SEAModMetadata, 'configSchema' | 'data'>;
 
 export function getNamespace(meta: SEAModMetadata) {
     const { scope, id } = meta;
-    return `${scope}::${id}`;
+    return `${scope ?? MOD_SCOPE_DEFAULT}::${id}`;
 }
 
 export function buildMetadata(metadata: SEAModMetadata) {
@@ -18,14 +18,4 @@ export function buildMetadata(metadata: SEAModMetadata) {
     description = description ?? '';
 
     return { ...metadata, scope, version, preload, description } as DefinedModMetadata;
-}
-
-export function buildDefaultConfig(configSchema: Record<string, SEAFormItemSchema>) {
-    const keys = Object.keys(configSchema);
-    const defaultConfig: Record<string, string | number | boolean> = {};
-    keys.forEach((key) => {
-        const item = configSchema[key];
-        defaultConfig[key] = item.default;
-    });
-    return defaultConfig;
 }

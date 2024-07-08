@@ -1,3 +1,4 @@
+import { Subject, tap } from 'rxjs';
 import { delay } from '../../common/utils.js';
 import { engine } from '../../internal/index.js';
 import { spet } from '../../pet-helper/index.js';
@@ -14,6 +15,10 @@ class LevelManager {
     private runner: LevelRunner | null = null;
     lock: Promise<void> | null = null;
 
+    update$ = new Subject<void>();
+    nextAction$ = new Subject<string>();
+    log$ = new Subject<string>();
+
     get running() {
         return this.runner != null;
     }
@@ -29,10 +34,7 @@ class LevelManager {
         try {
             await this.lock;
         } catch (e) {
-            throw new Error(`关卡运行失败: ${e as string}`);
-        } finally {
-            this.lock = null;
-            manager.clear();
+            // pass
         }
     }
 
@@ -40,7 +42,8 @@ class LevelManager {
         if (this.running) throw new Error('你必须先停止当前Runner的运行!');
 
         this.runner = runner;
-        const { logger } = runner;
+        const log$ = new Subject<string>();
+        const subscription = log$.pipe(tap(runner.logger)).subscribe(this.log$);
 
         const lockFn = async () => {
             const autoCureState = await engine.autoCureState();
@@ -53,7 +56,7 @@ class LevelManager {
 
                 const { strategy, pets, beforeBattle } = levelBattle;
 
-                logger('准备对战');
+                log$.next('准备对战');
                 await engine.switchBag(pets);
 
                 void engine.toggleAutoCure(false);
@@ -61,11 +64,11 @@ class LevelManager {
 
                 await delay(100);
 
-                logger('执行beforeBattle');
+                log$.next('执行beforeBattle');
                 await beforeBattle?.();
                 await spet(pets[0]).default();
 
-                logger('进入对战');
+                log$.next('进入对战');
                 try {
                     if (!this.runner) throw new Error('关卡已停止运行');
 
@@ -74,28 +77,30 @@ class LevelManager {
                         void runner.actions['battle'].call(runner);
                     }, strategy);
 
-                    logger('对战完成');
+                    log$.next('对战完成');
                 } catch (error) {
                     this.runner = null;
-                    logger(`接管对战失败: ${error as string}`);
+                    log$.next(`接管对战失败: ${error as string}`);
                 }
 
                 manager.clear();
             };
 
             while (this.runner) {
-                logger('更新关卡信息');
                 await runner.update();
+                this.update$.next();
+                log$.next('更新关卡信息');
+
                 const nextAction = runner.next();
-                logger(`next action: ${nextAction}`);
+                this.nextAction$.next(nextAction);
+                log$.next(`next action: ${nextAction}`);
+
                 switch (nextAction) {
                     case LevelAction.BATTLE:
                         await battle();
                         break;
                     case LevelAction.STOP:
-                        if (runner.actions['stop']) {
-                            await runner.actions['stop'].call(runner);
-                        }
+                        await runner.actions['stop']?.call(runner);
                         this.runner = null;
                         break;
                     default:
@@ -104,17 +109,24 @@ class LevelManager {
                 }
                 await delay(100);
             }
-            logger('正在停止关卡');
+            log$.next('正在停止关卡');
             // 恢复自动治疗状态
             await engine.toggleAutoCure(autoCureState);
             engine.cureAllPet();
             await delay(200);
-
-            logger('关卡完成');
-            this.lock = this.runner = null;
         };
 
-        this.lock = lockFn();
+        this.lock = lockFn()
+            .catch((err: unknown) => {
+                log$.next(`关卡运行失败: ${err as string}`);
+                throw err;
+            })
+            .finally(() => {
+                log$.next('关卡运行结束');
+                subscription.unsubscribe();
+                this.lock = this.runner = null;
+                manager.clear();
+            });
     }
 }
 

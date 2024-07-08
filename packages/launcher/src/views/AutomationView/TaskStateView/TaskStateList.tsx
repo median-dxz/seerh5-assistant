@@ -18,7 +18,7 @@ import {
     useTheme,
     type ListProps
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 
 import { SwordLine } from '@/components/icons/SwordLine';
 import { Paper } from '@/components/styled/Paper';
@@ -32,6 +32,8 @@ import Pending from '@mui/icons-material/PendingOutlined';
 import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 import RestartAlt from '@mui/icons-material/RestartAltRounded';
 import Stop from '@mui/icons-material/StopOutlined';
+import type { Task } from '@sea/mod-type';
+import { dateTime2hhmmss, time2mmss } from '@/shared';
 
 const StatusIconMap = {
     pending: <Pending fontSize="inherit" />,
@@ -61,23 +63,10 @@ interface LevelStateListItemProps {
     state: TaskState;
 }
 
-const timeFormatter = (n: number) => {
-    const { format } = Intl.NumberFormat(undefined, {
-        minimumIntegerDigits: 2
-    });
-    return `${format(Math.trunc(n / 1000 / 60))}:${format(Math.trunc(n / 1000) % 60)}`;
-};
-
-const timePrintFormatter = Intl.DateTimeFormat('zh-cn', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
-});
-
 export function TaskStateListItem({ state }: LevelStateListItemProps) {
     const [dialogOpen, setDialogOpen] = useState(false);
     const { dequeue, enqueue, stopCurrentRunner } = useTaskScheduler();
-    const runner = state.runner as TaskRunner;
+    const { runnerId, runnerData, task } = state;
     const { status, error } = state;
 
     const isRunning = status === 'running';
@@ -93,6 +82,8 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
             clearInterval(timer);
         };
     }, []);
+
+    const handleCloseDialog = useCallback(() => setDialogOpen(false), []);
 
     return (
         <ListItem
@@ -111,10 +102,10 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                 '&:hover': {
                     backgroundColor: (theme) => {
                         if (error) {
-                            return alpha(theme.palette.error.main, 0.18);
+                            return alpha(theme.palette.error.main, 0.36);
                         }
                         if (isRunning) {
-                            return alpha(theme.palette.secondary.main, 0.18);
+                            return alpha(theme.palette.secondary.main, 0.36);
                         }
                         return alpha(theme.palette.primary.main, 0.12);
                     }
@@ -131,11 +122,11 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                     }
                 }}
                 primaryTypographyProps={{ sx: { whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' } }}
-                primary={`${runner.name}`}
+                primary={`#${runnerId + 1} ${task.metadata.name}`}
                 secondary={
                     <>
                         <Chip label={StatusTextMap[status]} variant="outlined" size="small" component="span" />
-                        {state.startTime && !state.endTime && timeFormatter(now - state.startTime)}
+                        {state.startTime && !state.endTime && time2mmss(now - state.startTime)}
                     </>
                 }
                 secondaryTypographyProps={{
@@ -160,8 +151,8 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                             }
                         }}
                         labelPosition="top-center"
-                        overridePrompt={`${runner.data.progress}%`}
-                        progress={runner.data.progress}
+                        overridePrompt={`${runnerData!.progress}%`}
+                        progress={runnerData!.progress}
                         total={100}
                     />
                     <LabeledLinearProgress
@@ -175,8 +166,8 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                         }}
                         prompt={`进度`}
                         labelPosition="top-center"
-                        progress={runner.meta.maxTimes - runner.data.remainingTimes}
-                        total={runner.meta.maxTimes}
+                        progress={task.metadata.maxTimes - runnerData!.remainingTimes}
+                        total={task.metadata.maxTimes}
                     />
                 </Stack>
             )}
@@ -198,7 +189,7 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                     secondary={
                         <>
                             <HourglassEmptyRounded fontSize="inherit" />
-                            {timeFormatter(state.endTime! - state.startTime!)} <SwordLine />
+                            {time2mmss(state.endTime! - state.startTime!)} <SwordLine />
                             {state.battleCount}
                         </>
                     }
@@ -233,19 +224,19 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                     title="重试"
                     size="small"
                     onClick={() => {
-                        dequeue(runner);
-                        enqueue(runner);
+                        dequeue(runnerId);
+                        enqueue(task, state.options);
                     }}
                 >
                     <RestartAlt fontSize="inherit" />
                 </IconButton>
             )}
             {actionsControl.del && (
-                <IconButton title="删除" size="small" color="error" onClick={() => dequeue(runner)}>
+                <IconButton title="删除" size="small" color="error" onClick={() => dequeue(runnerId)}>
                     <Delete fontSize="inherit" />
                 </IconButton>
             )}
-            <RunnerDetailDialog close={() => setDialogOpen(false)} open={dialogOpen} runnerState={state} />
+            <RunnerDetailDialog close={handleCloseDialog} open={dialogOpen} runnerState={state} task={task} />
         </ListItem>
     );
 }
@@ -255,9 +246,9 @@ export function LevelStateList(listProps: ListProps) {
     return (
         <>
             <List {...listProps}>
-                {queue.map((state, index) => {
-                    return <TaskStateListItem key={index} state={state} />;
-                })}
+                {queue.map((state) => (
+                    <TaskStateListItem key={state.runnerId} state={state} />
+                ))}
             </List>
             {queue.length === 0 && (
                 <Stack sx={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
@@ -273,10 +264,53 @@ export interface RunnerDetailDialogProps {
     open: boolean;
     close(): void;
     runnerState: TaskState;
+    task: Task;
 }
 
-function RunnerDetailDialog({ open, close, runnerState }: RunnerDetailDialogProps) {
+const RunnerDetailDialog = memo(function RunnerDetailDialog({
+    open,
+    close,
+    runnerState,
+    task
+}: RunnerDetailDialogProps) {
     const { fonts } = useTheme();
+    const FieldPaper = ({ data, title, id }: { title: string; id: string; data: string }) => (
+        <div>
+            <Typography
+                fontSize="1.25rem"
+                fontFamily={fonts.input}
+                sx={{
+                    width: 'fit-content',
+                    px: 4,
+                    mb: 2,
+                    bgcolor: (theme) => alpha(theme.palette.background.default, 0.4),
+                    borderRadius: 2
+                }}
+            >
+                {title}:{' '}
+            </Typography>
+            <Paper
+                sx={{
+                    bgcolor: (theme) => alpha(theme.palette.background.default, 0.88)
+                }}
+            >
+                <TextField
+                    key={`runner-${id}-${task.metadata.name}`}
+                    id={`runner-${id}-${task.metadata.name}`}
+                    multiline
+                    aria-readonly
+                    InputProps={{
+                        readOnly: true,
+                        sx: {
+                            fontFamily: fonts.input
+                        }
+                    }}
+                    fullWidth
+                    value={data}
+                />
+            </Paper>
+        </div>
+    );
     return (
         <Dialog
             open={open}
@@ -286,7 +320,7 @@ function RunnerDetailDialog({ open, close, runnerState }: RunnerDetailDialogProp
             sx={{
                 '& .MuiPaper-root[role="dialog"]': {
                     backgroundImage: 'none',
-                    bgcolor: ({ palette }) => alpha(palette.popup.background, 0.88),
+                    bgcolor: ({ palette }) => alpha(palette.popup.background, 0.8),
                     minWidth: '18rem',
                     maxWidth: '60vw'
                 }
@@ -305,68 +339,60 @@ function RunnerDetailDialog({ open, close, runnerState }: RunnerDetailDialogProp
                 <Close />
             </IconButton>
             <DialogContent>
-                <Typography>关卡名称: {runnerState.runner.name}</Typography>
-                <Typography>{runnerState.status}</Typography>
-                <Typography>
-                    时间:
-                    {runnerState.endTime && runnerState.startTime
-                        ? timePrintFormatter.formatRange(runnerState.startTime, runnerState.endTime)
-                        : runnerState.startTime
-                          ? timePrintFormatter.format(runnerState.startTime)
-                          : '未启动'}
-                </Typography>
-                <Typography>元数据: {JSON.stringify(runnerState.runner.meta)}</Typography>
-                {Boolean(runnerState.error) && (
-                    <Paper
-                        sx={{
-                            bgcolor: (theme) => alpha(theme.palette.background.default, 0.88)
-                        }}
-                    >
-                        ERROR: <Typography fontFamily={fonts.input}>{runnerState.error?.message}</Typography>
-                    </Paper>
-                )}
-                <Typography>RUNNER: </Typography>
-                <Paper
-                    sx={{
-                        bgcolor: (theme) => alpha(theme.palette.background.default, 0.88),
-                        overflow: 'auto'
-                    }}
-                >
-                    <TextField
-                        id={`runner-snapshot-${runnerState.runner.name}`}
-                        multiline
-                        aria-readonly
-                        InputProps={{
-                            readOnly: true,
-                            sx: {
-                                fontFamily: ['Open Sans', 'Noto Sans SC']
-                            }
-                        }}
-                        fullWidth
-                        defaultValue={JSON.stringify(runnerState.runner, undefined, 2)}
-                    />
-                </Paper>
-                <Typography>日志详情: </Typography>
-                <Paper
-                    sx={{
-                        bgcolor: (theme) => alpha(theme.palette.background.default, 0.88)
-                    }}
-                >
-                    <TextField
-                        id={`runner-snapshot-${runnerState.runner.name}`}
-                        multiline
-                        aria-readonly
-                        InputProps={{
-                            readOnly: true,
-                            sx: {
-                                fontFamily: fonts.input
-                            }
-                        }}
-                        fullWidth
-                        value={runnerState.logs.join('\n')}
-                    />
-                </Paper>
+                <Stack direction="column" spacing={4}>
+                    <Stack direction="row" spacing={2} alignItems="center">
+                        <Typography
+                            fontSize="2rem"
+                            sx={{
+                                width: 'fit-content',
+                                px: 4,
+                                bgcolor: (theme) => alpha(theme.palette.background.default, 0.4),
+                                borderRadius: 2
+                            }}
+                        >
+                            {task.metadata.name}
+                        </Typography>
+                        <Chip label={runnerState.status} variant="outlined" size="small" />
+                    </Stack>
+
+                    <Typography>
+                        时间:{' '}
+                        {runnerState.endTime && runnerState.startTime
+                            ? dateTime2hhmmss.formatRange(runnerState.startTime, runnerState.endTime)
+                            : runnerState.startTime
+                              ? dateTime2hhmmss.format(runnerState.startTime)
+                              : '未启动'}
+                    </Typography>
+                    {Boolean(runnerState.error) && (
+                        <Paper
+                            sx={{
+                                bgcolor: (theme) => alpha(theme.palette.background.default, 0.88)
+                            }}
+                        >
+                            ERROR: <Typography fontFamily={fonts.input}>{runnerState.error?.message}</Typography>
+                        </Paper>
+                    )}
+
+                    <FieldPaper data={JSON.stringify(task.metadata, undefined, 2)} id="metadata" title="元数据" />
+                    {runnerState.options && (
+                        <FieldPaper
+                            data={JSON.stringify(runnerState.options, undefined, 2)}
+                            id="options"
+                            title="选项"
+                        />
+                    )}
+                    {runnerState.runnerData && (
+                        <FieldPaper
+                            data={JSON.stringify(runnerState.runnerData, undefined, 2)}
+                            id="data"
+                            title="数据"
+                        />
+                    )}
+                    {runnerState.logs.length > 0 && (
+                        <FieldPaper data={runnerState.logs.join('\n')} id="log" title="日志" />
+                    )}
+                </Stack>
             </DialogContent>
         </Dialog>
     );
-}
+});

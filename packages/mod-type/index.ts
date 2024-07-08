@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-extraneous-class */
 /* eslint-disable @typescript-eslint/no-namespace */
 import type { LevelBattle, LevelRunner, MoveStrategy } from '@sea/core';
 
-export type DataObject = NonNullable<object>;
+export type DataObject = object & {};
 
 export type SEAFormItem =
     | {
@@ -67,9 +66,6 @@ export interface SEAModContext<TMetadata extends SEAModMetadata> {
     configSchemas?: TMetadata['configSchema'];
 
     data: TMetadata['data'];
-    mutate: TMetadata['data'] extends undefined
-        ? undefined
-        : (recipe: (draft: NonNullable<TMetadata['data']>) => void) => void;
 
     ct(...pets: string[]): number[];
     battle(name: string): LevelBattle;
@@ -116,12 +112,13 @@ export interface Task<
     TData extends LevelData = LevelData,
     TActions extends string = string
 > {
-    readonly meta: TMeta;
+    readonly metadata: TMeta;
     readonly configSchema?: TSchema;
     runner(
         metadata: TMeta,
         options: TSchema extends SEAConfigSchema ? GetConfigObjectTypeFromSchema<NonNullable<TSchema>> : undefined
     ): Omit<LevelRunner, 'next' | 'actions'> & {
+        name?: string;
         next: () => TActions;
         data: TData;
         actions: Partial<Record<NoInfer<TActions>, VoidFunction>> &
@@ -164,6 +161,8 @@ declare module '@sea/core' {
          * @param itemId 装备的**物品**id
          */
         changeEquipment(type: Parameters<UserInfo['requestChangeClothes']>[0], itemId: number): Promise<void>;
+
+        getPetFragmentLevelObj(id: number): seerh5.PetFragmentLevelObj | undefined;
     }
 
     export interface GameConfigMap {

@@ -1,21 +1,18 @@
 import { z } from 'zod';
+import { DateObjectSchema, type DataObject } from '../../shared/schemas.ts';
 
 export const ModIdentifierSchema = z.object({
     scope: z.string(),
     id: z.string()
 });
 
-export const NonNullObjectSchema = z.custom<DataObject>((data) => data !== null && typeof data === 'object');
-
 export const ModInstallOptionsSchema = z.object({
     builtin: z.boolean().optional(),
     preload: z.boolean().optional(),
     update: z.boolean().optional(),
-    config: NonNullObjectSchema.optional(),
-    data: NonNullObjectSchema.optional()
+    config: DateObjectSchema.optional(),
+    data: DateObjectSchema.optional()
 });
-
-export type DataObject = object & {};
 
 export interface ModInstallOptions {
     builtin?: boolean;

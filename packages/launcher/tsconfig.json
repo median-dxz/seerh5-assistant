@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.common.json",
   "compilerOptions": {
     "tsBuildInfoFile": "../../.tsbuildinfo/app.tsbuildinfo",
     "moduleResolution": "bundler",

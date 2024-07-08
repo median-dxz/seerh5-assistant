@@ -4,7 +4,7 @@ import React, { useCallback, useMemo } from 'react';
 import { Selector } from './Selector';
 
 import { Paper } from '@/components/styled/Paper';
-import { DS } from '@/constants';
+import { QueryKey } from '@/constants';
 import { GameConfigRegistry, SEAEventSource, engine } from '@sea/core';
 
 export function Inventory() {
@@ -70,7 +70,7 @@ export function Inventory() {
                 <Selector
                     id="change-title"
                     label={'称号'}
-                    dataKey={DS.multiValue.title}
+                    dataKey={QueryKey.multiValue.title}
                     currentItemGetter={engine.playerTitle}
                     allItemGetter={getAllTitles}
                     descriptionGetter={titleDescription}
@@ -82,7 +82,7 @@ export function Inventory() {
                 <Selector
                     id="change-suit"
                     label={'套装'}
-                    dataKey={DS.multiValue.suit}
+                    dataKey={QueryKey.multiValue.suit}
                     currentItemGetter={engine.playerSuit}
                     allItemGetter={engine.playerAbilitySuits}
                     descriptionGetter={suitDescription}
@@ -94,7 +94,7 @@ export function Inventory() {
                 <Selector
                     id="change-eye-equipment"
                     label={'目镜'}
-                    dataKey={DS.multiValue.eyeEquipment}
+                    dataKey={QueryKey.multiValue.eyeEquipment}
                     currentItemGetter={getEyeEquipment}
                     allItemGetter={getAllEyeEquipment}
                     eventSource={changeClothesEventSource}

@@ -1,4 +1,3 @@
-import type { PetFragmentOptionRaw } from '@/builtin/petFragment/types';
 import type { DataObject } from '@sea/mod-type';
 import type { ApiRouter, ModInstallOptions } from '@sea/server';
 import { createTRPCClient, createWSClient, wsLink } from '@trpc/client';
@@ -13,6 +12,8 @@ const trpcClient = createTRPCClient<ApiRouter>({
 });
 
 const { modRouter, configRouter } = trpcClient;
+
+export const { task } = configRouter;
 
 export const mod = {
     fetchList: async () => modRouter.modList.query(),
@@ -53,22 +54,17 @@ export const mod = {
 };
 
 export type ConfigKey = 'PetGroups';
-export const getConfig = async (key: ConfigKey) => configRouter.launcherConfig.query(key) as Promise<unknown>;
+export const getConfig = async (key: ConfigKey) => configRouter.launcher.item.query(key) as Promise<unknown>;
 
-export const setConfig = async (key: ConfigKey, value: unknown) =>
-    configRouter.setLauncherConfig.mutate({ key, value });
+export const setConfig = async (key: ConfigKey, value: unknown) => configRouter.launcher.setItem.mutate({ key, value });
 
 export async function queryCatchTime(name: string): Promise<[string, number]>;
 export async function queryCatchTime(): Promise<Map<string, number>>;
 export async function queryCatchTime(name?: string) {
-    return configRouter.allCatchTime.query(name);
+    return configRouter.catchTime.all.query(name);
 }
+export const updateAllCatchTime = async (data: Map<string, number>) => configRouter.catchTime.mutate.mutate(data);
 
-export const updateAllCatchTime = async (data: Map<string, number>) => configRouter.updateAllCatchTime.mutate(data);
+export const deleteCatchTime = async (name: string) => configRouter.catchTime.delete.mutate(name);
 
-export const deleteCatchTime = async (name: string) => configRouter.deleteCatchTime.mutate(name);
-
-export const addCatchTime = async (name: string, time: number) => configRouter.setCatchTime.mutate([name, time]);
-
-export const getPetFragmentConfig = async () =>
-    configRouter.petFragmentLevel.query() as Promise<PetFragmentOptionRaw[]>;
+export const addCatchTime = async (name: string, time: number) => configRouter.catchTime.set.mutate([name, time]);

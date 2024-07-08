@@ -1,5 +1,4 @@
 import fastifyMultipart from '@fastify/multipart';
-import type { DataObject } from './schemas.ts';
 import type { FastifyPluginAsync } from 'fastify';
 import { serializerCompiler, validatorCompiler, type ZodTypeProvider } from 'fastify-type-provider-zod';
 import { createWriteStream } from 'node:fs';
@@ -8,6 +7,7 @@ import { pipeline } from 'node:stream/promises';
 import superjson from 'superjson';
 import { z } from 'zod';
 import { modsRoot } from '../../paths.ts';
+import type { DataObject } from '../../shared/schemas.ts';
 import { ModManager } from './manager.ts';
 import { ModIdentifierSchema, ModInstallOptionsSchema } from './schemas.ts';
 

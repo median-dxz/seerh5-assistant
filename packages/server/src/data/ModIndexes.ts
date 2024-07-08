@@ -1,5 +1,5 @@
-import { SEASConfigData } from '../utils/SEASConfigData.ts';
-import { getNamespace, praseNamespace } from '../utils/index.ts';
+import { SEASConfigData } from '../shared/SEASConfigData.ts';
+import { getNamespace, praseNamespace } from '../shared/index.ts';
 
 export interface ModState {
     enable: boolean;
@@ -22,7 +22,7 @@ class ModIndexes extends SEASConfigData<Map<string, ModState>> {
         return super.loadWithDefault(configFile, new Map());
     }
 
-    getModList() {
+    stateList() {
         const data = super.query();
         return Array.from(data.entries()).map(([ns, state]) => {
             const { id, scope } = praseNamespace(ns);
@@ -45,7 +45,7 @@ class ModIndexes extends SEASConfigData<Map<string, ModState>> {
         });
     }
 
-    get(scope: string, id: string) {
+    state(scope: string, id: string) {
         const ns = getNamespace(scope, id);
         return super.query().get(ns);
     }

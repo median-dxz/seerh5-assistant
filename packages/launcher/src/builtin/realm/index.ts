@@ -13,8 +13,7 @@ export const metadata = {
     id: 'realm',
     scope: MOD_SCOPE_BUILTIN,
     version: VERSION,
-    description: '日常关卡',
-    configSchema: {}
+    description: '日常关卡'
 } satisfies SEAModMetadata;
 
 export default function realm({ logger, battle }: SEAModContext<typeof metadata>) {
@@ -27,7 +26,7 @@ export default function realm({ logger, battle }: SEAModContext<typeof metadata>
             LevelTitanHole(logger, battle),
             LevelXTeamRoom(logger, battle),
             task({
-                meta: { id: 'Test', name: '测试', maxTimes: 1 },
+                metadata: { id: 'Test', name: '测试', maxTimes: 1 },
                 runner() {
                     return {
                         data: {
@@ -39,18 +38,18 @@ export default function realm({ logger, battle }: SEAModContext<typeof metadata>
                             return battle('');
                         },
                         async update() {
-                            await Promise.resolve(this.data.customField + '1');
+                            await Promise.resolve();
+                            this.data.progress += 33;
                         },
                         logger: NOOP,
                         next() {
-                            if (this.data.progress === 3) {
+                            if (this.data.progress >= 99) {
                                 return 'stop';
                             }
                             return 'run';
                         },
                         actions: {
                             async run() {
-                                this.data.customField = 'custom';
                                 await delay(3000);
                             }
                         }

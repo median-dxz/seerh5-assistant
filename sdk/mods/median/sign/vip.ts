@@ -4,7 +4,7 @@ import { data, signBase } from './SignBase';
 
 export const vip = [
     task({
-        meta: {
+        metadata: {
             id: 'VipDailyBox',
             name: '领取vip每日箱子',
             maxTimes: 1
@@ -25,7 +25,7 @@ export const vip = [
     }),
 
     task({
-        meta: {
+        metadata: {
             id: 'VipWeeklyBox',
             name: '领取vip每周箱子',
             maxTimes: 1
@@ -46,7 +46,7 @@ export const vip = [
     }),
 
     task({
-        meta: {
+        metadata: {
             id: 'VipMonthlyBox',
             name: '领取vip每月箱子',
             maxTimes: 1

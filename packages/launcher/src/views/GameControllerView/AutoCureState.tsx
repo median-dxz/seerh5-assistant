@@ -1,6 +1,6 @@
 import { Paper } from '@/components/styled/Paper';
 import { Row } from '@/components/styled/Row';
-import { DS } from '@/constants';
+import { QueryKey } from '@/constants';
 import { CircularProgress, Switch, Typography } from '@mui/material';
 import { SEAEventSource, Subscription, engine } from '@sea/core';
 import type { ChangeEvent } from 'react';
@@ -10,7 +10,7 @@ import useSWRSubscription from 'swr/subscription';
 
 export function AutoCureState() {
     const { data: autoCure } = useSWRSubscription(
-        DS.multiValue.autoCure,
+        QueryKey.multiValue.autoCure,
         (_, { next }: SWRSubscriptionOptions<boolean, Error>) => {
             const sub = new Subscription();
             sub.on(SEAEventSource.socket(42019, 'send'), (data) => {
@@ -20,7 +20,7 @@ export function AutoCureState() {
                 }
             });
 
-            engine.autoCureState().then((autoCure) => {
+            void engine.autoCureState().then((autoCure) => {
                 next(null, autoCure);
             });
 
@@ -31,7 +31,7 @@ export function AutoCureState() {
     );
 
     const handleToggleMode = (_: ChangeEvent, checked: boolean) => {
-        engine.toggleAutoCure(checked);
+        void engine.toggleAutoCure(checked);
     };
 
     return (

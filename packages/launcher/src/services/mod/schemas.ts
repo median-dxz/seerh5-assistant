@@ -1,3 +1,4 @@
+import type { DataObject } from '@sea/mod-type';
 import { z } from 'zod';
 
 const ConfigItemSchema = z
@@ -11,12 +12,22 @@ const ConfigItemSchema = z
         ])
     );
 
+const DateObjectSchema = z.custom<DataObject>(
+    (data) =>
+        data !== null &&
+        typeof data === 'object' &&
+        (Object.getPrototypeOf(data) === Object.prototype ||
+            Array.isArray(data) ||
+            data instanceof Set ||
+            data instanceof Map)
+);
+
 export const ModMetadataSchema = z.object({
     id: z.string(),
     scope: z.string().optional(),
     version: z.string().optional(),
     description: z.string().optional(),
     preload: z.boolean().optional(),
-    data: z.object({}).optional(),
+    data: DateObjectSchema.optional(),
     configSchema: z.record(ConfigItemSchema).optional()
 });

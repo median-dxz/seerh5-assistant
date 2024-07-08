@@ -10,8 +10,8 @@ export interface TaskInstance {
 export const store = new Map<string, TaskInstance>();
 
 export function add(mod: string, task: Task) {
-    const name = task.meta.name;
-    const id = task.meta.id;
+    const name = task.metadata.name;
+    const id = task.metadata.id;
 
     const instance: TaskInstance = {
         task: task,

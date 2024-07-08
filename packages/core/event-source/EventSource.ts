@@ -1,8 +1,10 @@
-import { take, type Observable, type Subscription } from 'rxjs';
+import type { Observable, Subscription } from 'rxjs';
+import { take } from 'rxjs';
 import { fromEvent } from './source-builder/fromEvent.js';
 import { fromEventPattern } from './source-builder/fromEventPattern.js';
 import { fromGameModule } from './source-builder/fromGameModule.js';
 import { fromHook } from './source-builder/fromHook.js';
+import { fromLevelManager } from './source-builder/fromLevelManager.js';
 import { fromEgret } from './source-builder/fromNative.js';
 import { fromSocket } from './source-builder/fromSocket.js';
 
@@ -16,8 +18,8 @@ export class SEAEventSource<T> {
     private subscriptions = new Map<number, Subscription>();
     private subscriptionId = 0;
 
-    constructor(EventSource$: Observable<T>) {
-        this._source$ = EventSource$;
+    constructor(eventSource$: Observable<T>) {
+        this._source$ = eventSource$;
     }
 
     on(handler: (data: T) => void) {
@@ -45,4 +47,5 @@ export class SEAEventSource<T> {
     static readonly hook = fromHook;
     static readonly egret = fromEgret;
     static readonly socket = fromSocket;
+    static readonly levelManger = fromLevelManager;
 }

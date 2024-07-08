@@ -1,7 +1,8 @@
 import { Paper } from '@/components/styled/Paper';
 import { Row } from '@/components/styled/Row';
-import { DS } from '@/constants';
+import { QueryKey } from '@/constants';
 import { useMainState } from '@/context/useMainState';
+import { time2mmss } from '@/shared/index';
 import { Button, CircularProgress, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { BattleFireType, SEAEventSource, Subscription, engine, socket, throttle } from '@sea/core';
@@ -12,17 +13,10 @@ import type { SWRSubscriptionOptions } from 'swr/subscription';
 import useSWRSubscription from 'swr/subscription';
 
 declare class FriendManager {
-    static getFriendList(): Promise<{ itemSend: number; id: number }[]>;
+    static getFriendList(): Promise<Array<{ itemSend: number; id: number }>>;
 }
 
 type BattleFireInfo = Awaited<ReturnType<typeof engine.updateBattleFireInfo>>;
-
-const timeFormatter = (n: number) => {
-    const { format } = Intl.NumberFormat(undefined, {
-        minimumIntegerDigits: 2
-    });
-    return `${format(Math.trunc(n / 60))}:${format(n % 60)}`;
-};
 
 const { setInterval } = window;
 
@@ -30,7 +24,7 @@ export function BattleFire() {
     const { enqueueSnackbar } = useSnackbar();
     const timer = useRef<null | number>(null);
     const { data: battleFire } = useSWRSubscription(
-        DS.multiValue.battleFire,
+        QueryKey.multiValue.battleFire,
         (_, { next }: SWRSubscriptionOptions<BattleFireInfo, Error>) => {
             const update = async () => {
                 const i = await engine.updateBattleFireInfo();
@@ -40,24 +34,27 @@ export function BattleFire() {
                 timer.current && clearInterval(timer.current);
 
                 timer.current = setInterval(() => {
-                    next(
-                        null,
-                        produce((draft) => {
+                    next(null, (currentData) => {
+                        if (currentData && currentData.timeLeft === 0) {
+                            timer.current && clearInterval(timer.current);
+                            timer.current = null;
+                        }
+
+                        return produce(currentData, (draft) => {
+                            if (!draft) return;
                             if (draft.timeLeft > 0) {
                                 draft.timeLeft -= 1;
                             } else {
                                 draft.valid = false;
-                                timer.current && clearInterval(timer.current);
-                                timer.current = null;
                             }
-                        })
-                    );
+                        });
+                    });
                 }, 1000);
             };
 
             const sub = new Subscription();
             sub.on(SEAEventSource.egret('battleFireUpdateInfo'), update);
-            update();
+            void update();
 
             return () => {
                 sub.dispose();
@@ -74,10 +71,10 @@ export function BattleFire() {
     if (valid) {
         switch (type) {
             case BattleFireType.绿火:
-                renderProps = { color: 'green', text: `绿火 ${timeFormatter(timeLeft)}` };
+                renderProps = { color: 'green', text: `绿火 ${time2mmss(timeLeft)}` };
                 break;
             case BattleFireType.金火:
-                renderProps = { color: 'gold', text: `金火 ${timeFormatter(timeLeft)}` };
+                renderProps = { color: 'gold', text: `金火 ${time2mmss(timeLeft)}` };
                 break;
             default:
                 renderProps = { color: 'inherit', text: '其他火焰' };

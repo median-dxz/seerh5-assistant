@@ -39,7 +39,7 @@ function getCurRoundInfo() {
         id: FighterModelFactory.playerMode.info.petID,
         name: FighterModelFactory.playerMode.info.petName,
         hp: {
-            gain: roundInfo[0].hp.gain,
+            gain: 0,
             remain: FighterModelFactory.playerMode.info.hp,
             max: FighterModelFactory.playerMode.info.maxHP
         },
@@ -51,7 +51,7 @@ function getCurRoundInfo() {
         id: FighterModelFactory.enemyMode.info.petID,
         name: FighterModelFactory.enemyMode.info.petName,
         hp: {
-            gain: roundInfo[1].hp.gain,
+            gain: 0,
             remain: FighterModelFactory.enemyMode.info.hp,
             max: FighterModelFactory.enemyMode.info.maxHP
         },

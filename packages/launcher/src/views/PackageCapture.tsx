@@ -6,6 +6,7 @@ import type { AnyFunction, HookPointDataMap } from '@sea/core';
 import { SEAEventSource, Subscription, restoreHookedFn } from '@sea/core';
 import { produce } from 'immer';
 import * as React from 'react';
+import { dateTime2hhmmss } from '@/shared';
 
 interface CapturedPackage {
     type: 'RemoveListener' | 'AddListener' | 'Received' | 'Send';
@@ -17,12 +18,6 @@ interface CapturedPackage {
 }
 
 type State = 'pending' | 'capturing';
-
-const timeFormat = Intl.DateTimeFormat('zh-cn', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-});
 
 const listLimit = 300;
 
@@ -36,7 +31,7 @@ const capturedPkgFactory = (
                 ...originalPack,
                 time: Date.now(),
                 label: SocketEncryptImpl.getCmdLabel(originalPack.cmd),
-                index: draft.length,
+                index: draft.length
             });
             draft.splice(0, draft.length - listLimit);
         })
@@ -52,7 +47,7 @@ const CmdMask = [
     2441, // LOAD_PERCENT
     9019, // NONO_FOLLOW_OR_HOOM
     9274, //PET_GET_LEVEL_UP_EXP
-    41228, // SYSTEM_TIME_CHECK
+    41228 // SYSTEM_TIME_CHECK
 ];
 
 // clear() {
@@ -99,13 +94,13 @@ export function PackageCapture() {
             capturedPkgFactory(setCapture, {
                 cmd,
                 data: data.flat().map((v) => (v instanceof egret.ByteArray ? v.dataView : v)),
-                type: 'Send',
+                type: 'Send'
             });
         };
 
         const $socket = {
             send: SEAEventSource.hook('socket:send'),
-            receive: SEAEventSource.hook('socket:receive'),
+            receive: SEAEventSource.hook('socket:receive')
         };
 
         const subscription = new Subscription();
@@ -128,9 +123,9 @@ export function PackageCapture() {
             {
                 field: 'label',
                 columnName: '命令名',
-                sx: { fontFamily: 'Open Sans, MFShangHei', fontSize: '0.9rem', p: 0 },
+                sx: { fontFamily: 'Open Sans, MFShangHei', fontSize: '0.9rem', p: 0 }
             },
-            { field: 'data', columnName: '操作' },
+            { field: 'data', columnName: '操作' }
         ],
         []
     );
@@ -141,12 +136,13 @@ export function PackageCapture() {
                     onClick={() => {
                         if (state === 'capturing') {
                             setState('pending');
-                        } else if (state === 'pending') {
+                        } else {
+                            // state === 'pending'
                             setState('capturing');
                         }
                     }}
                 >
-                    {state === 'capturing' ? '停止' : state === 'pending' ? '监听' : ''}
+                    {state === 'capturing' ? '停止' : '监听'}
                 </Button>
                 <Button>清除</Button>
                 <Button
@@ -175,7 +171,7 @@ const PanelRow = React.memo(function PanelRow() {
     const pkg = useRowData<CapturedPackage>();
     return (
         <SeaTableRow>
-            <PanelField field="time">{timeFormat.format(pkg.time)}</PanelField>
+            <PanelField field="time">{dateTime2hhmmss.format(pkg.time)}</PanelField>
             <PanelField field="type">{pkg.type}</PanelField>
             <PanelField field="cmd">{pkg.cmd}</PanelField>
             <PanelField field="label">{pkg.label}</PanelField>

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { SEASConfigData } from '../utils/SEASConfigData.ts';
+import { SEASConfigData } from '../shared/SEASConfigData.ts';
 
 export const LauncherConfigKeys = ['PetGroups'] as const;
 
@@ -16,7 +16,7 @@ class LauncherConfig extends SEASConfigData<LauncherConfigType> {
         return super.loadWithDefault(configFile, defaultConfig);
     }
 
-    async getItem<TKey extends keyof LauncherConfigType>(key: TKey) {
+    async item<TKey extends keyof LauncherConfigType>(key: TKey) {
         const data = super.query();
         return Promise.resolve(data[key]);
     }

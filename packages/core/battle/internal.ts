@@ -60,9 +60,7 @@ export default () => {
                     context.triggerLock?.(isWin);
                     manager.clear();
                 })
-                .catch((err: unknown) => {
-                    console.error(err);
-                });
+                .catch((err: unknown) => console.error(err));
         }
     });
 
@@ -73,7 +71,5 @@ export default () => {
         return [fi, si] as const;
     });
 
-    SEAEventSource.socket(CommandID.NOTE_USE_SKILL, 'receive').on((data) => {
-        cachedRoundInfo.update([...data]);
-    });
+    SEAEventSource.socket(CommandID.NOTE_USE_SKILL, 'receive').on((data) => cachedRoundInfo.update([...data]));
 };

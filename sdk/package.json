@@ -12,7 +12,7 @@
     "watch:tsc": "tsc --watch"
   },
   "devDependencies": {
-    "@sea/core": "file:lib/sea-core-1.0.0-rc.6.tgz",
+    "@sea/core": "file:lib/sea-core-1.0.0-rc.7.tgz",
     "@sea/mod-type": "file:lib/sea-mod-type-0.8.0.tgz",
     "superjson": "^2.2.1",
     "typescript": "^5.4.5",
