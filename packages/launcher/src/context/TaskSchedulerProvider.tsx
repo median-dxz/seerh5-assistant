@@ -247,7 +247,7 @@ export const TaskSchedulerProvider = ({ children }: PropsWithChildren<object>) =
         }
         changeSchedulerState('waitingForStop');
 
-        return levelManager.stop().catch((e: unknown) => {
+        return levelManager.abort().catch((e: unknown) => {
             if (e instanceof Error) {
                 console.error(`停止关卡失败: ${e.message}`);
             } else {

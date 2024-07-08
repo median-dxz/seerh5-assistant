@@ -28,7 +28,7 @@ class LevelManager {
         return this.runner;
     }
 
-    async stop() {
+    async abort() {
         if (!this.runner) return;
         this.runner = null;
         try {
