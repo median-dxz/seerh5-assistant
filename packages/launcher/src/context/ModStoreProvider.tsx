@@ -26,12 +26,12 @@ export function ModStoreProvider({ children }: PropsWithChildren) {
                 await installBuiltinMods();
                 await fetchList();
                 await Promise.all(
-                    deploymentHandlers
-                        .filter((handler) => handler.state.enable && handler.state.preload)
-                        .map(async (handler) => {
+                    deploymentHandlers.map(async (handler) => {
+                        if (handler.state.enable && handler.state.preload) {
                             await handler.fetch();
-                            return handler.deploy();
-                        })
+                            await handler.deploy();
+                        }
+                    })
                 );
                 sync();
             }

@@ -22,6 +22,7 @@ import React, { memo, useCallback, useEffect, useState } from 'react';
 
 import { SwordLine } from '@/components/icons/SwordLine';
 import { Paper } from '@/components/styled/Paper';
+import { dateTime2hhmmss, time2mmss } from '@/shared';
 import CheckCircleOutline from '@mui/icons-material/CheckCircleOutlineRounded';
 import Close from '@mui/icons-material/Close';
 import Delete from '@mui/icons-material/DeleteOutlineRounded';
@@ -33,7 +34,6 @@ import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 import RestartAlt from '@mui/icons-material/RestartAltRounded';
 import Stop from '@mui/icons-material/StopOutlined';
 import type { Task } from '@sea/mod-type';
-import { dateTime2hhmmss, time2mmss } from '@/shared';
 
 const StatusIconMap = {
     pending: <Pending fontSize="inherit" />,
@@ -283,17 +283,13 @@ const RunnerDetailDialog = memo(function RunnerDetailDialog({
                     width: 'fit-content',
                     px: 4,
                     mb: 2,
-                    bgcolor: (theme) => alpha(theme.palette.background.default, 0.4),
-                    borderRadius: 2
+                    bgcolor: (theme) => alpha(theme.palette.background.paper, 0.3),
+                    borderRadius: 1
                 }}
             >
                 {title}:{' '}
             </Typography>
-            <Paper
-                sx={{
-                    bgcolor: (theme) => alpha(theme.palette.background.default, 0.88)
-                }}
-            >
+            <Paper>
                 <TextField
                     key={`runner-${id}-${task.metadata.name}`}
                     id={`runner-${id}-${task.metadata.name}`}
@@ -346,7 +342,7 @@ const RunnerDetailDialog = memo(function RunnerDetailDialog({
                             sx={{
                                 width: 'fit-content',
                                 px: 4,
-                                bgcolor: (theme) => alpha(theme.palette.background.default, 0.4),
+                                bgcolor: (theme) => alpha(theme.palette.background.paper, 0.3),
                                 borderRadius: 2
                             }}
                         >

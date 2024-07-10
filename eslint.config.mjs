@@ -47,8 +47,8 @@ export default tsEslint.config(
             '@typescript-eslint/no-unused-vars': [
                 'error',
                 {
-                    argsIgnorePattern: '^_',
-                    varsIgnorePattern: '_',
+                    vars: 'local',
+                    varsIgnorePattern: '^_',
                     caughtErrors: 'none'
                 }
             ],
@@ -65,10 +65,10 @@ export default tsEslint.config(
                 }
             ],
             '@typescript-eslint/prefer-promise-reject-errors': 'off',
+            '@typescript-eslint/no-invalid-void-type': 'off',
             '@typescript-eslint/dot-notation': ['error', { allowIndexSignaturePropertyAccess: true }],
             '@typescript-eslint/array-type': ['error', { default: 'array-simple' }],
             '@typescript-eslint/no-unnecessary-condition': ['error', { allowConstantLoopConditions: true }],
-            '@typescript-eslint/no-invalid-void-type': ['error', { allowAsThisParameter: true }],
             '@typescript-eslint/no-confusing-void-expression': [
                 'error',
                 { ignoreArrowShorthand: true, ignoreVoidOperator: true }

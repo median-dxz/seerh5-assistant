@@ -21,10 +21,12 @@ function takeover(trigger: Trigger, _strategy?: MoveStrategy): Promise<boolean> 
         } catch (err) {
             return Promise.reject(err);
         }
-        return new Promise((resolve) => {
-            context.strategy = _strategy;
-            context.triggerLock = resolve;
-        });
+
+        const { resolve, promise } = Promise.withResolvers<boolean>();
+        context.strategy = _strategy;
+        context.triggerLock = resolve;
+
+        return promise;
     } else {
         return Promise.reject('已经接管了一场战斗！');
     }

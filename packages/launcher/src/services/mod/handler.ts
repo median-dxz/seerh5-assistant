@@ -1,13 +1,21 @@
 import * as endpoints from '@/services/endpoints';
 import * as ctStore from '@/services/store/CatchTimeBinding';
 import { store as battleStore } from '@/services/store/battle';
+import { LauncherLoggerBuilder } from '@/shared/logger';
+import type { AnyFunction } from '@sea/core';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 import type { ModState } from '@sea/server';
 import { ModInstance, store } from '../store/mod';
 import { buildMetadata, getNamespace, type DefinedModMetadata } from './metadata';
-import { getLogger, getModConfig, getModData } from './utils';
+import { getModConfig, getModData } from './utils';
 
 type ModFactory = (context: SEAModContext<SEAModMetadata>) => Promise<SEAModExport> | SEAModExport;
+
+export const loggerDispatcher: {
+    dispatch?: AnyFunction;
+} = {
+    dispatch: undefined
+};
 
 export async function createModContext(metadata: SEAModMetadata) {
     const ct = (...pets: string[]) => {
@@ -27,11 +35,23 @@ export async function createModContext(metadata: SEAModMetadata) {
     };
 
     const meta = buildMetadata(metadata);
-    const logger = getLogger(meta.id);
+
+    const logger = LauncherLoggerBuilder.build(meta.id);
+
     const data = await getModData(meta);
     const config = await getModConfig(meta);
 
-    return { meta, logger, ct, battle, ...data, ...config } as SEAModContext<DefinedModMetadata>;
+    return {
+        meta,
+        logger: (...args: unknown[]) => {
+            logger(...args);
+            loggerDispatcher.dispatch?.(...args);
+        },
+        ct,
+        battle,
+        ...data,
+        ...config
+    } as SEAModContext<DefinedModMetadata>;
 }
 
 class ModDeploymentHandler {

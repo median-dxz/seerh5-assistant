@@ -11,7 +11,8 @@ import Bookmarks from '@mui/icons-material/Bookmarks';
 import Clear from '@mui/icons-material/ClearRounded';
 import { Button, Tooltip, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
-import { Pet, PetLocation, SEAPetStore, engine, spet } from '@sea/core';
+import type { Pet } from '@sea/core';
+import { PetLocation, SEAPetStore, engine, spet } from '@sea/core';
 import React, { useCallback } from 'react';
 
 interface ToolBarProps {
@@ -23,7 +24,7 @@ export function ToolBar({ selected }: ToolBarProps) {
     const { isLoading, mutate, petGroups } = usePetGroups();
 
     const handleLowerHp = () => {
-        engine.lowerHp(selected);
+        void engine.lowerHp(selected);
     };
 
     const handleCurePets = () => {
@@ -37,7 +38,7 @@ export function ToolBar({ selected }: ToolBarProps) {
     };
 
     const handleOpenBag = () => {
-        ModuleManager.showModule('petBag');
+        void ModuleManager.showModule('petBag');
         setMainOpen(false);
     };
 
@@ -48,7 +49,7 @@ export function ToolBar({ selected }: ToolBarProps) {
 
     const handleDeleteGroup = useCallback(
         (_: unknown, index: number) => {
-            mutate((groups) => {
+            void mutate((groups) => {
                 groups[index].splice(0);
             });
         },
@@ -57,22 +58,22 @@ export function ToolBar({ selected }: ToolBarProps) {
 
     const handleSaveGroup = useCallback(
         (_: unknown, index: number) => {
-            SEAPetStore.getBagPets(PetLocation.Bag).then((pets) => {
+            void SEAPetStore.getBagPets(PetLocation.Bag).then((pets) =>
                 mutate((groups) => {
                     groups.splice(
                         index,
                         1,
                         pets.map((pet) => pet.catchTime)
                     );
-                });
-            });
+                })
+            );
         },
         [mutate]
     );
 
     const handleSwitchBag = useCallback((group: Pet[]) => {
         if (group.length > 0) {
-            engine.switchBag(group);
+            void engine.switchBag(group);
         }
     }, []);
 

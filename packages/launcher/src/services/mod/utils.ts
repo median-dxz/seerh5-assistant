@@ -1,10 +1,7 @@
 import * as endpoints from '@/services/endpoints';
 import { buildDefaultConfig } from '@/shared/index';
-import { CommonLogger, LogStyle } from '@/shared/logger';
 import { reactive } from '@vue/reactivity';
 import type { DefinedModMetadata } from './metadata';
-
-export const getLogger = (id: string) => CommonLogger(id, 'info', LogStyle.mod);
 
 export async function getModData({ scope, id, data: defaultData }: DefinedModMetadata) {
     if (defaultData) {

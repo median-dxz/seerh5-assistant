@@ -9,14 +9,12 @@ if ('serviceWorker' in navigator) {
     await navigator.serviceWorker.register(import.meta.env.MODE === 'production' ? '/sw.js' : '/dev-sw.js?dev-sw');
 }
 
-seac.devMode = IS_DEV;
-
 // init sea core
+seac.devMode = IS_DEV;
 window.sea = { ...window.sea, ...seaCore };
 
-seac.addSetupFn('afterFirstShowMainPanel', setupForLauncher);
-
 // init launcher
+seac.addSetupFn('afterFirstShowMainPanel', setupForLauncher);
 seac.addSetupFn('afterFirstShowMainPanel', () => {
     const canvas: HTMLCanvasElement = document.querySelector('#egret_player_container canvas')!;
     canvas.setAttribute('tabindex', '-1');

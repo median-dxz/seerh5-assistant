@@ -17,9 +17,11 @@ function match(state: RoundData, skills: Skill[], pets: Pet[]) {
 
 // skill matchers
 function rotating(...skills: string[]): Matcher {
-    return (state, allSkills) => {
+    let count = -1;
+    return (_, allSkills) => {
+        count += 1;
         const availableSkills = allSkills.filter((skill) => skill.pp > 0 && skills.some((name) => skill.name === name));
-        return availableSkills[state.round % availableSkills.length]?.id;
+        return availableSkills[count % availableSkills.length]?.id;
     };
 }
 

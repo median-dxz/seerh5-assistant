@@ -35,7 +35,7 @@ export class ModInstance {
         if (ctx.data) {
             const mutate = debounce(
                 () => void endpoints.mod.setData(ctx.meta.scope, ctx.meta.id, toRaw(ctx.data)!),
-                10000
+                1000
             );
             const effectRunner = effect(() => {
                 dequal(ctx.data, toRaw(ctx.data));

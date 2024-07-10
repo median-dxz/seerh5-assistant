@@ -8,10 +8,12 @@
 - [ ] 收星星上限出错出错处理
 - [ ] 更新vip签到(flash商城?)
 - [ ] 全屏与刷新按钮
+- [x] rotating算子基于内部计数器而不是round
 - [ ] 关卡添加与结束的snackbar
-- [ ] rotating算子基于内部计数器而不是round
 - [ ] 命名空间的脆弱性
 - [ ] core v1.0.0
+- [ ] 日任扫荡功能
+- [ ] LevelManager中止时的超时和强制逃跑处理
 
 - [ ] https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-5.html#the-configdir-template-variable-for-configuration-files
 - [ ] 升级sdk的ts版本
@@ -19,7 +21,7 @@
 - [ ] sdk 中 core 版本兼容性检测, 添加 core 版本字段(必填), 并规范 launcher 的 core 实例和 sdk 使用的 api 之间的关系
   - [ ] 需要一次性提供 Launcher Api 版本，Core 版本和自身版本
   - [ ] launcher api 版本和 launcher 版本之间的关系？
-  - [ ] 同步server launcher mod-type的版本，保持统一
+  - [ ] 同步server launcher mod-type的版本，保持统一 (选取三个中最新的, 同步到其他两个)
 - [ ] 战斗日志保存
 - [ ] script 通过语法树进行高级反混淆, 暂定主要目标是升级 async/await
 - [ ] 后端日志管理

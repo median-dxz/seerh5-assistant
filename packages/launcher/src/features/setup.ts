@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { GameConfigRegistry, SEAEventSource, battle, hookPrototype } from '@sea/core';
 import { IS_DEV } from '../constants';
 import { extendCoreEngine } from './engine';
@@ -80,7 +82,6 @@ function backgroundHeartBeatCheck() {
     );
 }
 
-/* eslint-disable-next-line */
 declare var Alert: any;
 
 /** cancel alert before use item for pet */

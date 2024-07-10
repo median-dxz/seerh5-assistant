@@ -1,3 +1,4 @@
+import { loggerDispatcher } from '@/services/mod/handler';
 import { dateTime2hhmmss } from '@/shared';
 import { LevelAction, levelManager, SEAEventSource, Subscription } from '@sea/core';
 import type { LevelData, Task } from '@sea/mod-type';
@@ -187,20 +188,18 @@ export const TaskSchedulerProvider = ({ children }: PropsWithChildren<object>) =
         const runner = task.runner(metadata, options as undefined);
         const sub = new Subscription();
 
-        sub.on(SEAEventSource.levelManger('update'), () => {
+        sub.on(SEAEventSource.levelManger('update'), (action) => {
             dispatch({
                 type: 'updateRunnerData',
                 payload: { data: runner.data } satisfies ActionType['updateRunnerData']
             });
-        });
-        sub.on(SEAEventSource.levelManger('nextAction'), (action) => {
             if (action === 'battle') {
                 dispatch({ type: 'addRunnerBattleCount' });
             }
         });
-        sub.on(SEAEventSource.levelManger('log'), (message) => {
+
+        loggerDispatcher.dispatch = (message: string) =>
             dispatch({ type: 'addRunnerLog', payload: { message } satisfies ActionType['addRunnerLog'] });
-        });
 
         levelManager.run(runner);
 
@@ -214,17 +213,17 @@ export const TaskSchedulerProvider = ({ children }: PropsWithChildren<object>) =
         const { lock } = levelManager;
         lock!
             .then(() => {
-                changeRunnerState('completed');
-            })
-            .catch((e: unknown) => {
-                changeRunnerState('error', e as Error);
-            })
-            .finally(() => {
                 if (runner.next() === LevelAction.STOP) {
                     changeRunnerState('completed');
                 } else {
                     changeRunnerState('stopped');
                 }
+            })
+            .catch((e: unknown) => {
+                changeRunnerState('error', e as Error);
+            })
+            .finally(() => {
+                loggerDispatcher.dispatch = undefined;
                 sub.dispose();
                 changeSchedulerState('ready');
                 dispatch({ type: 'moveNext' });

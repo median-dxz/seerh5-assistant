@@ -17,9 +17,9 @@ export class CacheData<T> {
 
     deactivate() {
         this.available = false;
-        this.updatePromise = new Promise((resolve) => {
-            this.updateResolve = resolve;
-        });
+        const { promise, resolve } = Promise.withResolvers<void>();
+        this.updatePromise = promise;
+        this.updateResolve = resolve;
     }
 
     update(data: T) {

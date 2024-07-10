@@ -4,9 +4,8 @@ import { Box, Grid, Tooltip, Typography } from '@mui/material';
 import React, { memo } from 'react';
 import useSWRSubscription from 'swr/subscription';
 
-import { SEAEventSource, Subscription } from '@sea/core';
+import type { SEAEventSource } from '@sea/core';
 
-import type { PopupMenuButtonProps } from '@/components/PopupMenuButton';
 import { ClampText } from '../styled/ClampText';
 import { SelectorButton } from '../styled/SelectorButton';
 
@@ -14,7 +13,7 @@ export interface SelectorProps {
     id: string;
     label: string;
     currentItemGetter: () => number | undefined;
-    allItemGetter: () => PopupMenuButtonProps<number, object>['data'];
+    allItemGetter: () => Promise<number[]>;
     nameGetter: (id: number) => string | undefined;
     descriptionGetter: (id: number) => string | undefined;
     dataKey: string;
@@ -36,11 +35,10 @@ export function Selector({
     const { data } = useSWRSubscription(
         dataKey,
         (_, { next }: SWRSubscriptionOptions<number, Error>) => {
-            const sub = new Subscription();
-            sub.on(eventSource, () => {
+            const sub = eventSource.on(() => {
                 next(null, itemGetter());
             });
-            return () => sub.dispose();
+            return () => eventSource.off(sub);
         },
         {
             fallbackData: itemGetter()
@@ -68,7 +66,7 @@ export function Selector({
             <Grid item xs={5}>
                 <SelectorButton
                     id={id}
-                    data={allItemGetter()}
+                    data={allItemGetter}
                     onSelectItem={handleSelectItem}
                     menuProps={{
                         RenderItem: ItemName,

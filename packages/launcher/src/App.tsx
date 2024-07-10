@@ -1,4 +1,4 @@
-import { CssBaseline, Grow } from '@mui/material';
+import { Box, Grow, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
 import { SEAEventSource, Subscription, seac } from '@sea/core';
@@ -8,6 +8,7 @@ import { SEALContextProvider } from '@/context/SEALContextProvider';
 import { Command } from '@/views/Command';
 import { Main } from '@/views/Main';
 import { QuickAccess } from '@/views/QuickAccess';
+import { Loading } from './components/Loading';
 
 export default function App() {
     const [init, setInit] = useState(false);
@@ -27,7 +28,7 @@ export default function App() {
             .then(() => {
                 setInit(true);
             })
-            .catch((err: unknown) => {
+            .catch(() => {
                 // React严格模式下导致的重复调用CoreLoader, 可以忽略
             });
     }, [init]);
@@ -52,11 +53,24 @@ export default function App() {
         };
     }, [init]);
 
-    if (!init) return null;
+    if (!init)
+        return (
+            <Box
+                sx={{
+                    height: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'column'
+                }}
+            >
+                <Typography sx={{ color: (theme) => theme.palette.secondary.main }}>等待游戏初始化</Typography>
+                <Loading sx={{ width: '100%' }} />
+            </Box>
+        );
 
     return (
         <SEALContextProvider>
-            <CssBaseline />
             {!fighting && (
                 <QuickAccess
                     ariaLabel="Seerh5 Assistant Quick Access"

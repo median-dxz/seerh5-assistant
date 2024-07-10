@@ -1,7 +1,7 @@
 import { theme } from '@/style';
 import { cache } from '@emotion/css';
 import { CacheProvider } from '@emotion/react';
-import { ThemeProvider, alpha, styled } from '@mui/material';
+import { CssBaseline, ThemeProvider, alpha, styled } from '@mui/material';
 import { enableMapSet } from 'immer';
 import { MaterialDesignContent, SnackbarProvider } from 'notistack';
 import React, { type PropsWithChildren } from 'react';
@@ -30,6 +30,7 @@ export function ApplicationContext({ children }: PropsWithChildren<object>) {
                         maxSnack={1}
                         Components={{ default: StyledMaterialDesignContent }}
                     >
+                        <CssBaseline />
                         <ModStoreProvider>{children}</ModStoreProvider>
                     </SnackbarProvider>
                 </SWRConfig>

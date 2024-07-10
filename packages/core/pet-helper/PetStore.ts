@@ -112,7 +112,7 @@ class SEAPetStore {
             const [ct, _] = Array.from(this.cacheTimestamp.entries())
                 .sort((a, b) => a[1] - b[1])
                 .find(
-                    ([ct, _]) =>
+                    ([ct]) =>
                         !this.bag
                             .getImmediate()
                             .flat()

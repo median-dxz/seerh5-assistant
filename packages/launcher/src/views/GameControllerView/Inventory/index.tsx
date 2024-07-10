@@ -1,5 +1,5 @@
 import { Divider, Stack } from '@mui/material';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 
 import { Selector } from './Selector';
 
@@ -7,37 +7,29 @@ import { Paper } from '@/components/styled/Paper';
 import { QueryKey } from '@/constants';
 import { GameConfigRegistry, SEAEventSource, engine } from '@sea/core';
 
+const changeTitleEventSource = SEAEventSource.eventPattern(
+    (handler) => {
+        MainManager.actorInfo.addEventListener(UserInfoEvent.EVENT_CHANGE_TITLE, handler, null);
+    },
+    (handler) => {
+        MainManager.actorInfo.removeEventListener(UserInfoEvent.EVENT_CHANGE_TITLE, handler, null);
+    }
+);
+
+const changeClothesEventSource = SEAEventSource.eventPattern(
+    (handler) => {
+        MainManager.actorInfo.addEventListener(UserInfoEvent.EVENT_CHANGE_CLOTHERS, handler, null);
+    },
+    (handler) => {
+        MainManager.actorInfo.removeEventListener(UserInfoEvent.EVENT_CHANGE_CLOTHERS, handler, null);
+    }
+);
+
 export function Inventory() {
     const equipmentQuery = GameConfigRegistry.getQuery('equipment');
     const itemQuery = GameConfigRegistry.getQuery('item');
     const titleQuery = GameConfigRegistry.getQuery('title');
     const suitQuery = GameConfigRegistry.getQuery('suit');
-
-    const changeTitleEventSource = useMemo(
-        () =>
-            SEAEventSource.eventPattern(
-                (handler) => {
-                    MainManager.actorInfo.addEventListener(UserInfoEvent.EVENT_CHANGE_TITLE, handler, null);
-                },
-                (handler) => {
-                    MainManager.actorInfo.removeEventListener(UserInfoEvent.EVENT_CHANGE_TITLE, handler, null);
-                }
-            ),
-        []
-    );
-
-    const changeClothesEventSource = useMemo(
-        () =>
-            SEAEventSource.eventPattern(
-                (handler) => {
-                    MainManager.actorInfo.addEventListener(UserInfoEvent.EVENT_CHANGE_CLOTHERS, handler, null);
-                },
-                (handler) => {
-                    MainManager.actorInfo.removeEventListener(UserInfoEvent.EVENT_CHANGE_CLOTHERS, handler, null);
-                }
-            ),
-        []
-    );
 
     const getEyeEquipment = useCallback(() => {
         const clothesIds = MainManager.actorInfo.clothIDs;
@@ -45,15 +37,17 @@ export function Inventory() {
     }, [itemQuery]);
 
     const getAllEyeEquipment = useCallback(
-        () =>
-            ItemManager.getClothIDs()
-                .map((v) => parseInt(v))
-                .map(itemQuery.get)
-                .filter(
-                    (item) =>
-                        item && item.type === 'eye' && equipmentQuery.find((e) => e.ItemID === item.ID && !e.SuitID)
-                )
-                .map((item) => item!.ID),
+        async () =>
+            Promise.resolve(
+                ItemManager.getClothIDs()
+                    .map((v) => parseInt(v))
+                    .map(itemQuery.get)
+                    .filter(
+                        (item) =>
+                            item && item.type === 'eye' && equipmentQuery.find((e) => e.ItemID === item.ID && !e.SuitID)
+                    )
+                    .map((item) => item!.ID)
+            ),
         [equipmentQuery, itemQuery]
     );
 
@@ -72,7 +66,7 @@ export function Inventory() {
                     label={'称号'}
                     dataKey={QueryKey.multiValue.title}
                     currentItemGetter={engine.playerTitle}
-                    allItemGetter={getAllTitles}
+                    allItemGetter={engine.playerAbilityTitles}
                     descriptionGetter={titleDescription}
                     eventSource={changeTitleEventSource}
                     mutate={engine.changeTitle}
@@ -84,7 +78,7 @@ export function Inventory() {
                     label={'套装'}
                     dataKey={QueryKey.multiValue.suit}
                     currentItemGetter={engine.playerSuit}
-                    allItemGetter={engine.playerAbilitySuits}
+                    allItemGetter={() => Promise.resolve(engine.playerAbilitySuits())}
                     descriptionGetter={suitDescription}
                     eventSource={changeClothesEventSource}
                     mutate={engine.changeSuit}
@@ -106,8 +100,6 @@ export function Inventory() {
         </Paper>
     );
 }
-
-const getAllTitles = () => engine.playerAbilityTitles;
 
 const suitDescription = (userSuit: number) => ItemSeXMLInfo.getSuitEff(userSuit);
 

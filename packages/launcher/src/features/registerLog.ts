@@ -2,7 +2,7 @@ import * as Logger from '@/shared/logger';
 import { SEAEventSource, Subscription, wrapper } from '@sea/core';
 
 export function registerLog() {
-    SystemTimerManager.sockettimeout = wrapper(SystemTimerManager.sockettimeout).after(() => {
+    SystemTimerManager.sockettimeout = wrapper(SystemTimerManager.sockettimeout.bind(SystemTimerManager)).after(() => {
         console.trace('客户端主动关闭');
     });
 

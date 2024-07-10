@@ -13,20 +13,18 @@ export function SEALContextProvider({ children }: PropsWithChildren<object>) {
     useEffect(() => {
         let active = true;
 
-        void ctService
-            .sync()
-            .then(() => {
-                if (!active) return;
-                return Promise.all(
-                    deploymentHandlers.map(async (handler) => {
-                        if (handler.state.enable && !handler.state.preload) {
-                            await handler.fetch();
-                            await handler.deploy();
-                        }
-                    })
-                );
-            })
-            .then(sync);
+        void ctService.sync().then(async () => {
+            if (!active) return;
+            await Promise.all(
+                deploymentHandlers.map(async (handler) => {
+                    if (handler.state.enable && !handler.state.preload) {
+                        await handler.fetch();
+                        await handler.deploy();
+                    }
+                })
+            );
+            sync();
+        });
 
         return () => {
             active = false;

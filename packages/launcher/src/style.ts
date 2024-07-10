@@ -70,7 +70,7 @@ export const theme = createTheme({
             primary: colors.text
         },
         background: {
-            default: alpha(colors.paper, 0.24),
+            default: alpha('#fff', 0.24),
             paper: alpha(colors.primary, 0.08)
         },
         divider: alpha(colors.primary, 0.16),
