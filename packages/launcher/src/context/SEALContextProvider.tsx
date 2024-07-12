@@ -1,10 +1,8 @@
-import React, { useEffect, type PropsWithChildren } from 'react';
+import { useEffect, type PropsWithChildren } from 'react';
 
-import * as ctService from '@/services/store/CatchTimeBinding';
+import * as ctService from '@/services/catchTimeBinding/CatchTimeBinding';
 
-import { deploymentHandlers } from '@/services/mod/handler';
-import { MainStateProvider } from './MainStateProvider';
-import { TaskSchedulerProvider } from './TaskSchedulerProvider';
+import { deploymentHandlers } from '@/services/modStore/deploymentHandlerSlice';
 import { useModStore } from './useModStore';
 
 export function SEALContextProvider({ children }: PropsWithChildren<object>) {
@@ -31,9 +29,5 @@ export function SEALContextProvider({ children }: PropsWithChildren<object>) {
         };
     }, [sync]);
 
-    return (
-        <TaskSchedulerProvider>
-            <MainStateProvider>{children}</MainStateProvider>
-        </TaskSchedulerProvider>
-    );
+    return children;
 }

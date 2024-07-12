@@ -14,6 +14,7 @@
 - [ ] core v1.0.0
 - [ ] 日任扫荡功能
 - [ ] LevelManager中止时的超时和强制逃跑处理
+- [ ] PanelTable是不是直接useMemo就行了，奇怪的cacheReturn hook
 
 - [ ] https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-5.html#the-configdir-template-variable-for-configuration-files
 - [ ] 升级sdk的ts版本
@@ -65,7 +66,6 @@
 - [ ] 对等依赖<->dts定义(例如注册查询表)(可参考：next模块定义，mui对样式引擎的定义依赖)
 - [ ] 模组定义新增标志位，表明不支持热重载
 - [ ] 取消对http-proxy-middleware的依赖
-- [ ] PanelTable是不是直接useMemo就行了，奇怪的cacheReturn hook
 - [ ] 错误边界
 
 # Core 当前版本 v1.0.0-rc.6

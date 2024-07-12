@@ -6,12 +6,13 @@ import { PanelTable, type PanelColumns } from '@/components/PanelTable/PanelTabl
 import { SeaTableRow } from '@/components/styled/TableRow';
 import { MOD_SCOPE_BUILTIN, QueryKey } from '@/constants';
 import { useModStore } from '@/context/useModStore';
-import { useTaskScheduler } from '@/context/useTaskScheduler';
-import { getNamespace as ns } from '@/services/mod/metadata';
-import type { TaskInstance } from '@/services/store/task';
+import { getNamespace as ns } from '@/services/modStore/metadata';
+import type { TaskInstance } from '@/services/modStore/task';
+import { taskSchedulerActions } from '@/services/taskSchedulerSlice';
 import { useTaskConfig } from '@/services/useTaskConfig';
 import { getTaskCurrentOptions } from '@/shared';
 import type { AnyTask } from '@/shared/types';
+import { useAppDispatch } from '@/store';
 import { LevelAction } from '@sea/core';
 import type { TaskConfigData } from '@sea/server';
 import useSWR from 'swr';
@@ -111,14 +112,13 @@ export function CommonLevelView() {
 
     return (
         <>
-            <Button>一键日任</Button>
             <PanelTable data={rows} toRowKey={toRowKey} columns={col} rowElement={<PanelRow />} />
         </>
     );
 }
 
 const PanelRow = React.memo(() => {
-    const { enqueue } = useTaskScheduler();
+    const dispatch = useAppDispatch();
     const {
         taskInstance: { task, name: taskName },
         config
@@ -146,7 +146,10 @@ const PanelRow = React.memo(() => {
             </PanelField>
             <PanelField field="action">
                 <Box component="span">
-                    <Button onClick={() => enqueue(task, currentOptions)} disabled={completed}>
+                    <Button
+                        onClick={() => dispatch(taskSchedulerActions.enqueue(task, currentOptions))}
+                        disabled={completed}
+                    >
                         启动
                     </Button>
                 </Box>

@@ -1,5 +1,20 @@
+import CheckCircleOutline from '@mui/icons-material/CheckCircleOutlineRounded';
+import Close from '@mui/icons-material/Close';
+import Delete from '@mui/icons-material/DeleteOutlineRounded';
+import ErrorOutline from '@mui/icons-material/ErrorOutlineRounded';
+import FeedOutlined from '@mui/icons-material/FeedOutlined';
+import HourglassEmptyRounded from '@mui/icons-material/HourglassEmptyRounded';
+import Pending from '@mui/icons-material/PendingOutlined';
+import PlayArrow from '@mui/icons-material/PlayArrowRounded';
+import RestartAlt from '@mui/icons-material/RestartAltRounded';
+import Stop from '@mui/icons-material/StopOutlined';
+
+import { SwordLine } from '@/components/icons/SwordLine';
 import { LabeledLinearProgress } from '@/components/LabeledProgress';
-import { useTaskScheduler, type TaskState } from '@/context/useTaskScheduler';
+import { Paper } from '@/components/styled/Paper';
+import { taskSchedulerActions, type TaskState } from '@/services/taskSchedulerSlice';
+import { dateTime2hhmmss, time2mmss } from '@/shared';
+import { useAppDispatch, useAppSelector } from '@/store';
 import {
     Chip,
     Dialog,
@@ -18,22 +33,10 @@ import {
     useTheme,
     type ListProps
 } from '@mui/material';
+import type { Task } from '@sea/mod-type';
 import React, { memo, useCallback, useEffect, useState } from 'react';
 
-import { SwordLine } from '@/components/icons/SwordLine';
-import { Paper } from '@/components/styled/Paper';
-import { dateTime2hhmmss, time2mmss } from '@/shared';
-import CheckCircleOutline from '@mui/icons-material/CheckCircleOutlineRounded';
-import Close from '@mui/icons-material/Close';
-import Delete from '@mui/icons-material/DeleteOutlineRounded';
-import ErrorOutline from '@mui/icons-material/ErrorOutlineRounded';
-import FeedOutlined from '@mui/icons-material/FeedOutlined';
-import HourglassEmptyRounded from '@mui/icons-material/HourglassEmptyRounded';
-import Pending from '@mui/icons-material/PendingOutlined';
-import PlayArrow from '@mui/icons-material/PlayArrowRounded';
-import RestartAlt from '@mui/icons-material/RestartAltRounded';
-import Stop from '@mui/icons-material/StopOutlined';
-import type { Task } from '@sea/mod-type';
+const { abortCurrentRunner, dequeue, enqueue } = taskSchedulerActions;
 
 const StatusIconMap = {
     pending: <Pending fontSize="inherit" />,
@@ -65,7 +68,7 @@ interface LevelStateListItemProps {
 
 export function TaskStateListItem({ state }: LevelStateListItemProps) {
     const [dialogOpen, setDialogOpen] = useState(false);
-    const { dequeue, enqueue, stopCurrentRunner } = useTaskScheduler();
+    const dispatch = useAppDispatch();
     const { runnerId, runnerData, task } = state;
     const { status, error } = state;
 
@@ -215,7 +218,7 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
             </IconButton>
 
             {actionsControl.stop && (
-                <IconButton title="停止" size="small" onClick={stopCurrentRunner}>
+                <IconButton title="停止" size="small" onClick={() => dispatch(abortCurrentRunner())}>
                     <Stop fontSize="inherit" />
                 </IconButton>
             )}
@@ -223,16 +226,16 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                 <IconButton
                     title="重试"
                     size="small"
-                    onClick={() => {
-                        dequeue(runnerId);
-                        enqueue(task, state.options);
+                    onClick={async () => {
+                        await dispatch(dequeue(runnerId)).unwrap();
+                        dispatch(enqueue(task, state.options));
                     }}
                 >
                     <RestartAlt fontSize="inherit" />
                 </IconButton>
             )}
             {actionsControl.del && (
-                <IconButton title="删除" size="small" color="error" onClick={() => dequeue(runnerId)}>
+                <IconButton title="删除" size="small" color="error" onClick={() => dispatch(dequeue(runnerId))}>
                     <Delete fontSize="inherit" />
                 </IconButton>
             )}
@@ -242,7 +245,7 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
 }
 
 export function LevelStateList(listProps: ListProps) {
-    const { queue } = useTaskScheduler();
+    const queue = useAppSelector((state) => state.taskScheduler.queue);
     return (
         <>
             <List {...listProps}>

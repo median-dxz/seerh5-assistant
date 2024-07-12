@@ -5,8 +5,9 @@ import { Backpack } from '@/components/icons/Backpack';
 import { HealthBroken } from '@/components/icons/HealthBroken';
 import { HpBar } from '@/components/icons/HpBar';
 import { Row } from '@/components/styled/Row';
-import { useMainState } from '@/context/useMainState';
 import { usePetGroups } from '@/services/config/usePetGroups';
+import { mainPanelActions } from '@/services/mainPanelSlice';
+import { useAppDispatch } from '@/store';
 import Bookmarks from '@mui/icons-material/Bookmarks';
 import Clear from '@mui/icons-material/ClearRounded';
 import { Button, Tooltip, Typography } from '@mui/material';
@@ -20,7 +21,7 @@ interface ToolBarProps {
 }
 
 export function ToolBar({ selected }: ToolBarProps) {
-    const { setOpen: setMainOpen } = useMainState();
+    const dispatch = useAppDispatch();
     const { isLoading, mutate, petGroups } = usePetGroups();
 
     const handleLowerHp = () => {
@@ -39,7 +40,7 @@ export function ToolBar({ selected }: ToolBarProps) {
 
     const handleOpenBag = () => {
         void ModuleManager.showModule('petBag');
-        setMainOpen(false);
+        dispatch(mainPanelActions.close());
     };
 
     const loadPets = useCallback(
@@ -82,8 +83,18 @@ export function ToolBar({ selected }: ToolBarProps) {
     }
 
     return (
-        <Row justifyContent="space-between">
-            <Stack flexDirection="row" gap={2} useFlexGap>
+        <Row
+            sx={{
+                justifyContent: 'space-between'
+            }}
+        >
+            <Stack
+                sx={{
+                    flexDirection: 'row'
+                }}
+                gap={2}
+                useFlexGap
+            >
                 <Button startIcon={<HpBar />} onClick={handleLowerHp}>
                     压血
                 </Button>

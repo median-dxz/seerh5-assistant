@@ -4,9 +4,9 @@ import { effect, stop, toRaw } from '@vue/reactivity';
 
 import { dequal } from 'dequal';
 import * as endpoints from '../endpoints';
-import { getNamespace, type DefinedModMetadata } from '../mod/metadata';
 import * as battleStore from './battle';
 import * as commandStore from './command';
+import { getNamespace, type DefinedModMetadata } from './metadata';
 import * as strategyStore from './strategy';
 import * as taskStore from './task';
 
@@ -126,15 +126,3 @@ export class ModInstance {
 }
 
 export const store = new Map<string, ModInstance>();
-
-export function teardown() {
-    store.forEach((mod) => {
-        try {
-            store.delete(mod.namespace);
-            mod.dispose();
-            console.log(`撤销模组部署: ${mod.namespace}`);
-        } catch (error) {
-            console.error(`撤销模组部署失败: ${mod.namespace}`, error);
-        }
-    });
-}

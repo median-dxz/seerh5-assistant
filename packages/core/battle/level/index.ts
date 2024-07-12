@@ -121,6 +121,8 @@ class LevelManager {
                 this.lock = this.runner = null;
                 manager.clear();
             });
+
+        return this.lock;
     }
 }
 

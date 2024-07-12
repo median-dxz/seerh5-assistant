@@ -1,6 +1,9 @@
 /* eslint-disable */
 
-import { GameConfigRegistry, SEAEventSource, battle, hookPrototype } from '@sea/core';
+import { taskStateActions } from '@/services/taskSchedulerSlice';
+import type { TaskRunner } from '@/shared/types';
+import { appStore } from '@/store';
+import { GameConfigRegistry, SEAEventSource, battle, hookPrototype, levelManager } from '@sea/core';
 import { IS_DEV } from '../constants';
 import { extendCoreEngine } from './engine';
 import { registerLog } from './registerLog';
@@ -40,6 +43,16 @@ export function setupForLauncher() {
             PetUpdateCmdListener.onUpdateSkill,
             PetUpdateCmdListener
         );
+    });
+
+    SEAEventSource.levelManger('update').on((action) => {
+        const runner = levelManager.getRunner();
+        if (!runner) return;
+
+        appStore.dispatch(taskStateActions.updateData((runner as TaskRunner).data));
+        if (action === 'battle') {
+            appStore.dispatch(taskStateActions.increaseBattleCount());
+        }
     });
 
     GameConfigRegistry.register('nature', {

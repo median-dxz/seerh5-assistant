@@ -1,12 +1,12 @@
-import * as ctService from '@/services/store/CatchTimeBinding';
-import * as battleService from '@/services/store/battle';
-import * as commandService from '@/services/store/command';
-import * as modService from '@/services/store/mod';
-import * as strategyService from '@/services/store/strategy';
-import * as taskService from '@/services/store/task';
+import * as ctService from '@/services/catchTimeBinding/CatchTimeBinding';
+import * as battleService from '@/services/modStore/battle';
+import * as commandService from '@/services/modStore/command';
+import * as modService from '@/services/modStore/mod';
+import * as strategyService from '@/services/modStore/strategy';
+import * as taskService from '@/services/modStore/task';
 
-import { deploymentHandlers, fetchList } from '@/services/mod/handler';
-import { installBuiltinMods } from '@/services/mod/install';
+import { deploymentHandlers, fetchList } from '@/services/modStore/deploymentHandlerSlice';
+import { installBuiltinMods } from '@/services/modStore/install';
 import { seac } from '@sea/core';
 import React, { useCallback, useEffect, useState, type PropsWithChildren } from 'react';
 import { ModStore } from './useModStore';

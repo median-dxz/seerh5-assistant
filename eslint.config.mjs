@@ -49,6 +49,7 @@ export default tsEslint.config(
                 {
                     vars: 'local',
                     varsIgnorePattern: '^_',
+                    argsIgnorePattern: '^_',
                     caughtErrors: 'none'
                 }
             ],

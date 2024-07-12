@@ -1,7 +1,7 @@
 import type { LevelBattle } from '@sea/core';
 
 import type { Battle } from '@sea/mod-type';
-import { ctByName } from './CatchTimeBinding';
+import { ctByName } from '../catchTimeBinding/CatchTimeBinding';
 import { store as strategyStore } from './strategy';
 
 export interface BattleInstance {

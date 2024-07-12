@@ -1,14 +1,15 @@
 import { LabeledLinearProgress } from '@/components/LabeledProgress';
 import { Paper } from '@/components/styled/Paper';
 import { Row } from '@/components/styled/Row';
-import { useTaskScheduler } from '@/context/useTaskScheduler';
+import { taskSchedulerActions } from '@/services/taskSchedulerSlice';
+import { useAppDispatch, useAppSelector } from '@/store';
 import Pause from '@mui/icons-material/PauseRounded';
 import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 import { Button, Chip, Stack, Typography } from '@mui/material';
 import React from 'react';
 
 const StatusTextMap = {
-    ready: '就绪',
+    idle: '就绪',
     running: '运行中',
     waitingForStop: '等待停止'
 };
@@ -18,13 +19,14 @@ export interface SidebarProps {
 }
 
 export function Sidebar({ height }: SidebarProps) {
-    const { isPaused, pause, resume, status, queue } = useTaskScheduler();
+    const dispatch = useAppDispatch();
+    const { isPaused, status, queue } = useAppSelector((state) => state.taskScheduler);
 
     const handlePauseScheduler = () => {
         if (isPaused) {
-            resume();
+            dispatch(taskSchedulerActions.resume());
         } else {
-            pause();
+            void dispatch(taskSchedulerActions.pause());
         }
     };
 

@@ -1,3 +1,4 @@
+import { appStore } from '@/store';
 import { theme } from '@/style';
 import { cache } from '@emotion/css';
 import { CacheProvider } from '@emotion/react';
@@ -5,6 +6,7 @@ import { CssBaseline, ThemeProvider, alpha, styled } from '@mui/material';
 import { enableMapSet } from 'immer';
 import { MaterialDesignContent, SnackbarProvider } from 'notistack';
 import React, { type PropsWithChildren } from 'react';
+import { Provider } from 'react-redux';
 import { SWRConfig, type SWRConfiguration } from 'swr';
 import { ModStoreProvider } from './ModStoreProvider';
 
@@ -31,7 +33,9 @@ export function ApplicationContext({ children }: PropsWithChildren<object>) {
                         Components={{ default: StyledMaterialDesignContent }}
                     >
                         <CssBaseline />
-                        <ModStoreProvider>{children}</ModStoreProvider>
+                        <Provider store={appStore}>
+                            <ModStoreProvider>{children}</ModStoreProvider>
+                        </Provider>
                     </SnackbarProvider>
                 </SWRConfig>
             </ThemeProvider>

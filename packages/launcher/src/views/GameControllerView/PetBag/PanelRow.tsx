@@ -4,8 +4,9 @@ import { HealthBroken } from '@/components/icons/HealthBroken';
 import { MoveToInbox } from '@/components/icons/MoveToInbox';
 import { Pill } from '@/components/icons/Pill';
 import { SeaTableRow } from '@/components/styled/TableRow';
-import { useMainState } from '@/context/useMainState';
+import { mainPanelActions } from '@/services/mainPanelSlice';
 import { Icon } from '@/services/resource';
+import { useAppDispatch } from '@/store';
 import MoreHoriz from '@mui/icons-material/MoreHoriz';
 import VerticalAlignTop from '@mui/icons-material/VerticalAlignTop';
 import { Box, Checkbox, Popover, Stack, Typography } from '@mui/material';
@@ -21,7 +22,7 @@ interface PanelRowProps {
 export function PanelRow({ selected, setSelected }: PanelRowProps) {
     const pet = useRowData<Pet>();
     const index = useIndex();
-    const { setOpen } = useMainState();
+    const dispatch = useAppDispatch();
     const natureQuery = GameConfigRegistry.getQuery('nature');
 
     const [petDetails, setPetDetails] = useState<ReactNode>('');
@@ -38,7 +39,7 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
         await delay(300);
         petBagPanel.showDevelopBaseView();
         petBagPanel.showDevelopView(9);
-        setOpen(false);
+        dispatch(mainPanelActions.close());
     };
 
     const handleClose = () => {

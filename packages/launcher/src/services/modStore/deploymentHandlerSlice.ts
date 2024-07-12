@@ -1,21 +1,16 @@
+import * as ctStore from '@/services/catchTimeBinding/CatchTimeBinding';
 import * as endpoints from '@/services/endpoints';
-import * as ctStore from '@/services/store/CatchTimeBinding';
-import { store as battleStore } from '@/services/store/battle';
+import { store as battleStore } from '@/services/modStore/battle';
 import { LauncherLoggerBuilder } from '@/shared/logger';
-import type { AnyFunction } from '@sea/core';
+import { appStore } from '@/store';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 import type { ModState } from '@sea/server';
-import { ModInstance, store } from '../store/mod';
+import { taskStateActions } from '../taskSchedulerSlice';
 import { buildMetadata, getNamespace, type DefinedModMetadata } from './metadata';
+import { ModInstance, store } from './mod';
 import { getModConfig, getModData } from './utils';
 
 type ModFactory = (context: SEAModContext<SEAModMetadata>) => Promise<SEAModExport> | SEAModExport;
-
-export const loggerDispatcher: {
-    dispatch?: AnyFunction;
-} = {
-    dispatch: undefined
-};
 
 export async function createModContext(metadata: SEAModMetadata) {
     const ct = (...pets: string[]) => {
@@ -45,7 +40,9 @@ export async function createModContext(metadata: SEAModMetadata) {
         meta,
         logger: (...args: unknown[]) => {
             logger(...args);
-            loggerDispatcher.dispatch?.(...args);
+            if (typeof args[0] === 'string') {
+                appStore.dispatch(taskStateActions.log(args[0]));
+            }
         },
         ct,
         battle,
@@ -62,7 +59,6 @@ class ModDeploymentHandler {
     ) {}
 
     metadata?: DefinedModMetadata;
-
     factory?: ModFactory;
 
     async fetch() {
@@ -118,6 +114,8 @@ class ModDeploymentHandler {
     }
 
     async deploy() {
+        await this.fetch();
+
         if (!this.metadata || !this.factory) {
             throw new Error(`模组: ${this.scope}::${this.id} 还未拉取代码`);
         }
@@ -128,6 +126,7 @@ class ModDeploymentHandler {
             const exports = await this.factory(context);
             const ins = new ModInstance(context, exports);
             store.set(namespace, ins);
+            // handlers.set(namespace, ins);
             console.log(`模组: ${namespace} 部署成功`);
         } catch (err) {
             console.error(`模组: ${namespace} 部署失败`, err);

@@ -3,7 +3,7 @@ import React, { useState, type MouseEventHandler } from 'react';
 
 import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 import { useModStore } from '@/context/useModStore';
-import type { ModInstance } from '@/services/store/mod';
+import type { ModInstance } from '@/services/modStore/mod';
 
 import Build from '@mui/icons-material/BuildRounded';
 import Delete from '@mui/icons-material/DeleteOutlineRounded';

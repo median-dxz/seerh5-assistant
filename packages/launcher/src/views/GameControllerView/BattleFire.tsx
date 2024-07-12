@@ -1,8 +1,9 @@
 import { Paper } from '@/components/styled/Paper';
 import { Row } from '@/components/styled/Row';
 import { QueryKey } from '@/constants';
-import { useMainState } from '@/context/useMainState';
+import { mainPanelActions } from '@/services/mainPanelSlice';
 import { time2mmss } from '@/shared/index';
+import { useAppDispatch } from '@/store';
 import { Button, CircularProgress, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { BattleFireType, SEAEventSource, Subscription, engine, socket, throttle } from '@sea/core';
@@ -84,10 +85,10 @@ export function BattleFire() {
         renderProps = { color: 'inherit', text: '无火焰' };
     }
 
-    const { setOpen } = useMainState();
+    const dispatch = useAppDispatch();
     const exchangeBattleFire = () => {
         ModuleManager.showModule('battleFirePanel', ['battleFirePanel'], null, null, AppDoStyle.NULL);
-        setOpen(false);
+        dispatch(mainPanelActions.close());
     };
 
     const giftStars = async () => {

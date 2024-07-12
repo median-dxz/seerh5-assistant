@@ -1,5 +1,5 @@
 import { IS_DEV } from '@/constants';
-import { installModFromUrl } from '@/services/mod/install';
+import { installModFromUrl } from '@/services/modStore/install';
 import Close from '@mui/icons-material/Close';
 import CloudUpload from '@mui/icons-material/CloudUploadRounded';
 import {

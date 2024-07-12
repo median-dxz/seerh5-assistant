@@ -9,7 +9,8 @@ import { PanelField, PanelTable, useRowData, type PanelColumns } from '@/compone
 import { Icon } from '@/services/resource';
 
 import { SeaTableRow } from '@/components/styled/TableRow';
-import { useMainState } from '@/context/useMainState';
+import { mainPanelActions } from '@/services/mainPanelSlice';
+import { useAppDispatch } from '@/store';
 import { idList, openModuleList } from './data';
 
 const convertUnit = (count: number) => {
@@ -49,7 +50,7 @@ export function CommonValue() {
 
 const PanelRow: React.FC = () => {
     const item = useRowData<Item>();
-    const panelState = useMainState();
+    const dispatch = useAppDispatch();
 
     let amountRender = undefined;
     if (item.amount) {
@@ -77,7 +78,7 @@ const PanelRow: React.FC = () => {
                     <Button
                         onClick={() => {
                             openModuleList[item.id]();
-                            panelState.setOpen(false);
+                            dispatch(mainPanelActions.close());
                         }}
                     >
                         兑换

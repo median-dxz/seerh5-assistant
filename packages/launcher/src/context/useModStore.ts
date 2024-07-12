@@ -1,8 +1,8 @@
-import type { BattleInstance } from '@/services/store/battle';
-import type { CommandInstance } from '@/services/store/command';
-import type { ModInstance } from '@/services/store/mod';
-import type { StrategyInstance } from '@/services/store/strategy';
-import type { TaskInstance } from '@/services/store/task';
+import type { BattleInstance } from '@/services/modStore/battle';
+import type { CommandInstance } from '@/services/modStore/command';
+import type { ModInstance } from '@/services/modStore/mod';
+import type { StrategyInstance } from '@/services/modStore/strategy';
+import type { TaskInstance } from '@/services/modStore/task';
 
 import { createContext, useContext } from 'react';
 

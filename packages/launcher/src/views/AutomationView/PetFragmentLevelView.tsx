@@ -1,19 +1,20 @@
-import { PanelField, useRowData } from '@/components/PanelTable';
-import { PanelTable, type PanelColumns } from '@/components/PanelTable/PanelTable';
-import { SeaTableRow } from '@/components/styled/TableRow';
-
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import React, { useMemo } from 'react';
+import useSWR from 'swr';
 
 import { PET_FRAGMENT_LEVEL_ID } from '@/builtin/petFragment';
 import type { IPetFragmentRunner, PetFragmentOption } from '@/builtin/petFragment/types';
+import { PanelField, useRowData } from '@/components/PanelTable';
+import { PanelTable, type PanelColumns } from '@/components/PanelTable/PanelTable';
+import { Row } from '@/components/styled/Row';
+import { SeaTableRow } from '@/components/styled/TableRow';
 import { MOD_SCOPE_BUILTIN, QueryKey } from '@/constants';
-import { useMainState } from '@/context/useMainState';
 import { useModStore } from '@/context/useModStore';
-import { useTaskScheduler } from '@/context/useTaskScheduler';
-import { getNamespace as ns } from '@/services/mod/metadata';
+import { mainPanelActions } from '@/services/mainPanelSlice';
+import { getNamespace as ns } from '@/services/modStore/metadata';
+import { taskSchedulerActions } from '@/services/taskSchedulerSlice';
+import { useAppDispatch } from '@/store';
 import { engine, LevelAction } from '@sea/core';
-import useSWR from 'swr';
 
 const toRowKey = (data: PetFragmentOption) => engine.getPetFragmentLevelObj(data.id)!.Desc;
 
@@ -60,16 +61,27 @@ export function PetFragmentLevelView() {
 
     return (
         <>
-            <Button variant="outlined">运行全部</Button>
-            <Button variant="outlined">添加新配置</Button>
+            <Row>
+                <Stack
+                    sx={{
+                        flexDirection: 'row',
+                        py: 3
+                    }}
+                    gap={2}
+                    useFlexGap
+                >
+                    <Button variant="outlined">运行全部</Button>
+                    <Button variant="outlined">添加新配置</Button>
+                </Stack>
+            </Row>
+
             <PanelTable data={optionsList} toRowKey={toRowKey} columns={col} rowElement={<PanelRow />} />
         </>
     );
 }
 
 const PanelRow = React.memo(() => {
-    const { setOpen } = useMainState();
-    const { enqueue } = useTaskScheduler();
+    const dispatch = useAppDispatch();
     const { taskStore } = useModStore();
     const options = useRowData<PetFragmentOption>();
     const task = taskStore.get(PET_FRAGMENT_LEVEL_ID)!.task;
@@ -100,7 +112,7 @@ const PanelRow = React.memo(() => {
                 <Typography>扫荡: {options.sweep ? '开启' : '关闭'}</Typography>
                 <Button
                     onClick={() => {
-                        enqueue(task, options as unknown as undefined);
+                        dispatch(taskSchedulerActions.enqueue(task, options as unknown as undefined));
                     }}
                     disabled={completed}
                 >
@@ -109,7 +121,7 @@ const PanelRow = React.memo(() => {
                 <Button
                     onClick={() => {
                         void ModuleManager.showModuleByID(151, `{Design:${runner.designId}}`);
-                        setOpen(false);
+                        dispatch(mainPanelActions.close());
                     }}
                 >
                     打开面板

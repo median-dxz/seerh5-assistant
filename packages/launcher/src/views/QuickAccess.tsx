@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 
 import { SeaQuickAccess } from '@/components/styled/QuickAccess';
 import { useModStore } from '@/context/useModStore';
-import type { CommandInstance } from '@/services/store/command';
+import type { CommandInstance } from '@/services/modStore/command';
 import type { AnyFunction } from '@sea/core';
 
 const SvgMaker = ({ url, children: _, ...rest }: React.SVGProps<SVGSVGElement> & { url: string }) => {
@@ -30,9 +30,7 @@ const SvgMaker = ({ url, children: _, ...rest }: React.SVGProps<SVGSVGElement> &
     );
 };
 
-const SvgWrapper = (url: string) => {
-    return (props: React.SVGProps<SVGSVGElement>) => SvgMaker({ url, ...props });
-};
+const SvgWrapper = (url: string) => (props: React.SVGProps<SVGSVGElement>) => SvgMaker({ url, ...props });
 
 const QuickAccessPluginAction: React.FC<
     {
@@ -70,7 +68,7 @@ const QuickAccessPluginAction: React.FC<
                 const r = plugin.handler();
 
                 if (r instanceof Promise) {
-                    r.then(() => {
+                    void r.then(() => {
                         setTitle(getTitle());
                     });
                 } else {

@@ -1,11 +1,10 @@
 import { useModStore } from '@/context/useModStore';
-import { deploymentHandlers, fetchList } from '@/services/mod/handler';
-import { teardown } from '@/services/store/mod';
+import { deploymentHandlers, fetchList } from '@/services/modStore/deploymentHandlerSlice';
 import { Box, Button, alpha } from '@mui/material';
 import React from 'react';
 
 export function Header() {
-    const { sync } = useModStore();
+    const { modStore: store, sync } = useModStore();
     return (
         <Box
             sx={{
@@ -20,7 +19,15 @@ export function Header() {
         >
             <Button
                 onClick={() => {
-                    teardown();
+                    store.forEach((mod) => {
+                        try {
+                            store.delete(mod.namespace);
+                            mod.dispose();
+                            console.log(`撤销模组部署: ${mod.namespace}`);
+                        } catch (error) {
+                            console.error(`撤销模组部署失败: ${mod.namespace}`, error);
+                        }
+                    });
                     void fetchList()
                         .then(() =>
                             Promise.all(
