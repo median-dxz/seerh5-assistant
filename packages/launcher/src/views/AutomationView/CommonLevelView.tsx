@@ -12,7 +12,7 @@ import { taskSchedulerActions } from '@/services/taskSchedulerSlice';
 import { useTaskConfig } from '@/services/useTaskConfig';
 import { getTaskCurrentOptions } from '@/shared';
 import type { AnyTask } from '@/shared/types';
-import { useAppDispatch } from '@/store';
+import { useAppDispatch, useAppSelector } from '@/store';
 import { LevelAction } from '@sea/core';
 import type { TaskConfigData } from '@sea/server';
 import useSWR from 'swr';
@@ -119,6 +119,8 @@ export function CommonLevelView() {
 
 const PanelRow = React.memo(() => {
     const dispatch = useAppDispatch();
+    const status = useAppSelector((state) => state.taskScheduler.status);
+
     const {
         taskInstance: { task, name: taskName },
         config
@@ -126,7 +128,7 @@ const PanelRow = React.memo(() => {
     const currentOptions = useMemo(() => getTaskCurrentOptions(task as AnyTask, config), [task, config]);
 
     const { data: completed } = useSWR(
-        [QueryKey.taskIsCompleted, task],
+        [QueryKey.taskIsCompleted, task, status],
         async () => {
             const runner = (task as AnyTask).runner(task.metadata, currentOptions);
             await runner.update();

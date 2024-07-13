@@ -10,6 +10,7 @@ import React from 'react';
 
 const StatusTextMap = {
     idle: '就绪',
+    pause: '暂停',
     running: '运行中',
     waitingForStop: '等待停止'
 };
@@ -20,7 +21,8 @@ export interface SidebarProps {
 
 export function Sidebar({ height }: SidebarProps) {
     const dispatch = useAppDispatch();
-    const { isPaused, status, queue } = useAppSelector((state) => state.taskScheduler);
+    const { isPaused, queue } = useAppSelector((state) => state.taskScheduler);
+    let status: keyof typeof StatusTextMap = useAppSelector((state) => state.taskScheduler.status);
 
     const handlePauseScheduler = () => {
         if (isPaused) {
@@ -29,6 +31,10 @@ export function Sidebar({ height }: SidebarProps) {
             void dispatch(taskSchedulerActions.pause());
         }
     };
+
+    if (status === 'idle' && isPaused) {
+        status = 'pause';
+    }
 
     const currentProgress = queue.length - Math.min(queue.filter((r) => r.status === 'pending').length, queue.length);
 

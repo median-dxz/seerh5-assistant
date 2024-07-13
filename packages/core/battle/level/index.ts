@@ -119,7 +119,6 @@ class LevelManager {
             .finally(() => {
                 logger('关卡运行结束');
                 this.lock = this.runner = null;
-                manager.clear();
             });
 
         return this.lock;

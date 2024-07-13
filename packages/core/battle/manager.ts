@@ -8,10 +8,13 @@ const context: {
     strategy: undefined | MoveStrategy;
     triggerLock: null | ((value: boolean | PromiseLike<boolean>) => void);
     delayTimeout: null | Promise<void>;
+    // for strategy
+    rotatingCount: Map<string, number>;
 } = {
     strategy: undefined,
     triggerLock: null,
-    delayTimeout: null
+    delayTimeout: null,
+    rotatingCount: new Map()
 };
 
 function takeover(trigger: Trigger, _strategy?: MoveStrategy): Promise<boolean> {
@@ -63,8 +66,10 @@ async function resolveStrategy(strategy?: MoveStrategy) {
 }
 
 function clear() {
-    context.strategy = undefined;
+    context.delayTimeout = null;
     context.triggerLock = null;
+    context.strategy = undefined;
+    context.rotatingCount = new Map<string, number>();
 }
 
 const manager = {

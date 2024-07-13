@@ -72,10 +72,10 @@ export function BattleFire() {
     if (valid) {
         switch (type) {
             case BattleFireType.绿火:
-                renderProps = { color: 'green', text: `绿火 ${time2mmss(timeLeft)}` };
+                renderProps = { color: 'green', text: `绿火 ${time2mmss(timeLeft * 1000)}` };
                 break;
             case BattleFireType.金火:
-                renderProps = { color: 'gold', text: `金火 ${time2mmss(timeLeft)}` };
+                renderProps = { color: 'gold', text: `金火 ${time2mmss(timeLeft * 1000)}` };
                 break;
             default:
                 renderProps = { color: 'inherit', text: '其他火焰' };
@@ -87,7 +87,7 @@ export function BattleFire() {
 
     const dispatch = useAppDispatch();
     const exchangeBattleFire = () => {
-        ModuleManager.showModule('battleFirePanel', ['battleFirePanel'], null, null, AppDoStyle.NULL);
+        void ModuleManager.showModule('battleFirePanel', ['battleFirePanel'], null, null, AppDoStyle.NULL);
         dispatch(mainPanelActions.close());
     };
 
@@ -108,31 +108,27 @@ export function BattleFire() {
         }
 
         setGiftingStars(true);
-        FriendManager.getFriendList()
-            .then((friendsList) => {
-                friendsList = friendsList.filter((friend) => friend.itemSend === 0).slice(0, remainingGifts);
+        let friendsList = await FriendManager.getFriendList();
+        friendsList = friendsList.filter((friend) => friend.itemSend === 0).slice(0, remainingGifts);
 
-                const buf = new egret.ByteArray();
-                buf.writeUnsignedInt(friendsList.length);
+        let buf = new egret.ByteArray();
+        buf.writeUnsignedInt(friendsList.length);
 
-                friendsList.forEach((friend) => {
-                    buf.writeUnsignedInt(friend.id);
-                });
+        friendsList.forEach((friend) => {
+            buf.writeUnsignedInt(friend.id);
+        });
 
-                return socket.sendByQueue(47348, [4, 0, buf]);
-            })
-            .then((r) => {
-                const buf = new egret.ByteArray(r);
-                const received = buf.readUnsignedInt();
-                const sent = buf.readUnsignedInt();
-                enqueueSnackbar({
-                    variant: 'info',
-                    message: `获得${received}个星星, 送出${sent}个星星`,
-                    onClose() {
-                        setGiftingStars(false);
-                    }
-                });
-            });
+        buf = new egret.ByteArray(await socket.sendByQueue(47348, [4, 0, buf]));
+
+        const received = buf.readUnsignedInt();
+        const sent = buf.readUnsignedInt();
+        enqueueSnackbar({
+            variant: 'info',
+            message: `获得${received}个星星, 送出${sent}个星星`,
+            onClose() {
+                setGiftingStars(false);
+            }
+        });
     };
 
     const throttledGiftStars = throttle(giftStars, 1500);
