@@ -114,8 +114,6 @@ class ModDeploymentHandler {
     }
 
     async deploy() {
-        await this.fetch();
-
         if (!this.metadata || !this.factory) {
             throw new Error(`模组: ${this.scope}::${this.id} 还未拉取代码`);
         }

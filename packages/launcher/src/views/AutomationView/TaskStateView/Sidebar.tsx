@@ -45,6 +45,7 @@ export function Sidebar({ height }: SidebarProps) {
                     color="inherit"
                     sx={{ minWidth: 'auto', padding: '4px' }}
                     onClick={handlePauseScheduler}
+                    disabled={status === 'waitingForStop'}
                 >
                     {isPaused ? <PlayArrow fontSize="inherit" /> : <Pause fontSize="inherit" />}
                 </Button>

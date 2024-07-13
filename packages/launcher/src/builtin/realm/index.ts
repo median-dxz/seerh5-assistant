@@ -55,6 +55,42 @@ export default function realm({ logger, battle }: SEAModContext<typeof metadata>
                         }
                     };
                 }
+            }),
+            task({
+                metadata: { id: 'TestError', name: '测试错误', maxTimes: 1 },
+                runner() {
+                    return {
+                        data: {
+                            progress: 0,
+                            remainingTimes: 0,
+                            customField: 'string'
+                        },
+                        selectLevelBattle() {
+                            return battle('');
+                        },
+                        async update() {
+                            if (this.data.progress >= 66) {
+                                await Promise.reject(new Error('oops update'));
+                            }
+                            this.data.progress += 33;
+                        },
+                        logger: NOOP,
+                        next() {
+                            if (this.data.progress >= 99) {
+                                return 'stop';
+                            }
+                            return 'run';
+                        },
+                        actions: {
+                            async run() {
+                                if (this.data.progress > 33) {
+                                    await Promise.reject(new Error('oops run'));
+                                }
+                                await delay(3000);
+                            }
+                        }
+                    };
+                }
             })
         ] as const
     } satisfies SEAModExport;

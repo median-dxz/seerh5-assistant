@@ -41,7 +41,7 @@ export function getTaskCurrentOptions<TSchema extends SEAConfigSchema | undefine
 
 export const time2mmss = (n: number) => {
     n = Math.round(n / 1000);
-    if (Object.is(n, -0)) {
+    if (Object.is(n, -0) || n < 0) {
         n = 0;
     }
     const format = Intl.NumberFormat(undefined, {

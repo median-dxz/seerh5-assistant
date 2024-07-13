@@ -4,7 +4,7 @@ import { startAppListening } from '@/shared/listenerMiddleware';
 import type { RootState } from '@/store';
 import { createAction, createAsyncThunk, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
 import { LevelAction, levelManager } from '@sea/core';
-import type { LevelData, Task } from '@sea/mod-type';
+import { type LevelData, type Task } from '@sea/mod-type';
 import { produce } from 'immer';
 
 export interface TaskState {
@@ -74,7 +74,7 @@ const run = createAsyncThunk<TaskState['status'], void, { state: RootState; reje
     'taskScheduler/run',
     async (_, api) => {
         const state = api.getState().taskScheduler;
-        console.log(`关卡调度器: tryStartNextRunner: `, levelManager.running, state);
+        console.log(`关卡调度器: tryStartNextRunner: `, state);
 
         const queue = state.queue;
         const currentIndex = state.currentIndex!;
@@ -171,7 +171,9 @@ const taskSchedulerSlice = createAppSlice({
         ),
         pause: create.asyncThunk<void>(abortLevelManager, {
             pending: (state) => {
-                state.status = 'waitingForStop';
+                if (state.status === 'running') {
+                    state.status = 'waitingForStop';
+                }
             },
             fulfilled: (state) => {
                 state.isPaused = true;
@@ -188,7 +190,7 @@ const taskSchedulerSlice = createAppSlice({
             options: {
                 condition(_, api): boolean {
                     const { taskScheduler } = api.getState() as RootState;
-                    return taskScheduler.status !== 'running';
+                    return taskScheduler.status === 'running';
                 }
             }
         })
@@ -226,6 +228,7 @@ const taskSchedulerSlice = createAppSlice({
                 state.status = 'running';
                 createTaskStateReducer((taskState) => {
                     taskState.startTime = Date.now();
+                    taskState.status = 'running';
                 })(state, action);
             })
             .addCase(
@@ -261,10 +264,12 @@ startAppListening({
         taskSchedulerActions.dequeue.fulfilled,
         taskSchedulerActions.abortCurrentRunner.fulfilled
     ),
-    effect: async (_, { dispatch, subscribe, unsubscribe }) => {
-        unsubscribe();
-        await dispatch(taskSchedulerActions.run()).unwrap();
-        subscribe();
-        dispatch(taskSchedulerActions.moveNext());
+    effect: async (_, { dispatch, getState, subscribe, unsubscribe }) => {
+        if (shouldRunTask(getState())) {
+            unsubscribe();
+            await dispatch(taskSchedulerActions.run());
+            subscribe();
+            dispatch(taskSchedulerActions.moveNext());
+        }
     }
 });

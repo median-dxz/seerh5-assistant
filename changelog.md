@@ -15,6 +15,7 @@
 - [ ] 日任扫荡功能
 - [ ] LevelManager中止时的超时和强制逃跑处理
 - [ ] PanelTable是不是直接useMemo就行了，奇怪的cacheReturn hook
+- [ ] (task state)使用自定义的高亮显示框代替textarea显示json
 
 - [ ] https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-5.html#the-configdir-template-variable-for-configuration-files
 - [ ] 升级sdk的ts版本

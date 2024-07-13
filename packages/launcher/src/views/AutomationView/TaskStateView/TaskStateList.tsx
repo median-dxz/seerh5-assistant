@@ -21,6 +21,7 @@ import {
     DialogContent,
     DialogTitle,
     IconButton,
+    InputLabel,
     List,
     ListItem,
     ListItemButton,
@@ -78,13 +79,17 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
     const [now, setNow] = useState(Date.now());
 
     useEffect(() => {
-        const timer = setInterval(() => {
-            setNow(Date.now());
-        }, 1000);
+        let timer: number | undefined;
+        if (isRunning) {
+            timer = window.setInterval(() => {
+                setNow(Date.now());
+            }, 300);
+        }
+
         return () => {
-            clearInterval(timer);
+            timer && clearInterval(timer);
         };
-    }, []);
+    }, [isRunning]);
 
     const handleCloseDialog = useCallback(() => setDialogOpen(false), []);
 
@@ -125,7 +130,7 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                     }
                 }}
                 primaryTypographyProps={{ sx: { whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' } }}
-                primary={`#${runnerId + 1} ${task.metadata.name}`}
+                primary={`#${runnerId} ${task.metadata.name}`}
                 secondary={
                     <>
                         <Chip label={StatusTextMap[status]} variant="outlined" size="small" component="span" />
@@ -142,7 +147,7 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                 }}
             />
 
-            {isRunning && (
+            {runnerData && isRunning && (
                 <Stack sx={{ width: '100%', overflow: 'hidden' }}>
                     <LabeledLinearProgress
                         typographyProps={{
@@ -154,8 +159,8 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                             }
                         }}
                         labelPosition="top-center"
-                        overridePrompt={`${runnerData!.progress}%`}
-                        progress={runnerData!.progress}
+                        overridePrompt={`${runnerData.progress}%`}
+                        progress={runnerData.progress}
                         total={100}
                     />
                     <LabeledLinearProgress
@@ -169,7 +174,7 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                         }}
                         prompt={`进度`}
                         labelPosition="top-center"
-                        progress={task.metadata.maxTimes - runnerData!.remainingTimes}
+                        progress={task.metadata.maxTimes - runnerData.remainingTimes}
                         total={task.metadata.maxTimes}
                     />
                 </Stack>
@@ -227,7 +232,7 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                     title="重试"
                     size="small"
                     onClick={async () => {
-                        await dispatch(dequeue(runnerId)).unwrap();
+                        await dispatch(dequeue(runnerId));
                         dispatch(enqueue(task, state.options));
                     }}
                 >
@@ -279,19 +284,21 @@ const RunnerDetailDialog = memo(function RunnerDetailDialog({
     const { fonts } = useTheme();
     const FieldPaper = ({ data, title, id }: { title: string; id: string; data: string }) => (
         <div>
-            <Typography
-                fontSize="1.25rem"
-                fontFamily={fonts.input}
+            <InputLabel
                 sx={{
                     width: 'fit-content',
                     px: 4,
                     mb: 2,
-                    bgcolor: (theme) => alpha(theme.palette.background.paper, 0.3),
-                    borderRadius: 1
+                    bgcolor: (theme) => alpha(theme.palette.background.paper, 0.12),
+                    borderRadius: 1,
+                    fontFamily: fonts.input,
+                    fontSize: '1.25rem',
+                    color: ({ palette }) => palette.text.primary
                 }}
+                htmlFor={`runner-${id}-${task.metadata.name}`}
             >
                 {title}:{' '}
-            </Typography>
+            </InputLabel>
             <Paper>
                 <TextField
                     key={`runner-${id}-${task.metadata.name}`}
@@ -319,7 +326,7 @@ const RunnerDetailDialog = memo(function RunnerDetailDialog({
             sx={{
                 '& .MuiPaper-root[role="dialog"]': {
                     backgroundImage: 'none',
-                    bgcolor: ({ palette }) => alpha(palette.popup.background, 0.8),
+                    bgcolor: ({ palette }) => palette.popup.background,
                     minWidth: '18rem',
                     maxWidth: '60vw'
                 }
@@ -345,7 +352,7 @@ const RunnerDetailDialog = memo(function RunnerDetailDialog({
                             sx={{
                                 width: 'fit-content',
                                 px: 4,
-                                bgcolor: (theme) => alpha(theme.palette.background.paper, 0.3),
+                                bgcolor: (theme) => alpha(theme.palette.background.paper, 0.24),
                                 borderRadius: 2
                             }}
                         >
@@ -365,10 +372,10 @@ const RunnerDetailDialog = memo(function RunnerDetailDialog({
                     {Boolean(runnerState.error) && (
                         <Paper
                             sx={{
-                                bgcolor: (theme) => alpha(theme.palette.background.default, 0.88)
+                                bgcolor: (theme) => alpha(theme.palette.background.paper, 0.36)
                             }}
                         >
-                            ERROR: <Typography fontFamily={fonts.input}>{runnerState.error?.message}</Typography>
+                            ERROR:<Typography fontFamily={fonts.input}> {runnerState.error?.message}</Typography>
                         </Paper>
                     )}
 

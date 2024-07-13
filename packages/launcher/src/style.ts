@@ -75,7 +75,7 @@ export const theme = createTheme({
         },
         divider: alpha(colors.primary, 0.16),
         popup: {
-            background: alpha(colors.secondary, 0.36)
+            background: alpha('#140b24', 0.88)
         }
     },
     typography: {

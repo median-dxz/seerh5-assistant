@@ -38,7 +38,7 @@ export default defineConfig(({ command, mode }) => {
             port: 1234
         },
         plugins: [
-            react({ jsxImportSource: '@emotion/react', devTarget: 'es2022' }),
+            react({ jsxImportSource: '@emotion/react', devTarget: 'esnext' }),
             importMap({
                 options: {
                     '@sea/core': path.resolve(dirname, '../core/dist/index.js')

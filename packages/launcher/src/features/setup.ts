@@ -9,6 +9,9 @@ import { extendCoreEngine } from './engine';
 import { registerLog } from './registerLog';
 
 export function setupForLauncher() {
+    const canvas: HTMLCanvasElement = document.querySelector('#egret_player_container canvas')!;
+    canvas.setAttribute('tabindex', '-1');
+
     const start$ = SEAEventSource.hook('battle:start');
     const roundEnd$ = SEAEventSource.hook('battle:roundEnd');
     const end$ = SEAEventSource.hook('battle:end');

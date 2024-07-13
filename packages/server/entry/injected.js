@@ -218,7 +218,6 @@ var Driver = (function () {
                                 // dispatch event end
                             }
                             config.action && config.action.length > 0 && eval(config.action + '()'), Driver.doAction();
-
                             // loader modify end
                         },
                         this,

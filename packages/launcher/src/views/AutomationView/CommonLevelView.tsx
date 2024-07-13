@@ -123,7 +123,6 @@ const PanelRow = React.memo(() => {
         taskInstance: { task, name: taskName },
         config
     } = useRowData<Row>();
-
     const currentOptions = useMemo(() => getTaskCurrentOptions(task as AnyTask, config), [task, config]);
 
     const { data: completed } = useSWR(
@@ -147,7 +146,9 @@ const PanelRow = React.memo(() => {
             <PanelField field="action">
                 <Box component="span">
                     <Button
-                        onClick={() => dispatch(taskSchedulerActions.enqueue(task, currentOptions))}
+                        onClick={() => {
+                            dispatch(taskSchedulerActions.enqueue(task, currentOptions));
+                        }}
                         disabled={completed}
                     >
                         启动
