@@ -55,7 +55,7 @@ export default () => {
     SEAEventSource.hook('battle:end').on(() => {
         const isWin = Boolean(FightManager.isWin);
         if (context.strategy) {
-            Promise.all([context.delayTimeout, delay(500)])
+            Promise.all([context.delayTimeout, delay(2000)])
                 .then(() => {
                     context.triggerLock?.(isWin);
                     manager.clear();

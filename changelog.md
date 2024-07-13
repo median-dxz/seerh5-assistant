@@ -15,10 +15,11 @@
 - [ ] 日任扫荡功能
 - [ ] LevelManager中止时的超时和强制逃跑处理
 - [ ] PanelTable是不是直接useMemo就行了，奇怪的cacheReturn hook
-- [ ] (task state)使用自定义的高亮显示框代替textarea显示json
 
 - [ ] https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-5.html#the-configdir-template-variable-for-configuration-files
 - [ ] 升级sdk的ts版本
+- [ ] (task state)使用自定义的高亮显示框代替textarea显示json
+- [ ] 战斗延迟做成可配置项
 - [ ] 验证第五和魂印判断的正确性
 - [ ] sdk 中 core 版本兼容性检测, 添加 core 版本字段(必填), 并规范 launcher 的 core 实例和 sdk 使用的 api 之间的关系
   - [ ] 需要一次性提供 Launcher Api 版本，Core 版本和自身版本
