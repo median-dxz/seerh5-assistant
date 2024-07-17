@@ -1,56 +1,21 @@
-import type { DataObject } from '../shared/schemas.ts';
 import { SEASConfigData } from '../shared/SEASConfigData.ts';
 
-export interface TaskConfigData {
-    currentOptions?: string;
-    options: Map<string, DataObject>;
-}
-
-class TaskConfig extends SEASConfigData<Map<string, TaskConfigData>> {
+class TaskConfig extends SEASConfigData<Map<string, object>> {
     async loadWithDefault(configFile: string) {
         return super.loadWithDefault(configFile, new Map());
     }
 
-    async addOptions(taskId: string, name: string, data: DataObject) {
+    async setOptions(taskId: string, data: object) {
         return this.mutate((config) => {
-            if (!config.has(taskId)) {
-                config.set(taskId, {
-                    options: new Map()
-                });
-            }
-            config.get(taskId)!.options.set(name, data);
+            config.set(taskId, data);
         });
     }
 
-    options(taskId: string, name: string) {
-        return this.query().get(taskId)?.options.get(name);
+    options(taskId: string) {
+        return this.query().get(taskId);
     }
 
-    allOptions(taskId: string) {
-        return this.query().get(taskId)?.options;
-    }
-
-    currentOptions(taskId: string) {
-        return this.query().get(taskId)?.currentOptions;
-    }
-
-    async setCurrentOptions(taskId: string, name: string) {
-        return this.mutate((config) => {
-            if (config.has(taskId)) {
-                config.get(taskId)!.currentOptions = name;
-            }
-        });
-    }
-
-    async removeOptions(taskId: string, name: string) {
-        return this.mutate((config) => {
-            if (config.has(taskId)) {
-                config.get(taskId)?.options.delete(name);
-            }
-        });
-    }
-
-    async remove(taskId: string) {
+    async removeOptions(taskId: string) {
         return this.mutate((config) => {
             config.delete(taskId);
         });

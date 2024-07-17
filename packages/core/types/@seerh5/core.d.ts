@@ -310,7 +310,7 @@ declare global {
 
     class ItemUseManager {
         static getInstance(): ItemUseManager;
-        useItem(t: PetInfo, e: number): void;
+        useItem(t?: PetInfo, e: number): void;
         $usePetItem(obj: { petInfo: PetInfo; itemId: number; itemName: string }, e: number): void;
     }
 

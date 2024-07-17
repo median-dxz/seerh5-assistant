@@ -9,10 +9,14 @@ import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 import RestartAlt from '@mui/icons-material/RestartAltRounded';
 import Stop from '@mui/icons-material/StopOutlined';
 
+import { DataLoading } from '@/components/DataLoading';
 import { SwordLine } from '@/components/icons/SwordLine';
 import { LabeledLinearProgress } from '@/components/LabeledProgress';
 import { Paper } from '@/components/styled/Paper';
-import { taskSchedulerActions, type TaskState } from '@/services/taskSchedulerSlice';
+import { taskStore } from '@/features/mod/store';
+import { useMapToStore } from '@/features/mod/useModStore';
+import { getCompositeId, type ModExportsRef } from '@/features/mod/utils';
+import { taskSchedulerActions, type TaskState } from '@/features/taskSchedulerSlice';
 import { dateTime2hhmmss, time2mmss } from '@/shared';
 import { useAppDispatch, useAppSelector } from '@/store';
 import {
@@ -31,10 +35,8 @@ import {
     TextField,
     Typography,
     alpha,
-    useTheme,
     type ListProps
 } from '@mui/material';
-import type { Task } from '@sea/mod-type';
 import React, { memo, useCallback, useEffect, useState } from 'react';
 
 const { abortCurrentRunner, dequeue, enqueue } = taskSchedulerActions;
@@ -70,8 +72,7 @@ interface LevelStateListItemProps {
 export function TaskStateListItem({ state }: LevelStateListItemProps) {
     const [dialogOpen, setDialogOpen] = useState(false);
     const dispatch = useAppDispatch();
-    const { runnerId, runnerData, task } = state;
-    const { status, error } = state;
+    const { runner, taskRef, status, error } = state;
 
     const isRunning = status === 'running';
     const actionsControl = StatusActionsMap[status];
@@ -83,7 +84,7 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
         if (isRunning) {
             timer = window.setInterval(() => {
                 setNow(Date.now());
-            }, 300);
+            }, 500);
         }
 
         return () => {
@@ -130,7 +131,7 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                     }
                 }}
                 primaryTypographyProps={{ sx: { whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' } }}
-                primary={`#${runnerId} ${task.metadata.name}`}
+                primary={`#${runner.id} ${runner.name}`}
                 secondary={
                     <>
                         <Chip label={StatusTextMap[status]} variant="outlined" size="small" component="span" />
@@ -147,7 +148,7 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                 }}
             />
 
-            {runnerData && isRunning && (
+            {runner.data && isRunning && (
                 <Stack sx={{ width: '100%', overflow: 'hidden' }}>
                     <LabeledLinearProgress
                         typographyProps={{
@@ -159,8 +160,8 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                             }
                         }}
                         labelPosition="top-center"
-                        overridePrompt={`${runnerData.progress}%`}
-                        progress={runnerData.progress}
+                        overridePrompt={`${runner.data.progress}%`}
+                        progress={runner.data.progress}
                         total={100}
                     />
                     <LabeledLinearProgress
@@ -174,8 +175,8 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                         }}
                         prompt={`进度`}
                         labelPosition="top-center"
-                        progress={task.metadata.maxTimes - runnerData.remainingTimes}
-                        total={task.metadata.maxTimes}
+                        progress={runner.data.maxTimes - runner.data.remainingTimes}
+                        total={runner.data.maxTimes}
                     />
                 </Stack>
             )}
@@ -232,19 +233,19 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                     title="重试"
                     size="small"
                     onClick={async () => {
-                        await dispatch(dequeue(runnerId));
-                        dispatch(enqueue(task, state.options));
+                        await dispatch(dequeue(runner.id));
+                        dispatch(enqueue(taskRef, state.options));
                     }}
                 >
                     <RestartAlt fontSize="inherit" />
                 </IconButton>
             )}
             {actionsControl.del && (
-                <IconButton title="删除" size="small" color="error" onClick={() => dispatch(dequeue(runnerId))}>
+                <IconButton title="删除" size="small" color="error" onClick={() => dispatch(dequeue(runner.id))}>
                     <Delete fontSize="inherit" />
                 </IconButton>
             )}
-            <RunnerDetailDialog close={handleCloseDialog} open={dialogOpen} runnerState={state} task={task} />
+            <RunnerDetailDialog close={handleCloseDialog} open={dialogOpen} taskState={state} taskRef={taskRef} />
         </ListItem>
     );
 }
@@ -255,7 +256,7 @@ export function LevelStateList(listProps: ListProps) {
         <>
             <List {...listProps}>
                 {queue.map((state) => (
-                    <TaskStateListItem key={state.runnerId} state={state} />
+                    <TaskStateListItem key={state.runner.id} state={state} />
                 ))}
             </List>
             {queue.length === 0 && (
@@ -271,17 +272,22 @@ export function LevelStateList(listProps: ListProps) {
 export interface RunnerDetailDialogProps {
     open: boolean;
     close(): void;
-    runnerState: TaskState;
-    task: Task;
+    taskState: TaskState;
+    taskRef: ModExportsRef;
 }
 
 const RunnerDetailDialog = memo(function RunnerDetailDialog({
     open,
     close,
-    runnerState,
-    task
+    taskState,
+    taskRef
 }: RunnerDetailDialogProps) {
-    const { fonts } = useTheme();
+    const task = useMapToStore(() => taskRef, taskStore);
+
+    if (!task) {
+        return <DataLoading error="无效的任务引用" />;
+    }
+
     const FieldPaper = ({ data, title, id }: { title: string; id: string; data: string }) => (
         <div>
             <InputLabel
@@ -289,9 +295,9 @@ const RunnerDetailDialog = memo(function RunnerDetailDialog({
                     width: 'fit-content',
                     px: 4,
                     mb: 2,
-                    bgcolor: (theme) => alpha(theme.palette.background.paper, 0.12),
+                    bgcolor: ({ palette }) => alpha(palette.background.paper, 0.12),
                     borderRadius: 1,
-                    fontFamily: fonts.input,
+                    fontFamily: ({ fonts }) => fonts.input,
                     fontSize: '1.25rem',
                     color: ({ palette }) => palette.text.primary
                 }}
@@ -308,7 +314,7 @@ const RunnerDetailDialog = memo(function RunnerDetailDialog({
                     InputProps={{
                         readOnly: true,
                         sx: {
-                            fontFamily: fonts.input
+                            fontFamily: ({ fonts }) => fonts.input
                         }
                     }}
                     fullWidth
@@ -317,6 +323,7 @@ const RunnerDetailDialog = memo(function RunnerDetailDialog({
             </Paper>
         </div>
     );
+
     return (
         <Dialog
             open={open}
@@ -327,6 +334,7 @@ const RunnerDetailDialog = memo(function RunnerDetailDialog({
                 '& .MuiPaper-root[role="dialog"]': {
                     backgroundImage: 'none',
                     bgcolor: ({ palette }) => palette.popup.background,
+                    backdropFilter: 'blur(4px)',
                     minWidth: '18rem',
                     maxWidth: '60vw'
                 }
@@ -356,47 +364,44 @@ const RunnerDetailDialog = memo(function RunnerDetailDialog({
                                 borderRadius: 2
                             }}
                         >
-                            {task.metadata.name}
+                            {taskState.runner.name}
                         </Typography>
-                        <Chip label={runnerState.status} variant="outlined" size="small" />
+                        <Chip label={taskState.status} variant="outlined" size="small" />
                     </Stack>
 
                     <Typography>
                         时间:{' '}
-                        {runnerState.endTime && runnerState.startTime
-                            ? dateTime2hhmmss.formatRange(runnerState.startTime, runnerState.endTime)
-                            : runnerState.startTime
-                              ? dateTime2hhmmss.format(runnerState.startTime)
+                        {taskState.endTime && taskState.startTime
+                            ? dateTime2hhmmss.formatRange(taskState.startTime, taskState.endTime)
+                            : taskState.startTime
+                              ? dateTime2hhmmss.format(taskState.startTime)
                               : '未启动'}
                     </Typography>
-                    {Boolean(runnerState.error) && (
+                    <Typography sx={{ fontFamily: ({ fonts }) => fonts.input }}>
+                        {task.metadata.id} - {task.metadata.name} -{' '}
+                        {getCompositeId({ id: taskRef.modId, scope: taskRef.modScope })}
+                    </Typography>
+
+                    {Boolean(taskState.error) && (
                         <Paper
                             sx={{
                                 bgcolor: (theme) => alpha(theme.palette.background.paper, 0.36)
                             }}
                         >
-                            ERROR:<Typography fontFamily={fonts.input}> {runnerState.error?.message}</Typography>
+                            ERROR:
+                            <Typography sx={{ fontFamily: ({ fonts }) => fonts.input }}>
+                                {taskState.error?.message}
+                            </Typography>
                         </Paper>
                     )}
 
-                    <FieldPaper data={JSON.stringify(task.metadata, undefined, 2)} id="metadata" title="元数据" />
-                    {runnerState.options && (
-                        <FieldPaper
-                            data={JSON.stringify(runnerState.options, undefined, 2)}
-                            id="options"
-                            title="选项"
-                        />
+                    {taskState.options && (
+                        <FieldPaper data={JSON.stringify(taskState.options, undefined, 2)} id="options" title="选项" />
                     )}
-                    {runnerState.runnerData && (
-                        <FieldPaper
-                            data={JSON.stringify(runnerState.runnerData, undefined, 2)}
-                            id="data"
-                            title="数据"
-                        />
+                    {taskState.runner.data && (
+                        <FieldPaper data={JSON.stringify(taskState.runner.data, undefined, 2)} id="data" title="数据" />
                     )}
-                    {runnerState.logs.length > 0 && (
-                        <FieldPaper data={runnerState.logs.join('\n')} id="log" title="日志" />
-                    )}
+                    {taskState.logs.length > 0 && <FieldPaper data={taskState.logs.join('\n')} id="log" title="日志" />}
                 </Stack>
             </DialogContent>
         </Dialog>

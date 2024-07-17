@@ -1,5 +1,4 @@
 import { SEASConfigData } from '../shared/SEASConfigData.ts';
-import { getNamespace, praseNamespace } from '../shared/index.ts';
 
 export interface ModState {
     enable: boolean;
@@ -7,15 +6,8 @@ export interface ModState {
     requireData: boolean;
     builtin: boolean;
     preload: boolean;
+    version: string;
 }
-
-const initialModState: ModState = {
-    enable: true,
-    requireConfig: false,
-    requireData: false,
-    builtin: false,
-    preload: false
-} as const;
 
 class ModIndexes extends SEASConfigData<Map<string, ModState>> {
     async loadWithDefault(configFile: string) {
@@ -24,30 +16,23 @@ class ModIndexes extends SEASConfigData<Map<string, ModState>> {
 
     stateList() {
         const data = super.query();
-        return Array.from(data.entries()).map(([ns, state]) => {
-            const { id, scope } = praseNamespace(ns);
-            return { id, scope, state };
-        });
+        return Array.from(data.entries()).map(([cid, state]) => ({ cid, state }));
     }
 
-    async set(scope: string, id: string, state?: ModState) {
-        state = state ?? { ...initialModState };
-        const ns = getNamespace(scope, id);
+    async set(cid: string, state: ModState) {
         await super.mutate((data) => {
-            data.set(ns, state);
+            data.set(cid, { ...state });
         });
     }
 
-    async remove(scope: string, id: string) {
-        const ns = getNamespace(scope, id);
+    async remove(cid: string) {
         await super.mutate((data) => {
-            data.delete(ns);
+            data.delete(cid);
         });
     }
 
-    state(scope: string, id: string) {
-        const ns = getNamespace(scope, id);
-        return super.query().get(ns);
+    state(cid: string) {
+        return super.query().get(cid);
     }
 }
 

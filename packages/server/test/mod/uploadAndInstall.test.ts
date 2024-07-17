@@ -6,8 +6,10 @@ import path from 'node:path';
 import { Writable } from 'node:stream';
 import superjson from 'superjson';
 import { modsRoot } from '../../src/paths';
-import { ModManager, type ModInstallOptions } from '../../src/router/mod/manager';
+import { ModManager } from '../../src/router/mod/manager';
+import { InstallModOptions } from '../../src/router/mod/schemas';
 import { createServer } from '../../src/server';
+import { getCompositeId } from '../../src/shared';
 
 const { server } = await createServer();
 
@@ -42,6 +44,7 @@ describe('uploadAndInstall', () => {
 
     const scope = 'scope_test';
     const id = 'id_test';
+    const cid = getCompositeId(scope, id);
     const filename = `${scope}.${id}.js`;
     const contentType = 'application/javascript';
 
@@ -65,31 +68,7 @@ describe('uploadAndInstall', () => {
             headers: data.getHeaders()
         });
         expect(response.statusCode).toBe(400);
-        expect(response.json()).toEqual({
-            statusCode: 400,
-            code: 'FST_ERR_VALIDATION',
-            error: 'Bad Request',
-            message: JSON.stringify(
-                [
-                    {
-                        code: 'invalid_type',
-                        expected: 'string',
-                        received: 'undefined',
-                        path: ['scope'],
-                        message: 'Required'
-                    },
-                    {
-                        code: 'invalid_type',
-                        expected: 'string',
-                        received: 'undefined',
-                        path: ['id'],
-                        message: 'Required'
-                    }
-                ],
-                undefined,
-                2
-            )
-        });
+        expect(response.json().code).toBe('FST_ERR_VALIDATION');
     });
 
     test('no options', async () => {
@@ -101,42 +80,28 @@ describe('uploadAndInstall', () => {
 
         const response = await server.inject({
             method: 'POST',
-            url: { pathname: '/api/mods/install', query: { id, scope } },
+            url: { pathname: '/api/mods/install', query: { cid } },
             payload: data,
             headers: data.getHeaders()
         });
         expect(response.statusCode).toBe(400);
-        expect(response.json()).toEqual({
-            statusCode: 400,
-            code: 'FST_ERR_VALIDATION',
-            error: 'Bad Request',
-            message: JSON.stringify(
-                [
-                    {
-                        code: 'invalid_type',
-                        expected: 'object',
-                        received: 'undefined',
-                        path: ['options'],
-                        message: 'Required'
-                    }
-                ],
-                undefined,
-                2
-            )
-        });
+        expect(response.json().code).toBe('FST_ERR_VALIDATION');
     });
 
     test('no mod file', async () => {
         const data = new FormData();
-        data.append('options', JSON.stringify({}), { contentType: 'application/json' });
+        data.append('options', JSON.stringify({ version: '1.0.0' } as InstallModOptions), {
+            contentType: 'application/json'
+        });
         vi.mocked(createWriteStream).mockClear();
 
         const response = await server.inject({
             method: 'POST',
-            url: '/api/mods/install?id=test&scope=test',
+            url: `/api/mods/install?${new URLSearchParams({ cid: 'test_scope::test' }).toString()}`,
             payload: data,
             headers: data.getHeaders()
         });
+
         expect(response.statusCode).toBe(200);
         expect(createWriteStream).not.toHaveBeenCalled();
     });
@@ -145,7 +110,8 @@ describe('uploadAndInstall', () => {
         vi.clearAllMocks();
 
         // data
-        const options: ModInstallOptions = {
+        const options: InstallModOptions = {
+            version: '1.0.0',
             builtin: false,
             config: {},
             data: {
@@ -166,7 +132,7 @@ describe('uploadAndInstall', () => {
         // action
         const response = await server.inject({
             method: 'POST',
-            url: { pathname: '/api/mods/install', query: { id, scope } },
+            url: { pathname: '/api/mods/install', query: { cid } },
             payload: data,
             headers: data.getHeaders()
         });
@@ -174,7 +140,7 @@ describe('uploadAndInstall', () => {
         // assert
         expect(response.statusCode).toBe(200);
         expect(ModManager.install).toHaveBeenCalledOnce();
-        expect(ModManager.install).toHaveBeenCalledWith(scope, id, options);
+        expect(ModManager.install).toHaveBeenCalledWith(cid, options);
         expect(createWriteStream).toHaveBeenCalledOnce();
         expect(createWriteStream).toHaveBeenCalledWith(path.join(server.config.APP_ROOT, modsRoot, filename));
     });

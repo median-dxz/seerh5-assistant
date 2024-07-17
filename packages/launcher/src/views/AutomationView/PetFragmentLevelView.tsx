@@ -1,25 +1,26 @@
-import { Box, Button, Stack, Typography } from '@mui/material';
-import React, { useMemo } from 'react';
-import useSWR from 'swr';
+import { Button, Stack, Typography } from '@mui/material';
+import { engine, LevelAction } from '@sea/core';
+import React, { useEffect, useMemo, useState } from 'react';
+
+import { PanelField, PanelTable, useRowData, type PanelColumns } from '@/components/PanelTable';
+import { Row } from '@/components/styled/Row';
+import { SeaTableRow } from '@/components/styled/TableRow';
 
 import { PET_FRAGMENT_LEVEL_ID } from '@/builtin/petFragment';
 import type { IPetFragmentRunner, PetFragmentOption } from '@/builtin/petFragment/types';
-import { PanelField, useRowData } from '@/components/PanelTable';
-import { PanelTable, type PanelColumns } from '@/components/PanelTable/PanelTable';
-import { Row } from '@/components/styled/Row';
-import { SeaTableRow } from '@/components/styled/TableRow';
-import { MOD_SCOPE_BUILTIN, QueryKey } from '@/constants';
-import { useModStore } from '@/context/useModStore';
-import { mainPanelActions } from '@/services/mainPanelSlice';
-import { getNamespace as ns } from '@/services/modStore/metadata';
-import { taskSchedulerActions } from '@/services/taskSchedulerSlice';
-import { useAppDispatch } from '@/store';
-import { engine, LevelAction } from '@sea/core';
+import { DataLoading } from '@/components/DataLoading';
+import { MOD_SCOPE_BUILTIN } from '@/constants';
+import { launcherActions } from '@/features/launcherSlice';
+import { taskStore } from '@/features/mod/store';
+import { useMapToStore } from '@/features/mod/useModStore';
+import { getCompositeId, type ModExportsRef } from '@/features/mod/utils';
+import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
+import { modApi } from '@/services/mod';
+import { useAppDispatch, useAppSelector } from '@/store';
 
 const toRowKey = (data: PetFragmentOption) => engine.getPetFragmentLevelObj(data.id)!.Desc;
 
 export function PetFragmentLevelView() {
-    const { modStore, taskStore } = useModStore();
     const col: PanelColumns = React.useMemo(
         () => [
             {
@@ -42,21 +43,24 @@ export function PetFragmentLevelView() {
         []
     );
 
-    const modIns = modStore.get(ns({ scope: MOD_SCOPE_BUILTIN, id: PET_FRAGMENT_LEVEL_ID }));
-    const taskIns = taskStore.get(PET_FRAGMENT_LEVEL_ID);
-    const optionsList = useMemo(() => (modIns?.ctx.data as undefined | PetFragmentOption[]) ?? [], [modIns?.ctx.data]);
+    const ref = useAppSelector(({ mod: { taskRefs } }) =>
+        taskRefs.find(
+            ({ modId, modScope, key }) =>
+                modId === PET_FRAGMENT_LEVEL_ID && modScope === MOD_SCOPE_BUILTIN && key === PET_FRAGMENT_LEVEL_ID
+        )
+    );
 
-    if (!modIns || !taskIns) {
-        return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                <Typography fontFamily={['Open Sans']}>未部署精灵因子模组</Typography>
-            </Box>
-        );
+    const cid = getCompositeId({ id: PET_FRAGMENT_LEVEL_ID, scope: MOD_SCOPE_BUILTIN });
+    const { data = [], isFetching } = modApi.endpoints.data.useQuery(cid);
+    const optionsList = data as PetFragmentOption[];
+
+    if (isFetching || !ref) {
+        return <DataLoading />;
     }
 
     const missingIds = optionsList.map(({ id }) => id).filter((id) => !engine.getPetFragmentLevelObj(id));
     if (missingIds.length > 0) {
-        return <Typography fontFamily={['Open Sans']}>错误的精灵因子ID: {missingIds.join(', ')}</Typography>;
+        return <DataLoading error={`错误的精灵因子ID: ${missingIds.join(', ')}`} />;
     }
 
     return (
@@ -75,32 +79,28 @@ export function PetFragmentLevelView() {
                 </Stack>
             </Row>
 
-            <PanelTable data={optionsList} toRowKey={toRowKey} columns={col} rowElement={<PanelRow />} />
+            <PanelTable data={optionsList} toRowKey={toRowKey} columns={col} rowElement={<PanelRow ref={ref} />} />
         </>
     );
 }
 
-const PanelRow = React.memo(() => {
+interface RowProps {
+    ref: ModExportsRef;
+}
+
+const PanelRow = React.memo(({ ref }: RowProps) => {
     const dispatch = useAppDispatch();
-    const { taskStore } = useModStore();
     const options = useRowData<PetFragmentOption>();
-    const task = taskStore.get(PET_FRAGMENT_LEVEL_ID)!.task;
+    const task = useMapToStore(() => ref, taskStore)!;
+    const runner = useMemo(() => task.runner(options) as IPetFragmentRunner, [options, task]);
+    const [completed, setCompleted] = useState(false);
 
-    const runner = useMemo(
-        () => task.runner(task.metadata, options as unknown as undefined) as IPetFragmentRunner,
-        [options, task]
-    );
-
-    const { data: completed } = useSWR(
-        [QueryKey.taskIsCompleted, task, options],
-        async () => {
+    useEffect(() => {
+        void (async () => {
             await runner.update();
-            return runner.next() === LevelAction.STOP;
-        },
-        {
-            fallbackData: false
-        }
-    );
+            setCompleted(runner.next() === LevelAction.STOP);
+        })();
+    }, [runner]);
 
     return (
         <SeaTableRow>
@@ -112,7 +112,7 @@ const PanelRow = React.memo(() => {
                 <Typography>扫荡: {options.sweep ? '开启' : '关闭'}</Typography>
                 <Button
                     onClick={() => {
-                        dispatch(taskSchedulerActions.enqueue(task, options as unknown as undefined));
+                        dispatch(taskSchedulerActions.enqueue(ref, options, runner.name));
                     }}
                     disabled={completed}
                 >
@@ -121,7 +121,7 @@ const PanelRow = React.memo(() => {
                 <Button
                     onClick={() => {
                         void ModuleManager.showModuleByID(151, `{Design:${runner.designId}}`);
-                        dispatch(mainPanelActions.close());
+                        dispatch(launcherActions.closeMain());
                     }}
                 >
                     打开面板

@@ -8,19 +8,17 @@ import { MaterialDesignContent, SnackbarProvider } from 'notistack';
 import React, { type PropsWithChildren } from 'react';
 import { Provider } from 'react-redux';
 import { SWRConfig, type SWRConfiguration } from 'swr';
-import { ModStoreProvider } from './ModStoreProvider';
 
 const StyledMaterialDesignContent = styled(MaterialDesignContent)`
     &.notistack-MuiContent-default {
         background-color: ${alpha(theme.palette.secondary.main, 0.6)};
-        backdrop-filter: blur(6px);
+        backdrop-filter: blur(4px);
     }
 `;
 
-enableMapSet();
-
 export function ApplicationContext({ children }: PropsWithChildren<object>) {
     const swrOptions: SWRConfiguration = {};
+    enableMapSet();
     return (
         <CacheProvider value={cache}>
             <ThemeProvider theme={theme}>
@@ -33,9 +31,7 @@ export function ApplicationContext({ children }: PropsWithChildren<object>) {
                         Components={{ default: StyledMaterialDesignContent }}
                     >
                         <CssBaseline />
-                        <Provider store={appStore}>
-                            <ModStoreProvider>{children}</ModStoreProvider>
-                        </Provider>
+                        <Provider store={appStore}>{children}</Provider>
                     </SnackbarProvider>
                 </SWRConfig>
             </ThemeProvider>

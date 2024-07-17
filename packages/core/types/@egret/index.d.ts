@@ -3,3 +3,4 @@
 /// <reference path="game/game.d.ts" />
 /// <reference path="res/res.d.ts" />
 /// <reference path="socket/socket.d.ts" />
+/// <reference path="dragonBones/dragonBones.d.ts" />

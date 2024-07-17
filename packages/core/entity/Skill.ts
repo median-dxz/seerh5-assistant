@@ -1,9 +1,12 @@
+import { getLogger } from '../common/log.js';
 import type { SkillType } from '../constant/index.js';
 import { EntityBase, type EntityType } from './EntityBase.js';
 import { PetElement } from './PetElement.js';
 
 type SkillEffects = [number[], number[]];
 type SkillEffectArgs = string | number | undefined;
+
+const logger = getLogger('SkillEntity');
 
 export class Skill extends EntityBase {
     readonly id: number;
@@ -75,7 +78,7 @@ export class Skill extends EntityBase {
                 skill.stoneItemId = stoneId;
                 return skill;
             } else {
-                console.error('解析技能失败');
+                logger.error('解析技能失败');
                 return {} as Skill;
             }
         }

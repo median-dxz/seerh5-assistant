@@ -2,37 +2,45 @@ import { Box, type SxProps } from '@mui/material';
 import { useSnackbar, type SnackbarProviderProps } from 'notistack';
 import React, { useState } from 'react';
 
+import type { Command as CommandInstance } from '@sea/mod-type';
+
 import { SeaAutocomplete } from '@/components/styled/Autocomplete';
 import { SeaTextField } from '@/components/styled/TextField';
-import { useModStore } from '@/context/useModStore';
+import { commandStore } from '@/features/mod/store';
+import { useMapToStore } from '@/features/mod/useModStore';
 import type { theme } from '@/style';
 
 interface Option {
-    value: string;
+    value: CommandInstance;
     label: string;
 }
 
 const snackBarOptions: SnackbarProviderProps = {
     autoHideDuration: 3000,
-    anchorOrigin: { horizontal: 'center', vertical: 'bottom' },
+    anchorOrigin: { horizontal: 'center', vertical: 'bottom' }
 };
 
 export function CommandInput() {
     const { enqueueSnackbar } = useSnackbar();
-    const { commandStore } = useModStore();
     const [open, setOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [value, setValue] = useState<null | Option>(null);
 
-    const options = React.useMemo(() => {
-        return Array.from(commandStore.values()).map((cmd) => {
-            let description = cmd.description;
-            if (typeof cmd.description === 'function') {
-                description = '';
-            }
-            return { value: cmd.name, label: `${cmd.name} ${description ?? ''}` } as Option;
-        });
-    }, [commandStore]);
+    const commands = useMapToStore((state) => state.mod.commandRefs, commandStore);
+
+    const options = React.useMemo(
+        () =>
+            commands.map((cmd) => {
+                let description: string;
+                if (typeof cmd.description === 'function') {
+                    description = cmd.description();
+                } else {
+                    description = cmd.description ?? '';
+                }
+                return { value: cmd, label: `${cmd.name} ${description}` } as Option;
+            }),
+        [commands]
+    );
 
     return (
         <SeaAutocomplete
@@ -49,7 +57,7 @@ export function CommandInput() {
             value={value}
             onChange={(event, newValue: Option | null) => {
                 if (!newValue) return;
-                const cmd = commandStore.get(newValue.value)!;
+                const cmd = newValue.value;
 
                 if (cmd.handler.length > 0) {
                     enqueueSnackbar(`命令: ${cmd.name} 需要输入参数`, snackBarOptions);
@@ -70,9 +78,6 @@ export function CommandInput() {
                 setOpen(false);
             }}
             options={options}
-            // isOptionEqualToValue={(option, value) => {
-            //     return value === option || value === '' || value === null;
-            // }}
             renderInput={(params) => (
                 <SeaTextField
                     {...params}
@@ -80,7 +85,7 @@ export function CommandInput() {
                     autoFocus
                     InputProps={{
                         ...params.InputProps,
-                        endAdornment: <React.Fragment>{params.InputProps.endAdornment}</React.Fragment>,
+                        endAdornment: <React.Fragment>{params.InputProps.endAdornment}</React.Fragment>
                     }}
                 />
             )}

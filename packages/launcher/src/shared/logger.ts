@@ -27,9 +27,8 @@ export const CommonLogger = (
 const BattleLogger = { info: CommonLogger('BattleManager', 'info') };
 const AwardLogger = { info: CommonLogger('AwardManager', 'info') };
 const ModuleLogger = { info: CommonLogger('ModuleManger', 'info') };
-const SEAModLogger = { info: CommonLogger('模组管理器', 'info'), error: CommonLogger('模组管理器', 'error') };
 
-export { AwardLogger, BattleLogger, ModuleLogger, SEAModLogger };
+export { AwardLogger, BattleLogger, ModuleLogger };
 
 export const LauncherLoggerBuilder = {
     build: (id: string) => CommonLogger(id, 'info', LogStyle.mod)

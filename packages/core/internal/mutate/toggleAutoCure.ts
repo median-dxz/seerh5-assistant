@@ -5,6 +5,4 @@ import { sendByQueue } from '../socket.js';
  *
  * @param enable 是否开启自动治疗
  */
-export function toggleAutoCure(enable: boolean) {
-    return sendByQueue(42019, [22439, Number(enable)]);
-}
+export const toggleAutoCure = (enable: boolean) => sendByQueue(42019, [22439, Number(enable)]);

@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import type { LevelBattle, LevelRunner, MoveStrategy } from '@sea/core';
 
-export type DataObject = object & {};
-
 export type SEAFormItem =
     | {
           type: 'textInput';
@@ -51,7 +49,7 @@ export interface SEAModMetadata {
     version?: string;
     description?: string;
     preload?: boolean;
-    data?: DataObject;
+    data?: object;
     configSchema?: SEAConfigSchema;
 }
 
@@ -89,15 +87,10 @@ export interface Battle {
     beforeBattle?: () => Promise<void>;
 }
 
-/** 关卡元数据 */
-export interface LevelMeta {
-    id: string;
-    name: string;
-    maxTimes: number;
-}
-
-/** 关卡的动态数据, 实现时可以使用getter来方便获取 */
+/** 关卡的动态数据 */
 export interface LevelData {
+    /** 当日最大次数 */
+    maxTimes: number;
     /** 剩余的每日次数 */
     remainingTimes: number;
     /** 当前次数下的进度 */
@@ -107,15 +100,13 @@ export interface LevelData {
 type VoidFunction = () => Promise<void> | void;
 
 export interface Task<
-    TMeta extends LevelMeta = LevelMeta,
     TSchema extends SEAConfigSchema | undefined = undefined,
     TData extends LevelData = LevelData,
     TActions extends string = string
 > {
-    readonly metadata: TMeta;
+    readonly metadata: { id: string; name: string };
     readonly configSchema?: TSchema;
     runner(
-        metadata: TMeta,
         options: TSchema extends SEAConfigSchema ? GetConfigObjectTypeFromSchema<NonNullable<TSchema>> : undefined
     ): Omit<LevelRunner, 'next' | 'actions'> & {
         name?: string;
@@ -127,11 +118,10 @@ export interface Task<
 }
 
 export function task<
-    TMeta extends LevelMeta,
     TData extends LevelData,
     TActions extends string,
     TSchema extends SEAConfigSchema | undefined = undefined
->(taskDefinition: Task<TMeta, TSchema, TData, TActions>): Task {
+>(taskDefinition: Task<TSchema, TData, TActions>): Task {
     return taskDefinition as Task;
 }
 
@@ -150,7 +140,7 @@ declare global {
 
 declare module '@sea/core' {
     export interface SEAEngine {
-        updateBattleFireInfo(): Promise<{
+        battleFireInfo: () => Promise<{
             type: number;
             valid: boolean;
             timeLeft: number;
@@ -160,9 +150,9 @@ declare module '@sea/core' {
          * @param type 装备类型, 代表装备的位置(目镜, 头部, 腰部等)
          * @param itemId 装备的**物品**id
          */
-        changeEquipment(type: Parameters<UserInfo['requestChangeClothes']>[0], itemId: number): Promise<void>;
+        changeEquipment: (type: Parameters<UserInfo['requestChangeClothes']>[0], itemId: number) => Promise<void>;
 
-        getPetFragmentLevelObj(id: number): seerh5.PetFragmentLevelObj | undefined;
+        getPetFragmentLevelObj: (id: number) => seerh5.PetFragmentLevelObj | undefined;
     }
 
     export interface GameConfigMap {

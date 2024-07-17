@@ -7,7 +7,7 @@ import {
     engine,
     socket
 } from '@sea/core';
-import type { LevelMeta, SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
+import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 import { task } from '@sea/mod-type';
 import type { IPetFragmentRunner, PetFragmentLevelData, PetFragmentOption } from './types';
 
@@ -22,8 +22,7 @@ export const metadata = {
 } satisfies SEAModMetadata;
 
 export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
-    const taskMetadata: LevelMeta = {
-        maxTimes: 3,
+    const taskMetadata = {
         name: '精灵因子',
         id: PET_FRAGMENT_LEVEL_ID
     };
@@ -47,7 +46,7 @@ export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
             this.frag = new PetFragmentLevel(LevelObj);
             this.designId = this.frag.id;
 
-            this.data = {} as PetFragmentLevelData;
+            this.data = { maxTimes: 3 } as PetFragmentLevelData;
             this.logger = logger.bind(logger, this.name);
         }
 
@@ -66,7 +65,7 @@ export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
 
             data.pieces = await engine.itemNum(frag.petFragmentItem);
 
-            data.remainingTimes = taskMetadata.maxTimes - values[0];
+            data.remainingTimes = data.maxTimes - values[0];
             data.failedTimes = values[1];
             data.curDifficulty = (values[2] >> 8) & 255;
             if (data.curDifficulty === Difficulty.NotSelected && this.options.difficulty) {
@@ -125,7 +124,7 @@ export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
     const tasks = [
         task({
             metadata: taskMetadata,
-            runner(_, options) {
+            runner(options) {
                 return new PetFragmentRunner(options as unknown as PetFragmentOption);
             }
         })

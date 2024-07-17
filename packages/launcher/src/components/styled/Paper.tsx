@@ -1,11 +1,10 @@
-import type { PaperProps } from '@mui/material';
-import { Paper as MuiPaper } from '@mui/material';
-import React from 'react';
+import { theme } from '@/style';
+import { Paper as MuiPaper, styled } from '@mui/material';
 
-export function Paper({ children, sx, ...props }: PaperProps) {
-    return (
-        <MuiPaper sx={{ p: 4, flexDirection: 'column', alignItems: 'baseline', ...sx }} {...props}>
-            {children}
-        </MuiPaper>
-    );
-}
+export const Paper = styled(MuiPaper)`
+    & {
+        display: flex;
+        padding: ${theme.spacing(4)};
+        flex-direction: column;
+    }
+` as typeof MuiPaper;

@@ -12,13 +12,14 @@ const MULTI_QUERY = {
 
 export const daily = [
     task({
-        metadata: { maxTimes: 1, id: 'MarkDraw', name: '刻印抽奖' },
-        runner(meta) {
+        metadata: { id: 'MarkDraw', name: '刻印抽奖' },
+        runner() {
             return {
                 ...signBase,
-                data: { ...data },
+                data: { ...data, maxTimes: 1 },
                 async update() {
-                    this.data.remainingTimes = meta.maxTimes - (await socket.multiValue(MULTI_QUERY.刻印抽奖次数))[0];
+                    this.data.remainingTimes =
+                        this.data.maxTimes - (await socket.multiValue(MULTI_QUERY.刻印抽奖次数))[0];
                 },
                 actions: {
                     [LevelAction.AWARD]: async () => {
@@ -29,11 +30,11 @@ export const daily = [
         }
     }),
     task({
-        metadata: { id: 'WishBottle', maxTimes: 10, name: '许愿' },
+        metadata: { id: 'WishBottle', name: '许愿' },
         runner(meta) {
             return {
                 ...signBase,
-                data: { ...data },
+                data: { ...data, maxTimes: 10 },
                 async update() {
                     let times = (await socket.multiValue(MULTI_QUERY.登录时长))[0];
                     times =
@@ -60,7 +61,7 @@ export const daily = [
                         }
                     }
 
-                    meta.maxTimes = 可许愿次数;
+                    this.data.maxTimes = 可许愿次数;
                     this.data.remainingTimes = 可许愿次数 - (await socket.multiValue(MULTI_QUERY.已许愿次数))[0];
                 },
                 actions: {
@@ -72,13 +73,13 @@ export const daily = [
         }
     }),
     task({
-        metadata: { id: 'WishSign', maxTimes: 1, name: '许愿签到' },
+        metadata: { id: 'WishSign', name: '许愿签到' },
         runner(meta) {
             return {
                 ...signBase,
-                data: { ...data },
+                data: { ...data, maxTimes: 1 },
                 async update() {
-                    this.data.remainingTimes = meta.maxTimes - (await socket.multiValue(MULTI_QUERY.许愿签到))[0];
+                    this.data.remainingTimes = this.data.maxTimes - (await socket.multiValue(MULTI_QUERY.许愿签到))[0];
                 },
                 actions: {
                     [LevelAction.AWARD]: async () => {

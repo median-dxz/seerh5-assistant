@@ -1,31 +1,34 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import LauncherMain from './App';
+import Launcher from './App';
 import { ApplicationContext } from './context/ApplicationContext';
 
 import * as seaCore from '@sea/core';
 import { seac } from '@sea/core';
 
 import { IS_DEV } from './constants';
-import { setupForLauncher } from './features/setup';
+import { LauncherInitializer } from './context/LauncherInitializer';
+import { initializationActions } from './features/init/initializationSlice';
+import { appStore } from './store';
 
 // register service worker
 if ('serviceWorker' in navigator) {
     await navigator.serviceWorker.register(!IS_DEV ? '/sw.js' : '/dev-sw.js?dev-sw');
 }
 
-// init sea core
+// setup sea core for development environment
 seac.devMode = IS_DEV;
 window.sea = { ...window.sea, ...seaCore };
 
-// init launcher
-seac.addSetupFn('afterFirstShowMainPanel', setupForLauncher);
+appStore.dispatch(initializationActions.SEALInitialization());
 
 ReactDOM.createRoot(document.getElementById('sea-launcher')!).render(
     <React.StrictMode>
         <ApplicationContext>
-            <LauncherMain />
+            <LauncherInitializer>
+                <Launcher />
+            </LauncherInitializer>
         </ApplicationContext>
     </React.StrictMode>
 );

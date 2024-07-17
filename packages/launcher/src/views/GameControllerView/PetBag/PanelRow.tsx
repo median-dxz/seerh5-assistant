@@ -4,7 +4,7 @@ import { HealthBroken } from '@/components/icons/HealthBroken';
 import { MoveToInbox } from '@/components/icons/MoveToInbox';
 import { Pill } from '@/components/icons/Pill';
 import { SeaTableRow } from '@/components/styled/TableRow';
-import { mainPanelActions } from '@/services/mainPanelSlice';
+import { launcherActions } from '@/features/launcherSlice';
 import { Icon } from '@/services/resource';
 import { useAppDispatch } from '@/store';
 import MoreHoriz from '@mui/icons-material/MoreHoriz';
@@ -15,11 +15,12 @@ import { GameConfigRegistry, delay, engine, spet } from '@sea/core';
 import React, { useState, type ReactNode } from 'react';
 
 interface PanelRowProps {
+    isFetching: boolean;
     selected: number[];
     setSelected: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
-export function PanelRow({ selected, setSelected }: PanelRowProps) {
+export function PanelRow({ isFetching, selected, setSelected }: PanelRowProps) {
     const pet = useRowData<Pet>();
     const index = useIndex();
     const dispatch = useAppDispatch();
@@ -39,7 +40,7 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
         await delay(300);
         petBagPanel.showDevelopBaseView();
         petBagPanel.showDevelopView(9);
-        dispatch(mainPanelActions.close());
+        dispatch(launcherActions.closeMain());
     };
 
     const handleClose = () => {
@@ -98,6 +99,7 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
                     {index !== 0 && (
                         <IconButton
                             title="首发"
+                            disabled={isFetching}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 void spet(pet).default();
@@ -115,6 +117,7 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
                         <HealthBroken />
                     </IconButton>
                     <IconButton
+                        disabled={isFetching}
                         title="入库"
                         onClick={() => {
                             void spet(pet).popFromBag();

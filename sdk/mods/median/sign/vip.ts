@@ -6,12 +6,11 @@ export const vip = [
     task({
         metadata: {
             id: 'VipDailyBox',
-            name: '领取vip每日箱子',
-            maxTimes: 1
+            name: '领取vip每日箱子'
         },
         runner: () => ({
             ...signBase,
-            data: { ...data },
+            data: { ...data, maxTimes: 1 },
             async update() {
                 const times = (await socket.multiValue(11516))[0];
                 this.data.remainingTimes = Number(!times);
@@ -27,12 +26,11 @@ export const vip = [
     task({
         metadata: {
             id: 'VipWeeklyBox',
-            name: '领取vip每周箱子',
-            maxTimes: 1
+            name: '领取vip每周箱子'
         },
         runner: () => ({
             ...signBase,
-            data: { ...data },
+            data: { ...data, maxTimes: 1 },
             async update() {
                 const times = (await socket.multiValue(20021))[0];
                 this.data.remainingTimes = Number(!times);
@@ -48,12 +46,11 @@ export const vip = [
     task({
         metadata: {
             id: 'VipMonthlyBox',
-            name: '领取vip每月箱子',
-            maxTimes: 1
+            name: '领取vip每月箱子'
         },
         runner: () => ({
             ...signBase,
-            data: { ...data },
+            data: { ...data, maxTimes: 1 },
             async update() {
                 const times = (await socket.multiValue(30005))[0];
                 this.data.remainingTimes = Number(!times);

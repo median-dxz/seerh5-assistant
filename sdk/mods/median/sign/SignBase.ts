@@ -8,5 +8,6 @@ export const signBase = {
 
 export const data: LevelData = {
     remainingTimes: 0,
-    progress: 0
+    progress: 0,
+    maxTimes: 0
 };

@@ -16,11 +16,11 @@ import { PetLocation, SEAPetStore, spet } from '../../pet-helper/index.js';
  * @param healPotionId 血药id, 默认中级体力药
  * @param hpLimit 血量上限, 默认200, 压血后全部精灵血量低于该值
  */
-export async function lowerHp(
+export const lowerHp = async (
     pets: number[],
     healPotionId: ValueOf<typeof PotionId> = PotionId.中级体力药剂,
     hpLimit = 200
-): Promise<void> {
+): Promise<void> => {
     pets = pets.slice(0, 6);
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!pets || pets.length === 0) {
@@ -114,4 +114,4 @@ export async function lowerHp(
         manager.clear();
         return;
     }
-}
+};

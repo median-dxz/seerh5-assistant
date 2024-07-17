@@ -6,7 +6,11 @@ import type { Constructor } from '../../common/utils.js';
  * @param classType obj的类对象
  * @param predicate 断言函数
  */
-export function findObject<T>(classType: Constructor<T>, predicate?: (obj: egret.DisplayObject) => boolean) {
+export function findObject<T>(
+    this: void,
+    classType: Constructor<T>,
+    predicate?: (obj: egret.DisplayObject) => boolean
+) {
     const root = LevelManager.stage;
 
     function find(parent: egret.DisplayObject) {

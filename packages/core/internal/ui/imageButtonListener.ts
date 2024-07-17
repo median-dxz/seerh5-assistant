@@ -3,6 +3,4 @@
  *
  * @returns 注册的监听器函数
  */
-export function imageButtonListener(button: eui.UIComponent) {
-    return ImageButtonUtil.imgs[`k_${button.hashCode}`];
-}
+export const imageButtonListener = (button: eui.UIComponent) => ImageButtonUtil.imgs[`k_${button.hashCode}`];

@@ -195,7 +195,7 @@ var Driver = (function () {
             if (0 == Driver.configs.length) return void Driver.callback.call(Driver.thisObj);
             var config = (Driver.currConfig = Driver.configs.shift());
             if ('js' == config.type)
-                if (IS_RELEASE)
+                if (IS_RELEASE) {
                     RES.getResByUrl(
                         config.url,
                         function (data, url) {
@@ -216,14 +216,16 @@ var Driver = (function () {
                                 sea.SeerH5Ready = true;
                                 window.dispatchEvent(new CustomEvent(sea.SEER_READY_EVENT));
                                 // dispatch event end
+                            } else {
+                                config.action && config.action.length > 0 && eval(config.action + '()'),
+                                    Driver.doAction();
                             }
-                            config.action && config.action.length > 0 && eval(config.action + '()'), Driver.doAction();
                             // loader modify end
                         },
                         this,
                         'text'
                     );
-                else {
+                } else {
                     var s = document.createElement('script');
                     (s.type = 'text/javascript'), (s.async = !1);
                     var loaded = function () {

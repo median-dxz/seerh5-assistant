@@ -1,76 +1,31 @@
 import { Paper } from '@/components/styled/Paper';
 import { Row } from '@/components/styled/Row';
-import { QueryKey } from '@/constants';
-import { mainPanelActions } from '@/services/mainPanelSlice';
+import { launcherActions } from '@/features/launcherSlice';
+import { gameApi } from '@/services/game';
 import { time2mmss } from '@/shared/index';
 import { useAppDispatch } from '@/store';
 import { Button, CircularProgress, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
-import { BattleFireType, SEAEventSource, Subscription, engine, socket, throttle } from '@sea/core';
-import { produce } from 'immer';
+import { BattleFireType, socket, throttle } from '@sea/core';
 import { useSnackbar } from 'notistack';
-import React, { useRef, useState } from 'react';
-import type { SWRSubscriptionOptions } from 'swr/subscription';
-import useSWRSubscription from 'swr/subscription';
+import React, { useState } from 'react';
 
 declare class FriendManager {
     static getFriendList(): Promise<Array<{ itemSend: number; id: number }>>;
 }
 
-type BattleFireInfo = Awaited<ReturnType<typeof engine.updateBattleFireInfo>>;
-
-const { setInterval } = window;
-
 export function BattleFire() {
     const { enqueueSnackbar } = useSnackbar();
-    const timer = useRef<null | number>(null);
-    const { data: battleFire } = useSWRSubscription(
-        QueryKey.multiValue.battleFire,
-        (_, { next }: SWRSubscriptionOptions<BattleFireInfo, Error>) => {
-            const update = async () => {
-                const i = await engine.updateBattleFireInfo();
+    const dispatch = useAppDispatch();
 
-                next(null, i);
-                if (!i.valid || i.timeLeft <= 0) return;
-                timer.current && clearInterval(timer.current);
+    const { data: battleFire = { timeLeft: 0, valid: false, type: 0 } } = gameApi.useBattleFireQuery();
 
-                timer.current = setInterval(() => {
-                    next(null, (currentData) => {
-                        if (currentData && currentData.timeLeft === 0) {
-                            timer.current && clearInterval(timer.current);
-                            timer.current = null;
-                        }
-
-                        return produce(currentData, (draft) => {
-                            if (!draft) return;
-                            if (draft.timeLeft > 0) {
-                                draft.timeLeft -= 1;
-                            } else {
-                                draft.valid = false;
-                            }
-                        });
-                    });
-                }, 1000);
-            };
-
-            const sub = new Subscription();
-            sub.on(SEAEventSource.egret('battleFireUpdateInfo'), update);
-            void update();
-
-            return () => {
-                sub.dispose();
-                timer.current && clearInterval(timer.current);
-            };
-        },
-        { fallbackData: { valid: false, timeLeft: 0 } as BattleFireInfo }
-    );
-
-    const [giftingStars, setGiftingStars] = useState(false);
+    const { timeLeft, valid, type } = battleFire;
 
     let renderProps: { color: string; text: string };
-    const { timeLeft, valid, type } = battleFire!;
+
     if (valid) {
-        switch (type) {
+        switch (type as BattleFireType) {
             case BattleFireType.绿火:
                 renderProps = { color: 'green', text: `绿火 ${time2mmss(timeLeft * 1000)}` };
                 break;
@@ -85,12 +40,13 @@ export function BattleFire() {
         renderProps = { color: 'inherit', text: '无火焰' };
     }
 
-    const dispatch = useAppDispatch();
     const exchangeBattleFire = () => {
         void ModuleManager.showModule('battleFirePanel', ['battleFirePanel'], null, null, AppDoStyle.NULL);
-        dispatch(mainPanelActions.close());
+        dispatch(launcherActions.closeMain());
     };
 
+    // TODO fix: https://github.com/median-dxz/seerh5-assistant/issues/19
+    const [giftingStars, setGiftingStars] = useState(false);
     const giftStars = async () => {
         if (giftingStars) return;
 

@@ -1,12 +1,15 @@
 import MenuOpen from '@mui/icons-material/MenuOpen';
 import { SpeedDialAction, SvgIcon, type SpeedDialActionProps, type SpeedDialProps } from '@mui/material';
-
 import React, { useState } from 'react';
 
-import { SeaQuickAccess } from '@/components/styled/QuickAccess';
-import { useModStore } from '@/context/useModStore';
-import type { CommandInstance } from '@/services/modStore/command';
 import type { AnyFunction } from '@sea/core';
+
+import { SeaQuickAccess } from '@/components/styled/QuickAccess';
+import { commandStore } from '@/features/mod/store';
+import { useMapToStore } from '@/features/mod/useModStore';
+import type { ModExportsRef } from '@/features/mod/utils';
+import { useAppSelector, type AppRootState } from '@/store';
+import { shallowEqual } from 'react-redux';
 
 const SvgMaker = ({ url, children: _, ...rest }: React.SVGProps<SVGSVGElement> & { url: string }) => {
     if (!url.startsWith('<svg xmlns="http://www.w3.org/2000/svg"')) {
@@ -32,12 +35,17 @@ const SvgMaker = ({ url, children: _, ...rest }: React.SVGProps<SVGSVGElement> &
 
 const SvgWrapper = (url: string) => (props: React.SVGProps<SVGSVGElement>) => SvgMaker({ url, ...props });
 
-const QuickAccessPluginAction: React.FC<
-    {
-        plugin: CommandInstance;
-        setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    } & SpeedDialActionProps
-> = ({ plugin, setOpen, FabProps, ...rest }) => {
+const QuickAccessPluginAction = ({
+    pluginRef,
+    setOpen,
+    FabProps,
+    ...rest
+}: {
+    pluginRef: ModExportsRef;
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+} & SpeedDialActionProps) => {
+    const plugin = useMapToStore(() => pluginRef, commandStore)!;
+
     const getTitle = () => {
         if (plugin.description) {
             if (typeof plugin.description === 'string') {
@@ -84,8 +92,9 @@ const QuickAccessPluginAction: React.FC<
 
 export function QuickAccess(props: SpeedDialProps) {
     const [open, setOpen] = useState(false);
-    const { commandStore } = useModStore();
-    const plugins = Array.from(commandStore.values()).filter((command) => command.icon);
+
+    const selectActions = (state: AppRootState) => state.mod.commandRefs.filter((ref) => commandStore.get(ref)?.icon);
+    const refs = useAppSelector(selectActions, shallowEqual);
 
     return (
         <SeaQuickAccess
@@ -111,8 +120,8 @@ export function QuickAccess(props: SpeedDialProps) {
             }}
             {...props}
         >
-            {plugins.map((plugin) => (
-                <QuickAccessPluginAction key={`${plugin.ownerMod}::${plugin.name}`} plugin={plugin} setOpen={setOpen} />
+            {refs.map((ref) => (
+                <QuickAccessPluginAction key={JSON.stringify(ref)} pluginRef={ref} setOpen={setOpen} />
             ))}
         </SeaQuickAccess>
     );

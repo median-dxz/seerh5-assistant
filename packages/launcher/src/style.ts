@@ -20,6 +20,7 @@ declare module '@mui/material/styles' {
 
         fonts: {
             input: string;
+            property: string;
         };
 
         palette: Palette;
@@ -48,6 +49,7 @@ const border = `1px solid ${alpha(colors.primary, 0.24)}`;
 
 const fonts = {
     input: `"Noto Sans SC", "Open Sans", consolas, monospace`,
+    property: `"Open Sans", MFShangHei, system-ui, -apple-system, "Open Sans", "Helvetica Neue", sans-serif`,
     main: `MFShangHei, "Open Sans", "Noto Sans SC", Helvetica, Arial, sans-serif`,
     header: `"Noto Sans SC", system-ui, -apple-system, "Open Sans", "Helvetica Neue", sans-serif`
 };

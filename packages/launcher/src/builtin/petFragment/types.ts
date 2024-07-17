@@ -1,5 +1,5 @@
 import type { PetFragmentLevelDifficulty as Difficulty, IPFLevelBoss, PetFragmentLevel } from '@sea/core';
-import type { LevelData, LevelMeta, Task } from '@sea/mod-type';
+import type { LevelData, Task } from '@sea/mod-type';
 
 export interface PetFragmentOption {
     id: number;
@@ -9,7 +9,7 @@ export interface PetFragmentOption {
 }
 
 export interface IPetFragmentRunner
-    extends ReturnType<Task<LevelMeta, undefined, PetFragmentLevelData, 'sweep' | 'battle' | 'stop'>['runner']> {
+    extends ReturnType<Task<undefined, PetFragmentLevelData, 'sweep' | 'battle' | 'stop'>['runner']> {
     readonly designId: number;
     readonly frag: PetFragmentLevel;
     options: PetFragmentOption;

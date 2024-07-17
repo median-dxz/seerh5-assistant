@@ -1,10 +1,3 @@
-import { List, ListItem, ListItemText, Menu, MenuItem, Typography, alpha, type ListProps } from '@mui/material';
-import React, { useState, type MouseEventHandler } from 'react';
-
-import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
-import { useModStore } from '@/context/useModStore';
-import type { ModInstance } from '@/services/modStore/mod';
-
 import Build from '@mui/icons-material/BuildRounded';
 import Delete from '@mui/icons-material/DeleteOutlineRounded';
 import Feed from '@mui/icons-material/FeedRounded';
@@ -12,13 +5,43 @@ import RadioButtonChecked from '@mui/icons-material/RadioButtonChecked';
 import RadioButtonUnchecked from '@mui/icons-material/RadioButtonUnchecked';
 import Refresh from '@mui/icons-material/RefreshRounded';
 import Settings from '@mui/icons-material/Settings';
-import { Box } from '@mui/system';
+
+import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
+import { deploymentSelectors, type ModDeployment } from '@/features/mod/slice';
+import { modStore } from '@/features/mod/store';
+import { useMapToStore } from '@/features/mod/useModStore';
+import { getCompositeId } from '@/features/mod/utils';
+import { useAppSelector } from '@/store';
+
+import {
+    Box,
+    List,
+    ListItem,
+    ListItemText,
+    Menu,
+    MenuItem,
+    Stack,
+    Tooltip,
+    Typography,
+    alpha,
+    styled,
+    type ListProps
+} from '@mui/material';
+import NanoClamp from 'nanoclamp';
+import React, { useState, type MouseEventHandler } from 'react';
+
+const ClampText = styled(NanoClamp)(({ theme }) => ({
+    ...theme.typography.button,
+    fontSize: '1rem',
+    fontFamily: theme.fonts.input,
+    margin: 0
+}));
 
 interface ModListItemProps {
-    mod: ModInstance;
+    deployment: ModDeployment;
 }
 
-export function ModListItem({ mod }: ModListItemProps) {
+export function ModListItem({ deployment }: ModListItemProps) {
     const [anchor, setAnchor] = useState<HTMLElement | null>(null);
 
     const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -32,49 +55,55 @@ export function ModListItem({ mod }: ModListItemProps) {
 
     const open = Boolean(anchor);
 
-    const {
-        ctx: { meta },
-        namespace
-    } = mod;
+    const { state, scope, id } = deployment;
+    const ins = useMapToStore(() => (deployment.status === 'deployed' ? deployment.deploymentId : undefined), modStore);
+
     const title = (
-        <>
-            <Typography component="span" sx={{ paddingRight: '1em' }} fontSize={24}>
-                {meta.id}
-            </Typography>
-            <Typography component="span">v{meta.version}</Typography>
-        </>
+        <Stack direction="row" spacing={4} useFlexGap sx={{ alignItems: 'baseline' }}>
+            <Typography sx={{ paddingRight: '1rem', fontSize: 28 }}>{id}</Typography>
+            <Typography>v{state.version}</Typography>
+        </Stack>
     );
 
     const description = (
-        <>
-            <Typography component="span" fontSize={16} sx={{ paddingRight: '1em' }}>
-                {namespace} {meta.description}
-            </Typography>
+        <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
+            <Stack direction="row" spacing={4} useFlexGap sx={{ alignItems: 'baseline' }}>
+                <Typography sx={{ fontFamily: ({ fonts }) => fonts.property }}>
+                    {getCompositeId({ scope, id })}
+                </Typography>
 
-            {meta.scope === 'builtin' && (
-                <Typography sx={{ pr: 1 }} component="span" color="GrayText" fontSize={16}>
-                    预置
+                {ins && (
+                    <Tooltip title={ins.metadata.description}>
+                        <Box>
+                            <ClampText
+                                is="p"
+                                lines={1}
+                                debounce={100}
+                                accessibility={false}
+                                text={ins.metadata.description}
+                            />
+                        </Box>
+                    </Tooltip>
+                )}
+            </Stack>
+            <Stack direction="row" spacing={4} useFlexGap sx={{ alignItems: 'baseline' }}>
+                {scope === 'builtin' && (
+                    <Typography color="GrayText" sx={{ fontSize: 16 }}>
+                        预置
+                    </Typography>
+                )}
+                {state.preload && (
+                    <Typography color="GrayText" sx={{ fontSize: 16 }}>
+                        预加载
+                    </Typography>
+                )}
+                <Typography color="GrayText" sx={{ fontSize: 16 }}>
+                    {deployment.status === 'deployed' ? '已部署' : deployment.isDeploying ? '部署中...' : '未部署'}
                 </Typography>
-            )}
-            {meta.preload && (
-                <Typography component="span" color="GrayText" fontSize={16}>
-                    预加载
-                </Typography>
-            )}
-            <Typography component="span" color="GrayText" sx={{ float: 'right' }} fontSize={16}>
-                {mod.strategies.length ? `策略: ${mod.strategies.length}` : ''}
-            </Typography>
-            <Typography component="span" color="GrayText" sx={{ float: 'right' }} fontSize={16}>
-                {mod.battles.length ? `战斗: ${mod.battles.length}` : ''}
-            </Typography>
-            <Typography component="span" color="GrayText" sx={{ float: 'right' }} fontSize={16}>
-                {mod.tasks.length ? `关卡: ${mod.tasks.length}` : ''}
-            </Typography>
-            <Typography component="span" color="GrayText" sx={{ float: 'right' }} fontSize={16}>
-                {mod.commands.length ? `命令: ${mod.commands.length}` : ''}
-            </Typography>
-        </>
+            </Stack>
+        </Stack>
     );
+
     return (
         <ListItem
             sx={{
@@ -93,7 +122,7 @@ export function ModListItem({ mod }: ModListItemProps) {
             <ListItemText
                 primary={title}
                 secondary={description}
-                primaryTypographyProps={{ fontFamily: ['Open Sans', 'MFShangHei'] }}
+                disableTypography
                 sx={{ paddingRight: 4, paddingLeft: 4 }}
             />
             <Box
@@ -107,8 +136,8 @@ export function ModListItem({ mod }: ModListItemProps) {
                 <IconButtonNoRipple
                     title="详情"
                     onClick={() => {
-                        console.log(mod);
-                        //TODO open mod detail
+                        // TODO open mod detail
+                        // available in status === 'deployed'
                     }}
                 >
                     <Feed />
@@ -162,15 +191,14 @@ export function ModListItem({ mod }: ModListItemProps) {
 }
 
 export function ModList(listProps: ListProps) {
-    const { modStore: _store } = useModStore();
-    const store = Array.from(_store.values());
+    const deployments = useAppSelector(deploymentSelectors.selectAll);
     return (
         <List
             sx={{ width: '100%', overflow: 'auto', paddingRight: 1, '& > *:not(:first-child)': { marginTop: '8px' } }}
             {...listProps}
         >
-            {store.map((mod) => (
-                <ModListItem key={mod.ctx.meta.id} mod={mod} />
+            {deployments.map((deployment) => (
+                <ModListItem key={getCompositeId(deployment)} deployment={deployment} />
             ))}
         </List>
     );

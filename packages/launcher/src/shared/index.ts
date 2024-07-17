@@ -1,5 +1,6 @@
-import type { GetConfigObjectTypeFromSchema, LevelMeta, SEAConfigSchema, SEAFormItemSchema, Task } from '@sea/mod-type';
-import type { TaskConfigData } from '@sea/server';
+import type { TaskInstance } from '@/features/mod/store';
+import { getCompositeId } from '@/features/mod/utils';
+import type { SEAFormItemSchema } from '@sea/mod-type';
 
 export function buildDefaultConfig(configSchema: Record<string, SEAFormItemSchema>) {
     const keys = Object.keys(configSchema);
@@ -11,32 +12,18 @@ export function buildDefaultConfig(configSchema: Record<string, SEAFormItemSchem
     return defaultConfig;
 }
 
-export function getTaskCurrentOptions(task: Task, taskConfig?: TaskConfigData | undefined): undefined;
-
-export function getTaskCurrentOptions<TSchema extends SEAConfigSchema>(
-    task: Task<LevelMeta, TSchema>,
-    taskConfig?: TaskConfigData | undefined
-): GetConfigObjectTypeFromSchema<TSchema>;
-
-export function getTaskCurrentOptions<TSchema extends SEAConfigSchema | undefined>(
-    task: Task<LevelMeta, TSchema>,
-    taskConfig?: TaskConfigData | undefined
-) {
-    if (task.configSchema == undefined) {
+export function getTaskOptions(task: TaskInstance, taskConfig: Record<string, object | undefined>) {
+    if (!task.configSchema) {
         return undefined;
     }
 
-    // 声明配置项, 声明现有配置但没找到对应的配置
-    if (taskConfig?.currentOptions !== undefined && !taskConfig.options.has(taskConfig.currentOptions)) {
-        throw new Error('未找到任务配置');
-    }
+    const configId = getCompositeId({ scope: task.cid, id: task.metadata.id });
 
-    // 声明配置项, 未声明现有配置
-    if (!taskConfig?.currentOptions) {
+    if (taskConfig[configId]) {
+        return taskConfig[configId];
+    } else {
         return buildDefaultConfig(task.configSchema);
     }
-
-    return taskConfig.options.get(taskConfig.currentOptions)!;
 }
 
 export const time2mmss = (n: number) => {

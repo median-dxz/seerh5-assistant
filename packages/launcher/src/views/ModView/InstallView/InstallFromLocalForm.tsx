@@ -1,5 +1,5 @@
 import { IS_DEV } from '@/constants';
-import { installModFromUrl } from '@/services/modStore/install';
+import { modApi } from '@/services/mod';
 import Close from '@mui/icons-material/Close';
 import CloudUpload from '@mui/icons-material/CloudUploadRounded';
 import {
@@ -37,6 +37,7 @@ export function InstallFromLocalForm() {
     const [uploading, setUploading] = useState(false);
     const uploadModRef = useRef<HTMLInputElement>(null);
     const { enqueueSnackbar } = useSnackbar();
+    const [install] = modApi.endpoints.install.useMutation();
 
     const handleClose = useCallback(() => {
         setOpen(false);
@@ -80,7 +81,8 @@ export function InstallFromLocalForm() {
                 PaperProps={{
                     sx: {
                         backgroundImage: 'none',
-                        bgcolor: ({ palette }) => palette.popup.background
+                        bgcolor: ({ palette }) => palette.popup.background,
+                        backdropFilter: 'blur(4px)'
                     },
                     component: 'form',
                     onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
@@ -95,7 +97,7 @@ export function InstallFromLocalForm() {
 
                         const modUrl = URL.createObjectURL(modFile);
 
-                        installModFromUrl(modUrl, true)
+                        install({ url: modUrl, update: true })
                             .then(() => {
                                 enqueueSnackbar(`模组安装成功!`, { variant: 'success' });
                             })

@@ -1,12 +1,12 @@
 import { IconButtonNoRipple as IconButton } from '@/components/IconButtonNoRipple';
-import { Loading } from '@/components/Loading';
+import { LinerLoading } from '@/components/LinerLoading';
 import { PopupMenuButton } from '@/components/PopupMenuButton';
 import { Backpack } from '@/components/icons/Backpack';
 import { HealthBroken } from '@/components/icons/HealthBroken';
 import { HpBar } from '@/components/icons/HpBar';
 import { Row } from '@/components/styled/Row';
+import { launcherActions } from '@/features/launcherSlice';
 import { usePetGroups } from '@/services/config/usePetGroups';
-import { mainPanelActions } from '@/services/mainPanelSlice';
 import { useAppDispatch } from '@/store';
 import Bookmarks from '@mui/icons-material/Bookmarks';
 import Clear from '@mui/icons-material/ClearRounded';
@@ -40,7 +40,7 @@ export function ToolBar({ selected }: ToolBarProps) {
 
     const handleOpenBag = () => {
         void ModuleManager.showModule('petBag');
-        dispatch(mainPanelActions.close());
+        dispatch(launcherActions.closeMain());
     };
 
     const loadPets = useCallback(
@@ -79,7 +79,7 @@ export function ToolBar({ selected }: ToolBarProps) {
     }, []);
 
     if (isLoading) {
-        return <Loading />;
+        return <LinerLoading />;
     }
 
     return (

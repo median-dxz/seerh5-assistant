@@ -1,9 +1,13 @@
-export const praseNamespace = (ns: string) => {
-    const [scope, id] = ns.split('::');
+export const praseCompositeId = (cid: string) => {
+    const [scope, id] = cid.split('::');
     return {
-        scope,
-        id
-    } as const;
+        scope: scope.replaceAll('/:/', ':'),
+        id: id.replaceAll('/:/', ':')
+    };
 };
 
-export const getNamespace = (scope: string, id: string) => `${scope}::${id}`;
+export const getCompositeId = (scope: string, id: string) => {
+    scope = scope.replaceAll(':', '/:/');
+    id = id.replaceAll(':', '/:/');
+    return `${scope}::${id}`;
+};

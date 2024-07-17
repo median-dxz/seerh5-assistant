@@ -4,7 +4,6 @@ import React, { useCallback } from 'react';
 import { Selector } from './Selector';
 
 import { Paper } from '@/components/styled/Paper';
-import { QueryKey } from '@/constants';
 import { GameConfigRegistry, SEAEventSource, engine } from '@sea/core';
 
 const changeTitleEventSource = SEAEventSource.eventPattern(
@@ -64,7 +63,6 @@ export function Inventory() {
                 <Selector
                     id="change-title"
                     label={'称号'}
-                    dataKey={QueryKey.multiValue.title}
                     currentItemGetter={engine.playerTitle}
                     allItemGetter={engine.playerAbilityTitles}
                     descriptionGetter={titleDescription}
@@ -76,7 +74,6 @@ export function Inventory() {
                 <Selector
                     id="change-suit"
                     label={'套装'}
-                    dataKey={QueryKey.multiValue.suit}
                     currentItemGetter={engine.playerSuit}
                     allItemGetter={() => Promise.resolve(engine.playerAbilitySuits())}
                     descriptionGetter={suitDescription}
@@ -88,7 +85,6 @@ export function Inventory() {
                 <Selector
                     id="change-eye-equipment"
                     label={'目镜'}
-                    dataKey={QueryKey.multiValue.eyeEquipment}
                     currentItemGetter={getEyeEquipment}
                     allItemGetter={getAllEyeEquipment}
                     eventSource={changeClothesEventSource}

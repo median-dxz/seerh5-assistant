@@ -1,13 +1,16 @@
-import type { SWRSubscriptionOptions } from 'swr/subscription';
-
-import { Box, Grid, Tooltip, Typography } from '@mui/material';
-import React, { memo } from 'react';
-import useSWRSubscription from 'swr/subscription';
+import { Box, Grid, styled, Tooltip, Typography } from '@mui/material';
+import React, { memo, useEffect, useState } from 'react';
+import NanoClamp from 'nanoclamp';
 
 import type { SEAEventSource } from '@sea/core';
 
-import { ClampText } from '../styled/ClampText';
-import { SelectorButton } from '../styled/SelectorButton';
+import { SelectorButton } from './SelectorButton';
+
+const ClampText = styled(NanoClamp)(({ theme }) => ({
+    ...theme.typography.button,
+    fontSize: 12,
+    margin: 0
+}));
 
 export interface SelectorProps {
     id: string;
@@ -16,7 +19,6 @@ export interface SelectorProps {
     allItemGetter: () => Promise<number[]>;
     nameGetter: (id: number) => string | undefined;
     descriptionGetter: (id: number) => string | undefined;
-    dataKey: string;
     eventSource: SEAEventSource<unknown>;
     mutate: (id: number) => unknown;
 }
@@ -24,7 +26,6 @@ export interface SelectorProps {
 export function Selector({
     id,
     label,
-    dataKey,
     currentItemGetter: itemGetter,
     allItemGetter,
     nameGetter,
@@ -32,18 +33,14 @@ export function Selector({
     mutate,
     descriptionGetter
 }: SelectorProps) {
-    const { data } = useSWRSubscription(
-        dataKey,
-        (_, { next }: SWRSubscriptionOptions<number, Error>) => {
-            const sub = eventSource.on(() => {
-                next(null, itemGetter());
-            });
-            return () => eventSource.off(sub);
-        },
-        {
-            fallbackData: itemGetter()
-        }
-    );
+    const [data, setData] = useState(itemGetter);
+
+    useEffect(() => {
+        const sub = eventSource.on(() => {
+            setData(itemGetter());
+        });
+        return () => void eventSource.off(sub);
+    }, [eventSource, itemGetter]);
 
     const handleSelectItem = React.useCallback(
         (newItem: number) => {

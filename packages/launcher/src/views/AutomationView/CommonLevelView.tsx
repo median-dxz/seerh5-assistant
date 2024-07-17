@@ -1,21 +1,23 @@
-import { Box, Button, CircularProgress, Typography } from '@mui/material';
-import React, { useMemo } from 'react';
+import { Box, Button, Typography } from '@mui/material';
+import React, { useEffect, useMemo, useState } from 'react';
 
+import { DataLoading } from '@/components/DataLoading';
 import { PanelField, useRowData } from '@/components/PanelTable';
 import { PanelTable, type PanelColumns } from '@/components/PanelTable/PanelTable';
 import { SeaTableRow } from '@/components/styled/TableRow';
-import { MOD_SCOPE_BUILTIN, QueryKey } from '@/constants';
-import { useModStore } from '@/context/useModStore';
-import { getNamespace as ns } from '@/services/modStore/metadata';
-import type { TaskInstance } from '@/services/modStore/task';
-import { taskSchedulerActions } from '@/services/taskSchedulerSlice';
-import { useTaskConfig } from '@/services/useTaskConfig';
-import { getTaskCurrentOptions } from '@/shared';
-import type { AnyTask } from '@/shared/types';
+
+import { taskStore } from '@/features/mod/store';
+import { mapToStore, useMapToStore } from '@/features/mod/useModStore';
+import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
+
+import { PET_FRAGMENT_LEVEL_ID } from '@/builtin/petFragment';
+import { MOD_SCOPE_BUILTIN } from '@/constants';
+import type { ModExportsRef } from '@/features/mod/utils';
+import { configApi } from '@/services/config';
+import { getTaskOptions } from '@/shared/index';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { LevelAction } from '@sea/core';
-import type { TaskConfigData } from '@sea/server';
-import useSWR from 'swr';
+import { shallowEqual } from 'react-redux';
 
 //      name: '作战实验室'
 //      name: '六界神王殿',
@@ -40,35 +42,44 @@ import useSWR from 'swr';
 //  },
 
 interface Row {
-    taskInstance: TaskInstance;
-    config?: TaskConfigData;
+    ref: ModExportsRef;
+    options?: object;
 }
 
-const toRowKey = (row: Row) => row.taskInstance.id;
+const toRowKey = (row: Row) => row.ref.key;
 
 export function CommonLevelView() {
-    const { taskStore } = useModStore();
-    const { data: taskConfig, isLoading, error } = useTaskConfig();
+    const taskRefs = useAppSelector(
+        ({ mod: { taskRefs } }) =>
+            taskRefs.filter(
+                ({ modScope, modId, key }) =>
+                    !(
+                        modScope === MOD_SCOPE_BUILTIN &&
+                        modId === PET_FRAGMENT_LEVEL_ID &&
+                        key === PET_FRAGMENT_LEVEL_ID
+                    )
+            ),
+        shallowEqual
+    );
 
+    const { data: taskConfig, isFetching, error } = configApi.endpoints.allTaskConfig.useQuery();
     const rows = useMemo(
         () =>
-            Array.from(taskStore.values())
-                .filter(({ ownerMod, task: _task, id }) => {
+            taskRefs
+                .map((ref) => {
                     if (!taskConfig) {
-                        return false;
+                        return undefined;
                     }
-
-                    if (ownerMod === ns({ scope: MOD_SCOPE_BUILTIN, id: 'PetFragmentLevel' })) {
-                        return false;
+                    const task = mapToStore(ref, taskStore)!;
+                    const currentOptions = getTaskOptions(task, taskConfig);
+                    const runner = task.runner(currentOptions);
+                    if (runner.selectLevelBattle) {
+                        return { ref, options: currentOptions } as Row;
                     }
-
-                    const task = _task as AnyTask;
-
-                    const runner = task.runner(task.metadata, getTaskCurrentOptions(task, taskConfig.get(id)));
-                    return Boolean(runner.selectLevelBattle);
+                    return undefined;
                 })
-                .map((task) => ({ taskInstance: task, config: taskConfig?.get(task.id) }) as Row),
-        [taskConfig, taskStore]
+                .filter(Boolean) as Row[],
+        [taskConfig, taskRefs]
     );
 
     const col: PanelColumns = useMemo(
@@ -93,21 +104,11 @@ export function CommonLevelView() {
         []
     );
 
-    if (!taskConfig || isLoading)
-        return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                <Typography sx={{ mx: 2 }}>加载数据中</Typography>
-                <CircularProgress />
-            </Box>
-        );
+    if (!taskConfig || isFetching) return <DataLoading />;
 
     if (error) {
         console.error(error);
-        return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                <Typography fontFamily={['Open Sans']}>{String(error)}</Typography>;
-            </Box>
-        );
+        return <DataLoading error={error.message} />;
     }
 
     return (
@@ -119,29 +120,21 @@ export function CommonLevelView() {
 
 const PanelRow = React.memo(() => {
     const dispatch = useAppDispatch();
-    const status = useAppSelector((state) => state.taskScheduler.status);
+    const { ref, options } = useRowData<Row>();
+    const task = useMapToStore(() => ref, taskStore)!;
+    const runner = useMemo(() => task.runner(options), [options, task]);
+    const [completed, setCompleted] = useState(false);
 
-    const {
-        taskInstance: { task, name: taskName },
-        config
-    } = useRowData<Row>();
-    const currentOptions = useMemo(() => getTaskCurrentOptions(task as AnyTask, config), [task, config]);
-
-    const { data: completed } = useSWR(
-        [QueryKey.taskIsCompleted, task, status],
-        async () => {
-            const runner = (task as AnyTask).runner(task.metadata, currentOptions);
+    useEffect(() => {
+        void (async () => {
             await runner.update();
-            return runner.next() === LevelAction.STOP;
-        },
-        {
-            fallbackData: false
-        }
-    );
+            setCompleted(runner.next() === LevelAction.STOP);
+        })();
+    }, [runner]);
 
     return (
         <SeaTableRow>
-            <PanelField field="name">{taskName}</PanelField>
+            <PanelField field="name">{runner.name ?? task.metadata.name}</PanelField>
             <PanelField field="state">
                 <Typography color={completed ? '#eeff41' : 'inherited'}>{completed ? '已完成' : '未完成'}</Typography>
             </PanelField>
@@ -149,7 +142,7 @@ const PanelRow = React.memo(() => {
                 <Box component="span">
                     <Button
                         onClick={() => {
-                            dispatch(taskSchedulerActions.enqueue(task, currentOptions));
+                            dispatch(taskSchedulerActions.enqueue(ref, options, runner.name));
                         }}
                         disabled={completed}
                     >

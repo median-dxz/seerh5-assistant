@@ -1,40 +1,40 @@
+import { DataLoading } from '@/components/DataLoading';
 import { PanelField, PanelTable, useRowData, type PanelColumns } from '@/components/PanelTable';
-import React, { useMemo } from 'react';
-
+import { SeaTableRow } from '@/components/styled/TableRow';
 import { Button, ButtonGroup, CircularProgress } from '@mui/material';
 
-import { SeaTableRow } from '@/components/styled/TableRow';
+import { taskStore, type TaskInstance } from '@/features/mod/store';
+import { useMapToStore } from '@/features/mod/useModStore';
+import { getCompositeId } from '@/features/mod/utils';
+
+import { PET_FRAGMENT_LEVEL_ID } from '@/builtin/petFragment';
 import { MOD_SCOPE_BUILTIN } from '@/constants';
-import { useModStore } from '@/context/useModStore';
-import { getNamespace as ns } from '@/services/modStore/metadata';
-import type { TaskInstance } from '@/services/modStore/task';
-import { useTaskConfig } from '@/services/useTaskConfig';
-import { getTaskCurrentOptions } from '@/shared';
-import type { AnyTask } from '@/shared/types';
+import { configApi } from '@/services/config';
+import { getTaskOptions } from '@/shared/index';
 import { LevelAction, delay } from '@sea/core';
-import useSWR from 'swr';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 export function DailySignView() {
-    const { taskStore } = useModStore();
-    const { data: taskConfig } = useTaskConfig();
-
+    const { data: configs, isFetching, error } = configApi.endpoints.allTaskConfig.useQuery();
+    const tasks = useMapToStore(
+        (state) =>
+            state.mod.taskRefs.filter(
+                ({ modId, modScope, key }) =>
+                    modId !== PET_FRAGMENT_LEVEL_ID && modScope !== MOD_SCOPE_BUILTIN && key !== PET_FRAGMENT_LEVEL_ID
+            ),
+        taskStore
+    );
     const signs = useMemo(
         () =>
-            Array.from(taskStore.values()).filter(({ ownerMod, task: _task, id }) => {
-                if (!taskConfig) {
-                    return false;
-                }
+            tasks
+                .filter((task) => {
+                    if (!configs) return false;
 
-                if (ownerMod === ns({ scope: MOD_SCOPE_BUILTIN, id: 'PetFragmentLevel' })) {
-                    return false;
-                }
-
-                const task = _task as AnyTask;
-
-                const runner = task.runner(task.metadata, getTaskCurrentOptions(task, taskConfig.get(id)));
-                return !runner.selectLevelBattle;
-            }),
-        [taskConfig, taskStore]
+                    const runner = task.runner(getTaskOptions(task, configs));
+                    return !runner.selectLevelBattle;
+                })
+                .map((sign) => ({ sign, options: getTaskOptions(sign, configs!) })),
+        [configs, tasks]
     );
 
     const columns: PanelColumns = React.useMemo(
@@ -59,52 +59,62 @@ export function DailySignView() {
         []
     );
 
+    if (isFetching) {
+        return <DataLoading error={error?.message} />;
+    }
+
     return (
         <>
             <PanelTable
                 data={signs}
                 columns={columns}
                 rowElement={<PanelRow />}
-                toRowKey={(sign) => `${sign.ownerMod}::${sign.name}`}
+                toRowKey={({ sign }) => getCompositeId({ scope: sign.cid, id: sign.metadata.id })}
             />
         </>
     );
 }
 
 const PanelRow = () => {
-    const ins = useRowData<TaskInstance>();
-    const { ownerMod, name, task: _task } = ins;
-    const task = _task as AnyTask;
-    const runner = task.runner(task.metadata, getTaskCurrentOptions(task));
+    const { sign, options } = useRowData<{ sign: TaskInstance; options?: object }>();
+    const { cid: cid } = sign;
 
-    const { data: state, mutate } = useSWR(
-        `ds://mod/sign/${ownerMod}/${name}`,
-        async () => {
-            await runner.update();
-            return {
-                timesHaveRun: task.metadata.maxTimes - runner.data.remainingTimes,
-                maxTimes: task.metadata.maxTimes
-            };
-        },
-        { revalidateOnFocus: false, revalidateOnMount: true }
-    );
+    const runner = useMemo(() => sign.runner(options), [options, sign]);
+    const [progress, setProgress] = useState(runner.data.progress);
+    const [maxTimes, setMaxTimes] = useState(runner.data.maxTimes);
+    const [fetched, setFetched] = useState(false);
+
+    const mutate = useCallback(async () => {
+        await runner.update();
+        setMaxTimes(runner.data.maxTimes);
+        setProgress(runner.data.maxTimes - runner.data.remainingTimes);
+        setFetched(true);
+    }, [runner]);
+
+    useEffect(() => {
+        void mutate();
+    }, [mutate]);
+
+    const signName = runner.name ?? sign.metadata.name;
 
     return (
         <SeaTableRow>
-            <PanelField field="name">{name}</PanelField>
-            <PanelField field="mod">{ownerMod}</PanelField>
+            <PanelField field="name">{signName}</PanelField>
+            <PanelField field="mod" sx={{ fontFamily: ({ fonts }) => fonts.input }}>
+                {cid}
+            </PanelField>
             <PanelField field="state">
-                {!state ? <CircularProgress /> : `# ${state.timesHaveRun} / ${state.maxTimes}`}
+                {fetched ? `# ${progress} / ${maxTimes}` : <CircularProgress size="1.5rem" />}
             </PanelField>
             <PanelField field="execute">
                 <ButtonGroup>
                     <Button
                         onClick={() => {
                             void (async () => {
-                                console.log(`正在执行${name}`);
+                                console.log(`正在执行${signName}`);
                                 await runner.update();
                                 while (runner.data.remainingTimes > 0) {
-                                    await runner.actions[LevelAction.AWARD]?.call(task);
+                                    await runner.actions[LevelAction.AWARD]?.call(runner);
                                     await delay(50).then(() => runner.update());
                                 }
                                 await mutate();

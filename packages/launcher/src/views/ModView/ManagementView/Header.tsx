@@ -1,10 +1,12 @@
-import { useModStore } from '@/context/useModStore';
-import { deploymentHandlers, fetchList } from '@/services/modStore/deploymentHandlerSlice';
+import { deploymentSelectors, modActions } from '@/features/mod/slice';
+import { getCompositeId } from '@/features/mod/utils';
+import { useAppDispatch, useAppSelector } from '@/store';
 import { Box, Button, alpha } from '@mui/material';
 import React from 'react';
 
 export function Header() {
-    const { modStore: store, sync } = useModStore();
+    const dispatch = useAppDispatch();
+    const deployments = useAppSelector(deploymentSelectors.selectAll);
     return (
         <Box
             sx={{
@@ -19,22 +21,12 @@ export function Header() {
         >
             <Button
                 onClick={() => {
-                    store.forEach((mod) => {
-                        try {
-                            store.delete(mod.namespace);
-                            mod.dispose();
-                            console.log(`撤销模组部署: ${mod.namespace}`);
-                        } catch (error) {
-                            console.error(`撤销模组部署失败: ${mod.namespace}`, error);
-                        }
+                    deployments.forEach((deployment) => {
+                        dispatch(modActions.dispose(getCompositeId(deployment)));
                     });
-                    void fetchList()
-                        .then(() =>
-                            Promise.all(
-                                deploymentHandlers.map((handler) => handler.fetch().then(() => handler.deploy()))
-                            )
-                        )
-                        .then(sync);
+                    deployments.forEach((deployment) => {
+                        void dispatch(modActions.deploy(getCompositeId(deployment)));
+                    });
                 }}
             >
                 重载所有模组

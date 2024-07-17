@@ -10,9 +10,7 @@ interface TabRouterProviderProps {
 
 export function TabRouterProvider({ children, rootView }: PropsWithChildren<TabRouterProviderProps>) {
     const [viewNodeStack, setViewNodeStack] = useState<ViewNode[]>([rootView]);
-    const [currentViewIndex, setCurrentViewIndex] = useState<number>(() => {
-        return defaultTab(rootView.view as ViewNode[])!;
-    });
+    const [currentViewIndex, setCurrentViewIndex] = useState<number>(() => defaultTab(rootView.view as ViewNode[])!);
 
     const updateRouter = useCallback((newViewNodeStack: ViewNode[]) => {
         setViewNodeStack(newViewNodeStack);
@@ -36,7 +34,13 @@ export function TabRouterProvider({ children, rootView }: PropsWithChildren<TabR
 
     return (
         <TabRouter.Provider
-            value={{ back, push, routerStack: viewNodeStack, currentTab: currentViewIndex, setTab: setCurrentViewIndex }}
+            value={{
+                back,
+                push,
+                routerStack: viewNodeStack,
+                currentTab: currentViewIndex,
+                setTab: setCurrentViewIndex
+            }}
         >
             {children}
         </TabRouter.Provider>

@@ -186,6 +186,7 @@ declare global {
 
     var EventManager: egret.EventDispatcher;
     var Core: any;
+    var Driver: any;
     var config: {
         xml: any;
         Brave_lv: any;

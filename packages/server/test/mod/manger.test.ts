@@ -3,16 +3,17 @@ import { modIndexes } from '../../src/data/ModIndexes';
 
 import superjson from 'superjson';
 import type { ModState } from '../../src/data/ModIndexes';
-import type { ModInstallOptions } from '../../src/router/mod/manager';
 import { ModManager } from '../../src/router/mod/manager';
-import { getNamespace } from '../../src/utils';
+import type { InstallModOptions } from '../../src/router/mod/schemas';
+import { getCompositeId } from '../../src/shared';
 
 const modState1: ModState = {
     enable: true,
     requireConfig: false,
     requireData: false,
     builtin: true,
-    preload: false
+    preload: false,
+    version: '0.0.1'
 };
 
 const modState2: ModState = {
@@ -20,7 +21,22 @@ const modState2: ModState = {
     requireConfig: true,
     requireData: true,
     builtin: false,
-    preload: false
+    preload: false,
+    version: '0.0.1'
+};
+
+const installOptions1: InstallModOptions = {
+    version: '1.0.0',
+    config: { key: 'value' },
+    data: { key: 'value' },
+    update: false
+};
+
+const installOptions2: InstallModOptions = {
+    version: '1.0.0',
+    config: { key: 'new value' },
+    data: { key: 'new value' },
+    update: true
 };
 
 vi.mock('node:fs/promises', async (importOriginal) => {
@@ -37,8 +53,8 @@ vi.mock('node:fs/promises', async (importOriginal) => {
                     return Promise.resolve(
                         superjson.stringify(
                             new Map([
-                                [getNamespace('scope1', 'mod1'), modState1],
-                                [getNamespace('scope2', 'mod2'), modState2]
+                                [getCompositeId('scope1', 'mod1'), modState1],
+                                [getCompositeId('scope2', 'mod2'), modState2]
                             ])
                         )
                     );
@@ -68,30 +84,32 @@ describe.sequential('mod manager', () => {
 
     const scope = 'scope3';
     const id = 'mod3';
-    const ns = getNamespace(scope, id);
+    const cid = getCompositeId(scope, id);
 
     test('load config and data', () => {
         expect(ModManager.modData.size).toBe(1);
         expect(ModManager.modConfig.size).toBe(1);
 
-        const ns = getNamespace('scope2', 'mod2');
-        const data = ModManager.modData.get(ns);
-        const config = ModManager.modConfig.get(ns);
+        const cid = getCompositeId('scope2', 'mod2');
+        const data = ModManager.modData.get(cid);
+        const config = ModManager.modConfig.get(cid);
 
         expect(data?.query()).toEqual({ key: 'value' });
         expect(config?.query()).toEqual({ key: 'value' });
     });
 
     test('install a new mod with config and data', async () => {
-        const installOptions: ModInstallOptions = {
+        const installOptions: InstallModOptions = {
+            version: '1.0.0',
             config: { key: 'value' },
             data: { key: 'value' },
             update: false
         };
 
-        const result = await ModManager.install(scope, id, installOptions);
+        const result = await ModManager.install(cid, installOptions);
         expect(result).toEqual({ success: true });
-        expect(modIndexes.set).toHaveBeenLastCalledWith(scope, id, {
+        expect(modIndexes.set).toHaveBeenLastCalledWith(cid, {
+            version: '1.0.0',
             builtin: false,
             preload: false,
             enable: true,
@@ -99,52 +117,28 @@ describe.sequential('mod manager', () => {
             requireData: true
         });
 
-        const data = ModManager.modData.get(ns);
-        const config = ModManager.modConfig.get(ns);
+        const data = ModManager.modData.get(cid);
+        const config = ModManager.modConfig.get(cid);
 
         expect(data?.query()).toEqual({ key: 'value' });
         expect(config?.query()).toEqual({ key: 'value' });
     });
 
     test('update a mod, should not change the data and config', async () => {
-        const installOptions1: ModInstallOptions = {
-            config: { key: 'value' },
-            data: { key: 'value' },
-            update: false
-        };
-
-        const installOptions2: ModInstallOptions = {
-            config: { key: 'new value' },
-            data: { key: 'new value' },
-            update: true
-        };
-
-        await ModManager.install(scope, id, installOptions1);
-        const result = await ModManager.install(scope, id, installOptions2);
+        await ModManager.install(cid, installOptions1);
+        const result = await ModManager.install(cid, installOptions2);
         expect(result).toEqual({ success: true });
 
-        const data = ModManager.modData.get(ns);
-        const config = ModManager.modConfig.get(ns);
+        const data = ModManager.modData.get(cid);
+        const config = ModManager.modConfig.get(cid);
 
         expect(data?.query()).toEqual({ key: 'value' });
         expect(config?.query()).toEqual({ key: 'value' });
     });
 
     test('install a mod that already exist', async () => {
-        const installOptions1: ModInstallOptions = {
-            config: { key: 'value' },
-            data: { key: 'value' },
-            update: false
-        };
-
-        const installOptions2: ModInstallOptions = {
-            config: { key: 'new value' },
-            data: { key: 'new value' },
-            update: false
-        };
-
-        await ModManager.install(scope, id, installOptions1);
-        const result = await ModManager.install(scope, id, installOptions2);
+        await ModManager.install(cid, installOptions1);
+        const result = await ModManager.install(cid, { ...installOptions2, update: false });
         expect(result).toEqual({
             success: false,
             reason: 'there has existed a mod with the same id and scope already'

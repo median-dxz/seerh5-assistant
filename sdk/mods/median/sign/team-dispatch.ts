@@ -22,8 +22,7 @@ export const teamDispatch = (logger: AnyFunction) =>
     task({
         metadata: {
             id: 'TeamDispatch',
-            name: '战队派遣',
-            maxTimes: 1
+            name: '战队派遣'
         },
         configSchema: {
             ignorePets: {
@@ -33,11 +32,11 @@ export const teamDispatch = (logger: AnyFunction) =>
                 default: ''
             }
         },
-        runner(meta, { ignorePets }) {
+        runner({ ignorePets }) {
             return {
                 next: signBase.next,
                 logger,
-                data: { ...data },
+                data: { ...data, maxTimes: 1 },
                 actions: {
                     [LevelAction.AWARD]: async () => {
                         const hasDispatched: number[] = [];
@@ -117,7 +116,7 @@ export const teamDispatch = (logger: AnyFunction) =>
                         const times = await socket.sendByQueue(45807).then((r) => new DataView(r!).getUint32(0));
                         this.data.remainingTimes = Number(12 - times === 0);
                     } else {
-                        this.data.remainingTimes = meta.maxTimes = 0;
+                        this.data.remainingTimes = this.data.maxTimes = 0;
                     }
                 }
             };

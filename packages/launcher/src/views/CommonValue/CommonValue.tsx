@@ -9,7 +9,7 @@ import { PanelField, PanelTable, useRowData, type PanelColumns } from '@/compone
 import { Icon } from '@/services/resource';
 
 import { SeaTableRow } from '@/components/styled/TableRow';
-import { mainPanelActions } from '@/services/mainPanelSlice';
+import { launcherActions } from '@/features/launcherSlice';
 import { useAppDispatch } from '@/store';
 import { idList, openModuleList } from './data';
 
@@ -78,7 +78,7 @@ const PanelRow: React.FC = () => {
                     <Button
                         onClick={() => {
                             openModuleList[item.id]();
-                            dispatch(mainPanelActions.close());
+                            dispatch(launcherActions.closeMain());
                         }}
                     >
                         兑换

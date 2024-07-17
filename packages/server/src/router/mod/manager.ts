@@ -2,9 +2,16 @@ import path from 'path';
 
 import { modIndexes, type ModState } from '../../data/ModIndexes.ts';
 import { configsRoot, modsRoot } from '../../paths.ts';
+import { getCompositeId, praseCompositeId } from '../../shared/index.ts';
 import { SEASConfigData } from '../../shared/SEASConfigData.ts';
-import { getNamespace } from '../../shared/index.ts';
-import type { ModInstallOptions } from './schemas.ts';
+import type { InstallModOptions } from './schemas.ts';
+
+const failed = (reason?: string) => ({
+    success: false,
+    reason
+});
+
+const succeed = () => ({ success: true });
 
 export const ModManager = {
     root: '.',
@@ -13,105 +20,105 @@ export const ModManager = {
     async init(root: string) {
         this.root = root;
         const mods = modIndexes.stateList();
-        await Promise.all(mods.map(async ({ id, scope, state }) => this.load(scope, id, state)));
+        await Promise.all(
+            mods.map(async ({ cid, state }) => {
+                const { id, scope } = praseCompositeId(cid);
+                return this.load(scope, id, state);
+            })
+        );
     },
 
-    async saveData(scope: string, id: string, data: object) {
-        const dataStore = this.modData.get(getNamespace(scope, id));
-        if (!dataStore) {
-            return {
-                success: false
-            };
-        }
+    async saveData(id: string, data: object) {
+        const dataStore = this.modData.get(id);
+        if (!dataStore) return failed('data store not found');
+
         await dataStore.mutate(() => data);
-        return {
-            success: true
-        };
+        return succeed();
     },
 
-    async data(scope: string, id: string) {
-        const dataStore = this.modData.get(getNamespace(scope, id));
+    async data(cid: string) {
+        const dataStore = this.modData.get(cid);
         if (!dataStore) {
             return undefined;
         }
         return Promise.resolve(dataStore.query());
     },
 
-    async saveConfig(scope: string, id: string, data: object) {
-        const configStore = this.modConfig.get(getNamespace(scope, id));
-        if (!configStore) {
-            return {
-                success: false
-            };
-        }
+    async saveConfig(cid: string, data: object) {
+        const configStore = this.modConfig.get(cid);
+        if (!configStore) return failed('config store not found');
+
         await configStore.mutate(() => data);
-        return {
-            success: true
-        };
+        return succeed();
     },
 
-    async config(scope: string, id: string) {
-        const configStore = this.modConfig.get(getNamespace(scope, id));
+    async config(cid: string) {
+        const configStore = this.modConfig.get(cid);
         if (!configStore) {
             return undefined;
         }
         return Promise.resolve(configStore.query());
     },
 
-    async install(scope: string, id: string, options: ModInstallOptions = {}) {
-        if (modIndexes.state(scope, id) != undefined && !options.update) {
-            return {
-                success: false,
-                reason: 'there has existed a mod with the same id and scope already'
-            };
-        }
+    async install(cid: string, options: InstallModOptions) {
+        if (modIndexes.state(cid) != undefined && !options.update)
+            return failed('there has existed a mod with the same id and scope already');
 
         const state: ModState = {
             builtin: Boolean(options.builtin),
             preload: Boolean(options.preload),
             enable: true,
+            version: options.version,
             requireConfig: Boolean(options.config),
             requireData: Boolean(options.data)
         };
 
-        await modIndexes.set(scope, id, state);
-        const ns = getNamespace(scope, id);
+        await modIndexes.set(cid, state);
+        const { id, scope } = praseCompositeId(cid);
 
         // 在满足该模组请求数据存储的前提下:
         // 1. 当前数据存在但更新选项为false
         // 2. 当前数据不存在
-        if (options.data && (!this.modData.has(ns) || options.update === false)) {
+        if (options.data && (!this.modData.has(cid) || options.update === false)) {
             const dataStore = new SEASConfigData();
             await dataStore.create(path.join(this.root, modsRoot, `${scope}.${id}.data.json`), options.data);
-            this.modData.set(ns, dataStore);
+            this.modData.set(cid, dataStore);
         }
-        if (options.config && (!this.modConfig.has(ns) || options.update === false)) {
+        if (options.config && (!this.modConfig.has(cid) || options.update === false)) {
             const configStore = new SEASConfigData();
             await configStore.create(
                 path.join(this.root, configsRoot, modsRoot, `${scope}.${id}.json`),
                 options.config
             );
-            this.modConfig.set(ns, configStore);
+            this.modConfig.set(cid, configStore);
         }
 
-        return {
-            success: true
-        };
+        return succeed();
     },
 
     async load(scope: string, id: string, state: ModState) {
-        const ns = getNamespace(scope, id);
+        const cid = getCompositeId(scope, id);
 
         if (state.requireData) {
             const dataStore = new SEASConfigData();
             await dataStore.load(path.join(this.root, modsRoot, `${scope}.${id}.data.json`));
-            this.modData.set(ns, dataStore);
+            this.modData.set(cid, dataStore);
         }
         if (state.requireConfig) {
             const configStore = new SEASConfigData();
             await configStore.load(path.join(this.root, configsRoot, modsRoot, `${scope}.${id}.json`));
-            this.modConfig.set(ns, configStore);
+            this.modConfig.set(cid, configStore);
         }
+    },
+
+    async setEnable(cid: string, enable: boolean) {
+        const state = modIndexes.state(cid);
+        if (!state) {
+            return failed('mod not found');
+        }
+        state.enable = enable;
+        await modIndexes.set(cid, state);
+        return succeed();
     },
 
     async uninstall() {

@@ -23,6 +23,7 @@ export default defineConfig(({ command, mode }) => {
         build: {
             target: 'esnext',
             outDir: '../server/launcher',
+            emptyOutDir: true,
             rollupOptions: {
                 input: {
                     index: path.resolve(dirname, 'index.html')

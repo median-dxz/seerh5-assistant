@@ -1,5 +1,5 @@
 import { scope } from '@/common/constants.json';
-import { SEAEventSource, socket } from '@sea/core';
+import { hookPrototype, restoreHookedFn, SEAEventSource, socket, Subscription } from '@sea/core';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 
 declare var Alarm: any;
@@ -14,7 +14,7 @@ export const metadata = {
 // team.TeamTech
 export default async function TeamTechCenter(ctx: SEAModContext<typeof metadata>) {
     const load = () => {
-        team.TeamTech.prototype.onClickEnhance = async function () {
+        hookPrototype(team.TeamTech, 'onClickEnhance', async function () {
             const index = this.list_attr.selectedIndex;
             if (null == this._petInfo) {
                 Alarm.show('先选择你要进行强化的精灵哦！');
@@ -46,18 +46,24 @@ export default async function TeamTechCenter(ctx: SEAModContext<typeof metadata>
                         }
                     });
             await updateOnce();
-        };
+        });
     };
 
-    let sub: number;
-    const ds = SEAEventSource.gameModule('team', 'load');
+    const sub = new Subscription();
+    let moduleLoaded = false;
 
     const install = () => {
-        sub = ds.on(load);
+        sub.on(SEAEventSource.gameModule('team', 'load'), load);
+        sub.on(SEAEventSource.gameModule('team', 'load'), () => {
+            moduleLoaded = true;
+        });
     };
 
     const uninstall = () => {
-        ds.off(sub);
+        sub.dispose();
+        if (moduleLoaded) {
+            restoreHookedFn(team.TeamTech.prototype, 'onClickEnhance');
+        }
     };
 
     return {

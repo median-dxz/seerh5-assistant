@@ -3,7 +3,7 @@
  *
  * @param suit 套装id
  */
-export async function changeSuit(suit: number): Promise<boolean> {
+export const changeSuit = async (suit: number) => {
     try {
         await new Promise<void>((resolve) => {
             MainManager.actorInfo.requestChangeClotherBySuit(suit, resolve, undefined, MainManager.actorInfo);
@@ -13,4 +13,4 @@ export async function changeSuit(suit: number): Promise<boolean> {
     } catch (err) {
         return false;
     }
-}
+};

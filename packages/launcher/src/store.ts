@@ -1,29 +1,48 @@
 import { configureStore, type SerializableStateInvariantMiddlewareOptions } from '@reduxjs/toolkit';
+import { setupListeners } from '@reduxjs/toolkit/query/react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { mainPanelReducer } from '@/services/mainPanelSlice';
-import { taskSchedulerReducer } from '@/services/taskSchedulerSlice';
-import { setupListeners } from '@reduxjs/toolkit/query/react';
 import { listenerMiddleware } from './shared/listenerMiddleware';
+
+import { initializationReducer } from './features/init/initializationSlice';
+import { launcherReducer } from './features/launcherSlice';
+import { modReducer } from './features/mod/slice';
+import { taskSchedulerReducer } from './features/taskSchedulerSlice';
+
+import { configApi } from './services/config';
+import { gameApi } from './services/game';
+import { modApi } from './services/mod';
 
 export const appStore = configureStore({
     reducer: {
-        mainPanel: mainPanelReducer,
-        taskScheduler: taskSchedulerReducer
+        launcher: launcherReducer,
+        taskScheduler: taskSchedulerReducer,
+        initialization: initializationReducer,
+        mod: modReducer,
+        [modApi.reducerPath]: modApi.reducer,
+        [configApi.reducerPath]: configApi.reducer,
+        [gameApi.reducerPath]: gameApi.reducer
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
             serializableCheck: {
-                ignoredPaths: [/taskScheduler\.queue\.[0-9]*\.task\.runner/, /taskScheduler\.queue\.[0-9]*\.error/],
-                ignoredActions: ['taskScheduler/enqueue', 'taskScheduler/run/rejected']
+                ignoredPaths: [
+                    /taskScheduler\.queue\.[0-9]*\.task\.runner/,
+                    /taskScheduler\.queue\.[0-9]*\.error/,
+                    /api\/mod\.queries\.fetch/,
+                    /api\/game\.queries\.bagPets/
+                ],
+                ignoreActions: true
             } satisfies SerializableStateInvariantMiddlewareOptions
-        }).prepend(listenerMiddleware.middleware)
+        })
+            .prepend(listenerMiddleware.middleware)
+            .concat(modApi.middleware, configApi.middleware, gameApi.middleware)
 });
 
 setupListeners(appStore.dispatch);
 
-export type RootState = ReturnType<typeof appStore.getState>;
+export type AppRootState = ReturnType<typeof appStore.getState>;
 export type AppDispatch = typeof appStore.dispatch;
 
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
-export const useAppSelector = useSelector.withTypes<RootState>();
+export const useAppSelector = useSelector.withTypes<AppRootState>();

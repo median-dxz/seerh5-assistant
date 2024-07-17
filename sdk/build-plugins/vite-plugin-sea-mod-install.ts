@@ -1,9 +1,9 @@
-import type { SEAConfigItemSchema, SEAModMetadata } from '@sea/mod-type';
+import type { SEAConfigSchema, SEAModMetadata } from '@sea/mod-type';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import superjson from 'superjson';
-import type { PluginOption } from 'vite';
+import { type PluginOption } from 'vite';
 
 interface SEAModBuilderOptions {
     server: string;
@@ -31,7 +31,8 @@ export function SEAModInstall({ server }: SEAModBuilderOptions) {
                     preload: metadata.preload,
                     config: metadata.configSchema ? buildDefaultConfig(metadata.configSchema) : undefined,
                     data: metadata.data,
-                    update: true
+                    update: true,
+                    version: metadata.version
                 };
 
                 if (server.endsWith('/')) server = server.slice(0, -1);
@@ -44,8 +45,7 @@ export function SEAModInstall({ server }: SEAModBuilderOptions) {
                 }
 
                 const query = new URLSearchParams({
-                    id,
-                    scope
+                    cid: getCompositeId(metadata)
                 });
 
                 let modSerializedData: string | undefined = undefined;
@@ -74,21 +74,27 @@ export function SEAModInstall({ server }: SEAModBuilderOptions) {
     ] as PluginOption[];
 }
 
-export function buildMetadata(metadata: SEAModMetadata) {
-    let { scope, version, preload } = metadata;
+type DefinedModMetadata = Required<Omit<SEAModMetadata, 'configSchema' | 'data'>> &
+    Pick<SEAModMetadata, 'configSchema' | 'data'>;
 
-    scope = scope ?? 'external';
-    version = version ?? '0.0.0';
-    preload = preload ?? false;
-
-    return { ...metadata, scope, version, preload } as SEAModMetadata & {
-        version: string;
-        scope: string;
-        preload: boolean;
-    };
+function getCompositeId({ id, scope }: Pick<DefinedModMetadata, 'id' | 'scope'>) {
+    scope = scope.replace(/:/g, '/:/');
+    id = id.replace(/:/g, '/:/');
+    return `${scope}::${id}`;
 }
 
-export function buildDefaultConfig(configSchema: Record<string, SEAConfigItemSchema>) {
+function buildMetadata(metadata: SEAModMetadata) {
+    let { scope, version, preload, description } = metadata;
+
+    scope = scope ?? 'external';
+    version = version ?? '0.0.1';
+    preload = preload ?? false;
+    description = description ?? '';
+
+    return { ...metadata, scope, version, preload, description } as DefinedModMetadata;
+}
+
+function buildDefaultConfig(configSchema: SEAConfigSchema) {
     const keys = Object.keys(configSchema);
     const defaultConfig: Record<string, string | number | boolean> = {};
     keys.forEach((key) => {

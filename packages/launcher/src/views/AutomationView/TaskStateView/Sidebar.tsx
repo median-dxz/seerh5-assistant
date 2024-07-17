@@ -1,10 +1,11 @@
+import Pause from '@mui/icons-material/PauseRounded';
+import PlayArrow from '@mui/icons-material/PlayArrowRounded';
+
 import { LabeledLinearProgress } from '@/components/LabeledProgress';
 import { Paper } from '@/components/styled/Paper';
 import { Row } from '@/components/styled/Row';
-import { taskSchedulerActions } from '@/services/taskSchedulerSlice';
+import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
 import { useAppDispatch, useAppSelector } from '@/store';
-import Pause from '@mui/icons-material/PauseRounded';
-import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 import { Button, Chip, Stack, Typography } from '@mui/material';
 import React from 'react';
 

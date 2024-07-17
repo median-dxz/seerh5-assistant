@@ -7,9 +7,8 @@ import { pipeline } from 'node:stream/promises';
 import superjson from 'superjson';
 import { z } from 'zod';
 import { modsRoot } from '../../paths.ts';
-import type { DataObject } from '../../shared/schemas.ts';
 import { ModManager } from './manager.ts';
-import { ModIdentifierSchema, ModInstallOptionsSchema } from './schemas.ts';
+import { InstallModOptionsSchema } from './schemas.ts';
 
 export const modUploadAndInstallRouter: FastifyPluginAsync<never> = async (server) => {
     await server.register(fastifyMultipart, {
@@ -31,17 +30,17 @@ export const modUploadAndInstallRouter: FastifyPluginAsync<never> = async (serve
         {
             schema: {
                 body: z.object({
-                    options: ModInstallOptionsSchema.merge(z.object({ data: z.string().optional() }))
+                    options: InstallModOptionsSchema.merge(z.object({ data: z.string().optional() }))
                 }),
-                querystring: ModIdentifierSchema
+                querystring: z.object({ cid: z.string() })
             }
         },
         async (req, res) => {
             const { options } = req.body;
-            const { id, scope } = req.query;
-            const data = options.data == undefined ? undefined : superjson.parse<DataObject>(options.data);
+            const { cid } = req.query;
+            const data = options.data == undefined ? undefined : superjson.parse<object>(options.data);
 
-            const r = await ModManager.install(scope, id, { ...options, data });
+            const r = await ModManager.install(cid, { ...options, data });
             return res.code(200).send(r);
         }
     );
