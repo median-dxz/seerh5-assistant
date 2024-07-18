@@ -4,15 +4,16 @@
 当前更新内容 模组安装与管理（2024.7）
 
 - [ ] 关卡配置与mod配置UI
-  - [ ] 关卡配置为mod cid + taskId组合主键
+  - [x] 关卡配置为mod cid + taskId组合主键
   - [ ] 部署mod时拒绝同mod下taskId相同
 - [ ] 调度界面, 删除全部已完成
+- [ ] 优化重写PanelTable
 - [ ] 收星星上限出错出错处理
 - [ ] 更新vip签到(flash商城?)
 - [ ] 全屏与刷新按钮
 - [x] rotating算子基于内部计数器而不是round
 - [ ] 命名空间的脆弱性 -> 全面换成组合id，手动对分隔符进行转义
-- [ ] core v1.0.0
+- [x] core v1.0.0
 - [ ] 日任扫荡功能
 - [ ] LevelManager中止时的超时和强制逃跑处理
 - [ ] PanelTable是不是直接useMemo就行了，奇怪的cacheReturn hook

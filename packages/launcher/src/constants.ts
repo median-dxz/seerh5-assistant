@@ -16,6 +16,7 @@ export const CMD_MASK = [
 
 export const MOD_SCOPE_DEFAULT = 'external';
 export const MOD_SCOPE_BUILTIN = 'builtin';
+export const PET_FRAGMENT_LEVEL_ID = 'PetFragmentLevel';
 
 export const MOD_BUILTIN_UPDATE_STRATEGY: 'always' | 'never' | 'version' = 'always';
 

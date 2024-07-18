@@ -9,10 +9,11 @@ import { buildDefaultConfig } from '@/shared/index';
 import { LauncherLoggerBuilder } from '@/shared/logger';
 import { appStore } from '@/store';
 
+import { getCompositeId } from '@/shared/index';
 import * as ctStore from '../catchTimeBinding/index';
 import { taskStateActions } from '../taskSchedulerSlice';
 import { battleStore } from './store';
-import { buildMetadata, getCompositeId, type DefinedModMetadata } from './utils';
+import { buildMetadata, type DefinedModMetadata } from './utils';
 
 export type ModFactory = (context: SEAModContext<SEAModMetadata>) => Promise<SEAModExport> | SEAModExport;
 

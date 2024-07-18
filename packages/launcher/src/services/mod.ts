@@ -16,7 +16,8 @@ import {
 import type { ModFactory } from '@/features/mod/handler';
 import { ModMetadataSchema } from '@/features/mod/schemas';
 import type { ModDeployment, ModDeploymentInfo } from '@/features/mod/slice';
-import { buildMetadata, praseCompositeId, prefetchModMetadata, type DefinedModMetadata } from '@/features/mod/utils';
+import { buildMetadata, prefetchModMetadata, type DefinedModMetadata } from '@/features/mod/utils';
+import { praseCompositeId } from '@/shared/index';
 
 const { modRouter } = trpcClient;
 

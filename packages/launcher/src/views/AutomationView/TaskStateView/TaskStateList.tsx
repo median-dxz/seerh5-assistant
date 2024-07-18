@@ -15,9 +15,8 @@ import { LabeledLinearProgress } from '@/components/LabeledProgress';
 import { Paper } from '@/components/styled/Paper';
 import { taskStore } from '@/features/mod/store';
 import { useMapToStore } from '@/features/mod/useModStore';
-import { getCompositeId, type ModExportsRef } from '@/features/mod/utils';
+import { type ModExportsRef } from '@/features/mod/utils';
 import { taskSchedulerActions, type TaskState } from '@/features/taskSchedulerSlice';
-import { dateTime2hhmmss, time2mmss } from '@/shared';
 import { useAppDispatch, useAppSelector } from '@/store';
 import {
     Chip,
@@ -37,6 +36,7 @@ import {
     alpha,
     type ListProps
 } from '@mui/material';
+import dayjs from 'dayjs';
 import React, { memo, useCallback, useEffect, useState } from 'react';
 
 const { abortCurrentRunner, dequeue, enqueue } = taskSchedulerActions;
@@ -77,14 +77,14 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
     const isRunning = status === 'running';
     const actionsControl = StatusActionsMap[status];
 
-    const [now, setNow] = useState(Date.now());
+    const [_, setNow] = useState(0);
 
     useEffect(() => {
         let timer: number | undefined;
         if (isRunning) {
             timer = window.setInterval(() => {
                 setNow(Date.now());
-            }, 500);
+            }, 1000);
         }
 
         return () => {
@@ -135,7 +135,9 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                 secondary={
                     <>
                         <Chip label={StatusTextMap[status]} variant="outlined" size="small" component="span" />
-                        {state.startTime && !state.endTime && time2mmss(now - state.startTime)}
+                        {state.startTime &&
+                            !state.endTime &&
+                            dayjs.duration(dayjs().diff(state.startTime)).format('mm:ss')}
                     </>
                 }
                 secondaryTypographyProps={{
@@ -198,7 +200,7 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                     secondary={
                         <>
                             <HourglassEmptyRounded fontSize="inherit" />
-                            {time2mmss(state.endTime! - state.startTime!)} <SwordLine />
+                            {dayjs.duration(dayjs(state.endTime).diff(state.startTime)).format('mm:ss')} <SwordLine />
                             {state.battleCount}
                         </>
                     }
@@ -372,14 +374,13 @@ const RunnerDetailDialog = memo(function RunnerDetailDialog({
                     <Typography>
                         时间:{' '}
                         {taskState.endTime && taskState.startTime
-                            ? dateTime2hhmmss.formatRange(taskState.startTime, taskState.endTime)
+                            ? `${dayjs(taskState.startTime).format('HH:mm:ss')} - ${dayjs(taskState.endTime).format('HH:mm:ss')}`
                             : taskState.startTime
-                              ? dateTime2hhmmss.format(taskState.startTime)
+                              ? dayjs(taskState.startTime).format('HH:mm:ss')
                               : '未启动'}
                     </Typography>
                     <Typography sx={{ fontFamily: ({ fonts }) => fonts.input }}>
-                        {task.metadata.id} - {task.metadata.name} -{' '}
-                        {getCompositeId({ id: taskRef.modId, scope: taskRef.modScope })}
+                        {task.metadata.id} - {task.metadata.name} - {taskRef.cid}
                     </Typography>
 
                     {Boolean(taskState.error) && (

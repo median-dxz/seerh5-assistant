@@ -10,8 +10,8 @@ import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 import { deploymentSelectors, type ModDeployment } from '@/features/mod/slice';
 import { modStore } from '@/features/mod/store';
 import { useMapToStore } from '@/features/mod/useModStore';
-import { getCompositeId } from '@/features/mod/utils';
 import { useAppSelector } from '@/store';
+import { getCompositeId } from '@/shared/index';
 
 import {
     Box,

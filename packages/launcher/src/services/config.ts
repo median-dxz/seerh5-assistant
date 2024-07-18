@@ -8,7 +8,6 @@ export const configApi = createApi({
     baseQuery,
     reducerPath: 'api/config',
     tagTypes: ['TaskConfig'],
-    refetchOnFocus: true,
     endpoints: (build) => ({
         allTaskConfig: build.query<Record<string, object | undefined>, TRpcArgs<typeof configRouter.task.all.query>>({
             query: () => async () => configRouter.task.all.query(),

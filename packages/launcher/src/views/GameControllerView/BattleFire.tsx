@@ -2,11 +2,11 @@ import { Paper } from '@/components/styled/Paper';
 import { Row } from '@/components/styled/Row';
 import { launcherActions } from '@/features/launcherSlice';
 import { gameApi } from '@/services/game';
-import { time2mmss } from '@/shared/index';
 import { useAppDispatch } from '@/store';
 import { Button, CircularProgress, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { BattleFireType, socket, throttle } from '@sea/core';
+import dayjs from 'dayjs';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 
@@ -27,10 +27,10 @@ export function BattleFire() {
     if (valid) {
         switch (type as BattleFireType) {
             case BattleFireType.绿火:
-                renderProps = { color: 'green', text: `绿火 ${time2mmss(timeLeft * 1000)}` };
+                renderProps = { color: 'green', text: `绿火 ${dayjs.duration(timeLeft, 's').format('mm:ss')}` };
                 break;
             case BattleFireType.金火:
-                renderProps = { color: 'gold', text: `金火 ${time2mmss(timeLeft * 1000)}` };
+                renderProps = { color: 'gold', text: `金火 ${dayjs.duration(timeLeft, 's').format('mm:ss')}` };
                 break;
             default:
                 renderProps = { color: 'inherit', text: '其他火焰' };

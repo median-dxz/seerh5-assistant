@@ -1,26 +1,25 @@
 import { DataLoading } from '@/components/DataLoading';
-import { PanelField, PanelTable, useRowData, type PanelColumns } from '@/components/PanelTable';
+import { PanelField, PanelTable, useRowData } from '@/components/PanelTable';
 import { SeaTableRow } from '@/components/styled/TableRow';
 import { Button, ButtonGroup, CircularProgress } from '@mui/material';
 
 import { taskStore, type TaskInstance } from '@/features/mod/store';
 import { useMapToStore } from '@/features/mod/useModStore';
-import { getCompositeId } from '@/features/mod/utils';
+import { getCompositeId } from '@/shared/index';
 
-import { PET_FRAGMENT_LEVEL_ID } from '@/builtin/petFragment';
-import { MOD_SCOPE_BUILTIN } from '@/constants';
+import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
 import { configApi } from '@/services/config';
 import { getTaskOptions } from '@/shared/index';
 import { LevelAction, delay } from '@sea/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { taskViewColumns } from './shared';
 
 export function DailySignView() {
     const { data: configs, isFetching, error } = configApi.endpoints.allTaskConfig.useQuery();
     const tasks = useMapToStore(
         (state) =>
             state.mod.taskRefs.filter(
-                ({ modId, modScope, key }) =>
-                    modId !== PET_FRAGMENT_LEVEL_ID && modScope !== MOD_SCOPE_BUILTIN && key !== PET_FRAGMENT_LEVEL_ID
+                ({ cid }) => cid !== getCompositeId({ scope: MOD_SCOPE_BUILTIN, id: PET_FRAGMENT_LEVEL_ID })
             ),
         taskStore
     );
@@ -37,28 +36,6 @@ export function DailySignView() {
         [configs, tasks]
     );
 
-    const columns: PanelColumns = React.useMemo(
-        () => [
-            {
-                field: 'name',
-                columnName: '名称'
-            },
-            {
-                field: 'mod',
-                columnName: '模组'
-            },
-            {
-                field: 'state',
-                columnName: '状态'
-            },
-            {
-                field: 'execute',
-                columnName: '执行'
-            }
-        ],
-        []
-    );
-
     if (isFetching) {
         return <DataLoading error={error?.message} />;
     }
@@ -67,7 +44,7 @@ export function DailySignView() {
         <>
             <PanelTable
                 data={signs}
-                columns={columns}
+                columns={taskViewColumns}
                 rowElement={<PanelRow />}
                 toRowKey={({ sign }) => getCompositeId({ scope: sign.cid, id: sign.metadata.id })}
             />
@@ -77,7 +54,6 @@ export function DailySignView() {
 
 const PanelRow = () => {
     const { sign, options } = useRowData<{ sign: TaskInstance; options?: object }>();
-    const { cid: cid } = sign;
 
     const runner = useMemo(() => sign.runner(options), [options, sign]);
     const [progress, setProgress] = useState(runner.data.progress);
@@ -100,13 +76,13 @@ const PanelRow = () => {
     return (
         <SeaTableRow>
             <PanelField field="name">{signName}</PanelField>
-            <PanelField field="mod" sx={{ fontFamily: ({ fonts }) => fonts.input }}>
-                {cid}
+            <PanelField field="cid" sx={{ fontFamily: ({ fonts }) => fonts.input }}>
+                {sign.cid}
             </PanelField>
             <PanelField field="state">
                 {fetched ? `# ${progress} / ${maxTimes}` : <CircularProgress size="1.5rem" />}
             </PanelField>
-            <PanelField field="execute">
+            <PanelField field="actions">
                 <ButtonGroup>
                     <Button
                         onClick={() => {

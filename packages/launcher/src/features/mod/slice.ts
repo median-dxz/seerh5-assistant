@@ -1,4 +1,5 @@
 import { createAppSlice } from '@/shared/createAppSlice';
+import { getCompositeId } from '@/shared/index';
 import type { AppDispatch, AppRootState } from '@/store';
 import {
     createAction,
@@ -12,7 +13,7 @@ import type { SEAModExport } from '@sea/mod-type';
 import type { ModState } from '@sea/server';
 import { createModContext, ModInstance } from './handler';
 import { battleStore, commandStore, modStore, strategyStore, taskStore } from './store';
-import { getCompositeId, type ModExportsRef } from './utils';
+import { type ModExportsRef } from './utils';
 
 import { modApi } from '@/services/mod';
 
@@ -63,12 +64,9 @@ const addExportsThunk =
         });
 
         const { commands, battles, strategies, tasks } = modExport as Required<SEAModExport>;
-        const {
-            deploymentId,
-            metadata: { scope: modScope, id: modId }
-        } = modInstance;
+        const { deploymentId, metadata } = modInstance;
 
-        const createRef = (key: string): ModExportsRef => ({ deploymentId, modScope, modId, key });
+        const createRef = (key: string): ModExportsRef => ({ deploymentId, cid: getCompositeId(metadata), key });
 
         const commandRefs = Object.values(commands).map((command) => {
             const ref = createRef(command.name);

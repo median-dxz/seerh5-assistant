@@ -1,10 +1,10 @@
 import { createAppSlice } from '@/shared/createAppSlice';
-import { dateTime2hhmmss } from '@/shared/index';
 import { startAppListening } from '@/shared/listenerMiddleware';
 import type { AppRootState } from '@/store';
 import { createAction, createAsyncThunk, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
 import { LevelAction, levelManager } from '@sea/core';
 import type { LevelData, Task } from '@sea/mod-type';
+import dayjs from 'dayjs';
 import { produce } from 'immer';
 import { taskStore } from './mod/store';
 import type { ModExportsRef } from './mod/utils';
@@ -219,7 +219,7 @@ const taskSchedulerSlice = createAppSlice({
             .addCase(
                 taskStateActions.log,
                 createTaskStateReducer((state, action) => {
-                    state.logs.push(`[${dateTime2hhmmss.format(new Date())}] ${action.payload}`);
+                    state.logs.push(`[${dayjs().format('HH:mm:ss')}] ${action.payload}`);
                 })
             )
             .addCase(

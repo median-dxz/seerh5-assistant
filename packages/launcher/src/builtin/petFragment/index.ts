@@ -1,4 +1,4 @@
-import { MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
+import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID, VERSION } from '@/constants';
 import {
     PetFragmentLevelDifficulty as Difficulty,
     LevelAction,
@@ -10,8 +10,6 @@ import {
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 import { task } from '@sea/mod-type';
 import type { IPetFragmentRunner, PetFragmentLevelData, PetFragmentOption } from './types';
-
-export const PET_FRAGMENT_LEVEL_ID = 'PetFragmentLevel';
 
 export const metadata = {
     id: PET_FRAGMENT_LEVEL_ID,

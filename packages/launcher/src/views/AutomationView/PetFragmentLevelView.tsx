@@ -2,51 +2,33 @@ import { Button, Stack, Typography } from '@mui/material';
 import { engine, LevelAction } from '@sea/core';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { PanelField, PanelTable, useRowData, type PanelColumns } from '@/components/PanelTable';
+import Add from '@mui/icons-material/AddRounded';
+
+import { PanelField, PanelTable, useRowData } from '@/components/PanelTable';
 import { Row } from '@/components/styled/Row';
 import { SeaTableRow } from '@/components/styled/TableRow';
 
-import { PET_FRAGMENT_LEVEL_ID } from '@/builtin/petFragment';
 import type { IPetFragmentRunner, PetFragmentOption } from '@/builtin/petFragment/types';
 import { DataLoading } from '@/components/DataLoading';
-import { MOD_SCOPE_BUILTIN } from '@/constants';
+import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
 import { launcherActions } from '@/features/launcherSlice';
 import { taskStore } from '@/features/mod/store';
 import { useMapToStore } from '@/features/mod/useModStore';
-import { getCompositeId, type ModExportsRef } from '@/features/mod/utils';
+import { type ModExportsRef } from '@/features/mod/utils';
 import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
 import { modApi } from '@/services/mod';
 import { useAppDispatch, useAppSelector } from '@/store';
+import { getCompositeId } from '@/shared/index';
+import { taskViewColumns } from './shared';
 
 const toRowKey = (data: PetFragmentOption) => engine.getPetFragmentLevelObj(data.id)!.Desc;
 
 export function PetFragmentLevelView() {
-    const col: PanelColumns = React.useMemo(
-        () => [
-            {
-                field: 'name',
-                columnName: '关卡名称'
-            },
-            {
-                field: 'state',
-                columnName: '完成状态'
-            },
-            {
-                field: 'action',
-                columnName: '操作'
-            },
-            {
-                field: 'config',
-                columnName: '配置'
-            }
-        ],
-        []
-    );
-
     const ref = useAppSelector(({ mod: { taskRefs } }) =>
         taskRefs.find(
-            ({ modId, modScope, key }) =>
-                modId === PET_FRAGMENT_LEVEL_ID && modScope === MOD_SCOPE_BUILTIN && key === PET_FRAGMENT_LEVEL_ID
+            ({ cid, key }) =>
+                cid === getCompositeId({ scope: MOD_SCOPE_BUILTIN, id: PET_FRAGMENT_LEVEL_ID }) &&
+                key === PET_FRAGMENT_LEVEL_ID
         )
     );
 
@@ -71,15 +53,21 @@ export function PetFragmentLevelView() {
                         flexDirection: 'row',
                         py: 3
                     }}
-                    gap={2}
+                    spacing={2}
                     useFlexGap
                 >
-                    <Button variant="outlined">运行全部</Button>
-                    <Button variant="outlined">添加新配置</Button>
+                    <Button startIcon={<Add />} variant="outlined">
+                        添加新配置
+                    </Button>
                 </Stack>
             </Row>
 
-            <PanelTable data={optionsList} toRowKey={toRowKey} columns={col} rowElement={<PanelRow ref={ref} />} />
+            <PanelTable
+                data={optionsList}
+                toRowKey={toRowKey}
+                columns={taskViewColumns}
+                rowElement={<PanelRow ref={ref} />}
+            />
         </>
     );
 }
@@ -105,10 +93,13 @@ const PanelRow = React.memo(({ ref }: RowProps) => {
     return (
         <SeaTableRow>
             <PanelField field="name">{runner.name}</PanelField>
+            <PanelField field="cid" sx={{ fontFamily: ({ fonts }) => fonts.input }}>
+                {ref.cid}
+            </PanelField>
             <PanelField field="state">
                 <Typography color={completed ? '#eeff41' : 'inherited'}>{completed ? '已完成' : '未完成'}</Typography>
             </PanelField>
-            <PanelField field="action" sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <PanelField field="actions" sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                 <Typography>扫荡: {options.sweep ? '开启' : '关闭'}</Typography>
                 <Button
                     onClick={() => {

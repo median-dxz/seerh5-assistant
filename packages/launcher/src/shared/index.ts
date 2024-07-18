@@ -1,5 +1,5 @@
 import type { TaskInstance } from '@/features/mod/store';
-import { getCompositeId } from '@/features/mod/utils';
+import type { DefinedModMetadata } from '@/features/mod/utils';
 import type { SEAFormItemSchema } from '@sea/mod-type';
 
 export function buildDefaultConfig(configSchema: Record<string, SEAFormItemSchema>) {
@@ -26,19 +26,16 @@ export function getTaskOptions(task: TaskInstance, taskConfig: Record<string, ob
     }
 }
 
-export const time2mmss = (n: number) => {
-    n = Math.round(n / 1000);
-    if (Object.is(n, -0) || n < 0) {
-        n = 0;
-    }
-    const format = Intl.NumberFormat(undefined, {
-        minimumIntegerDigits: 2
-    });
-    return `${format.format(Math.trunc(n / 60))}:${format.format(n % 60)}`;
-};
+export function getCompositeId({ id, scope }: Pick<DefinedModMetadata, 'id' | 'scope'>) {
+    scope = scope.replaceAll(':', '/:/');
+    id = id.replaceAll(':', '/:/');
+    return `${scope}::${id}`;
+}
 
-export const dateTime2hhmmss = Intl.DateTimeFormat('zh-cn', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
-});
+export const praseCompositeId = (compositeId: string) => {
+    const [scope, id] = compositeId.split('::');
+    return {
+        scope: scope.replaceAll('/:/', ':'),
+        id: id.replaceAll('/:/', ':')
+    };
+};

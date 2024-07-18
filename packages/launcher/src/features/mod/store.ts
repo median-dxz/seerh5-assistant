@@ -3,7 +3,7 @@ import type { LevelBattle, MoveStrategy } from '@sea/core';
 import type { Battle, Command, Strategy, Task } from '@sea/mod-type';
 import { ctByName } from '../catchTimeBinding';
 import type { ModInstance } from './handler';
-import { getCompositeId, type ModExportsRef } from './utils';
+import { type ModExportsRef } from './utils';
 
 export const modStore = new Map<string, ModInstance>();
 
@@ -56,9 +56,7 @@ export interface StrategyInstance extends MoveStrategy {
 }
 
 export const commandStore = createModExportsRefStore((ref, proto: Command) => proto);
-export const taskStore = createModExportsRefStore(
-    (ref, proto: Task) => ({ ...proto, cid: getCompositeId({ id: ref.modId, scope: ref.modScope }) }) as TaskInstance
-);
+export const taskStore = createModExportsRefStore((ref, proto: Task) => ({ ...proto, cid: ref.cid }) as TaskInstance);
 export const strategyStore = createModExportsKeyStore((deploymentId, proto: Strategy) => ({
     deploymentId,
     strategy: proto,

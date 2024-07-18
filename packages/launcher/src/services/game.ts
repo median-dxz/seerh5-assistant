@@ -31,24 +31,21 @@ export const gameApi = createApi({
                         void dispatch(gameApi.util.invalidateTags(['BattleFire']));
                     });
 
-                    const { data } = getCacheEntry();
-                    if (data?.valid) {
-                        let { timeLeft } = data;
-
-                        timer = window.setInterval(() => {
+                    timer = window.setInterval(() => {
+                        const { data } = getCacheEntry();
+                        if (!data) return;
+                        const { timeLeft, valid } = data;
+                        if (valid && timeLeft === 0) {
                             updateCachedData((draft) => {
-                                if (timeLeft > 0) {
-                                    draft.timeLeft = --timeLeft;
-                                } else {
-                                    draft.valid = false;
-                                }
+                                draft.valid = false;
                             });
-                            if (timeLeft === 0) {
-                                dispatch(gameApi.util.invalidateTags(['BattleFire']));
-                                clear();
-                            }
-                        }, 1000);
-                    }
+                            dispatch(gameApi.util.invalidateTags(['BattleFire']));
+                        } else if (valid) {
+                            updateCachedData((draft) => {
+                                draft.timeLeft--;
+                            });
+                        }
+                    }, 1000);
                 } catch (e) {
                     // noop
                 }

@@ -3,11 +3,14 @@ import { theme } from '@/style';
 import { cache } from '@emotion/css';
 import { CacheProvider } from '@emotion/react';
 import { CssBaseline, ThemeProvider, alpha, styled } from '@mui/material';
-import { enableMapSet } from 'immer';
 import { MaterialDesignContent, SnackbarProvider } from 'notistack';
-import React, { type PropsWithChildren } from 'react';
+import React, { useEffect, type PropsWithChildren } from 'react';
 import { Provider } from 'react-redux';
 import { SWRConfig, type SWRConfiguration } from 'swr';
+
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import { enableMapSet } from 'immer';
 
 const StyledMaterialDesignContent = styled(MaterialDesignContent)`
     &.notistack-MuiContent-default {
@@ -18,7 +21,12 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)`
 
 export function ApplicationContext({ children }: PropsWithChildren<object>) {
     const swrOptions: SWRConfiguration = {};
-    enableMapSet();
+
+    useEffect(() => {
+        enableMapSet();
+        dayjs.extend(duration);
+    }, []);
+
     return (
         <CacheProvider value={cache}>
             <ThemeProvider theme={theme}>

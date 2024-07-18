@@ -3,21 +3,21 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { DataLoading } from '@/components/DataLoading';
 import { PanelField, useRowData } from '@/components/PanelTable';
-import { PanelTable, type PanelColumns } from '@/components/PanelTable/PanelTable';
+import { PanelTable } from '@/components/PanelTable/PanelTable';
 import { SeaTableRow } from '@/components/styled/TableRow';
 
 import { taskStore } from '@/features/mod/store';
 import { mapToStore, useMapToStore } from '@/features/mod/useModStore';
 import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
 
-import { PET_FRAGMENT_LEVEL_ID } from '@/builtin/petFragment';
-import { MOD_SCOPE_BUILTIN } from '@/constants';
+import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
 import type { ModExportsRef } from '@/features/mod/utils';
 import { configApi } from '@/services/config';
-import { getTaskOptions } from '@/shared/index';
+import { getCompositeId, getTaskOptions } from '@/shared/index';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { LevelAction } from '@sea/core';
 import { shallowEqual } from 'react-redux';
+import { taskViewColumns } from './shared';
 
 //      name: '作战实验室'
 //      name: '六界神王殿',
@@ -52,12 +52,7 @@ export function CommonLevelView() {
     const taskRefs = useAppSelector(
         ({ mod: { taskRefs } }) =>
             taskRefs.filter(
-                ({ modScope, modId, key }) =>
-                    !(
-                        modScope === MOD_SCOPE_BUILTIN &&
-                        modId === PET_FRAGMENT_LEVEL_ID &&
-                        key === PET_FRAGMENT_LEVEL_ID
-                    )
+                ({ cid }) => cid !== getCompositeId({ scope: MOD_SCOPE_BUILTIN, id: PET_FRAGMENT_LEVEL_ID })
             ),
         shallowEqual
     );
@@ -82,28 +77,6 @@ export function CommonLevelView() {
         [taskConfig, taskRefs]
     );
 
-    const col: PanelColumns = useMemo(
-        () => [
-            {
-                field: 'name',
-                columnName: '关卡名称'
-            },
-            {
-                field: 'state',
-                columnName: '完成状态'
-            },
-            {
-                field: 'action',
-                columnName: '操作'
-            },
-            {
-                field: 'config',
-                columnName: '配置'
-            }
-        ],
-        []
-    );
-
     if (!taskConfig || isFetching) return <DataLoading />;
 
     if (error) {
@@ -113,7 +86,7 @@ export function CommonLevelView() {
 
     return (
         <>
-            <PanelTable data={rows} toRowKey={toRowKey} columns={col} rowElement={<PanelRow />} />
+            <PanelTable data={rows} toRowKey={toRowKey} columns={taskViewColumns} rowElement={<PanelRow />} />
         </>
     );
 }
@@ -135,10 +108,13 @@ const PanelRow = React.memo(() => {
     return (
         <SeaTableRow>
             <PanelField field="name">{runner.name ?? task.metadata.name}</PanelField>
+            <PanelField field="cid" sx={{ fontFamily: ({ fonts }) => fonts.input }}>
+                {ref.cid}
+            </PanelField>
             <PanelField field="state">
                 <Typography color={completed ? '#eeff41' : 'inherited'}>{completed ? '已完成' : '未完成'}</Typography>
             </PanelField>
-            <PanelField field="action">
+            <PanelField field="actions">
                 <Box component="span">
                     <Button
                         onClick={() => {
@@ -150,7 +126,6 @@ const PanelRow = React.memo(() => {
                     </Button>
                 </Box>
             </PanelField>
-            <PanelField field="config"></PanelField>
         </SeaTableRow>
     );
 });

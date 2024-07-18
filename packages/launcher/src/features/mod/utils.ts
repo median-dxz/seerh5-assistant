@@ -4,27 +4,12 @@ import { ModMetadataSchema } from './schemas';
 
 export interface ModExportsRef {
     deploymentId: string;
-    modScope: string;
-    modId: string;
+    cid: string;
     key: string;
 }
 
 export type DefinedModMetadata = Required<Omit<SEAModMetadata, 'configSchema' | 'data'>> &
     Pick<SEAModMetadata, 'configSchema' | 'data'>;
-
-export function getCompositeId({ id, scope }: Pick<DefinedModMetadata, 'id' | 'scope'>) {
-    scope = scope.replaceAll(':', '/:/');
-    id = id.replaceAll(':', '/:/');
-    return `${scope}::${id}`;
-}
-
-export const praseCompositeId = (compositeId: string) => {
-    const [scope, id] = compositeId.split('::');
-    return {
-        scope: scope.replaceAll('/:/', ':'),
-        id: id.replaceAll('/:/', ':')
-    };
-};
 
 export function buildMetadata(metadata: SEAModMetadata) {
     let { scope, version, preload, description } = metadata;

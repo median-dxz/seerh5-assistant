@@ -1,13 +1,13 @@
 import { IS_DEV } from '@/constants';
 import { modApi } from '@/services/mod';
 import { createAppSlice } from '@/shared/createAppSlice';
+import { getCompositeId } from '@/shared/index';
 import { startAppListening } from '@/shared/listenerMiddleware';
 import type { AppDispatch } from '@/store';
 import { createAction, type PayloadAction } from '@reduxjs/toolkit';
 import { seac, type SetupOptions } from '@sea/core';
 import * as ctService from '../catchTimeBinding/index';
 import { deploymentSelectors, modActions, type ModDeployment } from '../mod/slice';
-import { getCompositeId } from '../mod/utils';
 import { preloadSetupMap, setupMap, type SetupMap } from './setup';
 
 export interface InitializationState {

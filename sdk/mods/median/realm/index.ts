@@ -8,7 +8,7 @@ import LevelTitanHole from './LevelTitanHole';
 import LevelXTeamRoom from './LevelXTeamRoom';
 
 export const metadata = {
-    id: 'realm',
+    id: 'Realm',
     scope,
     version: '1.0.0',
     description: '日常关卡'
