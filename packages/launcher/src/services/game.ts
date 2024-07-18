@@ -13,6 +13,7 @@ export const gameApi = createApi({
         battleFire: build.query<BattleFireInfo, void>({
             query: () => engine.battleFireInfo,
             providesTags: ['BattleFire'],
+            keepUnusedDataFor: 5,
             async onCacheEntryAdded(
                 _,
                 { getCacheEntry, updateCachedData, cacheDataLoaded, cacheEntryRemoved, dispatch }

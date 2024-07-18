@@ -2,7 +2,7 @@ import { useAppSelector } from '@/store';
 import { CoreLoadingScreen } from '@/views/InitializationView/CoreLoadingScreen';
 import { ErrorScreen } from '@/views/InitializationView/ErrorScreen';
 import { LoginLoadingScreen } from '@/views/InitializationView/LoginLoadingScreen';
-import { Box, Fade, Grow } from '@mui/material';
+import { Box, Fade } from '@mui/material';
 import type { BoxProps } from '@mui/system';
 import { forwardRef, type PropsWithChildren } from 'react';
 
@@ -43,11 +43,11 @@ export function LauncherInitializer({ children }: PropsWithChildren<object>) {
         case 'fulfilled':
             return (
                 <>
-                    <Grow timeout={1200} in={status === 'afterFirstShowMainPanel'} unmountOnExit>
+                    <Fade timeout={1200} in={status === 'afterFirstShowMainPanel'} unmountOnExit>
                         <Container>
                             <LoginLoadingScreen />
                         </Container>
-                    </Grow>
+                    </Fade>
                     {status === 'fulfilled' && children}
                 </>
             );

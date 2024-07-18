@@ -1,15 +1,15 @@
 import { debounce, type AnyFunction } from '@sea/core';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 import { effect, reactive, stop, toRaw } from '@vue/reactivity';
+import dayjs from 'dayjs';
 import { dequal } from 'dequal';
 
 import { trpcClient } from '@/services/endpointsBase';
 import { modApi } from '@/services/mod';
-import { buildDefaultConfig } from '@/shared/index';
+import { buildDefaultConfig, getCompositeId } from '@/shared/index';
 import { LauncherLoggerBuilder } from '@/shared/logger';
 import { appStore } from '@/store';
 
-import { getCompositeId } from '@/shared/index';
 import * as ctStore from '../catchTimeBinding/index';
 import { taskStateActions } from '../taskSchedulerSlice';
 import { battleStore } from './store';
@@ -78,7 +78,7 @@ export async function createModContext(metadata: SEAModMetadata) {
         logger: (...args: unknown[]) => {
             logger(...args);
             if (typeof args[0] === 'string') {
-                appStore.dispatch(taskStateActions.log(args[0]));
+                appStore.dispatch(taskStateActions.log(`[${dayjs().format('HH:mm:ss')}] ${args[0]}`));
             }
         },
         ct,

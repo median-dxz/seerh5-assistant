@@ -22,7 +22,7 @@ export interface SidebarProps {
 
 export function Sidebar({ height }: SidebarProps) {
     const dispatch = useAppDispatch();
-    const { isPaused, queue } = useAppSelector((state) => state.taskScheduler);
+    const { pause: isPaused, queue } = useAppSelector((state) => state.taskScheduler);
     let status: keyof typeof StatusTextMap = useAppSelector((state) => state.taskScheduler.status);
 
     const handlePauseScheduler = () => {

@@ -4,7 +4,6 @@ import type { AppRootState } from '@/store';
 import { createAction, createAsyncThunk, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
 import { LevelAction, levelManager } from '@sea/core';
 import type { LevelData, Task } from '@sea/mod-type';
-import dayjs from 'dayjs';
 import { produce } from 'immer';
 import { taskStore } from './mod/store';
 import type { ModExportsRef } from './mod/utils';
@@ -30,12 +29,12 @@ export interface TaskSchedulerState {
     currentIndex?: number;
     /** idle表示队列为空或者被暂停 */
     status: 'idle' | 'running' | 'waitingForStop';
-    isPaused: boolean;
+    pause: boolean;
 }
 
 const initialState: TaskSchedulerState = {
     queue: [],
-    isPaused: false,
+    pause: false,
     status: 'idle'
 };
 
@@ -52,7 +51,7 @@ const abortLevelManager = async () =>
     });
 
 const shouldRunTask = (currentState: AppRootState) => {
-    const { isPaused, status, currentIndex } = currentState.taskScheduler;
+    const { pause: isPaused, status, currentIndex } = currentState.taskScheduler;
     if (isPaused || currentIndex == undefined || status !== 'idle') {
         return false;
     }
@@ -184,17 +183,17 @@ const taskSchedulerSlice = createAppSlice({
         ),
         pause: create.asyncThunk<void>(abortLevelManager, {
             pending: (state) => {
+                state.pause = true;
                 if (state.status === 'running') {
                     state.status = 'waitingForStop';
                 }
             },
             fulfilled: (state) => {
-                state.isPaused = true;
                 state.status = 'idle';
             }
         }),
         resume: create.reducer((state) => {
-            state.isPaused = false;
+            state.pause = false;
         }),
         abortCurrentRunner: create.asyncThunk<void>(abortLevelManager, {
             pending: (state) => {
@@ -219,7 +218,7 @@ const taskSchedulerSlice = createAppSlice({
             .addCase(
                 taskStateActions.log,
                 createTaskStateReducer((state, action) => {
-                    state.logs.push(`[${dayjs().format('HH:mm:ss')}] ${action.payload}`);
+                    state.logs.push(action.payload);
                 })
             )
             .addCase(
