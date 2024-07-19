@@ -6,7 +6,7 @@
     "target": "es2022",
     "noEmit": true,
     "strict": true,
-    "skipLibCheck": false,
+    // "skipLibCheck": false,
     "tsBuildInfoFile": "../../.tsbuildinfo/mod-type.tsbuildinfo",
     "types": ["@sea/core/types/seerh5", "@sea/core/types/egret"]
   },

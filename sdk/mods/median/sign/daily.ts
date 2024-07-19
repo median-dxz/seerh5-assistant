@@ -31,7 +31,7 @@ export const daily = [
     }),
     task({
         metadata: { id: 'WishBottle', name: '许愿' },
-        runner(meta) {
+        runner() {
             return {
                 ...signBase,
                 data: { ...data, maxTimes: 10 },
@@ -74,7 +74,7 @@ export const daily = [
     }),
     task({
         metadata: { id: 'WishSign', name: '许愿签到' },
-        runner(meta) {
+        runner() {
             return {
                 ...signBase,
                 data: { ...data, maxTimes: 1 },
