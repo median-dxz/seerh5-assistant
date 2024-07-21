@@ -2,13 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 import Launcher from './App';
+import { InitializationView } from './views/InitializationView';
 import { ApplicationContext } from './context/ApplicationContext';
 
 import * as seaCore from '@sea/core';
 import { seac } from '@sea/core';
 
 import { IS_DEV } from './constants';
-import { LauncherInitializer } from './context/LauncherInitializer';
 import { initializationActions } from './features/init/initializationSlice';
 import { appStore } from './store';
 
@@ -26,9 +26,8 @@ appStore.dispatch(initializationActions.SEALInitialization());
 ReactDOM.createRoot(document.getElementById('sea-launcher')!).render(
     <React.StrictMode>
         <ApplicationContext>
-            <LauncherInitializer>
-                <Launcher />
-            </LauncherInitializer>
+            <InitializationView />
+            <Launcher />
         </ApplicationContext>
     </React.StrictMode>
 );

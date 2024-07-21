@@ -2,9 +2,8 @@ import { useAppSelector } from '@/store';
 import { CoreLoadingScreen } from '@/views/InitializationView/CoreLoadingScreen';
 import { ErrorScreen } from '@/views/InitializationView/ErrorScreen';
 import { LoginLoadingScreen } from '@/views/InitializationView/LoginLoadingScreen';
-import { Box, Fade } from '@mui/material';
-import type { BoxProps } from '@mui/system';
-import { forwardRef, type PropsWithChildren } from 'react';
+import { Box, Fade, type BoxProps } from '@mui/material';
+import { forwardRef } from 'react';
 
 const Container = forwardRef<HTMLDivElement, BoxProps>(function ({ sx, ...props }, ref) {
     return (
@@ -26,7 +25,7 @@ const Container = forwardRef<HTMLDivElement, BoxProps>(function ({ sx, ...props 
     );
 });
 
-export function LauncherInitializer({ children }: PropsWithChildren<object>) {
+export function InitializationView() {
     const status = useAppSelector((state) => state.initialization.status);
 
     switch (status) {
@@ -42,14 +41,11 @@ export function LauncherInitializer({ children }: PropsWithChildren<object>) {
         case 'afterFirstShowMainPanel':
         case 'fulfilled':
             return (
-                <>
-                    <Fade timeout={1200} in={status === 'afterFirstShowMainPanel'} unmountOnExit>
-                        <Container>
-                            <LoginLoadingScreen />
-                        </Container>
-                    </Fade>
-                    {status === 'fulfilled' && children}
-                </>
+                <Fade timeout={600} in={status === 'afterFirstShowMainPanel'} unmountOnExit>
+                    <Container>
+                        <LoginLoadingScreen />
+                    </Container>
+                </Fade>
             );
         case 'error':
             return (

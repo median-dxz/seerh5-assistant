@@ -20,7 +20,7 @@
 - [ ] ctOverride battle strategy Override
 - [ ] 模组定义新增标志位，表明不支持热重载
 - [ ] 模组加载/卸载时的出错处理
--
+- [ ] 组件泛型，能不能简化MenuButton
 - [ ] command接口增强，也支持使用schema输入参数
 - [ ] https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-5.html#the-configdir-template-variable-for-configuration-files
 - [ ] 升级sdk的ts版本

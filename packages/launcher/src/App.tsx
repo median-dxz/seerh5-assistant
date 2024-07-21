@@ -7,8 +7,11 @@ import { Grow } from '@mui/material';
 import React from 'react';
 
 export default function Launcher() {
+    const status = useAppSelector((state) => state.initialization.status);
     const isFighting = useAppSelector(launcherSelectors.selectIsFighting);
     const commandOpen = useAppSelector(launcherSelectors.selectCommandOpen);
+
+    if (status !== 'fulfilled') return null;
 
     return (
         <>

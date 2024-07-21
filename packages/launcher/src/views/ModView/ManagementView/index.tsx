@@ -1,8 +1,8 @@
-import { Stack } from '@mui/system';
+import { Stack } from '@mui/material';
 import React from 'react';
 
-import { ModList } from './ModList';
 import { Header } from './Header';
+import { ModList } from './ModList';
 
 export function ManagementView() {
     return (

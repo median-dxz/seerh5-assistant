@@ -1,5 +1,4 @@
-import { Fade, Paper, Tabs, Typography, useTheme } from '@mui/material';
-import { alpha, Box, Stack } from '@mui/system';
+import { alpha, Box, Fade, Paper, Stack, Tabs, Typography, useTheme } from '@mui/material';
 import { seac } from '@sea/core';
 import React, { forwardRef, type ReactElement } from 'react';
 import { SwitchTransition } from 'react-transition-group';
@@ -26,7 +25,7 @@ function a11yProps(index: number) {
     return {
         id: `vertical-tab-${index}`,
         role: 'tab',
-        'aria-controls': `vertical-tabpanel-${index}`,
+        'aria-controls': `vertical-tabpanel-${index}`
     };
 }
 
@@ -36,7 +35,7 @@ const TabsGroup = forwardRef<HTMLDivElement, TabsGroupProps>(function ({ onSelec
         border,
         transitions: { easing },
         boxShadow,
-        palette: { primary },
+        palette: { primary }
     } = useTheme();
 
     return (
@@ -49,7 +48,7 @@ const TabsGroup = forwardRef<HTMLDivElement, TabsGroupProps>(function ({ onSelec
                 unmountOnExit
                 easing={{
                     enter: easing.easeOut,
-                    exit: easing.easeInOut,
+                    exit: easing.easeInOut
                 }}
             >
                 <Tabs
@@ -63,17 +62,17 @@ const TabsGroup = forwardRef<HTMLDivElement, TabsGroupProps>(function ({ onSelec
                         '& .Mui-selected': {
                             boxShadow: boxShadow,
                             backgroundColor: alpha(primary.main, 0.12),
-                            border: border,
+                            border: border
                         },
                         '& .Mui-selected:active': {
-                            backgroundColor: alpha(primary.main, 0.24),
+                            backgroundColor: alpha(primary.main, 0.24)
                         },
                         '& .MuiTabs-flexContainer': {
-                            gap: '2px',
-                        },
+                            gap: '2px'
+                        }
                     }}
                     TabIndicatorProps={{
-                        sx: { display: 'none' },
+                        sx: { display: 'none' }
                     }}
                 >
                     {tabs.map(({ index, name, icon }) => (
@@ -100,7 +99,7 @@ export function TabView() {
         border,
         fonts,
         palette: { primary },
-        transitions: { easing },
+        transitions: { easing }
     } = useTheme();
 
     let currentViewNodes = routerStack.at(-1)?.view as ViewNode[];
@@ -110,9 +109,9 @@ export function TabView() {
             {
                 index: 0,
                 name: '返回',
-                icon: <ArrowBack fontSize="small" />,
+                icon: <ArrowBack fontSize="small" />
             },
-            ...currentViewNodes,
+            ...currentViewNodes
         ];
     }
 
@@ -143,7 +142,7 @@ export function TabView() {
                     minWidth: '193px',
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'flex-end',
+                    justifyContent: 'flex-end'
                 }}
             >
                 <Box sx={{ minHeight: '192px' }} />
@@ -153,11 +152,11 @@ export function TabView() {
                         height: '100%',
                         overflowY: 'scroll',
                         '::-webkit-scrollbar-thumb': {
-                            backgroundColor: 'transparent',
+                            backgroundColor: 'transparent'
                         },
                         ':hover::-webkit-scrollbar-thumb': {
-                            backgroundColor: alpha(primary.main, 0.24),
-                        },
+                            backgroundColor: alpha(primary.main, 0.24)
+                        }
                     }}
                 >
                     <TabsGroup tabs={currentViewNodes} onSelect={handleSelectTab} value={currentTab} />
@@ -169,7 +168,7 @@ export function TabView() {
                         minHeight: '96px',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        m: 8,
+                        m: 8
                     }}
                 >
                     <Typography fontSize={22} fontFamily={fonts.input}>
@@ -195,7 +194,7 @@ export function TabView() {
                     unmountOnExit
                     easing={{
                         enter: easing.easeOut,
-                        exit: easing.easeInOut,
+                        exit: easing.easeInOut
                     }}
                 >
                     <Box
