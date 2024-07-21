@@ -166,7 +166,10 @@ declare global {
 
         SETTITLE: 3404;
 
+        GAME_GET_PLAYER_INFO: 41206;
+        BATCH_GET_BITSET: 42023;
         GET_PET_INFO_BY_ONCE: 43706;
+        GET_MULTI_FOREVER: 46046;
     };
 
     namespace RES {

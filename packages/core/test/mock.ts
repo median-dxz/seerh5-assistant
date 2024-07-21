@@ -1,9 +1,5 @@
 import { vi } from 'vitest';
 
-export const Mock_KTool = {
-    getBitSetAsync: vi.fn(async () => [true, true])
-};
-
 export const Mock_SocketConnection = {
     sendByQueue(
         cmd: number,

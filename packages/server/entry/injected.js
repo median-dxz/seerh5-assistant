@@ -201,15 +201,9 @@ var Driver = (function () {
                         function (data, url) {
                             var script = document.createElement('script');
                             script.type = 'text/javascript';
+                            script.text = data;
                             // author: median
                             // loader modify begin
-                            while (data.startsWith('eval')) {
-                                data = eval(data.match(/eval([^)].*)/)[1]);
-                            }
-                            data = data.replaceAll(/console\.log/g, 'logFilter');
-                            data = data.replaceAll(/console\.warn/g, 'warnFilter');
-                            script.text = '//@ sourceURL=http://seerh5.61.com/' + url + '\n' + data;
-
                             document.head.appendChild(script).parentNode.removeChild(script);
                             if (config.action === 'Core.init') {
                                 // dispatch event begin

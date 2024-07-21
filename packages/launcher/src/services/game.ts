@@ -60,10 +60,10 @@ export const gameApi = createApi({
                 const sub = new Subscription();
                 try {
                     await cacheDataLoaded;
-                    sub.on(SEAEventSource.socket(42019, 'send'), (data) => {
-                        if (Array.isArray(data) && data.length === 2 && data[0] === 22439) {
-                            const [_, autoCure] = data as [number, number];
-                            updateCachedData(() => autoCure === 1);
+                    sub.on(SEAEventSource.socket(42036, 'send'), (data) => {
+                        if (Array.isArray(data) && data[1] instanceof egret.ByteArray) {
+                            const autoCure = Boolean(new DataView(data[1].rawBuffer).getUint8(2));
+                            updateCachedData(() => autoCure);
                         }
                     });
                 } catch (e) {

@@ -19,17 +19,43 @@ export async function sendByQueue(cmd: number, data: Parameters<SocketConnection
     });
 }
 
+const readResponse = (response?: ArrayBuffer) => {
+    if (!response) return [];
+    const data = new egret.ByteArray(response);
+    const result = [];
+    const length = data.readUnsignedInt();
+    for (let i = 0; i < length; i++) {
+        result.push(data.readUnsignedInt());
+    }
+    return result;
+};
+
 export async function multiValue(...values: number[]): Promise<number[]> {
     if (values.length === 0) return [];
-    return KTool.getMultiValueAsync(values);
+    const buf = new egret.ByteArray();
+    values.forEach((v) => buf.writeInt(v));
+    buf.position = 0;
+    return sendByQueue(CommandID.GET_MULTI_FOREVER, [values.length, buf]).then(readResponse);
 }
 
 export async function bitSet(...values: number[]): Promise<boolean[]> {
     if (values.length === 0) return [];
-    return KTool.getBitSetAsync(values).then((r) => r.map(Boolean));
+    const buf = new egret.ByteArray();
+    values.forEach((v) => buf.writeUnsignedInt(v));
+    buf.position = 0;
+    return sendByQueue(CommandID.BATCH_GET_BITSET, [values.length, buf]).then((r) => {
+        if (!r) return [];
+        const data = new Uint8Array(r);
+        // 大端数据 ByteArray也是默认大端
+        const length = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
+        return Array.from(data.slice(4, 4 + length)).map(Boolean);
+    });
 }
 
 export async function playerInfo(...values: number[]): Promise<number[]> {
     if (values.length === 0) return [];
-    return KTool.getPlayerInfoValueAsync(values);
+    const buf = new egret.ByteArray();
+    values.forEach((v) => buf.writeInt(v));
+    buf.position = 0;
+    return sendByQueue(CommandID.GAME_GET_PLAYER_INFO, [values.length, buf]).then(readResponse);
 }
