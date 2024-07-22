@@ -2,9 +2,9 @@ import Delete from '@mui/icons-material/DeleteOutlineRounded';
 import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 import Settings from '@mui/icons-material/Settings';
 
-import { Button, Stack, Typography } from '@mui/material';
+import { Button, CircularProgress, Stack } from '@mui/material';
 import { engine, LevelAction } from '@sea/core';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import Add from '@mui/icons-material/AddRounded';
 
@@ -17,12 +17,13 @@ import { DataLoading } from '@/components/DataLoading';
 import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
 import { launcherActions } from '@/features/launcherSlice';
-import { taskStore } from '@/features/mod/store';
+import { taskStore, type TaskInstance } from '@/features/mod/store';
 import { useMapToStore } from '@/features/mod/useModStore';
 import { type ModExportsRef } from '@/features/mod/utils';
 import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
 import { modApi } from '@/services/mod';
 import { getCompositeId } from '@/shared/index';
+import { startAppListening } from '@/shared/listenerMiddleware';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { taskViewColumns } from '../shared';
 import { AddOptionsForm } from './AddOptionsForm';
@@ -42,8 +43,9 @@ export function PetFragmentLevelView() {
     const cid = getCompositeId({ id: PET_FRAGMENT_LEVEL_ID, scope: MOD_SCOPE_BUILTIN });
     const { data = [], isFetching } = modApi.endpoints.data.useQuery(cid);
     const optionsList = data as PetFragmentOptions[];
+    const task = useMapToStore(() => ref, taskStore);
 
-    if (isFetching || !ref) {
+    if (isFetching || !ref || !task) {
         return <DataLoading />;
     }
 
@@ -78,7 +80,7 @@ export function PetFragmentLevelView() {
                 data={optionsList}
                 toRowKey={toRowKey}
                 columns={taskViewColumns}
-                rowElement={<PanelRow ref={ref} />}
+                rowElement={<PanelRow ref={ref} task={task} />}
             />
             <AddOptionsForm open={addOptionsFormOpen} setOpen={setOpen} />
         </>
@@ -87,21 +89,31 @@ export function PetFragmentLevelView() {
 
 interface RowProps {
     ref: ModExportsRef;
+    task: TaskInstance;
 }
 
-const PanelRow = React.memo(({ ref }: RowProps) => {
+const PanelRow = React.memo(({ ref, task }: RowProps) => {
     const dispatch = useAppDispatch();
     const options = useRowData<PetFragmentOptions>();
-    const task = useMapToStore(() => ref, taskStore)!;
     const runner = useMemo(() => task.runner(options) as IPetFragmentRunner, [options, task]);
+
     const [completed, setCompleted] = useState(false);
+    const [fetched, setFetched] = useState(false);
+
+    const mutate = useCallback(async () => {
+        await runner.update();
+        setCompleted(runner.next() === LevelAction.STOP);
+        setFetched(true);
+    }, [runner]);
 
     useEffect(() => {
-        void (async () => {
-            await runner.update();
-            setCompleted(runner.next() === LevelAction.STOP);
-        })();
-    }, [runner]);
+        void mutate();
+        const unsubscribe = startAppListening({
+            actionCreator: taskSchedulerActions.moveNext,
+            effect: mutate
+        });
+        return unsubscribe;
+    }, [mutate]);
 
     return (
         <SeaTableRow sx={{ height: '3.3rem' }}>
@@ -110,7 +122,7 @@ const PanelRow = React.memo(({ ref }: RowProps) => {
                 {ref.cid}
             </PanelField>
             <PanelField field="state">
-                <Typography color={completed ? '#eeff41' : 'inherited'}>{completed ? '已完成' : '未完成'}</Typography>
+                {fetched ? completed ? '已完成' : '未完成' : <CircularProgress size="1.5rem" />}
             </PanelField>
             <PanelField field="actions" sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                 <IconButtonNoRipple

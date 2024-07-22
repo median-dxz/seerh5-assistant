@@ -218,8 +218,9 @@ declare global {
     class SocketErrorEvent extends egret.Event {}
 
     class PetEvent extends egret.Event {
+        static readonly CURE_COMPLETE: string;
         static readonly EQUIP_SKIN: string;
-        constructor(type: string, catchTime: number, obj: any);
+        constructor(type: string, catchTime: number, obj?: any);
     }
 
     class PetFightEvent extends egret.Event {

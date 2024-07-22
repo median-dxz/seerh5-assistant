@@ -7,65 +7,89 @@ import { SeaTableRow } from '@/components/styled/TableRow';
 import { CircularProgress } from '@mui/material';
 
 import { taskStore, type TaskInstance } from '@/features/mod/store';
-import { useMapToStore } from '@/features/mod/useModStore';
+import { mapToStore } from '@/features/mod/useModStore';
 import { getCompositeId } from '@/shared/index';
 
 import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
+import type { ModExportsRef } from '@/features/mod/utils';
+import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
 import { configApi } from '@/services/config';
 import { getTaskOptions } from '@/shared/index';
-import { LevelAction, delay } from '@sea/core';
+import { startAppListening } from '@/shared/listenerMiddleware';
+import type { TaskRunner } from '@/shared/types';
+import { useAppDispatch, useAppSelector } from '@/store';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { shallowEqual } from 'react-redux';
 import { taskViewColumns } from './shared';
 
+interface Row {
+    ref: ModExportsRef;
+    task: TaskInstance;
+    runner: TaskRunner;
+    options?: object;
+}
+
+const toRowKey = ({ ref: { cid, key } }: Row) => getCompositeId({ id: key, scope: cid });
+
 export function DailySignView() {
-    const { data: configs, isFetching, error } = configApi.endpoints.allTaskConfig.useQuery();
-    const tasks = useMapToStore(
-        (state) =>
-            state.mod.taskRefs.filter(
+    const taskRefs = useAppSelector(
+        ({ mod: { taskRefs } }) =>
+            taskRefs.filter(
                 ({ cid }) => cid !== getCompositeId({ scope: MOD_SCOPE_BUILTIN, id: PET_FRAGMENT_LEVEL_ID })
             ),
-        taskStore
+        shallowEqual
     );
-    const signs = useMemo(
+
+    const { data: taskConfig, isFetching, error } = configApi.endpoints.allTaskConfig.useQuery();
+
+    const rows = useMemo(
         () =>
-            tasks
-                .filter((task) => {
-                    if (!configs) return false;
-
-                    const runner = task.runner(getTaskOptions(task, configs));
-                    return !runner.selectLevelBattle;
+            taskRefs
+                .map((ref) => {
+                    if (!taskConfig) {
+                        return undefined;
+                    }
+                    const task = mapToStore(ref, taskStore)!;
+                    const options = getTaskOptions(task, taskConfig);
+                    const runner = task.runner(options);
+                    if (!runner.selectLevelBattle) {
+                        return { ref, options, task, runner } satisfies Row;
+                    }
+                    return undefined;
                 })
-                .map((sign) => ({ sign, options: getTaskOptions(sign, configs!) })),
-        [configs, tasks]
+                .filter(Boolean) as Row[],
+        [taskConfig, taskRefs]
     );
 
-    if (isFetching) {
-        return <DataLoading error={error?.message} />;
+    if (!taskConfig || isFetching) return <DataLoading />;
+
+    if (error) {
+        console.error(error);
+        return <DataLoading error={error.message} />;
     }
 
     return (
         <>
-            <PanelTable
-                data={signs}
-                columns={taskViewColumns}
-                rowElement={<PanelRow />}
-                toRowKey={({ sign }) => getCompositeId({ scope: sign.cid, id: sign.metadata.id })}
-            />
+            <PanelTable data={rows} columns={taskViewColumns} rowElement={<PanelRow />} toRowKey={toRowKey} />
         </>
     );
 }
 
 const PanelRow = () => {
-    const { sign, options } = useRowData<{ sign: TaskInstance; options?: object }>();
+    const dispatch = useAppDispatch();
+    const { ref, runner, task, options } = useRowData<Row>();
 
-    const runner = useMemo(() => sign.runner(options), [options, sign]);
     const [progress, setProgress] = useState(runner.data.progress);
     const [maxTimes, setMaxTimes] = useState(runner.data.maxTimes);
     const [fetched, setFetched] = useState(false);
 
     const mutate = useCallback(async () => {
-        await runner.update();
+        try {
+            await runner.update();
+        } catch (error) {
+            // TODO handle error
+        }
         setMaxTimes(runner.data.maxTimes);
         setProgress(runner.data.maxTimes - runner.data.remainingTimes);
         setFetched(true);
@@ -73,15 +97,18 @@ const PanelRow = () => {
 
     useEffect(() => {
         void mutate();
+        const unsubscribe = startAppListening({
+            actionCreator: taskSchedulerActions.moveNext,
+            effect: mutate
+        });
+        return unsubscribe;
     }, [mutate]);
-
-    const signName = runner.name ?? sign.metadata.name;
 
     return (
         <SeaTableRow sx={{ height: '3.3rem' }}>
-            <PanelField field="name">{signName}</PanelField>
+            <PanelField field="name">{runner.name ?? task.metadata.name}</PanelField>
             <PanelField field="cid" sx={{ fontFamily: ({ fonts }) => fonts.input }}>
-                {sign.cid}
+                {task.cid}
             </PanelField>
             <PanelField field="state">
                 {fetched ? `# ${progress} / ${maxTimes}` : <CircularProgress size="1.5rem" />}
@@ -89,14 +116,8 @@ const PanelRow = () => {
             <PanelField field="actions">
                 <IconButtonNoRipple
                     title="启动"
-                    onClick={async () => {
-                        console.log(`正在执行${signName}`);
-                        await runner.update();
-                        while (runner.data.remainingTimes > 0) {
-                            await runner.actions[LevelAction.AWARD]?.call(runner);
-                            await delay(50).then(() => runner.update());
-                        }
-                        await mutate();
+                    onClick={() => {
+                        void dispatch(taskSchedulerActions.enqueue(ref, options, runner.name));
                     }}
                     disabled={progress === maxTimes}
                 >

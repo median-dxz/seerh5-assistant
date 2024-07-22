@@ -352,7 +352,7 @@ const RunnerDetailDialog = memo(function RunnerDetailDialog({
                             sx={{
                                 width: 'fit-content',
                                 px: 4,
-                                bgcolor: (theme) => alpha(theme.palette.background.paper, 0.24),
+                                bgcolor: ({ palette }) => alpha(palette.background.paper, 0.24),
                                 borderRadius: 2
                             }}
                         >
@@ -376,7 +376,8 @@ const RunnerDetailDialog = memo(function RunnerDetailDialog({
                     {Boolean(taskState.error) && (
                         <Paper
                             sx={{
-                                bgcolor: (theme) => alpha(theme.palette.background.paper, 0.36)
+                                bgcolor: ({ palette }) => alpha(palette.background.paper, 0.36),
+                                p: 4
                             }}
                         >
                             ERROR:

@@ -1,8 +1,8 @@
-import { LevelAction, socket } from '@sea/core';
+import { LevelAction, socket, type AnyFunction } from '@sea/core';
 import { task } from '@sea/mod-type';
 import { data, signBase } from './SignBase';
 
-export const vip = [
+export const vip = (logger: AnyFunction) => [
     task({
         metadata: {
             id: 'VipDailyBox',
@@ -10,6 +10,7 @@ export const vip = [
         },
         runner: () => ({
             ...signBase,
+            logger,
             data: { ...data, maxTimes: 1 },
             async update() {
                 const times = (await socket.multiValue(11516))[0];
@@ -30,6 +31,7 @@ export const vip = [
         },
         runner: () => ({
             ...signBase,
+            logger,
             data: { ...data, maxTimes: 1 },
             async update() {
                 const times = (await socket.multiValue(20021))[0];
@@ -50,6 +52,7 @@ export const vip = [
         },
         runner: () => ({
             ...signBase,
+            logger,
             data: { ...data, maxTimes: 1 },
             async update() {
                 const times = (await socket.multiValue(30005))[0];

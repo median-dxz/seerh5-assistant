@@ -50,14 +50,20 @@ export function Sidebar({ height }: SidebarProps) {
                 <Button
                     variant="outlined"
                     color="inherit"
-                    sx={{ minWidth: 'auto', padding: '4px' }}
+                    sx={{ minWidth: 'auto', padding: '2px' }}
                     onClick={handlePauseScheduler}
                     disabled={status === 'waitingForStop'}
                 >
-                    {isPaused ? <PlayArrow fontSize="inherit" /> : <Pause fontSize="inherit" />}
+                    {isPaused ? <PlayArrow /> : <Pause />}
                 </Button>
             </Row>
-            <Stack justifyContent="space-around" height="100%" width="100%">
+            <Stack
+                sx={{
+                    justifyContent: 'space-around',
+                    height: '100%',
+                    width: '100%'
+                }}
+            >
                 <Row alignItems="baseline">
                     <Typography>当前状态: </Typography>
                     <Chip label={StatusTextMap[status]} variant="outlined" size="small" />

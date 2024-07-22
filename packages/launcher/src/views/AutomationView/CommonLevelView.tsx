@@ -1,7 +1,7 @@
 import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 import Settings from '@mui/icons-material/Settings';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DataLoading } from '@/components/DataLoading';
 import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
@@ -9,15 +9,18 @@ import { PanelField, useRowData } from '@/components/PanelTable';
 import { PanelTable } from '@/components/PanelTable/PanelTable';
 import { SeaTableRow } from '@/components/styled/TableRow';
 
-import { taskStore } from '@/features/mod/store';
-import { mapToStore, useMapToStore } from '@/features/mod/useModStore';
+import { taskStore, type TaskInstance } from '@/features/mod/store';
+import { mapToStore } from '@/features/mod/useModStore';
 import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
 
 import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
 import type { ModExportsRef } from '@/features/mod/utils';
 import { configApi } from '@/services/config';
 import { getCompositeId, getTaskOptions } from '@/shared/index';
+import { startAppListening } from '@/shared/listenerMiddleware';
+import type { TaskRunner } from '@/shared/types';
 import { useAppDispatch, useAppSelector } from '@/store';
+import { CircularProgress } from '@mui/material';
 import { LevelAction } from '@sea/core';
 import { shallowEqual } from 'react-redux';
 import { taskViewColumns } from './shared';
@@ -46,10 +49,12 @@ import { taskViewColumns } from './shared';
 
 interface Row {
     ref: ModExportsRef;
+    task: TaskInstance;
+    runner: TaskRunner;
     options?: object;
 }
 
-const toRowKey = (row: Row) => row.ref.key;
+const toRowKey = ({ ref: { cid, key } }: Row) => getCompositeId({ id: key, scope: cid });
 
 export function CommonLevelView() {
     const taskRefs = useAppSelector(
@@ -61,6 +66,7 @@ export function CommonLevelView() {
     );
 
     const { data: taskConfig, isFetching, error } = configApi.endpoints.allTaskConfig.useQuery();
+
     const rows = useMemo(
         () =>
             taskRefs
@@ -69,10 +75,10 @@ export function CommonLevelView() {
                         return undefined;
                     }
                     const task = mapToStore(ref, taskStore)!;
-                    const currentOptions = getTaskOptions(task, taskConfig);
-                    const runner = task.runner(currentOptions);
+                    const options = getTaskOptions(task, taskConfig);
+                    const runner = task.runner(options);
                     if (runner.selectLevelBattle) {
-                        return { ref, options: currentOptions } as Row;
+                        return { ref, options, task, runner } satisfies Row;
                     }
                     return undefined;
                 })
@@ -96,17 +102,29 @@ export function CommonLevelView() {
 
 const PanelRow = React.memo(() => {
     const dispatch = useAppDispatch();
-    const { ref, options } = useRowData<Row>();
-    const task = useMapToStore(() => ref, taskStore)!;
-    const runner = useMemo(() => task.runner(options), [options, task]);
+    const { ref, options, task, runner } = useRowData<Row>();
+
     const [completed, setCompleted] = useState(false);
+    const [fetched, setFetched] = useState(false);
+
+    const mutate = useCallback(async () => {
+        try {
+            await runner.update();
+        } catch (error) {
+            // TODO handle error
+        }
+        setCompleted(runner.next() === LevelAction.STOP);
+        setFetched(true);
+    }, [runner]);
 
     useEffect(() => {
-        void (async () => {
-            await runner.update();
-            setCompleted(runner.next() === LevelAction.STOP);
-        })();
-    }, [runner]);
+        void mutate();
+        const unsubscribe = startAppListening({
+            actionCreator: taskSchedulerActions.moveNext,
+            effect: mutate
+        });
+        return unsubscribe;
+    }, [mutate]);
 
     return (
         <SeaTableRow sx={{ height: '3.3rem' }}>
@@ -114,14 +132,8 @@ const PanelRow = React.memo(() => {
             <PanelField field="cid" sx={{ fontFamily: ({ fonts }) => fonts.input }}>
                 {ref.cid}
             </PanelField>
-            <PanelField
-                field="state"
-                sx={{
-                    color: completed ? '#eeff41' : 'inherited',
-                    fontSize: 'inherited'
-                }}
-            >
-                {completed ? '已完成' : '未完成'}
+            <PanelField field="state">
+                {fetched ? completed ? '已完成' : '未完成' : <CircularProgress size="1.5rem" />}
             </PanelField>
             <PanelField field="actions">
                 <IconButtonNoRipple

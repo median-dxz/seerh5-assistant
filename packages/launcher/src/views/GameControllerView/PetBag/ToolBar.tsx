@@ -29,7 +29,7 @@ export function ToolBar({ selected }: ToolBarProps) {
 
     const handleCurePets = () => {
         if (selected.length === 0) {
-            engine.cureAllPet();
+            void engine.cureAllPet();
         } else {
             for (const ct of selected) {
                 spet(ct).cure();

@@ -1,4 +1,4 @@
-import { LevelAction, socket } from '@sea/core';
+import { LevelAction, socket, type AnyFunction } from '@sea/core';
 import { task } from '@sea/mod-type';
 import { data, signBase } from './SignBase';
 
@@ -10,12 +10,13 @@ const MULTI_QUERY = {
     许愿签到: 201345
 } as const;
 
-export const daily = [
+export const daily = (logger: AnyFunction) => [
     task({
         metadata: { id: 'MarkDraw', name: '刻印抽奖' },
         runner() {
             return {
                 ...signBase,
+                logger,
                 data: { ...data, maxTimes: 1 },
                 async update() {
                     this.data.remainingTimes =
@@ -34,6 +35,7 @@ export const daily = [
         runner() {
             return {
                 ...signBase,
+                logger,
                 data: { ...data, maxTimes: 10 },
                 async update() {
                     let times = (await socket.multiValue(MULTI_QUERY.登录时长))[0];
@@ -77,6 +79,7 @@ export const daily = [
         runner() {
             return {
                 ...signBase,
+                logger,
                 data: { ...data, maxTimes: 1 },
                 async update() {
                     this.data.remainingTimes = this.data.maxTimes - (await socket.multiValue(MULTI_QUERY.许愿签到))[0];

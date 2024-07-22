@@ -34,7 +34,7 @@ export const teamDispatch = (logger: AnyFunction) =>
         },
         runner({ ignorePets }) {
             return {
-                next: signBase.next,
+                ...signBase,
                 logger,
                 data: { ...data, maxTimes: 1 },
                 actions: {

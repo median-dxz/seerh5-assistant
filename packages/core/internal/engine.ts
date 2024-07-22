@@ -70,8 +70,8 @@ export interface SEAEngine {
     buyPetItem: typeof buyPetItem;
     changeSuit: typeof changeSuit;
     changeTitle: typeof changeTitle;
-    cureAllPet: () => void;
-    fightBoss: (id: number) => void;
+    cureAllPet: typeof cureAllPet;
+    fightBoss: typeof fightBoss;
     toggleAutoCure: typeof toggleAutoCure;
     autoCureState: typeof autoCureState;
     eliteStorageLimit: typeof eliteStorageLimit;

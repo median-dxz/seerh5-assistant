@@ -14,7 +14,7 @@ export const Mock_SocketConnection = {
 export function mockEngine() {
     vi.mock('../internal/index', () => {
         const engine = {
-            cureAllPet: () => {},
+            cureAllPet: async () => {},
             autoCureState: async () => {},
             toggleAutoCure: async () => {},
             switchBag: async () => {}

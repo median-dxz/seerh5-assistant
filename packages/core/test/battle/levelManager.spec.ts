@@ -1,4 +1,4 @@
-import { Mock_KTool, Mock_SocketConnection, mockEngine, mockPet } from '../mock';
+import { Mock_SocketConnection, mockEngine, mockPet } from '../mock';
 
 import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import type { LevelBattle, LevelRunner, MoveStrategy } from '../../battle';
@@ -8,7 +8,6 @@ import type { Item } from '../../entity';
 import type { CaughtPet, PetLocation } from '../../pet-helper';
 import { SEAPetStore } from '../../pet-helper';
 
-vi.stubGlobal('KTool', Mock_KTool);
 vi.stubGlobal('SocketConnection', Mock_SocketConnection);
 mockEngine();
 mockPet();

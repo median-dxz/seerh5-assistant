@@ -56,8 +56,8 @@ class LevelManager {
                 logger('准备对战');
                 await engine.switchBag(pets);
 
-                void engine.toggleAutoCure(false);
-                engine.cureAllPet();
+                await engine.toggleAutoCure(false);
+                await engine.cureAllPet();
 
                 await delay(100);
 
@@ -107,7 +107,7 @@ class LevelManager {
             logger('正在停止关卡');
             // 恢复自动治疗状态
             await engine.toggleAutoCure(autoCureState);
-            engine.cureAllPet();
+            await engine.cureAllPet();
             await delay(200);
         };
 

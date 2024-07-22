@@ -1,4 +1,4 @@
-import { LevelAction, socket } from '@sea/core';
+import { LevelAction, socket, type AnyFunction } from '@sea/core';
 import { task } from '@sea/mod-type';
 import { data, signBase } from './SignBase';
 
@@ -25,7 +25,7 @@ const EXCHANGE_LIST = {
     攻击珠: '3'
 };
 
-export const teamSign = [
+export const teamSign = (logger: AnyFunction) => [
     task({
         metadata: {
             id: 'ProductResource',
@@ -33,6 +33,7 @@ export const teamSign = [
         },
         runner: () => ({
             ...signBase,
+            logger,
             data: { ...data, maxTimes: 5 },
             async update() {
                 if (MainManager.actorInfo.teamInfo && MainManager.actorInfo.teamInfo.id > 0) {
@@ -66,6 +67,7 @@ export const teamSign = [
         },
         runner: (options) => ({
             ...signBase,
+            logger,
             data: { ...data, maxTimes: 3 },
             async update() {
                 if (MainManager.actorInfo.teamInfo && MainManager.actorInfo.teamInfo.id > 0) {

@@ -8,10 +8,10 @@ export function Row({ children, sx, ...props }: StackProps) {
             sx={{
                 flexDirection: 'row',
                 alignItems: 'center',
+                justifyContent: 'start',
                 width: '100%',
-                ...sx,
+                ...sx
             }}
-            justifyContent="start"
             {...props}
         >
             {children}
