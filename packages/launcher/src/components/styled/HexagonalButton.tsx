@@ -1,4 +1,4 @@
-import { theme } from '@/style';
+import { theme } from '@/theme';
 import type { ButtonBaseProps } from '@mui/material';
 import { alpha, ButtonBase, styled } from '@mui/material';
 import { forwardRef, type ForwardedRef, type PropsWithChildren } from 'react';

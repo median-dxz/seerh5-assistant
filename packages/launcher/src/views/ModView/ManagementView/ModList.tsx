@@ -59,7 +59,7 @@ export function ModListItem({ deployment }: ModListItemProps) {
     const ins = useMapToStore(() => (deployment.status === 'deployed' ? deployment.deploymentId : undefined), modStore);
 
     const title = (
-        <Stack direction="row" spacing={4} useFlexGap sx={{ alignItems: 'baseline' }}>
+        <Stack direction="row" sx={{ alignItems: 'baseline' }}>
             <Typography sx={{ paddingRight: '1rem', fontSize: 28 }}>{id}</Typography>
             <Typography>v{state.version}</Typography>
         </Stack>
@@ -67,7 +67,7 @@ export function ModListItem({ deployment }: ModListItemProps) {
 
     const description = (
         <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
-            <Stack direction="row" spacing={4} useFlexGap sx={{ alignItems: 'baseline' }}>
+            <Stack direction="row" sx={{ alignItems: 'baseline' }}>
                 <Typography sx={{ fontFamily: ({ fonts }) => fonts.property }}>
                     {getCompositeId({ scope, id })}
                 </Typography>
@@ -86,7 +86,7 @@ export function ModListItem({ deployment }: ModListItemProps) {
                     </Tooltip>
                 )}
             </Stack>
-            <Stack direction="row" spacing={4} useFlexGap sx={{ alignItems: 'baseline' }}>
+            <Stack direction="row" spacing={4} sx={{ alignItems: 'baseline' }}>
                 {scope === 'builtin' && (
                     <Typography color="GrayText" sx={{ fontSize: 16 }}>
                         预置

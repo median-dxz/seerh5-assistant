@@ -1,17 +1,16 @@
-import { alpha, createTheme, darken, lighten, type SxProps } from '@mui/material';
+import { alpha, createTheme, darken, lighten } from '@mui/material';
 import { deepPurple } from '@mui/material/colors';
 
 declare module '@mui/material/styles' {
     interface Palette {
-        popup: {
-            background: string;
+        extendedBackground: {
+            popup: string;
+            emphasize: string;
         };
     }
 
     interface PaletteOptions {
-        popup?: {
-            background?: string;
-        };
+        extendedBackground?: Partial<Palette['extendedBackground']>;
     }
 
     interface Theme {
@@ -42,7 +41,9 @@ const colors = {
     primary: deepPurple[200],
     secondary: deepPurple[500],
     text: '#e1f5fe',
-    paper: '#211d22'
+    paper: '#211d22',
+    emphasize: '#140b24',
+    popup: '#2f2148'
 };
 
 const border = `1px solid ${alpha(colors.primary, 0.24)}`;
@@ -55,10 +56,9 @@ const fonts = {
 };
 
 export const theme = createTheme({
-    boxShadow: `0 8px 16px rgba(0 0 0 / 24%)`,
     fonts,
-    border,
-
+    boxShadow: `0 8px 16px rgba(0 0 0 / 24%)`,
+    border: `1px solid ${alpha(colors.primary, 0.24)}`,
     spacing: 4,
     palette: {
         mode: 'dark',
@@ -76,8 +76,9 @@ export const theme = createTheme({
             paper: alpha(colors.primary, 0.08)
         },
         divider: alpha(colors.primary, 0.16),
-        popup: {
-            background: alpha('#140b24', 0.88)
+        extendedBackground: {
+            popup: alpha(colors.popup, 0.88),
+            emphasize: alpha(colors.emphasize, 0.88)
         }
     },
     typography: {
@@ -116,6 +117,12 @@ export const theme = createTheme({
                 root: { backgroundColor: alpha('#000', 0.24) }
             }
         },
+        MuiStack: {
+            defaultProps: {
+                spacing: 4,
+                useFlexGap: true
+            }
+        },
         MuiTooltip: {
             styleOverrides: {
                 tooltip: {
@@ -133,9 +140,19 @@ export const theme = createTheme({
         },
         MuiPaper: {
             styleOverrides: {
-                root: {
-                    boxShadow: `0 8px 16px rgba(0 0 0 / 24%)`,
-                    display: 'flex'
+                root: ({ theme: { boxShadow } }) => ({
+                    boxShadow,
+                    display: 'flex',
+                    flexDirection: 'column'
+                })
+            }
+        },
+        MuiDialog: {
+            styleOverrides: {
+                paper: {
+                    backgroundImage: 'none',
+                    backgroundColor: alpha(colors.popup, 0.88),
+                    backdropFilter: 'blur(4px)'
                 }
             }
         },
@@ -146,26 +163,22 @@ export const theme = createTheme({
                     border,
                     ':hover': {
                         backgroundColor: alpha(colors.primary, 0.24),
-                        border
+                        border: `1px solid ${alpha(colors.primary, 0.48)}`
                     }
                 },
                 contained: {
                     color: colors.text,
-                    border,
-                    backgroundColor: alpha(colors.secondary, 0.48),
-                    ':hover': {
-                        backgroundColor: alpha(darken(colors.secondary, 0.15), 0.48)
+                    border: 'none',
+                    backgroundColor: colors.secondary,
+                    '&:hover': {
+                        backgroundColor: lighten(colors.secondary, 0.1),
+                        boxShadow: `0 0 8px ${alpha(lighten(colors.secondary, 0.1), 0.24)}`
                     },
-                    ':active': {
-                        backgroundColor: alpha(lighten(colors.secondary, 0.15), 0.48)
+                    '&:active': {
+                        backgroundColor: darken(colors.secondary, 0.24),
+                        boxShadow: `0 0 8px ${alpha(darken(colors.secondary, 0.24), 0.24)}`
                     },
-                    boxShadow: `0 0 4px rgba(0 0 0 / 24%)`
-                },
-                outlinedInherit: {
-                    border: `1px solid ${alpha(colors.text, 0.24)}`,
-                    ':hover': {
-                        border: `1px solid ${alpha(colors.text, 0.48)}`
-                    }
+                    boxShadow: `0 0 4px ${alpha(colors.secondary, 0.24)}`
                 }
             }
         },
@@ -179,13 +192,46 @@ export const theme = createTheme({
         MuiChip: {
             styleOverrides: {
                 root: {
-                    backgroundColor: alpha(colors.primary, 0.18),
+                    backgroundColor: alpha(colors.secondary, 0.18),
                     border: `1px solid ${alpha(colors.text, 0.24)}`,
                     fontFamily: fonts.input
                 }
             }
+        },
+        MuiAutocomplete: {
+            styleOverrides: {
+                paper: ({ theme: { boxShadow } }) => ({
+                    width: '100%',
+                    boxShadow,
+                    backdropFilter: 'blur(8px)',
+                    backgroundColor: alpha(colors.secondary, 0.8),
+                    fontFamily: fonts.input
+                }),
+                listbox: {
+                    width: '100%'
+                }
+            }
+        },
+        MuiOutlinedInput: {
+            styleOverrides: {
+                root: ({ theme: { transitions } }) => ({
+                    '& .MuiOutlinedInput-notchedOutline': {
+                        transition: transitions.create(['border-color'])
+                    },
+                    '&.Mui-disabled .MuiOutlinedInput-notchedOutline': {
+                        border: `1px solid ${alpha(colors.text, 0.12)}`
+                    },
+                    '&.Mui-disabled:hover .MuiOutlinedInput-notchedOutline': {
+                        border: `1px solid ${alpha(colors.text, 0.12)}`
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                        border: `1px solid ${alpha(colors.text, 0.48)}`
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        border: `1px solid ${alpha(colors.primary, 0.64)}`
+                    }
+                })
+            }
         }
     }
 });
-
-export const componentStyles: Record<string, SxProps> = {};

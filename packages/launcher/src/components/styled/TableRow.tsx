@@ -1,4 +1,4 @@
-import { theme } from '@/style';
+import { theme } from '@/theme';
 import { TableRow, alpha, styled } from '@mui/material';
 
 const radius = theme.shape.borderRadius * 1.5;

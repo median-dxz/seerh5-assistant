@@ -81,7 +81,7 @@ export function InstallFromLocalForm() {
                 PaperProps={{
                     sx: {
                         backgroundImage: 'none',
-                        bgcolor: ({ palette }) => palette.popup.background,
+                        bgcolor: ({ palette }) => palette.extendedBackground.popup,
                         backdropFilter: 'blur(4px)'
                     },
                     component: 'form',

@@ -33,7 +33,7 @@ export default function Launcher() {
                         top: '64px',
                         width: '40vw',
                         minWidth: '240px',
-                        zIndex: (theme) => theme.zIndex.snackbar
+                        zIndex: ({ zIndex }) => zIndex.modal - 1
                     }}
                 />
             </Grow>

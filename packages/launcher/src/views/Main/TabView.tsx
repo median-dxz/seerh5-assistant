@@ -134,6 +134,7 @@ export function TabView() {
         <Stack
             flexDirection="row"
             sx={{ width: '100vw', height: '100vh', alignItems: 'stretch', justifyContent: 'stretch' }}
+            spacing={0}
         >
             <Stack
                 sx={{
@@ -163,8 +164,6 @@ export function TabView() {
                 </Box>
                 <Paper
                     sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
                         minHeight: '96px',
                         justifyContent: 'center',
                         alignItems: 'center',

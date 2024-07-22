@@ -9,14 +9,14 @@ import {
 } from '@sea/core';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 import { task } from '@sea/mod-type';
-import type { IPetFragmentRunner, PetFragmentLevelData, PetFragmentOption } from './types';
+import type { IPetFragmentRunner, PetFragmentLevelData, PetFragmentOptions } from './types';
 
 export const metadata = {
     id: PET_FRAGMENT_LEVEL_ID,
     scope: MOD_SCOPE_BUILTIN,
     version: VERSION,
     description: '精灵因子',
-    data: [] as PetFragmentOption[]
+    data: [] as PetFragmentOptions[]
 } satisfies SEAModMetadata;
 
 export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
@@ -36,7 +36,7 @@ export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
         data: PetFragmentLevelData;
         logger = logger;
 
-        constructor(public options: PetFragmentOption) {
+        constructor(public options: PetFragmentOptions) {
             const LevelObj = engine.getPetFragmentLevelObj(options.id);
 
             if (!LevelObj) throw new Error(`未找到精灵因子关卡: ${options.id}`);
@@ -123,7 +123,7 @@ export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
         task({
             metadata: taskMetadata,
             runner(options) {
-                return new PetFragmentRunner(options as unknown as PetFragmentOption);
+                return new PetFragmentRunner(options as unknown as PetFragmentOptions);
             }
         })
     ];

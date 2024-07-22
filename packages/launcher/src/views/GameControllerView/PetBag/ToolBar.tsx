@@ -92,7 +92,6 @@ export function ToolBar({ selected }: ToolBarProps) {
                     flexDirection: 'row'
                 }}
                 gap={2}
-                useFlexGap
             >
                 <Button startIcon={<HpBar />} onClick={handleLowerHp}>
                     压血

@@ -1,7 +1,10 @@
-import { Box, Button, Typography } from '@mui/material';
+import PlayArrow from '@mui/icons-material/PlayArrowRounded';
+import Settings from '@mui/icons-material/Settings';
+
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { DataLoading } from '@/components/DataLoading';
+import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 import { PanelField, useRowData } from '@/components/PanelTable';
 import { PanelTable } from '@/components/PanelTable/PanelTable';
 import { SeaTableRow } from '@/components/styled/TableRow';
@@ -106,25 +109,33 @@ const PanelRow = React.memo(() => {
     }, [runner]);
 
     return (
-        <SeaTableRow>
+        <SeaTableRow sx={{ height: '3.3rem' }}>
             <PanelField field="name">{runner.name ?? task.metadata.name}</PanelField>
             <PanelField field="cid" sx={{ fontFamily: ({ fonts }) => fonts.input }}>
                 {ref.cid}
             </PanelField>
-            <PanelField field="state">
-                <Typography color={completed ? '#eeff41' : 'inherited'}>{completed ? '已完成' : '未完成'}</Typography>
+            <PanelField
+                field="state"
+                sx={{
+                    color: completed ? '#eeff41' : 'inherited',
+                    fontSize: 'inherited'
+                }}
+            >
+                {completed ? '已完成' : '未完成'}
             </PanelField>
             <PanelField field="actions">
-                <Box component="span">
-                    <Button
-                        onClick={() => {
-                            dispatch(taskSchedulerActions.enqueue(ref, options, runner.name));
-                        }}
-                        disabled={completed}
-                    >
-                        启动
-                    </Button>
-                </Box>
+                <IconButtonNoRipple
+                    title="启动"
+                    onClick={() => {
+                        dispatch(taskSchedulerActions.enqueue(ref, options, runner.name));
+                    }}
+                    disabled={completed}
+                >
+                    <PlayArrow />
+                </IconButtonNoRipple>
+                <IconButtonNoRipple title="配置">
+                    <Settings />
+                </IconButtonNoRipple>
             </PanelField>
         </SeaTableRow>
     );

@@ -1,6 +1,5 @@
-import { Paper } from '@/components/styled/Paper';
 import { Row } from '@/components/styled/Row';
-import { Switch, Typography } from '@mui/material';
+import { Paper, Switch, Typography } from '@mui/material';
 import React, { useEffect, useState, type ChangeEvent } from 'react';
 
 export function AnimationMode() {
@@ -17,7 +16,7 @@ export function AnimationMode() {
     };
 
     return (
-        <Paper>
+        <Paper sx={{ p: 4 }}>
             <Row justifyContent="space-between">
                 <Typography>动画模式</Typography>
                 <Switch

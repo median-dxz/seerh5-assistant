@@ -34,7 +34,7 @@ export default (logger: AnyFunction, battle: (name: string) => LevelBattle) => {
         elfKingId: {
             name: '精灵王',
             type: 'select',
-            description: '自动日任要挑战的精灵王',
+            helperText: '自动日任要挑战的精灵王',
             default: '15',
             list: ELF_KINGS_LIST
         },

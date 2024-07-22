@@ -15,6 +15,6 @@ export const taskViewColumns: PanelColumns = [
     },
     {
         field: 'actions',
-        columnName: ''
+        columnName: '操作'
     }
 ];

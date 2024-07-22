@@ -1,6 +1,5 @@
-import { Paper } from '@/components/styled/Paper';
 import { useAppSelector } from '@/store';
-import { CircularProgress, Typography } from '@mui/material';
+import { CircularProgress, Paper, Typography } from '@mui/material';
 
 export function LoginLoadingScreen() {
     const loadingItem = useAppSelector((state) => state.initialization.loadingItem);
@@ -11,7 +10,7 @@ export function LoginLoadingScreen() {
                 height: `200px`,
                 backgroundImage: 'none',
                 backdropFilter: 'blur(8px)',
-                bgcolor: (theme) => theme.palette.popup.background,
+                bgcolor: ({ palette }) => palette.extendedBackground.emphasize,
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: 4

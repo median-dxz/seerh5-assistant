@@ -1,9 +1,8 @@
-import { Divider, Stack } from '@mui/material';
+import { Divider, Paper, Stack } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { Selector } from './Selector';
 
-import { Paper } from '@/components/styled/Paper';
 import { GameConfigRegistry, SEAEventSource, engine } from '@sea/core';
 
 const changeTitleEventSource = SEAEventSource.eventPattern(
@@ -58,8 +57,8 @@ export function Inventory() {
     const titleDescription = useCallback((userTitle: number) => titleQuery.get(userTitle)?.abtext, [titleQuery]);
 
     return (
-        <Paper>
-            <Stack width="100%" spacing={2} justifyContent="space-around" useFlexGap>
+        <Paper sx={{ p: 4 }}>
+            <Stack sx={{ width: '100%', justifyContent: 'space-around' }} spacing={2}>
                 <Selector
                     id="change-title"
                     label={'称号'}

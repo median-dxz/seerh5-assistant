@@ -15,7 +15,7 @@ export const metadata = {
         betterAlarm: {
             type: 'checkbox',
             name: '更好的确认',
-            description: '使用气泡提示代替单按钮确认对话框',
+            helperText: '使用气泡提示代替单按钮确认对话框',
             default: true
         },
         fasterStaticAnimation: {
@@ -36,7 +36,7 @@ export const metadata = {
         disableNewSkillPanelAfterBattle: {
             type: 'checkbox',
             name: '屏蔽新技能面板',
-            description: '关闭战斗结束后由于精灵升级而弹出的新技能面板',
+            helperText: '关闭战斗结束后由于精灵升级而弹出的新技能面板',
             default: true
         }
     }

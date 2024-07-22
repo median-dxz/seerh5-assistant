@@ -1,9 +1,8 @@
-import { Paper } from '@/components/styled/Paper';
 import { Row } from '@/components/styled/Row';
 import { launcherActions } from '@/features/launcherSlice';
 import { gameApi } from '@/services/game';
 import { useAppDispatch } from '@/store';
-import { Button, CircularProgress, Stack, Typography } from '@mui/material';
+import { Button, CircularProgress, Paper, Stack, Typography } from '@mui/material';
 import { BattleFireType, socket, throttle } from '@sea/core';
 import dayjs from 'dayjs';
 import { useSnackbar } from 'notistack';
@@ -89,7 +88,7 @@ export function BattleFire() {
     const throttledGiftStars = throttle(giftStars, 1500);
 
     return (
-        <Paper>
+        <Paper sx={{ p: 4 }}>
             <Typography variant="subtitle1" fontSize="1em">
                 火焰信息
             </Typography>

@@ -1,7 +1,6 @@
-import { Paper } from '@/components/styled/Paper';
 import { Row } from '@/components/styled/Row';
 import { gameApi } from '@/services/game';
-import { CircularProgress, Switch, Typography } from '@mui/material';
+import { CircularProgress, Paper, Switch, Typography } from '@mui/material';
 import { engine } from '@sea/core';
 import type { ChangeEvent } from 'react';
 import React from 'react';
@@ -14,7 +13,7 @@ export function AutoCureState() {
     };
 
     return (
-        <Paper>
+        <Paper sx={{ p: 4 }}>
             <Row justifyContent="space-between">
                 <Typography>自动治疗</Typography>
                 {!isLoading ? (

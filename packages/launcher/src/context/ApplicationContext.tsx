@@ -1,5 +1,5 @@
 import { appStore } from '@/store';
-import { theme } from '@/style';
+import { theme } from '@/theme';
 import { cache } from '@emotion/css';
 import { CacheProvider } from '@emotion/react';
 import { CssBaseline, ThemeProvider, alpha, styled } from '@mui/material';

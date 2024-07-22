@@ -2,11 +2,10 @@ import Pause from '@mui/icons-material/PauseRounded';
 import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 
 import { LabeledLinearProgress } from '@/components/LabeledProgress';
-import { Paper } from '@/components/styled/Paper';
 import { Row } from '@/components/styled/Row';
 import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { Button, Chip, Stack, Typography } from '@mui/material';
+import { Button, Chip, Paper, Stack, Typography } from '@mui/material';
 import React from 'react';
 
 const StatusTextMap = {
@@ -42,10 +41,11 @@ export function Sidebar({ height }: SidebarProps) {
     return (
         <Paper
             sx={{
-                height
+                height,
+                p: 4
             }}
         >
-            <Row alignItems="baseline" justifySelf="start" useFlexGap gap={4} mb={2}>
+            <Row alignItems="baseline" justifySelf="start" mb={2}>
                 <Typography variant="subtitle1">调度器</Typography>
                 <Button
                     variant="outlined"
@@ -58,7 +58,7 @@ export function Sidebar({ height }: SidebarProps) {
                 </Button>
             </Row>
             <Stack justifyContent="space-around" height="100%" width="100%">
-                <Row alignItems="baseline" useFlexGap gap={4}>
+                <Row alignItems="baseline">
                     <Typography>当前状态: </Typography>
                     <Chip label={StatusTextMap[status]} variant="outlined" size="small" />
                 </Row>

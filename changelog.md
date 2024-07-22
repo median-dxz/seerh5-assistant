@@ -4,29 +4,29 @@
 当前更新内容 模组安装与管理（2024.7）
 
 - [ ] 关卡配置与mod配置UI
-  - [x] 关卡配置为mod cid + taskId组合主键
   - [ ] 部署mod时拒绝同mod下taskId相同
 - [ ] 调度界面, 删除全部已完成
-- [ ] 优化重写PanelTable
 - [ ] 收星星上限出错出错处理
-- [ ] 更新vip签到(flash商城?)
+- [ ] 更新vip签到->flash商城
 - [ ] 全屏与刷新按钮
-- [x] rotating算子基于内部计数器而不是round
-- [ ] 命名空间的脆弱性 -> 全面换成组合id，手动对分隔符进行转义
-- [x] core v1.0.0
 - [ ] 日任扫荡功能
-- [ ] LevelManager中止时的超时和强制逃跑处理
-- [ ] PanelTable是不是直接useMemo就行了，奇怪的cacheReturn hook
-- [ ] ctOverride battle strategy Override
+- [ ] ctOverride battleOverride strategyOverride, 有重映射和fallback两种模式, 只支持一级重载
 - [ ] 模组定义新增标志位，表明不支持热重载
 - [ ] 模组加载/卸载时的出错处理
+- [ ] 选择套装称号时也可以预览效果
+- [ ] vip自动恢复血量弹框的UI同步
+- [ ] 优化重写PanelTable, PanelTable是不是直接useMemo就行了, 奇怪的cacheReturn hook, 参考react-hook-form简化实现
 - [ ] 组件泛型，能不能简化MenuButton
-- [ ] command接口增强，也支持使用schema输入参数
+
+- [ ] QuickAccess重做，移入主界面底部
+
+  - [ ] command接口增强，也支持使用schema输入参数
+  - [ ] 命令行对于qa插件显示图标
+
 - [ ] https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-5.html#the-configdir-template-variable-for-configuration-files
 - [ ] 升级sdk的ts版本
 - [ ] (task state)使用自定义的高亮显示框代替textarea显示json
 - [ ] 战斗延迟做成可配置项
-- [ ] 验证第五和魂印判断的正确性
 - [ ] sdk 中 core 版本兼容性检测, 添加 core 版本字段(必填), 并规范 launcher 的 core 实例和 sdk 使用的 api 之间的关系
   - [ ] 需要一次性提供 Launcher Api 版本，Core 版本和自身版本
   - [ ] launcher api 版本和 launcher 版本之间的关系？
@@ -43,7 +43,6 @@
 - [ ] 内置模组在更新时的处理
 - [ ] 日任掉线
 - [ ] 自定义背景（各种意义上？）
-- [ ] QuickAccess 重做，移入主界面底部
 - [ ] spt 扫荡
 - [ ] 作战实验室 六界扫荡 星际迷航 神兽
 - [ ] 常用配置查询
@@ -74,7 +73,7 @@
 - [ ] 取消对http-proxy-middleware的依赖
 - [ ] 错误边界
 
-# Core 当前版本 v1.0.0-rc.6
+# Core v1.0.0(当前版本)
 
 - [x] 精简 api 界面, 删除不必要的导出
   - [x] 删除不常用的子包导出
@@ -97,22 +96,27 @@
 - [x] 日志模块重写，输出 object 而不是消息，可以子 logger 化
 - [x] 启用单元测试
 - [ ] 查询关卡获取的因子数量
+- [ ] 查询魂印激活放到 SEAPet 中
+- [ ] 验证第五和魂印判断的正确性
 - [ ] 解耦登录器/后端特定逻辑, 分离非核心功能, 部分由登录器提供扩展定义, 合并到`engine`中, 部分由`mod-presets`实现
-  - [ ] script 解密
+  - [x] script 解密
   - [ ] 对战显血
   - [x] 自动关弹窗
-  - [ ] logFilter
+  - [x] logFilter
   - [ ] 注册hook时添加的副作用
-- [ ] 查询魂印激活放到 SEAPet 中
 - [x] LevelRunner使用事件流
+- [x] 对于 CoreLoad 的注册 hook, 提供标志位来进行功能的打开，关闭
+  - [x] 同时公开 hook 数组, 以便登录器层可以开关特定功能
+- [x] 集成测试作为单独的包，移出 core
+
+# Core v1.1.0
+
+- [ ] LevelManager中止时的超时和强制逃跑处理
 - [ ] 完善 pet 缓存逻辑
   - [ ] cacheMap接口优化
   - [ ] 使用Monad实现替换Proxy实现
   - [ ] 同时优化第五和魂印的检测逻辑
   - [ ] 添加单元测试
-- [x] 对于 CoreLoad 的注册 hook, 提供标志位来进行功能的打开，关闭
-  - [x] 同时公开 hook 数组, 以便登录器层可以开关特定功能
-- [x] 集成测试作为单独的包，移出 core
 
 # 低优先级
 
@@ -123,6 +127,4 @@
 - [ ] jsx 外部化, import-map 共享 react
 - [ ] cookie issue
 - [ ] 在三个加载资源处都显示 总加载文件数 当前文件名 当前已下载大小/当前文件大小
-- [ ] 考虑如何使`Strategy`添加更简单的 fallback 支持(可能添加一个字段?)
-  - [ ] 例如`true`代表 fallback 到自动, 否则链式依次 fallback
 - [ ] 首屏logo

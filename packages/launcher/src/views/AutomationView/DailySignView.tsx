@@ -1,12 +1,16 @@
+import PlayArrow from '@mui/icons-material/PlayArrowRounded';
+import Settings from '@mui/icons-material/Settings';
+
 import { DataLoading } from '@/components/DataLoading';
 import { PanelField, PanelTable, useRowData } from '@/components/PanelTable';
 import { SeaTableRow } from '@/components/styled/TableRow';
-import { Button, ButtonGroup, CircularProgress } from '@mui/material';
+import { CircularProgress } from '@mui/material';
 
 import { taskStore, type TaskInstance } from '@/features/mod/store';
 import { useMapToStore } from '@/features/mod/useModStore';
 import { getCompositeId } from '@/shared/index';
 
+import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
 import { configApi } from '@/services/config';
 import { getTaskOptions } from '@/shared/index';
@@ -74,7 +78,7 @@ const PanelRow = () => {
     const signName = runner.name ?? sign.metadata.name;
 
     return (
-        <SeaTableRow>
+        <SeaTableRow sx={{ height: '3.3rem' }}>
             <PanelField field="name">{signName}</PanelField>
             <PanelField field="cid" sx={{ fontFamily: ({ fonts }) => fonts.input }}>
                 {sign.cid}
@@ -83,24 +87,24 @@ const PanelRow = () => {
                 {fetched ? `# ${progress} / ${maxTimes}` : <CircularProgress size="1.5rem" />}
             </PanelField>
             <PanelField field="actions">
-                <ButtonGroup>
-                    <Button
-                        onClick={() => {
-                            void (async () => {
-                                console.log(`正在执行${signName}`);
-                                await runner.update();
-                                while (runner.data.remainingTimes > 0) {
-                                    await runner.actions[LevelAction.AWARD]?.call(runner);
-                                    await delay(50).then(() => runner.update());
-                                }
-                                await mutate();
-                            })();
-                        }}
-                    >
-                        执行
-                    </Button>
-                    <Button>查看详情</Button>
-                </ButtonGroup>
+                <IconButtonNoRipple
+                    title="启动"
+                    onClick={async () => {
+                        console.log(`正在执行${signName}`);
+                        await runner.update();
+                        while (runner.data.remainingTimes > 0) {
+                            await runner.actions[LevelAction.AWARD]?.call(runner);
+                            await delay(50).then(() => runner.update());
+                        }
+                        await mutate();
+                    }}
+                    disabled={progress === maxTimes}
+                >
+                    <PlayArrow />
+                </IconButtonNoRipple>
+                <IconButtonNoRipple title="配置">
+                    <Settings />
+                </IconButtonNoRipple>
             </PanelField>
         </SeaTableRow>
     );

@@ -12,7 +12,6 @@ import Stop from '@mui/icons-material/StopOutlined';
 import { DataLoading } from '@/components/DataLoading';
 import { SwordLine } from '@/components/icons/SwordLine';
 import { LabeledLinearProgress } from '@/components/LabeledProgress';
-import { Paper } from '@/components/styled/Paper';
 import { taskStore } from '@/features/mod/store';
 import { useMapToStore } from '@/features/mod/useModStore';
 import { type ModExportsRef } from '@/features/mod/utils';
@@ -30,6 +29,7 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
+    Paper,
     Stack,
     TextField,
     Typography,
@@ -307,22 +307,20 @@ const RunnerDetailDialog = memo(function RunnerDetailDialog({
             >
                 {title}:{' '}
             </InputLabel>
-            <Paper>
-                <TextField
-                    key={`runner-${id}-${task.metadata.name}`}
-                    id={`runner-${id}-${task.metadata.name}`}
-                    multiline
-                    aria-readonly
-                    InputProps={{
-                        readOnly: true,
-                        sx: {
-                            fontFamily: ({ fonts }) => fonts.input
-                        }
-                    }}
-                    fullWidth
-                    value={data}
-                />
-            </Paper>
+            <TextField
+                key={`runner-${id}-${task.metadata.name}`}
+                id={`runner-${id}-${task.metadata.name}`}
+                multiline
+                aria-readonly
+                InputProps={{
+                    readOnly: true,
+                    sx: {
+                        fontFamily: ({ fonts }) => fonts.input
+                    }
+                }}
+                fullWidth
+                value={data}
+            />
         </div>
     );
 
@@ -332,15 +330,7 @@ const RunnerDetailDialog = memo(function RunnerDetailDialog({
             onClose={close}
             scroll="paper"
             fullWidth
-            sx={{
-                '& .MuiPaper-root[role="dialog"]': {
-                    backgroundImage: 'none',
-                    bgcolor: ({ palette }) => palette.popup.background,
-                    backdropFilter: 'blur(4px)',
-                    minWidth: '18rem',
-                    maxWidth: '60vw'
-                }
-            }}
+            PaperProps={{ sx: { minWidth: '18rem', maxWidth: '60vw' } }}
         >
             <DialogTitle>Runner详情</DialogTitle>
             <IconButton
