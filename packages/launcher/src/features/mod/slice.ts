@@ -1,5 +1,5 @@
-import { createAppSlice } from '@/shared/createAppSlice';
 import { getCompositeId } from '@/shared/index';
+import { createAppSlice } from '@/shared/redux';
 import type { AppDispatch, AppRootState } from '@/store';
 import {
     createAction,

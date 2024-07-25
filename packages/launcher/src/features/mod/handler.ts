@@ -109,14 +109,25 @@ export class ModInstance {
 
         // 声明data的模组需要注册响应式更新以及清理函数
         if (ctx.data) {
-            const mutate = debounce(() => {
-                const inputs = { compositeId: this.compositeId, data: toRaw(ctx.data)! };
+            let timer: undefined | number;
+            const mutate = () => {
+                const inputs = { compositeId: this.compositeId, data: window.structuredClone(toRaw(ctx.data)!) };
                 void appStore.dispatch(modApi.endpoints.setData.initiate(inputs));
-            }, 1000);
+            };
+            const debounceMutate = debounce(mutate, 300);
 
             const effectRunner = effect(() => {
                 dequal(ctx.data, toRaw(ctx.data));
-                mutate();
+
+                if (timer) {
+                    debounceMutate();
+                } else {
+                    mutate();
+                }
+
+                timer = window.setTimeout(() => {
+                    timer = undefined;
+                }, 300);
             });
 
             this.addFinalizer(() => {

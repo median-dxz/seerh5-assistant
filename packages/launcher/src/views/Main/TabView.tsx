@@ -146,7 +146,7 @@ export function TabView() {
                     justifyContent: 'flex-end'
                 }}
             >
-                <Box sx={{ minHeight: '192px' }} />
+                <Box sx={{ minHeight: '172px' }} />
                 <Box
                     sx={{
                         position: 'relative',
@@ -164,10 +164,10 @@ export function TabView() {
                 </Box>
                 <Paper
                     sx={{
-                        minHeight: '96px',
+                        minHeight: '84px',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        m: 8
+                        m: 4
                     }}
                 >
                     <Typography fontSize={22} fontFamily={fonts.input}>

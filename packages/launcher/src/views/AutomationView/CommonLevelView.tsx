@@ -17,7 +17,7 @@ import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
 import type { ModExportsRef } from '@/features/mod/utils';
 import { configApi } from '@/services/config';
 import { getCompositeId, getTaskOptions } from '@/shared/index';
-import { startAppListening } from '@/shared/listenerMiddleware';
+import { startAppListening } from '@/shared/redux';
 import type { TaskRunner } from '@/shared/types';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { CircularProgress } from '@mui/material';

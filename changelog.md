@@ -17,52 +17,36 @@
 - [ ] vip自动恢复血量弹框的UI同步
 - [ ] 优化重写PanelTable, PanelTable是不是直接useMemo就行了, 奇怪的cacheReturn hook, 参考react-hook-form简化实现
 - [ ] 组件泛型，能不能简化MenuButton
-
-- [ ] QuickAccess重做，移入主界面底部
-
-  - [ ] command接口增强，也支持使用schema输入参数
-  - [ ] 命令行对于qa插件显示图标
-
-- [ ] https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-5.html#the-configdir-template-variable-for-configuration-files
-- [ ] 升级sdk的ts版本
-- [ ] (task state)使用自定义的高亮显示框代替textarea显示json
 - [ ] 战斗延迟做成可配置项
 - [ ] sdk 中 core 版本兼容性检测, 添加 core 版本字段(必填), 并规范 launcher 的 core 实例和 sdk 使用的 api 之间的关系
   - [ ] 需要一次性提供 Launcher Api 版本，Core 版本和自身版本
   - [ ] launcher api 版本和 launcher 版本之间的关系？
   - [ ] 同步server launcher mod-type的版本，保持统一 (选取三个中最新的, 同步到其他两个)
-- [ ] script 通过语法树进行高级反混淆, 暂定主要目标是升级 async/await
 - [ ] 战斗日志保存
 - [ ] 优化内置日志输出，信息输出，封装组件
-  - [ ] 全局日志接入redux，包括core
-  - [ ] 分为多个模块，引入chalk
-  - [ ] builder添加onLog，链式语法构建，用例有初始化和模组logger
 - [ ] 后端日志管理
   - [ ] rotating
-- [ ] 预置功能管理
+- [ ] sdk/预设/例子/模组发布转移到单独的仓库
+- [ ] 工作区脚手架->暂定github模板repo
+
+- [ ] QuickAccess重做，移入主界面底部
+  - [ ] command接口增强，也支持使用schema输入参数
+  - [ ] 命令行对于qa插件显示图标
+- [ ] https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-5.html#the-configdir-template-variable-for-configuration-files
+- [ ] 升级sdk的ts版本
 - [ ] 内置模组在更新时的处理
 - [ ] 日任掉线
-- [ ] 自定义背景（各种意义上？）
 - [ ] spt 扫荡
 - [ ] 作战实验室 六界扫荡 星际迷航 神兽
-- [ ] 常用配置查询
-- [ ] 精灵养成模组，每天自动养成指定精灵
+- [ ] 精灵养成模组(日签)，自动养成指定精灵
   - [ ] 自动消耗积分
   - [ ] 指定一个列表，自动选择没有达到指标的精灵进行养成
-- [ ] launcher 语法高亮模块 hljs
-- [ ] launcher 轻量配置编辑器模块，日志显示模块
-- [ ] launcher 和 server 的 logger 模块
 - [ ] 教程的 cc 共享协议
 - [ ] 删除博客功能
-- [ ] logo
 - [ ] 教程网站配色，首页，编辑
-- [ ] 由后端支持的更新 dist 文件夹进行软件更新
 - [ ] dc 群组
-- [ ] yo 工作区脚手架构建
 - [ ] 引入 changeset + 发版
-- [ ] 优化自动构建脚本
 - [ ] 搜索功能
-- [ ] sdk/预设/例子/模组发布转移到单独的仓库
 - [ ] tarui/electron 打包项目
 - [ ] 控件拖动
 - [ ] 当前面板路径
@@ -112,6 +96,7 @@
 # Core v1.1.0
 
 - [ ] LevelManager中止时的超时和强制逃跑处理
+- [ ] 断线重连后SocketConnection失效
 - [ ] 完善 pet 缓存逻辑
   - [ ] cacheMap接口优化
   - [ ] 使用Monad实现替换Proxy实现
@@ -121,10 +106,13 @@
 # 低优先级
 
 - [ ] 本地文件缓存
-- [ ] 字体设置
-- [ ] join all pet, 全局 pet 筛选
-- [x] 根组件渲染提前到 Core.init
 - [ ] jsx 外部化, import-map 共享 react
 - [ ] cookie issue
 - [ ] 在三个加载资源处都显示 总加载文件数 当前文件名 当前已下载大小/当前文件大小
-- [ ] 首屏logo
+- [ ] script 通过语法树进行高级反混淆, 暂定主要目标是升级 async/await
+- [ ] (task state)使用自定义的高亮显示框代替textarea显示json
+- [ ] 由后端支持的更新 dist 文件夹进行软件更新
+- [ ] 自定义背景（各种意义上？）
+- [ ] logo
+- [ ] 重新组织图标：更好的DX，Material Symbol，更好的代码组织
+- [ ] 使用gird重置表格组件

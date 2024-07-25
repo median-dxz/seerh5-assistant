@@ -1,4 +1,5 @@
 import type { seac } from '@sea/core';
+import { PetFragmentLevelDifficulty as Difficulty } from '@sea/core';
 
 export const VERSION = '0.9.0';
 export const CORE_VERSION: typeof seac.version = '1.0.0';
@@ -27,3 +28,10 @@ export const QueryKeys = {
     },
     taskConfig: (cid: string) => `db://taskConfig/${cid}`
 };
+
+export const DifficultyText = {
+    [Difficulty.NotSelected]: '未选择',
+    [Difficulty.Ease]: '简单',
+    [Difficulty.Normal]: '困难',
+    [Difficulty.Hard]: '地狱'
+} as const;

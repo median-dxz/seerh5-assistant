@@ -10,7 +10,7 @@ import { usePetGroups } from '@/services/config/usePetGroups';
 import { useAppDispatch } from '@/store';
 import Bookmarks from '@mui/icons-material/Bookmarks';
 import Clear from '@mui/icons-material/ClearRounded';
-import { Button, Stack, Tooltip, Typography } from '@mui/material';
+import { Button, Tooltip, Typography } from '@mui/material';
 import type { Pet } from '@sea/core';
 import { PetLocation, SEAPetStore, engine, spet } from '@sea/core';
 import React, { useCallback } from 'react';
@@ -86,13 +86,9 @@ export function ToolBar({ selected }: ToolBarProps) {
             sx={{
                 justifyContent: 'space-between'
             }}
+            spacing={0}
         >
-            <Stack
-                sx={{
-                    flexDirection: 'row'
-                }}
-                gap={2}
-            >
+            <Row sx={{ width: 'fit-content' }} spacing={2}>
                 <Button startIcon={<HpBar />} onClick={handleLowerHp}>
                     压血
                 </Button>
@@ -102,7 +98,7 @@ export function ToolBar({ selected }: ToolBarProps) {
                 <Button startIcon={<Backpack />} onClick={handleOpenBag}>
                     背包
                 </Button>
-            </Stack>
+            </Row>
 
             <PopupMenuButton
                 data={loadPets}
@@ -137,9 +133,10 @@ const PetGroupItem = React.memo(({ item: group, index, onSave, onDelete }: PetGr
     return (
         <Row
             sx={{
-                fontSize: '1rem'
+                fontSize: '1rem',
+                justifyContent: 'space-between'
             }}
-            justifyContent="space-between"
+            spacing={0}
         >
             <Tooltip title={group.length > 0 ? groupString : ''}>
                 <Typography
@@ -154,7 +151,7 @@ const PetGroupItem = React.memo(({ item: group, index, onSave, onDelete }: PetGr
                 </Typography>
             </Tooltip>
 
-            <Stack flexDirection="row" ml={2}>
+            <Row sx={{ width: 'fit-content', justifyContent: 'flex-end' }} spacing={0}>
                 <IconButton
                     onClick={(e) => {
                         e.stopPropagation();
@@ -171,7 +168,7 @@ const PetGroupItem = React.memo(({ item: group, index, onSave, onDelete }: PetGr
                 >
                     <Clear fontSize="inherit" />
                 </IconButton>
-            </Stack>
+            </Row>
         </Row>
     );
 });

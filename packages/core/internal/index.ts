@@ -1,4 +1,4 @@
-export type { SEAC, SetupOptions } from './core.js';
+export type { CoreLoader, SetupOptions } from './core.js';
 export type { SEAEngine } from './engine.js';
 export type { GameConfigQuery, GameConfigRegistryEntity } from './GameConfig.js';
 

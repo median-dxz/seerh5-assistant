@@ -16,7 +16,7 @@ import type { ModExportsRef } from '@/features/mod/utils';
 import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
 import { configApi } from '@/services/config';
 import { getTaskOptions } from '@/shared/index';
-import { startAppListening } from '@/shared/listenerMiddleware';
+import { startAppListening } from '@/shared/redux';
 import type { TaskRunner } from '@/shared/types';
 import { useAppDispatch, useAppSelector } from '@/store';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';

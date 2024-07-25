@@ -151,7 +151,7 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
             />
 
             {runner.data && isRunning && (
-                <Stack sx={{ width: '100%', overflow: 'hidden' }}>
+                <Stack sx={{ width: '100%', overflow: 'hidden' }} spacing={2}>
                     <LabeledLinearProgress
                         typographyProps={{
                             sx: {

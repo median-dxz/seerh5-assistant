@@ -1,4 +1,4 @@
-import { createAppSlice } from '@/shared/createAppSlice';
+import { createAppSlice } from '@/shared/redux';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
 export interface LauncherState {

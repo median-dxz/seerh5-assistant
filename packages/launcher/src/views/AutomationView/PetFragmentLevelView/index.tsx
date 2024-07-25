@@ -1,14 +1,15 @@
+import { Acute } from '@/components/icons/Acute';
+import Add from '@mui/icons-material/AddRounded';
+import AspectRatio from '@mui/icons-material/AspectRatioRounded';
 import Delete from '@mui/icons-material/DeleteOutlineRounded';
 import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 import Settings from '@mui/icons-material/Settings';
 
-import { Button, CircularProgress, Stack } from '@mui/material';
+import { Button, Chip, CircularProgress, Stack } from '@mui/material';
 import { engine, LevelAction } from '@sea/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import Add from '@mui/icons-material/AddRounded';
-
-import { PanelField, PanelTable, useRowData } from '@/components/PanelTable';
+import { PanelField, PanelTable, useIndex, useRowData } from '@/components/PanelTable';
 import { Row } from '@/components/styled/Row';
 import { SeaTableRow } from '@/components/styled/TableRow';
 
@@ -17,37 +18,42 @@ import { DataLoading } from '@/components/DataLoading';
 import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
 import { launcherActions } from '@/features/launcherSlice';
-import { taskStore, type TaskInstance } from '@/features/mod/store';
+import { deploymentSelectors } from '@/features/mod/slice';
+import { modStore, taskStore, type TaskInstance } from '@/features/mod/store';
 import { useMapToStore } from '@/features/mod/useModStore';
 import { type ModExportsRef } from '@/features/mod/utils';
 import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
 import { modApi } from '@/services/mod';
 import { getCompositeId } from '@/shared/index';
-import { startAppListening } from '@/shared/listenerMiddleware';
+import { startAppListening } from '@/shared/redux';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { taskViewColumns } from '../shared';
 import { AddOptionsForm } from './AddOptionsForm';
 
-const toRowKey = (data: PetFragmentOptions) => engine.getPetFragmentLevelObj(data.id)!.Desc;
+const toRowKey = (data: PetFragmentOptions) => JSON.stringify(data);
 
 export function PetFragmentLevelView() {
-    const ref = useAppSelector(({ mod: { taskRefs } }) =>
-        taskRefs.find(
-            ({ cid, key }) =>
-                cid === getCompositeId({ scope: MOD_SCOPE_BUILTIN, id: PET_FRAGMENT_LEVEL_ID }) &&
-                key === PET_FRAGMENT_LEVEL_ID
-        )
-    );
     const [addOptionsFormOpen, setOpen] = useState(false);
 
     const cid = getCompositeId({ id: PET_FRAGMENT_LEVEL_ID, scope: MOD_SCOPE_BUILTIN });
-    const { data = [], isFetching } = modApi.endpoints.data.useQuery(cid);
-    const optionsList = data as PetFragmentOptions[];
-    const task = useMapToStore(() => ref, taskStore);
+    const taskRef = useAppSelector(({ mod: { taskRefs } }) =>
+        taskRefs.find(({ cid: _cid, key }) => cid === _cid && key === PET_FRAGMENT_LEVEL_ID)
+    );
+    const deployment = useAppSelector((state) => deploymentSelectors.selectById(state, cid));
+    const modIns = useMapToStore(
+        () => (deployment.status === 'deployed' ? deployment.deploymentId : undefined),
+        modStore
+    );
+    const task = useMapToStore(() => taskRef, taskStore);
 
-    if (isFetching || !ref || !task) {
+    const { data = [], isFetching } = modApi.useDataQuery(cid);
+
+    if (isFetching || !modIns || !taskRef || !task) {
         return <DataLoading />;
     }
+
+    const modData = modIns.ctx.data as PetFragmentOptions[];
+    const optionsList = data as PetFragmentOptions[];
 
     const missingIds = optionsList.map(({ id }) => id).filter((id) => !engine.getPetFragmentLevelObj(id));
     if (missingIds.length > 0) {
@@ -79,21 +85,36 @@ export function PetFragmentLevelView() {
             <PanelTable
                 data={optionsList}
                 toRowKey={toRowKey}
-                columns={taskViewColumns}
-                rowElement={<PanelRow ref={ref} task={task} />}
+                columns={taskViewColumns.map((col) => {
+                    if (col.field === 'cid') {
+                        return { field: 'battles', columnName: '对战方案' };
+                    }
+                    return col;
+                })}
+                rowElement={
+                    <PanelRow
+                        taskRef={taskRef}
+                        task={task}
+                        remove={(index) => {
+                            modData.splice(index, 1);
+                        }}
+                    />
+                }
             />
-            <AddOptionsForm open={addOptionsFormOpen} setOpen={setOpen} />
+            <AddOptionsForm open={addOptionsFormOpen} setOpen={setOpen} modData={modData} />
         </>
     );
 }
 
 interface RowProps {
-    ref: ModExportsRef;
+    taskRef: ModExportsRef;
     task: TaskInstance;
+    remove: (index: number) => void;
 }
 
-const PanelRow = React.memo(({ ref, task }: RowProps) => {
+const PanelRow = React.memo(({ taskRef, task, remove }: RowProps) => {
     const dispatch = useAppDispatch();
+    const index = useIndex();
     const options = useRowData<PetFragmentOptions>();
     const runner = useMemo(() => task.runner(options) as IPetFragmentRunner, [options, task]);
 
@@ -115,38 +136,61 @@ const PanelRow = React.memo(({ ref, task }: RowProps) => {
         return unsubscribe;
     }, [mutate]);
 
+    const startLevel = (sweep: boolean) => () =>
+        dispatch(taskSchedulerActions.enqueue(taskRef, { ...options, sweep }, runner.name));
+
     return (
         <SeaTableRow sx={{ height: '3.3rem' }}>
             <PanelField field="name">{runner.name}</PanelField>
-            <PanelField field="cid" sx={{ fontFamily: ({ fonts }) => fonts.input }}>
-                {ref.cid}
+            <PanelField
+                field="battles"
+                sx={{
+                    fontFamily: ({ fonts }) => fonts.input
+                }}
+            >
+                <Row sx={{ overflow: 'auto', width: '15rem' }} spacing={1}>
+                    {options.battle.map((key, index) => (
+                        <Chip key={index} label={`${index + 1}-${key}`} />
+                    ))}
+                </Row>
             </PanelField>
             <PanelField field="state">
                 {fetched ? completed ? '已完成' : '未完成' : <CircularProgress size="1.5rem" />}
             </PanelField>
-            <PanelField field="actions" sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <IconButtonNoRipple
-                    title="启动"
-                    onClick={() => {
-                        dispatch(taskSchedulerActions.enqueue(ref, options, runner.name));
-                    }}
-                    disabled={completed}
-                >
-                    <PlayArrow />
-                </IconButtonNoRipple>
-                <IconButtonNoRipple title="配置">
-                    <Settings />
-                </IconButtonNoRipple>
-                <IconButtonNoRipple
-                    title="打开面板"
-                    onClick={() => {
-                        void ModuleManager.showModuleByID(151, `{Design:${runner.designId}}`);
-                        dispatch(launcherActions.closeMain());
-                    }}
-                ></IconButtonNoRipple>
-                <IconButtonNoRipple title="删除">
-                    <Delete />
-                </IconButtonNoRipple>
+            <PanelField field="actions">
+                <Row sx={{ width: '100%', justifyContent: 'center' }} spacing={1}>
+                    <IconButtonNoRipple title="启动" onClick={startLevel(false)} disabled={completed}>
+                        <PlayArrow />
+                    </IconButtonNoRipple>
+                    <IconButtonNoRipple
+                        title="扫荡"
+                        sx={{ fontSize: '1.75rem' }}
+                        onClick={startLevel(true)}
+                        disabled={completed}
+                    >
+                        <Acute />
+                    </IconButtonNoRipple>
+                    <IconButtonNoRipple
+                        title="打开面板"
+                        onClick={() => {
+                            void ModuleManager.showModuleByID(151, `{Design:${runner.designId}}`);
+                            dispatch(launcherActions.closeMain());
+                        }}
+                    >
+                        <AspectRatio />
+                    </IconButtonNoRipple>
+                    <IconButtonNoRipple title="配置">
+                        <Settings />
+                    </IconButtonNoRipple>
+                    <IconButtonNoRipple
+                        title="删除"
+                        onClick={() => {
+                            remove(index);
+                        }}
+                    >
+                        <Delete />
+                    </IconButtonNoRipple>
+                </Row>
             </PanelField>
         </SeaTableRow>
     );

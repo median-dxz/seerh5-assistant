@@ -17,7 +17,7 @@ export interface SetupOptions {
 
 const checkEnv = () => typeof window !== 'undefined' && window === window.self && typeof window.sea === 'undefined';
 
-export class SEAC {
+export class CoreLoader {
     readonly version = VERSION;
 
     private loadCalled = false;
@@ -116,4 +116,4 @@ export class SEAC {
     }
 }
 
-export const seac = new SEAC();
+export const seac = new CoreLoader();

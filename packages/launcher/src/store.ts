@@ -2,7 +2,7 @@ import { configureStore, type SerializableStateInvariantMiddlewareOptions } from
 import { setupListeners } from '@reduxjs/toolkit/query/react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { listenerMiddleware } from './shared/listenerMiddleware';
+import { listenerMiddleware } from './shared/redux';
 
 import { initializationReducer } from './features/init/initializationSlice';
 import { launcherReducer } from './features/launcherSlice';

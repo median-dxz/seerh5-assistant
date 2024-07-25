@@ -129,7 +129,7 @@ export function InstallFromLocalForm() {
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',
-                        alignItems: 'left',
+                        alignItems: 'flex-start',
                         gap: 4
                     }}
                 >

@@ -1,6 +1,6 @@
 import type { PanelColumns } from '@/components/PanelTable';
 
-export const taskViewColumns: PanelColumns = [
+export const taskViewColumns = [
     {
         field: 'name',
         columnName: '名称'
@@ -11,10 +11,10 @@ export const taskViewColumns: PanelColumns = [
     },
     {
         field: 'state',
-        columnName: '完成状态'
+        columnName: '状态'
     },
     {
         field: 'actions',
         columnName: '操作'
     }
-];
+] as const satisfies PanelColumns;

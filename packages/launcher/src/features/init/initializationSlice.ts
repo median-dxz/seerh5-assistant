@@ -1,11 +1,14 @@
+import { createAction, type PayloadAction } from '@reduxjs/toolkit';
+
+import * as seaCore from '@sea/core';
+import { seac, type SetupOptions } from '@sea/core';
+
 import { IS_DEV } from '@/constants';
 import { modApi } from '@/services/mod';
-import { createAppSlice } from '@/shared/createAppSlice';
 import { getCompositeId } from '@/shared/index';
-import { startAppListening } from '@/shared/listenerMiddleware';
+import { createAppSlice, startAppListening } from '@/shared/redux';
 import type { AppDispatch } from '@/store';
-import { createAction, type PayloadAction } from '@reduxjs/toolkit';
-import { seac, type SetupOptions } from '@sea/core';
+
 import * as ctService from '../catchTimeBinding/index';
 import { deploymentSelectors, modActions, type ModDeployment } from '../mod/slice';
 import { preloadSetupMap, setupMap, type SetupMap } from './setup';
@@ -39,7 +42,7 @@ const filterToDeploy = ({ state, status, isDeploying }: ModDeployment) =>
 const filterNotPreload = (dep: ModDeployment) => !dep.state.preload && filterToDeploy(dep);
 const filterPreload = (dep: ModDeployment) => dep.state.preload && filterToDeploy(dep);
 
-const SEALInitialization = createAction('SEAL/internal/init');
+const init = createAction('SEAL/internal/init');
 
 const initializationSlice = createAppSlice({
     name: 'initialization',
@@ -73,9 +76,19 @@ const unsubscribeLoadingItem = startAppListening({
 });
 
 startAppListening({
-    actionCreator: SEALInitialization,
+    actionCreator: init,
     async effect(_, api) {
         api.unsubscribe();
+
+        // register service worker
+        if ('serviceWorker' in navigator) {
+            await navigator.serviceWorker.register(!IS_DEV ? '/sw.js' : '/dev-sw.js?dev-sw');
+        }
+
+        // setup sea core for development environment
+        seac.devMode = IS_DEV;
+        window.sea = { ...window.sea, ...seaCore };
+
         const ac = new AbortController();
         seac.abortGameLoadSignal = ac.signal;
 
@@ -190,4 +203,4 @@ startAppListening({
 });
 
 export const initializationReducer = initializationSlice.reducer;
-export const initializationActions = { ...initializationSlice.actions, SEALInitialization };
+export const initializationActions = { ...initializationSlice.actions, init };

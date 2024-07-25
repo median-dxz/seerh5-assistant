@@ -1,4 +1,4 @@
-import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID, VERSION } from '@/constants';
+import { DifficultyText, MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID, VERSION } from '@/constants';
 import {
     PetFragmentLevelDifficulty as Difficulty,
     LevelAction,
@@ -27,7 +27,7 @@ export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
 
     class PetFragmentRunner implements IPetFragmentRunner {
         get name() {
-            return `精灵因子-${this.frag.name}`;
+            return `精灵因子-${this.frag.name.split(' ')[1]}: ${DifficultyText[this.options.difficulty]}`;
         }
 
         readonly designId: number;
@@ -36,7 +36,7 @@ export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
         data: PetFragmentLevelData;
         logger = logger;
 
-        constructor(public options: PetFragmentOptions) {
+        constructor(public options: PetFragmentOptions & { sweep: boolean }) {
             const LevelObj = engine.getPetFragmentLevelObj(options.id);
 
             if (!LevelObj) throw new Error(`未找到精灵因子关卡: ${options.id}`);
@@ -122,8 +122,8 @@ export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
     const tasks = [
         task({
             metadata: taskMetadata,
-            runner(options) {
-                return new PetFragmentRunner(options as unknown as PetFragmentOptions);
+            runner(options: never) {
+                return new PetFragmentRunner(options);
             }
         })
     ];
