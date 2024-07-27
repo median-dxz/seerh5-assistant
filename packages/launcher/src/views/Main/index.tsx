@@ -1,6 +1,6 @@
 import ElectricBolt from '@mui/icons-material/ElectricBolt';
 import { Backdrop, alpha, type ButtonProps } from '@mui/material';
-import React, { type PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
 
 import { HexagonalButton } from '@/components/styled/HexagonalButton';
 import { TabRouterProvider } from '@/context/TabRouterProvider';

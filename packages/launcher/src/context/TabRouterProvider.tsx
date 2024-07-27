@@ -1,4 +1,5 @@
-import React, { useCallback, useState, type PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
+import { useCallback, useState } from 'react';
 
 import { TabRouter, type ViewNode } from '@/context/useTabRouter';
 

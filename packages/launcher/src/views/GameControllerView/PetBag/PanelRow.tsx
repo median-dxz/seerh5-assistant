@@ -12,7 +12,7 @@ import VerticalAlignTop from '@mui/icons-material/VerticalAlignTop';
 import { Box, Checkbox, Popover, Stack, Typography } from '@mui/material';
 import type { Pet } from '@sea/core';
 import { GameConfigRegistry, delay, engine, spet } from '@sea/core';
-import React, { useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 
 interface PanelRowProps {
     isFetching: boolean;

@@ -2,7 +2,6 @@ import { deploymentSelectors, modActions } from '@/features/mod/slice';
 import { getCompositeId } from '@/shared/index';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { Box, Button, alpha } from '@mui/material';
-import React from 'react';
 
 export function Header() {
     const dispatch = useAppDispatch();

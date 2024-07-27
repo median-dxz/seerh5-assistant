@@ -9,7 +9,7 @@ import { launcherReducer } from './features/launcherSlice';
 import { modReducer } from './features/mod/slice';
 import { taskSchedulerReducer } from './features/taskSchedulerSlice';
 
-import { configApi } from './services/config';
+import { dataApi } from './services/data';
 import { gameApi } from './services/game';
 import { modApi } from './services/mod';
 
@@ -20,7 +20,7 @@ export const appStore = configureStore({
         initialization: initializationReducer,
         mod: modReducer,
         [modApi.reducerPath]: modApi.reducer,
-        [configApi.reducerPath]: configApi.reducer,
+        [dataApi.reducerPath]: dataApi.reducer,
         [gameApi.reducerPath]: gameApi.reducer
     },
     middleware: (getDefaultMiddleware) =>
@@ -36,7 +36,7 @@ export const appStore = configureStore({
             } satisfies SerializableStateInvariantMiddlewareOptions
         })
             .prepend(listenerMiddleware.middleware)
-            .concat(modApi.middleware, configApi.middleware, gameApi.middleware)
+            .concat(modApi.middleware, dataApi.middleware, gameApi.middleware)
 });
 
 setupListeners(appStore.dispatch);

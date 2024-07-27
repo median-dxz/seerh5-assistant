@@ -7,7 +7,8 @@ import Settings from '@mui/icons-material/Settings';
 
 import { Button, Chip, CircularProgress, Stack } from '@mui/material';
 import { engine, LevelAction } from '@sea/core';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import * as React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { PanelField, PanelTable, useIndex, useRowData } from '@/components/PanelTable';
 import { Row } from '@/components/styled/Row';

@@ -1,6 +1,6 @@
 import MenuOpen from '@mui/icons-material/MenuOpen';
 import { SpeedDialAction, SvgIcon, type SpeedDialActionProps, type SpeedDialProps } from '@mui/material';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import type { AnyFunction } from '@sea/core';
 

@@ -22,7 +22,6 @@ export const lowerHp = async (
     hpLimit = 200
 ): Promise<void> => {
     pets = pets.slice(0, 6);
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!pets || pets.length === 0) {
         return;
     }

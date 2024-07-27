@@ -1,4 +1,4 @@
-import React from 'react';
+import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 
 import Launcher from './App';
@@ -11,10 +11,10 @@ import { appStore } from './store';
 appStore.dispatch(initializationActions.init());
 
 ReactDOM.createRoot(document.getElementById('sea-launcher')!).render(
-    <React.StrictMode>
+    <StrictMode>
         <ApplicationContext>
             <InitializationView />
             <Launcher />
         </ApplicationContext>
-    </React.StrictMode>
+    </StrictMode>
 );

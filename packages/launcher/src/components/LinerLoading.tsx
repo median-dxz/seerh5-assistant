@@ -1,5 +1,4 @@
 import { Box, LinearProgress, type BoxProps } from '@mui/material';
-import React from 'react';
 
 export const LinerLoading = ({ sx }: BoxProps) => (
     <Box

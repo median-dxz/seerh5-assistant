@@ -1,5 +1,4 @@
 import { Stack } from '@mui/material';
-import React from 'react';
 
 import { Header } from './Header';
 import { ModList } from './ModList';

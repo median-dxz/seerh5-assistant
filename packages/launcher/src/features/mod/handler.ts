@@ -4,7 +4,7 @@ import { effect, reactive, stop, toRaw } from '@vue/reactivity';
 import dayjs from 'dayjs';
 import { dequal } from 'dequal';
 
-import { trpcClient } from '@/services/endpointsBase';
+import { trpcClient } from '@/services/base';
 import { modApi } from '@/services/mod';
 import { buildDefaultConfig, getCompositeId } from '@/shared/index';
 import { LauncherLoggerBuilder } from '@/shared/logger';
@@ -109,9 +109,9 @@ export class ModInstance {
 
         // 声明data的模组需要注册响应式更新以及清理函数
         if (ctx.data) {
-            let timer: undefined | number;
+            let timer: number | undefined;
             const mutate = () => {
-                const inputs = { compositeId: this.compositeId, data: window.structuredClone(toRaw(ctx.data)!) };
+                const inputs = { compositeId: this.compositeId, data: structuredClone(toRaw(ctx.data)!) };
                 void appStore.dispatch(modApi.endpoints.setData.initiate(inputs));
             };
             const debounceMutate = debounce(mutate, 300);
@@ -125,7 +125,7 @@ export class ModInstance {
                     mutate();
                 }
 
-                timer = window.setTimeout(() => {
+                timer = setTimeout(() => {
                     timer = undefined;
                 }, 300);
             });

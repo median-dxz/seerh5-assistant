@@ -1,19 +1,21 @@
 import { z } from 'zod';
-import { SEASConfigData } from '../shared/SEASConfigData.ts';
+import { SEASConfigHandler } from '../shared/SEASConfigHandler.ts';
 
 export const LauncherConfigKeys = ['PetGroups'] as const;
 
 export const PetGroupsSchema = z.array(z.array(z.number())).length(7);
 
-const defaultConfig = {
-    PetGroups: [[], [], [], [], [], [], []] as z.infer<typeof PetGroupsSchema>
-} as const;
+const defaultConfig: {
+    PetGroups: z.infer<typeof PetGroupsSchema>;
+} = {
+    PetGroups: [[], [], [], [], [], [], []]
+};
 
 export type LauncherConfigType = typeof defaultConfig;
 
-class LauncherConfig extends SEASConfigData<LauncherConfigType> {
-    async loadWithDefault(configFile: string) {
-        return super.loadWithDefault(configFile, defaultConfig);
+export class LauncherConfig extends SEASConfigHandler<LauncherConfigType> {
+    async load() {
+        return super.load(defaultConfig);
     }
 
     async item<TKey extends keyof LauncherConfigType>(key: TKey) {
@@ -27,5 +29,3 @@ class LauncherConfig extends SEASConfigData<LauncherConfigType> {
         });
     }
 }
-
-export const launcherConfig = new LauncherConfig();

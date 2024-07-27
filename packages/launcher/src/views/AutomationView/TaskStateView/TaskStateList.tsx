@@ -7,7 +7,7 @@ import HourglassEmptyRounded from '@mui/icons-material/HourglassEmptyRounded';
 import Pending from '@mui/icons-material/PendingOutlined';
 import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 import RestartAlt from '@mui/icons-material/RestartAltRounded';
-import Stop from '@mui/icons-material/StopOutlined';
+import Stop from '@mui/icons-material/StopRounded';
 
 import { DataLoading } from '@/components/DataLoading';
 import { SwordLine } from '@/components/icons/SwordLine';
@@ -37,7 +37,8 @@ import {
     type ListProps
 } from '@mui/material';
 import dayjs from 'dayjs';
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import * as React from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const { abortCurrentRunner, dequeue, enqueue } = taskSchedulerActions;
 
@@ -82,7 +83,7 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
     useEffect(() => {
         let timer: number | undefined;
         if (isRunning) {
-            timer = window.setInterval(() => {
+            timer = setInterval(() => {
                 setNow(Date.now());
             }, 1000);
         }
@@ -278,7 +279,7 @@ export interface RunnerDetailDialogProps {
     taskRef: ModExportsRef;
 }
 
-const RunnerDetailDialog = memo(function RunnerDetailDialog({
+const RunnerDetailDialog = React.memo(function RunnerDetailDialog({
     open,
     close,
     taskState,

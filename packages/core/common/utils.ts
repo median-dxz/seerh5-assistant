@@ -22,7 +22,7 @@ export function debounce<F extends AnyFunction>(func: F, time: number) {
     let timer: number | undefined;
     return function (this: unknown, ...args: Parameters<F>) {
         timer && clearTimeout(timer);
-        timer = window.setTimeout(() => {
+        timer = setTimeout(() => {
             func.apply(this, args);
         }, time);
     };
@@ -34,7 +34,7 @@ export function throttle<F extends AnyFunction>(func: F, time: number) {
     return function (this: unknown, ...args: Parameters<F>) {
         if (timer) return;
         func.apply(this, args);
-        timer = window.setTimeout(() => {
+        timer = setTimeout(() => {
             clearTimeout(timer);
             timer = undefined;
         }, time);

@@ -3,7 +3,7 @@ import { catchTime } from './catchTime.ts';
 import { launcher } from './launcher.ts';
 import { task } from './task.ts';
 
-export const configRouter = router({
+export const dataRouter = router({
     launcher,
     catchTime,
     task

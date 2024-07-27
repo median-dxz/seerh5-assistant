@@ -75,8 +75,8 @@ afterAll(() => {
 
 describe.sequential('levelManagerTest', () => {
     class NoBattleLevelRunner implements LevelRunner {
-        actions!: Record<string, (this: LevelRunner) => Promise<void>>;
-        data!: object;
+        actions: Record<string, (this: LevelRunner) => Promise<void>>;
+        data: object;
 
         logger(): any {}
 

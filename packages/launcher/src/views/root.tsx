@@ -1,5 +1,4 @@
 import type { ViewNode } from '@/context/useTabRouter';
-import React from 'react';
 
 import { GameController } from './GameControllerView';
 

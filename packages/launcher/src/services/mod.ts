@@ -1,17 +1,10 @@
-import { IS_DEV, MOD_BUILTIN_UPDATE_STRATEGY, MOD_SCOPE_BUILTIN, QueryKeys, VERSION } from '@/constants';
+import { IS_DEV, MOD_BUILTIN_UPDATE_STRATEGY, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
 import { buildDefaultConfig } from '@/shared';
 import { createApi } from '@reduxjs/toolkit/query/react';
 import type { SEAModMetadata } from '@sea/mod-type';
 import type { InstallModOptions } from '@sea/server';
 import superjson from 'superjson';
-import {
-    baseQuery,
-    optionalTags,
-    trpcClient,
-    type CommonResponse,
-    type TRpcArgs,
-    type TRpcResponse
-} from './endpointsBase';
+import { baseQuery, optionalTags, trpcClient, type CommonResponse, type TRpcArgs, type TRpcResponse } from './base';
 
 import type { ModFactory } from '@/features/mod/handler';
 import { ModMetadataSchema } from '@/features/mod/schemas';
@@ -156,7 +149,7 @@ export const modApi = createApi({
 
         data: build.query<TRpcResponse<typeof modRouter.data.query>, TRpcArgs<typeof modRouter.data.query>>({
             query: (compositeId) => async () => modRouter.data.query(compositeId),
-            providesTags: (r, e, cid) => optionalTags(r, [{ type: 'Data', id: QueryKeys.mod.data(cid) } as const])
+            providesTags: (r, e, cid) => optionalTags(r, [{ type: 'Data', id: cid } as const])
         }),
 
         setData: build.mutation<
@@ -172,16 +165,16 @@ export const modApi = createApi({
                 const patchResult = dispatch(modApi.util.updateQueryData('data', compositeId, () => data));
                 try {
                     await queryFulfilled;
-                } catch {
+                } catch (e) {
                     patchResult.undo();
-                    dispatch(modApi.util.invalidateTags([{ type: 'Data', id: QueryKeys.mod.data(compositeId) }]));
+                    dispatch(modApi.util.invalidateTags([{ type: 'Data', id: compositeId }]));
                 }
             }
         }),
 
         config: build.query<TRpcResponse<typeof modRouter.config.query>, TRpcArgs<typeof modRouter.config.query>>({
             query: (compositeId) => async () => modRouter.config.query(compositeId),
-            providesTags: (r, e, cid) => optionalTags(r, [{ type: 'Config', id: QueryKeys.mod.config(cid) } as const])
+            providesTags: (r, e, cid) => optionalTags(r, [{ type: 'Config', cid } as const])
         }),
 
         setConfig: build.mutation<
@@ -192,7 +185,7 @@ export const modApi = createApi({
                 ({ compositeId, data }) =>
                 async () =>
                     modRouter.setConfig.mutate({ compositeId, data }),
-            invalidatesTags: (r, e, { compositeId }) => [{ type: 'Config', id: QueryKeys.mod.config(compositeId) }]
+            invalidatesTags: (r, e, { compositeId }) => [{ type: 'Config', id: compositeId }]
         })
     })
 });

@@ -2,9 +2,9 @@
   "extends": "../../tsconfig.common.json",
   "compilerOptions": {
     "module": "nodenext",
+    "moduleResolution": "nodenext",
     "outDir": "dist",
-    "rootDir": ".",
-    "baseUrl": ".",
+    "baseUrl": "./",
     "tsBuildInfoFile": "../../.tsbuildinfo/core.tsbuildinfo",
     "declaration": true,
     "inlineSourceMap": true,

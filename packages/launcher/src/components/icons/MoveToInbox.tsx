@@ -1,9 +1,8 @@
 import { SvgIcon } from '@mui/material';
-import React from 'react';
 
 export function MoveToInbox() {
     return (
-        <SvgIcon fontSize='inherit'>
+        <SvgIcon fontSize="inherit">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                 <g fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1.5">
                     <path strokeLinejoin="round" d="M12 2v8m0 0l3-3m-3 3L9 7" />

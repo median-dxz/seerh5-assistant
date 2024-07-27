@@ -1,6 +1,5 @@
 import type { LinearProgressProps, TypographyProps } from '@mui/material';
 import { LinearProgress, Stack, Typography } from '@mui/material';
-import React from 'react';
 
 type LabeledProgressProps = LinearProgressProps & {
     prompt?: string;

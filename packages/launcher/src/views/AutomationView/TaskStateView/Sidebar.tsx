@@ -6,7 +6,6 @@ import { Row } from '@/components/styled/Row';
 import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { Button, Chip, Paper, Stack, Typography } from '@mui/material';
-import React from 'react';
 
 const StatusTextMap = {
     idle: '就绪',

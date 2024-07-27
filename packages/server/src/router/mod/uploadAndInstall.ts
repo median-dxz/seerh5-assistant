@@ -7,10 +7,14 @@ import { pipeline } from 'node:stream/promises';
 import superjson from 'superjson';
 import { z } from 'zod';
 import { modsRoot } from '../../paths.ts';
-import { ModManager } from './manager.ts';
+
+import type { ModManager } from './manager.ts';
 import { InstallModOptionsSchema } from './schemas.ts';
 
-export const modUploadAndInstallRouter: FastifyPluginAsync<never> = async (server) => {
+export const modUploadAndInstallRouter: FastifyPluginAsync<{ modManager: ModManager }> = async (
+    server,
+    { modManager }
+) => {
     await server.register(fastifyMultipart, {
         attachFieldsToBody: 'keyValues',
 
@@ -40,7 +44,7 @@ export const modUploadAndInstallRouter: FastifyPluginAsync<never> = async (serve
             const { cid } = req.query;
             const data = options.data == undefined ? undefined : superjson.parse<object>(options.data);
 
-            const r = await ModManager.install(cid, { ...options, data });
+            const r = await modManager.install(cid, { ...options, data });
             return res.code(200).send(r);
         }
     );

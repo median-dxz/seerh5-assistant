@@ -1,5 +1,5 @@
-import { alpha, createTheme, darken, lighten } from '@mui/material';
 import { deepPurple } from '@mui/material/colors';
+import { alpha, createTheme, darken, lighten } from '@mui/material/styles';
 
 declare module '@mui/material/styles' {
     interface Palette {
@@ -214,21 +214,18 @@ export const theme = createTheme({
         },
         MuiOutlinedInput: {
             styleOverrides: {
-                root: ({ theme: { transitions } }) => ({
+                root: ({ theme: { transitions, palette } }) => ({
                     '& .MuiOutlinedInput-notchedOutline': {
                         transition: transitions.create(['border-color'])
                     },
-                    '&.Mui-disabled .MuiOutlinedInput-notchedOutline': {
-                        border: `1px solid ${alpha(colors.text, 0.12)}`
-                    },
-                    '&.Mui-disabled:hover .MuiOutlinedInput-notchedOutline': {
-                        border: `1px solid ${alpha(colors.text, 0.12)}`
+                    '& input[disabled] ~ .MuiOutlinedInput-notchedOutline': {
+                        border: `1px solid ${alpha(palette.text.primary, 0.12)}`
                     },
                     '&:hover .MuiOutlinedInput-notchedOutline': {
-                        border: `1px solid ${alpha(colors.text, 0.48)}`
+                        border: `1px solid ${alpha(palette.text.primary, 0.48)}`
                     },
                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        border: `1px solid ${alpha(colors.primary, 0.64)}`
+                        border: `1px solid ${alpha(palette.primary.main, 0.64)}`
                     }
                 })
             }

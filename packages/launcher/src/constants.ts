@@ -21,14 +21,6 @@ export const PET_FRAGMENT_LEVEL_ID = 'PetFragmentLevel';
 
 export const MOD_BUILTIN_UPDATE_STRATEGY: 'always' | 'never' | 'version' = 'always';
 
-export const QueryKeys = {
-    mod: {
-        data: (cid: string) => `db//mod/data/${cid}`,
-        config: (cid: string) => `db//mod/config/${cid}`
-    },
-    taskConfig: (cid: string) => `db://taskConfig/${cid}`
-};
-
 export const DifficultyText = {
     [Difficulty.NotSelected]: '未选择',
     [Difficulty.Ease]: '简单',

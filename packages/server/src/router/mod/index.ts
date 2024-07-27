@@ -1,48 +1,65 @@
 import { z } from 'zod';
 
-import { modIndexes } from '../../data/ModIndexes.ts';
 import { getCompositeId } from '../../shared/index.ts';
 import { DateObjectSchema } from '../../shared/schemas.ts';
 
 import { procedure, router } from '../trpc.ts';
-import { ModManager } from './manager.ts';
 import { InstallModOptionsSchema } from './schemas.ts';
 
 export const modRouter = router({
-    modList: procedure.query(modIndexes.stateList.bind(modIndexes)),
-
-    config: procedure.input(z.string()).query(({ input }) => {
-        const compositeId = input;
-        return ModManager.config(compositeId);
+    modList: procedure.query(({ ctx }) => {
+        const { modManager } = ctx;
+        return modManager.index.stateList();
     }),
 
-    setConfig: procedure.input(z.object({ compositeId: z.string(), data: DateObjectSchema })).mutation(({ input }) => {
-        const { data, compositeId } = input;
-        return ModManager.saveConfig(compositeId, data);
+    config: procedure.input(z.string()).query(({ input, ctx }) => {
+        const cid = input;
+        const { modManager } = ctx;
+        return modManager.config(cid);
     }),
 
-    data: procedure.input(z.string()).query(({ input }) => {
-        const compositeId = input;
-        return ModManager.data(compositeId);
+    setConfig: procedure
+        .input(z.object({ compositeId: z.string(), data: DateObjectSchema }))
+        .mutation(({ input, ctx }) => {
+            const { data, compositeId } = input;
+            const { modManager } = ctx;
+            return modManager.saveConfig(compositeId, data);
+        }),
+
+    data: procedure.input(z.string()).query(({ input, ctx }) => {
+        const cid = input;
+        const { modManager } = ctx;
+        return modManager.data(cid);
     }),
 
-    saveData: procedure.input(z.object({ compositeId: z.string(), data: DateObjectSchema })).mutation(({ input }) => {
-        const { compositeId, data } = input;
-        return ModManager.saveData(compositeId, data);
-    }),
+    saveData: procedure
+        .input(z.object({ compositeId: z.string(), data: DateObjectSchema }))
+        .mutation(({ input, ctx }) => {
+            const { compositeId, data } = input;
+            const { modManager } = ctx;
+            return modManager.saveData(compositeId, data);
+        }),
 
     install: procedure
         .input(z.object({ scope: z.string(), id: z.string(), options: InstallModOptionsSchema }))
-        .mutation(({ input }) => {
+        .mutation(({ input, ctx }) => {
             const { scope, id, options } = input;
+            const { modManager } = ctx;
             // ATTENTION: this endpoint is for builtin mods ONLY
-            return ModManager.install(getCompositeId(scope, id), options);
+            return modManager.install(getCompositeId(scope, id), options);
         }),
 
-    setEnable: procedure.input(z.object({ compositeId: z.string(), enable: z.boolean() })).mutation(({ input }) => {
-        const { compositeId, enable } = input;
-        return ModManager.setEnable(compositeId, enable);
-    }),
+    setEnable: procedure
+        .input(z.object({ compositeId: z.string(), enable: z.boolean() }))
+        .mutation(({ input, ctx }) => {
+            const { compositeId, enable } = input;
+            const { modManager } = ctx;
+            return modManager.setEnable(compositeId, enable);
+        }),
 
-    uninstall: procedure.mutation(() => ModManager.uninstall())
+    uninstall: procedure.input(z.string()).mutation(({ input, ctx }) => {
+        const cid = input;
+        const { modManager } = ctx;
+        return modManager.uninstall(cid);
+    })
 });

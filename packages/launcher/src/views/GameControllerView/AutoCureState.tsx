@@ -3,7 +3,6 @@ import { gameApi } from '@/services/game';
 import { CircularProgress, Paper, Switch, Typography } from '@mui/material';
 import { engine } from '@sea/core';
 import type { ChangeEvent } from 'react';
-import React from 'react';
 
 export function AutoCureState() {
     const { data: autoCure = false, isLoading } = gameApi.useAutoCureQuery();
@@ -14,7 +13,11 @@ export function AutoCureState() {
 
     return (
         <Paper sx={{ p: 4 }}>
-            <Row justifyContent="space-between">
+            <Row
+                sx={{
+                    justifyContent: 'space-between'
+                }}
+            >
                 <Typography>自动治疗</Typography>
                 {!isLoading ? (
                     <Switch

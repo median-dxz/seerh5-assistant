@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Grid } from '@mui/material';
 
 import { AnimationMode } from './AnimationMode';

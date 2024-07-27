@@ -1,6 +1,6 @@
 import { alpha, Box, Fade, Paper, Stack, Tabs, Typography, useTheme } from '@mui/material';
 import { seac } from '@sea/core';
-import React, { forwardRef, type ReactElement } from 'react';
+import { forwardRef, type ReactElement } from 'react';
 import { SwitchTransition } from 'react-transition-group';
 
 import { VERSION } from '@/constants';

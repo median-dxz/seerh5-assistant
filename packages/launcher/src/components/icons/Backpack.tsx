@@ -1,5 +1,4 @@
 import { SvgIcon } from '@mui/material';
-import React from 'react';
 
 export const Backpack = () => (
     <SvgIcon fontSize="inherit">

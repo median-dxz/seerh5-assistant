@@ -12,10 +12,12 @@ import {
     DialogContent,
     DialogTitle,
     FormControl,
+    FormControlLabel,
     InputLabel,
     MenuItem,
     Select,
     Stack,
+    Switch,
     TextField,
     Typography
 } from '@mui/material';
@@ -49,12 +51,15 @@ const validatePrimitive = (value: number | string) => {
     return value.trim() !== '';
 };
 
+const AllDifficulty = [Difficulty.Ease, Difficulty.Normal, Difficulty.Hard];
+
 export function AddOptionsForm({ open, setOpen, modData }: AddOptionsFormProps) {
     const { enqueueSnackbar } = useSnackbar();
     const { control, handleSubmit, watch, reset } = useForm<PetFragmentOptions>({
         defaultValues: {
             id: NaN,
             difficulty: Difficulty.Ease,
+            sweep: false,
             battle: []
         }
     });
@@ -73,9 +78,7 @@ export function AddOptionsForm({ open, setOpen, modData }: AddOptionsFormProps) 
         [setOpen, reset]
     );
 
-    const AllDifficulty = [Difficulty.Ease, Difficulty.Normal, Difficulty.Hard];
-    // const = watch(level)
-    // 检查因子子关卡数量
+    const isSweep = watch('sweep');
 
     return (
         <Dialog
@@ -86,7 +89,7 @@ export function AddOptionsForm({ open, setOpen, modData }: AddOptionsFormProps) 
                 component: 'form',
                 onSubmit: handleSubmit((newData) => {
                     if (!toRaw(modData).some((data) => dequal(data, newData))) {
-                        modData.push(newData);
+                        modData.push({ ...newData, battle: newData.battle ?? [] });
                         handleClose();
                     } else {
                         reset({ ...newData, battle: [] });
@@ -98,35 +101,35 @@ export function AddOptionsForm({ open, setOpen, modData }: AddOptionsFormProps) 
             <DialogTitle>添加精灵因子配置</DialogTitle>
             <DialogContent>
                 <Stack sx={{ pt: 2 }} direction="column">
-                    <Row sx={{ alignItems: 'flex-start' }}>
-                        <Controller
-                            control={control}
-                            name="id"
-                            rules={{
-                                validate: (value) => validatePrimitive(value) || '请选择一个因子关卡'
-                            }}
-                            render={({ field, fieldState }) => (
-                                <Autocomplete<PetFragmentLevel | null>
-                                    {...field}
-                                    fullWidth
-                                    onChange={(_, value) => {
-                                        field.onChange(value?.id ?? NaN);
-                                    }}
-                                    value={petFragmentLevelList.find((pf) => pf.id === field.value) ?? null}
-                                    autoComplete
-                                    renderInput={(params) => (
-                                        <TextField
-                                            {...params}
-                                            inputProps={{ ...params.inputProps, autoComplete: 'off' }}
-                                            label="因子"
-                                            helperText={fieldState.error?.message}
-                                        />
-                                    )}
-                                    options={petFragmentLevelList.sort((a, b) => b.id - a.id)}
-                                    getOptionLabel={(pf) => (pf ? pf.name.split(' ')[1] : '')}
-                                />
-                            )}
-                        />
+                    <Controller
+                        control={control}
+                        name="id"
+                        rules={{
+                            validate: (value) => validatePrimitive(value) || '请选择一个因子关卡'
+                        }}
+                        render={({ field, fieldState }) => (
+                            <Autocomplete<PetFragmentLevel | null>
+                                {...field}
+                                fullWidth
+                                onChange={(_, value) => {
+                                    field.onChange(value?.id ?? NaN);
+                                }}
+                                value={petFragmentLevelList.find((pf) => pf.id === field.value) ?? null}
+                                autoComplete
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        inputProps={{ ...params.inputProps, autoComplete: 'off' }}
+                                        label="因子"
+                                        helperText={fieldState.error?.message}
+                                    />
+                                )}
+                                options={petFragmentLevelList.sort((a, b) => b.id - a.id)}
+                                getOptionLabel={(pf) => (pf ? pf.name.split(' ')[1] : '')}
+                            />
+                        )}
+                    />
+                    <Row sx={{ alignItems: 'center' }}>
                         <Controller
                             control={control}
                             name="difficulty"
@@ -155,9 +158,15 @@ export function AddOptionsForm({ open, setOpen, modData }: AddOptionsFormProps) 
                                 </FormControl>
                             )}
                         />
+                        <Controller
+                            control={control}
+                            name="sweep"
+                            render={({ field }) => <FormControlLabel {...field} control={<Switch />} label="扫荡" />}
+                        />
                     </Row>
                     <Controller
                         control={control}
+                        disabled={isSweep}
                         name="battle"
                         rules={{
                             validate: (value) => value.length === 7 || '对战方案数量和关卡不一致'
@@ -178,7 +187,7 @@ export function AddOptionsForm({ open, setOpen, modData }: AddOptionsFormProps) 
     );
 }
 
-const PFBattleSelector = forwardRef(function (
+const PFBattleSelector = forwardRef(function PFBattleSelector(
     {
         onChange,
         value,
@@ -210,7 +219,6 @@ const PFBattleSelector = forwardRef(function (
                 renderInput={(params) => (
                     <TextField
                         {...params}
-                        disabled={false}
                         InputProps={{
                             ...params.InputProps
                         }}

@@ -79,7 +79,6 @@ export default () => {
                 id = id.hashCode;
             }
             const popView = this.__viewMap__['key_' + id.toString()];
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (popView) {
                 resolve((Object.getPrototypeOf(popView) as WithClass<PopView>).__class__);
             }

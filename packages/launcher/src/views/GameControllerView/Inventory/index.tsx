@@ -1,5 +1,5 @@
 import { Divider, Paper, Stack } from '@mui/material';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 
 import { Selector } from './Selector';
 

@@ -1,5 +1,5 @@
+import { trpcClient } from '@/services/base';
 import { PetPosType, SEAPetStore } from '@sea/core';
-import * as endpoints from '../../services/endpoints';
 
 const JIM_ID = 3582;
 
@@ -22,7 +22,7 @@ async function sync() {
     data1.filter(petFilter).forEach(mapping);
     data2.forEach(mapping);
 
-    await endpoints.updateAllCatchTime(store);
+    await updateAllCatchTime(store);
 }
 
 /**
@@ -31,7 +31,7 @@ async function sync() {
 async function load() {
     store.clear();
     lookup.clear();
-    store = await endpoints.queryCatchTime();
+    store = await queryCatchTime();
     store.forEach((value, key) => lookup.set(value, key));
 }
 
@@ -67,3 +67,15 @@ function nameBindingByCt(ct: number) {
 }
 
 export { add, ctByName, load, nameBindingByCt, remove, sync };
+const { dataRouter: configRouter } = trpcClient;
+
+export async function queryCatchTime(name: string): Promise<[string, number]>;
+export async function queryCatchTime(): Promise<Map<string, number>>;
+export async function queryCatchTime(name?: string) {
+    return configRouter.catchTime.all.query(name);
+}
+export const updateAllCatchTime = async (data: Map<string, number>) => configRouter.catchTime.mutate.mutate(data);
+
+export const deleteCatchTime = async (name: string) => configRouter.catchTime.delete.mutate(name);
+
+export const addCatchTime = async (name: string, time: number) => configRouter.catchTime.set.mutate([name, time]);

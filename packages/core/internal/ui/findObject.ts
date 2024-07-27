@@ -14,7 +14,6 @@ export function findObject<T>(
     const root = LevelManager.stage;
 
     function find(parent: egret.DisplayObject) {
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (parent.$children == null) {
             return [];
         }

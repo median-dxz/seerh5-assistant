@@ -1,6 +1,6 @@
 import type { TableCellProps, TableProps } from '@mui/material';
 import { Table, TableBody, TableCell, TableHead, TableRow, alpha } from '@mui/material';
-import React from 'react';
+import * as React from 'react';
 
 import { useCachedReturn } from '@/shared/hooks';
 import { RowDataContext, RowIndexContext } from './usePanelTableData';

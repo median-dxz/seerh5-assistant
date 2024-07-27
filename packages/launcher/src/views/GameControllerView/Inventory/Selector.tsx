@@ -1,6 +1,7 @@
 import { Box, Grid, styled, Tooltip, Typography } from '@mui/material';
-import React, { memo, useEffect, useState } from 'react';
 import NanoClamp from 'nanoclamp';
+import * as React from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import type { SEAEventSource } from '@sea/core';
 
@@ -42,7 +43,7 @@ export function Selector({
         return () => void eventSource.off(sub);
     }, [eventSource, itemGetter]);
 
-    const handleSelectItem = React.useCallback(
+    const handleSelectItem = useCallback(
         (newItem: number) => {
             if (newItem !== data) {
                 mutate(newItem);
@@ -51,7 +52,7 @@ export function Selector({
         [data, mutate]
     );
 
-    const description = data ? descriptionGetter(data) ?? '无' : '无';
+    const description = data ? (descriptionGetter(data) ?? '无') : '无';
 
     return (
         <Grid container columnSpacing={3} alignItems="center">
@@ -70,7 +71,7 @@ export function Selector({
                         renderItemProps: { nameGetter }
                     }}
                 >
-                    {data ? nameGetter(data) ?? '无' : '无'}
+                    {data ? (nameGetter(data) ?? '无') : '无'}
                 </SelectorButton>
             </Grid>
             <Grid item xs={5}>
@@ -89,4 +90,4 @@ interface ItemProps {
     nameGetter: (id: number) => string | undefined;
 }
 
-const ItemName = memo(({ item, nameGetter }: ItemProps) => nameGetter(item) ?? '');
+const ItemName = React.memo(({ item, nameGetter }: ItemProps) => nameGetter(item) ?? '');

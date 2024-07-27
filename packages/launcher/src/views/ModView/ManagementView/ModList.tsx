@@ -28,7 +28,8 @@ import {
     type ListProps
 } from '@mui/material';
 import NanoClamp from 'nanoclamp';
-import React, { useState, type MouseEventHandler } from 'react';
+import type { MouseEventHandler } from 'react';
+import { useCallback, useState } from 'react';
 
 const ClampText = styled(NanoClamp)(({ theme }) => ({
     ...theme.typography.button,
@@ -49,7 +50,7 @@ export function ModListItem({ deployment }: ModListItemProps) {
         setAnchor(target);
     };
 
-    const handleCloseMenu = React.useCallback(() => {
+    const handleCloseMenu = useCallback(() => {
         setAnchor(null);
     }, [setAnchor]);
 

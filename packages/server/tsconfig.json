@@ -5,8 +5,8 @@
     "moduleResolution": "nodenext",
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
-    "rootDir": ".",
-    "baseUrl": ".",
+    "rootDir": "src",
+    "baseUrl": "./src/",
     "noEmit": true,
     "tsBuildInfoFile": "../../.tsbuildinfo/server.tsbuildinfo",
     "lib": ["ESNext"]

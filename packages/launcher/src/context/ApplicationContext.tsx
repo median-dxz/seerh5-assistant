@@ -4,9 +4,9 @@ import { cache } from '@emotion/css';
 import { CacheProvider } from '@emotion/react';
 import { CssBaseline, ThemeProvider, alpha, styled } from '@mui/material';
 import { MaterialDesignContent, SnackbarProvider } from 'notistack';
-import React, { useEffect, type PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
+import { useEffect } from 'react';
 import { Provider } from 'react-redux';
-import { SWRConfig, type SWRConfiguration } from 'swr';
 
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
@@ -20,8 +20,6 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)`
 `;
 
 export function ApplicationContext({ children }: PropsWithChildren<object>) {
-    const swrOptions: SWRConfiguration = {};
-
     useEffect(() => {
         enableMapSet();
         dayjs.extend(duration);
@@ -30,18 +28,16 @@ export function ApplicationContext({ children }: PropsWithChildren<object>) {
     return (
         <CacheProvider value={cache}>
             <ThemeProvider theme={theme}>
-                <SWRConfig value={swrOptions}>
-                    <SnackbarProvider
-                        anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
-                        autoHideDuration={1500}
-                        disableWindowBlurListener
-                        maxSnack={1}
-                        Components={{ default: StyledMaterialDesignContent }}
-                    >
-                        <CssBaseline />
-                        <Provider store={appStore}>{children}</Provider>
-                    </SnackbarProvider>
-                </SWRConfig>
+                <SnackbarProvider
+                    anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+                    autoHideDuration={1500}
+                    disableWindowBlurListener
+                    maxSnack={1}
+                    Components={{ default: StyledMaterialDesignContent }}
+                >
+                    <CssBaseline />
+                    <Provider store={appStore}>{children}</Provider>
+                </SnackbarProvider>
             </ThemeProvider>
         </CacheProvider>
     );

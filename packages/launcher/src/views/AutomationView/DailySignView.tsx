@@ -14,12 +14,12 @@ import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
 import type { ModExportsRef } from '@/features/mod/utils';
 import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
-import { configApi } from '@/services/config';
+import { dataApi } from '@/services/data';
 import { getTaskOptions } from '@/shared/index';
 import { startAppListening } from '@/shared/redux';
 import type { TaskRunner } from '@/shared/types';
 import { useAppDispatch, useAppSelector } from '@/store';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual } from 'react-redux';
 import { taskViewColumns } from './shared';
 
@@ -41,7 +41,7 @@ export function DailySignView() {
         shallowEqual
     );
 
-    const { data: taskConfig, isFetching, error } = configApi.endpoints.allTaskConfig.useQuery();
+    const { data: taskConfig, isFetching, error } = dataApi.endpoints.allTaskConfig.useQuery();
 
     const rows = useMemo(
         () =>

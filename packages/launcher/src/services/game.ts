@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import type { Pet } from '@sea/core';
 import { debounce, engine, SEAEventSource, SEAPetStore, Subscription } from '@sea/core';
-import { baseQuery } from './endpointsBase';
+import { baseQuery } from './base';
 
 export type BattleFireInfo = Awaited<ReturnType<typeof engine.battleFireInfo>>;
 
@@ -32,7 +32,7 @@ export const gameApi = createApi({
                         void dispatch(gameApi.util.invalidateTags(['BattleFire']));
                     });
 
-                    timer = window.setInterval(() => {
+                    timer = setInterval(() => {
                         const { data } = getCacheEntry();
                         if (!data) return;
                         const { timeLeft, valid } = data;

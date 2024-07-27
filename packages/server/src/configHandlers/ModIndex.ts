@@ -1,4 +1,4 @@
-import { SEASConfigData } from '../shared/SEASConfigData.ts';
+import { SEASConfigHandler } from '../shared/SEASConfigHandler.ts';
 
 export interface ModState {
     enable: boolean;
@@ -9,9 +9,9 @@ export interface ModState {
     version: string;
 }
 
-class ModIndexes extends SEASConfigData<Map<string, ModState>> {
-    async loadWithDefault(configFile: string) {
-        return super.loadWithDefault(configFile, new Map());
+export class ModIndex extends SEASConfigHandler<Map<string, ModState>> {
+    async load() {
+        return super.load(new Map());
     }
 
     stateList() {
@@ -35,5 +35,3 @@ class ModIndexes extends SEASConfigData<Map<string, ModState>> {
         return super.query().get(cid);
     }
 }
-
-export const modIndexes = new ModIndexes();

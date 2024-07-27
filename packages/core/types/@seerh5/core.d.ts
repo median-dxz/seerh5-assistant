@@ -422,9 +422,7 @@ declare global {
         movesMap: seerh5.Dict<seerh5.MoveObj>;
         moveStoneMap: seerh5.Dict<seerh5.MoveObj>;
         hideMovesMap: Record<number, Array<{ o: number; id: number }>>;
-        typeMap: {
-            [Property: string]: seerh5.ElementObj;
-        };
+        typeMap: seerh5.Dict<seerh5.ElementObj>;
         getName(id: number): string;
         getTypeID(id: number): number;
         getCategory(id: number): number;

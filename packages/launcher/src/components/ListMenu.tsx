@@ -1,6 +1,6 @@
 import { useCachedReturn } from '@/shared/hooks';
 import { Menu, MenuItem, alpha, type MenuItemProps, type MenuProps } from '@mui/material';
-import React from 'react';
+import * as React from 'react';
 
 const MemoMenuItem = React.memo(MenuItem);
 

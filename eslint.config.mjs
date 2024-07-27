@@ -4,11 +4,9 @@ import eslint from '@eslint/js';
 import globals from 'globals';
 import tsEslint from 'typescript-eslint';
 
-import reactRefresh from 'eslint-plugin-react-refresh';
-// TODO: 等待以下插件的FlatConfig与ESLint9支持
-// import react from "eslint-plugin-react"
+import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
-// import reactJsxA11y from "eslint-plugin-jsx-a11y"
+import reactRefresh from 'eslint-plugin-react-refresh';
 
 export default tsEslint.config(
     {
@@ -35,6 +33,7 @@ export default tsEslint.config(
         files: ['packages/**/*.ts', 'packages/**/*.tsx'],
         languageOptions: {
             parserOptions: {
+                // @ts-ignore
                 tsconfigRootDir: import.meta.dirname,
                 projectService: true
             }
@@ -55,6 +54,8 @@ export default tsEslint.config(
             ],
             '@typescript-eslint/no-unused-expressions': ['error', { allowShortCircuit: true }],
             '@typescript-eslint/no-non-null-assertion': 'off',
+            '@typescript-eslint/no-unnecessary-condition': 'off',
+            '@typescript-eslint/no-unsafe-assignment': 'off',
             '@typescript-eslint/no-explicit-any': 'warn',
             '@typescript-eslint/consistent-type-imports': 'error',
             '@typescript-eslint/restrict-template-expressions': [
@@ -69,7 +70,6 @@ export default tsEslint.config(
             '@typescript-eslint/no-invalid-void-type': 'off',
             '@typescript-eslint/dot-notation': ['error', { allowIndexSignaturePropertyAccess: true }],
             '@typescript-eslint/array-type': ['error', { default: 'array-simple' }],
-            '@typescript-eslint/no-unnecessary-condition': ['error', { allowConstantLoopConditions: true }],
             '@typescript-eslint/no-confusing-void-expression': [
                 'error',
                 { ignoreArrowShorthand: true, ignoreVoidOperator: true }
@@ -109,18 +109,23 @@ export default tsEslint.config(
                 }
             }
         },
+        settings: {
+            react: {
+                version: '18.3'
+            }
+        },
         plugins: {
             'react-refresh': reactRefresh,
             // @ts-expect-error
-            'react-hooks': reactHooks
-            // 'jsx-a11y': reactJsxA11y,
-            // 'react': react
+            'react-hooks': reactHooks,
+            react: react
         },
-        // @ts-expect-error
         rules: {
+            ...react.configs.flat.recommended.rules,
             ...reactHooks.configs.recommended.rules,
             'react-refresh/only-export-components': 'warn',
-            '@typescript-eslint/no-unsafe-assignment': 'warn' // swr 当前版本解构出的 error 只能推导出 any
+            'react/jsx-uses-react': 'off',
+            'react/react-in-jsx-scope': 'off'
         }
     },
     // @sea/server

@@ -4,7 +4,6 @@ import { Command } from '@/views/Command';
 import { Main } from '@/views/Main';
 import { QuickAccess } from '@/views/QuickAccess';
 import { Grow } from '@mui/material';
-import React from 'react';
 
 export default function Launcher() {
     const status = useAppSelector((state) => state.initialization.status);

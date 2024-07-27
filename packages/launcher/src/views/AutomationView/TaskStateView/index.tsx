@@ -1,5 +1,4 @@
 import { Box, Grid, useMediaQuery, useTheme } from '@mui/material';
-import React from 'react';
 import { Sidebar } from './Sidebar';
 import { LevelStateList as TaskStateList } from './TaskStateList';
 

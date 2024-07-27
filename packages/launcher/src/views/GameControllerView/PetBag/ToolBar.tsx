@@ -1,19 +1,22 @@
 import { IconButtonNoRipple as IconButton } from '@/components/IconButtonNoRipple';
-import { LinerLoading } from '@/components/LinerLoading';
 import { PopupMenuButton } from '@/components/PopupMenuButton';
+import { Row } from '@/components/styled/Row';
+
 import { Backpack } from '@/components/icons/Backpack';
 import { HealthBroken } from '@/components/icons/HealthBroken';
 import { HpBar } from '@/components/icons/HpBar';
-import { Row } from '@/components/styled/Row';
-import { launcherActions } from '@/features/launcherSlice';
-import { usePetGroups } from '@/services/config/usePetGroups';
-import { useAppDispatch } from '@/store';
 import Bookmarks from '@mui/icons-material/Bookmarks';
 import Clear from '@mui/icons-material/ClearRounded';
+
+import { DataLoading } from '@/components/DataLoading';
+import { launcherActions } from '@/features/launcherSlice';
+import { usePetGroups } from '@/services/data/usePetGroups';
+import { useAppDispatch } from '@/store';
 import { Button, Tooltip, Typography } from '@mui/material';
 import type { Pet } from '@sea/core';
 import { PetLocation, SEAPetStore, engine, spet } from '@sea/core';
-import React, { useCallback } from 'react';
+import * as React from 'react';
+import { useCallback } from 'react';
 
 interface ToolBarProps {
     selected: number[];
@@ -21,7 +24,7 @@ interface ToolBarProps {
 
 export function ToolBar({ selected }: ToolBarProps) {
     const dispatch = useAppDispatch();
-    const { isLoading, mutate, petGroups } = usePetGroups();
+    const { isFetching, mutate, petGroups } = usePetGroups();
 
     const handleLowerHp = () => {
         void engine.lowerHp(selected);
@@ -77,8 +80,8 @@ export function ToolBar({ selected }: ToolBarProps) {
         }
     }, []);
 
-    if (isLoading) {
-        return <LinerLoading />;
+    if (isFetching) {
+        return <DataLoading />;
     }
 
     return (
@@ -128,7 +131,7 @@ interface PetGroupItemProps {
     onDelete: (group: Pet[], index: number) => void;
 }
 
-const PetGroupItem = React.memo(({ item: group, index, onSave, onDelete }: PetGroupItemProps) => {
+const PetGroupItem = React.memo(function PetGroupItem({ item: group, index, onSave, onDelete }: PetGroupItemProps) {
     const groupString = group.length > 0 ? group.map((i) => i.name).join(', ') : '空';
     return (
         <Row

@@ -1,7 +1,8 @@
 import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 import Settings from '@mui/icons-material/Settings';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import * as React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DataLoading } from '@/components/DataLoading';
 import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
@@ -15,7 +16,7 @@ import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
 
 import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
 import type { ModExportsRef } from '@/features/mod/utils';
-import { configApi } from '@/services/config';
+import { dataApi } from '@/services/data';
 import { getCompositeId, getTaskOptions } from '@/shared/index';
 import { startAppListening } from '@/shared/redux';
 import type { TaskRunner } from '@/shared/types';
@@ -65,7 +66,7 @@ export function CommonLevelView() {
         shallowEqual
     );
 
-    const { data: taskConfig, isFetching, error } = configApi.endpoints.allTaskConfig.useQuery();
+    const { data: taskConfig, isFetching, error } = dataApi.endpoints.allTaskConfig.useQuery();
 
     const rows = useMemo(
         () =>

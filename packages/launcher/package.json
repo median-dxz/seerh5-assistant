@@ -16,16 +16,15 @@
     "@emotion/css": "^11.13.0",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
-    "@hookform/resolvers": "^3.9.0",
-    "@mui/icons-material": "^5.15.20",
-    "@mui/material": "^5.16.4",
+    "@mui/icons-material": "^5.16.5",
+    "@mui/material": "^5.16.5",
     "@reduxjs/toolkit": "^2.2.6",
     "@sea/core": "workspace:*",
     "@trpc/client": "11.0.0-rc.417",
     "@trpc/server": "11.0.0-rc.417",
-    "@vue/reactivity": "^3.4.31",
+    "@vue/reactivity": "^3.4.34",
     "chalk": "^5.3.0",
-    "dayjs": "^1.11.11",
+    "dayjs": "^1.11.12",
     "dequal": "^2.0.3",
     "immer": "^10.1.1",
     "nanoclamp": "^2.0.10",
@@ -36,7 +35,6 @@
     "react-redux": "^9.1.2",
     "react-transition-group": "^4.4.5",
     "superjson": "^2.2.1",
-    "swr": "^2.2.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -46,7 +44,7 @@
     "@types/react-dom": "^18.3.0",
     "@types/react-transition-group": "^4.4.10",
     "@vitejs/plugin-react-swc": "^3.7.0",
-    "vite-plugin-inspect": "^0.8.4",
-    "vite-plugin-pwa": "^0.20.0"
+    "vite-plugin-inspect": "^0.8.5",
+    "vite-plugin-pwa": "^0.20.1"
   }
 }

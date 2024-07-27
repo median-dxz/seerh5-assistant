@@ -36,7 +36,7 @@ export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
         data: PetFragmentLevelData;
         logger = logger;
 
-        constructor(public options: PetFragmentOptions & { sweep: boolean }) {
+        constructor(public options: PetFragmentOptions) {
             const LevelObj = engine.getPetFragmentLevelObj(options.id);
 
             if (!LevelObj) throw new Error(`未找到精灵因子关卡: ${options.id}`);

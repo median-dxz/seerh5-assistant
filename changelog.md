@@ -28,6 +28,7 @@
   - [ ] rotating
 - [ ] sdk/预设/例子/模组发布转移到单独的仓库
 - [ ] 工作区脚手架->暂定github模板repo
+- [ ] 入口文件转字符串替换
 
 - [ ] QuickAccess重做，移入主界面底部
   - [ ] command接口增强，也支持使用schema输入参数
@@ -116,3 +117,4 @@
 - [ ] logo
 - [ ] 重新组织图标：更好的DX，Material Symbol，更好的代码组织
 - [ ] 使用gird重置表格组件
+- [ ] 构建electron分发

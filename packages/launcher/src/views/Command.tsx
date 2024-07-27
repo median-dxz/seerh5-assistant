@@ -1,6 +1,6 @@
 import { alpha, Autocomplete, Box, TextField as MuiTextField, styled, type BoxProps } from '@mui/material';
 import { useSnackbar, type SnackbarProviderProps } from 'notistack';
-import React, { useState } from 'react';
+import { useMemo, forwardRef, useState } from 'react';
 
 import type { Command as CommandInstance } from '@sea/mod-type';
 
@@ -33,7 +33,7 @@ export function CommandInput() {
 
     const commands = useMapToStore((state) => state.mod.commandRefs, commandStore);
 
-    const options = React.useMemo(
+    const options = useMemo(
         () =>
             commands.map((cmd) => {
                 let description: string;
@@ -95,7 +95,7 @@ export function CommandInput() {
     );
 }
 
-const CommandInputRef = React.forwardRef<HTMLDivElement, BoxProps>(({ ...props }, ref) => (
+const CommandInputRef = forwardRef<HTMLDivElement, BoxProps>(({ ...props }, ref) => (
     <Box {...props} ref={ref}>
         <CommandInput />
     </Box>

@@ -2,11 +2,11 @@ import { Row } from '@/components/styled/Row';
 import { launcherActions } from '@/features/launcherSlice';
 import { gameApi } from '@/services/game';
 import { useAppDispatch } from '@/store';
-import { Button, CircularProgress, Paper, Stack, Typography } from '@mui/material';
+import { Button, CircularProgress, Paper, Typography } from '@mui/material';
 import { BattleFireType, socket, throttle } from '@sea/core';
 import dayjs from 'dayjs';
 import { useSnackbar } from 'notistack';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 declare class FriendManager {
     static getFriendList(): Promise<Array<{ itemSend: number; id: number }>>;
@@ -89,17 +89,31 @@ export function BattleFire() {
 
     return (
         <Paper sx={{ p: 4 }}>
-            <Typography variant="subtitle1" fontSize="1em">
+            <Typography
+                variant="subtitle1"
+                sx={{
+                    fontSize: '1rem'
+                }}
+            >
                 火焰信息
             </Typography>
-            <Row justifyContent="space-between">
+            <Row
+                sx={{
+                    justifyContent: 'space-between'
+                }}
+            >
                 <Typography color={renderProps.color}>{renderProps.text}</Typography>
-                <Stack flexDirection="row">
+                <Row
+                    sx={{
+                        width: 'fit-content'
+                    }}
+                    spacing={1}
+                >
                     <Button onClick={throttledGiftStars}>
                         {giftingStars ? <CircularProgress size={16} /> : '互送星星'}
                     </Button>
                     <Button onClick={exchangeBattleFire}>兑换</Button>
-                </Stack>
+                </Row>
             </Row>
         </Paper>
     );

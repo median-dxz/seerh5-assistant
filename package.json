@@ -10,7 +10,7 @@
     "name": "median-dxz",
     "url": "https://median-dxz.xyz/"
   },
-  "packageManager": "pnpm@9.5.0+sha512.140036830124618d624a2187b50d04289d5a087f326c9edfc0ccd733d76c4f52c3a313d4fc148794a2a9d81553016004e6742e8cf850670268a7387fc220c903",
+  "packageManager": "pnpm@9.6.0+sha512.38dc6fba8dba35b39340b9700112c2fe1e12f10b17134715a4aa98ccf7bb035e76fd981cf0bb384dfa98f8d6af5481c2bef2f4266a24bfa20c34eb7147ce0b5e",
   "scripts": {
     "server:run": "pnpm -C ./packages/server run start",
     "launcher:dev": "pnpm -C ./packages/launcher run dev",
@@ -27,20 +27,21 @@
     "@vitest/coverage-v8": "2.0.3",
     "concurrently": "^8.2.2",
     "eslint": "^9.7.0",
-    "eslint-plugin-react-hooks": "5.1.0-rc-8971381549-20240625",
-    "eslint-plugin-react-refresh": "^0.4.8",
+    "eslint-plugin-react": "^7.35.0",
+    "eslint-plugin-react-hooks": "5.1.0-rc-14a4699f-20240725",
+    "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.8.0",
-    "husky": "^9.1.0",
+    "husky": "^9.1.1",
     "lint-staged": "^15.2.7",
     "prettier": "^3.3.3",
     "rimraf": "^6.0.1",
-    "typescript": "^5.5.3",
-    "typescript-eslint": "8.0.0-alpha.34",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "8.0.0-alpha.54",
     "vite": "^5.3.4",
     "vitest": "2.0.3"
   },
   "engines": {
-    "node": ">=20.10.0"
+    "node": ">=20.11.0"
   },
   "lint-staged": {
     "*.{ts,tsx,json,css,md}": "prettier --write"

@@ -3,7 +3,7 @@ import { PanelTable, type PanelColumns } from '@/components/PanelTable';
 import { gameApi } from '@/services/game';
 import { Box, Stack } from '@mui/material';
 import type { Pet } from '@sea/core';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PanelRow } from './PanelRow';
 import { ToolBar } from './ToolBar';
 
@@ -12,8 +12,8 @@ export function PetBag() {
     const [selected, setSelected] = useState<number[]>([]);
 
     useEffect(() => {
-        setSelected([]);
-    }, [pets]);
+        isFetching && setSelected([]);
+    }, [isFetching]);
 
     const cols: PanelColumns = useMemo(
         () => [
