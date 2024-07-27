@@ -34,19 +34,24 @@ export default (logger: AnyFunction, battle: (name: string) => LevelBattle) => {
         elfKingId: {
             name: '精灵王',
             type: 'select',
-            helperText: '自动日任要挑战的精灵王',
+            helperText: '要挑战的精灵王',
             default: '15',
             list: ELF_KINGS_LIST
         },
         stimulation: {
-            name: '精灵王双倍',
+            name: '双倍',
             type: 'checkbox',
             default: false
         },
         sweep: {
-            name: '精灵王扫荡',
+            name: '扫荡',
             type: 'checkbox',
             default: false
+        },
+        battle: {
+            name: '对战方案',
+            type: 'battle',
+            default: 'auto'
         }
     } satisfies SEAConfigSchema;
 
@@ -94,7 +99,7 @@ export default (logger: AnyFunction, battle: (name: string) => LevelBattle) => {
                     }
                 },
                 selectLevelBattle() {
-                    return battle('LevelElfKingsTrial');
+                    return battle(options.battle);
                 },
                 actions: {
                     async battle() {

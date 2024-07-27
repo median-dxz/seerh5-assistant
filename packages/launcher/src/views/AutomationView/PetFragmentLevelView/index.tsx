@@ -113,7 +113,7 @@ interface RowProps {
     remove: (index: number) => void;
 }
 
-const PanelRow = React.memo(({ taskRef, task, remove }: RowProps) => {
+const PanelRow = React.memo(function PanelRow({ taskRef, task, remove }: RowProps) {
     const dispatch = useAppDispatch();
     const index = useIndex();
     const options = useRowData<PetFragmentOptions>();
@@ -142,34 +142,35 @@ const PanelRow = React.memo(({ taskRef, task, remove }: RowProps) => {
 
     return (
         <SeaTableRow sx={{ height: '3.3rem' }}>
-            <PanelField field="name">{runner.name}</PanelField>
+            <PanelField field="name">{runner.name?.split('-').toSpliced(0, 1).join('-')}</PanelField>
             <PanelField
                 field="battles"
                 sx={{
                     fontFamily: ({ fonts }) => fonts.input
                 }}
             >
-                <Row sx={{ overflow: 'auto', width: '15rem' }} spacing={1}>
-                    {options.battle.map((key, index) => (
-                        <Chip key={index} label={`${index + 1}-${key}`} />
-                    ))}
-                </Row>
+                {options.battle && (
+                    <Row sx={{ overflow: 'auto', width: '15rem' }} spacing={1}>
+                        {options.battle.map((key, index) => (
+                            <Chip key={index} label={`${index + 1}-${key}`} />
+                        ))}
+                    </Row>
+                )}
             </PanelField>
             <PanelField field="state">
                 {fetched ? completed ? '已完成' : '未完成' : <CircularProgress size="1.5rem" />}
             </PanelField>
             <PanelField field="actions">
                 <Row sx={{ width: '100%', justifyContent: 'center' }} spacing={1}>
-                    <IconButtonNoRipple title="启动" onClick={startLevel(false)} disabled={completed}>
-                        <PlayArrow />
-                    </IconButtonNoRipple>
                     <IconButtonNoRipple
-                        title="扫荡"
-                        sx={{ fontSize: '1.75rem' }}
-                        onClick={startLevel(true)}
+                        title={options.sweep ? '扫荡' : '启动'}
+                        sx={{
+                            fontSize: '1.8rem'
+                        }}
+                        onClick={startLevel(options.sweep)}
                         disabled={completed}
                     >
-                        <Acute />
+                        {options.sweep ? <Acute /> : <PlayArrow />}
                     </IconButtonNoRipple>
                     <IconButtonNoRipple
                         title="打开面板"

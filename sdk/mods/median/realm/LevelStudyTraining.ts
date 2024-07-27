@@ -18,14 +18,19 @@ export default (logger: AnyFunction, battle: (name: string) => LevelBattle) =>
         },
         configSchema: {
             stimulation: {
-                name: '学习力双倍',
+                name: '双倍',
                 type: 'checkbox',
                 default: false
             },
             sweep: {
-                name: '学习力扫荡',
+                name: '扫荡',
                 type: 'checkbox',
                 default: false
+            },
+            battle: {
+                name: '对战方案',
+                type: 'battle',
+                default: 'auto'
             }
         },
         runner: (options) => ({
@@ -57,7 +62,7 @@ export default (logger: AnyFunction, battle: (name: string) => LevelBattle) =>
                 this.data.remainingTimes = this.data.maxTimes - realmInfo.getUint32(8);
             },
             selectLevelBattle() {
-                return battle('LevelStudyTraining');
+                return battle(options.battle);
             },
             actions: {
                 battle: async () => {

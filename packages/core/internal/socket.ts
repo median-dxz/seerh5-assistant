@@ -13,7 +13,7 @@ export async function sendByQueue(cmd: number, data: Parameters<SocketConnection
                 resolve(v.data?.rawBuffer);
             },
             (err: SocketErrorEvent) => {
-                reject(err.data);
+                reject(err.data ?? new Error(`SendByQueue Failed: cmd: ${cmd} errno: ${err.headInfo.result}`));
             }
         );
     });

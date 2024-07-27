@@ -9,7 +9,14 @@ export default (logger: AnyFunction, battle: (name: string) => LevelBattle) =>
             id: 'LevelXTeamRoom',
             name: 'X战队密室'
         },
-        runner: (meta) => ({
+        configSchema: {
+            battle: {
+                name: '对战方案',
+                type: 'battle',
+                default: 'auto'
+            }
+        },
+        runner: (options) => ({
             logger,
             data: {
                 maxTimes: 3,
@@ -59,7 +66,7 @@ export default (logger: AnyFunction, battle: (name: string) => LevelBattle) =>
                 this.data.weeklyCompletedCount = values[2];
             },
             selectLevelBattle() {
-                return battle('LevelXTeamRoom');
+                return battle(options.battle);
             },
             actions: {
                 open_level: async () => {

@@ -18,14 +18,19 @@ export default (logger: AnyFunction, battle: (name: string) => LevelBattle) =>
         },
         configSchema: {
             stimulation: {
-                name: '勇者之塔双倍',
+                name: '双倍',
                 type: 'checkbox',
                 default: false
             },
             sweep: {
-                name: '勇者之塔扫荡',
+                name: '扫荡',
                 type: 'checkbox',
                 default: false
+            },
+            battle: {
+                name: '对战方案',
+                type: 'battle',
+                default: 'auto'
             }
         },
         runner: (options) => ({
@@ -57,7 +62,7 @@ export default (logger: AnyFunction, battle: (name: string) => LevelBattle) =>
                 return LevelAction.STOP;
             },
             selectLevelBattle() {
-                return battle('LevelCourageTower');
+                return battle(options.battle);
             },
             actions: {
                 async battle() {

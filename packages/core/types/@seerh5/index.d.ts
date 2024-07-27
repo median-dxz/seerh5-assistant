@@ -215,7 +215,11 @@ declare global {
         data: egret.ByteArray | undefined;
     }
 
-    class SocketErrorEvent extends egret.Event {}
+    class SocketErrorEvent extends egret.Event {
+        headInfo: {
+            result: number;
+        };
+    }
 
     class PetEvent extends egret.Event {
         static readonly CURE_COMPLETE: string;

@@ -10,14 +10,29 @@ export default (logger: AnyFunction, battle: (name: string) => LevelBattle) =>
         },
         configSchema: {
             stimulation: {
-                name: '泰坦矿洞双倍',
+                name: '双倍',
                 type: 'checkbox',
                 default: false
             },
             sweep: {
-                name: '泰坦矿洞扫荡',
+                name: '扫荡',
                 type: 'checkbox',
                 default: false
+            },
+            battle_step1: {
+                name: '第一关对战方案',
+                type: 'battle',
+                default: 'auto'
+            },
+            battle_step2: {
+                name: '第二关对战方案',
+                type: 'battle',
+                default: 'auto'
+            },
+            battle_step4: {
+                name: '第四关对战方案',
+                type: 'battle',
+                default: 'auto'
             }
         },
         runner: (options) => ({
@@ -65,11 +80,13 @@ export default (logger: AnyFunction, battle: (name: string) => LevelBattle) =>
                 }
             },
             selectLevelBattle() {
-                if (this.data.step === 2) {
-                    return battle('LevelTitanHole_1');
-                } else {
-                    return battle('LevelTitanHole');
+                if (this.data.step === 1) {
+                    return battle(options.battle_step1);
                 }
+                if (this.data.step === 2) {
+                    return battle(options.battle_step2);
+                }
+                return battle(options.battle_step4);
             },
             actions: {
                 async mine_ores() {

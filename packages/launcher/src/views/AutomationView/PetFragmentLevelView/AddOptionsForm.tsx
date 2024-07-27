@@ -88,8 +88,9 @@ export function AddOptionsForm({ open, setOpen, modData }: AddOptionsFormProps) 
             PaperProps={{
                 component: 'form',
                 onSubmit: handleSubmit((newData) => {
+                    newData.battle = newData.battle ?? [];
                     if (!toRaw(modData).some((data) => dequal(data, newData))) {
-                        modData.push({ ...newData, battle: newData.battle ?? [] });
+                        modData.push({ ...newData });
                         handleClose();
                     } else {
                         reset({ ...newData, battle: [] });
