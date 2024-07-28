@@ -18,7 +18,7 @@
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^5.16.5",
     "@mui/material": "^5.16.5",
-    "@reduxjs/toolkit": "^2.2.6",
+    "@reduxjs/toolkit": "^2.2.7",
     "@sea/core": "workspace:*",
     "@trpc/client": "11.0.0-rc.417",
     "@trpc/server": "11.0.0-rc.417",

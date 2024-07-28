@@ -2,15 +2,17 @@ import { Acute } from '@/components/icons/Acute';
 import Add from '@mui/icons-material/AddRounded';
 import AspectRatio from '@mui/icons-material/AspectRatioRounded';
 import Delete from '@mui/icons-material/DeleteOutlineRounded';
+import Info from '@mui/icons-material/InfoOutlined';
+import MoreHoriz from '@mui/icons-material/MoreHorizRounded';
 import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 import Settings from '@mui/icons-material/Settings';
 
-import { Button, Chip, CircularProgress, Stack } from '@mui/material';
-import { engine, LevelAction } from '@sea/core';
+import { Button, Chip, CircularProgress, Menu, MenuItem, Popover, Stack, Typography } from '@mui/material';
+import { LevelAction, query, SEAPetStore, spet, type Pet } from '@sea/core';
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { PanelField, PanelTable, useIndex, useRowData } from '@/components/PanelTable';
+import { PanelField, PanelTable, useIndex, useRowData, type PanelColumns } from '@/components/PanelTable';
 import { Row } from '@/components/styled/Row';
 import { SeaTableRow } from '@/components/styled/TableRow';
 
@@ -25,16 +27,31 @@ import { useMapToStore } from '@/features/mod/useModStore';
 import { type ModExportsRef } from '@/features/mod/utils';
 import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
 import { modApi } from '@/services/mod';
-import { getCompositeId } from '@/shared/index';
-import { startAppListening } from '@/shared/redux';
+import { getCompositeId, startAppListening, usePopupState } from '@/shared';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { taskViewColumns } from '../shared';
 import { AddOptionsForm } from './AddOptionsForm';
+import { EditOptionsForm } from './EditOptionsForm';
 
 const toRowKey = (data: PetFragmentOptions) => JSON.stringify(data);
 
+const columns = [
+    {
+        field: 'name',
+        columnName: '名称'
+    },
+    { field: 'battles', columnName: '对战方案' },
+    {
+        field: 'state',
+        columnName: '状态'
+    },
+    {
+        field: 'actions',
+        columnName: '操作'
+    }
+] as const satisfies PanelColumns;
+
 export function PetFragmentLevelView() {
-    const [addOptionsFormOpen, setOpen] = useState(false);
+    const [addFormOpen, setAddFormOpen] = useState(false);
 
     const cid = getCompositeId({ id: PET_FRAGMENT_LEVEL_ID, scope: MOD_SCOPE_BUILTIN });
     const taskRef = useAppSelector(({ mod: { taskRefs } }) =>
@@ -47,7 +64,9 @@ export function PetFragmentLevelView() {
     );
     const task = useMapToStore(() => taskRef, taskStore);
 
-    const { data = [], isFetching } = modApi.useDataQuery(cid);
+    const { data = [], isFetching: isFetchingModData } = modApi.useDataQuery(cid);
+
+    const isFetching = isFetchingModData;
 
     if (isFetching || !modIns || !taskRef || !task) {
         return <DataLoading />;
@@ -55,11 +74,6 @@ export function PetFragmentLevelView() {
 
     const modData = modIns.ctx.data as PetFragmentOptions[];
     const optionsList = data as PetFragmentOptions[];
-
-    const missingIds = optionsList.map(({ id }) => id).filter((id) => !engine.getPetFragmentLevelObj(id));
-    if (missingIds.length > 0) {
-        return <DataLoading error={`错误的精灵因子ID: ${missingIds.join(', ')}`} />;
-    }
 
     return (
         <>
@@ -73,7 +87,7 @@ export function PetFragmentLevelView() {
                 >
                     <Button
                         onClick={() => {
-                            setOpen(true);
+                            setAddFormOpen(true);
                         }}
                         startIcon={<Add />}
                         variant="outlined"
@@ -86,23 +100,10 @@ export function PetFragmentLevelView() {
             <PanelTable
                 data={optionsList}
                 toRowKey={toRowKey}
-                columns={taskViewColumns.map((col) => {
-                    if (col.field === 'cid') {
-                        return { field: 'battles', columnName: '对战方案' };
-                    }
-                    return col;
-                })}
-                rowElement={
-                    <PanelRow
-                        taskRef={taskRef}
-                        task={task}
-                        remove={(index) => {
-                            modData.splice(index, 1);
-                        }}
-                    />
-                }
+                columns={columns}
+                rowElement={<PanelRow taskRef={taskRef} task={task} modData={modData} />}
             />
-            <AddOptionsForm open={addOptionsFormOpen} setOpen={setOpen} modData={modData} />
+            <AddOptionsForm open={addFormOpen} setOpen={setAddFormOpen} modData={modData} />
         </>
     );
 }
@@ -110,32 +111,54 @@ export function PetFragmentLevelView() {
 interface RowProps {
     taskRef: ModExportsRef;
     task: TaskInstance;
-    remove: (index: number) => void;
+    modData: PetFragmentOptions[];
 }
 
-const PanelRow = React.memo(function PanelRow({ taskRef, task, remove }: RowProps) {
+const PanelRow = React.memo(function PanelRow({ taskRef, task, modData }: RowProps) {
     const dispatch = useAppDispatch();
     const index = useIndex();
     const options = useRowData<PetFragmentOptions>();
     const runner = useMemo(() => task.runner(options) as IPetFragmentRunner, [options, task]);
 
+    const pet = useRef<Pet | null>(null);
     const [completed, setCompleted] = useState(false);
     const [fetched, setFetched] = useState(false);
 
-    const mutate = useCallback(async () => {
+    const [editFormOpen, setEditFormOpen] = useState(false);
+
+    const {
+        state: moreState,
+        open: openMore,
+        close: closeMore
+    } = usePopupState({
+        popupId: 'more-actions-menu'
+    });
+
+    const { state: detailsState, open: openDetail } = usePopupState({
+        popupId: 'level-details-popover'
+    });
+
+    const update = useCallback(async () => {
+        const allPets = await SEAPetStore.getAllPets();
+        const findResult = allPets.find(({ id }) => id === runner.level.petFragment.petId);
+        if (findResult) {
+            pet.current = await spet(findResult).done;
+        } else {
+            pet.current = null;
+        }
         await runner.update();
         setCompleted(runner.next() === LevelAction.STOP);
         setFetched(true);
     }, [runner]);
 
     useEffect(() => {
-        void mutate();
+        void update();
         const unsubscribe = startAppListening({
             actionCreator: taskSchedulerActions.moveNext,
-            effect: mutate
+            effect: update
         });
         return unsubscribe;
-    }, [mutate]);
+    }, [update]);
 
     const startLevel = (sweep: boolean) => () =>
         dispatch(taskSchedulerActions.enqueue(taskRef, { ...options, sweep }, runner.name));
@@ -158,7 +181,19 @@ const PanelRow = React.memo(function PanelRow({ taskRef, task, remove }: RowProp
                 )}
             </PanelField>
             <PanelField field="state">
-                {fetched ? completed ? '已完成' : '未完成' : <CircularProgress size="1.5rem" />}
+                <Stack
+                    direction="row"
+                    sx={{
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}
+                    spacing={2}
+                >
+                    <span> {fetched ? completed ? '已完成' : '未完成' : <CircularProgress size="1.5rem" />}</span>
+                    <IconButtonNoRipple title="关卡详情" onClick={openDetail}>
+                        <Info fontSize="inherit" />
+                    </IconButtonNoRipple>
+                </Stack>
             </PanelField>
             <PanelField field="actions">
                 <Row sx={{ width: '100%', justifyContent: 'center' }} spacing={1}>
@@ -168,32 +203,93 @@ const PanelRow = React.memo(function PanelRow({ taskRef, task, remove }: RowProp
                             fontSize: '1.8rem'
                         }}
                         onClick={startLevel(options.sweep)}
-                        disabled={completed}
+                        disabled={completed || (options.sweep && !runner.data.canSweep)}
                     >
                         {options.sweep ? <Acute /> : <PlayArrow />}
                     </IconButtonNoRipple>
                     <IconButtonNoRipple
-                        title="打开面板"
+                        title="配置"
                         onClick={() => {
-                            void ModuleManager.showModuleByID(151, `{Design:${runner.designId}}`);
-                            dispatch(launcherActions.closeMain());
+                            setEditFormOpen(true);
                         }}
                     >
-                        <AspectRatio />
-                    </IconButtonNoRipple>
-                    <IconButtonNoRipple title="配置">
                         <Settings />
                     </IconButtonNoRipple>
-                    <IconButtonNoRipple
-                        title="删除"
-                        onClick={() => {
-                            remove(index);
-                        }}
-                    >
-                        <Delete />
+
+                    <IconButtonNoRipple title="更多操作" onClick={openMore}>
+                        <MoreHoriz />
                     </IconButtonNoRipple>
                 </Row>
             </PanelField>
+            <Popover
+                {...detailsState}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center'
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center'
+                }}
+                slotProps={{
+                    paper: { sx: { p: 2, fontSize: '1rem' } }
+                }}
+            >
+                <Typography variant="inherit">
+                    {runner.designId} · {runner.level.name}
+                </Typography>
+                <Typography variant="inherit">
+                    精灵ID: {runner.level.petFragment.petId} · 物品ID: {runner.level.petFragment.itemId}
+                </Typography>
+                <Typography variant="inherit">因子产出: {runner.level.pieces[options.difficulty]}</Typography>
+                <Typography variant="inherit">已收集: {runner.data.piecesOwned ?? 0}</Typography>
+                <Typography variant="inherit">解锁扫荡: {runner.data.canSweep ? '是' : '否'}</Typography>
+                <Typography variant="inherit">
+                    本体: {pet.current ? '已兑换' : runner.level.petFragment.petConsume} · 魂印:{' '}
+                    {pet.current?.isEffectActivated ? '已兑换' : runner.level.petFragment.effectConsume} · 第五:{' '}
+                    {pet.current?.fifthSkill ? '已兑换' : runner.level.petFragment.fifthSkillConsume}
+                </Typography>
+
+                {runner.level.bosses[options.difficulty]?.map(({ battleBoss }, index) => (
+                    <Typography key={index} variant="inherit">
+                        {index + 1}: {query('pet').get(battleBoss)!.DefName}
+                    </Typography>
+                ))}
+            </Popover>
+            <Menu
+                {...moreState}
+                MenuListProps={{
+                    sx: {
+                        maxHeight: '50vh'
+                    }
+                }}
+            >
+                <MenuItem
+                    sx={{ maxWidth: '25vw', fontSize: '1rem' }}
+                    onClick={() => {
+                        void ModuleManager.showModuleByID(151, `{Design:${runner.designId}}`);
+                        dispatch(launcherActions.closeMain());
+                        closeMore();
+                    }}
+                >
+                    <AspectRatio fontSize="inherit" />
+                    <Typography sx={{ ml: 2, mr: 2 }} fontSize="inherit">
+                        打开面板
+                    </Typography>
+                </MenuItem>
+                <MenuItem
+                    sx={{ maxWidth: '25vw', fontSize: '1rem' }}
+                    onClick={() => {
+                        modData.splice(index, 1);
+                    }}
+                >
+                    <Delete fontSize="inherit" />
+                    <Typography sx={{ ml: 2, mr: 2 }} fontSize="inherit">
+                        删除配置
+                    </Typography>
+                </MenuItem>
+            </Menu>
+            <EditOptionsForm open={editFormOpen} setOpen={setEditFormOpen} index={index} modData={modData} />
         </SeaTableRow>
     );
 });

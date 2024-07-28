@@ -1,4 +1,4 @@
-import { createAppSlice, startAppListening } from '@/shared/redux';
+import { createAppSlice, startAppListening } from '@/shared';
 import type { AppRootState } from '@/store';
 import { createAction, createAsyncThunk, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
 import { LevelAction, levelManager } from '@sea/core';

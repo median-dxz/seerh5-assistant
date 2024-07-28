@@ -6,7 +6,7 @@ import { dequal } from 'dequal';
 
 import { trpcClient } from '@/services/base';
 import { modApi } from '@/services/mod';
-import { buildDefaultConfig, getCompositeId } from '@/shared/index';
+import { buildDefaultConfig, getCompositeId } from '@/shared';
 import { LauncherLoggerBuilder } from '@/shared/logger';
 import { appStore } from '@/store';
 

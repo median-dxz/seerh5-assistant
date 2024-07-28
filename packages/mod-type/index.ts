@@ -26,7 +26,7 @@ export type SEAFormItem =
 
 export type SEAFormItemSchema = SEAFormItem & {
     name: string;
-    description?: string;
+    helperText?: string;
 };
 
 export type SEAConfigSchema = Record<string, SEAFormItemSchema>;
@@ -151,8 +151,6 @@ declare module '@sea/core' {
          * @param itemId 装备的**物品**id
          */
         changeEquipment: (type: Parameters<UserInfo['requestChangeClothes']>[0], itemId: number) => Promise<void>;
-
-        getPetFragmentLevelObj: (id: number) => seerh5.PetFragmentLevelObj | undefined;
     }
 
     export interface GameConfigMap {

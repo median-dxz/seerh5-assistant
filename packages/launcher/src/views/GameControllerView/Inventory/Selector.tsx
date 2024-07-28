@@ -57,7 +57,7 @@ export function Selector({
     return (
         <Grid container columnSpacing={3} alignItems="center">
             <Grid item xs={2}>
-                <Typography variant="subtitle1" fontSize="1rem">
+                <Typography variant="h2" fontSize="1rem">
                     {label}
                 </Typography>
             </Grid>
@@ -90,4 +90,6 @@ interface ItemProps {
     nameGetter: (id: number) => string | undefined;
 }
 
-const ItemName = React.memo(({ item, nameGetter }: ItemProps) => nameGetter(item) ?? '');
+const ItemName = React.memo(function ItemName({ item, nameGetter }: ItemProps) {
+    return nameGetter(item) ?? '';
+});

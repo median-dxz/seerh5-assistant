@@ -125,12 +125,13 @@ export default tsEslint.config(
             ...reactHooks.configs.recommended.rules,
             'react-refresh/only-export-components': 'warn',
             'react/jsx-uses-react': 'off',
-            'react/react-in-jsx-scope': 'off'
+            'react/react-in-jsx-scope': 'off',
+            'react/prop-types': 'off'
         }
     },
     // @sea/server
     {
-        files: ['packages/server/**/src/*.ts'],
+        files: ['packages/server/src/**/*.ts'],
         languageOptions: {
             globals: {
                 ...globals.node

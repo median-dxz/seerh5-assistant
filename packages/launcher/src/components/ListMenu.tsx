@@ -1,5 +1,5 @@
-import { useCachedReturn } from '@/shared/hooks';
-import { Menu, MenuItem, alpha, type MenuItemProps, type MenuProps } from '@mui/material';
+import { useListDerivedValue } from '@/shared';
+import { Menu, MenuItem, type MenuItemProps, type MenuProps } from '@mui/material';
 import * as React from 'react';
 
 const MemoMenuItem = React.memo(MenuItem);
@@ -43,7 +43,7 @@ export function ListMenu<T, P extends object>(props: ListMenuProps<T, P>) {
         [onClick, setAnchor]
     );
 
-    const onClickRef = useCachedReturn(data, handleClickItem, (r) => r);
+    const onClickRef = useListDerivedValue(data, handleClickItem);
 
     if (data.length === 0) {
         return null;
@@ -57,8 +57,6 @@ export function ListMenu<T, P extends object>(props: ListMenuProps<T, P>) {
                 ...MenuListProps,
                 sx: {
                     maxHeight: '50vh',
-                    overflowY: 'auto',
-                    bgcolor: (theme) => alpha(theme.palette.secondary.main, 0.88),
                     ...MenuListSx
                 }
             }}

@@ -1,15 +1,6 @@
 import { scope } from '@/common/constants.json';
 import type { Pet } from '@sea/core';
-import {
-    GameConfigRegistry,
-    SEAEventSource,
-    SEAPetStore,
-    engine,
-    hookPrototype,
-    restoreHookedFn,
-    spet,
-    wrapper
-} from '@sea/core';
+import { SEAEventSource, SEAPetStore, hookPrototype, query, restoreHookedFn, spet, wrapper } from '@sea/core';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 
 interface PetFragment {
@@ -71,8 +62,8 @@ export const metadata = {
 
 export default async function ItemWareHouse(ctx: SEAModContext<typeof metadata>) {
     const load = () => {
-        const skillQuery = GameConfigRegistry.getQuery('skill');
-        const petQuery = GameConfigRegistry.getQuery('pet');
+        const skillQuery = query('skill');
+        const petQuery = query('pet');
         hookPrototype(itemWarehouse.ItemWarehouse, 'getFilterPetFactorItems', async function (fn) {
             if (this.allType === 1) {
                 return fn();
@@ -112,7 +103,7 @@ export default async function ItemWareHouse(ctx: SEAModContext<typeof metadata>)
                         })
                         .map(async (pet_) => {
                             const pet = await spet(pet_.catchTime).done;
-                            const notActivatedEffect = !(await engine.isPetEffectActivated(pet));
+                            const notActivatedEffect = !pet.isEffectActivated;
                             return {
                                 id: pet.id,
                                 notActivatedHideSkill: Boolean(!pet.fifthSkill),
@@ -165,7 +156,7 @@ export default async function ItemWareHouse(ctx: SEAModContext<typeof metadata>)
                 check = data.PetConsume <= itemCount;
             } else if (this._petFactorPage === 2) {
                 if (pet?.hasEffect) {
-                    const activated = await engine.isPetEffectActivated(pet);
+                    const activated = pet.isEffectActivated;
                     this.txtTexing.text = `专属特性: ${activated ? '已开启' : '未开启'}`;
                     check = data.NewseConsume <= itemCount && !activated;
                 }

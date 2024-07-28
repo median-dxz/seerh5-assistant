@@ -41,10 +41,13 @@ export function PopupMenuButton<T, P extends object>({
             const data = await _data();
             setFetching(false);
             setData(data.length ? data : undefined);
+            return data;
         } else if (Array.isArray(_data) && _data.length > 0) {
             setData(_data);
+            return _data;
         } else {
             setData(undefined);
+            return [];
         }
     }, [_data]);
 
@@ -57,10 +60,11 @@ export function PopupMenuButton<T, P extends object>({
     const handleClick: MouseEventHandler<HTMLButtonElement> = async (e) => {
         buttonProps?.onClick?.(e);
         const target = e.currentTarget;
+        let r = data;
         if (!data?.length) {
-            await loadData();
+            r = await loadData();
         }
-        setAnchor(data?.length ? target : null);
+        setAnchor(r?.length ? target : null);
     };
 
     return (

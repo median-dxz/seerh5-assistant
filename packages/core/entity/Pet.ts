@@ -25,12 +25,10 @@ export class Pet extends EntityBase {
     readonly baseMaxHp: number;
 
     readonly unwrapped_effect?: PetEffectInfo[];
+    // 是否存在第五
     readonly hasFifthSkill: boolean;
+    // 第五技能, 不存在和未获取时为undefined
     readonly fifthSkill?: Skill;
-
-    get hasEffect(): boolean {
-        return Boolean(EffectIconControl._hashMapByPetId.getValue(this.id));
-    }
 
     constructor(obj: PetInfo) {
         super();
@@ -60,20 +58,45 @@ export class Pet extends EntityBase {
             obj.base_hp_total
         ];
 
-        this.skills = [...obj.skillArray, obj.hideSkill].filter(Boolean).map((v) => {
-            const o = Skill.formatById(v.id);
-            o.pp = v.pp;
-            return o;
-        });
+        if (Array.isArray(obj.skillArray)) {
+            this.skills = [...obj.skillArray, obj.hideSKill].filter(Boolean).map((v) => {
+                const o = Skill.formatById(v.id);
+                o.pp = v.pp;
+                return o;
+            });
+        } else {
+            this.skills = [];
+        }
 
         this.hasFifthSkill = Boolean(SkillXMLInfo.hideMovesMap[this.id]);
-        this.fifthSkill = Object.hasOwn(obj, 'hideSkill') ? Skill.formatById(obj.hideSkill.id) : undefined;
+        this.fifthSkill = Object.hasOwn(obj, 'hideSKill') ? Skill.formatById(obj.hideSKill.id) : undefined;
         if (this.fifthSkill) {
-            this.fifthSkill.pp = obj.hideSkill.pp;
+            this.fifthSkill.pp = obj.hideSKill.pp;
         }
+
         if (obj.effectList && obj.effectList.length > 0) {
             this.unwrapped_effect = obj.effectList;
         }
+    }
+
+    // 是否存在魂印
+    get hasEffect() {
+        return Boolean(EffectIconControl._hashMapByPetId.getValue(this.id));
+    }
+
+    /**
+     * 查询精灵是否激活魂印
+     * @returns 如果激活魂印则返回 true, 否则包括没有魂印在内, 都返回false
+     */
+    get isEffectActivated() {
+        if (!(this.hasEffect && this.unwrapped_effect)) return false;
+
+        let result = false;
+        PetManager.checkPetInfoEffect({ id: this.id, effectList: this.unwrapped_effect }, (r) => {
+            result = r;
+        });
+
+        return result;
     }
 
     static from(obj: seerh5.PetLike) {
@@ -93,7 +116,7 @@ export class Pet extends EntityBase {
         }
     }
 
-    static inferCatchTime(obj: Exclude<seerh5.PetLike, seerh5.PetObj> | Pet | number) {
+    static inferCatchTime(obj: { catchTime: number } | number) {
         if (typeof obj === 'number') {
             return obj;
         }

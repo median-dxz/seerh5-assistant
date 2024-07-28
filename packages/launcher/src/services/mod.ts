@@ -1,5 +1,5 @@
 import { IS_DEV, MOD_BUILTIN_UPDATE_STRATEGY, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
-import { buildDefaultConfig } from '@/shared';
+import { buildDefaultConfig, praseCompositeId } from '@/shared';
 import { createApi } from '@reduxjs/toolkit/query/react';
 import type { SEAModMetadata } from '@sea/mod-type';
 import type { InstallModOptions } from '@sea/server';
@@ -10,7 +10,6 @@ import type { ModFactory } from '@/features/mod/handler';
 import { ModMetadataSchema } from '@/features/mod/schemas';
 import type { ModDeployment, ModDeploymentInfo } from '@/features/mod/slice';
 import { buildMetadata, prefetchModMetadata, type DefinedModMetadata } from '@/features/mod/utils';
-import { praseCompositeId } from '@/shared/index';
 
 const { modRouter } = trpcClient;
 
@@ -189,5 +188,3 @@ export const modApi = createApi({
         })
     })
 });
-
-// export const { endpoints } = modApi;

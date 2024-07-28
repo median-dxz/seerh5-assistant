@@ -48,5 +48,3 @@ export const dataApi = createApi({
         })
     })
 });
-
-// export const { endpoints } = dataApi;

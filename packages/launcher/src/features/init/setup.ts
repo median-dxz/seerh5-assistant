@@ -1,7 +1,7 @@
 import { battle, hookPrototype, levelManager, NOOP, SEAEventSource, type SetupOptions } from '@sea/core';
 
 import { IS_DEV } from '@/constants';
-import type { TaskRunner } from '@/shared/types';
+import type { TaskRunner } from '@/shared';
 import { appStore } from '@/store';
 
 import { launcherActions } from '../launcherSlice';

@@ -84,7 +84,7 @@ export const theme = createTheme({
     typography: {
         fontSize: 16,
         fontFamily: fonts.main,
-        subtitle1: {
+        h2: {
             fontSize: 20,
             fontFamily: fonts.header,
             fontWeight: 'bold',
@@ -147,6 +147,21 @@ export const theme = createTheme({
                 })
             }
         },
+        MuiMenu: {
+            styleOverrides: {
+                list: {
+                    backgroundColor: alpha(colors.secondary, 0.88),
+                    overflowY: 'auto'
+                }
+            }
+        },
+        MuiPopover: {
+            styleOverrides: {
+                paper: {
+                    backdropFilter: 'blur(8px)'
+                }
+            }
+        },
         MuiDialog: {
             styleOverrides: {
                 paper: {
@@ -179,13 +194,6 @@ export const theme = createTheme({
                         boxShadow: `0 0 8px ${alpha(darken(colors.secondary, 0.24), 0.24)}`
                     },
                     boxShadow: `0 0 4px ${alpha(colors.secondary, 0.24)}`
-                }
-            }
-        },
-        MuiTypography: {
-            defaultProps: {
-                variantMapping: {
-                    subtitle1: 'h2'
                 }
             }
         },

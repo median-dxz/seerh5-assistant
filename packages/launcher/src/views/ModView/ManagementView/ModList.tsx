@@ -11,7 +11,7 @@ import { deploymentSelectors, type ModDeployment } from '@/features/mod/slice';
 import { modStore } from '@/features/mod/store';
 import { useMapToStore } from '@/features/mod/useModStore';
 import { useAppSelector } from '@/store';
-import { getCompositeId } from '@/shared/index';
+import { getCompositeId } from '@/shared';
 
 import {
     Box,
@@ -154,9 +154,7 @@ export function ModListItem({ deployment }: ModListItemProps) {
                 anchorEl={anchor}
                 MenuListProps={{
                     sx: {
-                        maxHeight: '50vh',
-                        overflowY: 'auto',
-                        bgcolor: (theme) => alpha(theme.palette.secondary.main, 0.88)
+                        maxHeight: '50vh'
                     }
                 }}
                 open={open}

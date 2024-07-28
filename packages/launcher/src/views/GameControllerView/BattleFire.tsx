@@ -90,7 +90,7 @@ export function BattleFire() {
     return (
         <Paper sx={{ p: 4 }}>
             <Typography
-                variant="subtitle1"
+                variant="h2"
                 sx={{
                     fontSize: '1rem'
                 }}

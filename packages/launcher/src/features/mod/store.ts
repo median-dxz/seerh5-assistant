@@ -1,4 +1,4 @@
-import type { AnyTask } from '@/shared/types';
+import type { AnyTask } from '@/shared';
 import type { LevelBattle, MoveStrategy } from '@sea/core';
 import type { Battle, Command, Strategy, Task } from '@sea/mod-type';
 import { ctByName } from '../catchTimeBinding';

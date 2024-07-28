@@ -2,7 +2,8 @@ import type { TableCellProps, TableProps } from '@mui/material';
 import { Table, TableBody, TableCell, TableHead, TableRow, alpha } from '@mui/material';
 import * as React from 'react';
 
-import { useCachedReturn } from '@/shared/hooks';
+import { useListDerivedValue } from '@/shared';
+import { useCallback } from 'react';
 import { RowDataContext, RowIndexContext } from './usePanelTableData';
 
 export type PanelColumns = Array<{ field: string; columnName: string } & TableCellProps>;
@@ -19,8 +20,11 @@ export const ColumnContext = React.createContext<PanelColumns>([]);
 export function PanelTable<TData>(props: PanelTableProps<TData>) {
     const { toRowKey, data, columns, rowElement, ...tableProps } = props;
 
-    const keyRef = useCachedReturn(data, toRowKey, (r, data) => r ?? JSON.stringify(data));
-    const dataRef = useCachedReturn(data, undefined, (r, data, index) => ({ data, index }));
+    const makeRowKey = useCallback((data: TData) => toRowKey?.(data) ?? JSON.stringify(data), [toRowKey]);
+    const makeRowEntities = useCallback((data: TData, index: number) => ({ data, index }), []);
+
+    const keyRef = useListDerivedValue(data, makeRowKey);
+    const dataRef = useListDerivedValue(data, makeRowEntities);
 
     return (
         <Table size="small" {...tableProps}>

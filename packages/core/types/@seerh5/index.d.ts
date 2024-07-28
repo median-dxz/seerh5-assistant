@@ -93,6 +93,11 @@ declare global {
             Desc: string;
         }
 
+        interface PetFragmentLevelBattleObj extends BaseObj {
+            Task: PetFragmentLevelBoss[];
+            Out: number;
+        }
+
         interface PetFragmentLevelObj extends BaseObj {
             ID: number;
             Desc: string;
@@ -102,12 +107,25 @@ declare global {
                 FailTimes: number;
                 ProgressValue: number;
             };
-            EasyBattle: { Task: PetFragmentLevelBoss[] };
-            NormalBattle: { Task: PetFragmentLevelBoss[] };
-            HardBattle: { Task: PetFragmentLevelBoss[] };
+            EasyBattle: PetFragmentLevelBattleObj;
+            NormalBattle: PetFragmentLevelBattleObj;
+            HardBattle: PetFragmentLevelBattleObj;
             Reward: {
                 ItemID: number;
+                GainValue: number;
+                MonsterID: number;
             };
+        }
+
+        interface PetFragmentObj extends BaseObj {
+            ID: number;
+            Name: string;
+            MonsterID: number;
+            PetConsume: number;
+            NewSeIdx: number;
+            NewseConsume: number;
+            MoveID: number;
+            MovesConsume: number;
         }
 
         interface SuitObj extends BaseObj {

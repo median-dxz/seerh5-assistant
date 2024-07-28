@@ -1,42 +1,26 @@
 import type { PetFragmentOptions } from '@/builtin/petFragment/types';
 import { Row } from '@/components/styled/Row';
-import { DifficultyText } from '@/constants';
-import { useAppSelector } from '@/store';
 import {
-    alpha,
     Autocomplete,
     Button,
-    Chip,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
-    FormControl,
     FormControlLabel,
-    InputLabel,
-    MenuItem,
-    Select,
     Stack,
     Switch,
-    TextField,
-    Typography
+    TextField
 } from '@mui/material';
-import { PetFragmentLevelDifficulty as Difficulty, PetFragmentLevel } from '@sea/core';
+import type { PetFragmentLevel } from '@sea/core';
+import { PetFragmentLevelDifficulty as Difficulty } from '@sea/core';
 import { toRaw } from '@vue/reactivity';
 import { dequal } from 'dequal';
 import { useSnackbar } from 'notistack';
-import { forwardRef, useCallback, useMemo, useState } from 'react';
-import { Controller, useForm, type ControllerRenderProps } from 'react-hook-form';
+import { useCallback } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 
-declare const config: {
-    xml: {
-        getAnyRes: (name: 'new_super_design') => {
-            Root: {
-                Design: seerh5.PetFragmentLevelObj[];
-            };
-        };
-    };
-};
+import { BattleSelector, DifficultySelector, petFragmentLevels, validatePrimitive } from './shared';
 
 export interface AddOptionsFormProps {
     open: boolean;
@@ -44,18 +28,9 @@ export interface AddOptionsFormProps {
     modData: PetFragmentOptions[];
 }
 
-const validatePrimitive = (value: number | string) => {
-    if (typeof value === 'number') {
-        return !isNaN(value);
-    }
-    return value.trim() !== '';
-};
-
-const AllDifficulty = [Difficulty.Ease, Difficulty.Normal, Difficulty.Hard];
-
 export function AddOptionsForm({ open, setOpen, modData }: AddOptionsFormProps) {
     const { enqueueSnackbar } = useSnackbar();
-    const { control, handleSubmit, watch, reset } = useForm<PetFragmentOptions>({
+    const { control, handleSubmit, watch, reset, clearErrors } = useForm<PetFragmentOptions>({
         defaultValues: {
             id: NaN,
             difficulty: Difficulty.Ease,
@@ -63,11 +38,6 @@ export function AddOptionsForm({ open, setOpen, modData }: AddOptionsFormProps) 
             battle: []
         }
     });
-
-    const petFragmentLevelList = useMemo(
-        () => config.xml.getAnyRes('new_super_design').Root.Design.map((o) => new PetFragmentLevel(o)),
-        []
-    );
 
     const handleClose = useCallback(
         (_?: unknown, reason?: 'backdropClick' | 'escapeKeyDown') => {
@@ -78,7 +48,15 @@ export function AddOptionsForm({ open, setOpen, modData }: AddOptionsFormProps) 
         [setOpen, reset]
     );
 
+    const difficulty = watch('difficulty');
     const isSweep = watch('sweep');
+    const levelId = watch('id');
+
+    let levelCount = 0;
+    if (levelId && difficulty) {
+        const bosses = petFragmentLevels.selectById(levelId)?.bosses;
+        levelCount = bosses?.[difficulty].length ?? 0;
+    }
 
     return (
         <Dialog
@@ -115,7 +93,7 @@ export function AddOptionsForm({ open, setOpen, modData }: AddOptionsFormProps) 
                                 onChange={(_, value) => {
                                     field.onChange(value?.id ?? NaN);
                                 }}
-                                value={petFragmentLevelList.find((pf) => pf.id === field.value) ?? null}
+                                value={petFragmentLevels.selectById(field.value) ?? null}
                                 autoComplete
                                 renderInput={(params) => (
                                     <TextField
@@ -125,7 +103,7 @@ export function AddOptionsForm({ open, setOpen, modData }: AddOptionsFormProps) 
                                         helperText={fieldState.error?.message}
                                     />
                                 )}
-                                options={petFragmentLevelList.sort((a, b) => b.id - a.id)}
+                                options={petFragmentLevels.all().sort((a, b) => b.id - a.id)}
                                 getOptionLabel={(pf) => (pf ? pf.name.split(' ')[1] : '')}
                             />
                         )}
@@ -134,35 +112,22 @@ export function AddOptionsForm({ open, setOpen, modData }: AddOptionsFormProps) 
                         <Controller
                             control={control}
                             name="difficulty"
-                            render={({ field }) => (
-                                <FormControl
-                                    sx={{
-                                        width: '10rem'
-                                    }}
-                                >
-                                    <InputLabel>难度</InputLabel>
-                                    <Select
-                                        {...field}
-                                        MenuProps={{
-                                            MenuListProps: {
-                                                sx: { bgcolor: ({ palette }) => alpha(palette.secondary.main, 0.88) }
-                                            }
-                                        }}
-                                        label="难度"
-                                    >
-                                        {AllDifficulty.map((difficulty) => (
-                                            <MenuItem key={difficulty} value={difficulty}>
-                                                {DifficultyText[difficulty]}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-                            )}
+                            render={({ field }) => <DifficultySelector {...field} />}
                         />
                         <Controller
                             control={control}
                             name="sweep"
-                            render={({ field }) => <FormControlLabel {...field} control={<Switch />} label="扫荡" />}
+                            render={({ field }) => (
+                                <FormControlLabel
+                                    {...field}
+                                    onChange={(e, checked) => {
+                                        clearErrors('battle');
+                                        field.onChange(e, checked);
+                                    }}
+                                    control={<Switch />}
+                                    label="扫荡"
+                                />
+                            )}
                         />
                     </Row>
                     <Controller
@@ -170,10 +135,11 @@ export function AddOptionsForm({ open, setOpen, modData }: AddOptionsFormProps) 
                         disabled={isSweep}
                         name="battle"
                         rules={{
-                            validate: (value) => value.length === 7 || '对战方案数量和关卡不一致'
+                            deps: ['sweep'],
+                            validate: (value) => (!isSweep && value.length === levelCount) || '对战方案数量和关卡不一致'
                         }}
                         render={({ field, fieldState }) => (
-                            <PFBattleSelector {...field} errorText={fieldState.error?.message} levelCount={7} />
+                            <BattleSelector {...field} errorText={fieldState.error?.message} levelCount={levelCount} />
                         )}
                     />
                 </Stack>
@@ -187,66 +153,3 @@ export function AddOptionsForm({ open, setOpen, modData }: AddOptionsFormProps) 
         </Dialog>
     );
 }
-
-const PFBattleSelector = forwardRef(function PFBattleSelector(
-    {
-        onChange,
-        value,
-        errorText,
-        levelCount,
-        ...props
-    }: ControllerRenderProps<PetFragmentOptions, 'battle'> & { errorText?: string; levelCount: number },
-    ref
-) {
-    const [inputValue, setInputValue] = useState('');
-    const battleKeys = useAppSelector((state) => state.mod.battleKeys);
-    return (
-        <>
-            <Autocomplete
-                {...props}
-                ref={ref}
-                autoComplete
-                onChange={(_, v) => {
-                    setInputValue('');
-                    if (v && value.length < levelCount) {
-                        onChange(value.concat(v));
-                    }
-                }}
-                value={null}
-                inputValue={inputValue}
-                onInputChange={(_, v) => {
-                    setInputValue(v);
-                }}
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        InputProps={{
-                            ...params.InputProps
-                        }}
-                        inputProps={{
-                            ...params.inputProps,
-                            autoComplete: 'off'
-                        }}
-                        label="对战方案"
-                        helperText={errorText}
-                    />
-                )}
-                options={battleKeys}
-            />
-            <Typography>
-                已选择: {value.length} / {levelCount}
-            </Typography>
-            <Row sx={{ overflowX: 'scroll' }} spacing={2}>
-                {value.map((battle, index) => (
-                    <Chip
-                        key={index}
-                        label={battle}
-                        onDelete={() => {
-                            onChange(value.filter((_, i) => i !== index));
-                        }}
-                    />
-                ))}
-            </Row>
-        </>
-    );
-});

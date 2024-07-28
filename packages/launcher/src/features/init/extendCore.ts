@@ -2,11 +2,6 @@ import { engine, GameConfigRegistry, socket } from '@sea/core';
 
 declare const config: {
     xml: {
-        getAnyRes: (name: 'new_super_design') => {
-            Root: {
-                Design: seerh5.PetFragmentLevelObj[];
-            };
-        };
         load: (name: string) => void;
     };
 };
@@ -36,9 +31,6 @@ export function extendCore() {
             return new Promise<void>((resolve) => {
                 MainManager.actorInfo.requestChangeClothes(type, itemId, resolve);
             });
-        },
-        getPetFragmentLevelObj(id: number) {
-            return config.xml.getAnyRes('new_super_design').Root.Design.find((r) => r.ID === id);
         }
     });
 }

@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 
 import { Selector } from './Selector';
 
-import { GameConfigRegistry, SEAEventSource, engine } from '@sea/core';
+import { SEAEventSource, engine, query } from '@sea/core';
 
 const changeTitleEventSource = SEAEventSource.eventPattern(
     (handler) => {
@@ -24,10 +24,10 @@ const changeClothesEventSource = SEAEventSource.eventPattern(
 );
 
 export function Inventory() {
-    const equipmentQuery = GameConfigRegistry.getQuery('equipment');
-    const itemQuery = GameConfigRegistry.getQuery('item');
-    const titleQuery = GameConfigRegistry.getQuery('title');
-    const suitQuery = GameConfigRegistry.getQuery('suit');
+    const equipmentQuery = query('equipment');
+    const itemQuery = query('item');
+    const titleQuery = query('title');
+    const suitQuery = query('suit');
 
     const getEyeEquipment = useCallback(() => {
         const clothesIds = MainManager.actorInfo.clothIDs;

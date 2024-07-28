@@ -98,8 +98,3 @@ export const gameApi = createApi({
         })
     })
 });
-
-// https://github.com/reduxjs/redux-toolkit/issues/4498
-// https://github.com/reduxjs/redux-toolkit/issues/4066
-// https://github.com/reduxjs/redux-toolkit/pull/4467
-// export const { endpoints } = gameApi;

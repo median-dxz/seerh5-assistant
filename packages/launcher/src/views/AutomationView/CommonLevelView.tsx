@@ -6,8 +6,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DataLoading } from '@/components/DataLoading';
 import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
-import { PanelField, useRowData } from '@/components/PanelTable';
-import { PanelTable } from '@/components/PanelTable/PanelTable';
+import { PanelField, PanelTable, useRowData } from '@/components/PanelTable/index';
+import { SEAConfigForm } from '@/components/SEAConfigForm';
 import { SeaTableRow } from '@/components/styled/TableRow';
 
 import { taskStore, type TaskInstance } from '@/features/mod/store';
@@ -17,9 +17,7 @@ import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
 import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
 import type { ModExportsRef } from '@/features/mod/utils';
 import { dataApi } from '@/services/data';
-import { getCompositeId, getTaskOptions } from '@/shared/index';
-import { startAppListening } from '@/shared/redux';
-import type { TaskRunner } from '@/shared/types';
+import { getCompositeId, getTaskOptions, startAppListening, type TaskRunner } from '@/shared';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { CircularProgress } from '@mui/material';
 import { LevelAction } from '@sea/core';
@@ -101,10 +99,11 @@ export function CommonLevelView() {
     );
 }
 
-const PanelRow = React.memo(() => {
+const PanelRow = React.memo(function PanelRow() {
     const dispatch = useAppDispatch();
     const { ref, options, task, runner } = useRowData<Row>();
 
+    const [editFormOpen, setEditFormOpen] = useState(false);
     const [completed, setCompleted] = useState(false);
     const [fetched, setFetched] = useState(false);
 
@@ -146,10 +145,16 @@ const PanelRow = React.memo(() => {
                 >
                     <PlayArrow />
                 </IconButtonNoRipple>
-                <IconButtonNoRipple title="配置">
+                <IconButtonNoRipple
+                    title="配置"
+                    onClick={() => {
+                        setEditFormOpen(true);
+                    }}
+                >
                     <Settings />
                 </IconButtonNoRipple>
             </PanelField>
+            <SEAConfigForm open={editFormOpen} config={options} />
         </SeaTableRow>
     );
 });

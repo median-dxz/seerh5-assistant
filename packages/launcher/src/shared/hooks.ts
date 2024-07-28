@@ -1,10 +1,7 @@
-import { useRef } from 'react';
+import type { PopoverProps } from '@mui/material';
+import { useCallback, useRef, useState, type MouseEventHandler } from 'react';
 
-export function useCachedReturn<TKey, TFn extends (data: TKey, index: number) => unknown, TCache>(
-    data: TKey[],
-    fn: TFn | undefined,
-    factory: (value: ReturnType<TFn> | undefined, data: TKey, index: number) => TCache
-) {
+export function useListDerivedValue<TKey, TCache>(data: TKey[], fn: (data: TKey, index: number) => TCache) {
     const valueRef = useRef(new Map<TKey, TCache>());
     const fnCache = useRef(fn);
 
@@ -12,18 +9,12 @@ export function useCachedReturn<TKey, TFn extends (data: TKey, index: number) =>
         fnCache.current = fn;
         valueRef.current.clear();
         data.forEach((data, index) => {
-            valueRef.current.set(
-                data,
-                factory(fnCache.current?.(data, index) as ReturnType<TFn> | undefined, data, index)
-            );
+            valueRef.current.set(data, fnCache.current?.(data, index));
         });
     } else {
         data.forEach((data, index) => {
             if (!valueRef.current.has(data)) {
-                valueRef.current.set(
-                    data,
-                    factory(fnCache.current?.(data, index) as ReturnType<TFn> | undefined, data, index)
-                );
+                valueRef.current.set(data, fnCache.current?.(data, index));
             }
         });
 
@@ -35,4 +26,38 @@ export function useCachedReturn<TKey, TFn extends (data: TKey, index: number) =>
         });
     }
     return valueRef;
+}
+
+export function usePopupState({
+    popupId,
+    closeHandler,
+    openHandler
+}: {
+    popupId?: string;
+    closeHandler?: () => void;
+    openHandler?: () => void | Promise<void>;
+}) {
+    const [anchorEl, setAnchorEl] = useState<Element | null>(null);
+    const onClose = useCallback(() => {
+        closeHandler?.();
+        setAnchorEl(null);
+    }, [closeHandler]);
+
+    const popupState: Pick<PopoverProps, 'id' | 'open' | 'anchorEl' | 'onClose'> = {
+        anchorEl,
+        id: popupId,
+        open: Boolean(anchorEl),
+        onClose
+    };
+
+    const open: MouseEventHandler = useCallback(
+        async (event) => {
+            const target = event.currentTarget;
+            await openHandler?.();
+            setAnchorEl(target);
+        },
+        [openHandler]
+    );
+
+    return { state: popupState, open, close: onClose };
 }

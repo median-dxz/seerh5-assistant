@@ -45,7 +45,7 @@ export function Sidebar({ height }: SidebarProps) {
             }}
         >
             <Row alignItems="baseline" justifySelf="start" mb={2}>
-                <Typography variant="subtitle1">调度器</Typography>
+                <Typography variant="h2">调度器</Typography>
                 <Button
                     variant="outlined"
                     color="inherit"

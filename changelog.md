@@ -70,24 +70,24 @@
   - [x] 不再有子包导出
   - [x] `seac`作为核心实例用于控制全局副作用
   - [x] `Strategy`模块重写, 提供更加方便优雅的 api, 且统一大部分操作
-    - [x] 新 api 以纯函数式方式，包括技能对点, 自动, 第五, 攻击
+    - [x] 新 api 以纯函数式方式实现，包括技能对点, 自动, 第五, 攻击
   - [x] 更名
     - [x] `SEAPet` -> `spet`
     - [x] `GameConfigRegistry.getQuery` -> `query`
     - [x] `extendEngine` -> `engine.extend`
     - [x] `Engine` -> `engine`
     - [x] `SEABattle` -> `battle`
-    - [x] `CoreLoader` -> `core`
 - [x] 日志模块重写，输出 object 而不是消息，可以子 logger 化
 - [x] 启用单元测试
-- [ ] 查询关卡获取的因子数量
-- [ ] 查询魂印激活放到 SEAPet 中
+- [x] 查询关卡获取的因子数量
+- [x] 查询魂印激活放到 SEAPet 中
+  - [x] 修复为同步实现
 - [ ] 验证第五和魂印判断的正确性
 - [ ] 解耦登录器/后端特定逻辑, 分离非核心功能, 部分由登录器提供扩展定义, 合并到`engine`中, 部分由`mod-presets`实现
-  - [x] script 解密
+  - [x] script 解密(后端)
   - [ ] 对战显血
-  - [x] 自动关弹窗
-  - [x] logFilter
+  - [x] 自动关弹窗(模组)
+  - [x] logFilter(后端+登录器)
   - [ ] 注册hook时添加的副作用
 - [x] LevelRunner使用事件流
 - [x] 对于 CoreLoad 的注册 hook, 提供标志位来进行功能的打开，关闭
@@ -101,7 +101,6 @@
 - [ ] 完善 pet 缓存逻辑
   - [ ] cacheMap接口优化
   - [ ] 使用Monad实现替换Proxy实现
-  - [ ] 同时优化第五和魂印的检测逻辑
   - [ ] 添加单元测试
 
 # 低优先级
@@ -111,10 +110,10 @@
 - [ ] cookie issue
 - [ ] 在三个加载资源处都显示 总加载文件数 当前文件名 当前已下载大小/当前文件大小
 - [ ] script 通过语法树进行高级反混淆, 暂定主要目标是升级 async/await
-- [ ] (task state)使用自定义的高亮显示框代替textarea显示json
+- [ ] (task state)使用自定义的*高亮*显示框代替textarea显示json
 - [ ] 由后端支持的更新 dist 文件夹进行软件更新
 - [ ] 自定义背景（各种意义上？）
 - [ ] logo
-- [ ] 重新组织图标：更好的DX，Material Symbol，更好的代码组织
+- [ ] 重新组织图标：更好的DX，Material Symbol，更好的代码组织，包括字体，注意要打包进去或者测试无梯子
 - [ ] 使用gird重置表格组件
 - [ ] 构建electron分发

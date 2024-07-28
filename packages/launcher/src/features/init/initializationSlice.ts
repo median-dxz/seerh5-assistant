@@ -5,8 +5,7 @@ import { seac, type SetupOptions } from '@sea/core';
 
 import { IS_DEV } from '@/constants';
 import { modApi } from '@/services/mod';
-import { getCompositeId } from '@/shared/index';
-import { createAppSlice, startAppListening } from '@/shared/redux';
+import { getCompositeId, createAppSlice, startAppListening } from '@/shared';
 import type { AppDispatch } from '@/store';
 
 import * as ctService from '../catchTimeBinding/index';

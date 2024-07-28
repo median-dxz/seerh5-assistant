@@ -8,16 +8,13 @@ import { CircularProgress } from '@mui/material';
 
 import { taskStore, type TaskInstance } from '@/features/mod/store';
 import { mapToStore } from '@/features/mod/useModStore';
-import { getCompositeId } from '@/shared/index';
+import { getCompositeId, getTaskOptions, startAppListening, type TaskRunner } from '@/shared';
 
 import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
 import type { ModExportsRef } from '@/features/mod/utils';
 import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
 import { dataApi } from '@/services/data';
-import { getTaskOptions } from '@/shared/index';
-import { startAppListening } from '@/shared/redux';
-import type { TaskRunner } from '@/shared/types';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual } from 'react-redux';

@@ -81,7 +81,7 @@ declare global {
         level: number;
         dv: number;
         nature: number;
-        hideSkill: PetSkillInfo;
+        hideSKill: PetSkillInfo;
         skillArray: Array<PetSkillInfo>;
         effectList?: Array<PetEffectInfo>;
         isDefault: boolean;
@@ -448,6 +448,11 @@ declare global {
         getName(id: number): string;
     }
     const PetXMLInfo: PetXMLInfo;
+
+    interface PetFragmentXMLInfo {
+        getItemByID(id: number): seerh5.PetFragmentObj;
+    }
+    const PetFragmentXMLInfo: PetFragmentXMLInfo;
 
     interface TypeXMLInfo {
         getRelationsPow(a: string, b: string): number;

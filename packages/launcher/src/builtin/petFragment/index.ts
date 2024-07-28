@@ -19,6 +19,16 @@ export const metadata = {
     data: [] as PetFragmentOptions[]
 } satisfies SEAModMetadata;
 
+declare const config: {
+    xml: {
+        getAnyRes: (name: 'new_super_design') => {
+            Root: {
+                Design: seerh5.PetFragmentLevelObj[];
+            };
+        };
+    };
+};
+
 export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
     const taskMetadata = {
         name: '精灵因子',
@@ -27,25 +37,26 @@ export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
 
     class PetFragmentRunner implements IPetFragmentRunner {
         get name() {
-            return `精灵因子-${this.frag.name.split(' ')[1]}: ${DifficultyText[this.options.difficulty]}`;
+            return `精灵因子-${this.level.name.split(' ')[1]}: ${DifficultyText[this.options.difficulty]}`;
         }
 
         readonly designId: number;
-        readonly frag: PetFragmentLevel;
+        readonly level: PetFragmentLevel;
 
         data: PetFragmentLevelData;
         logger = logger;
 
         constructor(public options: PetFragmentOptions) {
-            const LevelObj = engine.getPetFragmentLevelObj(options.id);
+            const allLevelObj = config.xml.getAnyRes('new_super_design').Root.Design;
+            const LevelObj = allLevelObj.find((level) => level.ID === options.id);
 
             if (!LevelObj) throw new Error(`未找到精灵因子关卡: ${options.id}`);
 
-            this.frag = new PetFragmentLevel(LevelObj);
-            this.designId = this.frag.id;
+            this.level = new PetFragmentLevel(LevelObj);
+            this.designId = this.level.id;
 
             this.data = { maxTimes: 3 } as PetFragmentLevelData;
-            this.logger = logger.bind(logger, this.name);
+            this.logger = (msg: string) => logger(`${this.name}: ${msg}`);
         }
 
         selectLevelBattle() {
@@ -58,49 +69,52 @@ export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
         }
 
         async update() {
-            const { frag, data } = this;
-            const values = await socket.multiValue(frag.values.openTimes, frag.values.failTimes, frag.values.progress);
+            const { level, data } = this;
+            const values = await socket.multiValue(
+                level.values.openTimes,
+                level.values.failTimes,
+                level.values.progress,
+                level.values.gain
+            );
 
-            data.pieces = await engine.itemNum(frag.petFragmentItem);
+            data.piecesOwned = await engine.itemNum(level.petFragment.itemId);
 
             data.remainingTimes = data.maxTimes - values[0];
             data.failedTimes = values[1];
             data.curDifficulty = (values[2] >> 8) & 255;
-            if (data.curDifficulty === Difficulty.NotSelected && this.options.difficulty) {
-                data.curDifficulty = this.options.difficulty;
-            }
             data.curPosition = values[2] >> 16;
             data.isChallenge = data.curDifficulty !== Difficulty.NotSelected && data.curPosition !== 0;
             data.progress = (data.curPosition / 5) * 100;
 
-            switch (data.curDifficulty) {
-                case Difficulty.Ease:
-                    data.bosses = frag.level.ease;
-                    break;
-                case Difficulty.Normal:
-                    data.bosses = frag.level.normal;
-                    break;
-                case Difficulty.Hard:
-                    data.bosses = frag.level.hard;
-                    break;
-                default:
-                    break;
+            data.canSweep = false;
+            if (data.curDifficulty === Difficulty.NotSelected) {
+                data.canSweep = Boolean((values[3] >> (4 + this.options.difficulty)) & 1);
             }
         }
 
         next() {
             const data = this.data;
+
+            if (data.stopByError) {
+                return LevelAction.STOP;
+            }
+
             if (data.isChallenge || data.remainingTimes > 0) {
                 if (this.options.sweep) {
-                    return 'sweep';
+                    return data.canSweep ? 'sweep' : 'error_not_able_to_sweep';
                 } else {
                     return LevelAction.BATTLE;
                 }
             }
+
             return LevelAction.STOP;
         }
 
         readonly actions = {
+            error_not_able_to_sweep: () => {
+                this.logger('不满足扫荡条件');
+                this.data.stopByError = true;
+            },
             sweep: async () => {
                 await socket.sendByQueue(41283, [this.designId, 4 + this.data.curDifficulty]);
                 this.logger('执行一次扫荡');
