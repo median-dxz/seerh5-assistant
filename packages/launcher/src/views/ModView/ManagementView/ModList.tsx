@@ -10,8 +10,8 @@ import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 import { deploymentSelectors, type ModDeployment } from '@/features/mod/slice';
 import { modStore } from '@/features/mod/store';
 import { useMapToStore } from '@/features/mod/useModStore';
+import { getCompositeId, usePopupState } from '@/shared';
 import { useAppSelector } from '@/store';
-import { getCompositeId } from '@/shared';
 
 import {
     Box,
@@ -28,8 +28,6 @@ import {
     type ListProps
 } from '@mui/material';
 import NanoClamp from 'nanoclamp';
-import type { MouseEventHandler } from 'react';
-import { useCallback, useState } from 'react';
 
 const ClampText = styled(NanoClamp)(({ theme }) => ({
     ...theme.typography.button,
@@ -43,18 +41,9 @@ interface ModListItemProps {
 }
 
 export function ModListItem({ deployment }: ModListItemProps) {
-    const [anchor, setAnchor] = useState<HTMLElement | null>(null);
-
-    const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
-        const target = e.currentTarget;
-        setAnchor(target);
-    };
-
-    const handleCloseMenu = useCallback(() => {
-        setAnchor(null);
-    }, [setAnchor]);
-
-    const open = Boolean(anchor);
+    const { state: menuState, open } = usePopupState({
+        popupId: 'mod-list-item-menu'
+    });
 
     const { state, scope, id } = deployment;
     const ins = useMapToStore(() => (deployment.status === 'deployed' ? deployment.deploymentId : undefined), modStore);
@@ -146,43 +135,33 @@ export function ModListItem({ deployment }: ModListItemProps) {
                 <IconButtonNoRipple title="配置">
                     <Settings />
                 </IconButtonNoRipple>
-                <IconButtonNoRipple title="管理" onClick={handleClick}>
+                <IconButtonNoRipple title="管理" onClick={open}>
                     <Build />
                 </IconButtonNoRipple>
             </Box>
             <Menu
-                anchorEl={anchor}
+                {...menuState}
                 MenuListProps={{
                     sx: {
                         maxHeight: '50vh'
                     }
                 }}
-                open={open}
-                onClose={handleCloseMenu}
             >
-                <MenuItem sx={{ maxWidth: '25vw', fontSize: '1rem' }}>
-                    <RadioButtonUnchecked fontSize="inherit" />
-                    <Typography sx={{ ml: 2, mr: 2 }} fontSize="inherit">
-                        启用
-                    </Typography>
+                <MenuItem sx={{ fontSize: '1rem' }}>
+                    <RadioButtonUnchecked sx={{ mr: 2, ml: -1 }} fontSize="inherit" />
+                    <Typography fontSize="inherit">启用</Typography>
                 </MenuItem>
-                <MenuItem sx={{ maxWidth: '25vw', fontSize: '1rem' }}>
-                    <RadioButtonChecked fontSize="inherit" />
-                    <Typography sx={{ ml: 2, mr: 2 }} fontSize="inherit">
-                        禁用
-                    </Typography>
+                <MenuItem sx={{ fontSize: '1rem' }}>
+                    <RadioButtonChecked sx={{ mr: 2, ml: -1 }} fontSize="inherit" />
+                    <Typography fontSize="inherit">禁用</Typography>
                 </MenuItem>
-                <MenuItem sx={{ maxWidth: '25vw', fontSize: '1rem' }}>
-                    <Refresh fontSize="inherit" />
-                    <Typography sx={{ ml: 2, mr: 2 }} fontSize="inherit">
-                        重载
-                    </Typography>
+                <MenuItem sx={{ fontSize: '1rem' }}>
+                    <Refresh sx={{ mr: 2, ml: -1 }} fontSize="inherit" />
+                    <Typography fontSize="inherit">重载</Typography>
                 </MenuItem>
-                <MenuItem sx={{ maxWidth: '25vw', fontSize: '1rem' }}>
-                    <Delete fontSize="inherit" />
-                    <Typography sx={{ ml: 2, mr: 2 }} fontSize="inherit">
-                        卸载
-                    </Typography>
+                <MenuItem sx={{ fontSize: '1rem' }}>
+                    <Delete sx={{ mr: 2, ml: -1 }} fontSize="inherit" />
+                    <Typography fontSize="inherit">卸载</Typography>
                 </MenuItem>
             </Menu>
         </ListItem>

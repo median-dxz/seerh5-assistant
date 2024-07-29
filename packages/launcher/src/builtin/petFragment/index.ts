@@ -95,10 +95,6 @@ export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
         next() {
             const data = this.data;
 
-            if (data.stopByError) {
-                return LevelAction.STOP;
-            }
-
             if (data.isChallenge || data.remainingTimes > 0) {
                 if (this.options.sweep) {
                     return data.canSweep ? 'sweep' : 'error_not_able_to_sweep';
@@ -112,18 +108,24 @@ export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
 
         readonly actions = {
             error_not_able_to_sweep: () => {
-                this.logger('不满足扫荡条件');
-                this.data.stopByError = true;
+                const err = `不满足扫荡条件`;
+                BubblerManager.getInstance().showText(err);
+                throw new Error(err);
             },
             sweep: async () => {
-                await socket.sendByQueue(41283, [this.designId, 4 + this.data.curDifficulty]);
+                await socket.sendByQueue(41283, [this.designId, 4 + this.options.difficulty]);
                 this.logger('执行一次扫荡');
             },
             battle: async () => {
-                const checkData = await socket.sendByQueue(41284, [this.designId, this.data.curDifficulty]);
+                if (this.data.isChallenge && this.options.difficulty !== this.data.curDifficulty) {
+                    const err = `正在进行其他难度的挑战: ${this.data.curDifficulty}`;
+                    BubblerManager.getInstance().showText(err);
+                    throw new Error(err);
+                }
+                const checkData = await socket.sendByQueue(41284, [this.designId, this.options.difficulty]);
                 const check = new DataView(checkData!).getUint32(0);
                 if (check === 0) {
-                    await socket.sendByQueue(41282, [this.designId, this.data.curDifficulty]);
+                    await socket.sendByQueue(41282, [this.designId, this.options.difficulty]);
                 } else {
                     const err = `出战情况不合法: ${check}`;
                     BubblerManager.getInstance().showText(err);

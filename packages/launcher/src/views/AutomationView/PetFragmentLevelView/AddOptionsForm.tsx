@@ -3,49 +3,50 @@ import { Row } from '@/components/styled/Row';
 import {
     Autocomplete,
     Button,
+    Checkbox,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
     FormControlLabel,
     Stack,
-    Switch,
     TextField
 } from '@mui/material';
 import type { PetFragmentLevel } from '@sea/core';
 import { PetFragmentLevelDifficulty as Difficulty } from '@sea/core';
-import { toRaw } from '@vue/reactivity';
 import { dequal } from 'dequal';
 import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import { BattleSelector, DifficultySelector, petFragmentLevels, validatePrimitive } from './shared';
+import { BattleSelector, DifficultySelector, petFragmentLevels, useOptionsList, validatePrimitive } from './shared';
 
 export interface AddOptionsFormProps {
     open: boolean;
-    setOpen: (open: boolean) => void;
-    modData: PetFragmentOptions[];
+    onClose: () => void;
 }
 
-export function AddOptionsForm({ open, setOpen, modData }: AddOptionsFormProps) {
+const defaultValues: PetFragmentOptions = {
+    id: NaN,
+    difficulty: Difficulty.Ease,
+    sweep: false,
+    battle: []
+};
+
+export function AddOptionsForm({ open, onClose }: AddOptionsFormProps) {
     const { enqueueSnackbar } = useSnackbar();
     const { control, handleSubmit, watch, reset, clearErrors } = useForm<PetFragmentOptions>({
-        defaultValues: {
-            id: NaN,
-            difficulty: Difficulty.Ease,
-            sweep: false,
-            battle: []
-        }
+        defaultValues
     });
+    const { optionsList, mutate } = useOptionsList();
 
     const handleClose = useCallback(
         (_?: unknown, reason?: 'backdropClick' | 'escapeKeyDown') => {
             if (reason === 'backdropClick') return;
-            setOpen(false);
-            reset();
+            onClose();
+            reset(defaultValues);
         },
-        [setOpen, reset]
+        [onClose, reset]
     );
 
     const difficulty = watch('difficulty');
@@ -67,8 +68,10 @@ export function AddOptionsForm({ open, setOpen, modData }: AddOptionsFormProps) 
                 component: 'form',
                 onSubmit: handleSubmit((newData) => {
                     newData.battle = newData.battle ?? [];
-                    if (!toRaw(modData).some((data) => dequal(data, newData))) {
-                        modData.push({ ...newData });
+                    if (!optionsList.some((data) => dequal(data, newData))) {
+                        mutate((draft) => {
+                            draft.push({ ...newData });
+                        });
                         handleClose();
                     } else {
                         reset({ ...newData, battle: [] });
@@ -124,7 +127,8 @@ export function AddOptionsForm({ open, setOpen, modData }: AddOptionsFormProps) 
                                         clearErrors('battle');
                                         field.onChange(e, checked);
                                     }}
-                                    control={<Switch />}
+                                    checked={field.value}
+                                    control={<Checkbox />}
                                     label="扫荡"
                                 />
                             )}

@@ -9,30 +9,32 @@ import Settings from '@mui/icons-material/Settings';
 
 import { Button, Chip, CircularProgress, Menu, MenuItem, Popover, Stack, Typography } from '@mui/material';
 import { LevelAction, query, SEAPetStore, spet, type Pet } from '@sea/core';
+import type { Recipe } from '@sea/server';
+import { toRaw } from '@vue/reactivity';
+import { produce } from 'immer';
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { DataLoading } from '@/components/DataLoading';
+import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 import { PanelField, PanelTable, useIndex, useRowData, type PanelColumns } from '@/components/PanelTable';
 import { Row } from '@/components/styled/Row';
 import { SeaTableRow } from '@/components/styled/TableRow';
 
 import type { IPetFragmentRunner, PetFragmentOptions } from '@/builtin/petFragment/types';
-import { DataLoading } from '@/components/DataLoading';
-import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
-import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
+import { PET_FRAGMENT_LEVEL_ID } from '@/constants';
 import { launcherActions } from '@/features/launcherSlice';
 import { deploymentSelectors } from '@/features/mod/slice';
 import { modStore, taskStore, type TaskInstance } from '@/features/mod/store';
 import { useMapToStore } from '@/features/mod/useModStore';
 import { type ModExportsRef } from '@/features/mod/utils';
 import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
-import { modApi } from '@/services/mod';
-import { getCompositeId, startAppListening, usePopupState } from '@/shared';
+import { startAppListening, usePopupState } from '@/shared';
 import { useAppDispatch, useAppSelector } from '@/store';
+
 import { AddOptionsForm } from './AddOptionsForm';
 import { EditOptionsForm } from './EditOptionsForm';
-
-const toRowKey = (data: PetFragmentOptions) => JSON.stringify(data);
+import { cid, OptionsListContext } from './shared';
 
 const columns = [
     {
@@ -52,31 +54,59 @@ const columns = [
 
 export function PetFragmentLevelView() {
     const [addFormOpen, setAddFormOpen] = useState(false);
+    const [editFormOpen, setEditFormOpen] = useState(false);
+    const [editingItemIdx, setEditingItemIdx] = useState<number>(0);
 
-    const cid = getCompositeId({ id: PET_FRAGMENT_LEVEL_ID, scope: MOD_SCOPE_BUILTIN });
     const taskRef = useAppSelector(({ mod: { taskRefs } }) =>
         taskRefs.find(({ cid: _cid, key }) => cid === _cid && key === PET_FRAGMENT_LEVEL_ID)
     );
+    const task = useMapToStore(() => taskRef, taskStore);
+
     const deployment = useAppSelector((state) => deploymentSelectors.selectById(state, cid));
     const modIns = useMapToStore(
         () => (deployment.status === 'deployed' ? deployment.deploymentId : undefined),
         modStore
     );
-    const task = useMapToStore(() => taskRef, taskStore);
 
-    const { data = [], isFetching: isFetchingModData } = modApi.useDataQuery(cid);
+    const modData = modIns?.ctx.data as PetFragmentOptions[];
 
-    const isFetching = isFetchingModData;
+    const [optionsList, setOptionsList] = useState<PetFragmentOptions[]>(structuredClone(toRaw(modData)));
+    const mutate = useCallback(
+        (recipe: Recipe<PetFragmentOptions[]>) => {
+            recipe(modData);
+            setOptionsList(produce(recipe));
+        },
+        [modData]
+    );
 
-    if (isFetching || !modIns || !taskRef || !task) {
+    const handleEdit = useCallback(
+        (index: number) => {
+            setEditingItemIdx(index);
+            setEditFormOpen(true);
+        },
+        [setEditFormOpen]
+    );
+
+    const handleDelete = useCallback(
+        (index: number) => {
+            mutate((draft) => {
+                draft.splice(index, 1);
+            });
+        },
+        [mutate]
+    );
+
+    if (!modIns || !taskRef || !task) {
         return <DataLoading />;
     }
 
-    const modData = modIns.ctx.data as PetFragmentOptions[];
-    const optionsList = data as PetFragmentOptions[];
-
     return (
-        <>
+        <OptionsListContext.Provider
+            value={{
+                optionsList,
+                mutate
+            }}
+        >
             <Row>
                 <Stack
                     sx={{
@@ -99,22 +129,25 @@ export function PetFragmentLevelView() {
 
             <PanelTable
                 data={optionsList}
-                toRowKey={toRowKey}
                 columns={columns}
-                rowElement={<PanelRow taskRef={taskRef} task={task} modData={modData} />}
+                rowElement={
+                    <PanelRow taskRef={taskRef} task={task} handleEdit={handleEdit} handleDelete={handleDelete} />
+                }
             />
-            <AddOptionsForm open={addFormOpen} setOpen={setAddFormOpen} modData={modData} />
-        </>
+            <AddOptionsForm open={addFormOpen} onClose={() => setAddFormOpen(false)} />
+            <EditOptionsForm open={editFormOpen} onClose={() => setEditFormOpen(false)} index={editingItemIdx} />
+        </OptionsListContext.Provider>
     );
 }
 
 interface RowProps {
     taskRef: ModExportsRef;
     task: TaskInstance;
-    modData: PetFragmentOptions[];
+    handleEdit: (index: number) => void;
+    handleDelete: (index: number) => void;
 }
 
-const PanelRow = React.memo(function PanelRow({ taskRef, task, modData }: RowProps) {
+const PanelRow = React.memo(function PanelRow({ taskRef, task, handleEdit, handleDelete }: RowProps) {
     const dispatch = useAppDispatch();
     const index = useIndex();
     const options = useRowData<PetFragmentOptions>();
@@ -123,8 +156,6 @@ const PanelRow = React.memo(function PanelRow({ taskRef, task, modData }: RowPro
     const pet = useRef<Pet | null>(null);
     const [completed, setCompleted] = useState(false);
     const [fetched, setFetched] = useState(false);
-
-    const [editFormOpen, setEditFormOpen] = useState(false);
 
     const {
         state: moreState,
@@ -138,26 +169,36 @@ const PanelRow = React.memo(function PanelRow({ taskRef, task, modData }: RowPro
         popupId: 'level-details-popover'
     });
 
-    const update = useCallback(async () => {
-        const allPets = await SEAPetStore.getAllPets();
-        const findResult = allPets.find(({ id }) => id === runner.level.petFragment.petId);
-        if (findResult) {
-            pet.current = await spet(findResult).done;
-        } else {
-            pet.current = null;
-        }
-        await runner.update();
-        setCompleted(runner.next() === LevelAction.STOP);
-        setFetched(true);
-    }, [runner]);
+    const update = useCallback(
+        async (active?: { current: boolean }) => {
+            setFetched(false);
+            await Promise.resolve(); // for development environment render performance
+            const allPets = await SEAPetStore.getAllPets();
+            const findResult = allPets.find(({ id }) => id === runner.level.petFragment.petId);
+            if (findResult) {
+                pet.current = await spet(findResult).done;
+            } else {
+                pet.current = null;
+            }
+            if (active && !active.current) return;
+            await runner.update();
+            setCompleted(runner.next() === LevelAction.STOP);
+            setFetched(true);
+        },
+        [runner]
+    );
 
     useEffect(() => {
-        void update();
+        const active = { current: true };
+        void update(active);
         const unsubscribe = startAppListening({
             actionCreator: taskSchedulerActions.moveNext,
-            effect: update
+            effect: async () => update()
         });
-        return unsubscribe;
+        return () => {
+            unsubscribe();
+            active.current = false;
+        };
     }, [update]);
 
     const startLevel = (sweep: boolean) => () =>
@@ -165,7 +206,9 @@ const PanelRow = React.memo(function PanelRow({ taskRef, task, modData }: RowPro
 
     return (
         <SeaTableRow sx={{ height: '3.3rem' }}>
-            <PanelField field="name">{runner.name?.split('-').toSpliced(0, 1).join('-')}</PanelField>
+            <PanelField field="name" sx={{ width: '20vw', minWidth: '10rem' }}>
+                {runner.name?.split('-').toSpliced(0, 1).join('-')}
+            </PanelField>
             <PanelField
                 field="battles"
                 sx={{
@@ -173,7 +216,7 @@ const PanelRow = React.memo(function PanelRow({ taskRef, task, modData }: RowPro
                 }}
             >
                 {options.battle && (
-                    <Row sx={{ overflow: 'auto', width: '15rem' }} spacing={1}>
+                    <Row sx={{ overflow: 'auto', width: 'calc(80vw - 33rem)', minWidth: '15rem', px: 2 }} spacing={1}>
                         {options.battle.map((key, index) => (
                             <Chip key={index} label={`${index + 1}-${key}`} />
                         ))}
@@ -203,19 +246,13 @@ const PanelRow = React.memo(function PanelRow({ taskRef, task, modData }: RowPro
                             fontSize: '1.8rem'
                         }}
                         onClick={startLevel(options.sweep)}
-                        disabled={completed || (options.sweep && !runner.data.canSweep)}
+                        disabled={completed || (options.sweep && !runner.data.canSweep) || !fetched}
                     >
                         {options.sweep ? <Acute /> : <PlayArrow />}
                     </IconButtonNoRipple>
-                    <IconButtonNoRipple
-                        title="配置"
-                        onClick={() => {
-                            setEditFormOpen(true);
-                        }}
-                    >
+                    <IconButtonNoRipple title="配置" onClick={() => handleEdit(index)}>
                         <Settings />
                     </IconButtonNoRipple>
-
                     <IconButtonNoRipple title="更多操作" onClick={openMore}>
                         <MoreHoriz />
                     </IconButtonNoRipple>
@@ -256,40 +293,29 @@ const PanelRow = React.memo(function PanelRow({ taskRef, task, modData }: RowPro
                     </Typography>
                 ))}
             </Popover>
-            <Menu
-                {...moreState}
-                MenuListProps={{
-                    sx: {
-                        maxHeight: '50vh'
-                    }
-                }}
-            >
+            <Menu {...moreState}>
                 <MenuItem
-                    sx={{ maxWidth: '25vw', fontSize: '1rem' }}
+                    sx={{ fontSize: '1rem' }}
                     onClick={() => {
                         void ModuleManager.showModuleByID(151, `{Design:${runner.designId}}`);
                         dispatch(launcherActions.closeMain());
                         closeMore();
                     }}
                 >
-                    <AspectRatio fontSize="inherit" />
-                    <Typography sx={{ ml: 2, mr: 2 }} fontSize="inherit">
-                        打开面板
-                    </Typography>
+                    <AspectRatio sx={{ mr: 2, ml: -1 }} fontSize="inherit" />
+                    <Typography fontSize="inherit">打开面板</Typography>
                 </MenuItem>
                 <MenuItem
-                    sx={{ maxWidth: '25vw', fontSize: '1rem' }}
+                    sx={{ fontSize: '1rem' }}
                     onClick={() => {
-                        modData.splice(index, 1);
+                        handleDelete(index);
+                        closeMore();
                     }}
                 >
-                    <Delete fontSize="inherit" />
-                    <Typography sx={{ ml: 2, mr: 2 }} fontSize="inherit">
-                        删除配置
-                    </Typography>
+                    <Delete sx={{ mr: 2, ml: -1 }} fontSize="inherit" />
+                    <Typography fontSize="inherit">删除配置</Typography>
                 </MenuItem>
             </Menu>
-            <EditOptionsForm open={editFormOpen} setOpen={setEditFormOpen} index={index} modData={modData} />
         </SeaTableRow>
     );
 });

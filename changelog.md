@@ -96,8 +96,10 @@
 
 # Core v1.1.0
 
-- [ ] LevelManager中止时的超时和强制逃跑处理
-- [ ] 断线重连后SocketConnection失效
+- [ ] LevelManager超时
+  - [ ] 中止时的超时和强制逃跑处理
+  - [ ] 进入战斗时的超时
+  - [ ] 为关卡提供更好出错引导与处理
 - [ ] 完善 pet 缓存逻辑
   - [ ] cacheMap接口优化
   - [ ] 使用Monad实现替换Proxy实现

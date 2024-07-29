@@ -24,5 +24,4 @@ export interface PetFragmentLevelData extends LevelData {
     failedTimes: number;
     curPosition: number;
     canSweep: boolean;
-    stopByError: boolean;
 }

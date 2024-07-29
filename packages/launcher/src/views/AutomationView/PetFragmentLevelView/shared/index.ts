@@ -1,3 +1,5 @@
+import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
+import { getCompositeId } from '@/shared';
 import { PetFragmentLevel } from '@sea/core';
 
 declare const config: {
@@ -33,5 +35,8 @@ export const validatePrimitive = (value: number | string) => {
     return value.trim() !== '';
 };
 
+export const cid = getCompositeId({ id: PET_FRAGMENT_LEVEL_ID, scope: MOD_SCOPE_BUILTIN });
+
 export { BattleSelector } from './BattleSelector';
 export { DifficultySelector } from './DifficultySelector';
+export { OptionsListContext, useOptionsList } from './useOptionsList';

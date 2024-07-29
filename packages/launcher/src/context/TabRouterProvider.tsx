@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from 'react';
 import { useCallback, useState } from 'react';
 
-import { TabRouter, type ViewNode } from '@/context/useTabRouter';
+import { TabRouterContext, type ViewNode } from '@/context/useTabRouter';
 
 const defaultTab = (nodes: ViewNode[]) => nodes.find((node) => node.default)?.index;
 
@@ -34,7 +34,7 @@ export function TabRouterProvider({ children, rootView }: PropsWithChildren<TabR
     );
 
     return (
-        <TabRouter.Provider
+        <TabRouterContext.Provider
             value={{
                 back,
                 push,
@@ -44,6 +44,6 @@ export function TabRouterProvider({ children, rootView }: PropsWithChildren<TabR
             }}
         >
             {children}
-        </TabRouter.Provider>
+        </TabRouterContext.Provider>
     );
 }

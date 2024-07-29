@@ -2,55 +2,48 @@ import type { PetFragmentOptions } from '@/builtin/petFragment/types';
 import { Row } from '@/components/styled/Row';
 import {
     Button,
+    Checkbox,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
     FormControlLabel,
-    Stack,
-    Switch
+    Stack
 } from '@mui/material';
-import { toRaw } from '@vue/reactivity';
 import { dequal } from 'dequal';
 import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import { BattleSelector, DifficultySelector, petFragmentLevels } from './shared';
+import { BattleSelector, DifficultySelector, petFragmentLevels, useOptionsList } from './shared';
 
 export interface EditOptionsFormProps {
     open: boolean;
-    setOpen: (open: boolean) => void;
-    modData: PetFragmentOptions[];
+    onClose: () => void;
     index: number;
 }
 
-export function EditOptionsForm({ open, setOpen, modData, index }: EditOptionsFormProps) {
+export function EditOptionsForm({ open, onClose, index }: EditOptionsFormProps) {
     const { enqueueSnackbar } = useSnackbar();
-    const { control, handleSubmit, watch, reset, clearErrors } = useForm<PetFragmentOptions>({
-        defaultValues: {
-            ...modData[index]
-        }
+    const { optionsList, mutate } = useOptionsList();
+    const { control, handleSubmit, watch, clearErrors } = useForm<PetFragmentOptions>({
+        values: optionsList[index]
     });
 
     const handleClose = useCallback(
         (_?: unknown, reason?: 'backdropClick' | 'escapeKeyDown') => {
             if (reason === 'backdropClick') return;
-            setOpen(false);
-            reset();
+            onClose();
         },
-        [setOpen, reset]
+        [onClose]
     );
 
     const difficulty = watch('difficulty');
     const isSweep = watch('sweep');
-    const levelId = watch('id');
 
-    let levelCount = 0;
-    if (levelId && difficulty) {
-        const bosses = petFragmentLevels.selectById(levelId)?.bosses;
-        levelCount = bosses?.[difficulty].length ?? 0;
-    }
+    const levelId = optionsList[index].id;
+    const bosses = petFragmentLevels.selectById(levelId)?.bosses;
+    const levelCount = bosses?.[difficulty].length ?? 0;
 
     return (
         <Dialog
@@ -61,17 +54,18 @@ export function EditOptionsForm({ open, setOpen, modData, index }: EditOptionsFo
                 component: 'form',
                 onSubmit: handleSubmit((newData) => {
                     newData.battle = newData.battle ?? [];
-                    if (!toRaw(modData).some((data) => dequal(data, newData))) {
-                        modData.push({ ...newData });
+                    if (!optionsList.some((data) => dequal(data, newData))) {
+                        mutate((draft) => {
+                            draft[index] = newData;
+                        });
                         handleClose();
                     } else {
-                        reset({ ...newData, battle: [] });
                         enqueueSnackbar('配置已存在', { variant: 'warning' });
                     }
                 })
             }}
         >
-            <DialogTitle>编辑精灵因子配置</DialogTitle>
+            <DialogTitle>{petFragmentLevels.selectById(levelId)?.name}</DialogTitle>
             <DialogContent>
                 <Stack sx={{ pt: 2 }} direction="column">
                     <Row sx={{ alignItems: 'center' }}>
@@ -90,7 +84,8 @@ export function EditOptionsForm({ open, setOpen, modData, index }: EditOptionsFo
                                         clearErrors('battle');
                                         field.onChange(e, checked);
                                     }}
-                                    control={<Switch />}
+                                    checked={field.value}
+                                    control={<Checkbox />}
                                     label="扫荡"
                                 />
                             )}
@@ -101,7 +96,8 @@ export function EditOptionsForm({ open, setOpen, modData, index }: EditOptionsFo
                         disabled={isSweep}
                         name="battle"
                         rules={{
-                            validate: (value) => value.length === levelCount || '对战方案数量和关卡不一致'
+                            deps: ['sweep'],
+                            validate: (value) => (!isSweep && value.length === levelCount) || '对战方案数量和关卡不一致'
                         }}
                         render={({ field, fieldState }) => (
                             <BattleSelector {...field} errorText={fieldState.error?.message} levelCount={levelCount} />

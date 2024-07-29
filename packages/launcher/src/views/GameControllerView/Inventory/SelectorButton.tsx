@@ -15,7 +15,7 @@ export function SelectorButton<T, P extends object>({ children, ...props }: Popu
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
-                    textAlign: 'start'
+                    textAlign: 'center'
                 }}
             >
                 {children}
