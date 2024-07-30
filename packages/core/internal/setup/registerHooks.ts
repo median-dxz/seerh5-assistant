@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { filter, map } from 'rxjs';
-import { delay, hookFn, hookPrototype, restoreHookedFn, wrapper, type WithClass } from '../../common/utils.js';
+import { hookFn, hookPrototype, restoreHookedFn, wrapper, type WithClass } from '../../common/utils.js';
 import { $hook } from '../../event-source/source-builder/fromHook.js';
 import { HookPointRegistry } from '../HookPointRegistry.js';
 
@@ -87,14 +87,7 @@ export default () => {
     });
 
     HookPointRegistry.register('award:show', (resolve) => {
-        hookPrototype(AwardItemDialog, 'startEvent', async function (originalFunc, ...args) {
-            originalFunc.apply(this, args);
-            resolve();
-            // TODO 副作用移除
-            LevelManager.stage.removeEventListener(egret.TouchEvent.TOUCH_TAP, this.startRemoveDialog, this);
-            await delay(500);
-            this.destroy();
-        });
+        AwardItemDialog.prototype.startEvent = wrapper(AwardItemDialog.prototype.startEvent).after(resolve);
         return () => restoreHookedFn(AwardItemDialog.prototype, 'startEvent');
     });
 
@@ -106,22 +99,16 @@ export default () => {
     });
 
     HookPointRegistry.register('battle:roundEnd', (resolve) => {
-        hookFn(PetFightController, 'onStartFight', function (originalFunc, ...args) {
-            originalFunc(...args);
+        PetFightController.onStartFight = wrapper(PetFightController.onStartFight).after(() => {
             const { enemyMode, playerMode } = FighterModelFactory;
             if (!enemyMode || !playerMode) return;
-            // TODO 副作用移除
-            enemyMode.setHpView(true);
-            enemyMode.setHpView = function () {
-                this.propView.isShowFtHp = true;
-            };
             playerMode.nextRound = wrapper(playerMode.nextRound.bind(playerMode)).after(resolve);
         });
         return () => restoreHookedFn(PetFightController, 'onStartFight');
     });
 
     HookPointRegistry.register('battle:start', (resolve) => {
-        // 因为这个Socket监听注册发生在Battle模块初始化的时候, 在这边Hook会滞后, 要重新注册
+        // 因为这个Socket监听注册时Battle模块已经初始化, 需要重新注册事件监听
         SocketConnection.removeCmdListener(
             CommandID.NOTE_START_FIGHT,
             FightNoteCmdListener.startFight,

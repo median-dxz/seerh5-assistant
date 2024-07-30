@@ -1,5 +1,5 @@
 import { scope } from '@/common/constants.json';
-import { hookFn, SEAEventSource } from '@sea/core';
+import { delay, hookFn, SEAEventSource, wrapper } from '@sea/core';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 
 import { backgroundHeartBeatCheck } from './backgroundHeartBeatCheck';
@@ -36,7 +36,23 @@ export const metadata = {
         disableNewSkillPanelAfterBattle: {
             type: 'checkbox',
             name: '屏蔽新技能面板',
-            helperText: '关闭战斗结束后由于精灵升级而弹出的新技能面板',
+            helperText: '屏蔽战斗结束后由于精灵升级而弹出的新技能面板',
+            default: true
+        },
+        autoCloseAwardPopup: {
+            type: 'checkbox',
+            name: '自动关闭获得物品弹窗',
+            default: true
+        },
+        autoCloseAwardPopupDelay: {
+            type: 'input',
+            name: '自动关闭获得物品弹窗延迟',
+            helperText: '单位: ms',
+            default: '500'
+        },
+        enableHpVisible: {
+            type: 'checkbox',
+            name: '显示血量',
             default: true
         }
     }
@@ -85,6 +101,29 @@ export default function ({ config }: SEAModContext<typeof metadata>) {
                         PetUpdateCmdListener.onUpdateSkill,
                         PetUpdateCmdListener
                     );
+                });
+            }
+            if (config.autoCloseAwardPopup) {
+                AwardItemDialog.prototype.startEvent = wrapper(AwardItemDialog.prototype.startEvent).after(
+                    async function (this: AwardItemDialog) {
+                        LevelManager.stage.removeEventListener(
+                            egret.TouchEvent.TOUCH_TAP,
+                            this.startRemoveDialog,
+                            this
+                        );
+                        await delay(parseInt(config.autoCloseAwardPopupDelay));
+                        this.destroy();
+                    }
+                );
+            }
+            if (config.enableHpVisible) {
+                PetFightController.onStartFight = wrapper(PetFightController.onStartFight).after(() => {
+                    const { enemyMode, playerMode } = FighterModelFactory;
+                    if (!enemyMode || !playerMode) return;
+                    enemyMode.setHpView(true);
+                    enemyMode.setHpView = function () {
+                        this.propView.isShowFtHp = true;
+                    };
                 });
             }
         }

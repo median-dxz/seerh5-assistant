@@ -151,7 +151,7 @@ export function hookFn<T extends object, K extends keyof T>(target: T, funcName:
     if (typeof func !== 'function') return;
 
     if (assertIsHookedFunction(func)) {
-        logger('hookFn').warn(`检测到对 ${String(funcName)} 的重复hook行为, 这可能导致冲突`);
+        logger('hookFn').warn(`检测到对 ${String(funcName)} 的重复hook行为, 最后一次hook将覆盖之前的所有修改`);
     }
 
     while (assertIsHookedFunction(func)) {
