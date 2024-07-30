@@ -8,9 +8,11 @@ import Settings from '@mui/icons-material/Settings';
 
 import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 
+import { SEAConfigForm } from '@/components/SEAConfigForm';
 import { deploymentSelectors, type ModDeployment } from '@/features/mod/slice';
 import { modStore } from '@/features/mod/store';
 import { useMapToStore } from '@/features/mod/useModStore';
+import { modApi } from '@/services/mod';
 import { getCompositeId, usePopupState } from '@/shared';
 import { useAppSelector } from '@/store';
 
@@ -29,6 +31,8 @@ import {
     type ListProps
 } from '@mui/material';
 import NanoClamp from 'nanoclamp';
+import { useSnackbar } from 'notistack';
+import { useState } from 'react';
 
 const ClampText = styled(NanoClamp)(({ theme }) => ({
     ...theme.typography.button,
@@ -42,11 +46,15 @@ interface ModListItemProps {
 }
 
 export function ModListItem({ deployment }: ModListItemProps) {
+    const { enqueueSnackbar } = useSnackbar();
     const { state: menuState, open } = usePopupState({
         popupId: 'mod-list-item-menu'
     });
 
+    const [configFormOpen, setConfigFormOpen] = useState(false);
+
     const { state, scope, id } = deployment;
+    const cid = getCompositeId({ scope, id });
     const ins = useMapToStore(() => (deployment.status === 'deployed' ? deployment.deploymentId : undefined), modStore);
 
     const title = (
@@ -69,7 +77,7 @@ export function ModListItem({ deployment }: ModListItemProps) {
                 sx={{ fontFamily: ({ fonts }) => fonts.property, textOverflow: 'ellipsis', overflow: 'hidden' }}
                 zeroMinWidth
             >
-                {getCompositeId({ scope, id })}
+                {cid}
             </Grid>
 
             <Tooltip title={ins?.metadata.description}>
@@ -107,6 +115,11 @@ export function ModListItem({ deployment }: ModListItemProps) {
         </Grid>
     );
 
+    const { data: configValues } = modApi.useConfigQuery(cid);
+    const [updateConfig] = modApi.useSetConfigMutation();
+    // TODO 模组安装时保存schema, 编辑配置独立于部署状态
+    const configurable = Boolean(configValues && ins?.metadata.configSchema);
+
     return (
         <ListItem
             sx={{
@@ -135,13 +148,34 @@ export function ModListItem({ deployment }: ModListItemProps) {
                 >
                     <Feed />
                 </IconButtonNoRipple>
-                <IconButtonNoRipple title="配置">
+                <IconButtonNoRipple
+                    disabled={!configurable}
+                    title="配置"
+                    onClick={() => {
+                        setConfigFormOpen(true);
+                    }}
+                >
                     <Settings />
                 </IconButtonNoRipple>
                 <IconButtonNoRipple title="管理" onClick={open}>
                     <Build />
                 </IconButtonNoRipple>
             </Stack>
+            {configurable && (
+                <SEAConfigForm
+                    open={configFormOpen}
+                    onClose={() => {
+                        setConfigFormOpen(false);
+                    }}
+                    onSubmit={async (payload) => {
+                        await updateConfig({ data: payload, compositeId: cid });
+                        enqueueSnackbar('配置已更新, 重载模组以应用更改', { variant: 'success' });
+                    }}
+                    title={`模组配置: ${ins!.compositeId}`}
+                    schema={ins!.metadata.configSchema!}
+                    values={configValues!}
+                />
+            )}
             <Menu
                 {...menuState}
                 MenuListProps={{

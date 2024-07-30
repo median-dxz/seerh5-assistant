@@ -106,7 +106,7 @@ export function SEAConfigForm({ onClose, onSubmit, open, values, schema, title }
                 <Button
                     variant="contained"
                     disabled={mutating}
-                    endIcon={<CircularProgress size="inherit" />}
+                    endIcon={mutating && <CircularProgress size="1rem" />}
                     disableRipple
                     type="submit"
                 >
