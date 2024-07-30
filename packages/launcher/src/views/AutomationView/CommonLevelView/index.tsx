@@ -17,7 +17,7 @@ import { SEAConfigForm } from '@/components/SEAConfigForm';
 import { SeaTableRow } from '@/components/styled/TableRow';
 
 import { taskStore, type TaskInstance } from '@/features/mod/store';
-import { mapToStore } from '@/features/mod/useModStore';
+import { mapRefInStore } from '@/features/mod/useModStore';
 import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
 
 import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
@@ -97,7 +97,7 @@ export function CommonLevelView({ filterLevelBattle }: CommonLevelViewProps) {
         if (!taskConfig) {
             return undefined;
         }
-        const task = mapToStore(ref, taskStore)!;
+        const task = mapRefInStore(ref, taskStore)!;
         const options = getTaskOptions(task, taskConfig);
         const runner = task.runner(options);
 

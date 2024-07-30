@@ -27,6 +27,7 @@
     "dayjs": "^1.11.12",
     "dequal": "^2.0.3",
     "immer": "^10.1.1",
+    "lodash-es": "^4.17.21",
     "nanoclamp": "^2.0.10",
     "notistack": "^3.0.1",
     "react": "^18.3.1",

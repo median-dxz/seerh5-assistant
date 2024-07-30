@@ -1,8 +1,20 @@
+import Close from '@mui/icons-material/Close';
+
 import { buildDefaultConfig } from '@/shared';
-import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Stack } from '@mui/material';
+import {
+    Button,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    IconButton,
+    Stack
+} from '@mui/material';
 import type { SEAConfigSchema } from '@sea/mod-type';
 import { useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+
 import { BattleItem } from './BattleItem';
 import { CheckboxItem } from './CheckboxItem';
 import { InputItem } from './InputItem';
@@ -26,14 +38,10 @@ export function SEAConfigForm({ onClose, onSubmit, open, values, schema, title }
 
     const [mutating, setMutating] = useState(false);
 
-    const handleClose = useCallback(
-        (_?: unknown, reason?: 'backdropClick' | 'escapeKeyDown') => {
-            if (reason === 'backdropClick') return;
-            onClose();
-            reset(values);
-        },
-        [onClose, reset, values]
-    );
+    const handleClose = useCallback(() => {
+        onClose();
+        reset(values);
+    }, [onClose, reset, values]);
 
     return (
         <Dialog
@@ -51,8 +59,19 @@ export function SEAConfigForm({ onClose, onSubmit, open, values, schema, title }
             }}
         >
             <DialogTitle>{title ?? '编辑配置'}</DialogTitle>
-            <DialogContent>
-                <Stack sx={{ pt: 2 }} spacing={2} direction="column">
+            <IconButton
+                aria-label="close"
+                onClick={handleClose}
+                sx={{
+                    position: 'absolute',
+                    right: 8,
+                    top: 8
+                }}
+            >
+                <Close />
+            </IconButton>
+            <DialogContent sx={{ pt: 0 }}>
+                <Stack spacing={2} direction="column">
                     {Object.keys(values).map((key) => {
                         const itemSchema = schema[key]!;
                         return (
@@ -103,17 +122,12 @@ export function SEAConfigForm({ onClose, onSubmit, open, values, schema, title }
                 </Stack>
             </DialogContent>
             <DialogActions>
-                <Button
-                    variant="contained"
-                    disabled={mutating}
-                    startIcon={mutating && <CircularProgress size="1rem" />}
-                    disableRipple
-                    type="submit"
-                >
+                {mutating && <CircularProgress size="1rem" />}
+                <Button variant="contained" disabled={mutating} disableRipple type="submit">
                     保存
                 </Button>
                 <Button onClick={() => reset(defaultValues)}>重置</Button>
-                <Button onClick={handleClose}>取消</Button>
+                <Button onClick={handleClose}>关闭</Button>
             </DialogActions>
         </Dialog>
     );

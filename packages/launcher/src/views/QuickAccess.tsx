@@ -6,7 +6,7 @@ import type { AnyFunction } from '@sea/core';
 
 import { SeaQuickAccess } from '@/components/styled/QuickAccess';
 import { commandStore } from '@/features/mod/store';
-import { useMapToStore } from '@/features/mod/useModStore';
+import { useMapRefInStore } from '@/features/mod/useModStore';
 import type { ModExportsRef } from '@/features/mod/utils';
 import { useAppSelector, type AppRootState } from '@/store';
 import { shallowEqual } from 'react-redux';
@@ -44,7 +44,7 @@ const QuickAccessPluginAction = ({
     pluginRef: ModExportsRef;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 } & SpeedDialActionProps) => {
-    const plugin = useMapToStore(() => pluginRef, commandStore)!;
+    const plugin = useMapRefInStore(() => pluginRef, commandStore)!;
 
     const getTitle = () => {
         if (plugin.description) {

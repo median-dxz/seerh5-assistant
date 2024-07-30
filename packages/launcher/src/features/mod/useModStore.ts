@@ -20,24 +20,24 @@ type RefStore = typeof commandStore | typeof taskStore;
 type KeyStoreInstance = StrategyInstance | BattleInstance | ModInstance;
 type KeyStore = typeof strategyStore | typeof battleStore | typeof modStore;
 
-export function mapToStore<TStore extends RefStore | KeyStore>(
+export function mapRefInStore<TStore extends RefStore | KeyStore>(
     key: string | ModExportsRef,
     store: TStore
 ): ReturnType<TStore['get']>;
-export function mapToStore<TStore extends RefStore | KeyStore>(
+export function mapRefInStore<TStore extends RefStore | KeyStore>(
     keys: string[] | ModExportsRef[],
     store: TStore
 ): Array<ReturnType<TStore['get']>>;
 
-export function mapToStore<TKey extends string | ModExportsRef, TInstance extends RefStoreInstance | KeyStoreInstance>(
-    keys: TKey | TKey[],
-    store: { get(key: TKey): TInstance | undefined }
-): undefined | TInstance | TInstance[];
+export function mapRefInStore<
+    TKey extends string | ModExportsRef,
+    TInstance extends RefStoreInstance | KeyStoreInstance
+>(keys: TKey | TKey[], store: { get(key: TKey): TInstance | undefined }): undefined | TInstance | TInstance[];
 
-export function mapToStore<TKey extends string | ModExportsRef, TInstance extends RefStoreInstance | KeyStoreInstance>(
-    keys: TKey | TKey[],
-    store: { get(key: TKey): TInstance | undefined }
-) {
+export function mapRefInStore<
+    TKey extends string | ModExportsRef,
+    TInstance extends RefStoreInstance | KeyStoreInstance
+>(keys: TKey | TKey[], store: { get(key: TKey): TInstance | undefined }) {
     if (Array.isArray(keys)) {
         return keys.map((key) => store.get(key));
     } else {
@@ -45,7 +45,7 @@ export function mapToStore<TKey extends string | ModExportsRef, TInstance extend
     }
 }
 
-export function useMapToStore<
+export function useMapRefInStore<
     TKey extends string | ModExportsRef,
     TInstance extends RefStoreInstance | KeyStoreInstance
 >(
@@ -53,15 +53,15 @@ export function useMapToStore<
     store: { get(key: TKey): TInstance | undefined }
 ): TInstance | undefined;
 
-export function useMapToStore<
+export function useMapRefInStore<
     TKey extends string | ModExportsRef,
     TInstance extends RefStoreInstance | KeyStoreInstance
 >(selector: (state: AppRootState) => TKey[], store: { get(key: TKey): TInstance | undefined }): TInstance[];
 
-export function useMapToStore<
+export function useMapRefInStore<
     TKey extends string | ModExportsRef,
     TInstance extends RefStoreInstance | KeyStoreInstance
 >(selector: (state: AppRootState) => undefined | TKey | TKey[], store: { get(key: TKey): TInstance | undefined }) {
     const keys = useAppSelector(selector, shallowEqual);
-    return useMemo(() => keys && mapToStore(keys, store), [keys, store]);
+    return useMemo(() => keys && mapRefInStore(keys, store), [keys, store]);
 }

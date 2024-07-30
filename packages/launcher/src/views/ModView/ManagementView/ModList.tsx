@@ -11,7 +11,7 @@ import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 import { SEAConfigForm } from '@/components/SEAConfigForm';
 import { deploymentSelectors, type ModDeployment } from '@/features/mod/slice';
 import { modStore } from '@/features/mod/store';
-import { useMapToStore } from '@/features/mod/useModStore';
+import { useMapRefInStore } from '@/features/mod/useModStore';
 import { modApi } from '@/services/mod';
 import { getCompositeId, usePopupState } from '@/shared';
 import { useAppSelector } from '@/store';
@@ -55,7 +55,10 @@ export function ModListItem({ deployment }: ModListItemProps) {
 
     const { state, scope, id } = deployment;
     const cid = getCompositeId({ scope, id });
-    const ins = useMapToStore(() => (deployment.status === 'deployed' ? deployment.deploymentId : undefined), modStore);
+    const ins = useMapRefInStore(
+        () => (deployment.status === 'deployed' ? deployment.deploymentId : undefined),
+        modStore
+    );
 
     const title = (
         <Stack direction="row" sx={{ alignItems: 'baseline' }}>

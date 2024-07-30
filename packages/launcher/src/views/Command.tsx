@@ -1,11 +1,11 @@
 import { alpha, Autocomplete, Box, TextField as MuiTextField, styled, type BoxProps } from '@mui/material';
 import { useSnackbar, type SnackbarProviderProps } from 'notistack';
-import { useMemo, forwardRef, useState } from 'react';
+import { forwardRef, useMemo, useState } from 'react';
 
 import type { Command as CommandInstance } from '@sea/mod-type';
 
 import { commandStore } from '@/features/mod/store';
-import { useMapToStore } from '@/features/mod/useModStore';
+import { useMapRefInStore } from '@/features/mod/useModStore';
 import { theme } from '@/theme';
 
 interface Option {
@@ -31,7 +31,7 @@ export function CommandInput() {
     const [inputValue, setInputValue] = useState('');
     const [value, setValue] = useState<null | Option>(null);
 
-    const commands = useMapToStore((state) => state.mod.commandRefs, commandStore);
+    const commands = useMapRefInStore((state) => state.mod.commandRefs, commandStore);
 
     const options = useMemo(
         () =>

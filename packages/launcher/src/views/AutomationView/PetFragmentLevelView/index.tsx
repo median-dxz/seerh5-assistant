@@ -27,7 +27,7 @@ import { PET_FRAGMENT_LEVEL_ID } from '@/constants';
 import { launcherActions } from '@/features/launcherSlice';
 import { deploymentSelectors } from '@/features/mod/slice';
 import { modStore, taskStore, type TaskInstance } from '@/features/mod/store';
-import { useMapToStore } from '@/features/mod/useModStore';
+import { useMapRefInStore } from '@/features/mod/useModStore';
 import { type ModExportsRef } from '@/features/mod/utils';
 import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
 import { startAppListening, usePopupState } from '@/shared';
@@ -62,10 +62,10 @@ export function PetFragmentLevelView() {
     const taskRef = useAppSelector(({ mod: { taskRefs } }) =>
         taskRefs.find(({ cid: _cid, key }) => cid === _cid && key === PET_FRAGMENT_LEVEL_ID)
     );
-    const task = useMapToStore(() => taskRef, taskStore);
+    const task = useMapRefInStore(() => taskRef, taskStore);
 
     const deployment = useAppSelector((state) => deploymentSelectors.selectById(state, cid));
-    const modIns = useMapToStore(
+    const modIns = useMapRefInStore(
         () => (deployment.status === 'deployed' ? deployment.deploymentId : undefined),
         modStore
     );

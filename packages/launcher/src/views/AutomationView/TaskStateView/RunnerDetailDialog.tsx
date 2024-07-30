@@ -2,7 +2,7 @@ import Close from '@mui/icons-material/Close';
 
 import { DataLoading } from '@/components/DataLoading';
 import { taskStore } from '@/features/mod/store';
-import { useMapToStore } from '@/features/mod/useModStore';
+import { useMapRefInStore } from '@/features/mod/useModStore';
 import type { ModExportsRef } from '@/features/mod/utils';
 import type { TaskState } from '@/features/taskSchedulerSlice';
 import {
@@ -34,7 +34,7 @@ export const RunnerDetailDialog = React.memo(function RunnerDetailDialog({
     taskState,
     taskRef
 }: RunnerDetailDialogProps) {
-    const task = useMapToStore(() => taskRef, taskStore);
+    const task = useMapRefInStore(() => taskRef, taskStore);
 
     if (!task) {
         return <DataLoading error="无效的任务引用" />;
