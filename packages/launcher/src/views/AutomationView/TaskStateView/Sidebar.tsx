@@ -5,7 +5,7 @@ import { LabeledLinearProgress } from '@/components/LabeledProgress';
 import { Row } from '@/components/styled/Row';
 import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { Button, Chip, Paper, Stack, Typography } from '@mui/material';
+import { Button, ButtonGroup, Chip, Paper, Stack, Typography } from '@mui/material';
 
 const StatusTextMap = {
     idle: '就绪',
@@ -41,32 +41,32 @@ export function Sidebar({ height }: SidebarProps) {
         <Paper
             sx={{
                 height,
+                width: '100%',
                 p: 4
             }}
         >
-            <Row alignItems="baseline" justifySelf="start" mb={2}>
-                <Typography variant="h2">调度器</Typography>
-                <Button
-                    variant="outlined"
-                    color="inherit"
-                    sx={{ minWidth: 'auto', padding: '2px' }}
-                    onClick={handlePauseScheduler}
-                    disabled={status === 'waitingForStop'}
-                >
-                    {isPaused ? <PlayArrow /> : <Pause />}
-                </Button>
-            </Row>
+            <Typography variant="h2" sx={{ mb: 2 }}>
+                调度器
+            </Typography>
             <Stack
                 sx={{
-                    justifyContent: 'space-around',
                     height: '100%',
-                    width: '100%'
+                    justifyContent: 'center'
                 }}
             >
                 <Row alignItems="baseline">
                     <Typography>当前状态: </Typography>
                     <Chip label={StatusTextMap[status]} variant="outlined" size="small" />
                 </Row>
+                <ButtonGroup size="small" variant="outlined" color="inherit">
+                    <Button
+                        onClick={handlePauseScheduler}
+                        disabled={status === 'waitingForStop'}
+                        startIcon={isPaused ? <PlayArrow /> : <Pause />}
+                    >
+                        {isPaused ? '运行' : '暂停'}
+                    </Button>
+                </ButtonGroup>
                 {queue.length > 0 && (
                     <LabeledLinearProgress
                         typographyProps={{

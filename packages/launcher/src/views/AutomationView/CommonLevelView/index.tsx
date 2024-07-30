@@ -1,4 +1,5 @@
 import PlayArrow from '@mui/icons-material/PlayArrowRounded';
+import Refresh from '@mui/icons-material/RefreshRounded';
 import Settings from '@mui/icons-material/Settings';
 
 import type { PanelColumns } from '@/components/PanelTable';
@@ -24,6 +25,7 @@ import type { ModExportsRef } from '@/features/mod/utils';
 import { dataApi } from '@/services/data';
 import { getCompositeId, getTaskOptions, startAppListening, type TaskRunner } from '@/shared';
 import { useAppDispatch, useAppSelector } from '@/store';
+import { dequal } from 'dequal';
 
 //      name: '作战实验室'
 //      name: '六界神王殿',
@@ -164,13 +166,26 @@ const PanelRow = React.memo(function PanelRow() {
         void update(active);
         const unsubscribe = startAppListening({
             actionCreator: taskSchedulerActions.moveNext,
-            effect: async () => update()
+            effect: (action, api) => {
+                const {
+                    taskScheduler: { currentIndex, queue }
+                } = api.getOriginalState();
+
+                if (
+                    currentIndex &&
+                    queue[currentIndex].taskRef === ref &&
+                    active.current &&
+                    dequal(queue[currentIndex].options, options)
+                ) {
+                    void update();
+                }
+            }
         });
         return () => {
             active.current = false;
             unsubscribe();
         };
-    }, [update]);
+    }, [options, ref, update]);
 
     return (
         <SeaTableRow sx={{ height: '3.3rem' }}>
@@ -190,6 +205,9 @@ const PanelRow = React.memo(function PanelRow() {
                     disabled={completed}
                 >
                     <PlayArrow />
+                </IconButtonNoRipple>
+                <IconButtonNoRipple title="刷新状态" onClick={() => update()}>
+                    <Refresh />
                 </IconButtonNoRipple>
                 <IconButtonNoRipple
                     title="配置"

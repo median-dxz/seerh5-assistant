@@ -24,7 +24,7 @@ export const BattleItem = forwardRef<unknown, ControllerRenderProps & BattleItem
             clearOnBlur
             handleHomeEndKeys
             onChange={(event: unknown, newValue: string | null) => {
-                onChange(newValue ?? 'auto');
+                onChange(newValue ?? '');
             }}
             renderInput={(params) => (
                 <TextField

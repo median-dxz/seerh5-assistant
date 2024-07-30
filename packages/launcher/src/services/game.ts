@@ -55,6 +55,7 @@ export const gameApi = createApi({
             }
         }),
         autoCure: build.query<boolean, void>({
+            keepUnusedDataFor: 5 * 60,
             query: () => engine.autoCureState,
             async onCacheEntryAdded(_, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
                 const sub = new Subscription();

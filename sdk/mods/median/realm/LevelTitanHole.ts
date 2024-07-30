@@ -22,17 +22,17 @@ export default (logger: AnyFunction, battle: (name: string) => LevelBattle) =>
             battle_step1: {
                 name: '第一关对战方案',
                 type: 'battle',
-                default: 'auto'
+                default: ''
             },
             battle_step2: {
                 name: '第二关对战方案',
                 type: 'battle',
-                default: 'auto'
+                default: ''
             },
             battle_step4: {
                 name: '第四关对战方案',
                 type: 'battle',
-                default: 'auto'
+                default: ''
             }
         },
         runner: (options) => ({

@@ -29,7 +29,10 @@ function a11yProps(index: number) {
     };
 }
 
-const TabsGroup = forwardRef<HTMLDivElement, TabsGroupProps>(function ({ onSelect, tabs, value }: TabsGroupProps, ref) {
+const TabsGroup = forwardRef<HTMLDivElement, TabsGroupProps>(function TabsGroup(
+    { onSelect, tabs, value }: TabsGroupProps,
+    ref
+) {
     const { routerStack } = useTabRouter();
     const {
         border,
@@ -132,17 +135,17 @@ export function TabView() {
 
     return (
         <Stack
-            flexDirection="row"
+            direction="row"
             sx={{ width: '100vw', height: '100vh', alignItems: 'stretch', justifyContent: 'stretch' }}
             spacing={0}
         >
             <Stack
+                direction="column"
                 sx={{
                     borderRight: border,
                     boxShadow: boxShadow,
                     minWidth: '193px',
                     display: 'flex',
-                    flexDirection: 'column',
                     justifyContent: 'flex-end'
                 }}
             >

@@ -30,7 +30,7 @@ export default (logger: AnyFunction, battle: (name: string) => LevelBattle) =>
             battle: {
                 name: '对战方案',
                 type: 'battle',
-                default: 'auto'
+                default: ''
             }
         },
         runner: (options) => ({

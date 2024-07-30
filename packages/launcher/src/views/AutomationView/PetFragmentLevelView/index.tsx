@@ -5,6 +5,7 @@ import Delete from '@mui/icons-material/DeleteOutlineRounded';
 import Info from '@mui/icons-material/InfoOutlined';
 import MoreHoriz from '@mui/icons-material/MoreHorizRounded';
 import PlayArrow from '@mui/icons-material/PlayArrowRounded';
+import Refresh from '@mui/icons-material/RefreshRounded';
 import Settings from '@mui/icons-material/Settings';
 
 import { Button, Chip, CircularProgress, Menu, MenuItem, Popover, Stack, Typography } from '@mui/material';
@@ -32,6 +33,7 @@ import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
 import { startAppListening, usePopupState } from '@/shared';
 import { useAppDispatch, useAppSelector } from '@/store';
 
+import { dequal } from 'dequal';
 import { AddOptionsForm } from './AddOptionsForm';
 import { EditOptionsForm } from './EditOptionsForm';
 import { cid, OptionsListContext } from './shared';
@@ -193,13 +195,26 @@ const PanelRow = React.memo(function PanelRow({ taskRef, task, handleEdit, handl
         void update(active);
         const unsubscribe = startAppListening({
             actionCreator: taskSchedulerActions.moveNext,
-            effect: async () => update()
+            effect: (action, api) => {
+                const {
+                    taskScheduler: { currentIndex, queue }
+                } = api.getOriginalState();
+
+                if (
+                    currentIndex &&
+                    queue[currentIndex].taskRef === taskRef &&
+                    active.current &&
+                    dequal(queue[currentIndex].options, options)
+                ) {
+                    void update();
+                }
+            }
         });
         return () => {
-            unsubscribe();
             active.current = false;
+            unsubscribe();
         };
-    }, [update]);
+    }, [options, taskRef, update]);
 
     const startLevel = (sweep: boolean) => () =>
         dispatch(taskSchedulerActions.enqueue(taskRef, { ...options, sweep }, runner.name));
@@ -216,7 +231,7 @@ const PanelRow = React.memo(function PanelRow({ taskRef, task, handleEdit, handl
                 }}
             >
                 {options.battle && (
-                    <Row sx={{ overflow: 'auto', width: 'calc(80vw - 33rem)', minWidth: '15rem', px: 2 }} spacing={1}>
+                    <Row sx={{ overflow: 'auto', width: 'calc(80vw - 36rem)', minWidth: '15rem', px: 2 }} spacing={1}>
                         {options.battle.map((key, index) => (
                             <Chip key={index} label={`${index + 1}-${key}`} />
                         ))}
@@ -252,6 +267,9 @@ const PanelRow = React.memo(function PanelRow({ taskRef, task, handleEdit, handl
                     </IconButtonNoRipple>
                     <IconButtonNoRipple title="配置" onClick={() => handleEdit(index)}>
                         <Settings />
+                    </IconButtonNoRipple>
+                    <IconButtonNoRipple title="刷新状态" onClick={() => update()}>
+                        <Refresh />
                     </IconButtonNoRipple>
                     <IconButtonNoRipple title="更多操作" onClick={openMore}>
                         <MoreHoriz />
