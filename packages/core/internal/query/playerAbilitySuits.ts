@@ -3,6 +3,5 @@
  *
  * 注意此函数是同步调用的
  */
-export function playerAbilitySuits() {
-    return ItemManager.GetMySuitIds().filter(ItemSeXMLInfo.getIsEffSuit.bind(ItemSeXMLInfo));
-}
+export const playerAbilitySuits = () =>
+    ItemManager.GetMySuitIds().filter(ItemSeXMLInfo.getIsEffSuit.bind(ItemSeXMLInfo));

@@ -1,11 +1,9 @@
-import { Divider, Stack } from '@mui/material';
-import React, { useCallback } from 'react';
+import { Divider, Paper, Stack } from '@mui/material';
+import { useCallback } from 'react';
 
 import { Selector } from './Selector';
 
-import { Paper } from '@/components/styled/Paper';
-import { QueryKey } from '@/constants';
-import { GameConfigRegistry, SEAEventSource, engine } from '@sea/core';
+import { SEAEventSource, engine, query } from '@sea/core';
 
 const changeTitleEventSource = SEAEventSource.eventPattern(
     (handler) => {
@@ -26,10 +24,10 @@ const changeClothesEventSource = SEAEventSource.eventPattern(
 );
 
 export function Inventory() {
-    const equipmentQuery = GameConfigRegistry.getQuery('equipment');
-    const itemQuery = GameConfigRegistry.getQuery('item');
-    const titleQuery = GameConfigRegistry.getQuery('title');
-    const suitQuery = GameConfigRegistry.getQuery('suit');
+    const equipmentQuery = query('equipment');
+    const itemQuery = query('item');
+    const titleQuery = query('title');
+    const suitQuery = query('suit');
 
     const getEyeEquipment = useCallback(() => {
         const clothesIds = MainManager.actorInfo.clothIDs;
@@ -59,12 +57,11 @@ export function Inventory() {
     const titleDescription = useCallback((userTitle: number) => titleQuery.get(userTitle)?.abtext, [titleQuery]);
 
     return (
-        <Paper>
-            <Stack width="100%" spacing={2} justifyContent="space-around" useFlexGap>
+        <Paper sx={{ p: 4 }}>
+            <Stack sx={{ width: '100%', justifyContent: 'space-around' }} spacing={2}>
                 <Selector
                     id="change-title"
                     label={'称号'}
-                    dataKey={QueryKey.multiValue.title}
                     currentItemGetter={engine.playerTitle}
                     allItemGetter={engine.playerAbilityTitles}
                     descriptionGetter={titleDescription}
@@ -76,7 +73,6 @@ export function Inventory() {
                 <Selector
                     id="change-suit"
                     label={'套装'}
-                    dataKey={QueryKey.multiValue.suit}
                     currentItemGetter={engine.playerSuit}
                     allItemGetter={() => Promise.resolve(engine.playerAbilitySuits())}
                     descriptionGetter={suitDescription}
@@ -88,7 +84,6 @@ export function Inventory() {
                 <Selector
                     id="change-eye-equipment"
                     label={'目镜'}
-                    dataKey={QueryKey.multiValue.eyeEquipment}
                     currentItemGetter={getEyeEquipment}
                     allItemGetter={getAllEyeEquipment}
                     eventSource={changeClothesEventSource}

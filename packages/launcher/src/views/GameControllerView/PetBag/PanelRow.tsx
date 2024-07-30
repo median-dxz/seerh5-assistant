@@ -4,30 +4,31 @@ import { HealthBroken } from '@/components/icons/HealthBroken';
 import { MoveToInbox } from '@/components/icons/MoveToInbox';
 import { Pill } from '@/components/icons/Pill';
 import { SeaTableRow } from '@/components/styled/TableRow';
-import { useMainState } from '@/context/useMainState';
+import { launcherActions } from '@/features/launcherSlice';
 import { Icon } from '@/services/resource';
+import { usePopupState } from '@/shared';
+import { useAppDispatch } from '@/store';
 import MoreHoriz from '@mui/icons-material/MoreHoriz';
 import VerticalAlignTop from '@mui/icons-material/VerticalAlignTop';
-import { Box, Checkbox, Popover, Stack, Typography } from '@mui/material';
+import { Checkbox, Popover, Stack, Typography } from '@mui/material';
 import type { Pet } from '@sea/core';
 import { GameConfigRegistry, delay, engine, spet } from '@sea/core';
-import React, { useState, type ReactNode } from 'react';
 
 interface PanelRowProps {
+    isFetching: boolean;
     selected: number[];
     setSelected: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
-export function PanelRow({ selected, setSelected }: PanelRowProps) {
+export function PanelRow({ isFetching, selected, setSelected }: PanelRowProps) {
     const pet = useRowData<Pet>();
     const index = useIndex();
-    const { setOpen } = useMainState();
+    const dispatch = useAppDispatch();
     const natureQuery = GameConfigRegistry.getQuery('nature');
 
-    const [petDetails, setPetDetails] = useState<ReactNode>('');
-    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-    const open = Boolean(anchorEl);
-    const id = open ? 'pet-details-popover' : undefined;
+    const { state: detailsState, open } = usePopupState({
+        popupId: 'pet-details-popover'
+    });
 
     const handleOpenPetItemUseProp = async (ct: number) => {
         await ModuleManager.showModule('petBag');
@@ -38,11 +39,7 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
         await delay(300);
         petBagPanel.showDevelopBaseView();
         petBagPanel.showDevelopView(9);
-        setOpen(false);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
+        dispatch(launcherActions.closeMain());
     };
 
     const handleSelect = () => {
@@ -58,10 +55,7 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
     return (
         <>
             <Popover
-                id={id}
-                open={open}
-                anchorEl={anchorEl}
-                onClose={handleClose}
+                {...detailsState}
                 anchorOrigin={{
                     vertical: 'bottom',
                     horizontal: 'center'
@@ -71,14 +65,24 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
                     horizontal: 'center'
                 }}
                 slotProps={{
-                    paper: {
-                        sx: {
-                            backdropFilter: 'blur(12px)'
-                        }
-                    }
+                    paper: { sx: { p: 2, fontSize: '1rem' } }
                 }}
             >
-                {petDetails}
+                <Typography variant="inherit">
+                    {pet.id} {pet.name}
+                </Typography>
+                <Typography variant="inherit">catchtime: {pet.catchTime}</Typography>
+                <Typography variant="inherit">lv: {pet.level}</Typography>
+                <Typography variant="inherit">
+                    Hp: {pet.baseCurHp} / {pet.baseMaxHp}
+                </Typography>
+                <Typography variant="inherit">天赋: {pet.dv}</Typography>
+                <Typography variant="inherit">
+                    性格: {pet.nature} {natureQuery.getName(pet.nature)}
+                </Typography>
+                <Typography variant="inherit">
+                    属性: {pet.element.id} {pet.element.name}
+                </Typography>
             </Popover>
             <SeaTableRow>
                 <PanelField field="select" onClick={handleSelect}>
@@ -97,8 +101,8 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
                     {index !== 0 && (
                         <IconButton
                             title="首发"
-                            onClick={(e) => {
-                                e.stopPropagation();
+                            disabled={isFetching}
+                            onClick={() => {
                                 void spet(pet).default();
                             }}
                         >
@@ -114,6 +118,7 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
                         <HealthBroken />
                     </IconButton>
                     <IconButton
+                        disabled={isFetching}
                         title="入库"
                         onClick={() => {
                             void spet(pet).popFromBag();
@@ -129,32 +134,7 @@ export function PanelRow({ selected, setSelected }: PanelRowProps) {
                     >
                         <Pill />
                     </IconButton>
-                    <IconButton
-                        aria-describedby={id}
-                        title="详情"
-                        onClick={(e) => {
-                            setPetDetails(
-                                <Box sx={{ p: 2 }}>
-                                    <Typography fontSize={16}>
-                                        {pet.id} {pet.name}
-                                    </Typography>
-                                    <Typography fontSize={16}>catchtime: {pet.catchTime}</Typography>
-                                    <Typography fontSize={16}>lv: {pet.level}</Typography>
-                                    <Typography fontSize={16}>
-                                        Hp: {pet.baseCurHp} / {pet.baseMaxHp}
-                                    </Typography>
-                                    <Typography fontSize={16}>天赋: {pet.dv}</Typography>
-                                    <Typography fontSize={16}>
-                                        性格: {pet.nature} {natureQuery.getName(pet.nature)}
-                                    </Typography>
-                                    <Typography fontSize={16}>
-                                        属性: {pet.element.id} {pet.element.name}
-                                    </Typography>
-                                </Box>
-                            );
-                            setAnchorEl(e.currentTarget);
-                        }}
-                    >
+                    <IconButton title="详情" onClick={open}>
                         <MoreHoriz />
                     </IconButton>
                 </PanelField>

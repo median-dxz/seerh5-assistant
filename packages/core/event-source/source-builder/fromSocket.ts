@@ -43,10 +43,9 @@ export function $socket<TCmd extends CMD>(cmd: TCmd, event?: SocketEvent) {
     }
 
     if (event === 'send') return $fromSocket.send(cmd);
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (event === 'receive') return $fromSocket.receive(cmd);
 
-    throw new Error(`Invalid type ${event as string}, type could only be 'send' or 'receive'`);
+    throw new TypeError(`Invalid type ${event as string}, type could only be 'send' or 'receive'`);
 }
 
 type InferFromSocketReturnType<TCmd extends CMD, Event extends SocketEvent | undefined> = Event extends 'send'

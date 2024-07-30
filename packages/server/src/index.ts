@@ -1,9 +1,5 @@
 import closeWithGrace from 'close-with-grace';
-import { enableMapSet, enablePatches } from 'immer';
 import { createServer } from './server.ts';
-
-enableMapSet();
-enablePatches();
 
 async function main() {
     const server = await createServer();

@@ -1,4 +1,4 @@
-import { LevelAction, socket } from '@sea/core';
+import { LevelAction, socket, type AnyFunction } from '@sea/core';
 import { task } from '@sea/mod-type';
 import { data, signBase } from './SignBase';
 
@@ -25,22 +25,22 @@ const EXCHANGE_LIST = {
     攻击珠: '3'
 };
 
-export const teamSign = [
+export const teamSign = (logger: AnyFunction) => [
     task({
         metadata: {
             id: 'ProductResource',
-            name: '生产资源',
-            maxTimes: 5
+            name: '生产资源'
         },
-        runner: (meta) => ({
+        runner: () => ({
             ...signBase,
-            data: { ...data },
+            logger,
+            data: { ...data, maxTimes: 5 },
             async update() {
                 if (MainManager.actorInfo.teamInfo && MainManager.actorInfo.teamInfo.id > 0) {
                     const times = (await socket.multiValue(MULTI_QUERY.资源生产次数))[0];
-                    this.data.remainingTimes = meta.maxTimes - times;
+                    this.data.remainingTimes = this.data.maxTimes - times;
                 } else {
-                    this.data.remainingTimes = meta.maxTimes = 0;
+                    this.data.remainingTimes = this.data.maxTimes = 0;
                 }
             },
             actions: {
@@ -54,21 +54,21 @@ export const teamSign = [
     task({
         metadata: {
             id: 'ExchangeItem',
-            name: '兑换道具',
-            maxTimes: 3
+            name: '兑换道具'
         },
         configSchema: {
             exchangeId: {
                 name: '战队兑换',
                 type: 'select',
-                description: '在战队商店中兑换的物品',
+                helperText: '在战队商店中兑换的物品',
                 default: '10',
                 list: EXCHANGE_LIST
             }
         },
-        runner: (meta, options) => ({
+        runner: (options) => ({
             ...signBase,
-            data: { ...data },
+            logger,
+            data: { ...data, maxTimes: 3 },
             async update() {
                 if (MainManager.actorInfo.teamInfo && MainManager.actorInfo.teamInfo.id > 0) {
                     const times = (await socket.multiValue(MULTI_QUERY.道具兑换次数))[0];
@@ -76,9 +76,9 @@ export const teamSign = [
                         const bytes = new DataView(buf as ArrayBuffer);
                         return Boolean(bytes.getUint32(4));
                     });
-                    this.data.remainingTimes = open ? 3 - times : 0;
+                    this.data.remainingTimes = open ? this.data.maxTimes - times : 0;
                 } else {
-                    this.data.remainingTimes = meta.maxTimes = 0;
+                    this.data.remainingTimes = this.data.maxTimes = 0;
                 }
             },
             actions: {

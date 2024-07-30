@@ -1,11 +1,11 @@
-import { useModStore } from '@/context/useModStore';
-import { deploymentHandlers, fetchList } from '@/services/mod/handler';
-import { teardown } from '@/services/store/mod';
+import { deploymentSelectors, modActions } from '@/features/mod/slice';
+import { getCompositeId } from '@/shared';
+import { useAppDispatch, useAppSelector } from '@/store';
 import { Box, Button, alpha } from '@mui/material';
-import React from 'react';
 
 export function Header() {
-    const { sync } = useModStore();
+    const dispatch = useAppDispatch();
+    const deployments = useAppSelector(deploymentSelectors.selectAll);
     return (
         <Box
             sx={{
@@ -20,14 +20,12 @@ export function Header() {
         >
             <Button
                 onClick={() => {
-                    teardown();
-                    void fetchList()
-                        .then(() =>
-                            Promise.all(
-                                deploymentHandlers.map((handler) => handler.fetch().then(() => handler.deploy()))
-                            )
-                        )
-                        .then(sync);
+                    deployments.forEach((deployment) => {
+                        dispatch(modActions.dispose(getCompositeId(deployment)));
+                    });
+                    deployments.forEach((deployment) => {
+                        void dispatch(modActions.deploy(getCompositeId(deployment)));
+                    });
                 }}
             >
                 重载所有模组

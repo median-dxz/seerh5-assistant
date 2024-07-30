@@ -4,9 +4,10 @@ import { Button, Toolbar } from '@mui/material';
 import { SeaTableRow } from '@/components/styled/TableRow';
 import type { AnyFunction, HookPointDataMap } from '@sea/core';
 import { SEAEventSource, Subscription, restoreHookedFn } from '@sea/core';
+import dayjs from 'dayjs';
 import { produce } from 'immer';
 import * as React from 'react';
-import { dateTime2hhmmss } from '@/shared';
+import { useEffect, useMemo, useState } from 'react';
 
 interface CapturedPackage {
     type: 'RemoveListener' | 'AddListener' | 'Received' | 'Send';
@@ -68,12 +69,12 @@ const CmdMask = [
 // }
 
 export function PackageCapture() {
-    const [state, setState] = React.useState<State>('pending');
-    const [capture, setCapture] = React.useState<CapturedPackage[]>([]);
+    const [state, setState] = useState<State>('pending');
+    const [capture, setCapture] = useState<CapturedPackage[]>([]);
 
     // const getLabel = socketEncryptImpl.getCmdLabel;
 
-    React.useEffect(() => {
+    useEffect(() => {
         // wrapperFactory('addCmdListener', (cmd, callback) => {
         //     if (state !== 'capturing' || CmdMask.includes(cmd)) return;
         //     capturedPkgFactory(setCapture, { cmd, type: 'AddListener', data: callback });
@@ -115,7 +116,7 @@ export function PackageCapture() {
         };
     }, [state, capture]);
 
-    const cols: PanelColumns = React.useMemo(
+    const cols: PanelColumns = useMemo(
         () => [
             { field: 'time', columnName: '时间' },
             { field: 'type', columnName: '类型' },
@@ -171,7 +172,7 @@ const PanelRow = React.memo(function PanelRow() {
     const pkg = useRowData<CapturedPackage>();
     return (
         <SeaTableRow>
-            <PanelField field="time">{dateTime2hhmmss.format(pkg.time)}</PanelField>
+            <PanelField field="time">{dayjs(pkg.time).format('HH:mm:ss')}</PanelField>
             <PanelField field="type">{pkg.type}</PanelField>
             <PanelField field="cmd">{pkg.cmd}</PanelField>
             <PanelField field="label">{pkg.label}</PanelField>

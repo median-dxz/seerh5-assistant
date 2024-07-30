@@ -1,6 +1,7 @@
 import type { ButtonProps, MenuProps } from '@mui/material';
 import { Button, CircularProgress, Typography } from '@mui/material';
-import React, { useState, type MouseEventHandler } from 'react';
+import type { MouseEventHandler } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ListMenu, type ListMenuProps } from './ListMenu';
 
 const SUFFIX = 'item-menu';
@@ -16,6 +17,12 @@ export interface PopupMenuButtonProps<T, P extends object> {
         Pick<ListMenuProps<T, P>, 'RenderItem' | 'renderItemProps' | 'listItemProps'>;
 }
 
+const Spinner = (
+    <Typography sx={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
+        <CircularProgress size="1.5rem" />
+    </Typography>
+);
+
 export function PopupMenuButton<T, P extends object>({
     id,
     children,
@@ -26,37 +33,43 @@ export function PopupMenuButton<T, P extends object>({
 }: PopupMenuButtonProps<T, P>) {
     const [anchor, setAnchor] = useState<HTMLElement | null>(null);
     const [data, setData] = useState<T[] | undefined>(undefined);
-    const [loading, setLoading] = useState(false);
+    const [fetching, setFetching] = useState(false);
 
-    const Spinner = (
-        <Typography sx={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
-            <CircularProgress size="1.5rem" />
-        </Typography>
-    );
+    const loadData = useCallback(async () => {
+        if (typeof _data === 'function') {
+            setFetching(true);
+            const data = await _data();
+            setFetching(false);
+            setData(data.length ? data : undefined);
+            return data;
+        } else if (Array.isArray(_data) && _data.length > 0) {
+            setData(_data);
+            return _data;
+        } else {
+            setData(undefined);
+            return [];
+        }
+    }, [_data]);
 
-    const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
+    useEffect(() => {
+        if (!fetching && anchor !== null) {
+            void loadData();
+        }
+    }, [anchor, fetching, loadData]);
+
+    const handleClick: MouseEventHandler<HTMLButtonElement> = async (e) => {
         buttonProps?.onClick?.(e);
         const target = e.currentTarget;
-
-        if (typeof _data === 'function') {
-            setLoading(true);
-            void _data().then((data) => {
-                setLoading(false);
-                setAnchor(data.length ? target : null);
-                setData(data.length ? data : undefined);
-            });
-        } else if (Array.isArray(_data) && _data.length > 0) {
-            setAnchor(target);
-            setData(_data);
-        } else {
-            setAnchor(null);
-            setData(undefined);
+        let r = data;
+        if (!data?.length) {
+            r = await loadData();
         }
+        setAnchor(r?.length ? target : null);
     };
 
     return (
         <>
-            <Button {...buttonProps} onClick={handleClick} disabled={loading} endIcon={loading ? Spinner : null}>
+            <Button {...buttonProps} onClick={handleClick} disabled={fetching} endIcon={fetching ? Spinner : null}>
                 {children}
             </Button>
             <ListMenu

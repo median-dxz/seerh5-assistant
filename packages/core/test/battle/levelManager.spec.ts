@@ -1,14 +1,13 @@
-import { Mock_KTool, Mock_SocketConnection, mockEngine, mockPet } from '../mock';
+import { Mock_SocketConnection, mockEngine, mockPet } from '../mock';
 
 import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-import type { ILevelBattle, ILevelRunner, MoveStrategy } from '../../battle';
+import type { LevelBattle, LevelRunner, MoveStrategy } from '../../battle';
 import { LevelAction, levelManager } from '../../battle';
 import { hookFn, restoreHookedFn } from '../../common/utils';
 import type { Item } from '../../entity';
 import type { CaughtPet, PetLocation } from '../../pet-helper';
 import { SEAPetStore } from '../../pet-helper';
 
-vi.stubGlobal('KTool', Mock_KTool);
 vi.stubGlobal('SocketConnection', Mock_SocketConnection);
 mockEngine();
 mockPet();
@@ -64,7 +63,7 @@ beforeAll(() => {
 
 beforeEach(async () => {
     try {
-        await levelManager.stop();
+        await levelManager.abort();
     } catch (e) {
         // 上个测试引发的错误，直接忽略
     }
@@ -75,9 +74,9 @@ afterAll(() => {
 });
 
 describe.sequential('levelManagerTest', () => {
-    class NoBattleLevelRunner implements ILevelRunner {
-        actions!: Record<string, (this: ILevelRunner) => Promise<void>>;
-        data!: object;
+    class NoBattleLevelRunner implements LevelRunner {
+        actions: Record<string, (this: LevelRunner) => Promise<void>>;
+        data: object;
 
         logger(): any {}
 
@@ -98,7 +97,7 @@ describe.sequential('levelManagerTest', () => {
         }
     }
 
-    class MyBattle implements ILevelBattle {
+    class MyBattle implements LevelBattle {
         async beforeBattle() {}
 
         pets: number[] = [0, 1, 2, 3];
@@ -106,7 +105,7 @@ describe.sequential('levelManagerTest', () => {
     }
 
     class BattleLevelRunner extends NoBattleLevelRunner {
-        selectLevelBattle(): ILevelBattle {
+        selectLevelBattle(): LevelBattle {
             return new MyBattle();
         }
     }
@@ -115,14 +114,14 @@ describe.sequential('levelManagerTest', () => {
         a: async () => {}
     };
 
-    function simplyRun(action: Record<string, (this: ILevelRunner) => Promise<void>> = simpleAction) {
+    function simplyRun(action: Record<string, (this: LevelRunner) => Promise<void>> = simpleAction) {
         const myLevelRunner = new NoBattleLevelRunner();
         myLevelRunner.actions = action;
         levelManager.run(myLevelRunner);
         return myLevelRunner;
     }
 
-    function setNextWithBattle(battleLevelRunner: ILevelRunner) {
+    function setNextWithBattle(battleLevelRunner: LevelRunner) {
         let now = '';
         battleLevelRunner.next = function () {
             if (now == '') {
@@ -173,7 +172,7 @@ describe.sequential('levelManagerTest', () => {
     test('levelManager should invoke all actions', async () => {
         const mockLock = vi.fn(async () => {});
         levelManager.lock = mockLock();
-        await levelManager.stop();
+        await levelManager.abort();
         expect(levelManager.getRunner()).toBe(null);
         expect(mockLock).toHaveBeenCalled();
     });
@@ -211,7 +210,7 @@ describe.sequential('levelManagerTest', () => {
         const actionA = vi.fn(async () => {});
         const actionBattle = vi.fn(async () => {});
         const actionStop = vi.fn(async () => {});
-        const actions: Record<string, (this: ILevelRunner) => Promise<void>> = {
+        const actions: Record<string, (this: LevelRunner) => Promise<void>> = {
             a: actionA,
             [LevelAction.BATTLE]: actionBattle,
             [LevelAction.STOP]: actionStop
@@ -240,7 +239,7 @@ describe.sequential('levelManagerTest', () => {
         const actionBattle = vi.fn(async () => {});
         const actionStop = vi.fn(async () => {});
         battleLevelRunner.selectLevelBattle = vi.fn(battleLevelRunner.selectLevelBattle);
-        const actions: Record<string, (this: ILevelRunner) => Promise<void>> = {
+        const actions: Record<string, (this: LevelRunner) => Promise<void>> = {
             a: actionA,
             [LevelAction.BATTLE]: actionBattle,
             [LevelAction.STOP]: actionStop

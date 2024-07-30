@@ -1,13 +1,17 @@
-import type { SWRSubscriptionOptions } from 'swr/subscription';
-
-import { Box, Grid, Tooltip, Typography } from '@mui/material';
-import React, { memo } from 'react';
-import useSWRSubscription from 'swr/subscription';
+import { Box, Grid, styled, Tooltip, Typography } from '@mui/material';
+import NanoClamp from 'nanoclamp';
+import * as React from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import type { SEAEventSource } from '@sea/core';
 
-import { ClampText } from '../styled/ClampText';
-import { SelectorButton } from '../styled/SelectorButton';
+import { SelectorButton } from './SelectorButton';
+
+const ClampText = styled(NanoClamp)(({ theme }) => ({
+    ...theme.typography.button,
+    fontSize: 12,
+    margin: 0
+}));
 
 export interface SelectorProps {
     id: string;
@@ -16,7 +20,6 @@ export interface SelectorProps {
     allItemGetter: () => Promise<number[]>;
     nameGetter: (id: number) => string | undefined;
     descriptionGetter: (id: number) => string | undefined;
-    dataKey: string;
     eventSource: SEAEventSource<unknown>;
     mutate: (id: number) => unknown;
 }
@@ -24,7 +27,6 @@ export interface SelectorProps {
 export function Selector({
     id,
     label,
-    dataKey,
     currentItemGetter: itemGetter,
     allItemGetter,
     nameGetter,
@@ -32,20 +34,16 @@ export function Selector({
     mutate,
     descriptionGetter
 }: SelectorProps) {
-    const { data } = useSWRSubscription(
-        dataKey,
-        (_, { next }: SWRSubscriptionOptions<number, Error>) => {
-            const sub = eventSource.on(() => {
-                next(null, itemGetter());
-            });
-            return () => eventSource.off(sub);
-        },
-        {
-            fallbackData: itemGetter()
-        }
-    );
+    const [data, setData] = useState(itemGetter);
 
-    const handleSelectItem = React.useCallback(
+    useEffect(() => {
+        const sub = eventSource.on(() => {
+            setData(itemGetter());
+        });
+        return () => void eventSource.off(sub);
+    }, [eventSource, itemGetter]);
+
+    const handleSelectItem = useCallback(
         (newItem: number) => {
             if (newItem !== data) {
                 mutate(newItem);
@@ -54,12 +52,12 @@ export function Selector({
         [data, mutate]
     );
 
-    const description = data ? descriptionGetter(data) ?? '无' : '无';
+    const description = data ? (descriptionGetter(data) ?? '无') : '无';
 
     return (
         <Grid container columnSpacing={3} alignItems="center">
             <Grid item xs={2}>
-                <Typography variant="subtitle1" fontSize="1rem">
+                <Typography variant="h2" fontSize="1rem">
                     {label}
                 </Typography>
             </Grid>
@@ -73,7 +71,7 @@ export function Selector({
                         renderItemProps: { nameGetter }
                     }}
                 >
-                    {data ? nameGetter(data) ?? '无' : '无'}
+                    {data ? (nameGetter(data) ?? '无') : '无'}
                 </SelectorButton>
             </Grid>
             <Grid item xs={5}>
@@ -92,4 +90,6 @@ interface ItemProps {
     nameGetter: (id: number) => string | undefined;
 }
 
-const ItemName = memo(({ item, nameGetter }: ItemProps) => nameGetter(item) ?? '');
+const ItemName = React.memo(function ItemName({ item, nameGetter }: ItemProps) {
+    return nameGetter(item) ?? '';
+});

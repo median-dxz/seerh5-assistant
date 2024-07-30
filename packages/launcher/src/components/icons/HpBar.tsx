@@ -1,9 +1,8 @@
 import { SvgIcon } from '@mui/material';
-import React from 'react';
 
 export function HpBar() {
     return (
-        <SvgIcon fontSize='inherit'>
+        <SvgIcon fontSize="inherit">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                 <path
                     fill="currentColor"

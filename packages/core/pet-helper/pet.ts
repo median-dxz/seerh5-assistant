@@ -123,7 +123,7 @@ export class CaughtPet extends Pet {
     }
 }
 
-export function spet(pet: Pet | CatchTime) {
+export function spet(pet: { catchTime: number } | CatchTime) {
     const ct = Pet.inferCatchTime(pet);
     const petPromise: Promise<CaughtPet> =
         pet instanceof Promise ? pet : Promise.resolve(ins.cache.get(ct) ?? ins.query(ct));

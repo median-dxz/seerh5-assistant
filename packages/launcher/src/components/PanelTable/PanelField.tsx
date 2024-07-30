@@ -1,11 +1,11 @@
 import type { TableCellProps } from '@mui/material';
 import { TableCell } from '@mui/material';
-import React from 'react';
+import { useContext } from 'react';
 import { ColumnContext } from './PanelTable';
 
 export function PanelField({ children, field, ...rest }: TableCellProps & { field: string }) {
-    const columns = React.useContext(ColumnContext);
-    const columnProps = React.useMemo(() => columns.find((c) => c.field === field), [columns, field]);
+    const columns = useContext(ColumnContext);
+    const columnProps = columns.find((c) => c.field === field);
     if (columnProps) {
         const { columnName: _, field: _1, ...cellProps } = columnProps;
         return (

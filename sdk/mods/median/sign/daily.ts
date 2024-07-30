@@ -1,4 +1,4 @@
-import { LevelAction, socket } from '@sea/core';
+import { LevelAction, socket, type AnyFunction } from '@sea/core';
 import { task } from '@sea/mod-type';
 import { data, signBase } from './SignBase';
 
@@ -10,15 +10,17 @@ const MULTI_QUERY = {
     许愿签到: 201345
 } as const;
 
-export const daily = [
+export const daily = (logger: AnyFunction) => [
     task({
-        metadata: { maxTimes: 1, id: 'MarkDraw', name: '刻印抽奖' },
-        runner(meta) {
+        metadata: { id: 'MarkDraw', name: '刻印抽奖' },
+        runner() {
             return {
                 ...signBase,
-                data: { ...data },
+                logger,
+                data: { ...data, maxTimes: 1 },
                 async update() {
-                    this.data.remainingTimes = meta.maxTimes - (await socket.multiValue(MULTI_QUERY.刻印抽奖次数))[0];
+                    this.data.remainingTimes =
+                        this.data.maxTimes - (await socket.multiValue(MULTI_QUERY.刻印抽奖次数))[0];
                 },
                 actions: {
                     [LevelAction.AWARD]: async () => {
@@ -29,11 +31,12 @@ export const daily = [
         }
     }),
     task({
-        metadata: { id: 'WishBottle', maxTimes: 10, name: '许愿' },
-        runner(meta) {
+        metadata: { id: 'WishBottle', name: '许愿' },
+        runner() {
             return {
                 ...signBase,
-                data: { ...data },
+                logger,
+                data: { ...data, maxTimes: 10 },
                 async update() {
                     let times = (await socket.multiValue(MULTI_QUERY.登录时长))[0];
                     times =
@@ -60,7 +63,7 @@ export const daily = [
                         }
                     }
 
-                    meta.maxTimes = 可许愿次数;
+                    this.data.maxTimes = 可许愿次数;
                     this.data.remainingTimes = 可许愿次数 - (await socket.multiValue(MULTI_QUERY.已许愿次数))[0];
                 },
                 actions: {
@@ -72,13 +75,14 @@ export const daily = [
         }
     }),
     task({
-        metadata: { id: 'WishSign', maxTimes: 1, name: '许愿签到' },
-        runner(meta) {
+        metadata: { id: 'WishSign', name: '许愿签到' },
+        runner() {
             return {
                 ...signBase,
-                data: { ...data },
+                logger,
+                data: { ...data, maxTimes: 1 },
                 async update() {
-                    this.data.remainingTimes = meta.maxTimes - (await socket.multiValue(MULTI_QUERY.许愿签到))[0];
+                    this.data.remainingTimes = this.data.maxTimes - (await socket.multiValue(MULTI_QUERY.许愿签到))[0];
                 },
                 actions: {
                     [LevelAction.AWARD]: async () => {

@@ -1,4 +1,5 @@
-import { delay } from '../common/utils.js';
+import { getLogger } from '../common/log.js';
+import { delay, hookPrototype } from '../common/utils.js';
 import { PetRoundInfo } from '../entity/index.js';
 import { SEAEventSource } from '../event-source/index.js';
 import { SocketDeserializerRegistry } from '../internal/SocketDeserializerRegistry.js';
@@ -6,13 +7,14 @@ import { context, manager } from './manager.js';
 import { cachedRoundInfo, provider } from './provider.js';
 
 declare const CountExpPanelManager: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    overData: any;
+    overData: unknown;
 };
 
+const logger = getLogger('SetupBattle');
+
 export default () => {
-    /** better switch pet handler */
-    PetBtnView.prototype.autoUse = function () {
+    // better switch pet handler
+    hookPrototype(PetBtnView, 'autoUse', function () {
         this.getMC().selected = !0;
         if (this.locked) throw new Error('[warn] 切换精灵失败: 该精灵已被放逐，无法出战');
         if (this.mc.selected) {
@@ -24,7 +26,7 @@ export default () => {
             this.dispatchEvent(new PetFightEvent('selectPet', this.catchTime));
         }
         this.getMC().selected = !1;
-    };
+    });
 
     SEAEventSource.hook('battle:start').on(() => {
         cachedRoundInfo.deactivate();
@@ -55,12 +57,12 @@ export default () => {
     SEAEventSource.hook('battle:end').on(() => {
         const isWin = Boolean(FightManager.isWin);
         if (context.strategy) {
-            Promise.all([context.delayTimeout, delay(500)])
+            Promise.all([context.delayTimeout, delay(2000)])
                 .then(() => {
                     context.triggerLock?.(isWin);
                     manager.clear();
                 })
-                .catch((err: unknown) => console.error(err));
+                .catch((err: unknown) => logger.error(JSON.stringify(err)));
         }
     });
 

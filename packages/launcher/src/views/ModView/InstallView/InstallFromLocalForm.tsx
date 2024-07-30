@@ -1,9 +1,8 @@
 import { IS_DEV } from '@/constants';
-import { installModFromUrl } from '@/services/mod/install';
+import { modApi } from '@/services/mod';
 import Close from '@mui/icons-material/Close';
 import CloudUpload from '@mui/icons-material/CloudUploadRounded';
 import {
-    alpha,
     Button,
     Dialog,
     DialogActions,
@@ -38,6 +37,7 @@ export function InstallFromLocalForm() {
     const [uploading, setUploading] = useState(false);
     const uploadModRef = useRef<HTMLInputElement>(null);
     const { enqueueSnackbar } = useSnackbar();
+    const [install] = modApi.endpoints.install.useMutation();
 
     const handleClose = useCallback(() => {
         setOpen(false);
@@ -81,7 +81,8 @@ export function InstallFromLocalForm() {
                 PaperProps={{
                     sx: {
                         backgroundImage: 'none',
-                        bgcolor: ({ palette }) => alpha(palette.popup.background, 0.8)
+                        bgcolor: ({ palette }) => palette.extendedBackground.popup,
+                        backdropFilter: 'blur(4px)'
                     },
                     component: 'form',
                     onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
@@ -96,7 +97,7 @@ export function InstallFromLocalForm() {
 
                         const modUrl = URL.createObjectURL(modFile);
 
-                        installModFromUrl(modUrl, true)
+                        install({ url: modUrl, update: true })
                             .then(() => {
                                 enqueueSnackbar(`模组安装成功!`, { variant: 'success' });
                             })
@@ -128,7 +129,7 @@ export function InstallFromLocalForm() {
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',
-                        alignItems: 'left',
+                        alignItems: 'flex-start',
                         gap: 4
                     }}
                 >

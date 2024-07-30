@@ -5,6 +5,9 @@ import { sendByQueue } from '../socket.js';
  *
  * @param enable 是否开启自动治疗
  */
-export function toggleAutoCure(enable: boolean) {
-    return sendByQueue(42019, [22439, Number(enable)]);
-}
+export const toggleAutoCure = (enable: boolean) => {
+    const buf = new egret.ByteArray();
+    buf.writeShort(22439);
+    buf.writeBoolean(enable);
+    return sendByQueue(42036, [1, buf]);
+};

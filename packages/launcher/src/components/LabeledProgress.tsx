@@ -1,6 +1,5 @@
 import type { LinearProgressProps, TypographyProps } from '@mui/material';
 import { LinearProgress, Stack, Typography } from '@mui/material';
-import React from 'react';
 
 type LabeledProgressProps = LinearProgressProps & {
     prompt?: string;
@@ -35,7 +34,14 @@ export function LabeledLinearProgress({
         );
     } else if (position === 'right') {
         return (
-            <Stack flexDirection="row" justifyContent="center" alignItems="baseline">
+            <Stack
+                sx={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                }}
+                spacing={0}
+            >
                 <LinearProgress
                     variant="determinate"
                     value={(progress / total) * 100}
@@ -47,9 +53,17 @@ export function LabeledLinearProgress({
                 </Typography>
             </Stack>
         );
-    } else if (position === 'top-center') {
+    } else {
+        // position === 'top-center'
         return (
-            <Stack flexDirection="column" justifyContent="center" alignItems="center">
+            <Stack
+                sx={{
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}
+                spacing={0}
+            >
                 <Typography component={'span'} {...typographyProps}>
                     {overridePrompt ?? display}
                 </Typography>

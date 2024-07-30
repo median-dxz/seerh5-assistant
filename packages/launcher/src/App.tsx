@@ -1,77 +1,20 @@
-import { Box, Grow, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-
-import { SEAEventSource, Subscription, seac } from '@sea/core';
-
-import { SEALContextProvider } from '@/context/SEALContextProvider';
-
+import { launcherSelectors } from '@/features/launcherSlice';
+import { useAppSelector } from '@/store';
 import { Command } from '@/views/Command';
 import { Main } from '@/views/Main';
 import { QuickAccess } from '@/views/QuickAccess';
-import { Loading } from './components/Loading';
+import { Grow } from '@mui/material';
 
-export default function App() {
-    const [init, setInit] = useState(false);
-    const [commandOpen, toggleCommandOpen] = useState(false);
-    const [fighting, toggleFighting] = useState(false);
+export default function Launcher() {
+    const status = useAppSelector((state) => state.initialization.status);
+    const isFighting = useAppSelector(launcherSelectors.selectIsFighting);
+    const commandOpen = useAppSelector(launcherSelectors.selectCommandOpen);
 
-    const handleShortCut = (e: KeyboardEvent) => {
-        if (e.key === 'p' && e.ctrlKey) {
-            toggleCommandOpen((preState) => !preState);
-            e.preventDefault();
-        }
-    };
-
-    useEffect(() => {
-        if (init) return;
-        seac.load()
-            .then(() => {
-                setInit(true);
-            })
-            .catch(() => {
-                // React严格模式下导致的重复调用CoreLoader, 可以忽略
-            });
-    }, [init]);
-
-    useEffect(() => {
-        if (!init) return;
-        // 注册全局快捷键
-        document.body.addEventListener('keydown', handleShortCut);
-
-        // 监听战斗状态变化
-        const sub = new Subscription();
-        sub.on(SEAEventSource.hook('battle:start'), () => {
-            toggleFighting(true);
-        });
-        sub.on(SEAEventSource.hook('battle:end'), () => {
-            toggleFighting(false);
-        });
-
-        return () => {
-            document.body.removeEventListener('keydown', handleShortCut);
-            sub.dispose();
-        };
-    }, [init]);
-
-    if (!init)
-        return (
-            <Box
-                sx={{
-                    height: '100vh',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexDirection: 'column'
-                }}
-            >
-                <Typography sx={{ color: (theme) => theme.palette.secondary.main }}>等待游戏初始化</Typography>
-                <Loading sx={{ width: '100%' }} />
-            </Box>
-        );
+    if (status !== 'fulfilled') return null;
 
     return (
-        <SEALContextProvider>
-            {!fighting && (
+        <>
+            {!isFighting && (
                 <QuickAccess
                     ariaLabel="Seerh5 Assistant Quick Access"
                     sx={{
@@ -89,11 +32,11 @@ export default function App() {
                         top: '64px',
                         width: '40vw',
                         minWidth: '240px',
-                        zIndex: (theme) => theme.zIndex.snackbar
+                        zIndex: ({ zIndex }) => zIndex.modal - 1
                     }}
                 />
             </Grow>
             <Main />
-        </SEALContextProvider>
+        </>
     );
 }

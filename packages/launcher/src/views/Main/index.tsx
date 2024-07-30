@@ -1,21 +1,24 @@
 import ElectricBolt from '@mui/icons-material/ElectricBolt';
 import { Backdrop, alpha, type ButtonProps } from '@mui/material';
-import React, { type PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
 
 import { HexagonalButton } from '@/components/styled/HexagonalButton';
 import { TabRouterProvider } from '@/context/TabRouterProvider';
-import { useMainState } from '@/context/useMainState';
+import { launcherActions, launcherSelectors } from '@/features/launcherSlice';
+import { useAppDispatch, useAppSelector } from '@/store';
 import { root } from '../root';
 import { TabView } from './TabView';
 
 export function Main() {
-    const { open, setOpen } = useMainState();
+    const dispatch = useAppDispatch();
+    const open = useAppSelector(launcherSelectors.selectMainOpen);
+
     return (
         <>
             <MainButton
                 baseSize={28}
                 sx={{ top: '64px', left: '64px', position: 'absolute', zIndex: (theme) => theme.zIndex.appBar }}
-                onClick={() => setOpen((prev) => !prev)}
+                onClick={() => dispatch(launcherActions.toggleMain())}
             />
             <MainBackdrop open={open}>
                 <TabRouterProvider rootView={root}>
@@ -32,7 +35,7 @@ const MainBackdrop = ({ open, children }: PropsWithChildren<{ open: boolean }>) 
         sx={{
             bgcolor: alpha('#000', 0.75),
             backdropFilter: 'blur(12px)',
-            zIndex: (theme) => theme.zIndex.appBar - 1,
+            zIndex: (theme) => theme.zIndex.appBar - 1
         }}
     >
         {children}

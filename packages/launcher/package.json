@@ -2,7 +2,7 @@
   "name": "@sea/launcher",
   "private": true,
   "type": "module",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "main": "./src/index.tsx",
   "scripts": {
     "dev": "vite --open",
@@ -10,29 +10,31 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint src/**.{ts,tsx} --fix",
-    "clean": "rimraf ./dist && rimraf ./build && rimraf ../../.tsbuildinfo/launcher.tsbuildinfo"
+    "clean": "rimraf ./dev-dist && rimraf ../../.tsbuildinfo/launcher.tsbuildinfo"
   },
   "dependencies": {
-    "@emotion/css": "^11.11.2",
-    "@emotion/react": "^11.11.4",
-    "@emotion/styled": "^11.11.5",
-    "@mui/icons-material": "^5.15.20",
-    "@mui/material": "^5.15.20",
-    "@mui/system": "^5.15.20",
+    "@emotion/css": "^11.13.0",
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^5.16.5",
+    "@mui/material": "^5.16.5",
+    "@reduxjs/toolkit": "^2.2.7",
     "@sea/core": "workspace:*",
     "@trpc/client": "11.0.0-rc.417",
     "@trpc/server": "11.0.0-rc.417",
-    "@vue/reactivity": "^3.4.31",
+    "@vue/reactivity": "^3.4.34",
     "chalk": "^5.3.0",
+    "dayjs": "^1.11.12",
     "dequal": "^2.0.3",
     "immer": "^10.1.1",
     "nanoclamp": "^2.0.10",
     "notistack": "^3.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-hook-form": "^7.52.1",
+    "react-redux": "^9.1.2",
     "react-transition-group": "^4.4.5",
     "superjson": "^2.2.1",
-    "swr": "^2.2.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -42,7 +44,7 @@
     "@types/react-dom": "^18.3.0",
     "@types/react-transition-group": "^4.4.10",
     "@vitejs/plugin-react-swc": "^3.7.0",
-    "vite-plugin-inspect": "^0.8.4",
-    "vite-plugin-pwa": "^0.20.0"
+    "vite-plugin-inspect": "^0.8.5",
+    "vite-plugin-pwa": "^0.20.1"
   }
 }

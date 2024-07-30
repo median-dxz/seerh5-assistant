@@ -1,6 +1,5 @@
-import { theme } from '@/style';
-import { SpeedDial as MuiSpeedDial } from '@mui/material';
-import { styled } from '@mui/system';
+import { theme } from '@/theme';
+import { SpeedDial as MuiSpeedDial, styled } from '@mui/material';
 
 const { palette } = theme;
 

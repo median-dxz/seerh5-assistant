@@ -1,39 +1,43 @@
-import { theme } from '@/style';
+import { appStore } from '@/store';
+import { theme } from '@/theme';
 import { cache } from '@emotion/css';
 import { CacheProvider } from '@emotion/react';
 import { CssBaseline, ThemeProvider, alpha, styled } from '@mui/material';
-import { enableMapSet } from 'immer';
 import { MaterialDesignContent, SnackbarProvider } from 'notistack';
-import React, { type PropsWithChildren } from 'react';
-import { SWRConfig, type SWRConfiguration } from 'swr';
-import { ModStoreProvider } from './ModStoreProvider';
+import type { PropsWithChildren } from 'react';
+import { useEffect } from 'react';
+import { Provider } from 'react-redux';
+
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import { enableMapSet } from 'immer';
 
 const StyledMaterialDesignContent = styled(MaterialDesignContent)`
     &.notistack-MuiContent-default {
         background-color: ${alpha(theme.palette.secondary.main, 0.6)};
-        backdrop-filter: blur(6px);
+        backdrop-filter: blur(4px);
     }
 `;
 
-enableMapSet();
-
 export function ApplicationContext({ children }: PropsWithChildren<object>) {
-    const swrOptions: SWRConfiguration = {};
+    useEffect(() => {
+        enableMapSet();
+        dayjs.extend(duration);
+    }, []);
+
     return (
         <CacheProvider value={cache}>
             <ThemeProvider theme={theme}>
-                <SWRConfig value={swrOptions}>
-                    <SnackbarProvider
-                        anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
-                        autoHideDuration={1500}
-                        disableWindowBlurListener
-                        maxSnack={1}
-                        Components={{ default: StyledMaterialDesignContent }}
-                    >
-                        <CssBaseline />
-                        <ModStoreProvider>{children}</ModStoreProvider>
-                    </SnackbarProvider>
-                </SWRConfig>
+                <SnackbarProvider
+                    anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+                    autoHideDuration={1500}
+                    disableWindowBlurListener
+                    maxSnack={1}
+                    Components={{ default: StyledMaterialDesignContent }}
+                >
+                    <CssBaseline />
+                    <Provider store={appStore}>{children}</Provider>
+                </SnackbarProvider>
             </ThemeProvider>
         </CacheProvider>
     );

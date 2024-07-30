@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
-export type DataObject = object & {};
-export const DateObjectSchema = z.custom<DataObject>(
+export const DateObjectSchema = z.custom<object>(
     (data) =>
         data !== null &&
         typeof data === 'object' &&

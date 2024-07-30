@@ -3,7 +3,6 @@ export type { AnyFunction, Constructor, ValueOf, WithClass } from './common/util
 
 export * from './battle/index.js';
 export {
-    NOOP,
     assertIsHookedFunction,
     assertIsWrappedFunction,
     debounce,
@@ -11,6 +10,7 @@ export {
     experiment_hookConstructor,
     hookFn,
     hookPrototype,
+    NOOP,
     restoreHookedFn,
     throttle,
     wrapper
@@ -21,7 +21,7 @@ export * from './event-source/index.js';
 export * from './internal/index.js';
 export * from './pet-helper/index.js';
 
-import type { SEAC } from './internal/core.js';
+import type { CoreLoader } from './internal/core.js';
 
 declare global {
     interface Window {
@@ -31,7 +31,7 @@ declare global {
 
     interface SEA {
         /** seac 全局单例 */
-        seac: SEAC;
+        seac: CoreLoader;
         /** 游戏核心加载就绪标志位 */
         SeerH5Ready: boolean;
         /**  game core loaded event */

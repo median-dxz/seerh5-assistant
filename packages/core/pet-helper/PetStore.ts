@@ -42,6 +42,7 @@ class SEAPetStore {
             SEAEventSource.socket(CommandID.ADD_LOVE_PET, 'receive').on(() => this.miniInfo.deactivate());
             SEAEventSource.socket(CommandID.DEL_LOVE_PET, 'receive').on(() => this.miniInfo.deactivate());
             SEAEventSource.socket(CommandID.PET_CURE, 'receive').on(() => this.bag.deactivate());
+            SEAEventSource.socket(CommandID.PET_CURE_FREE, 'receive').on(() => this.bag.deactivate());
             SEAEventSource.socket(CommandID.PET_ONE_CURE, 'receive').on(() => this.bag.deactivate());
             SEAEventSource.socket(CommandID.USE_PET_ITEM_OUT_OF_FIGHT, 'send').on(() => this.bag.deactivate());
 

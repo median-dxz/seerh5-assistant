@@ -81,7 +81,7 @@ declare global {
         level: number;
         dv: number;
         nature: number;
-        hideSkill: PetSkillInfo;
+        hideSKill: PetSkillInfo;
         skillArray: Array<PetSkillInfo>;
         effectList?: Array<PetEffectInfo>;
         isDefault: boolean;
@@ -310,7 +310,7 @@ declare global {
 
     class ItemUseManager {
         static getInstance(): ItemUseManager;
-        useItem(t: PetInfo, e: number): void;
+        useItem(t?: PetInfo, e: number): void;
         $usePetItem(obj: { petInfo: PetInfo; itemId: number; itemName: string }, e: number): void;
     }
 
@@ -422,9 +422,7 @@ declare global {
         movesMap: seerh5.Dict<seerh5.MoveObj>;
         moveStoneMap: seerh5.Dict<seerh5.MoveObj>;
         hideMovesMap: Record<number, Array<{ o: number; id: number }>>;
-        typeMap: {
-            [Property: string]: seerh5.ElementObj;
-        };
+        typeMap: seerh5.Dict<seerh5.ElementObj>;
         getName(id: number): string;
         getTypeID(id: number): number;
         getCategory(id: number): number;
@@ -450,6 +448,11 @@ declare global {
         getName(id: number): string;
     }
     const PetXMLInfo: PetXMLInfo;
+
+    interface PetFragmentXMLInfo {
+        getItemByID(id: number): seerh5.PetFragmentObj;
+    }
+    const PetFragmentXMLInfo: PetFragmentXMLInfo;
 
     interface TypeXMLInfo {
         getRelationsPow(a: string, b: string): number;

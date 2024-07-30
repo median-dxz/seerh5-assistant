@@ -5,7 +5,7 @@ import { sendByQueue } from '../socket.js';
  *
  * @param title 称号ID
  */
-export async function changeTitle(title: number): Promise<boolean> {
+export const changeTitle = async (title: number) => {
     if (MainManager.actorInfo.curTitle !== title) {
         try {
             await sendByQueue(CommandID.SETTITLE, [title]);
@@ -16,4 +16,4 @@ export async function changeTitle(title: number): Promise<boolean> {
         }
     }
     return false;
-}
+};

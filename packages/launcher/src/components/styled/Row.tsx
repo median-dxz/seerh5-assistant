@@ -1,6 +1,5 @@
 import type { StackProps } from '@mui/material';
 import { Stack } from '@mui/material';
-import React from 'react';
 
 export function Row({ children, sx, ...props }: StackProps) {
     return (
@@ -8,10 +7,10 @@ export function Row({ children, sx, ...props }: StackProps) {
             sx={{
                 flexDirection: 'row',
                 alignItems: 'center',
+                justifyContent: 'flex-start',
                 width: '100%',
-                ...sx,
+                ...sx
             }}
-            justifyContent="start"
             {...props}
         >
             {children}

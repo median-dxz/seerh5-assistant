@@ -11,7 +11,7 @@ export interface ViewNode {
     default?: boolean;
 }
 
-export interface TabRouter {
+export interface TabRouterContextValue {
     routerStack: ViewNode[];
     currentTab: number;
     push: (viewNode: ViewNode) => void;
@@ -19,8 +19,8 @@ export interface TabRouter {
     setTab: Dispatch<SetStateAction<number>>;
 }
 
-export const TabRouter = createContext({} as TabRouter);
+export const TabRouterContext = createContext({} as TabRouterContextValue);
 
 export function useTabRouter() {
-    return useContext(TabRouter);
+    return useContext(TabRouterContext);
 }

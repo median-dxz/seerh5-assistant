@@ -20,9 +20,8 @@ import { buildSEALContext } from './context.ts';
 import { fastifyLogRotate } from './logger/index.ts';
 import { apiRouter } from './router/index.ts';
 
-import { initConfigs } from './data/init.ts';
+import { initConfigHandlers } from './configHandlers/init.ts';
 import { configsRoot, launcherRoot, logsRoot, modsRoot } from './paths.ts';
-import { ModManager } from './router/mod/manager.ts';
 import { modUploadAndInstallRouter } from './router/mod/uploadAndInstall.ts';
 
 export async function createServer() {
@@ -65,8 +64,7 @@ export async function createServer() {
     void server.use('/account-co.61.com/', loginProxy);
     void server.register(createAppJsProxy);
 
-    await initConfigs(server.config.APP_ROOT);
-    await ModManager.init(server.config.APP_ROOT);
+    const configHandlers = await initConfigHandlers(server.config.APP_ROOT);
 
     void server.register(fastifyStatic, {
         root: path.resolve(server.config.APP_ROOT, modsRoot),
@@ -89,11 +87,11 @@ export async function createServer() {
         useWSS: true,
         trpcOptions: {
             router: apiRouter,
-            createContext: buildSEALContext({ appRoot: server.config.APP_ROOT })
+            createContext: buildSEALContext({ ...configHandlers })
         }
     });
 
-    void server.register(modUploadAndInstallRouter);
+    void server.register(modUploadAndInstallRouter, { modManager: configHandlers.modManager });
 
     const stop = async () => {
         await server.close();

@@ -6,10 +6,10 @@ import type { Item } from '../../entity/Item.js';
  *
  * @param item 物品ID或物品实例
  */
-export async function itemNum(item: number | Item) {
+export const itemNum = async (item: number | Item) => {
     const id = EntityBase.inferId(item);
     await new Promise((res) => {
         ItemManager.updateItems([id], res);
     });
     return ItemManager.getNumByID(id);
-}
+};

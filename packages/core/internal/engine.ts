@@ -13,7 +13,6 @@ import { toggleAutoCure } from './mutate/toggleAutoCure.js';
 
 import { autoCureState } from './query/autoCureState.js';
 import { eliteStorageLimit } from './query/eliteStorageLimit.js';
-import { isPetEffectActivated } from './query/isPetEffectActivated.js';
 import { itemNum } from './query/itemNum.js';
 import { playerAbilitySuits } from './query/playerAbilitySuits.js';
 import { playerAbilityTitles } from './query/playerAbilityTitles.js';
@@ -37,7 +36,6 @@ export const engine: SEAEngine = {
     toggleAutoCure,
     autoCureState,
     eliteStorageLimit,
-    isPetEffectActivated,
     itemNum,
     playerAbilitySuits,
     playerAbilityTitles,
@@ -70,12 +68,11 @@ export interface SEAEngine {
     buyPetItem: typeof buyPetItem;
     changeSuit: typeof changeSuit;
     changeTitle: typeof changeTitle;
-    cureAllPet: () => void;
-    fightBoss: (id: number) => void;
+    cureAllPet: typeof cureAllPet;
+    fightBoss: typeof fightBoss;
     toggleAutoCure: typeof toggleAutoCure;
     autoCureState: typeof autoCureState;
     eliteStorageLimit: typeof eliteStorageLimit;
-    isPetEffectActivated: typeof isPetEffectActivated;
     itemNum: typeof itemNum;
     playerAbilitySuits: typeof playerAbilitySuits;
     playerAbilityTitles: typeof playerAbilityTitles;

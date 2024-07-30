@@ -1,27 +1,30 @@
 import { IconButtonNoRipple as IconButton } from '@/components/IconButtonNoRipple';
-import { Loading } from '@/components/Loading';
 import { PopupMenuButton } from '@/components/PopupMenuButton';
+import { Row } from '@/components/styled/Row';
+
 import { Backpack } from '@/components/icons/Backpack';
 import { HealthBroken } from '@/components/icons/HealthBroken';
 import { HpBar } from '@/components/icons/HpBar';
-import { Row } from '@/components/styled/Row';
-import { useMainState } from '@/context/useMainState';
-import { usePetGroups } from '@/services/config/usePetGroups';
 import Bookmarks from '@mui/icons-material/Bookmarks';
 import Clear from '@mui/icons-material/ClearRounded';
+
+import { DataLoading } from '@/components/DataLoading';
+import { launcherActions } from '@/features/launcherSlice';
+import { usePetGroups } from '@/services/data/usePetGroups';
+import { useAppDispatch } from '@/store';
 import { Button, Tooltip, Typography } from '@mui/material';
-import { Stack } from '@mui/system';
 import type { Pet } from '@sea/core';
 import { PetLocation, SEAPetStore, engine, spet } from '@sea/core';
-import React, { useCallback } from 'react';
+import * as React from 'react';
+import { useCallback } from 'react';
 
 interface ToolBarProps {
     selected: number[];
 }
 
 export function ToolBar({ selected }: ToolBarProps) {
-    const { setOpen: setMainOpen } = useMainState();
-    const { isLoading, mutate, petGroups } = usePetGroups();
+    const dispatch = useAppDispatch();
+    const { isFetching, mutate, petGroups } = usePetGroups();
 
     const handleLowerHp = () => {
         void engine.lowerHp(selected);
@@ -29,7 +32,7 @@ export function ToolBar({ selected }: ToolBarProps) {
 
     const handleCurePets = () => {
         if (selected.length === 0) {
-            engine.cureAllPet();
+            void engine.cureAllPet();
         } else {
             for (const ct of selected) {
                 spet(ct).cure();
@@ -39,7 +42,7 @@ export function ToolBar({ selected }: ToolBarProps) {
 
     const handleOpenBag = () => {
         void ModuleManager.showModule('petBag');
-        setMainOpen(false);
+        dispatch(launcherActions.closeMain());
     };
 
     const loadPets = useCallback(
@@ -77,13 +80,18 @@ export function ToolBar({ selected }: ToolBarProps) {
         }
     }, []);
 
-    if (isLoading) {
-        return <Loading />;
+    if (isFetching) {
+        return <DataLoading />;
     }
 
     return (
-        <Row justifyContent="space-between">
-            <Stack flexDirection="row" gap={2} useFlexGap>
+        <Row
+            sx={{
+                justifyContent: 'space-between'
+            }}
+            spacing={0}
+        >
+            <Row sx={{ width: 'fit-content' }} spacing={2}>
                 <Button startIcon={<HpBar />} onClick={handleLowerHp}>
                     压血
                 </Button>
@@ -93,7 +101,7 @@ export function ToolBar({ selected }: ToolBarProps) {
                 <Button startIcon={<Backpack />} onClick={handleOpenBag}>
                     背包
                 </Button>
-            </Stack>
+            </Row>
 
             <PopupMenuButton
                 data={loadPets}
@@ -123,14 +131,15 @@ interface PetGroupItemProps {
     onDelete: (group: Pet[], index: number) => void;
 }
 
-const PetGroupItem = React.memo(({ item: group, index, onSave, onDelete }: PetGroupItemProps) => {
+const PetGroupItem = React.memo(function PetGroupItem({ item: group, index, onSave, onDelete }: PetGroupItemProps) {
     const groupString = group.length > 0 ? group.map((i) => i.name).join(', ') : '空';
     return (
         <Row
             sx={{
-                fontSize: '1rem'
+                fontSize: '1rem',
+                justifyContent: 'space-between'
             }}
-            justifyContent="space-between"
+            spacing={0}
         >
             <Tooltip title={group.length > 0 ? groupString : ''}>
                 <Typography
@@ -145,7 +154,7 @@ const PetGroupItem = React.memo(({ item: group, index, onSave, onDelete }: PetGr
                 </Typography>
             </Tooltip>
 
-            <Stack flexDirection="row" ml={2}>
+            <Row sx={{ width: 'fit-content', justifyContent: 'flex-end' }} spacing={0}>
                 <IconButton
                     onClick={(e) => {
                         e.stopPropagation();
@@ -162,7 +171,7 @@ const PetGroupItem = React.memo(({ item: group, index, onSave, onDelete }: PetGr
                 >
                     <Clear fontSize="inherit" />
                 </IconButton>
-            </Stack>
+            </Row>
         </Row>
     );
 });

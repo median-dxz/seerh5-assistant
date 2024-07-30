@@ -1,5 +1,4 @@
 import { IconButton, styled, type IconButtonProps } from '@mui/material';
-import React from 'react';
 
 const StyledIconButton = styled(IconButton)`
     color: ${({ theme }) => theme.palette.text.primary};

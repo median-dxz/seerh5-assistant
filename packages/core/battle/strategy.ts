@@ -1,6 +1,7 @@
 import { SkillType } from '../constant/index.js';
 import type { Pet, PetRoundInfo, Skill } from '../entity/index.js';
 import { executor } from './executor.js';
+import { context } from './manager.js';
 import type { RoundData } from './provider.js';
 
 export type MoveHandler = (battleState: RoundData, skills: Skill[], pets: Pet[]) => Promise<boolean>;
@@ -17,9 +18,16 @@ function match(state: RoundData, skills: Skill[], pets: Pet[]) {
 
 // skill matchers
 function rotating(...skills: string[]): Matcher {
-    let count = -1;
+    let count = 0;
+    const { rotatingCount } = context;
+    const stringifySkills = skills.join(',');
+
+    if (rotatingCount.has(stringifySkills)) {
+        count = rotatingCount.get(stringifySkills)!;
+    }
+    rotatingCount.set(stringifySkills, count + 1);
+
     return (_, allSkills) => {
-        count += 1;
         const availableSkills = allSkills.filter((skill) => skill.pp > 0 && skills.some((name) => skill.name === name));
         return availableSkills[count % availableSkills.length]?.id;
     };

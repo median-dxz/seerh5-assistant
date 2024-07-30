@@ -16,11 +16,15 @@ const entries = [
     'module/PetBag.ts',
     'module/TeamTechCenter.ts',
     'module/ItemWareHouse.ts',
-    'commands/FightPuni.ts',
-    'sign/sign.ts',
-    'LocalPetSkin.ts',
+    'quick-access/FightPuni.ts',
+    'enhancement/index.ts',
+    'realm/index.ts',
+    'sign/index.ts',
     'CraftSkillStone.ts',
-    'DisableSentry.ts'
+    'LocalPetSkin.ts',
+    'battle.ts',
+    'command.ts',
+    'strategy.ts'
 ];
 
 let cleanOutput = true;

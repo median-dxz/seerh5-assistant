@@ -1,13 +1,13 @@
-import { Paper } from '@/components/styled/Paper';
 import { Row } from '@/components/styled/Row';
-import { Switch, Typography } from '@mui/material';
-import React, { useEffect, useState, type ChangeEvent } from 'react';
+import { Paper, Switch, Typography } from '@mui/material';
+import type { ChangeEvent } from 'react';
+import { useEffect, useState } from 'react';
 
 export function AnimationMode() {
     const [animationMode, setAnimationMode] = useState(false);
 
     useEffect(() => {
-        const fightMode = window.localStorage.getItem('fight_mode');
+        const fightMode = localStorage.getItem('fight_mode');
         setAnimationMode(fightMode === '0' || fightMode === null);
     }, [animationMode]);
 
@@ -17,8 +17,12 @@ export function AnimationMode() {
     };
 
     return (
-        <Paper>
-            <Row justifyContent="space-between">
+        <Paper sx={{ p: 4 }}>
+            <Row
+                sx={{
+                    justifyContent: 'space-between'
+                }}
+            >
                 <Typography>动画模式</Typography>
                 <Switch
                     checked={animationMode}

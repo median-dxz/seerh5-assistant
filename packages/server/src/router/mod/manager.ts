@@ -1,122 +1,122 @@
-import path from 'path';
+import type { ModIndex, ModState } from '../../configHandlers/ModIndex.ts';
+import { SEASConfigHandler, type IStorage } from '../../shared/SEASConfigHandler.ts';
+import type { InstallModOptions } from './schemas.ts';
 
-import { modIndexes, type ModState } from '../../data/ModIndexes.ts';
-import { configsRoot, modsRoot } from '../../paths.ts';
-import { SEASConfigData } from '../../shared/SEASConfigData.ts';
-import { getNamespace } from '../../shared/index.ts';
-import type { ModInstallOptions } from './schemas.ts';
+const failed = (reason?: string) => ({
+    success: false,
+    reason
+});
 
-export const ModManager = {
-    root: '.',
-    modData: new Map<string, SEASConfigData>(),
-    modConfig: new Map<string, SEASConfigData>(),
-    async init(root: string) {
-        this.root = root;
-        const mods = modIndexes.stateList();
-        await Promise.all(mods.map(async ({ id, scope, state }) => this.load(scope, id, state)));
-    },
+const succeed = () => ({ success: true });
 
-    async saveData(scope: string, id: string, data: object) {
-        const dataStore = this.modData.get(getNamespace(scope, id));
-        if (!dataStore) {
-            return {
-                success: false
-            };
-        }
+export class ModManager {
+    configHandlers = new Map<string, SEASConfigHandler>();
+    dataHandlers = new Map<string, SEASConfigHandler>();
+
+    constructor(
+        public index: ModIndex,
+        private configStorageBuilder: (cid: string) => IStorage,
+        private dataStorageBuilder: (cid: string) => IStorage
+    ) {}
+
+    async init() {
+        const mods = this.index.stateList();
+        await Promise.all(mods.map(async ({ cid, state }) => this.load(cid, state)));
+    }
+
+    async saveData(cid: string, data: object) {
+        const dataStore = this.dataHandlers.get(cid);
+        if (!dataStore) return failed('data store not found');
+
         await dataStore.mutate(() => data);
-        return {
-            success: true
-        };
-    },
+        return succeed();
+    }
 
-    async data(scope: string, id: string) {
-        const dataStore = this.modData.get(getNamespace(scope, id));
+    async data(cid: string) {
+        const dataStore = this.dataHandlers.get(cid);
         if (!dataStore) {
             return undefined;
         }
         return Promise.resolve(dataStore.query());
-    },
+    }
 
-    async saveConfig(scope: string, id: string, data: object) {
-        const configStore = this.modConfig.get(getNamespace(scope, id));
-        if (!configStore) {
-            return {
-                success: false
-            };
-        }
+    async saveConfig(cid: string, data: object) {
+        const configStore = this.configHandlers.get(cid);
+        if (!configStore) return failed('config store not found');
+
         await configStore.mutate(() => data);
-        return {
-            success: true
-        };
-    },
+        return succeed();
+    }
 
-    async config(scope: string, id: string) {
-        const configStore = this.modConfig.get(getNamespace(scope, id));
+    async config(cid: string) {
+        const configStore = this.configHandlers.get(cid);
         if (!configStore) {
             return undefined;
         }
         return Promise.resolve(configStore.query());
-    },
+    }
 
-    async install(scope: string, id: string, options: ModInstallOptions = {}) {
-        if (modIndexes.state(scope, id) != undefined && !options.update) {
-            return {
-                success: false,
-                reason: 'there has existed a mod with the same id and scope already'
-            };
-        }
+    async install(cid: string, options: InstallModOptions) {
+        if (this.index.state(cid) != undefined && !options.update)
+            return failed('there has existed a mod with the same id and scope already');
 
         const state: ModState = {
             builtin: Boolean(options.builtin),
             preload: Boolean(options.preload),
             enable: true,
+            version: options.version,
             requireConfig: Boolean(options.config),
             requireData: Boolean(options.data)
         };
 
-        await modIndexes.set(scope, id, state);
-        const ns = getNamespace(scope, id);
+        await this.index.set(cid, state);
 
         // 在满足该模组请求数据存储的前提下:
         // 1. 当前数据存在但更新选项为false
         // 2. 当前数据不存在
-        if (options.data && (!this.modData.has(ns) || options.update === false)) {
-            const dataStore = new SEASConfigData();
-            await dataStore.create(path.join(this.root, modsRoot, `${scope}.${id}.data.json`), options.data);
-            this.modData.set(ns, dataStore);
-        }
-        if (options.config && (!this.modConfig.has(ns) || options.update === false)) {
-            const configStore = new SEASConfigData();
-            await configStore.create(
-                path.join(this.root, configsRoot, modsRoot, `${scope}.${id}.json`),
-                options.config
-            );
-            this.modConfig.set(ns, configStore);
+        if (options.config && (!this.configHandlers.has(cid) || options.update === false)) {
+            const handler = new SEASConfigHandler(this.configStorageBuilder(cid));
+            await handler.create(options.config);
+            this.configHandlers.set(cid, handler);
         }
 
-        return {
-            success: true
-        };
-    },
+        if (options.data && (!this.dataHandlers.has(cid) || options.update === false)) {
+            const handler = new SEASConfigHandler(this.dataStorageBuilder(cid));
+            await handler.create(options.data);
+            this.dataHandlers.set(cid, handler);
+        }
 
-    async load(scope: string, id: string, state: ModState) {
-        const ns = getNamespace(scope, id);
+        return succeed();
+    }
+
+    async load(cid: string, state: ModState) {
+        if (state.requireConfig) {
+            const handler = new SEASConfigHandler(this.configStorageBuilder(cid));
+            await handler.load();
+            this.configHandlers.set(cid, handler);
+        }
 
         if (state.requireData) {
-            const dataStore = new SEASConfigData();
-            await dataStore.load(path.join(this.root, modsRoot, `${scope}.${id}.data.json`));
-            this.modData.set(ns, dataStore);
+            const handler = new SEASConfigHandler(this.dataStorageBuilder(cid));
+            await handler.load();
+            this.dataHandlers.set(cid, handler);
         }
-        if (state.requireConfig) {
-            const configStore = new SEASConfigData();
-            await configStore.load(path.join(this.root, configsRoot, modsRoot, `${scope}.${id}.json`));
-            this.modConfig.set(ns, configStore);
-        }
-    },
+    }
 
-    async uninstall() {
+    async setEnable(cid: string, enable: boolean) {
+        const state = this.index.state(cid);
+        if (!state) {
+            return failed('mod not found');
+        }
+        state.enable = enable;
+        await this.index.set(cid, state);
+        return succeed();
+    }
+
+    async uninstall(_cid: string) {
+        // TODO implement
         return Promise.resolve({
             success: true
         });
     }
-};
+}

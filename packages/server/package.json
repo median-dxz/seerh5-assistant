@@ -2,7 +2,7 @@
   "name": "@sea/server",
   "private": true,
   "type": "module",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "main": "./src/index.ts",
   "exports": {
     ".": {
@@ -32,13 +32,14 @@
     "http-proxy-middleware": "3.0.0",
     "rotating-file-stream": "^3.2.3",
     "superjson": "^2.2.1",
+    "thread-stream": "^3.1.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@swc/core": "^1.6.6",
-    "@types/node": "^20.14.9",
+    "@swc/core": "^1.7.0",
+    "@types/node": "^20.14.12",
     "@yao-pkg/pkg": "^5.12.0",
-    "esbuild": "0.21.5",
+    "esbuild": "0.23.0",
     "form-data": "^4.0.0",
     "nodemon": "^3.1.4",
     "pino-pretty": "^11.2.1",
@@ -58,6 +59,9 @@
   "pkg": {
     "targets": [
       "node20-win-x64"
+    ],
+    "scripts": [
+      "./node_modules/thread-stream/lib/worker.js"
     ]
   }
 }

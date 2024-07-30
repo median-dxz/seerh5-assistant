@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Grid } from '@mui/material';
 
 import { AnimationMode } from './AnimationMode';
@@ -10,16 +8,26 @@ import { PetBag } from './PetBag';
 
 export function GameController() {
     return (
-        <Grid container spacing={4} pt={3} pb={3} flexDirection="row-reverse">
+        <Grid
+            container
+            spacing={4}
+            sx={{
+                pt: 3,
+                pb: 3,
+                flexDirection: 'row-reverse'
+            }}
+        >
             <Grid
                 item
                 container
                 spacing={4}
                 xs={12}
                 md={4}
-                alignItems="stretch"
-                justifyContent="center"
-                minWidth="232px"
+                sx={{
+                    alignItems: 'stretch',
+                    justifyContent: 'center',
+                    minWidth: '232px'
+                }}
             >
                 <Grid item xs={6} md={12}>
                     <AnimationMode />

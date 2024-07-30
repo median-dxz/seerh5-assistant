@@ -17,7 +17,7 @@ const filterCMD = [
     2441, // LOAD_PERCENT
     9019, // NONO_FOLLOW_OR_HOOM
     9274, //PET_GET_LEVEL_UP_EXP
-    41228, // SYSTEM_TIME_CHECK
+    41228 // SYSTEM_TIME_CHECK
 ];
 
 describe('BattleManager', function () {
@@ -69,7 +69,7 @@ describe('BattleManager', function () {
                     return operator.escape();
                 }
                 return operator.switchPet(next);
-            },
+            }
         });
     });
 
@@ -98,14 +98,14 @@ describe('BattleManager', function () {
             async resolveNoBlood() {
                 noBlood = true;
                 return false;
-            },
+            }
         });
     });
 
     beforeEach(async function () {
         const cts = [env.测试精灵1, env.测试精灵2, env.测试精灵3].map((v) => v.catchTime);
         await engine.switchBag(cts);
-        engine.cureAllPet();
+        await engine.cureAllPet();
         await SEAPet(cts[0]).default();
 
         await delay(200);
@@ -114,7 +114,7 @@ describe('BattleManager', function () {
 
     afterEach(async function () {
         sub.dispose();
-        engine.cureAllPet();
+        await engine.cureAllPet();
 
         await delay(1000);
         console.log(`${this.currentTest.title}: end`);

@@ -1,14 +1,20 @@
-import React from 'react';
+import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 
-import LauncherMain from './App';
+import Launcher from './App';
 import { ApplicationContext } from './context/ApplicationContext';
-import './init';
+import { InitializationView } from './views/InitializationView';
+
+import { initializationActions } from './features/init/initializationSlice';
+import { appStore } from './store';
+
+appStore.dispatch(initializationActions.init());
 
 ReactDOM.createRoot(document.getElementById('sea-launcher')!).render(
-    <React.StrictMode>
+    <StrictMode>
         <ApplicationContext>
-            <LauncherMain />
+            <InitializationView />
+            <Launcher />
         </ApplicationContext>
-    </React.StrictMode>
+    </StrictMode>
 );

@@ -1,6 +1,7 @@
-import React, { useCallback, useState, type PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
+import { useCallback, useState } from 'react';
 
-import { TabRouter, type ViewNode } from '@/context/useTabRouter';
+import { TabRouterContext, type ViewNode } from '@/context/useTabRouter';
 
 const defaultTab = (nodes: ViewNode[]) => nodes.find((node) => node.default)?.index;
 
@@ -10,9 +11,7 @@ interface TabRouterProviderProps {
 
 export function TabRouterProvider({ children, rootView }: PropsWithChildren<TabRouterProviderProps>) {
     const [viewNodeStack, setViewNodeStack] = useState<ViewNode[]>([rootView]);
-    const [currentViewIndex, setCurrentViewIndex] = useState<number>(() => {
-        return defaultTab(rootView.view as ViewNode[])!;
-    });
+    const [currentViewIndex, setCurrentViewIndex] = useState<number>(() => defaultTab(rootView.view as ViewNode[])!);
 
     const updateRouter = useCallback((newViewNodeStack: ViewNode[]) => {
         setViewNodeStack(newViewNodeStack);
@@ -35,10 +34,16 @@ export function TabRouterProvider({ children, rootView }: PropsWithChildren<TabR
     );
 
     return (
-        <TabRouter.Provider
-            value={{ back, push, routerStack: viewNodeStack, currentTab: currentViewIndex, setTab: setCurrentViewIndex }}
+        <TabRouterContext.Provider
+            value={{
+                back,
+                push,
+                routerStack: viewNodeStack,
+                currentTab: currentViewIndex,
+                setTab: setCurrentViewIndex
+            }}
         >
             {children}
-        </TabRouter.Provider>
+        </TabRouterContext.Provider>
     );
 }

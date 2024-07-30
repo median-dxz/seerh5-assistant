@@ -1,41 +1,54 @@
-import { Box, type SxProps } from '@mui/material';
+import { alpha, Autocomplete, Box, TextField as MuiTextField, styled, type BoxProps } from '@mui/material';
 import { useSnackbar, type SnackbarProviderProps } from 'notistack';
-import React, { useState } from 'react';
+import { useMemo, forwardRef, useState } from 'react';
 
-import { SeaAutocomplete } from '@/components/styled/Autocomplete';
-import { SeaTextField } from '@/components/styled/TextField';
-import { useModStore } from '@/context/useModStore';
-import type { theme } from '@/style';
+import type { Command as CommandInstance } from '@sea/mod-type';
+
+import { commandStore } from '@/features/mod/store';
+import { useMapToStore } from '@/features/mod/useModStore';
+import { theme } from '@/theme';
 
 interface Option {
-    value: string;
+    value: CommandInstance;
     label: string;
 }
 
 const snackBarOptions: SnackbarProviderProps = {
     autoHideDuration: 3000,
-    anchorOrigin: { horizontal: 'center', vertical: 'bottom' },
+    anchorOrigin: { horizontal: 'center', vertical: 'bottom' }
 };
+
+const TextField = styled(MuiTextField)`
+    box-shadow: ${theme.boxShadow};
+    background-color: ${alpha(theme.palette.extendedBackground.emphasize, 0.72)};
+    backdrop-filter: blur(8px);
+    font-family: ${theme.fonts.input};
+` as typeof MuiTextField;
 
 export function CommandInput() {
     const { enqueueSnackbar } = useSnackbar();
-    const { commandStore } = useModStore();
     const [open, setOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [value, setValue] = useState<null | Option>(null);
 
-    const options = React.useMemo(() => {
-        return Array.from(commandStore.values()).map((cmd) => {
-            let description = cmd.description;
-            if (typeof cmd.description === 'function') {
-                description = '';
-            }
-            return { value: cmd.name, label: `${cmd.name} ${description ?? ''}` } as Option;
-        });
-    }, [commandStore]);
+    const commands = useMapToStore((state) => state.mod.commandRefs, commandStore);
+
+    const options = useMemo(
+        () =>
+            commands.map((cmd) => {
+                let description: string;
+                if (typeof cmd.description === 'function') {
+                    description = cmd.description();
+                } else {
+                    description = cmd.description ?? '';
+                }
+                return { value: cmd, label: `${cmd.name} ${description}` } as Option;
+            }),
+        [commands]
+    );
 
     return (
-        <SeaAutocomplete
+        <Autocomplete
             id="command-input"
             autoHighlight
             selectOnFocus
@@ -49,7 +62,7 @@ export function CommandInput() {
             value={value}
             onChange={(event, newValue: Option | null) => {
                 if (!newValue) return;
-                const cmd = commandStore.get(newValue.value)!;
+                const cmd = newValue.value;
 
                 if (cmd.handler.length > 0) {
                     enqueueSnackbar(`命令: ${cmd.name} 需要输入参数`, snackBarOptions);
@@ -70,27 +83,21 @@ export function CommandInput() {
                 setOpen(false);
             }}
             options={options}
-            // isOptionEqualToValue={(option, value) => {
-            //     return value === option || value === '' || value === null;
-            // }}
             renderInput={(params) => (
-                <SeaTextField
+                <TextField
                     {...params}
+                    inputProps={{ ...params.inputProps, autoComplete: 'off' }}
                     label={'SEA Launcher 命令行'}
                     autoFocus
-                    InputProps={{
-                        ...params.InputProps,
-                        endAdornment: <React.Fragment>{params.InputProps.endAdornment}</React.Fragment>,
-                    }}
                 />
             )}
         />
     );
 }
 
-const CommandInputRef = React.forwardRef<HTMLDivElement, { sx: SxProps<typeof theme> }>(({ sx, ...props }, ref) => (
-    <Box sx={sx} ref={ref}>
-        <CommandInput {...props} />
+const CommandInputRef = forwardRef<HTMLDivElement, BoxProps>(({ ...props }, ref) => (
+    <Box {...props} ref={ref}>
+        <CommandInput />
     </Box>
 ));
 

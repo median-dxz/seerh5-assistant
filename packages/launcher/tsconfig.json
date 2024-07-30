@@ -1,25 +1,26 @@
 {
   "extends": "../../tsconfig.common.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "../../.tsbuildinfo/app.tsbuildinfo",
-    "moduleResolution": "bundler",
     "module": "esnext",
+    "moduleResolution": "bundler",
+    "baseUrl": "./src/",
+    "tsBuildInfoFile": "../../.tsbuildinfo/app.tsbuildinfo",
+    "noEmit": true,
+    "lib": ["ESNext", "DOM"],
+    "jsx": "react-jsx",
+
     "isolatedModules": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "allowArbitraryExtensions": true,
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
-    "lib": ["ESNext", "DOM"],
     // "skipLibCheck": false,
-    "jsx": "react",
-    "noEmit": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./*"]
     },
     "types": ["vite/client", "@sea/core/types/seerh5", "@sea/core/types/egret"]
   },
-  "include": ["./src/**/*"],
+  "include": ["src"],
   "references": [
     {
       "path": "../core"

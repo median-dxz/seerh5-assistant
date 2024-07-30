@@ -93,6 +93,11 @@ declare global {
             Desc: string;
         }
 
+        interface PetFragmentLevelBattleObj extends BaseObj {
+            Task: PetFragmentLevelBoss[];
+            Out: number;
+        }
+
         interface PetFragmentLevelObj extends BaseObj {
             ID: number;
             Desc: string;
@@ -102,12 +107,25 @@ declare global {
                 FailTimes: number;
                 ProgressValue: number;
             };
-            EasyBattle: { Task: PetFragmentLevelBoss[] };
-            NormalBattle: { Task: PetFragmentLevelBoss[] };
-            HardBattle: { Task: PetFragmentLevelBoss[] };
+            EasyBattle: PetFragmentLevelBattleObj;
+            NormalBattle: PetFragmentLevelBattleObj;
+            HardBattle: PetFragmentLevelBattleObj;
             Reward: {
                 ItemID: number;
+                GainValue: number;
+                MonsterID: number;
             };
+        }
+
+        interface PetFragmentObj extends BaseObj {
+            ID: number;
+            Name: string;
+            MonsterID: number;
+            PetConsume: number;
+            NewSeIdx: number;
+            NewseConsume: number;
+            MoveID: number;
+            MovesConsume: number;
         }
 
         interface SuitObj extends BaseObj {
@@ -166,7 +184,10 @@ declare global {
 
         SETTITLE: 3404;
 
+        GAME_GET_PLAYER_INFO: 41206;
+        BATCH_GET_BITSET: 42023;
         GET_PET_INFO_BY_ONCE: 43706;
+        GET_MULTI_FOREVER: 46046;
     };
 
     namespace RES {
@@ -186,6 +207,7 @@ declare global {
 
     var EventManager: egret.EventDispatcher;
     var Core: any;
+    var Driver: any;
     var config: {
         xml: any;
         Brave_lv: any;
@@ -211,11 +233,16 @@ declare global {
         data: egret.ByteArray | undefined;
     }
 
-    class SocketErrorEvent extends egret.Event {}
+    class SocketErrorEvent extends egret.Event {
+        headInfo: {
+            result: number;
+        };
+    }
 
     class PetEvent extends egret.Event {
+        static readonly CURE_COMPLETE: string;
         static readonly EQUIP_SKIN: string;
-        constructor(type: string, catchTime: number, obj: any);
+        constructor(type: string, catchTime: number, obj?: any);
     }
 
     class PetFightEvent extends egret.Event {

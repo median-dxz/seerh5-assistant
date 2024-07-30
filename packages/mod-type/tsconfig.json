@@ -3,10 +3,10 @@
   "compilerOptions": {
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "target": "es2022",
+    "target": "esnext",
     "noEmit": true,
     "strict": true,
-    "skipLibCheck": false,
+    // "skipLibCheck": false,
     "tsBuildInfoFile": "../../.tsbuildinfo/mod-type.tsbuildinfo",
     "types": ["@sea/core/types/seerh5", "@sea/core/types/egret"]
   },

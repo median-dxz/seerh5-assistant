@@ -1,14 +1,15 @@
-import { LabeledLinearProgress } from '@/components/LabeledProgress';
-import { Paper } from '@/components/styled/Paper';
-import { Row } from '@/components/styled/Row';
-import { useTaskScheduler } from '@/context/useTaskScheduler';
 import Pause from '@mui/icons-material/PauseRounded';
 import PlayArrow from '@mui/icons-material/PlayArrowRounded';
-import { Button, Chip, Stack, Typography } from '@mui/material';
-import React from 'react';
+
+import { LabeledLinearProgress } from '@/components/LabeledProgress';
+import { Row } from '@/components/styled/Row';
+import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { Button, Chip, Paper, Stack, Typography } from '@mui/material';
 
 const StatusTextMap = {
-    ready: '就绪',
+    idle: '就绪',
+    pause: '暂停',
     running: '运行中',
     waitingForStop: '等待停止'
 };
@@ -18,37 +19,51 @@ export interface SidebarProps {
 }
 
 export function Sidebar({ height }: SidebarProps) {
-    const { isPaused, pause, resume, status, queue } = useTaskScheduler();
+    const dispatch = useAppDispatch();
+    const { pause: isPaused, queue } = useAppSelector((state) => state.taskScheduler);
+    let status: keyof typeof StatusTextMap = useAppSelector((state) => state.taskScheduler.status);
 
     const handlePauseScheduler = () => {
         if (isPaused) {
-            resume();
+            dispatch(taskSchedulerActions.resume());
         } else {
-            pause();
+            void dispatch(taskSchedulerActions.pause());
         }
     };
+
+    if (status === 'idle' && isPaused) {
+        status = 'pause';
+    }
 
     const currentProgress = queue.length - Math.min(queue.filter((r) => r.status === 'pending').length, queue.length);
 
     return (
         <Paper
             sx={{
-                height
+                height,
+                p: 4
             }}
         >
-            <Row alignItems="baseline" justifySelf="start" useFlexGap gap={4} mb={2}>
-                <Typography variant="subtitle1">调度器</Typography>
+            <Row alignItems="baseline" justifySelf="start" mb={2}>
+                <Typography variant="h2">调度器</Typography>
                 <Button
                     variant="outlined"
                     color="inherit"
-                    sx={{ minWidth: 'auto', padding: '4px' }}
+                    sx={{ minWidth: 'auto', padding: '2px' }}
                     onClick={handlePauseScheduler}
+                    disabled={status === 'waitingForStop'}
                 >
-                    {isPaused ? <PlayArrow fontSize="inherit" /> : <Pause fontSize="inherit" />}
+                    {isPaused ? <PlayArrow /> : <Pause />}
                 </Button>
             </Row>
-            <Stack justifyContent="space-around" height="100%" width="100%">
-                <Row alignItems="baseline" useFlexGap gap={4}>
+            <Stack
+                sx={{
+                    justifyContent: 'space-around',
+                    height: '100%',
+                    width: '100%'
+                }}
+            >
+                <Row alignItems="baseline">
                     <Typography>当前状态: </Typography>
                     <Chip label={StatusTextMap[status]} variant="outlined" size="small" />
                 </Row>

@@ -1,19 +1,19 @@
-import { Loading } from '@/components/Loading';
+import { LinerLoading } from '@/components/LinerLoading';
 import { PanelTable, type PanelColumns } from '@/components/PanelTable';
-import { useBagPets } from '@/services/useBagPets';
+import { gameApi } from '@/services/game';
 import { Box, Stack } from '@mui/material';
 import type { Pet } from '@sea/core';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PanelRow } from './PanelRow';
 import { ToolBar } from './ToolBar';
 
 export function PetBag() {
-    const { pets } = useBagPets();
+    const { data: pets, isFetching } = gameApi.useBagPetsQuery();
     const [selected, setSelected] = useState<number[]>([]);
 
     useEffect(() => {
-        setSelected([]);
-    }, [pets]);
+        isFetching && setSelected([]);
+    }, [isFetching]);
 
     const cols: PanelColumns = useMemo(
         () => [
@@ -27,10 +27,10 @@ export function PetBag() {
 
     const toRowKey = useCallback((pet: Pet) => pet.catchTime, []);
 
-    if (!pets) return <Loading />;
+    if (!pets) return <LinerLoading />;
 
     return (
-        <Stack width={'100%'}>
+        <Stack sx={{ width: '100%' }}>
             <ToolBar selected={selected} />
             <Box
                 sx={{
@@ -44,8 +44,8 @@ export function PetBag() {
                         minWidth: 'max-content'
                     }}
                     columns={cols}
-                    rowElement={<PanelRow selected={selected} setSelected={setSelected} />}
-                    data={pets}
+                    rowElement={<PanelRow selected={selected} setSelected={setSelected} isFetching={isFetching} />}
+                    data={pets[0]}
                     toRowKey={toRowKey}
                 />
             </Box>

@@ -8,8 +8,7 @@ import { PetLocation, SEAPetStore, spet } from '../../pet-helper/index.js';
  *
  * @param pets 要切换的精灵列表, 可以是ct或者Pet实例
  */
-export async function switchBag(pets: number[] | Pet[]) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+export const switchBag = async (pets: number[] | Pet[]) => {
     if (!pets) return;
     pets = pets.slice(0, 6);
 
@@ -25,4 +24,4 @@ export async function switchBag(pets: number[] | Pet[]) {
     for (const v of cts) {
         await spet(v).setLocation(PetLocation.Bag);
     }
-}
+};
