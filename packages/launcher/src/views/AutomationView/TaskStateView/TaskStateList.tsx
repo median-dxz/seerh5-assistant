@@ -1,5 +1,4 @@
 import CheckCircleOutline from '@mui/icons-material/CheckCircleOutlineRounded';
-import Close from '@mui/icons-material/Close';
 import Delete from '@mui/icons-material/DeleteOutlineRounded';
 import ErrorOutline from '@mui/icons-material/ErrorOutlineRounded';
 import FeedOutlined from '@mui/icons-material/FeedOutlined';
@@ -9,36 +8,27 @@ import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 import RestartAlt from '@mui/icons-material/RestartAltRounded';
 import Stop from '@mui/icons-material/StopRounded';
 
-import { DataLoading } from '@/components/DataLoading';
 import { SwordLine } from '@/components/icons/SwordLine';
 import { LabeledLinearProgress } from '@/components/LabeledProgress';
-import { taskStore } from '@/features/mod/store';
-import { useMapToStore } from '@/features/mod/useModStore';
-import { type ModExportsRef } from '@/features/mod/utils';
 import { taskSchedulerActions, type TaskState } from '@/features/taskSchedulerSlice';
 import { useAppDispatch, useAppSelector } from '@/store';
 import {
     Chip,
-    Dialog,
-    DialogContent,
-    DialogTitle,
     IconButton,
-    InputLabel,
     List,
     ListItem,
     ListItemButton,
     ListItemIcon,
     ListItemText,
-    Paper,
     Stack,
-    TextField,
     Typography,
     alpha,
     type ListProps
 } from '@mui/material';
 import dayjs from 'dayjs';
-import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
+
+import { RunnerDetailDialog } from './RunnerDetailDialog';
 
 const { abortCurrentRunner, dequeue, enqueue } = taskSchedulerActions;
 
@@ -253,7 +243,7 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
     );
 }
 
-export function LevelStateList(listProps: ListProps) {
+export function TaskStateList(listProps: ListProps) {
     const queue = useAppSelector((state) => state.taskScheduler.queue);
     return (
         <>
@@ -271,132 +261,3 @@ export function LevelStateList(listProps: ListProps) {
         </>
     );
 }
-
-export interface RunnerDetailDialogProps {
-    open: boolean;
-    close(): void;
-    taskState: TaskState;
-    taskRef: ModExportsRef;
-}
-
-const RunnerDetailDialog = React.memo(function RunnerDetailDialog({
-    open,
-    close,
-    taskState,
-    taskRef
-}: RunnerDetailDialogProps) {
-    const task = useMapToStore(() => taskRef, taskStore);
-
-    if (!task) {
-        return <DataLoading error="无效的任务引用" />;
-    }
-
-    const FieldPaper = ({ data, title, id }: { title: string; id: string; data: string }) => (
-        <div>
-            <InputLabel
-                sx={{
-                    width: 'fit-content',
-                    px: 4,
-                    mb: 2,
-                    bgcolor: ({ palette }) => alpha(palette.background.paper, 0.12),
-                    borderRadius: 1,
-                    fontFamily: ({ fonts }) => fonts.input,
-                    fontSize: '1.25rem',
-                    color: ({ palette }) => palette.text.primary
-                }}
-                htmlFor={`runner-${id}-${task.metadata.name}`}
-            >
-                {title}:{' '}
-            </InputLabel>
-            <TextField
-                key={`runner-${id}-${task.metadata.name}`}
-                id={`runner-${id}-${task.metadata.name}`}
-                multiline
-                aria-readonly
-                InputProps={{
-                    readOnly: true,
-                    sx: {
-                        fontFamily: ({ fonts }) => fonts.input
-                    }
-                }}
-                fullWidth
-                value={data}
-            />
-        </div>
-    );
-
-    return (
-        <Dialog
-            open={open}
-            onClose={close}
-            scroll="paper"
-            fullWidth
-            PaperProps={{ sx: { minWidth: '18rem', maxWidth: '60vw' } }}
-        >
-            <DialogTitle>Runner详情</DialogTitle>
-            <IconButton
-                aria-label="close"
-                onClick={close}
-                sx={{
-                    position: 'absolute',
-                    right: 8,
-                    top: 8
-                }}
-            >
-                <Close />
-            </IconButton>
-            <DialogContent>
-                <Stack direction="column" spacing={4}>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                        <Typography
-                            fontSize="2rem"
-                            sx={{
-                                width: 'fit-content',
-                                px: 4,
-                                bgcolor: ({ palette }) => alpha(palette.background.paper, 0.24),
-                                borderRadius: 2
-                            }}
-                        >
-                            {taskState.runner.name}
-                        </Typography>
-                        <Chip label={taskState.status} variant="outlined" size="small" />
-                    </Stack>
-
-                    <Typography>
-                        时间:{' '}
-                        {taskState.endTime && taskState.startTime
-                            ? `${dayjs(taskState.startTime).format('HH:mm:ss')} - ${dayjs(taskState.endTime).format('HH:mm:ss')}`
-                            : taskState.startTime
-                              ? dayjs(taskState.startTime).format('HH:mm:ss')
-                              : '未启动'}
-                    </Typography>
-                    <Typography sx={{ fontFamily: ({ fonts }) => fonts.input }}>
-                        {task.metadata.id} - {task.metadata.name} - {taskRef.cid}
-                    </Typography>
-
-                    {Boolean(taskState.error) && (
-                        <Paper
-                            sx={{
-                                bgcolor: ({ palette }) => alpha(palette.background.paper, 0.36),
-                                p: 4
-                            }}
-                        >
-                            ERROR:
-                            <Typography sx={{ fontFamily: ({ fonts }) => fonts.input }}>
-                                {taskState.error?.message}
-                            </Typography>
-                        </Paper>
-                    )}
-
-                    {taskState.options && (
-                        <FieldPaper data={JSON.stringify(taskState.options, undefined, 2)} id="options" title="选项" />
-                    )}
-                    {taskState.runner.data && (
-                        <FieldPaper data={JSON.stringify(taskState.runner.data, undefined, 2)} id="data" title="数据" />
-                    )}
-                    {taskState.logs.length > 0 && <FieldPaper data={taskState.logs.join('\n')} id="log" title="日志" />}
-                </Stack>
-            </DialogContent>
-        </Dialog>
-    );
-});

@@ -1,8 +1,13 @@
 import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 import Settings from '@mui/icons-material/Settings';
 
+import type { PanelColumns } from '@/components/PanelTable';
+import { CircularProgress } from '@mui/material';
+import { LevelAction } from '@sea/core';
+import { useSnackbar } from 'notistack';
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { shallowEqual } from 'react-redux';
 
 import { DataLoading } from '@/components/DataLoading';
 import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
@@ -19,10 +24,6 @@ import type { ModExportsRef } from '@/features/mod/utils';
 import { dataApi } from '@/services/data';
 import { getCompositeId, getTaskOptions, startAppListening, type TaskRunner } from '@/shared';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { CircularProgress } from '@mui/material';
-import { LevelAction } from '@sea/core';
-import { shallowEqual } from 'react-redux';
-import { taskViewColumns } from './shared';
 
 //      name: '作战实验室'
 //      name: '六界神王殿',
@@ -46,6 +47,25 @@ import { taskViewColumns } from './shared';
 //      },
 //  },
 
+const taskViewColumns = [
+    {
+        field: 'name',
+        columnName: '名称'
+    },
+    {
+        field: 'cid',
+        columnName: '模组'
+    },
+    {
+        field: 'state',
+        columnName: '状态'
+    },
+    {
+        field: 'actions',
+        columnName: '操作'
+    }
+] as const satisfies PanelColumns;
+
 interface Row {
     ref: ModExportsRef;
     task: TaskInstance;
@@ -55,7 +75,11 @@ interface Row {
 
 const toRowKey = ({ ref: { cid, key } }: Row) => getCompositeId({ id: key, scope: cid });
 
-export function CommonLevelView() {
+export interface CommonLevelViewProps {
+    filterLevelBattle: boolean;
+}
+
+export function CommonLevelView({ filterLevelBattle }: CommonLevelViewProps) {
     const taskRefs = useAppSelector(
         ({ mod: { taskRefs } }) =>
             taskRefs.filter(
@@ -65,25 +89,35 @@ export function CommonLevelView() {
     );
 
     const { data: taskConfig, isFetching, error } = dataApi.endpoints.allTaskConfig.useQuery();
+    const rowCache = useRef(new WeakMap<ModExportsRef, Row>());
 
-    const rows = useMemo(
-        () =>
-            taskRefs
-                .map((ref) => {
-                    if (!taskConfig) {
-                        return undefined;
-                    }
-                    const task = mapToStore(ref, taskStore)!;
-                    const options = getTaskOptions(task, taskConfig);
-                    const runner = task.runner(options);
-                    if (runner.selectLevelBattle) {
-                        return { ref, options, task, runner } satisfies Row;
-                    }
-                    return undefined;
-                })
-                .filter(Boolean) as Row[],
-        [taskConfig, taskRefs]
-    );
+    const mapRefToRow = (ref: ModExportsRef) => {
+        if (!taskConfig) {
+            return undefined;
+        }
+        const task = mapToStore(ref, taskStore)!;
+        const options = getTaskOptions(task, taskConfig);
+        const runner = task.runner(options);
+
+        let cachedRow = rowCache.current.get(ref);
+
+        if (cachedRow) {
+            if (cachedRow.options !== options) {
+                cachedRow = { ...cachedRow, options, runner };
+                rowCache.current.set(ref, cachedRow);
+            }
+            return cachedRow;
+        } else {
+            if (!runner.selectLevelBattle === filterLevelBattle) {
+                cachedRow = { ref, options, task, runner };
+                rowCache.current.set(ref, cachedRow);
+                return cachedRow;
+            }
+            return undefined;
+        }
+    };
+
+    const rows = taskRefs.map(mapRefToRow).filter(Boolean) as Row[];
 
     if (!taskConfig || isFetching) return <DataLoading />;
 
@@ -101,30 +135,42 @@ export function CommonLevelView() {
 
 const PanelRow = React.memo(function PanelRow() {
     const dispatch = useAppDispatch();
+    const { enqueueSnackbar } = useSnackbar();
     const { ref, options, task, runner } = useRowData<Row>();
+    const [mutate] = dataApi.useSetTaskOptionsMutation();
 
     const [editFormOpen, setEditFormOpen] = useState(false);
     const [completed, setCompleted] = useState(false);
     const [fetched, setFetched] = useState(false);
 
-    const mutate = useCallback(async () => {
-        try {
-            await runner.update();
-        } catch (error) {
-            // TODO handle error
-        }
-        setCompleted(runner.next() === LevelAction.STOP);
-        setFetched(true);
-    }, [runner]);
+    const update = useCallback(
+        async (active?: { current: boolean }) => {
+            setFetched(false);
+            await Promise.resolve();
+            if (active && !active.current) return;
+            try {
+                await runner.update();
+            } catch (error) {
+                // TODO handle error
+            }
+            setCompleted(runner.next() === LevelAction.STOP);
+            setFetched(true);
+        },
+        [runner]
+    );
 
     useEffect(() => {
-        void mutate();
+        const active = { current: true };
+        void update(active);
         const unsubscribe = startAppListening({
             actionCreator: taskSchedulerActions.moveNext,
-            effect: mutate
+            effect: async () => update()
         });
-        return unsubscribe;
-    }, [mutate]);
+        return () => {
+            active.current = false;
+            unsubscribe();
+        };
+    }, [update]);
 
     return (
         <SeaTableRow sx={{ height: '3.3rem' }}>
@@ -150,11 +196,26 @@ const PanelRow = React.memo(function PanelRow() {
                     onClick={() => {
                         setEditFormOpen(true);
                     }}
+                    disabled={!options}
                 >
                     <Settings />
                 </IconButtonNoRipple>
             </PanelField>
-            <SEAConfigForm open={editFormOpen} config={options} />
+            {options && (
+                <SEAConfigForm
+                    open={editFormOpen}
+                    onClose={() => {
+                        setEditFormOpen(false);
+                    }}
+                    onSubmit={async (values) => {
+                        await mutate({ id: getCompositeId({ scope: task.cid, id: task.metadata.id }), data: values });
+                        enqueueSnackbar('配置已更新', { variant: 'success' });
+                    }}
+                    values={options}
+                    schema={task.configSchema!}
+                    title={`编辑配置: ${runner.name ?? task.metadata.name}`}
+                />
+            )}
         </SeaTableRow>
     );
 });

@@ -159,16 +159,7 @@ export const modApi = createApi({
                 ({ compositeId, data }) =>
                 async () =>
                     modRouter.saveData.mutate({ compositeId, data }),
-            // 乐观更新
-            async onQueryStarted({ compositeId, data }, { dispatch, queryFulfilled }) {
-                const patchResult = dispatch(modApi.util.updateQueryData('data', compositeId, () => data));
-                try {
-                    await queryFulfilled;
-                } catch (e) {
-                    patchResult.undo();
-                    dispatch(modApi.util.invalidateTags([{ type: 'Data', id: compositeId }]));
-                }
-            }
+            invalidatesTags: (r, e, { compositeId }) => [{ type: 'Data', id: compositeId }]
         }),
 
         config: build.query<TRpcResponse<typeof modRouter.config.query>, TRpcArgs<typeof modRouter.config.query>>({

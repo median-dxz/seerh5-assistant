@@ -45,6 +45,25 @@ export const dataApi = createApi({
                             id: key
                         }))
                 )
+        }),
+        setTaskOptions: build.mutation<void, TRpcArgs<typeof dataRouter.task.set.mutate>>({
+            query:
+                ({ id, data }) =>
+                async () =>
+                    dataRouter.task.set.mutate({ id, data }),
+            async onQueryStarted({ id, data }, { dispatch, queryFulfilled }) {
+                const patchResult = dispatch(
+                    dataApi.util.updateQueryData('allTaskConfig', undefined, (draft) => {
+                        draft[id] = data;
+                    })
+                );
+                try {
+                    await queryFulfilled;
+                } catch (e) {
+                    patchResult.undo();
+                    dispatch(dataApi.util.invalidateTags([{ type: 'TaskConfig', id }]));
+                }
+            }
         })
     })
 });

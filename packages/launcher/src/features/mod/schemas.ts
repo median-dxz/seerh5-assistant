@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
 const ConfigItemSchema = z
-    .object({ name: z.string(), description: z.string().optional() })
+    .object({ name: z.string(), helperText: z.string().optional() })
     .and(
         z.union([
-            z.object({ type: z.literal('textInput'), default: z.string() }),
-            z.object({ type: z.literal('numberInput'), default: z.number() }),
+            z.object({ type: z.literal('input'), default: z.string() }),
             z.object({ type: z.literal('select'), default: z.string(), list: z.record(z.string()) }),
-            z.object({ type: z.literal('checkbox'), default: z.boolean() })
+            z.object({ type: z.literal('checkbox'), default: z.boolean() }),
+            z.object({ type: z.literal('battle'), default: z.string() })
         ])
     );
 

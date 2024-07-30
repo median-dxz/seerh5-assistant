@@ -44,7 +44,7 @@ export function AddOptionsForm({ open, onClose }: AddOptionsFormProps) {
         (_?: unknown, reason?: 'backdropClick' | 'escapeKeyDown') => {
             if (reason === 'backdropClick') return;
             onClose();
-            reset(defaultValues);
+            reset();
         },
         [onClose, reset]
     );
@@ -66,15 +66,15 @@ export function AddOptionsForm({ open, onClose }: AddOptionsFormProps) {
             fullWidth
             PaperProps={{
                 component: 'form',
-                onSubmit: handleSubmit((newData) => {
-                    newData.battle = newData.battle ?? [];
-                    if (!optionsList.some((data) => dequal(data, newData))) {
+                onSubmit: handleSubmit((payload) => {
+                    payload.battle = payload.battle ?? [];
+                    if (!optionsList.some((data) => dequal(data, payload))) {
                         mutate((draft) => {
-                            draft.push({ ...newData });
+                            draft.push({ ...payload });
                         });
                         handleClose();
                     } else {
-                        reset({ ...newData, battle: [] });
+                        reset({ ...payload, battle: [] });
                         enqueueSnackbar('配置已存在', { variant: 'warning' });
                     }
                 })

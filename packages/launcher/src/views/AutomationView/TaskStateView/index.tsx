@@ -1,6 +1,6 @@
 import { Box, Grid, useMediaQuery, useTheme } from '@mui/material';
 import { Sidebar } from './Sidebar';
-import { LevelStateList as TaskStateList } from './TaskStateList';
+import { TaskStateList } from './TaskStateList';
 
 const sidebarHeight = '156px';
 

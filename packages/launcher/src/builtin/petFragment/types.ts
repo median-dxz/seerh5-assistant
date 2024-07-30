@@ -9,9 +9,7 @@ export interface PetFragmentOptions {
 }
 
 export interface IPetFragmentRunner
-    extends ReturnType<
-        Task<undefined, PetFragmentLevelData, 'sweep' | 'battle' | 'stop' | 'error_not_able_to_sweep'>['runner']
-    > {
+    extends ReturnType<Task<undefined, PetFragmentLevelData, 'sweep' | 'battle' | 'stop'>['runner']> {
     readonly designId: number;
     readonly level: PetFragmentLevel;
     options: PetFragmentOptions;

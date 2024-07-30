@@ -7,6 +7,7 @@ import Refresh from '@mui/icons-material/RefreshRounded';
 import Settings from '@mui/icons-material/Settings';
 
 import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
+
 import { deploymentSelectors, type ModDeployment } from '@/features/mod/slice';
 import { modStore } from '@/features/mod/store';
 import { useMapToStore } from '@/features/mod/useModStore';
@@ -14,7 +15,7 @@ import { getCompositeId, usePopupState } from '@/shared';
 import { useAppSelector } from '@/store';
 
 import {
-    Box,
+    Grid,
     List,
     ListItem,
     ListItemText,
@@ -50,48 +51,60 @@ export function ModListItem({ deployment }: ModListItemProps) {
 
     const title = (
         <Stack direction="row" sx={{ alignItems: 'baseline' }}>
-            <Typography sx={{ paddingRight: '1rem', fontSize: 28 }}>{id}</Typography>
+            <Typography sx={{ paddingRight: '1rem', fontSize: '1.4rem' }}>{id}</Typography>
             <Typography>v{state.version}</Typography>
         </Stack>
     );
 
     const description = (
-        <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
-            <Stack direction="row" sx={{ alignItems: 'baseline' }}>
-                <Typography sx={{ fontFamily: ({ fonts }) => fonts.property }}>
-                    {getCompositeId({ scope, id })}
-                </Typography>
+        <Grid
+            container
+            spacing={1}
+            columns={16}
+            sx={{ justifyContent: 'flex-start', alignItems: 'baseline', fontSize: '1rem' }}
+        >
+            <Grid
+                item
+                xs
+                sx={{ fontFamily: ({ fonts }) => fonts.property, textOverflow: 'ellipsis', overflow: 'hidden' }}
+                zeroMinWidth
+            >
+                {getCompositeId({ scope, id })}
+            </Grid>
 
-                {ins && (
-                    <Tooltip title={ins.metadata.description}>
-                        <Box>
-                            <ClampText
-                                is="p"
-                                lines={1}
-                                debounce={100}
-                                accessibility={false}
-                                text={ins.metadata.description}
-                            />
-                        </Box>
-                    </Tooltip>
-                )}
-            </Stack>
-            <Stack direction="row" spacing={4} sx={{ alignItems: 'baseline' }}>
-                {scope === 'builtin' && (
-                    <Typography color="GrayText" sx={{ fontSize: 16 }}>
+            <Tooltip title={ins?.metadata.description}>
+                <Grid item xs={8} zeroMinWidth>
+                    <ClampText
+                        is="p"
+                        lines={1}
+                        debounce={100}
+                        accessibility={false}
+                        text={ins?.metadata.description ?? ''}
+                    />
+                </Grid>
+            </Tooltip>
+
+            {scope === 'builtin' && (
+                <Grid item xs={2} sx={{ alignSelf: 'flex-end' }}>
+                    <Typography color="GrayText" variant="inherit" noWrap>
                         预置
                     </Typography>
-                )}
-                {state.preload && (
-                    <Typography color="GrayText" sx={{ fontSize: 16 }}>
+                </Grid>
+            )}
+            {state.preload && (
+                <Grid item xs={2} sx={{ alignSelf: 'flex-end' }}>
+                    <Typography color="GrayText" variant="inherit" noWrap>
                         预加载
                     </Typography>
-                )}
-                <Typography color="GrayText" sx={{ fontSize: 16 }}>
+                </Grid>
+            )}
+
+            <Grid item xs={2} sx={{ alignSelf: 'flex-end' }}>
+                <Typography color="GrayText" variant="inherit" noWrap>
                     {deployment.status === 'deployed' ? '已部署' : deployment.isDeploying ? '部署中...' : '未部署'}
                 </Typography>
-            </Stack>
-        </Stack>
+            </Grid>
+        </Grid>
     );
 
     return (
@@ -106,23 +119,13 @@ export function ModListItem({ deployment }: ModListItemProps) {
                         //     return alpha(theme.palette.error.main, 0.18);
                         // }
                         alpha(theme.palette.primary.main, 0.12)
-                }
+                },
+                justifyContent: 'space-between',
+                px: 8
             }}
         >
-            <ListItemText
-                primary={title}
-                secondary={description}
-                disableTypography
-                sx={{ paddingRight: 4, paddingLeft: 4 }}
-            />
-            <Box
-                sx={{
-                    marginInline: '2rem',
-                    '&>*': {
-                        marginInline: '0.5rem'
-                    }
-                }}
-            >
+            <ListItemText primary={title} secondary={description} disableTypography sx={{ width: '70%' }} />
+            <Stack direction="row">
                 <IconButtonNoRipple
                     title="详情"
                     onClick={() => {
@@ -138,7 +141,7 @@ export function ModListItem({ deployment }: ModListItemProps) {
                 <IconButtonNoRipple title="管理" onClick={open}>
                     <Build />
                 </IconButtonNoRipple>
-            </Box>
+            </Stack>
             <Menu
                 {...menuState}
                 MenuListProps={{

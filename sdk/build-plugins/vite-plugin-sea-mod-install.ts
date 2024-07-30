@@ -98,7 +98,7 @@ function buildDefaultConfig(configSchema: SEAConfigSchema) {
     const keys = Object.keys(configSchema);
     const defaultConfig: Record<string, string | number | boolean> = {};
     keys.forEach((key) => {
-        const item = configSchema[key];
+        const item = configSchema[key]!;
         defaultConfig[key] = item.default;
     });
     return defaultConfig;

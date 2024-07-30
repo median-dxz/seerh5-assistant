@@ -1,6 +1,7 @@
 import { useListDerivedValue } from '@/shared';
 import { Menu, MenuItem, type MenuItemProps, type MenuProps } from '@mui/material';
 import * as React from 'react';
+import { useCallback } from 'react';
 
 const MemoMenuItem = React.memo(MenuItem);
 
@@ -31,11 +32,11 @@ export function ListMenu<T, P extends object>(props: ListMenuProps<T, P>) {
     const { sx: MenuListSx, ...MenuListProps } = allMenuListProps ?? {};
     const open = Boolean(anchorEl);
 
-    const handleCloseMenu = React.useCallback(() => {
+    const handleCloseMenu = useCallback(() => {
         setAnchor(null);
     }, [setAnchor]);
 
-    const handleClickItem = React.useCallback(
+    const handleClickItem = useCallback(
         (item: T, index: number) => () => {
             onClick?.(item, index);
             setAnchor(null);

@@ -27,8 +27,8 @@ export const teamDispatch = (logger: AnyFunction) =>
         configSchema: {
             ignorePets: {
                 name: '忽略精灵列表',
-                type: 'textInput',
-                description: '战队派遣将忽略列表中的精灵名称, 以逗号分隔',
+                type: 'input',
+                helperText: '战队派遣将忽略列表中的精灵名称, 以逗号分隔',
                 default: ''
             }
         },

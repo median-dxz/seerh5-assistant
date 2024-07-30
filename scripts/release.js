@@ -48,32 +48,38 @@ await exec('pnpm clean', { cwd: coreDir })
         const { stdout } = await exec('pnpm pack --pack-destination ../../release', { cwd: coreDir });
         console.log(`core: tarball output: ${stdout}`);
         coreTarball = stdout.trim();
-        await installTarball('@sea/core', coreTarball);
     })
     .then(async () => {
         const { stdout } = await exec('pnpm pack --pack-destination ../../release', { cwd: modTypeDir });
         console.log(`mod type: tarball output: ${stdout}`);
         modTypeTarball = stdout.trim();
-        installTarball('@sea/mod-type', modTypeTarball);
-    });
+    })
+    .then(() => installTarball(['@sea/core', coreTarball], ['@sea/mod-type', modTypeTarball]));
 
 /**
- * @param {string} packageName
- * @param {string} tarball
+ * @param {Array<[string, string]>} packages
  */
-async function installTarball(packageName, tarball) {
+async function installTarball(...packages) {
+    // packageName, tarball
+    const pkgNames = packages.map(([name]) => name);
+
     // 卸载旧版本
     try {
-        await exec(`npm uninstall ${packageName}`, { cwd: sdkDir });
+        await exec(`npm uninstall ${pkgNames.join(' ')}`, { cwd: sdkDir });
     } catch (e) {
         console.error(e);
     }
 
-    let targetFile = path.resolve(sdkDir, 'lib', path.basename(tarball));
-    await fs.copyFile(tarball, targetFile);
+    const tarballs = await Promise.all(
+        packages.map(async ([, tarball]) => {
+            let targetFile = path.resolve(sdkDir, 'lib', path.basename(tarball));
+            await fs.copyFile(tarball, targetFile);
+            targetFile = path.relative(sdkDir, targetFile);
+            return targetFile;
+        })
+    );
 
-    targetFile = path.relative(sdkDir, targetFile);
-    const { stdout } = await exec(`npm install ${targetFile} -D`, { cwd: sdkDir });
+    const { stdout } = await exec(`npm install ${tarballs.join(' ')} -D`, { cwd: sdkDir });
 
     console.log(stdout);
 }

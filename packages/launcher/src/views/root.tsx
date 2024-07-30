@@ -3,7 +3,6 @@ import type { ViewNode } from '@/context/useTabRouter';
 import { GameController } from './GameControllerView';
 
 import { CommonLevelView } from './AutomationView/CommonLevelView';
-import { DailySignView } from './AutomationView/DailySignView';
 import { PetFragmentLevelView } from './AutomationView/PetFragmentLevelView';
 import { TaskStateView } from './AutomationView/TaskStateView';
 
@@ -48,9 +47,9 @@ export const root: ViewNode = {
                     icon: <Route fontSize="small" />,
                     view: <TaskStateView />
                 },
-                { index: 2, name: '签到', icon: placeholder, view: <DailySignView /> },
+                { index: 2, name: '签到', icon: placeholder, view: <CommonLevelView filterLevelBattle={true} /> },
                 { index: 3, name: '因子', icon: placeholder, view: <PetFragmentLevelView /> },
-                { index: 4, name: '关卡', icon: placeholder, view: <CommonLevelView /> }
+                { index: 4, name: '关卡', icon: placeholder, view: <CommonLevelView filterLevelBattle={false} /> }
             ]
         },
         {

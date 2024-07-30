@@ -19,12 +19,8 @@ export const ColumnContext = React.createContext<PanelColumns>([]);
 
 export function PanelTable<TData>(props: PanelTableProps<TData>) {
     const { toRowKey, data, columns, rowElement, ...tableProps } = props;
-
     const makeRowKey = useCallback((data: TData) => toRowKey?.(data) ?? JSON.stringify(data), [toRowKey]);
-    const makeRowEntities = useCallback((data: TData, index: number) => ({ data, index }), []);
-
     const keyRef = useListDerivedValue(data, makeRowKey);
-    const dataRef = useListDerivedValue(data, makeRowEntities);
 
     return (
         <Table size="small" {...tableProps}>
@@ -42,11 +38,7 @@ export function PanelTable<TData>(props: PanelTableProps<TData>) {
                 <ColumnContext.Provider value={columns}>
                     {data.map((data, index) => {
                         const key = keyRef.current.get(data);
-                        let ctx = dataRef.current.get(data)!;
-                        if (ctx.index !== index) {
-                            ctx = { data, index };
-                            dataRef.current.set(data, ctx);
-                        }
+
                         return (
                             <RowIndexContext.Provider key={key} value={index}>
                                 <RowDataContext.Provider key={key} value={data}>

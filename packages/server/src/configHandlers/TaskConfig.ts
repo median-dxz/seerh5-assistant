@@ -11,10 +11,6 @@ export class TaskConfig extends SEASConfigHandler<Map<string, object>> {
         });
     }
 
-    options(taskId: string) {
-        return this.query().get(taskId);
-    }
-
     async remove(taskId: string) {
         return this.mutate((config) => {
             config.delete(taskId);

@@ -3,12 +3,8 @@ import type { LevelBattle, LevelRunner, MoveStrategy } from '@sea/core';
 
 export type SEAFormItem =
     | {
-          type: 'textInput';
+          type: 'input';
           default: string;
-      }
-    | {
-          type: 'numberInput';
-          default: number;
       }
     | {
           type: 'select';
@@ -29,15 +25,15 @@ export type SEAFormItemSchema = SEAFormItem & {
     helperText?: string;
 };
 
-export type SEAConfigSchema = Record<string, SEAFormItemSchema>;
+export type SEAConfigSchema = Record<string, SEAFormItemSchema | undefined>;
 
-export type GetFormItemType<TFormItem extends SEAFormItem> = TFormItem['type'] extends 'textInput' | 'select' | 'battle'
-    ? string
-    : TFormItem['type'] extends 'numberInput'
-      ? number
-      : TFormItem['type'] extends 'checkbox'
-        ? boolean
-        : never;
+export type GetFormItemType<TFormItem extends SEAFormItem | undefined> = TFormItem extends SEAFormItem
+    ? TFormItem['type'] extends 'input' | 'select' | 'battle'
+        ? string
+        : TFormItem['type'] extends 'checkbox'
+          ? boolean
+          : never
+    : never;
 
 export type GetConfigObjectTypeFromSchema<TConfigSchema extends SEAConfigSchema> = {
     [item in keyof TConfigSchema]: GetFormItemType<TConfigSchema[item]>;

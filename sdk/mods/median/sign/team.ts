@@ -60,7 +60,7 @@ export const teamSign = (logger: AnyFunction) => [
             exchangeId: {
                 name: '战队兑换',
                 type: 'select',
-                description: '在战队商店中兑换的物品',
+                helperText: '在战队商店中兑换的物品',
                 default: '10',
                 list: EXCHANGE_LIST
             }

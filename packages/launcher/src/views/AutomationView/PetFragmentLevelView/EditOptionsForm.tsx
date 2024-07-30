@@ -52,11 +52,11 @@ export function EditOptionsForm({ open, onClose, index }: EditOptionsFormProps) 
             fullWidth
             PaperProps={{
                 component: 'form',
-                onSubmit: handleSubmit((newData) => {
-                    newData.battle = newData.battle ?? [];
-                    if (!optionsList.some((data) => dequal(data, newData))) {
+                onSubmit: handleSubmit((payload) => {
+                    payload.battle = payload.battle ?? [];
+                    if (!optionsList.some((data) => dequal(data, payload))) {
                         mutate((draft) => {
-                            draft[index] = newData;
+                            draft[index] = payload;
                         });
                         handleClose();
                     } else {

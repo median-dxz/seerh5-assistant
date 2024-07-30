@@ -97,7 +97,7 @@ export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
 
             if (data.isChallenge || data.remainingTimes > 0) {
                 if (this.options.sweep) {
-                    return data.canSweep ? 'sweep' : 'error_not_able_to_sweep';
+                    return 'sweep';
                 } else {
                     return LevelAction.BATTLE;
                 }
@@ -107,12 +107,12 @@ export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
         }
 
         readonly actions = {
-            error_not_able_to_sweep: () => {
-                const err = `不满足扫荡条件`;
-                BubblerManager.getInstance().showText(err);
-                throw new Error(err);
-            },
             sweep: async () => {
+                if (!this.data.canSweep) {
+                    const err = `不满足扫荡条件`;
+                    BubblerManager.getInstance().showText(err);
+                    throw new Error(err);
+                }
                 await socket.sendByQueue(41283, [this.designId, 4 + this.options.difficulty]);
                 this.logger('执行一次扫荡');
             },
