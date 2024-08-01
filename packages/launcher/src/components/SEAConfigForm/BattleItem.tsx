@@ -2,7 +2,8 @@ import { Autocomplete, TextField } from '@mui/material';
 import { forwardRef } from 'react';
 import type { ControllerRenderProps } from 'react-hook-form';
 
-import { useAppSelector } from '@/store';
+import { mod } from '@/features/mod';
+import { useAppSelector } from '@/shared';
 
 export interface BattleItemProps {
     label: string;
@@ -13,7 +14,8 @@ export const BattleItem = forwardRef<unknown, ControllerRenderProps & BattleItem
     { helperText, label, onChange, ...props },
     ref
 ) {
-    const battleKeys = useAppSelector((state) => state.mod.battleKeys);
+    const battleKeys = useAppSelector(mod.battleKeys);
+
     return (
         <Autocomplete
             {...props}

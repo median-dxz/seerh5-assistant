@@ -1,15 +1,13 @@
 import MenuOpen from '@mui/icons-material/MenuOpen';
 import { SpeedDialAction, SvgIcon, type SpeedDialActionProps, type SpeedDialProps } from '@mui/material';
 import { useState } from 'react';
+import { shallowEqual } from 'react-redux';
 
 import type { AnyFunction } from '@sea/core';
 
 import { SeaQuickAccess } from '@/components/styled/QuickAccess';
-import { commandStore } from '@/features/mod/store';
-import { useMapRefInStore } from '@/features/mod/useModStore';
-import type { ModExportsRef } from '@/features/mod/utils';
-import { useAppSelector, type AppRootState } from '@/store';
-import { shallowEqual } from 'react-redux';
+import { mod, ModStore, type ModExportsRef } from '@/features/mod';
+import { useAppSelector } from '@/shared';
 
 const SvgMaker = ({ url, children: _, ...rest }: React.SVGProps<SVGSVGElement> & { url: string }) => {
     if (!url.startsWith('<svg xmlns="http://www.w3.org/2000/svg"')) {
@@ -44,7 +42,7 @@ const QuickAccessPluginAction = ({
     pluginRef: ModExportsRef;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 } & SpeedDialActionProps) => {
-    const plugin = useMapRefInStore(() => pluginRef, commandStore)!;
+    const plugin = ModStore.getCommand(pluginRef)!;
 
     const getTitle = () => {
         if (plugin.description) {
@@ -93,8 +91,10 @@ const QuickAccessPluginAction = ({
 export function QuickAccess(props: SpeedDialProps) {
     const [open, setOpen] = useState(false);
 
-    const selectActions = (state: AppRootState) => state.mod.commandRefs.filter((ref) => commandStore.get(ref)?.icon);
-    const refs = useAppSelector(selectActions, shallowEqual);
+    const refs = useAppSelector(
+        (state) => mod.commandRefs(state).filter((ref) => ModStore.getCommand(ref)?.icon),
+        shallowEqual
+    );
 
     return (
         <SeaQuickAccess

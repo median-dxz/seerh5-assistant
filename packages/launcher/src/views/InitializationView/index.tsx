@@ -1,11 +1,14 @@
-import { useAppSelector } from '@/store';
-import { CoreLoadingScreen } from '@/views/InitializationView/CoreLoadingScreen';
-import { ErrorScreen } from '@/views/InitializationView/ErrorScreen';
-import { LoginLoadingScreen } from '@/views/InitializationView/LoginLoadingScreen';
 import { Box, Fade, type BoxProps } from '@mui/material';
 import { forwardRef } from 'react';
 
-const Container = forwardRef<HTMLDivElement, BoxProps>(function ({ sx, ...props }, ref) {
+import { initializer } from '@/features/initializer';
+import { useAppSelector } from '@/shared';
+
+import { CoreLoadingScreen } from './CoreLoadingScreen';
+import { ErrorScreen } from './ErrorScreen';
+import { LoginLoadingScreen } from './LoginLoadingScreen';
+
+const Container = forwardRef<HTMLDivElement, BoxProps>(function Container({ sx, ...props }, ref) {
     return (
         <Box
             ref={ref}
@@ -26,7 +29,7 @@ const Container = forwardRef<HTMLDivElement, BoxProps>(function ({ sx, ...props 
 });
 
 export function InitializationView() {
-    const status = useAppSelector((state) => state.initialization.status);
+    const status = useAppSelector(initializer.status);
 
     switch (status) {
         case 'beforeGameCoreInit':

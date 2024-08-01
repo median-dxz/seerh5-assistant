@@ -1,5 +1,5 @@
 import type { PopoverProps } from '@mui/material';
-import { useCallback, useRef, useState, type MouseEventHandler } from 'react';
+import { useCallback, useMemo, useRef, useState, type MouseEventHandler } from 'react';
 
 export function useListDerivedValue<TKey, TCache>(data: TKey[], fn: (data: TKey, index: number) => TCache) {
     const valueRef = useRef(new Map<TKey, TCache>());
@@ -30,34 +30,34 @@ export function useListDerivedValue<TKey, TCache>(data: TKey[], fn: (data: TKey,
 
 export function usePopupState({
     popupId,
-    closeHandler,
-    openHandler
+    onClose,
+    onOpen
 }: {
     popupId?: string;
-    closeHandler?: () => void;
-    openHandler?: () => void | Promise<void>;
+    onClose?: () => void;
+    onOpen?: () => void | Promise<void>;
 }) {
     const [anchorEl, setAnchorEl] = useState<Element | null>(null);
-    const onClose = useCallback(() => {
-        closeHandler?.();
+    const handleClose = useCallback(() => {
+        onClose?.();
         setAnchorEl(null);
-    }, [closeHandler]);
+    }, [onClose]);
 
     const popupState: Pick<PopoverProps, 'id' | 'open' | 'anchorEl' | 'onClose'> = {
         anchorEl,
         id: popupId,
         open: Boolean(anchorEl),
-        onClose
+        onClose: handleClose
     };
 
     const open: MouseEventHandler = useCallback(
         async (event) => {
             const target = event.currentTarget;
-            await openHandler?.();
+            await onOpen?.();
             setAnchorEl(target);
         },
-        [openHandler]
+        [onOpen]
     );
 
-    return { state: popupState, open, close: onClose };
+    return { state: popupState, open, close: handleClose };
 }

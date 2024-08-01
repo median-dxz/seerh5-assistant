@@ -1,5 +1,4 @@
 import { createAppSlice } from '@/shared';
-import type { PayloadAction } from '@reduxjs/toolkit';
 
 export interface LauncherState {
     mainOpen: boolean;
@@ -13,7 +12,7 @@ const initialState: LauncherState = {
     isFighting: false
 };
 
-export const launcherSlice = createAppSlice({
+export const launcher = createAppSlice({
     name: 'launcher',
     initialState,
     reducers: {
@@ -26,15 +25,11 @@ export const launcherSlice = createAppSlice({
         toggleCommand: (state) => {
             state.commandOpen = !state.commandOpen;
         },
-        setIsFighting: (state, { payload }: PayloadAction<boolean>) => {
-            state.isFighting = payload;
+        fightStart: (state) => {
+            state.isFighting = true;
+        },
+        fightEnd: (state) => {
+            state.isFighting = false;
         }
-    },
-    selectors: {
-        selectMainOpen: (state) => state.mainOpen,
-        selectCommandOpen: (state) => state.commandOpen,
-        selectIsFighting: (state) => state.isFighting
     }
 });
-
-export const { reducer: launcherReducer, actions: launcherActions, selectors: launcherSelectors } = launcherSlice;

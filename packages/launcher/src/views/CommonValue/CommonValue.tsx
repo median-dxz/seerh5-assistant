@@ -9,8 +9,8 @@ import { PanelField, PanelTable, useRowData, type PanelColumns } from '@/compone
 import { Icon } from '@/services/resource';
 
 import { SeaTableRow } from '@/components/styled/TableRow';
-import { launcherActions } from '@/features/launcherSlice';
-import { useAppDispatch } from '@/store';
+import { launcher } from '@/features/launcher';
+import { useAppDispatch } from '@/shared';
 import { idList, openModuleList } from './data';
 
 const convertUnit = (count: number) => {
@@ -78,7 +78,7 @@ const PanelRow: React.FC = () => {
                     <Button
                         onClick={() => {
                             openModuleList[item.id]();
-                            dispatch(launcherActions.closeMain());
+                            dispatch(launcher.closeMain());
                         }}
                     >
                         兑换

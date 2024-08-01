@@ -1,3 +1,4 @@
+import { SwordLine } from '@/components/icons/SwordLine';
 import CheckCircleOutline from '@mui/icons-material/CheckCircleOutlineRounded';
 import Delete from '@mui/icons-material/DeleteOutlineRounded';
 import ErrorOutline from '@mui/icons-material/ErrorOutlineRounded';
@@ -8,11 +9,8 @@ import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 import RestartAlt from '@mui/icons-material/RestartAltRounded';
 import Stop from '@mui/icons-material/StopRounded';
 
-import { SwordLine } from '@/components/icons/SwordLine';
-import { LabeledLinearProgress } from '@/components/LabeledProgress';
-import { taskSchedulerActions, type TaskState } from '@/features/taskSchedulerSlice';
-import { useAppDispatch, useAppSelector } from '@/store';
 import {
+    alpha,
     Chip,
     IconButton,
     List,
@@ -22,15 +20,18 @@ import {
     ListItemText,
     Stack,
     Typography,
-    alpha,
     type ListProps
 } from '@mui/material';
 import dayjs from 'dayjs';
+import { useSnackbar } from 'notistack';
 import { useCallback, useEffect, useState } from 'react';
 
-import { RunnerDetailDialog } from './RunnerDetailDialog';
+import { LabeledLinearProgress } from '@/components/LabeledProgress';
+import { ModStore } from '@/features/mod';
+import { taskScheduler, type TaskState } from '@/features/taskScheduler';
+import { useAppDispatch } from '@/shared';
 
-const { abortCurrentRunner, dequeue, enqueue } = taskSchedulerActions;
+import { RunnerDetailDialog } from './RunnerDetailDialog';
 
 const StatusIconMap = {
     pending: <Pending fontSize="inherit" />,
@@ -61,9 +62,10 @@ interface LevelStateListItemProps {
 }
 
 export function TaskStateListItem({ state }: LevelStateListItemProps) {
-    const [dialogOpen, setDialogOpen] = useState(false);
+    const { enqueueSnackbar } = useSnackbar();
     const dispatch = useAppDispatch();
     const { runner, taskRef, status, error } = state;
+    const [dialogOpen, setDialogOpen] = useState(false);
 
     const isRunning = status === 'running';
     const actionsControl = StatusActionsMap[status];
@@ -210,6 +212,11 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                 title="详情"
                 size="small"
                 onClick={() => {
+                    if (!ModStore.getTask(taskRef)) {
+                        enqueueSnackbar('无效的任务引用', { variant: 'error' });
+                        return;
+                    }
+
                     setDialogOpen(true);
                 }}
             >
@@ -217,7 +224,7 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
             </IconButton>
 
             {actionsControl.stop && (
-                <IconButton title="停止" size="small" onClick={() => dispatch(abortCurrentRunner())}>
+                <IconButton title="停止" size="small" onClick={() => dispatch(taskScheduler.abortCurrentRunner())}>
                     <Stop fontSize="inherit" />
                 </IconButton>
             )}
@@ -226,15 +233,20 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                     title="重试"
                     size="small"
                     onClick={async () => {
-                        await dispatch(dequeue(runner.id));
-                        dispatch(enqueue(taskRef, state.options));
+                        await dispatch(taskScheduler.dequeue(runner.id));
+                        dispatch(taskScheduler.enqueue(taskRef, state.options));
                     }}
                 >
                     <RestartAlt fontSize="inherit" />
                 </IconButton>
             )}
             {actionsControl.del && (
-                <IconButton title="删除" size="small" color="error" onClick={() => dispatch(dequeue(runner.id))}>
+                <IconButton
+                    title="删除"
+                    size="small"
+                    color="error"
+                    onClick={() => dispatch(taskScheduler.dequeue(runner.id))}
+                >
                     <Delete fontSize="inherit" />
                 </IconButton>
             )}
@@ -244,7 +256,7 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
 }
 
 export function TaskStateList(listProps: ListProps) {
-    const queue = useAppSelector((state) => state.taskScheduler.queue);
+    const { queue } = taskScheduler.useSelectProps('queue');
     return (
         <>
             <List {...listProps}>

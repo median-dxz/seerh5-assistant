@@ -1,35 +1,17 @@
-import { getCompositeId, createAppSlice } from '@/shared';
-import type { AppDispatch, AppRootState } from '@/store';
-import {
-    createAction,
-    createEntityAdapter,
-    nanoid,
-    type EntityState,
-    type ThunkAction,
-    type UnknownAction
-} from '@reduxjs/toolkit';
+import { createEntityAdapter, nanoid, type EntityState } from '@reduxjs/toolkit';
+
 import type { SEAModExport } from '@sea/mod-type';
-import type { ModState } from '@sea/server';
-import { createModContext, ModInstance } from './handler';
-import { battleStore, commandStore, modStore, strategyStore, taskStore } from './store';
-import { type ModExportsRef } from './utils';
 
 import { modApi } from '@/services/mod';
+import { createAppSlice, getCompositeId, startAppListening } from '@/shared';
+import { CommonLoggerBuilder } from '@/shared/logger';
+import type { AppDispatch, AppRootState } from '@/store';
 
-export interface ModDeploymentInfo {
-    id: string;
-    scope: string;
-    state: ModState;
-}
+import { taskScheduler } from '../taskScheduler';
 
-export type ModDeploymentStatus = 'notDeployed' | 'deployed';
-export type ModDeployment<T extends ModDeploymentStatus = ModDeploymentStatus> = T extends 'deployed'
-    ? ModDeploymentInfo & {
-          status: T;
-          deploymentId: string;
-          isDeploying: false;
-      }
-    : ModDeploymentInfo & { status: T; isDeploying: boolean };
+import { createModContext, ModInstance } from './handler';
+import { battleStore, commandStore, modInsStore, strategyStore, taskStore } from './store';
+import type { ModDeployment, ModExportsRef } from './utils';
 
 export interface DeploymentState {
     deployments: EntityState<ModDeployment, string>;
@@ -39,9 +21,7 @@ export interface DeploymentState {
     strategyKeys: string[];
 }
 
-export type DeploymentFilter = (deployment: ModDeployment) => boolean;
-
-const deploymentAdapter = createEntityAdapter({
+export const deploymentAdapter = createEntityAdapter({
     selectId: (deployment: ModDeployment) => getCompositeId(deployment)
 });
 
@@ -53,95 +33,79 @@ const initialState: DeploymentState = {
     strategyKeys: []
 };
 
-const addExportsThunk =
-    (modInstance: ModInstance, modExport: SEAModExport): ThunkAction<void, AppRootState, unknown, UnknownAction> =>
-    (dispatch) => {
-        (['commands', 'tasks', 'strategies', 'battles'] as const).forEach((key) => {
-            if (modExport[key] == undefined) {
-                modExport[key] = [];
-            }
-        });
+export const isDeployed = (dep: ModDeployment): dep is ModDeployment<'deployed'> => dep.status === 'deployed';
 
-        const { commands, battles, strategies, tasks } = modExport as Required<SEAModExport>;
-        const { deploymentId, metadata } = modInstance;
-
-        const createRef = (key: string): ModExportsRef => ({ deploymentId, cid: getCompositeId(metadata), key });
-
-        const commandRefs = Object.values(commands).map((command) => {
-            const ref = createRef(command.name);
-            commandStore.add(ref, command);
-            modInstance.addFinalizer(() => commandStore.delete(ref));
-            return ref;
-        });
-
-        const taskRefs = Object.values(tasks).map((task) => {
-            const ref = createRef(task.metadata.id);
-            taskStore.add(ref, task);
-            modInstance.addFinalizer(() => taskStore.delete(ref));
-            return ref;
-        });
-
-        const strategyKeys = Object.values(strategies).map((strategy) => {
-            strategyStore.add(deploymentId, strategy.name, strategy);
-            modInstance.addFinalizer(() => strategyStore.delete(strategy.name));
-            return strategy.name;
-        });
-
-        const battleKeys = Object.values(battles).map((battle) => {
-            battleStore.add(deploymentId, battle.name, battle);
-            modInstance.addFinalizer(() => battleStore.delete(battle.name));
-            return battle.name;
-        });
-
-        dispatch(modActions.addExports({ commandRefs, taskRefs, strategyKeys, battleKeys }));
-    };
-
-const disposeThunk =
-    (cid: string): ThunkAction<void, AppRootState, unknown, UnknownAction> =>
-    (dispatch, getState) => {
-        const deployment = deploymentSelectors.selectById(getState(), cid);
-        if (deployment.status === 'notDeployed') {
-            return;
-        }
-        const { deploymentId } = deployment;
-        const ins = modStore.get(deployment.deploymentId)!;
-        modStore.delete(deploymentId);
-
-        dispatch(disposeAction(cid));
-
-        ins.dispose();
-        console.log(`撤销部署: ${ins.compositeId}: ${ins.deploymentId}`);
-    };
-
-const disposeAction = createAction<string>('mod/dispose');
-
-const modSlice = createAppSlice({
+export const mod = createAppSlice({
     name: 'mod',
     initialState,
     reducers: (create) => ({
         deploy: create.asyncThunk<string, string>(
             async (cid, api) => {
                 const dispatch = api.dispatch as AppDispatch;
-                const deployment = deploymentSelectors.selectById(api.getState() as AppRootState, cid);
+                const dep = selectors.getDeploymentById(api.getState() as AppRootState, cid);
 
-                const promise = dispatch(modApi.endpoints.fetch.initiate(deployment));
-                const { factory, metadata } = await promise.unwrap();
-                promise.unsubscribe();
+                const { factory, metadata } = await dispatch(modApi.endpoints.fetch.initiate(dep)).unwrap();
 
-                const context = await createModContext(metadata);
+                const loggerBuilder = new CommonLoggerBuilder(metadata.id);
+                const context = await createModContext(metadata, loggerBuilder);
                 const modExport = await factory(context);
                 const deploymentId = nanoid();
 
                 const instance = new ModInstance(deploymentId, context, modExport);
-                modStore.set(deploymentId, instance);
-                dispatch(addExportsThunk(instance, modExport));
+                instance.onDataChanged = (data) =>
+                    dispatch(modApi.endpoints.setData.initiate({ compositeId: cid, data }));
+                modInsStore.set(deploymentId, instance);
+                // TODO 在logger架构更新中重写
+                loggerBuilder.trace((msg) => dispatch(taskScheduler.traceRunnerLog(msg)));
+
+                (['commands', 'tasks', 'strategies', 'battles'] as const).forEach((key) => {
+                    if (modExport[key] == undefined) {
+                        modExport[key] = [];
+                    }
+                });
+
+                const { commands, battles, strategies, tasks } = modExport as Required<SEAModExport>;
+
+                const createRef = (key: string): ModExportsRef => ({
+                    deploymentId,
+                    cid: getCompositeId(metadata),
+                    key
+                });
+
+                const commandRefs = Object.values(commands).map((command) => {
+                    const ref = createRef(command.name);
+                    commandStore.add(ref, command);
+                    instance.addFinalizer(() => commandStore.delete(ref));
+                    return ref;
+                });
+
+                const taskRefs = Object.values(tasks).map((task) => {
+                    const ref = createRef(task.metadata.id);
+                    taskStore.add(ref, task);
+                    instance.addFinalizer(() => taskStore.delete(ref));
+                    return ref;
+                });
+
+                const strategyKeys = Object.values(strategies).map((strategy) => {
+                    strategyStore.add(deploymentId, strategy.name, strategy);
+                    instance.addFinalizer(() => strategyStore.delete(strategy.name));
+                    return strategy.name;
+                });
+
+                const battleKeys = Object.values(battles).map((battle) => {
+                    battleStore.add(deploymentId, battle.name, battle);
+                    instance.addFinalizer(() => battleStore.delete(battle.name));
+                    return battle.name;
+                });
+
+                dispatch(actions.addExports({ commandRefs, taskRefs, strategyKeys, battleKeys }));
 
                 return deploymentId;
             },
             {
                 options: {
-                    condition(cid, api): boolean {
-                        const deployment = deploymentSelectors.selectById(api.getState() as AppRootState, cid);
+                    condition(cid, { getState }): boolean {
+                        const deployment = selectors.getDeploymentById(getState() as AppRootState, cid);
                         return deployment.status === 'notDeployed';
                     }
                 },
@@ -166,41 +130,56 @@ const modSlice = createAppSlice({
                 state.strategyKeys.push(...payload.strategyKeys);
                 state.battleKeys.push(...payload.battleKeys);
             }
-        )
+        ),
+        dispose: create.reducer<string>((state, action) => {
+            const cid = action.payload;
+            const dep = state.deployments.entities[cid];
+            if (!isDeployed(dep)) return;
+            const { deploymentId } = dep;
+
+            state.commandRefs = state.commandRefs.filter((ref) => ref.deploymentId === deploymentId);
+            state.taskRefs = state.taskRefs.filter((ref) => ref.deploymentId === deploymentId);
+            state.battleKeys = state.battleKeys.filter((key) => battleStore.get(key)!.deploymentId === deploymentId);
+            state.strategyKeys = state.strategyKeys.filter(
+                (key) => strategyStore.get(key)!.deploymentId === deploymentId
+            );
+
+            deploymentAdapter.updateOne(state.deployments, {
+                id: cid,
+                changes: {
+                    isDeploying: false,
+                    status: 'notDeployed'
+                }
+            });
+        })
     }),
     extraReducers: (builder) =>
-        builder
-            .addCase(disposeAction, (state, { payload }) => {
-                const cid = payload;
-                const dep = deploymentAdapter
-                    .getSelectors<typeof state>((state) => state.deployments)
-                    .selectById(state, cid);
-
-                if (dep.status === 'notDeployed') {
-                    return;
-                }
-
-                const id = dep.deploymentId;
-
-                state.commandRefs = state.commandRefs.filter((ref) => ref.deploymentId === id);
-                state.taskRefs = state.taskRefs.filter((ref) => ref.deploymentId === id);
-                state.battleKeys = state.battleKeys.filter((key) => battleStore.get(key)!.deploymentId === id);
-                state.strategyKeys = state.strategyKeys.filter((key) => strategyStore.get(key)!.deploymentId === id);
-
-                deploymentAdapter.updateOne(state.deployments, {
-                    id: cid,
-                    changes: {
-                        isDeploying: false,
-                        status: 'notDeployed'
-                    }
-                });
-            })
-            .addMatcher(modApi.endpoints.modList.matchFulfilled, (state, action) => {
-                state.deployments = deploymentAdapter.setAll(state.deployments, action.payload);
-            })
+        builder.addMatcher(modApi.endpoints.modList.matchFulfilled, (state, action) => {
+            state.deployments = deploymentAdapter.setAll(state.deployments, action.payload);
+        }),
+    selectors: {
+        getDeploymentById: ({ deployments }, id: string) =>
+            deploymentAdapter.getSelectors().selectById(deployments, id),
+        deployments: ({ deployments }) => deploymentAdapter.getSelectors().selectAll(deployments),
+        taskRefs: ({ taskRefs }) => taskRefs,
+        commandRefs: ({ commandRefs }) => commandRefs,
+        battleKeys: ({ battleKeys }) => battleKeys,
+        strategyKeys: ({ strategyKeys }) => strategyKeys
+    }
 });
 
-export const modReducer = modSlice.reducer;
-export const modActions = { ...modSlice.actions, dispose: disposeThunk };
+const { selectors, actions } = mod;
 
-export const deploymentSelectors = deploymentAdapter.getSelectors<AppRootState>((state) => state.mod.deployments);
+startAppListening({
+    actionCreator: actions.dispose,
+    effect(action, { getOriginalState }) {
+        const dep = selectors.getDeploymentById(getOriginalState(), action.payload);
+        if (!isDeployed(dep)) return;
+
+        const { deploymentId } = dep;
+        const ins = modInsStore.get(deploymentId)!;
+        modInsStore.delete(deploymentId);
+        ins.dispose();
+        console.log(`撤销部署: ${ins.compositeId}: ${ins.deploymentId}`);
+    }
+});

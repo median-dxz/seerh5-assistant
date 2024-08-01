@@ -1,7 +1,7 @@
 import { Row } from '@/components/styled/Row';
-import { launcherActions } from '@/features/launcherSlice';
+import { launcher } from '@/features/launcher';
 import { gameApi } from '@/services/game';
-import { useAppDispatch } from '@/store';
+import { useAppDispatch } from '@/shared';
 import { Button, CircularProgress, Paper, Typography } from '@mui/material';
 import { BattleFireType, socket, throttle } from '@sea/core';
 import dayjs from 'dayjs';
@@ -40,7 +40,7 @@ export function BattleFire() {
 
     const exchangeBattleFire = () => {
         void ModuleManager.showModule('battleFirePanel', ['battleFirePanel'], null, null, AppDoStyle.NULL);
-        dispatch(launcherActions.closeMain());
+        dispatch(launcher.closeMain());
     };
 
     // TODO fix: https://github.com/median-dxz/seerh5-assistant/issues/19

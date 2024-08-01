@@ -9,14 +9,12 @@ import Settings from '@mui/icons-material/Settings';
 import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 
 import { SEAConfigForm } from '@/components/SEAConfigForm';
-import { deploymentSelectors, type ModDeployment } from '@/features/mod/slice';
-import { modStore } from '@/features/mod/store';
-import { useMapRefInStore } from '@/features/mod/useModStore';
+import { mod, ModStore, type ModDeployment } from '@/features/mod';
 import { modApi } from '@/services/mod';
 import { getCompositeId, usePopupState } from '@/shared';
-import { useAppSelector } from '@/store';
 
 import {
+    alpha,
     Grid,
     List,
     ListItem,
@@ -24,10 +22,9 @@ import {
     Menu,
     MenuItem,
     Stack,
+    styled,
     Tooltip,
     Typography,
-    alpha,
-    styled,
     type ListProps
 } from '@mui/material';
 import NanoClamp from 'nanoclamp';
@@ -55,10 +52,7 @@ export function ModListItem({ deployment }: ModListItemProps) {
 
     const { state, scope, id } = deployment;
     const cid = getCompositeId({ scope, id });
-    const ins = useMapRefInStore(
-        () => (deployment.status === 'deployed' ? deployment.deploymentId : undefined),
-        modStore
-    );
+    const ins = ModStore.getModIns(deployment.status === 'deployed' ? deployment.deploymentId : '');
 
     const title = (
         <Stack direction="row" sx={{ alignItems: 'baseline' }}>
@@ -209,7 +203,7 @@ export function ModListItem({ deployment }: ModListItemProps) {
 }
 
 export function ModList(listProps: ListProps) {
-    const deployments = useAppSelector(deploymentSelectors.selectAll);
+    const deployments = mod.useDeployments();
     return (
         <List
             sx={{ width: '100%', overflow: 'auto', paddingRight: 1, '& > *:not(:first-child)': { marginTop: '8px' } }}

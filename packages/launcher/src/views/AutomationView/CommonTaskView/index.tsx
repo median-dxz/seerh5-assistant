@@ -2,30 +2,32 @@ import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 import Refresh from '@mui/icons-material/RefreshRounded';
 import Settings from '@mui/icons-material/Settings';
 
-import type { PanelColumns } from '@/components/PanelTable';
 import { CircularProgress } from '@mui/material';
-import { LevelAction } from '@sea/core';
 import { useSnackbar } from 'notistack';
 import * as React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { shallowEqual } from 'react-redux';
 
+import { LevelAction } from '@sea/core';
+
 import { DataLoading } from '@/components/DataLoading';
 import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
+import type { PanelColumns } from '@/components/PanelTable';
 import { PanelField, PanelTable, useRowData } from '@/components/PanelTable/index';
 import { SEAConfigForm } from '@/components/SEAConfigForm';
 import { SeaTableRow } from '@/components/styled/TableRow';
-
-import { taskStore, type TaskInstance } from '@/features/mod/store';
-import { mapRefInStore } from '@/features/mod/useModStore';
-import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
-
 import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
-import type { ModExportsRef } from '@/features/mod/utils';
+import { mod, ModStore, type ModExportsRef, type TaskInstance } from '@/features/mod';
+import { taskScheduler } from '@/features/taskScheduler';
 import { dataApi } from '@/services/data';
-import { getCompositeId, getTaskOptions, startAppListening, type TaskRunner } from '@/shared';
-import { useAppDispatch, useAppSelector } from '@/store';
-import { dequal } from 'dequal';
+import {
+    getCompositeId,
+    getTaskOptions,
+    startAppListening,
+    useAppDispatch,
+    useAppSelector,
+    type TaskRunner
+} from '@/shared';
 
 //      name: '作战实验室'
 //      name: '六界神王殿',
@@ -77,16 +79,16 @@ interface Row {
 
 const toRowKey = ({ ref: { cid, key } }: Row) => getCompositeId({ id: key, scope: cid });
 
-export interface CommonLevelViewProps {
-    filterLevelBattle: boolean;
+export interface CommonTaskViewProps {
+    isLevelView: boolean;
 }
 
-export function CommonLevelView({ filterLevelBattle }: CommonLevelViewProps) {
+export function CommonTaskView({ isLevelView }: CommonTaskViewProps) {
     const taskRefs = useAppSelector(
-        ({ mod: { taskRefs } }) =>
-            taskRefs.filter(
-                ({ cid }) => cid !== getCompositeId({ scope: MOD_SCOPE_BUILTIN, id: PET_FRAGMENT_LEVEL_ID })
-            ),
+        (state) =>
+            mod
+                .taskRefs(state)
+                .filter(({ cid }) => cid !== getCompositeId({ scope: MOD_SCOPE_BUILTIN, id: PET_FRAGMENT_LEVEL_ID })),
         shallowEqual
     );
 
@@ -94,12 +96,15 @@ export function CommonLevelView({ filterLevelBattle }: CommonLevelViewProps) {
     const rowCache = useRef(new WeakMap<ModExportsRef, Row>());
 
     const mapRefToRow = (ref: ModExportsRef) => {
-        if (!taskConfig) {
-            return undefined;
-        }
-        const task = mapRefInStore(ref, taskStore)!;
+        if (!taskConfig) return undefined;
+
+        const task = ModStore.getTask(ref)!;
         const options = getTaskOptions(task, taskConfig);
         const runner = task.runner(options);
+
+        if (Boolean(runner.selectLevelBattle) !== isLevelView) {
+            return undefined;
+        }
 
         let cachedRow = rowCache.current.get(ref);
 
@@ -108,15 +113,11 @@ export function CommonLevelView({ filterLevelBattle }: CommonLevelViewProps) {
                 cachedRow = { ...cachedRow, options, runner };
                 rowCache.current.set(ref, cachedRow);
             }
-            return cachedRow;
         } else {
-            if (!runner.selectLevelBattle === filterLevelBattle) {
-                cachedRow = { ref, options, task, runner };
-                rowCache.current.set(ref, cachedRow);
-                return cachedRow;
-            }
-            return undefined;
+            cachedRow = { ref, options, task, runner };
+            rowCache.current.set(ref, cachedRow);
         }
+        return cachedRow;
     };
 
     const rows = taskRefs.map(mapRefToRow).filter(Boolean) as Row[];
@@ -165,18 +166,12 @@ const PanelRow = React.memo(function PanelRow() {
         const active = { current: true };
         void update(active);
         const unsubscribe = startAppListening({
-            actionCreator: taskSchedulerActions.moveNext,
+            actionCreator: taskScheduler.run.fulfilled,
             effect: (action, api) => {
-                const {
-                    taskScheduler: { currentIndex, queue }
-                } = api.getOriginalState();
+                const state = api.getState();
+                const isCurrentTask = taskScheduler.isCurrentTaskByRefAndOptions(state, ref, options);
 
-                if (
-                    currentIndex &&
-                    queue[currentIndex].taskRef === ref &&
-                    active.current &&
-                    dequal(queue[currentIndex].options, options)
-                ) {
+                if (isCurrentTask && active.current) {
                     void update();
                 }
             }
@@ -200,7 +195,7 @@ const PanelRow = React.memo(function PanelRow() {
                 <IconButtonNoRipple
                     title="启动"
                     onClick={() => {
-                        dispatch(taskSchedulerActions.enqueue(ref, options, runner.name));
+                        dispatch(taskScheduler.enqueue(ref, options, runner.name));
                     }}
                     disabled={completed}
                 >

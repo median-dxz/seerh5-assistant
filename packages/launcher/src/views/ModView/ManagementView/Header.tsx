@@ -1,11 +1,10 @@
-import { deploymentSelectors, modActions } from '@/features/mod/slice';
-import { getCompositeId } from '@/shared';
-import { useAppDispatch, useAppSelector } from '@/store';
+import { mod } from '@/features/mod';
+import { getCompositeId, useAppDispatch } from '@/shared';
 import { Box, Button, alpha } from '@mui/material';
 
 export function Header() {
     const dispatch = useAppDispatch();
-    const deployments = useAppSelector(deploymentSelectors.selectAll);
+    const deployments = mod.useDeployments();
     return (
         <Box
             sx={{
@@ -20,11 +19,9 @@ export function Header() {
         >
             <Button
                 onClick={() => {
+                    deployments.forEach((deployment) => dispatch(mod.dispose(getCompositeId(deployment))));
                     deployments.forEach((deployment) => {
-                        dispatch(modActions.dispose(getCompositeId(deployment)));
-                    });
-                    deployments.forEach((deployment) => {
-                        void dispatch(modActions.deploy(getCompositeId(deployment)));
+                        void dispatch(mod.deploy(getCompositeId(deployment)));
                     });
                 }}
             >

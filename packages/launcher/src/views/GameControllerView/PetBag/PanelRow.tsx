@@ -4,10 +4,9 @@ import { HealthBroken } from '@/components/icons/HealthBroken';
 import { MoveToInbox } from '@/components/icons/MoveToInbox';
 import { Pill } from '@/components/icons/Pill';
 import { SeaTableRow } from '@/components/styled/TableRow';
-import { launcherActions } from '@/features/launcherSlice';
+import { launcher } from '@/features/launcher';
 import { Icon } from '@/services/resource';
-import { usePopupState } from '@/shared';
-import { useAppDispatch } from '@/store';
+import { useAppDispatch, usePopupState } from '@/shared';
 import MoreHoriz from '@mui/icons-material/MoreHoriz';
 import VerticalAlignTop from '@mui/icons-material/VerticalAlignTop';
 import { Checkbox, Popover, Stack, Typography } from '@mui/material';
@@ -39,7 +38,7 @@ export function PanelRow({ isFetching, selected, setSelected }: PanelRowProps) {
         await delay(300);
         petBagPanel.showDevelopBaseView();
         petBagPanel.showDevelopView(9);
-        dispatch(launcherActions.closeMain());
+        dispatch(launcher.closeMain());
     };
 
     const handleSelect = () => {

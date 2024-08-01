@@ -5,10 +5,10 @@ import Launcher from './App';
 import { ApplicationContext } from './context/ApplicationContext';
 import { InitializationView } from './views/InitializationView';
 
-import { initializationActions } from './features/init/initializationSlice';
+import { initializer } from './features/initializer';
 import { appStore } from './store';
 
-appStore.dispatch(initializationActions.init());
+appStore.dispatch(initializer.init());
 
 ReactDOM.createRoot(document.getElementById('sea-launcher')!).render(
     <StrictMode>

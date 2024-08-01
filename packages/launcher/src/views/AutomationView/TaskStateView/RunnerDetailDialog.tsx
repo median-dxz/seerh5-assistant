@@ -1,10 +1,7 @@
 import Close from '@mui/icons-material/Close';
 
-import { DataLoading } from '@/components/DataLoading';
-import { taskStore } from '@/features/mod/store';
-import { useMapRefInStore } from '@/features/mod/useModStore';
-import type { ModExportsRef } from '@/features/mod/utils';
-import type { TaskState } from '@/features/taskSchedulerSlice';
+import { ModStore, type ModExportsRef } from '@/features/mod';
+import type { TaskState } from '@/features/taskScheduler';
 import {
     alpha,
     Chip,
@@ -34,11 +31,8 @@ export const RunnerDetailDialog = React.memo(function RunnerDetailDialog({
     taskState,
     taskRef
 }: RunnerDetailDialogProps) {
-    const task = useMapRefInStore(() => taskRef, taskStore);
-
-    if (!task) {
-        return <DataLoading error="无效的任务引用" />;
-    }
+    const task = ModStore.getTask(taskRef)!;
+    if (!task) return null;
 
     const FieldPaper = ({ data, title, id }: { title: string; id: string; data: string }) => (
         <div>

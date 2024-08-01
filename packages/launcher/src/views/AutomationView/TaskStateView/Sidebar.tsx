@@ -3,8 +3,8 @@ import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 
 import { LabeledLinearProgress } from '@/components/LabeledProgress';
 import { Row } from '@/components/styled/Row';
-import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
-import { useAppDispatch, useAppSelector } from '@/store';
+import { taskScheduler } from '@/features/taskScheduler';
+import { useAppDispatch, useAppSelector } from '@/shared';
 import { Button, ButtonGroup, Chip, Paper, Stack, Typography } from '@mui/material';
 
 const StatusTextMap = {
@@ -20,20 +20,16 @@ export interface SidebarProps {
 
 export function Sidebar({ height }: SidebarProps) {
     const dispatch = useAppDispatch();
-    const { pause: isPaused, queue } = useAppSelector((state) => state.taskScheduler);
-    let status: keyof typeof StatusTextMap = useAppSelector((state) => state.taskScheduler.status);
+    const { queue, isPaused } = taskScheduler.useSelectProps('queue', 'isPaused');
+    const status = useAppSelector(taskScheduler.status);
 
     const handlePauseScheduler = () => {
         if (isPaused) {
-            dispatch(taskSchedulerActions.resume());
+            dispatch(taskScheduler.resume());
         } else {
-            void dispatch(taskSchedulerActions.pause());
+            void dispatch(taskScheduler.pause());
         }
     };
-
-    if (status === 'idle' && isPaused) {
-        status = 'pause';
-    }
 
     const currentProgress = queue.length - Math.min(queue.filter((r) => r.status === 'pending').length, queue.length);
 

@@ -1,8 +1,10 @@
-import { useAppSelector } from '@/store';
 import { CircularProgress, Paper, Typography } from '@mui/material';
 
+import { initializer } from '@/features/initializer';
+import { useAppSelector } from '@/shared';
+
 export function LoginLoadingScreen() {
-    const loadingItem = useAppSelector((state) => state.initialization.loadingItem);
+    const loadingText = useAppSelector(initializer.loadingText);
     return (
         <Paper
             sx={{
@@ -17,7 +19,7 @@ export function LoginLoadingScreen() {
             }}
         >
             <CircularProgress size={'1.5rem'} />
-            <Typography sx={{ fontFamily: (theme) => theme.fonts.input }}>{loadingItem || '加载中...'}</Typography>
+            <Typography sx={{ fontFamily: (theme) => theme.fonts.input }}>{loadingText || '加载中...'}</Typography>
         </Paper>
     );
 }

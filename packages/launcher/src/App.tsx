@@ -1,14 +1,15 @@
-import { launcherSelectors } from '@/features/launcherSlice';
-import { useAppSelector } from '@/store';
+import { Grow } from '@mui/material';
+
+import { initializer } from '@/features/initializer';
+import { launcher } from '@/features/launcher';
+import { useAppSelector } from '@/shared';
 import { Command } from '@/views/Command';
 import { Main } from '@/views/Main';
 import { QuickAccess } from '@/views/QuickAccess';
-import { Grow } from '@mui/material';
 
 export default function Launcher() {
-    const status = useAppSelector((state) => state.initialization.status);
-    const isFighting = useAppSelector(launcherSelectors.selectIsFighting);
-    const commandOpen = useAppSelector(launcherSelectors.selectCommandOpen);
+    const { commandOpen, isFighting } = launcher.useSelectProps('commandOpen', 'isFighting');
+    const status = useAppSelector(initializer.status);
 
     if (status !== 'fulfilled') return null;
 

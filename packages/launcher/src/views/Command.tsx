@@ -4,8 +4,7 @@ import { forwardRef, useMemo, useState } from 'react';
 
 import type { Command as CommandInstance } from '@sea/mod-type';
 
-import { commandStore } from '@/features/mod/store';
-import { useMapRefInStore } from '@/features/mod/useModStore';
+import { ModStore } from '@/features/mod';
 import { theme } from '@/theme';
 
 interface Option {
@@ -31,7 +30,7 @@ export function CommandInput() {
     const [inputValue, setInputValue] = useState('');
     const [value, setValue] = useState<null | Option>(null);
 
-    const commands = useMapRefInStore((state) => state.mod.commandRefs, commandStore);
+    const commands = ModStore.useCommandStore();
 
     const options = useMemo(
         () =>
@@ -95,10 +94,12 @@ export function CommandInput() {
     );
 }
 
-const CommandInputRef = forwardRef<HTMLDivElement, BoxProps>(({ ...props }, ref) => (
-    <Box {...props} ref={ref}>
-        <CommandInput />
-    </Box>
-));
+const CommandInputRef = forwardRef<HTMLDivElement, BoxProps>(function CommandInputRef({ ...props }, ref) {
+    return (
+        <Box {...props} ref={ref}>
+            <CommandInput />
+        </Box>
+    );
+});
 
 export const Command = CommandInputRef;

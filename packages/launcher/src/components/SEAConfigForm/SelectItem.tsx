@@ -15,7 +15,7 @@ export const SelectItem = forwardRef<HTMLDivElement, ControllerRenderProps & Sel
     return (
         <FormControl ref={ref}>
             <InputLabel>{label}</InputLabel>
-            <Select {...field}>
+            <Select {...field} label={label}>
                 {Object.entries(items).map(([key, item]) => (
                     <MenuItem key={item} value={item}>
                         {key}

@@ -1,13 +1,13 @@
 import { configureStore, type SerializableStateInvariantMiddlewareOptions } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query/react';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { listenerMiddleware } from './shared/redux';
 
-import { initializationReducer } from './features/init/initializationSlice';
-import { launcherReducer } from './features/launcherSlice';
-import { modReducer } from './features/mod/slice';
-import { taskSchedulerReducer } from './features/taskSchedulerSlice';
+import { initializer } from './features/initializer';
+import { launcher } from './features/launcher';
+import { mod } from './features/mod';
+import { task } from './features/task';
+import { taskScheduler } from './features/taskScheduler';
 
 import { dataApi } from './services/data';
 import { gameApi } from './services/game';
@@ -15,10 +15,11 @@ import { modApi } from './services/mod';
 
 export const appStore = configureStore({
     reducer: {
-        launcher: launcherReducer,
-        taskScheduler: taskSchedulerReducer,
-        initialization: initializationReducer,
-        mod: modReducer,
+        launcher: launcher.reducer,
+        taskScheduler: taskScheduler.reducer,
+        mod: mod.reducer,
+        task: task.reducer,
+        initializer: initializer.reducer,
         [modApi.reducerPath]: modApi.reducer,
         [dataApi.reducerPath]: dataApi.reducer,
         [gameApi.reducerPath]: gameApi.reducer
@@ -44,6 +45,3 @@ setupListeners(appStore.dispatch);
 
 export type AppRootState = ReturnType<typeof appStore.getState>;
 export type AppDispatch = typeof appStore.dispatch;
-
-export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
-export const useAppSelector = useSelector.withTypes<AppRootState>();

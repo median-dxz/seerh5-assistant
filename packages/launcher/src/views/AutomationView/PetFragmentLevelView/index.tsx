@@ -24,16 +24,11 @@ import { SeaTableRow } from '@/components/styled/TableRow';
 
 import type { IPetFragmentRunner, PetFragmentOptions } from '@/builtin/petFragment/types';
 import { PET_FRAGMENT_LEVEL_ID } from '@/constants';
-import { launcherActions } from '@/features/launcherSlice';
-import { deploymentSelectors } from '@/features/mod/slice';
-import { modStore, taskStore, type TaskInstance } from '@/features/mod/store';
-import { useMapRefInStore } from '@/features/mod/useModStore';
-import { type ModExportsRef } from '@/features/mod/utils';
-import { taskSchedulerActions } from '@/features/taskSchedulerSlice';
-import { startAppListening, usePopupState } from '@/shared';
-import { useAppDispatch, useAppSelector } from '@/store';
+import { launcher } from '@/features/launcher';
+import { mod, ModStore, type ModExportsRef, type TaskInstance } from '@/features/mod';
+import { taskScheduler } from '@/features/taskScheduler';
+import { startAppListening, useAppDispatch, useAppSelector, usePopupState } from '@/shared';
 
-import { dequal } from 'dequal';
 import { AddOptionsForm } from './AddOptionsForm';
 import { EditOptionsForm } from './EditOptionsForm';
 import { cid, OptionsListContext } from './shared';
@@ -59,17 +54,11 @@ export function PetFragmentLevelView() {
     const [editFormOpen, setEditFormOpen] = useState(false);
     const [editingItemIdx, setEditingItemIdx] = useState<number>(0);
 
-    const taskRef = useAppSelector(({ mod: { taskRefs } }) =>
-        taskRefs.find(({ cid: _cid, key }) => cid === _cid && key === PET_FRAGMENT_LEVEL_ID)
+    const taskRef = useAppSelector((state) =>
+        mod.taskRefs(state).find(({ cid: _cid, key }) => cid === _cid && key === PET_FRAGMENT_LEVEL_ID)
     );
-    const task = useMapRefInStore(() => taskRef, taskStore);
-
-    const deployment = useAppSelector((state) => deploymentSelectors.selectById(state, cid));
-    const modIns = useMapRefInStore(
-        () => (deployment.status === 'deployed' ? deployment.deploymentId : undefined),
-        modStore
-    );
-
+    const task = ModStore.getTask(taskRef);
+    const modIns = ModStore.getModIns(taskRef?.deploymentId);
     const modData = modIns?.ctx.data as PetFragmentOptions[];
 
     const [optionsList, setOptionsList] = useState<PetFragmentOptions[]>(structuredClone(toRaw(modData)));
@@ -194,18 +183,12 @@ const PanelRow = React.memo(function PanelRow({ taskRef, task, handleEdit, handl
         const active = { current: true };
         void update(active);
         const unsubscribe = startAppListening({
-            actionCreator: taskSchedulerActions.moveNext,
+            actionCreator: taskScheduler.run.fulfilled,
             effect: (action, api) => {
-                const {
-                    taskScheduler: { currentIndex, queue }
-                } = api.getOriginalState();
+                const state = api.getState();
+                const isCurrentTask = taskScheduler.isCurrentTaskByRefAndOptions(state, taskRef, options);
 
-                if (
-                    currentIndex &&
-                    queue[currentIndex].taskRef === taskRef &&
-                    active.current &&
-                    dequal(queue[currentIndex].options, options)
-                ) {
+                if (isCurrentTask && active.current) {
                     void update();
                 }
             }
@@ -217,7 +200,7 @@ const PanelRow = React.memo(function PanelRow({ taskRef, task, handleEdit, handl
     }, [options, taskRef, update]);
 
     const startLevel = (sweep: boolean) => () =>
-        dispatch(taskSchedulerActions.enqueue(taskRef, { ...options, sweep }, runner.name));
+        dispatch(taskScheduler.enqueue(taskRef, { ...options, sweep }, runner.name));
 
     return (
         <SeaTableRow sx={{ height: '3.3rem' }}>
@@ -316,7 +299,7 @@ const PanelRow = React.memo(function PanelRow({ taskRef, task, handleEdit, handl
                     sx={{ fontSize: '1rem' }}
                     onClick={() => {
                         void ModuleManager.showModuleByID(151, `{Design:${runner.designId}}`);
-                        dispatch(launcherActions.closeMain());
+                        dispatch(launcher.closeMain());
                         closeMore();
                     }}
                 >

@@ -1,26 +1,27 @@
 import { createAction, type PayloadAction } from '@reduxjs/toolkit';
 
 import * as seaCore from '@sea/core';
-import { seac, type SetupOptions } from '@sea/core';
+import { battle, levelManager, seac, SEAEventSource, type SetupOptions } from '@sea/core';
 
 import { IS_DEV } from '@/constants';
 import { modApi } from '@/services/mod';
-import { getCompositeId, createAppSlice, startAppListening } from '@/shared';
+import { createAppSlice, getCompositeId, startAppListening, type TaskRunner } from '@/shared';
 import type { AppDispatch } from '@/store';
 
 import * as ctService from '../catchTimeBinding/index';
-import { deploymentSelectors, modActions, type ModDeployment } from '../mod/slice';
+import { launcher } from '../launcher';
+import { mod, type ModDeployment } from '../mod';
+import { taskScheduler } from '../taskScheduler';
+
 import { preloadSetupMap, setupMap, type SetupMap } from './setup';
 
-export interface InitializationState {
-    loadingItem: string;
-    error: string;
+export interface InitializerState {
+    loadingText: string;
     status: SetupOptions['type'] | 'fulfilled' | 'waitingForLogin' | 'error';
 }
 
-const initialState: InitializationState = {
-    loadingItem: '',
-    error: '',
+const initialState: InitializerState = {
+    loadingText: '',
     status: 'beforeGameCoreInit'
 };
 
@@ -31,7 +32,7 @@ const prependSetup = (entries: SetupMap, type: SetupOptions['type'], dispatch: A
         const loadingItem = `Setup: ${name} (${++i}/${length})`;
         seac.prependSetup(type, setup);
         seac.prependSetup(type, () => {
-            dispatch(initializationActions.setLoadingItem(loadingItem));
+            dispatch(actions.setLoadingItem(loadingItem));
         });
     });
 };
@@ -41,41 +42,48 @@ const filterToDeploy = ({ state, status, isDeploying }: ModDeployment) =>
 const filterNotPreload = (dep: ModDeployment) => !dep.state.preload && filterToDeploy(dep);
 const filterPreload = (dep: ModDeployment) => dep.state.preload && filterToDeploy(dep);
 
-const init = createAction('SEAL/internal/init');
+export const extraActions = {
+    init: createAction('initializer/init')
+};
 
-const initializationSlice = createAppSlice({
-    name: 'initialization',
+export const initializer = createAppSlice({
+    name: 'initializer',
     initialState,
     reducers: {
         setLoadingItem(state, action: PayloadAction<string>) {
-            state.loadingItem = action.payload;
+            state.loadingText = action.payload;
         },
         readyToLogin(state) {
             state.status = 'waitingForLogin';
         },
-        mainPanelFirstShow(state) {
+        mainPanelFirstShown(state) {
             state.status = 'afterFirstShowMainPanel';
         },
-        fulfilled(state) {
+        fulfill(state) {
             state.status = 'fulfilled';
         },
-        error(state, action: PayloadAction<string>) {
+        reject(state, action: PayloadAction<string>) {
             state.status = 'error';
-            state.error = action.payload;
+            state.loadingText = action.payload;
         }
+    },
+    selectors: {
+        status: (state) => state.status,
+        loadingText: (state) => state.loadingText
     }
-    // extraReducers: (builder) =>
 });
 
 const unsubscribeLoadingItem = startAppListening({
-    actionCreator: initializationSlice.actions.setLoadingItem,
+    actionCreator: initializer.actions.setLoadingItem,
     effect(action) {
         IS_DEV && console.log(`[SEAL]: ${action.payload}`);
     }
 });
 
+const { actions, selectors } = initializer;
+
 startAppListening({
-    actionCreator: init,
+    actionCreator: extraActions.init,
     async effect(_, api) {
         api.unsubscribe();
 
@@ -96,15 +104,43 @@ startAppListening({
         // preload setup
         prependSetup(preloadSetupMap, 'beforeGameCoreInit', api.dispatch);
 
+        // register listeners
+        const battleStart$ = SEAEventSource.hook('battle:start');
+        const battleEnd$ = SEAEventSource.hook('battle:end');
+        const roundEnd$ = SEAEventSource.hook('battle:roundEnd');
+
+        // 自动战斗需要在Launcher层通过对应hook启用
+        battleStart$.on(battle.manager.resolveStrategy);
+        battleStart$.on(() => api.dispatch(launcher.fightStart()));
+        roundEnd$.on(battle.manager.resolveStrategy);
+        battleEnd$.on(() => api.dispatch(launcher.fightEnd()));
+
+        SEAEventSource.levelManger('update').on((action) => {
+            const runner = levelManager.getRunner();
+            if (!runner) return;
+
+            api.dispatch(taskScheduler.updateRunnerData((runner as TaskRunner).data));
+            if (action === 'battle') {
+                api.dispatch(taskScheduler.increaseBattleCount());
+            }
+        });
+
+        document.body.addEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.key === 'p' && e.ctrlKey) {
+                api.dispatch(launcher.toggleCommand());
+                e.preventDefault();
+            }
+        });
+
         // install builtin mods
         // deploy preload type mods
         seac.prependSetup('beforeGameCoreInit', async () => {
             try {
-                api.dispatch(initializationActions.setLoadingItem(`Mod Deployment: 安装内置模组...`));
+                api.dispatch(actions.setLoadingItem(`Mod Deployment: 安装内置模组...`));
                 const { error: installError } = await api.dispatch(modApi.endpoints.installBuiltin.initiate());
                 if (installError) throw new Error(installError.message);
 
-                api.dispatch(initializationActions.setLoadingItem(`Mod Deployment: 拉取本地模组列表...`));
+                api.dispatch(actions.setLoadingItem(`Mod Deployment: 拉取本地模组列表...`));
                 const fetchModList = api.dispatch(
                     modApi.endpoints.modList.initiate(undefined, {
                         subscribe: false,
@@ -113,49 +149,47 @@ startAppListening({
                 );
                 await fetchModList.unwrap();
 
-                const deployments = deploymentSelectors.selectAll(api.getState()).filter(filterPreload);
+                const deployments = mod.deployments(api.getState()).filter(filterPreload);
                 const collectDeployment = api.fork(async () => {
                     let i = 0;
                     while (i < deployments.length) {
-                        const [action] = await api.take(modActions.deploy.fulfilled.match);
+                        const [action] = await api.take(mod.deploy.fulfilled.match);
                         api.dispatch(
-                            initializationActions.setLoadingItem(
+                            actions.setLoadingItem(
                                 `Mod Deployment: 部署预加载模组: ${action.meta.arg} (${++i}/${deployments.length})`
                             )
                         );
-                        if (api.getState().initialization.status === 'error') {
+                        if (selectors.status(api.getState()) === 'error') {
                             break;
                         }
                     }
                 });
 
                 for (const deployment of deployments) {
-                    await api.dispatch(modActions.deploy(getCompositeId(deployment))).unwrap();
+                    await api.dispatch(mod.deploy(getCompositeId(deployment))).unwrap();
                 }
 
                 await collectDeployment.result;
             } catch (e: unknown) {
-                api.dispatch(initializationActions.error(`Initialization: Error: ${(e as Error).message}`));
+                api.dispatch(actions.reject(`Initialization: Error: ${(e as Error).message}`));
                 ac.abort(e);
                 return;
             }
 
-            api.dispatch(initializationActions.setLoadingItem(`正在进入游戏...`));
+            api.dispatch(actions.setLoadingItem(`正在进入游戏...`));
             const { sea } = window;
             if (sea.SeerH5Ready) {
-                api.dispatch(initializationActions.readyToLogin());
+                api.dispatch(actions.readyToLogin());
             } else {
-                window.addEventListener(
-                    sea.SEER_READY_EVENT,
-                    () => api.dispatch(initializationActions.readyToLogin()),
-                    { once: true }
-                );
+                window.addEventListener(sea.SEER_READY_EVENT, () => api.dispatch(actions.readyToLogin()), {
+                    once: true
+                });
             }
         });
 
         // wait player login
         seac.prependSetup('afterFirstShowMainPanel', () => {
-            api.dispatch(initializationActions.mainPanelFirstShow());
+            api.dispatch(actions.mainPanelFirstShown());
         });
 
         // post setup
@@ -165,34 +199,32 @@ startAppListening({
         // deploy rest mods
         seac.prependSetup('afterFirstShowMainPanel', async () => {
             try {
-                api.dispatch(initializationActions.setLoadingItem(`初始化 CatchTimeService`));
+                api.dispatch(actions.setLoadingItem(`初始化 CatchTimeService`));
                 await ctService.sync();
                 await api.delay(1000); // ctService.load();
 
-                const deployments = deploymentSelectors.selectAll(api.getState()).filter(filterNotPreload);
+                const deployments = mod.deployments(api.getState()).filter(filterNotPreload);
                 const collectDeployment = api.fork(async () => {
                     let i = 0;
                     while (i < deployments.length) {
-                        const [action] = await api.take(modActions.deploy.fulfilled.match);
+                        const [action] = await api.take(mod.deploy.fulfilled.match);
                         api.dispatch(
-                            initializationActions.setLoadingItem(
-                                `部署模组: ${action.meta.arg} (${++i}/${deployments.length})`
-                            )
+                            actions.setLoadingItem(`部署模组: ${action.meta.arg} (${++i}/${deployments.length})`)
                         );
-                        if (api.getState().initialization.status === 'error') {
+                        if (selectors.status(api.getState()) === 'error') {
                             break;
                         }
                     }
                 });
 
                 for (const deployment of deployments) {
-                    await api.dispatch(modActions.deploy(getCompositeId(deployment))).unwrap();
+                    await api.dispatch(mod.deploy(getCompositeId(deployment))).unwrap();
                 }
                 await collectDeployment.result;
 
-                api.dispatch(initializationActions.fulfilled());
+                api.dispatch(actions.fulfill());
             } catch (e: unknown) {
-                api.dispatch(initializationActions.error(`Initialization: Error: ${(e as Error).message}`));
+                api.dispatch(actions.reject(`Initialization: Error: ${(e as Error).message}`));
             }
         });
 
@@ -200,6 +232,3 @@ startAppListening({
         unsubscribeLoadingItem();
     }
 });
-
-export const initializationReducer = initializationSlice.reducer;
-export const initializationActions = { ...initializationSlice.actions, init };

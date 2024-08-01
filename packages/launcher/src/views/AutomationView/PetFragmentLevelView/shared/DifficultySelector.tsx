@@ -17,7 +17,7 @@ export const DifficultySelector = forwardRef<HTMLDivElement, ControllerRenderPro
                 }}
             >
                 <InputLabel>难度</InputLabel>
-                <Select {...field}>
+                <Select {...field} label="难度">
                     {AllDifficulty.map((difficulty) => (
                         <MenuItem key={difficulty} value={difficulty}>
                             {DifficultyText[difficulty]}

@@ -4,21 +4,21 @@ import type { PropsWithChildren } from 'react';
 
 import { HexagonalButton } from '@/components/styled/HexagonalButton';
 import { TabRouterProvider } from '@/context/TabRouterProvider';
-import { launcherActions, launcherSelectors } from '@/features/launcherSlice';
-import { useAppDispatch, useAppSelector } from '@/store';
+import { launcher } from '@/features/launcher';
+import { useAppDispatch } from '@/shared';
 import { root } from '../root';
 import { TabView } from './TabView';
 
 export function Main() {
     const dispatch = useAppDispatch();
-    const open = useAppSelector(launcherSelectors.selectMainOpen);
+    const { mainOpen: open } = launcher.useSelectProps('mainOpen');
 
     return (
         <>
             <MainButton
                 baseSize={28}
                 sx={{ top: '64px', left: '64px', position: 'absolute', zIndex: (theme) => theme.zIndex.appBar }}
-                onClick={() => dispatch(launcherActions.toggleMain())}
+                onClick={() => dispatch(launcher.toggleMain())}
             />
             <MainBackdrop open={open}>
                 <TabRouterProvider rootView={root}>

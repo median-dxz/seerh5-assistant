@@ -4,14 +4,15 @@ import type { ControllerRenderProps } from 'react-hook-form';
 
 import type { PetFragmentOptions } from '@/builtin/petFragment/types';
 import { Row } from '@/components/styled/Row';
-import { useAppSelector } from '@/store';
+import { mod } from '@/features/mod';
+import { useAppSelector } from '@/shared';
 
 export const BattleSelector = forwardRef<
     unknown,
     ControllerRenderProps<PetFragmentOptions, 'battle'> & { errorText?: string; levelCount: number }
 >(function BattleSelector({ onChange, value, errorText, levelCount, ...props }, ref) {
     const [inputValue, setInputValue] = useState('');
-    const battleKeys = useAppSelector((state) => state.mod.battleKeys);
+    const battleKeys = useAppSelector(mod.battleKeys);
     return (
         <>
             <Autocomplete

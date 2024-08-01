@@ -44,7 +44,7 @@ export function ListMenu<T, P extends object>(props: ListMenuProps<T, P>) {
         [onClick, setAnchor]
     );
 
-    const onClickRef = useListDerivedValue(data, handleClickItem);
+    const handleClickItemRef = useListDerivedValue(data, handleClickItem);
 
     if (data.length === 0) {
         return null;
@@ -68,7 +68,7 @@ export function ListMenu<T, P extends object>(props: ListMenuProps<T, P>) {
                 <MemoMenuItem
                     key={index}
                     sx={{ maxWidth: '25vw' }}
-                    onClick={onClickRef.current.get(item)}
+                    onClick={handleClickItemRef.current.get(item)}
                     {...listItemProps}
                 >
                     {RenderItem ? <RenderItem index={index} item={item} {...renderItemProps} /> : String(item)}

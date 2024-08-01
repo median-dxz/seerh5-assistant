@@ -1,3 +1,4 @@
+import type { AnyFunction } from '@sea/core';
 import chalk from 'chalk';
 
 chalk.level = 3;
@@ -11,7 +12,7 @@ export const CommonLogger = (
     module: string,
     level: 'debug' | 'info' | 'warn' | 'error' | 'fault',
     style = LogStyle.core
-): typeof console.log => {
+) => {
     switch (level) {
         case 'debug':
         case 'info':
@@ -30,6 +31,21 @@ const ModuleLogger = { info: CommonLogger('ModuleManger', 'info') };
 
 export { AwardLogger, BattleLogger, ModuleLogger };
 
-export const LauncherLoggerBuilder = {
-    build: (id: string) => CommonLogger(id, 'info', LogStyle.mod)
-};
+export class CommonLoggerBuilder {
+    private callbacks: Array<(msg: string) => void>;
+    logger: AnyFunction;
+    constructor(id: string) {
+        this.callbacks = [];
+        this.logger = new Proxy(CommonLogger(id, 'info', LogStyle.mod), {
+            apply: (target, thisArg, args) => {
+                this.callbacks.forEach((handler) => {
+                    handler(args[0] as string);
+                });
+                Reflect.apply(target, thisArg, args);
+            }
+        });
+    }
+    trace(handler: (msg: string) => void) {
+        this.callbacks.push(handler);
+    }
+}

@@ -41,8 +41,8 @@ export function EditOptionsForm({ open, onClose, index }: EditOptionsFormProps) 
     const difficulty = watch('difficulty');
     const isSweep = watch('sweep');
 
-    const levelId = optionsList[index].id;
-    const bosses = petFragmentLevels.selectById(levelId)?.bosses;
+    const levelId = optionsList.at(index)?.id;
+    const bosses = levelId ? petFragmentLevels.selectById(levelId)?.bosses : undefined;
     const levelCount = bosses?.[difficulty].length ?? 0;
 
     return (
@@ -65,7 +65,7 @@ export function EditOptionsForm({ open, onClose, index }: EditOptionsFormProps) 
                 })
             }}
         >
-            <DialogTitle>{petFragmentLevels.selectById(levelId)?.name}</DialogTitle>
+            <DialogTitle>{levelId && petFragmentLevels.selectById(levelId)?.name}</DialogTitle>
             <DialogContent>
                 <Stack sx={{ pt: 2 }} direction="column">
                     <Row sx={{ alignItems: 'center' }}>

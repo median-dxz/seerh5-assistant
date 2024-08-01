@@ -20,7 +20,7 @@ export function LabeledLinearProgress({
     sx,
     ...rest
 }: LabeledProgressProps) {
-    let display = prompt ? `${prompt}: ` : '';
+    let display = prompt ?? '';
     position = position ?? 'top-left';
 
     display += `${progress} / ${total}`;

@@ -1,17 +1,14 @@
 import { debounce, type AnyFunction } from '@sea/core';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 import { effect, reactive, stop, toRaw } from '@vue/reactivity';
-import dayjs from 'dayjs';
 import { dequal } from 'dequal';
 
 import { trpcClient } from '@/services/base';
-import { modApi } from '@/services/mod';
 import { buildDefaultConfig, getCompositeId } from '@/shared';
-import { LauncherLoggerBuilder } from '@/shared/logger';
-import { appStore } from '@/store';
+import type { CommonLoggerBuilder } from '@/shared/logger';
 
 import * as ctStore from '../catchTimeBinding/index';
-import { taskStateActions } from '../taskSchedulerSlice';
+
 import { battleStore } from './store';
 import { buildMetadata, type DefinedModMetadata } from './utils';
 
@@ -49,7 +46,7 @@ async function getModConfig({ scope, id, configSchema }: DefinedModMetadata) {
     return {};
 }
 
-export async function createModContext(metadata: SEAModMetadata) {
+export async function createModContext(metadata: SEAModMetadata, loggerBuilder: CommonLoggerBuilder) {
     const ct = (...pets: string[]) => {
         const r = pets.map((pet) => ctStore.ctByName(pet));
         if (r.some((v) => v === undefined)) {
@@ -67,20 +64,12 @@ export async function createModContext(metadata: SEAModMetadata) {
     };
 
     const meta = buildMetadata(metadata);
-
-    const logger = LauncherLoggerBuilder.build(meta.id);
-
     const data = await getModData(meta);
     const config = await getModConfig(meta);
 
     return {
         meta,
-        logger: (...args: unknown[]) => {
-            logger(...args);
-            if (typeof args[0] === 'string') {
-                appStore.dispatch(taskStateActions.log(`[${dayjs().format('HH:mm:ss')}] ${args[0]}`));
-            }
-        },
+        logger: loggerBuilder.logger,
         ct,
         battle,
         ...data,
@@ -96,6 +85,7 @@ export class ModInstance {
     }
 
     compositeId: string;
+    onDataChanged?: (payload: object) => void;
 
     constructor(
         public deploymentId: string,
@@ -111,8 +101,7 @@ export class ModInstance {
         if (ctx.data) {
             let timer: number | undefined;
             const mutate = () => {
-                const inputs = { compositeId: this.compositeId, data: structuredClone(toRaw(ctx.data)!) };
-                void appStore.dispatch(modApi.endpoints.setData.initiate(inputs));
+                this.onDataChanged?.(structuredClone(toRaw(ctx.data)!));
             };
             const debounceMutate = debounce(mutate, 300);
 

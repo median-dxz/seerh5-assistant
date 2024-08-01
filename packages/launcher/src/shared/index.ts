@@ -1,7 +1,6 @@
 import type { SEAFormItemSchema } from '@sea/mod-type';
 
-import type { TaskInstance } from '@/features/mod/store';
-import type { DefinedModMetadata } from '@/features/mod/utils';
+import type { DefinedModMetadata, TaskInstance } from '@/features/mod';
 
 export function buildDefaultConfig(configSchema: Record<string, SEAFormItemSchema | undefined>) {
     const keys = Object.keys(configSchema);

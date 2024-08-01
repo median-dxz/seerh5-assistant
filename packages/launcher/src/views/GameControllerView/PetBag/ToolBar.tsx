@@ -9,9 +9,9 @@ import Bookmarks from '@mui/icons-material/Bookmarks';
 import Clear from '@mui/icons-material/ClearRounded';
 
 import { DataLoading } from '@/components/DataLoading';
-import { launcherActions } from '@/features/launcherSlice';
+import { launcher } from '@/features/launcher';
 import { usePetGroups } from '@/services/data/usePetGroups';
-import { useAppDispatch } from '@/store';
+import { useAppDispatch } from '@/shared';
 import { Button, Tooltip, Typography } from '@mui/material';
 import type { Pet } from '@sea/core';
 import { PetLocation, SEAPetStore, engine, spet } from '@sea/core';
@@ -42,7 +42,7 @@ export function ToolBar({ selected }: ToolBarProps) {
 
     const handleOpenBag = () => {
         void ModuleManager.showModule('petBag');
-        dispatch(launcherActions.closeMain());
+        dispatch(launcher.closeMain());
     };
 
     const loadPets = useCallback(
