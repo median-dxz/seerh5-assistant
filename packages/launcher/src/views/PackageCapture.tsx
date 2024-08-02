@@ -1,4 +1,4 @@
-import { PanelField, PanelTable, useRowData, type PanelColumns } from '@/components/PanelTable';
+import { PanelField, PanelTable, type PanelColumn } from '@/components/SEAPanelTable';
 import { Button, Toolbar } from '@mui/material';
 
 import { SeaTableRow } from '@/components/styled/TableRow';
@@ -7,7 +7,7 @@ import { SEAEventSource, Subscription, restoreHookedFn } from '@sea/core';
 import dayjs from 'dayjs';
 import { produce } from 'immer';
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 interface CapturedPackage {
     type: 'RemoveListener' | 'AddListener' | 'Received' | 'Send';
@@ -116,7 +116,7 @@ export function PackageCapture() {
         };
     }, [state, capture]);
 
-    const cols: PanelColumns = useMemo(
+    const cols: PanelColumn[] = useMemo(
         () => [
             { field: 'time', columnName: '时间' },
             { field: 'type', columnName: '类型' },
@@ -130,6 +130,9 @@ export function PackageCapture() {
         ],
         []
     );
+
+    const render = useCallback((data: CapturedPackage) => <PanelRow pkg={data} />, []);
+
     return (
         <>
             <Toolbar>
@@ -163,13 +166,12 @@ export function PackageCapture() {
                 </Button>
             </Toolbar>
 
-            <PanelTable data={capture} columns={cols} rowElement={<PanelRow />} />
+            <PanelTable data={capture} columns={cols} renderRow={render} />
         </>
     );
 }
 
-const PanelRow = React.memo(function PanelRow() {
-    const pkg = useRowData<CapturedPackage>();
+const PanelRow = React.memo(function PanelRow({ pkg }: { pkg: CapturedPackage }) {
     return (
         <SeaTableRow>
             <PanelField field="time">{dayjs(pkg.time).format('HH:mm:ss')}</PanelField>

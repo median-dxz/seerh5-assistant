@@ -44,7 +44,7 @@ export function AddOptionsForm({ open, onClose }: AddOptionsFormProps) {
         (_?: unknown, reason?: 'backdropClick' | 'escapeKeyDown') => {
             if (reason === 'backdropClick') return;
             onClose();
-            reset();
+            reset(defaultValues);
         },
         [onClose, reset]
     );
@@ -82,7 +82,7 @@ export function AddOptionsForm({ open, onClose }: AddOptionsFormProps) {
         >
             <DialogTitle>添加精灵因子配置</DialogTitle>
             <DialogContent>
-                <Stack sx={{ pt: 2 }} direction="column">
+                <Stack sx={{ pt: 2, mt: 2 }}>
                     <Controller
                         control={control}
                         name="id"

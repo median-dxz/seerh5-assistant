@@ -1,20 +1,14 @@
 import { mod } from '@/features/mod';
 import { getCompositeId, useAppDispatch } from '@/shared';
-import { Box, Button, alpha } from '@mui/material';
+import { Button, Toolbar, alpha } from '@mui/material';
 
 export function Header() {
     const dispatch = useAppDispatch();
     const deployments = mod.useDeployments();
     return (
-        <Box
+        <Toolbar
             sx={{
-                display: 'flex',
-                height: '56px',
-                width: '100%',
-                justifyContent: 'space-evenly',
-                padding: '0 16px',
-                alignItems: 'center',
-                borderBottom: (theme) => `1px solid ${alpha(theme.palette.divider, 0.12)}`
+                borderBottom: ({ palette }) => `1px solid ${alpha(palette.divider, 0.12)}`
             }}
         >
             <Button
@@ -27,6 +21,6 @@ export function Header() {
             >
                 重载所有模组
             </Button>
-        </Box>
+        </Toolbar>
     );
 }

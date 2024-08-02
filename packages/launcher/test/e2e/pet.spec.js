@@ -6,7 +6,7 @@ import {
     Subscription,
     delay,
     engine,
-    getBagPets,
+    getBagPets
 } from '../../dist/index.js';
 import { ProxyPet } from '../../dist/pet-helper/SEAPet.js';
 import env from '../env/pet.json';

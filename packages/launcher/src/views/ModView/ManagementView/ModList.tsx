@@ -20,7 +20,7 @@ import {
     ListItem,
     ListItemText,
     Menu,
-    MenuItem,
+    MenuItem as MuiMenuItem,
     Stack,
     styled,
     Tooltip,
@@ -37,6 +37,14 @@ const ClampText = styled(NanoClamp)(({ theme }) => ({
     fontFamily: theme.fonts.input,
     margin: 0
 }));
+
+const MenuItem = styled(MuiMenuItem)`
+    font-size: 1rem;
+    & :first-child {
+        margin-left: -4px;
+        margin-right: 8px;
+    }
+`;
 
 interface ModListItemProps {
     deployment: ModDeployment;
@@ -143,7 +151,7 @@ export function ModListItem({ deployment }: ModListItemProps) {
                         // available in status === 'deployed'
                     }}
                 >
-                    <Feed />
+                    <Feed fontSize="small" />
                 </IconButtonNoRipple>
                 <IconButtonNoRipple
                     disabled={!configurable}
@@ -152,10 +160,10 @@ export function ModListItem({ deployment }: ModListItemProps) {
                         setConfigFormOpen(true);
                     }}
                 >
-                    <Settings />
+                    <Settings fontSize="small" />
                 </IconButtonNoRipple>
                 <IconButtonNoRipple title="管理" onClick={open}>
-                    <Build />
+                    <Build fontSize="small" />
                 </IconButtonNoRipple>
             </Stack>
             {configurable && (
@@ -173,29 +181,22 @@ export function ModListItem({ deployment }: ModListItemProps) {
                     values={configValues!}
                 />
             )}
-            <Menu
-                {...menuState}
-                MenuListProps={{
-                    sx: {
-                        maxHeight: '50vh'
-                    }
-                }}
-            >
-                <MenuItem sx={{ fontSize: '1rem' }}>
-                    <RadioButtonUnchecked sx={{ mr: 2, ml: -1 }} fontSize="inherit" />
-                    <Typography fontSize="inherit">启用</Typography>
+            <Menu {...menuState}>
+                <MenuItem>
+                    <RadioButtonUnchecked fontSize="inherit" />
+                    <Typography variant="inherit">启用</Typography>
                 </MenuItem>
-                <MenuItem sx={{ fontSize: '1rem' }}>
-                    <RadioButtonChecked sx={{ mr: 2, ml: -1 }} fontSize="inherit" />
-                    <Typography fontSize="inherit">禁用</Typography>
+                <MenuItem>
+                    <RadioButtonChecked fontSize="inherit" />
+                    <Typography variant="inherit">禁用</Typography>
                 </MenuItem>
-                <MenuItem sx={{ fontSize: '1rem' }}>
-                    <Refresh sx={{ mr: 2, ml: -1 }} fontSize="inherit" />
-                    <Typography fontSize="inherit">重载</Typography>
+                <MenuItem>
+                    <Refresh fontSize="inherit" />
+                    <Typography variant="inherit">重载</Typography>
                 </MenuItem>
-                <MenuItem sx={{ fontSize: '1rem' }}>
-                    <Delete sx={{ mr: 2, ml: -1 }} fontSize="inherit" />
-                    <Typography fontSize="inherit">卸载</Typography>
+                <MenuItem>
+                    <Delete fontSize="inherit" />
+                    <Typography variant="inherit">卸载</Typography>
                 </MenuItem>
             </Menu>
         </ListItem>

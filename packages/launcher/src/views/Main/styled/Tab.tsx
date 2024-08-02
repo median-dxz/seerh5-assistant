@@ -16,4 +16,3 @@ const StyledTab = styled(MuiTab)`
 ` as typeof MuiTab;
 
 export { StyledTab };
-

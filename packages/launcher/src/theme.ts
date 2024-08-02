@@ -171,6 +171,13 @@ export const theme = createTheme({
                 }
             }
         },
+        MuiDialogTitle: {
+            styleOverrides: {
+                root: {
+                    paddingBottom: 0
+                }
+            }
+        },
         MuiButton: {
             styleOverrides: {
                 outlined: {

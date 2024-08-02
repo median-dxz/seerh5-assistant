@@ -1,27 +1,31 @@
-import { IconButtonNoRipple as IconButton } from '@/components/IconButtonNoRipple';
-import { PanelField, useIndex, useRowData } from '@/components/PanelTable';
 import { HealthBroken } from '@/components/icons/HealthBroken';
 import { MoveToInbox } from '@/components/icons/MoveToInbox';
 import { Pill } from '@/components/icons/Pill';
-import { SeaTableRow } from '@/components/styled/TableRow';
-import { launcher } from '@/features/launcher';
-import { Icon } from '@/services/resource';
-import { useAppDispatch, usePopupState } from '@/shared';
 import MoreHoriz from '@mui/icons-material/MoreHoriz';
 import VerticalAlignTop from '@mui/icons-material/VerticalAlignTop';
+
 import { Checkbox, Popover, Stack, Typography } from '@mui/material';
+
 import type { Pet } from '@sea/core';
 import { GameConfigRegistry, delay, engine, spet } from '@sea/core';
 
+import { IconButtonNoRipple as IconButton } from '@/components/IconButtonNoRipple';
+import { PanelField } from '@/components/SEAPanelTable';
+import { SeaTableRow } from '@/components/styled/TableRow';
+
+import { launcher } from '@/features/launcher';
+import { Icon } from '@/services/resource';
+import { useAppDispatch, usePopupState } from '@/shared';
+
 interface PanelRowProps {
     isFetching: boolean;
-    selected: number[];
-    setSelected: React.Dispatch<React.SetStateAction<number[]>>;
+    onSelect: (selected: boolean) => void;
+    selected: boolean;
+    pet: Pet;
+    index: number;
 }
 
-export function PanelRow({ isFetching, selected, setSelected }: PanelRowProps) {
-    const pet = useRowData<Pet>();
-    const index = useIndex();
+export function PanelRow({ isFetching, onSelect, selected, pet, index }: PanelRowProps) {
     const dispatch = useAppDispatch();
     const natureQuery = GameConfigRegistry.getQuery('nature');
 
@@ -42,13 +46,7 @@ export function PanelRow({ isFetching, selected, setSelected }: PanelRowProps) {
     };
 
     const handleSelect = () => {
-        setSelected((selected) => {
-            if (selected.includes(pet.catchTime)) {
-                return selected.filter((ct) => ct !== pet.catchTime);
-            } else {
-                return [...selected, pet.catchTime];
-            }
-        });
+        onSelect(!selected);
     };
 
     return (
@@ -85,7 +83,7 @@ export function PanelRow({ isFetching, selected, setSelected }: PanelRowProps) {
             </Popover>
             <SeaTableRow>
                 <PanelField field="select" onClick={handleSelect}>
-                    <Checkbox name="pet-checkbox" checked={selected.includes(pet.catchTime)} />
+                    <Checkbox name="pet-checkbox" checked={selected} />
                 </PanelField>
                 <PanelField field="name" sx={{ userSelect: 'none' }} onClick={handleSelect}>
                     <Stack flexDirection="row" alignItems="center">

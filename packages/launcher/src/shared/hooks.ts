@@ -1,5 +1,5 @@
 import type { PopoverProps } from '@mui/material';
-import { useCallback, useMemo, useRef, useState, type MouseEventHandler } from 'react';
+import { useCallback, useRef, useState, type MouseEvent, type MouseEventHandler } from 'react';
 
 export function useListDerivedValue<TKey, TCache>(data: TKey[], fn: (data: TKey, index: number) => TCache) {
     const valueRef = useRef(new Map<TKey, TCache>());
@@ -35,7 +35,7 @@ export function usePopupState({
 }: {
     popupId?: string;
     onClose?: () => void;
-    onOpen?: () => void | Promise<void>;
+    onOpen?: (event: MouseEvent<HTMLButtonElement>) => void | boolean | Promise<void | boolean>;
 }) {
     const [anchorEl, setAnchorEl] = useState<Element | null>(null);
     const handleClose = useCallback(() => {
@@ -50,10 +50,11 @@ export function usePopupState({
         onClose: handleClose
     };
 
-    const open: MouseEventHandler = useCallback(
+    const open: MouseEventHandler<HTMLButtonElement> = useCallback(
         async (event) => {
             const target = event.currentTarget;
-            await onOpen?.();
+            const r = await onOpen?.(event);
+            if (r === false) return;
             setAnchorEl(target);
         },
         [onOpen]

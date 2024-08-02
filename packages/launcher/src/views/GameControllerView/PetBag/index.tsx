@@ -1,11 +1,14 @@
 import { LinerLoading } from '@/components/LinerLoading';
-import { PanelTable, type PanelColumns } from '@/components/PanelTable';
+import { PanelTable, type PanelColumn } from '@/components/SEAPanelTable';
 import { gameApi } from '@/services/game';
 import { Box, Stack } from '@mui/material';
 import type { Pet } from '@sea/core';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { produce } from 'immer';
+import { useEffect, useMemo, useState } from 'react';
 import { PanelRow } from './PanelRow';
 import { ToolBar } from './ToolBar';
+
+const toRowKey = (pet: Pet) => pet.catchTime;
 
 export function PetBag() {
     const { data: pets, isFetching } = gameApi.useBagPetsQuery();
@@ -15,7 +18,7 @@ export function PetBag() {
         isFetching && setSelected([]);
     }, [isFetching]);
 
-    const cols: PanelColumns = useMemo(
+    const cols: PanelColumn[] = useMemo(
         () => [
             { columnName: '', field: 'select' },
             { columnName: '精灵', field: 'name' },
@@ -25,7 +28,18 @@ export function PetBag() {
         []
     );
 
-    const toRowKey = useCallback((pet: Pet) => pet.catchTime, []);
+    const handleSelected = (pet: Pet) => (selected: boolean) => {
+        setSelected(
+            produce((draft) => {
+                const r = draft.indexOf(pet.catchTime);
+                if (r !== -1 && !selected) {
+                    draft.splice(r, 1);
+                } else if (r === -1 && selected) {
+                    draft.push(pet.catchTime);
+                }
+            })
+        );
+    };
 
     if (!pets) return <LinerLoading />;
 
@@ -44,7 +58,15 @@ export function PetBag() {
                         minWidth: 'max-content'
                     }}
                     columns={cols}
-                    rowElement={<PanelRow selected={selected} setSelected={setSelected} isFetching={isFetching} />}
+                    renderRow={(data, index) => (
+                        <PanelRow
+                            index={index}
+                            pet={data}
+                            selected={selected.includes(data.catchTime)}
+                            onSelect={handleSelected(data)}
+                            isFetching={isFetching}
+                        />
+                    )}
                     data={pets[0]}
                     toRowKey={toRowKey}
                 />

@@ -13,7 +13,7 @@ export const idList = [
     1706928, //绿宝石
     1717452, //荣耀铸币
     1717451, //圣战奖章
-    1722506, //先锋旗帜
+    1722506 //先锋旗帜
 ];
 
 declare namespace pveEnterPanel {
@@ -62,5 +62,5 @@ export const openModuleList: { [id: number]: any } = {
     }, //圣战奖章
     1722506: async () => {
         ModuleManager.showModule('pveSpt');
-    }, //先锋旗帜
+    } //先锋旗帜
 };

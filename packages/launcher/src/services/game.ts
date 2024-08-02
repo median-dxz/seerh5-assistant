@@ -54,26 +54,6 @@ export const gameApi = createApi({
                 await cacheEntryRemoved.then(clear);
             }
         }),
-        autoCure: build.query<boolean, void>({
-            keepUnusedDataFor: 5 * 60,
-            query: () => engine.autoCureState,
-            async onCacheEntryAdded(_, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
-                const sub = new Subscription();
-                try {
-                    await cacheDataLoaded;
-                    sub.on(SEAEventSource.socket(42036, 'send'), (data) => {
-                        if (Array.isArray(data) && data[1] instanceof egret.ByteArray) {
-                            const autoCure = Boolean(new DataView(data[1].rawBuffer).getUint8(2));
-                            updateCachedData(() => autoCure);
-                        }
-                    });
-                } catch (e) {
-                    // noop
-                }
-                await cacheEntryRemoved;
-                sub.dispose();
-            }
-        }),
         bagPets: build.query<[Pet[], Pet[]], void>({
             query: () => SEAPetStore.bag.get.bind(SEAPetStore.bag),
             providesTags: ['BagPets'],
@@ -89,6 +69,26 @@ export const gameApi = createApi({
 
                     sub.on(SEAEventSource.hook('pet_bag:update'), (pets) => {
                         updateCachedData(() => pets);
+                    });
+                } catch (e) {
+                    // noop
+                }
+                await cacheEntryRemoved;
+                sub.dispose();
+            }
+        }),
+        autoCure: build.query<boolean, void>({
+            keepUnusedDataFor: 5 * 60,
+            query: () => engine.autoCureState,
+            async onCacheEntryAdded(_, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
+                const sub = new Subscription();
+                try {
+                    await cacheDataLoaded;
+                    sub.on(SEAEventSource.socket(42036, 'send'), (data) => {
+                        if (Array.isArray(data) && data[1] instanceof egret.ByteArray) {
+                            const autoCure = Boolean(new DataView(data[1].rawBuffer).getUint8(2));
+                            updateCachedData(() => autoCure);
+                        }
                     });
                 } catch (e) {
                     // noop

@@ -4,7 +4,7 @@ import { PetLocation, SEAPetStore, spet } from '../../pet-helper/index.js';
 /**
  * 切换背包
  * 若数组为空, 则清空背包, 若数组长度大于6, 则截断至前六个
- * 注意数组的第一个元素**不一定会**被设为首发
+ * 数组的第一个元素会被**设为首发**
  *
  * @param pets 要切换的精灵列表, 可以是ct或者Pet实例
  */
@@ -24,4 +24,5 @@ export const switchBag = async (pets: number[] | Pet[]) => {
     for (const v of cts) {
         await spet(v).setLocation(PetLocation.Bag);
     }
+    await spet(pets[0]).isDefault.then((r) => !r && spet(pets[0]).default());
 };

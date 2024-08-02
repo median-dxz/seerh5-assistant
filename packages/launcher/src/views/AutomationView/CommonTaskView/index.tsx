@@ -12,9 +12,8 @@ import { LevelAction } from '@sea/core';
 
 import { DataLoading } from '@/components/DataLoading';
 import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
-import type { PanelColumns } from '@/components/PanelTable';
-import { PanelField, PanelTable, useRowData } from '@/components/PanelTable/index';
 import { SEAConfigForm } from '@/components/SEAConfigForm';
+import { PanelField, PanelTable, type PanelColumn } from '@/components/SEAPanelTable';
 import { SeaTableRow } from '@/components/styled/TableRow';
 import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
 import { mod, ModStore, type ModExportsRef, type TaskInstance } from '@/features/mod';
@@ -68,16 +67,16 @@ const taskViewColumns = [
         field: 'actions',
         columnName: '操作'
     }
-] as const satisfies PanelColumns;
+] as const satisfies PanelColumn[];
 
 interface Row {
-    ref: ModExportsRef;
+    taskRef: ModExportsRef;
     task: TaskInstance;
     runner: TaskRunner;
     options?: object;
 }
 
-const toRowKey = ({ ref: { cid, key } }: Row) => getCompositeId({ id: key, scope: cid });
+const toRowKey = ({ taskRef: { cid, key } }: Row) => getCompositeId({ id: key, scope: cid });
 
 export interface CommonTaskViewProps {
     isLevelView: boolean;
@@ -114,7 +113,7 @@ export function CommonTaskView({ isLevelView }: CommonTaskViewProps) {
                 rowCache.current.set(ref, cachedRow);
             }
         } else {
-            cachedRow = { ref, options, task, runner };
+            cachedRow = { taskRef: ref, options, task, runner };
             rowCache.current.set(ref, cachedRow);
         }
         return cachedRow;
@@ -131,15 +130,19 @@ export function CommonTaskView({ isLevelView }: CommonTaskViewProps) {
 
     return (
         <>
-            <PanelTable data={rows} toRowKey={toRowKey} columns={taskViewColumns} rowElement={<PanelRow />} />
+            <PanelTable
+                data={rows}
+                toRowKey={toRowKey}
+                columns={taskViewColumns}
+                renderRow={(row) => <PanelRow {...row} />}
+            />
         </>
     );
 }
 
-const PanelRow = React.memo(function PanelRow() {
+const PanelRow = React.memo(function PanelRow({ taskRef: ref, options, task, runner }: Row) {
     const dispatch = useAppDispatch();
     const { enqueueSnackbar } = useSnackbar();
-    const { ref, options, task, runner } = useRowData<Row>();
     const [mutate] = dataApi.useSetTaskOptionsMutation();
 
     const [editFormOpen, setEditFormOpen] = useState(false);

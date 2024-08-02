@@ -24,7 +24,7 @@ const gameConfigRegistryEntityMap = new Map<string, GameConfigQuery<GameConfigMa
 const logger = getLogger('GameConfigRegistry');
 
 export const GameConfigRegistry = {
-    getQuery<T extends keyof GameConfigMap>(type: T) {
+    getQuery<T extends keyof GameConfigMap>(this: void, type: T) {
         const entity = gameConfigRegistryEntityMap.get(type) as GameConfigQuery<GameConfigMap[T]> | undefined;
 
         if (entity == undefined) {
@@ -98,5 +98,4 @@ export const GameConfigRegistry = {
     }
 };
 
-// eslint-disable-next-line @typescript-eslint/unbound-method
 export const query = GameConfigRegistry.getQuery;

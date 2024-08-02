@@ -134,11 +134,12 @@ export function InstallFromLocalForm() {
                     }}
                 >
                     <Typography>注意: 本地上传模组为开发者功能, 将始终覆盖安装现有模组</Typography>
-                    <FormControl variant="standard">
+                    <FormControl variant="standard" fullWidth>
                         <InputLabel htmlFor="mod-file">模组文件</InputLabel>
                         <Input
                             id="mod-file"
                             title="模组文件"
+                            aria-label="mod file"
                             autoComplete="off"
                             value={modFile?.name ?? ''}
                             endAdornment={

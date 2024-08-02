@@ -5,7 +5,7 @@ import { Item } from '@sea/core';
 import { Button, Typography } from '@mui/material';
 
 import { LabeledLinearProgress } from '@/components/LabeledProgress';
-import { PanelField, PanelTable, useRowData, type PanelColumns } from '@/components/PanelTable';
+import { PanelField, PanelTable, type PanelColumn } from '@/components/SEAPanelTable';
 import { Icon } from '@/services/resource';
 
 import { SeaTableRow } from '@/components/styled/TableRow';
@@ -21,7 +21,7 @@ const convertUnit = (count: number) => {
     }
 };
 
-const columns: PanelColumns = [
+const columns: PanelColumn[] = [
     { field: 'id', columnName: 'ID' },
     { field: 'icon', columnName: '' },
     { field: 'name', columnName: '名称' },
@@ -45,11 +45,17 @@ export function CommonValue() {
         );
     }, [rows]);
 
-    return <PanelTable columns={columns} rowElement={<PanelRow />} data={items} toRowKey={(item) => item.id} />;
+    return (
+        <PanelTable
+            columns={columns}
+            data={items}
+            toRowKey={(item) => item.id}
+            renderRow={(item) => <PanelRow item={item} />}
+        />
+    );
 }
 
-const PanelRow: React.FC = () => {
-    const item = useRowData<Item>();
+const PanelRow = ({ item }: { item: Item }) => {
     const dispatch = useAppDispatch();
 
     let amountRender = undefined;

@@ -5,7 +5,7 @@ import { ModList } from './ModList';
 
 export function ManagementView() {
     return (
-        <Stack>
+        <Stack spacing={0}>
             <Header />
             <ModList />
         </Stack>

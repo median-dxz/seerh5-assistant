@@ -67,7 +67,7 @@ export function EditOptionsForm({ open, onClose, index }: EditOptionsFormProps) 
         >
             <DialogTitle>{levelId && petFragmentLevels.selectById(levelId)?.name}</DialogTitle>
             <DialogContent>
-                <Stack sx={{ pt: 2 }} direction="column">
+                <Stack sx={{ pt: 2, mt: 2 }}>
                     <Row sx={{ alignItems: 'center' }}>
                         <Controller
                             control={control}

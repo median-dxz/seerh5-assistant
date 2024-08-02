@@ -4,23 +4,23 @@ import * as React from 'react';
 
 import { useListDerivedValue } from '@/shared';
 import { useCallback } from 'react';
-import { RowDataContext, RowIndexContext } from './usePanelTableData';
 
-export type PanelColumns = Array<{ field: string; columnName: string } & TableCellProps>;
+export type PanelColumn = { field: string; columnName: string } & TableCellProps;
 
-type PanelTableProps<TData> = {
-    data: TData[];
-    toRowKey?: (data: TData) => React.Key;
-    columns: PanelColumns;
-    rowElement: React.ReactNode;
+type PanelTableProps<Data> = {
+    data: Data[];
+    toRowKey?: (data: Data) => React.Key;
+    columns: PanelColumn[];
+    renderRow: (data: Data, index: number) => React.ReactElement;
 } & Omit<TableProps, 'children'>;
 
-export const ColumnContext = React.createContext<PanelColumns>([]);
+export const ColumnContext = React.createContext<PanelColumn[]>([]);
 
 export function PanelTable<TData>(props: PanelTableProps<TData>) {
-    const { toRowKey, data, columns, rowElement, ...tableProps } = props;
+    const { toRowKey, data, columns, renderRow, ...tableProps } = props;
     const makeRowKey = useCallback((data: TData) => toRowKey?.(data) ?? JSON.stringify(data), [toRowKey]);
     const keyRef = useListDerivedValue(data, makeRowKey);
+    const renderResultRef = useListDerivedValue(data, renderRow);
 
     return (
         <Table size="small" {...tableProps}>
@@ -36,16 +36,9 @@ export function PanelTable<TData>(props: PanelTableProps<TData>) {
 
             <TableBody>
                 <ColumnContext.Provider value={columns}>
-                    {data.map((data, index) => {
+                    {data.map((data) => {
                         const key = keyRef.current.get(data);
-
-                        return (
-                            <RowIndexContext.Provider key={key} value={index}>
-                                <RowDataContext.Provider key={key} value={data}>
-                                    {rowElement}
-                                </RowDataContext.Provider>
-                            </RowIndexContext.Provider>
-                        );
+                        return <React.Fragment key={key}>{renderResultRef.current.get(data)}</React.Fragment>;
                     })}
                 </ColumnContext.Provider>
             </TableBody>

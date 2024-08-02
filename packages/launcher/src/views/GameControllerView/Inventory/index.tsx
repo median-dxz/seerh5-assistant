@@ -1,5 +1,4 @@
 import { Divider, Paper, Stack } from '@mui/material';
-import { useCallback } from 'react';
 
 import { Selector } from './Selector';
 
@@ -23,81 +22,68 @@ const changeClothesEventSource = SEAEventSource.eventPattern(
     }
 );
 
+const suitDescription = (userSuit: number) => ItemSeXMLInfo.getSuitEff(userSuit);
+
+const changeEyeEquipment = (eyeEquipment: number) => {
+    void engine.changeEquipment('eye', eyeEquipment);
+};
+
+const currentEyeEquipment = () => {
+    const clothesIds = MainManager.actorInfo.clothIDs;
+    return clothesIds.map(query('item').get).find((clothes) => clothes?.type === 'eye')?.ID;
+};
+
+const allEyeEquipment = () =>
+    ItemManager.getClothIDs()
+        .map((v) => parseInt(v))
+        .map(query('item').get)
+        .filter(
+            (item) => item && item.type === 'eye' && query('equipment').find((e) => e.ItemID === item.ID && !e.SuitID)
+        )
+        .map((item) => item!.ID);
+
+const eyeEquipmentDescription = (eyeEquipment: number) =>
+    query('equipment').find((e) => e.ItemID === eyeEquipment)?.Desc;
+
+const titleDescription = (title: number) => query('title').get(title)?.abtext;
+
 export function Inventory() {
-    const equipmentQuery = query('equipment');
-    const itemQuery = query('item');
-    const titleQuery = query('title');
-    const suitQuery = query('suit');
-
-    const getEyeEquipment = useCallback(() => {
-        const clothesIds = MainManager.actorInfo.clothIDs;
-        return clothesIds.map(itemQuery.get).find((clothes) => clothes?.type === 'eye')?.ID;
-    }, [itemQuery]);
-
-    const getAllEyeEquipment = useCallback(
-        async () =>
-            Promise.resolve(
-                ItemManager.getClothIDs()
-                    .map((v) => parseInt(v))
-                    .map(itemQuery.get)
-                    .filter(
-                        (item) =>
-                            item && item.type === 'eye' && equipmentQuery.find((e) => e.ItemID === item.ID && !e.SuitID)
-                    )
-                    .map((item) => item!.ID)
-            ),
-        [equipmentQuery, itemQuery]
-    );
-
-    const eyeEquipmentDescription = useCallback(
-        (userEyeEquipment: number) => equipmentQuery.find((e) => e.ItemID === userEyeEquipment)?.Desc,
-        [equipmentQuery]
-    );
-
-    const titleDescription = useCallback((userTitle: number) => titleQuery.get(userTitle)?.abtext, [titleQuery]);
-
     return (
         <Paper sx={{ p: 4 }}>
             <Stack sx={{ width: '100%', justifyContent: 'space-around' }} spacing={2}>
                 <Selector
                     id="change-title"
                     label={'称号'}
-                    currentItemGetter={engine.playerTitle}
-                    allItemGetter={engine.playerAbilityTitles}
-                    descriptionGetter={titleDescription}
+                    getCurrentItem={engine.playerTitle}
+                    fetchAllItems={engine.playerAbilityTitles}
+                    getDescription={titleDescription}
                     eventSource={changeTitleEventSource}
                     mutate={engine.changeTitle}
-                    nameGetter={titleQuery.getName}
+                    getName={query('title').getName}
                 />
                 <Divider />
                 <Selector
                     id="change-suit"
                     label={'套装'}
-                    currentItemGetter={engine.playerSuit}
-                    allItemGetter={() => Promise.resolve(engine.playerAbilitySuits())}
-                    descriptionGetter={suitDescription}
+                    getCurrentItem={engine.playerSuit}
+                    fetchAllItems={engine.playerAbilitySuits}
+                    getDescription={suitDescription}
                     eventSource={changeClothesEventSource}
                     mutate={engine.changeSuit}
-                    nameGetter={suitQuery.getName}
+                    getName={query('suit').getName}
                 />
                 <Divider />
                 <Selector
                     id="change-eye-equipment"
                     label={'目镜'}
-                    currentItemGetter={getEyeEquipment}
-                    allItemGetter={getAllEyeEquipment}
+                    getCurrentItem={currentEyeEquipment}
+                    fetchAllItems={allEyeEquipment}
                     eventSource={changeClothesEventSource}
                     mutate={changeEyeEquipment}
-                    descriptionGetter={eyeEquipmentDescription}
-                    nameGetter={itemQuery.getName}
+                    getDescription={eyeEquipmentDescription}
+                    getName={query('item').getName}
                 />
             </Stack>
         </Paper>
     );
 }
-
-const suitDescription = (userSuit: number) => ItemSeXMLInfo.getSuitEff(userSuit);
-
-const changeEyeEquipment = (eyeEquipment: number) => {
-    void engine.changeEquipment('eye', eyeEquipment);
-};

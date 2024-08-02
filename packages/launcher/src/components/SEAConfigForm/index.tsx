@@ -58,7 +58,7 @@ export function SEAConfigForm({ onClose, onSubmit, open, values, schema, title }
                 })
             }}
         >
-            <DialogTitle sx={{ pb: 0 }}>{title ?? '编辑配置'}</DialogTitle>
+            <DialogTitle>{title ?? '编辑配置'}</DialogTitle>
             <IconButton
                 aria-label="close"
                 onClick={handleClose}
@@ -71,7 +71,7 @@ export function SEAConfigForm({ onClose, onSubmit, open, values, schema, title }
                 <Close />
             </IconButton>
             <DialogContent>
-                <Stack spacing={2} direction="column">
+                <Stack spacing={2}>
                     {Object.keys(values).map((key) => {
                         const itemSchema = schema[key]!;
                         return (

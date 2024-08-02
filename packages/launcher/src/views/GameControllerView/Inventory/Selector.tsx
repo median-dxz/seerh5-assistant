@@ -1,11 +1,10 @@
 import { Box, Grid, styled, Tooltip, Typography } from '@mui/material';
 import NanoClamp from 'nanoclamp';
-import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 
 import type { SEAEventSource } from '@sea/core';
 
-import { SelectorButton } from './SelectorButton';
+import { PopupMenuButton } from '@/components/PopupMenuButton';
 
 const ClampText = styled(NanoClamp)(({ theme }) => ({
     ...theme.typography.button,
@@ -16,10 +15,10 @@ const ClampText = styled(NanoClamp)(({ theme }) => ({
 export interface SelectorProps {
     id: string;
     label: string;
-    currentItemGetter: () => number | undefined;
-    allItemGetter: () => Promise<number[]>;
-    nameGetter: (id: number) => string | undefined;
-    descriptionGetter: (id: number) => string | undefined;
+    getCurrentItem: () => number | undefined;
+    fetchAllItems: (() => Promise<number[]>) | (() => number[]);
+    getName: (id: number) => string | undefined;
+    getDescription: (id: number) => string | undefined;
     eventSource: SEAEventSource<unknown>;
     mutate: (id: number) => unknown;
 }
@@ -27,21 +26,21 @@ export interface SelectorProps {
 export function Selector({
     id,
     label,
-    currentItemGetter: itemGetter,
-    allItemGetter,
-    nameGetter,
+    getCurrentItem,
+    fetchAllItems,
+    getName,
     eventSource,
     mutate,
-    descriptionGetter
+    getDescription
 }: SelectorProps) {
-    const [data, setData] = useState(itemGetter);
+    const [data, setData] = useState(getCurrentItem);
 
     useEffect(() => {
         const sub = eventSource.on(() => {
-            setData(itemGetter());
+            setData(getCurrentItem());
         });
         return () => void eventSource.off(sub);
-    }, [eventSource, itemGetter]);
+    }, [eventSource, getCurrentItem]);
 
     const handleSelectItem = useCallback(
         (newItem: number) => {
@@ -52,7 +51,7 @@ export function Selector({
         [data, mutate]
     );
 
-    const description = data ? (descriptionGetter(data) ?? '无') : '无';
+    const description = data ? (getDescription(data) ?? '无') : '无';
 
     return (
         <Grid container columnSpacing={3} alignItems="center">
@@ -62,17 +61,27 @@ export function Selector({
                 </Typography>
             </Grid>
             <Grid item xs={5}>
-                <SelectorButton
-                    id={id}
-                    data={allItemGetter}
-                    onSelectItem={handleSelectItem}
-                    menuProps={{
-                        RenderItem: ItemName,
-                        renderItemProps: { nameGetter }
+                <PopupMenuButton
+                    buttonProps={{
+                        sx: { width: '100%', padding: '6px 12px', justifyContent: 'start' }
                     }}
+                    id={id}
+                    data={() => Promise.resolve(fetchAllItems())}
+                    onSelectItem={handleSelectItem}
+                    renderItem={({ item }) => getName(item) ?? '未知'}
                 >
-                    {data ? (nameGetter(data) ?? '无') : '无'}
-                </SelectorButton>
+                    <Box
+                        sx={{
+                            width: '100%',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            textAlign: 'center'
+                        }}
+                    >
+                        {(data && getName(data)) ?? '无'}
+                    </Box>
+                </PopupMenuButton>
             </Grid>
             <Grid item xs={5}>
                 <Tooltip title={description}>
@@ -84,12 +93,3 @@ export function Selector({
         </Grid>
     );
 }
-
-interface ItemProps {
-    item: number;
-    nameGetter: (id: number) => string | undefined;
-}
-
-const ItemName = React.memo(function ItemName({ item, nameGetter }: ItemProps) {
-    return nameGetter(item) ?? '';
-});

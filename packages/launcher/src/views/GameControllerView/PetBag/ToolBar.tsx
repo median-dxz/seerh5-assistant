@@ -15,7 +15,6 @@ import { useAppDispatch } from '@/shared';
 import { Button, Tooltip, Typography } from '@mui/material';
 import type { Pet } from '@sea/core';
 import { PetLocation, SEAPetStore, engine, spet } from '@sea/core';
-import * as React from 'react';
 import { useCallback } from 'react';
 
 interface ToolBarProps {
@@ -74,9 +73,10 @@ export function ToolBar({ selected }: ToolBarProps) {
         [mutate]
     );
 
-    const handleSwitchBag = useCallback((group: Pet[]) => {
+    const handleSwitchBag = useCallback(async (group: Pet[]) => {
         if (group.length > 0) {
-            void engine.switchBag(group);
+            await engine.switchBag(group);
+            await spet(group[0]).default();
         }
     }, []);
 
@@ -109,14 +109,10 @@ export function ToolBar({ selected }: ToolBarProps) {
                 buttonProps={{
                     variant: 'outlined'
                 }}
-                menuProps={{
-                    RenderItem: PetGroupItem,
-                    renderItemProps: {
-                        onSave: handleSaveGroup,
-                        onDelete: handleDeleteGroup
-                    },
-                    listItemProps: { disableRipple: true }
-                }}
+                listItemProps={{ disableRipple: true }}
+                renderItem={({ index, item }) => (
+                    <PetGroupItem item={item} index={index} onSave={handleSaveGroup} onDelete={handleDeleteGroup} />
+                )}
             >
                 精灵方案
             </PopupMenuButton>
@@ -131,7 +127,7 @@ interface PetGroupItemProps {
     onDelete: (group: Pet[], index: number) => void;
 }
 
-const PetGroupItem = React.memo(function PetGroupItem({ item: group, index, onSave, onDelete }: PetGroupItemProps) {
+function PetGroupItem({ item: group, index, onSave, onDelete }: PetGroupItemProps) {
     const groupString = group.length > 0 ? group.map((i) => i.name).join(', ') : '空';
     return (
         <Row
@@ -174,4 +170,4 @@ const PetGroupItem = React.memo(function PetGroupItem({ item: group, index, onSa
             </Row>
         </Row>
     );
-});
+}
