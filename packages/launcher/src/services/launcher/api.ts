@@ -1,29 +1,30 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { baseQuery, optionalTags, trpcClient, type TRpcArgs } from './base';
+
+import { baseQuery, optionalTags, trpcClient, type TRpcArgs } from '../shared';
 
 const { dataRouter } = trpcClient;
 
-export const dataApi = createApi({
+export const launcherApi = createApi({
     baseQuery,
-    reducerPath: 'api/data',
+    reducerPath: 'api/launcher',
     tagTypes: ['TaskConfig', 'LauncherConfig'],
     endpoints: (build) => ({
-        launcherConfigItem: build.query<unknown, TRpcArgs<typeof dataRouter.launcher.item.query>>({
+        configItem: build.query<unknown, TRpcArgs<typeof dataRouter.launcher.item.query>>({
             query: (key) => async () => dataRouter.launcher.item.query(key),
             providesTags: (result, error, key) => optionalTags(result, [{ type: 'LauncherConfig' as const, id: key }])
         }),
-        setLauncherConfigItem: build.mutation<void, TRpcArgs<typeof dataRouter.launcher.setItem.mutate>>({
+        setConfigItem: build.mutation<void, TRpcArgs<typeof dataRouter.launcher.setItem.mutate>>({
             query:
                 ({ key, value }) =>
                 async () =>
                     dataRouter.launcher.setItem.mutate({ key, value }),
             async onQueryStarted({ key, value }, { dispatch, queryFulfilled }) {
-                const patchResult = dispatch(dataApi.util.updateQueryData('launcherConfigItem', key, () => value));
+                const patchResult = dispatch(launcherApi.util.updateQueryData('configItem', key, () => value));
                 try {
                     await queryFulfilled;
                 } catch (e) {
                     patchResult.undo();
-                    dispatch(dataApi.util.invalidateTags([{ type: 'LauncherConfig', id: key }]));
+                    dispatch(launcherApi.util.invalidateTags([{ type: 'LauncherConfig', id: key }]));
                 }
             }
         }),
@@ -53,7 +54,7 @@ export const dataApi = createApi({
                     dataRouter.task.set.mutate({ id, data }),
             async onQueryStarted({ id, data }, { dispatch, queryFulfilled }) {
                 const patchResult = dispatch(
-                    dataApi.util.updateQueryData('allTaskConfig', undefined, (draft) => {
+                    launcherApi.util.updateQueryData('allTaskConfig', undefined, (draft) => {
                         draft[id] = data;
                     })
                 );
@@ -61,7 +62,7 @@ export const dataApi = createApi({
                     await queryFulfilled;
                 } catch (e) {
                     patchResult.undo();
-                    dispatch(dataApi.util.invalidateTags([{ type: 'TaskConfig', id }]));
+                    dispatch(launcherApi.util.invalidateTags([{ type: 'TaskConfig', id }]));
                 }
             }
         })

@@ -1,4 +1,4 @@
-import { trpcClient } from '@/services/base';
+import { trpcClient } from '@/services/shared';
 import { PetPosType, SEAPetStore } from '@sea/core';
 
 const JIM_ID = 3582;

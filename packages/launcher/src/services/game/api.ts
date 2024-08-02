@@ -1,14 +1,17 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
+
 import type { Pet } from '@sea/core';
 import { debounce, engine, SEAEventSource, SEAPetStore, Subscription } from '@sea/core';
-import { baseQuery } from './base';
 
-export type BattleFireInfo = Awaited<ReturnType<typeof engine.battleFireInfo>>;
+import { baseQuery } from '../shared';
+
+import type { BattleFireInfo } from './utils';
+import { monitorGameData, tagTypes } from './utils';
 
 export const gameApi = createApi({
     baseQuery,
     reducerPath: 'api/game',
-    tagTypes: ['BattleFire', 'BagPets'],
+    tagTypes,
     endpoints: (build) => ({
         battleFire: build.query<BattleFireInfo, void>({
             query: () => engine.battleFireInfo,
@@ -80,22 +83,14 @@ export const gameApi = createApi({
         autoCure: build.query<boolean, void>({
             keepUnusedDataFor: 5 * 60,
             query: () => engine.autoCureState,
-            async onCacheEntryAdded(_, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
-                const sub = new Subscription();
-                try {
-                    await cacheDataLoaded;
-                    sub.on(SEAEventSource.socket(42036, 'send'), (data) => {
-                        if (Array.isArray(data) && data[1] instanceof egret.ByteArray) {
-                            const autoCure = Boolean(new DataView(data[1].rawBuffer).getUint8(2));
-                            updateCachedData(() => autoCure);
-                        }
-                    });
-                } catch (e) {
-                    // noop
-                }
-                await cacheEntryRemoved;
-                sub.dispose();
-            }
+            onCacheEntryAdded: monitorGameData((_, sub, invalidateTags, updateCachedData) => {
+                sub.on(SEAEventSource.socket(42036, 'send'), (data) => {
+                    if (Array.isArray(data) && data[1] instanceof egret.ByteArray) {
+                        const autoCure = Boolean(new DataView(data[1].rawBuffer).getUint8(2));
+                        updateCachedData(autoCure);
+                    }
+                });
+            })
         })
     })
 });

@@ -18,7 +18,7 @@ import { SeaTableRow } from '@/components/styled/TableRow';
 import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
 import { mod, ModStore, type ModExportsRef, type TaskInstance } from '@/features/mod';
 import { taskScheduler } from '@/features/taskScheduler';
-import { dataApi } from '@/services/data';
+import { launcherApi } from '@/services/launcher';
 import {
     getCompositeId,
     getTaskOptions,
@@ -91,7 +91,7 @@ export function CommonTaskView({ isLevelView }: CommonTaskViewProps) {
         shallowEqual
     );
 
-    const { data: taskConfig, isFetching, error } = dataApi.endpoints.allTaskConfig.useQuery();
+    const { data: taskConfig, isFetching, error } = launcherApi.endpoints.allTaskConfig.useQuery();
     const rowCache = useRef(new WeakMap<ModExportsRef, Row>());
 
     const mapRefToRow = (ref: ModExportsRef) => {
@@ -143,7 +143,7 @@ export function CommonTaskView({ isLevelView }: CommonTaskViewProps) {
 const PanelRow = React.memo(function PanelRow({ taskRef: ref, options, task, runner }: Row) {
     const dispatch = useAppDispatch();
     const { enqueueSnackbar } = useSnackbar();
-    const [mutate] = dataApi.useSetTaskOptionsMutation();
+    const [mutate] = launcherApi.useSetTaskOptionsMutation();
 
     const [editFormOpen, setEditFormOpen] = useState(false);
     const [completed, setCompleted] = useState(false);

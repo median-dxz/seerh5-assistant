@@ -3,7 +3,7 @@ import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type'
 import { effect, reactive, stop, toRaw } from '@vue/reactivity';
 import { dequal } from 'dequal';
 
-import { trpcClient } from '@/services/base';
+import { trpcClient } from '@/services/shared';
 import { buildDefaultConfig, getCompositeId } from '@/shared';
 import type { CommonLoggerBuilder } from '@/shared/logger';
 

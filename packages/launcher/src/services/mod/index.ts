@@ -5,11 +5,11 @@ import type { SEAModMetadata } from '@sea/mod-type';
 import type { InstallModOptions } from '@sea/server';
 
 import { IS_DEV, MOD_BUILTIN_UPDATE_STRATEGY, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
-import { buildDefaultConfig, praseCompositeId } from '@/shared';
-import { baseQuery, optionalTags, trpcClient, type CommonResponse, type TRpcArgs, type TRpcResponse } from './base';
-
 import type { DefinedModMetadata, ModDeployment, ModDeploymentInfo, ModFactory } from '@/features/mod';
 import { buildMetadata, ModMetadataSchema, prefetchModMetadata } from '@/features/mod/utils'; // 阻止循环导入
+import { buildDefaultConfig, praseCompositeId } from '@/shared';
+
+import { baseQuery, optionalTags, trpcClient, type CommonResponse, type TRpcArgs, type TRpcResponse } from '../shared';
 
 const { modRouter } = trpcClient;
 

@@ -35,19 +35,20 @@ export function PopupMenuButton<T>({
     menuProps,
     listItemProps
 }: PopupMenuButtonProps<T>) {
-    const [data, setData] = useState<T[]>([]);
-    const [fetching, setFetching] = useState(false);
+    const [data, setData] = useState<T[] | null>(null);
 
     const loadData = useCallback(async () => {
-        let data: T[] = [];
-        setFetching(true);
+        let data: T[] | null = [];
+
         if (typeof _data === 'function') {
             data = await _data();
         } else if (Array.isArray(_data)) {
             data = _data;
+        } else {
+            data = null;
         }
+
         setData(data);
-        setFetching(false);
         return data;
     }, [_data]);
 
@@ -57,16 +58,14 @@ export function PopupMenuButton<T>({
             buttonProps?.onClick?.(e);
             if (!data?.length) {
                 const r = await loadData();
-                return Boolean(r.length);
+                return Boolean(r?.length);
             }
         }
     });
 
     useEffect(() => {
-        if (!fetching && Boolean(state.anchorEl)) {
-            void loadData();
-        }
-    }, [fetching, loadData, state.anchorEl]);
+        void loadData();
+    }, [loadData]);
 
     const handlerClickItem = useCallback(
         (item: T, index: number) => () => {
@@ -76,22 +75,19 @@ export function PopupMenuButton<T>({
         [onSelectItem, close]
     );
 
-    const makeRowKey = useCallback((item: T) => JSON.stringify(item), []);
     const doRenderItem = useCallback((item: T, index: number) => renderItem({ item, index }), [renderItem]);
-
-    const itemKeyCache = useListDerivedValue(data, makeRowKey);
-    const renderItemCache = useListDerivedValue(data, doRenderItem);
+    const renderItemCache = useListDerivedValue(data ?? [], doRenderItem);
 
     return (
         <>
-            <Button onClick={open} disabled={fetching} endIcon={fetching ? Spinner : null} {...buttonProps}>
+            <Button onClick={open} endIcon={data === null ? Spinner : null} {...buttonProps}>
                 {children}
             </Button>
-            {data.length > 0 && (
-                <Menu {...state} {...menuProps}>
+            {data && data.length > 0 && (
+                <Menu {...state} {...menuProps} sx={{ ...menuProps?.sx, maxHeight: '60vh' }}>
                     {data.map((item, index) => (
                         <MenuItem
-                            key={itemKeyCache.current.get(item)}
+                            key={index}
                             sx={{ maxWidth: '25vw' }}
                             onClick={handlerClickItem(item, index)}
                             {...listItemProps}

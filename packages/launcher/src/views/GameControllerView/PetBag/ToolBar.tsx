@@ -10,7 +10,7 @@ import Clear from '@mui/icons-material/ClearRounded';
 
 import { DataLoading } from '@/components/DataLoading';
 import { launcher } from '@/features/launcher';
-import { usePetGroups } from '@/services/data/usePetGroups';
+import { usePetGroups } from '@/services/launcher';
 import { useAppDispatch } from '@/shared';
 import { Button, Tooltip, Typography } from '@mui/material';
 import type { Pet } from '@sea/core';
