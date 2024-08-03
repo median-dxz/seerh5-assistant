@@ -12,6 +12,7 @@ const cwd = path.resolve(fileURLToPath(import.meta.url), '../..');
 
 const coreDir = path.join(cwd, 'packages', 'core');
 const modTypeDir = path.join(cwd, 'packages', 'mod-type');
+const modResolverDir = path.join(cwd, 'packages', 'mod-resolver');
 const sdkDir = path.join(cwd, 'sdk');
 
 let dir;
@@ -19,6 +20,8 @@ let dir;
 let coreTarball;
 /** @type {string} */
 let modTypeTarball;
+/** @type {string} */
+let modResolverTarball;
 
 if (!existsSync(path.resolve(cwd, 'release'))) {
     await fs.mkdir(path.resolve(cwd, 'release'));
@@ -54,7 +57,18 @@ await exec('pnpm clean', { cwd: coreDir })
         console.log(`mod type: tarball output: ${stdout}`);
         modTypeTarball = stdout.trim();
     })
-    .then(() => installTarball(['@sea/core', coreTarball], ['@sea/mod-type', modTypeTarball]));
+    .then(async () => {
+        const { stdout } = await exec('pnpm pack --pack-destination ../../release', { cwd: modResolverDir });
+        console.log(`mod type: tarball output: ${stdout}`);
+        modResolverTarball = stdout.trim();
+    })
+    .then(() =>
+        installTarball(
+            ['@sea/core', coreTarball],
+            ['@sea/mod-type', modTypeTarball],
+            ['@sea/mod-resolver', modResolverTarball]
+        )
+    );
 
 /**
  * @param {Array<[string, string]>} packages

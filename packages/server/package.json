@@ -26,6 +26,7 @@
     "@fastify/static": "^7.0.4",
     "@fastify/websocket": "^10.0.1",
     "@trpc/server": "11.0.0-rc.417",
+    "@sea/mod-resolver": "workspace:*",
     "close-with-grace": "^1.3.0",
     "fastify": "^4.28.1",
     "fastify-type-provider-zod": "^2.0.0",
