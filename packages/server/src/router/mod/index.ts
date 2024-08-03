@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
-import { getCompositeId } from '../../shared/index.ts';
 import { DateObjectSchema } from '../../shared/schemas.ts';
+import { getCompositeId, praseCompositeId } from '../../shared/utils.ts';
 
 import { procedure, router } from '../trpc.ts';
 import { InstallModOptionsSchema } from './schemas.ts';
 
 export const modRouter = router({
-    modList: procedure.query(({ ctx }) => {
+    indexList: procedure.query(({ ctx }) => {
         const { modManager } = ctx;
         return modManager.index.stateList();
     }),
@@ -32,7 +32,7 @@ export const modRouter = router({
         return modManager.data(cid);
     }),
 
-    saveData: procedure
+    setData: procedure
         .input(z.object({ compositeId: z.string(), data: DateObjectSchema }))
         .mutation(({ input, ctx }) => {
             const { compositeId, data } = input;
@@ -57,9 +57,22 @@ export const modRouter = router({
             return modManager.setEnable(compositeId, enable);
         }),
 
-    uninstall: procedure.input(z.string()).mutation(({ input, ctx }) => {
+    uninstall: procedure.input(z.string()).mutation(async ({ input, ctx }) => {
         const cid = input;
-        const { modManager } = ctx;
+        const { modManager, taskOptions, modFileHandler } = ctx;
+
+        // 删除任务配置
+        const configs = taskOptions.query();
+        for (const [taskId] of configs) {
+            const { scope } = praseCompositeId(taskId);
+            if (scope === cid) {
+                await taskOptions.remove(taskId);
+            }
+        }
+
+        // 删除Mod文件
+        await modFileHandler.remove(cid);
+
         return modManager.uninstall(cid);
     })
 });

@@ -3,6 +3,7 @@
     "module": "ES2022",
     "moduleResolution": "Bundler",
     "target": "ESNext",
+    "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "noEmit": true
   },

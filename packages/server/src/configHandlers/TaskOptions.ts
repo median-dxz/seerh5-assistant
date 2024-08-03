@@ -1,6 +1,6 @@
 import { SEASConfigHandler } from '../shared/SEASConfigHandler.ts';
 
-export class TaskConfig extends SEASConfigHandler<Map<string, object>> {
+export class TaskOptions extends SEASConfigHandler<Map<string, object>> {
     async load() {
         return super.load(new Map());
     }

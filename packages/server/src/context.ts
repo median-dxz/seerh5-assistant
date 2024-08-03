@@ -1,13 +1,15 @@
 import type { LauncherConfig } from './configHandlers/LauncherConfig.ts';
 import type { PetCatchTime } from './configHandlers/PetCatchTime.ts';
-import type { TaskConfig } from './configHandlers/TaskConfig.ts';
-import type { ModManager } from './router/mod/manager.ts';
+import type { TaskOptions } from './configHandlers/TaskOptions.ts';
+import type { ModManager } from './shared/ModManager.ts';
+import type { IModFileHandler } from './shared/utils.ts';
 
 interface BuildContextOptions {
     petCatchTime: PetCatchTime;
     launcherConfig: LauncherConfig;
-    taskConfig: TaskConfig;
+    taskOptions: TaskOptions;
     modManager: ModManager;
+    modFileHandler: IModFileHandler;
 }
 
 export function buildSEALContext(options: BuildContextOptions) {

@@ -1,7 +1,6 @@
-import { IS_DEV } from '@/constants';
-import { modApi } from '@/services/mod';
 import Close from '@mui/icons-material/Close';
 import CloudUpload from '@mui/icons-material/CloudUploadRounded';
+
 import {
     Button,
     Dialog,
@@ -19,6 +18,11 @@ import {
 import { useSnackbar } from 'notistack';
 import { useCallback, useRef, useState } from 'react';
 
+import { IS_DEV } from '@/constants';
+import { mod } from '@/features/mod';
+import { modApi } from '@/services/mod';
+import { useAppDispatch } from '@/shared';
+
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -32,12 +36,14 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 export function InstallFromLocalForm() {
+    const { enqueueSnackbar } = useSnackbar();
+    const dispatch = useAppDispatch();
+    const [install] = modApi.useInstallMutation();
+
     const [open, setOpen] = useState(false);
     const [modFile, setModFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
     const uploadModRef = useRef<HTMLInputElement>(null);
-    const { enqueueSnackbar } = useSnackbar();
-    const [install] = modApi.endpoints.install.useMutation();
 
     const handleClose = useCallback(() => {
         setOpen(false);
@@ -97,11 +103,18 @@ export function InstallFromLocalForm() {
 
                         const modUrl = URL.createObjectURL(modFile);
 
-                        install({ url: modUrl, update: true })
-                            .then(() => {
-                                enqueueSnackbar(`模组安装成功!`, { variant: 'success' });
+                        void install({ url: modUrl, update: true })
+                            .then(async (result) => {
+                                if (!result.error) {
+                                    await dispatch(mod.deploy(result.data));
+                                    enqueueSnackbar(`模组${result.data}安装成功!`, { variant: 'success' });
+                                } else if (result.error) {
+                                    // eslint-disable-next-line @typescript-eslint/only-throw-error
+                                    throw result.error;
+                                }
                             })
-                            .catch(() => {
+                            .catch((error: unknown) => {
+                                console.error(error);
                                 enqueueSnackbar('模组安装失败, 查看日志获取详情', { variant: 'error' });
                             })
                             .finally(() => {
@@ -142,6 +155,9 @@ export function InstallFromLocalForm() {
                             aria-label="mod file"
                             autoComplete="off"
                             value={modFile?.name ?? ''}
+                            sx={{
+                                fontFamily: ({ fonts }) => fonts.input
+                            }}
                             endAdornment={
                                 <UploadEndAdornment file={modFile} fileInputRef={uploadModRef} setFile={setModFile} />
                             }

@@ -142,8 +142,8 @@ startAppListening({
 
                 api.dispatch(actions.setLoadingItem(`Mod Deployment: 拉取本地模组列表...`));
                 const fetchModList = api.dispatch(
-                    modApi.endpoints.modList.initiate(undefined, {
-                        subscribe: false,
+                    modApi.endpoints.indexList.initiate(undefined, {
+                        subscribe: true, // 用于在整个生命周期内监听
                         forceRefetch: true
                     })
                 );

@@ -11,7 +11,8 @@
 - [ ] 全屏与刷新按钮
 - [ ] 日任扫荡功能
 - [ ] 引入 changeset + 发版
-
+- [ ] 入口文件转字符串替换
+- [ ]
 - [ ] ctOverride battleOverride strategyOverride, 有重映射和fallback两种模式, 只支持一级重载
 - [ ] 模组定义新增标志位，表明不支持热重载
 - [ ] 模组加载/卸载时的出错处理
@@ -29,7 +30,6 @@
   - [ ] rotating
 - [ ] sdk/预设/例子/模组发布转移到单独的仓库
 - [ ] 工作区脚手架->暂定github模板repo
-- [ ] 入口文件转字符串替换
 - [ ] 进入对战超时
 - [ ] QuickAccess重做，移入主界面底部
   - [ ] command接口增强，也支持使用schema输入参数

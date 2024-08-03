@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { LauncherConfigKeys, PetGroupsSchema, type LauncherConfigType } from '../../configHandlers/LauncherConfig.ts';
 import { procedure, router } from '../trpc.ts';
 
-export const launcher = router({
+export const configs = router({
     item: procedure.input(z.enum(LauncherConfigKeys)).query(({ input, ctx }) => {
         const { launcherConfig } = ctx;
         const key = input;

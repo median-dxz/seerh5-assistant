@@ -1,5 +1,5 @@
 {
-  "name": "@sea/mod-type",
+  "name": "@sea/mod-resolver",
   "private": true,
   "type": "module",
   "version": "0.9.1",

@@ -1,11 +1,5 @@
 import type { Recipe } from '../client-types.ts';
-
-export interface IStorage {
-    source: string;
-    load(defaultData?: object): Promise<object>;
-    save(data: object): Promise<void>;
-    delete(): Promise<void>;
-}
+import type { IStorage } from './utils.ts';
 
 class DateNotLoadedError extends Error {
     constructor(public file: string) {

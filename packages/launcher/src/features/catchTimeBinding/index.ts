@@ -67,7 +67,7 @@ function nameBindingByCt(ct: number) {
 }
 
 export { add, ctByName, load, nameBindingByCt, remove, sync };
-const { dataRouter: configRouter } = trpcClient;
+const { launcherRouter: configRouter } = trpcClient;
 
 export async function queryCatchTime(name: string): Promise<[string, number]>;
 export async function queryCatchTime(): Promise<Map<string, number>>;

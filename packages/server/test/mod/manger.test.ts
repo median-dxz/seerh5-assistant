@@ -1,9 +1,9 @@
 import { test as base } from 'vitest';
 
 import { ModIndex, ModState } from '../../src/configHandlers/ModIndex';
-import { ModManager } from '../../src/router/mod/manager';
 import { InstallModOptions } from '../../src/router/mod/schemas';
-import { CID_LIST, FakeStorage, FakeStorageBuilder, SOURCE_INDEX } from './mocks';
+import { ModManager } from '../../src/shared/ModManager';
+import { CID_LIST, FakeStorage, FakeStorageBuilder, SOURCE_INDEX, storageDelete } from './mocks';
 
 const modState1 = {
     enable: true,
@@ -102,4 +102,20 @@ test('install a mod that already exist', async ({ expect, modManager }) => {
         success: false,
         reason: 'there has existed a mod with the same id and scope already'
     });
+});
+
+test('uninstall a mod', async ({ expect, modManager }) => {
+    const cid = CID_LIST[3];
+    await modManager.install(cid, installOptions1);
+
+    storageDelete.mockClear();
+    const result = await modManager.uninstall(cid);
+
+    expect(result).toEqual({ success: true });
+
+    expect(modManager.index.state(cid)).toBeUndefined();
+    expect(await modManager.data(cid)).toBeUndefined();
+    expect(await modManager.config(cid)).toBeUndefined();
+
+    expect(storageDelete).toHaveBeenCalledTimes(2);
 });

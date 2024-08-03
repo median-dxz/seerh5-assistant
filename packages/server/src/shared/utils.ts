@@ -11,3 +11,16 @@ export const getCompositeId = (scope: string, id: string) => {
     id = id.replaceAll(':', '/:/');
     return `${scope}::${id}`;
 };
+
+export interface IStorage {
+    source: string;
+    load(defaultData?: object): Promise<object>;
+    save(data: object): Promise<void>;
+    delete(): Promise<void>;
+}
+
+export interface IModFileHandler {
+    root: string;
+    buildPath(filename: string): string;
+    remove(cid: string): void | Promise<void>;
+}

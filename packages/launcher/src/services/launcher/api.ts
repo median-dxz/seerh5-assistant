@@ -1,23 +1,30 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
+import type { inferRouterInputs } from '@trpc/server';
 
-import { baseQuery, optionalTags, trpcClient, type TRpcArgs } from '../shared';
+import type { ApiRouter } from '@sea/server';
 
-const { dataRouter } = trpcClient;
+import { baseQuery, optionalTags, trpcClient } from '../shared';
+
+const {
+    launcherRouter: { taskOptions, configs }
+} = trpcClient;
+
+type RouterInput = inferRouterInputs<ApiRouter>['launcherRouter'];
 
 export const launcherApi = createApi({
     baseQuery,
     reducerPath: 'api/launcher',
-    tagTypes: ['TaskConfig', 'LauncherConfig'],
+    tagTypes: ['TaskOptions', 'LauncherConfig'],
     endpoints: (build) => ({
-        configItem: build.query<unknown, TRpcArgs<typeof dataRouter.launcher.item.query>>({
-            query: (key) => async () => dataRouter.launcher.item.query(key),
+        configItem: build.query<unknown, RouterInput['configs']['item']>({
+            query: (key) => async () => configs.item.query(key),
             providesTags: (result, error, key) => optionalTags(result, [{ type: 'LauncherConfig' as const, id: key }])
         }),
-        setConfigItem: build.mutation<void, TRpcArgs<typeof dataRouter.launcher.setItem.mutate>>({
+        setConfigItem: build.mutation<void, RouterInput['configs']['setItem']>({
             query:
                 ({ key, value }) =>
                 async () =>
-                    dataRouter.launcher.setItem.mutate({ key, value }),
+                    configs.setItem.mutate({ key, value }),
             async onQueryStarted({ key, value }, { dispatch, queryFulfilled }) {
                 const patchResult = dispatch(launcherApi.util.updateQueryData('configItem', key, () => value));
                 try {
@@ -28,8 +35,8 @@ export const launcherApi = createApi({
                 }
             }
         }),
-        allTaskConfig: build.query<Record<string, object | undefined>, TRpcArgs<typeof dataRouter.task.all.query>>({
-            query: () => async () => dataRouter.task.all.query(),
+        allTaskOptions: build.query<Record<string, object | undefined>, RouterInput['taskOptions']['all']>({
+            query: () => async () => taskOptions.all.query(),
             transformResponse(response: Map<string, object>) {
                 const result: Record<string, object | undefined> = {};
                 for (const [k, v] of response.entries()) {
@@ -42,19 +49,19 @@ export const launcherApi = createApi({
                     result,
                     result &&
                         Object.keys(result).map((key) => ({
-                            type: 'TaskConfig',
+                            type: 'TaskOptions',
                             id: key
                         }))
                 )
         }),
-        setTaskOptions: build.mutation<void, TRpcArgs<typeof dataRouter.task.set.mutate>>({
+        setTaskOptions: build.mutation<void, RouterInput['taskOptions']['set']>({
             query:
                 ({ id, data }) =>
                 async () =>
-                    dataRouter.task.set.mutate({ id, data }),
+                    taskOptions.set.mutate({ id, data }),
             async onQueryStarted({ id, data }, { dispatch, queryFulfilled }) {
                 const patchResult = dispatch(
-                    launcherApi.util.updateQueryData('allTaskConfig', undefined, (draft) => {
+                    launcherApi.util.updateQueryData('allTaskOptions', undefined, (draft) => {
                         draft[id] = data;
                     })
                 );
@@ -62,7 +69,7 @@ export const launcherApi = createApi({
                     await queryFulfilled;
                 } catch (e) {
                     patchResult.undo();
-                    dispatch(launcherApi.util.invalidateTags([{ type: 'TaskConfig', id }]));
+                    dispatch(launcherApi.util.invalidateTags([{ type: 'TaskOptions', id }]));
                 }
             }
         })

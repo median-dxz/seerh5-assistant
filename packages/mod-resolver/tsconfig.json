@@ -7,8 +7,7 @@
     "noEmit": true,
     "strict": true,
     // "skipLibCheck": false,
-    "tsBuildInfoFile": "../../.tsbuildinfo/mod-type.tsbuildinfo",
-    "types": ["@sea/core/types/seerh5", "@sea/core/types/egret"]
+    "tsBuildInfoFile": "../../.tsbuildinfo/mod-resolver.tsbuildinfo"
   },
   "include": ["index.ts"]
 }

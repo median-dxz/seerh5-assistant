@@ -20,9 +20,9 @@ import { buildSEALContext } from './context.ts';
 import { fastifyLogRotate } from './logger/index.ts';
 import { apiRouter } from './router/index.ts';
 
-import { initConfigHandlers } from './configHandlers/init.ts';
 import { configsRoot, launcherRoot, logsRoot, modsRoot } from './paths.ts';
 import { modUploadAndInstallRouter } from './router/mod/uploadAndInstall.ts';
+import { setupConfigHandlers, setupModManager } from './setup/index.ts';
 
 export async function createServer() {
     const server = fastify({
@@ -64,7 +64,8 @@ export async function createServer() {
     void server.use('/account-co.61.com/', loginProxy);
     void server.register(createAppJsProxy);
 
-    const configHandlers = await initConfigHandlers(server.config.APP_ROOT);
+    const configHandlers = await setupConfigHandlers(server.config.APP_ROOT);
+    const mod = await setupModManager(server.config.APP_ROOT, configHandlers.modIndex);
 
     void server.register(fastifyStatic, {
         root: path.resolve(server.config.APP_ROOT, modsRoot),
@@ -87,11 +88,17 @@ export async function createServer() {
         useWSS: true,
         trpcOptions: {
             router: apiRouter,
-            createContext: buildSEALContext({ ...configHandlers })
+            createContext: buildSEALContext({
+                launcherConfig: configHandlers.launcherConfig,
+                modManager: mod.manager,
+                modFileHandler: mod.fileHandler,
+                petCatchTime: configHandlers.petCatchTime,
+                taskOptions: configHandlers.taskConfig
+            })
         }
     });
 
-    void server.register(modUploadAndInstallRouter, { modManager: configHandlers.modManager });
+    void server.register(modUploadAndInstallRouter, { modManager: mod.manager, modFileHandler: mod.fileHandler });
 
     const stop = async () => {
         await server.close();

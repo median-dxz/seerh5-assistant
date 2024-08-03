@@ -4,7 +4,7 @@ import { effect, reactive, stop, toRaw } from '@vue/reactivity';
 import { dequal } from 'dequal';
 
 import { trpcClient } from '@/services/shared';
-import { buildDefaultConfig, getCompositeId } from '@/shared';
+import { getCompositeId } from '@/shared';
 import type { CommonLoggerBuilder } from '@/shared/logger';
 
 import * as ctStore from '../catchTimeBinding/index';
@@ -19,11 +19,10 @@ const { modRouter } = trpcClient;
 async function getModData({ scope, id, data: defaultData }: DefinedModMetadata) {
     if (defaultData) {
         const compositeId = getCompositeId({ scope, id });
-        let data = await modRouter.data.query(compositeId);
+        const data = await modRouter.data.query(compositeId);
 
         if (!data) {
-            await modRouter.saveData.mutate({ compositeId, data: defaultData });
-            data = defaultData;
+            throw new Error(`Mod data not found: ${compositeId}`);
         }
 
         const proxyData = reactive(data);
@@ -35,12 +34,12 @@ async function getModData({ scope, id, data: defaultData }: DefinedModMetadata) 
 async function getModConfig({ scope, id, configSchema }: DefinedModMetadata) {
     if (configSchema) {
         const compositeId = getCompositeId({ scope, id });
-        let config;
-        config = await modRouter.config.query(compositeId);
+        const config = await modRouter.config.query(compositeId);
+
         if (!config) {
-            config = buildDefaultConfig(configSchema);
-            await modRouter.setConfig.mutate({ compositeId, data: config });
+            throw new Error(`Mod config not found: ${compositeId}`);
         }
+
         return { config };
     }
     return {};

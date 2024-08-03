@@ -1,5 +1,2 @@
 packages:
-  - 'packages/core'
-  - 'packages/launcher'
-  - 'packages/server'
-  - 'packages/mod-type'
+    - 'packages/*'

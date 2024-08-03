@@ -47,11 +47,11 @@ export const mod = createAppSlice({
                 const { factory, metadata } = await dispatch(modApi.endpoints.fetch.initiate(dep)).unwrap();
 
                 const loggerBuilder = new CommonLoggerBuilder(metadata.id);
-                const context = await createModContext(metadata, loggerBuilder);
-                const modExport = await factory(context);
+                const context = await createModContext(metadata, loggerBuilder); // try-catch
+                const modExport = await factory(context); // try-catch
                 const deploymentId = nanoid();
 
-                const instance = new ModInstance(deploymentId, context, modExport);
+                const instance = new ModInstance(deploymentId, context, modExport); // try-catch
                 instance.onDataChanged = (data) =>
                     dispatch(modApi.endpoints.setData.initiate({ compositeId: cid, data }));
                 modInsStore.set(deploymentId, instance);
@@ -154,8 +154,26 @@ export const mod = createAppSlice({
         })
     }),
     extraReducers: (builder) =>
-        builder.addMatcher(modApi.endpoints.modList.matchFulfilled, (state, action) => {
-            state.deployments = deploymentAdapter.setAll(state.deployments, action.payload);
+        builder.addMatcher(modApi.endpoints.indexList.matchFulfilled, (state, action) => {
+            const indexList = action.payload;
+            const deployments = state.deployments;
+            const checked = new Set<string>();
+            indexList.forEach((value) => {
+                const cid = getCompositeId(value);
+                const current = deployments.entities[cid];
+                checked.add(cid);
+                if (current !== undefined) {
+                    // 已有的mod刷新state
+                    deploymentAdapter.updateOne(deployments, { id: cid, changes: { state: value.state } });
+                } else {
+                    // 新加的mod直接添加
+                    deploymentAdapter.addOne(deployments, { ...value, status: 'notDeployed', isDeploying: false });
+                }
+            });
+
+            // 没有的mod标记删除
+            const toDelete = deployments.ids.filter((id) => !checked.has(id));
+            deploymentAdapter.removeMany(deployments, toDelete);
         }),
     selectors: {
         getDeploymentById: ({ deployments }, id: string) =>

@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import * as superjson from 'superjson';
-import type { IStorage } from './SEASConfigHandler.ts';
+import type { IStorage } from './utils.ts';
 
 export class FileSystemStorage implements IStorage {
     constructor(public file = '') {}

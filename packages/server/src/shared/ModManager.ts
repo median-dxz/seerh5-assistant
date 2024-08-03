@@ -1,13 +1,7 @@
-import type { ModIndex, ModState } from '../../configHandlers/ModIndex.ts';
-import { SEASConfigHandler, type IStorage } from '../../shared/SEASConfigHandler.ts';
-import type { InstallModOptions } from './schemas.ts';
-
-const failed = (reason?: string) => ({
-    success: false,
-    reason
-});
-
-const succeed = () => ({ success: true });
+import type { ModIndex, ModState } from '../configHandlers/ModIndex.js';
+import type { InstallModOptions } from '../router/mod/schemas.js';
+import { SEASConfigHandler } from './SEASConfigHandler.js';
+import type { IStorage } from './utils.js';
 
 export class ModManager {
     configHandlers = new Map<string, SEASConfigHandler>();
@@ -26,10 +20,9 @@ export class ModManager {
 
     async saveData(cid: string, data: object) {
         const dataStore = this.dataHandlers.get(cid);
-        if (!dataStore) return failed('data store not found');
+        if (!dataStore) throw new Error('data store not found');
 
         await dataStore.mutate(() => data);
-        return succeed();
     }
 
     async data(cid: string) {
@@ -42,10 +35,9 @@ export class ModManager {
 
     async saveConfig(cid: string, data: object) {
         const configStore = this.configHandlers.get(cid);
-        if (!configStore) return failed('config store not found');
+        if (!configStore) throw new Error('config store not found');
 
         await configStore.mutate(() => data);
-        return succeed();
     }
 
     async config(cid: string) {
@@ -58,7 +50,7 @@ export class ModManager {
 
     async install(cid: string, options: InstallModOptions) {
         if (this.index.state(cid) != undefined && !options.update)
-            return failed('there has existed a mod with the same id and scope already');
+            throw new Error('there has existed a mod with the same id and scope already');
 
         const state: ModState = {
             builtin: Boolean(options.builtin),
@@ -86,7 +78,7 @@ export class ModManager {
             this.dataHandlers.set(cid, handler);
         }
 
-        return succeed();
+        return cid;
     }
 
     async load(cid: string, state: ModState) {
@@ -106,17 +98,21 @@ export class ModManager {
     async setEnable(cid: string, enable: boolean) {
         const state = this.index.state(cid);
         if (!state) {
-            return failed('mod not found');
+            return new Error('mod not found');
         }
         state.enable = enable;
         await this.index.set(cid, state);
-        return succeed();
     }
 
-    async uninstall(_cid: string) {
-        // TODO implement
-        return Promise.resolve({
-            success: true
-        });
+    async uninstall(cid: string) {
+        // 清除数据
+        await Promise.all(
+            [this.configHandlers.get(cid), this.dataHandlers.get(cid)].map((handler) => handler?.destroy())
+        );
+        this.configHandlers.delete(cid);
+        this.dataHandlers.delete(cid);
+
+        // 删除索引
+        await this.index.remove(cid);
     }
 }

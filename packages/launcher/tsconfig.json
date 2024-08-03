@@ -20,10 +20,5 @@
     },
     "types": ["vite/client", "@sea/core/types/seerh5", "@sea/core/types/egret"]
   },
-  "include": ["src"],
-  "references": [
-    {
-      "path": "../core"
-    }
-  ]
+  "include": ["src"]
 }

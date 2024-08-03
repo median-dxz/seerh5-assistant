@@ -1,35 +1,36 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
+import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import superjson from 'superjson';
 
 import type { SEAModMetadata } from '@sea/mod-type';
-import type { InstallModOptions } from '@sea/server';
+import type { ApiRouter, InstallModOptions } from '@sea/server';
 
 import { IS_DEV, MOD_BUILTIN_UPDATE_STRATEGY, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
-import type { DefinedModMetadata, ModDeployment, ModDeploymentInfo, ModFactory } from '@/features/mod';
+import type { DefinedModMetadata, ModDeploymentInfo, ModFactory } from '@/features/mod';
 import { buildMetadata, ModMetadataSchema, prefetchModMetadata } from '@/features/mod/utils'; // 阻止循环导入
-import { buildDefaultConfig, praseCompositeId } from '@/shared';
+import { buildDefaultConfig, getCompositeId, praseCompositeId } from '@/shared';
 
-import { baseQuery, optionalTags, trpcClient, type CommonResponse, type TRpcArgs, type TRpcResponse } from '../shared';
+import { baseQuery, optionalTags, trpcClient } from '../shared';
 
+type RouterInput = inferRouterInputs<ApiRouter>['modRouter'];
+type RouterOutput = inferRouterOutputs<ApiRouter>['modRouter'];
 const { modRouter } = trpcClient;
 
 export const modApi = createApi({
     baseQuery,
     reducerPath: 'api/mod',
-    tagTypes: ['Deployment', 'Data', 'Config'],
+    tagTypes: ['Index', 'Data', 'Config'],
     endpoints: (build) => ({
-        modList: build.query<Array<ModDeployment<'notDeployed'>>, void>({
+        indexList: build.query<ModDeploymentInfo[], void>({
             query: () => async () => {
-                const list = await modRouter.modList.query();
+                const list = await modRouter.indexList.query();
                 const result = list.map(({ cid, state }) => ({
                     ...praseCompositeId(cid),
-                    state,
-                    status: 'notDeployed' as const,
-                    isDeploying: false
+                    state
                 }));
                 return result;
             },
-            providesTags: [{ type: 'Deployment', id: 'LIST' }]
+            providesTags: [{ type: 'Index', id: 'LIST' }]
         }),
 
         fetch: build.query<{ factory: ModFactory; metadata: DefinedModMetadata }, ModDeploymentInfo>({
@@ -68,14 +69,14 @@ export const modApi = createApi({
                 }
         }),
 
-        installBuiltin: build.mutation<CommonResponse[], void>({
+        installBuiltin: build.mutation<string[], void>({
             query: () => async () => {
                 const builtinExports = await Promise.all([
                     import('@/builtin/builtin'),
                     import('@/builtin/petFragment')
                 ]);
 
-                const results: CommonResponse[] = await Promise.all(
+                return await Promise.all(
                     builtinExports.map(async (exports) => {
                         const metadata = ModMetadataSchema.parse(exports.metadata) as SEAModMetadata;
                         const options: InstallModOptions = {
@@ -89,20 +90,14 @@ export const modApi = createApi({
                         return modRouter.install.mutate({ scope: MOD_SCOPE_BUILTIN, id: metadata.id, options });
                     })
                 );
-
-                const failed = results.filter((r) => !r.success);
-                if (failed.length > 0) {
-                    throw new Error(`Failed to install builtin mods: [${failed.map((r) => r.reason).join(', ')}]`);
-                }
             },
-            invalidatesTags: [{ type: 'Deployment', id: 'LIST' }]
+            invalidatesTags: [{ type: 'Index', id: 'LIST' }]
         }),
 
-        install: build.mutation<CommonResponse, { url: string; update?: boolean }>({
+        install: build.mutation<string, { url: string; update?: boolean }>({
             query:
-                ({ url, update }) =>
+                ({ url, update = false }) =>
                 async () => {
-                    update = update ?? false;
                     const metadata = await prefetchModMetadata(url);
 
                     const options: InstallModOptions = {
@@ -120,8 +115,7 @@ export const modApi = createApi({
                     const modFile = new File([modBlob], `${scope}.${id}.js`, { type: 'text/javascript' });
 
                     const query = new URLSearchParams({
-                        id,
-                        scope
+                        cid: getCompositeId({ id, scope })
                     });
 
                     let modSerializedData: string | undefined = undefined;
@@ -141,41 +135,51 @@ export const modApi = createApi({
                     return fetch(`/api/mods/install?` + query.toString(), {
                         body: data,
                         method: 'POST'
-                    }).then((r) => r.json());
+                    }).then(async (r) => {
+                        const parsedResponse = await r.json();
+                        if (!r.ok) {
+                            const errorResponse = {
+                                ...parsedResponse,
+                                message: JSON.parse((parsedResponse as { message: string }).message)
+                            };
+                            throw errorResponse;
+                        } else {
+                            return (parsedResponse as { result: string }).result;
+                        }
+                    });
                 },
-            invalidatesTags: [{ type: 'Deployment', id: 'LIST' }]
+            invalidatesTags: [{ type: 'Index', id: 'LIST' }]
         }),
 
-        data: build.query<TRpcResponse<typeof modRouter.data.query>, TRpcArgs<typeof modRouter.data.query>>({
+        data: build.query<object, RouterInput['data']>({
             query: (compositeId) => async () => modRouter.data.query(compositeId),
             providesTags: (r, e, cid) => optionalTags(r, [{ type: 'Data', id: cid } as const])
         }),
 
-        setData: build.mutation<
-            TRpcResponse<typeof modRouter.saveData.mutate>,
-            TRpcArgs<typeof modRouter.saveData.mutate>
-        >({
+        setData: build.mutation<RouterOutput['setData'], RouterInput['setData']>({
             query:
                 ({ compositeId, data }) =>
                 async () =>
-                    modRouter.saveData.mutate({ compositeId, data }),
+                    modRouter.setData.mutate({ compositeId, data }),
             invalidatesTags: (r, e, { compositeId }) => [{ type: 'Data', id: compositeId }]
         }),
 
-        config: build.query<TRpcResponse<typeof modRouter.config.query>, TRpcArgs<typeof modRouter.config.query>>({
+        config: build.query<object, RouterInput['config']>({
             query: (compositeId) => async () => modRouter.config.query(compositeId),
             providesTags: (r, e, cid) => optionalTags(r, [{ type: 'Config', cid } as const])
         }),
 
-        setConfig: build.mutation<
-            TRpcResponse<typeof modRouter.setConfig.mutate>,
-            TRpcArgs<typeof modRouter.setConfig.mutate>
-        >({
+        setConfig: build.mutation<RouterOutput['setConfig'], RouterInput['setConfig']>({
             query:
                 ({ compositeId, data }) =>
                 async () =>
                     modRouter.setConfig.mutate({ compositeId, data }),
             invalidatesTags: (r, e, { compositeId }) => [{ type: 'Config', id: compositeId }]
+        }),
+
+        uninstall: build.mutation<void, RouterInput['uninstall']>({
+            query: (compositeId) => async () => modRouter.uninstall.mutate(compositeId),
+            invalidatesTags: [{ type: 'Index', id: 'LIST' }]
         })
     })
 });

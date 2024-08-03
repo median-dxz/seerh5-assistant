@@ -13,6 +13,9 @@
     },
     {
       "path": "./packages/mod-type/tsconfig.json"
+    },
+    {
+      "path": "./packages/mod-resolver/tsconfig.json"
     }
   ]
 }

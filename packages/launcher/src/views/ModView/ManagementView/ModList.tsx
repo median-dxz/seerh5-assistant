@@ -5,16 +5,11 @@ import RadioButtonChecked from '@mui/icons-material/RadioButtonChecked';
 import RadioButtonUnchecked from '@mui/icons-material/RadioButtonUnchecked';
 import Refresh from '@mui/icons-material/RefreshRounded';
 import Settings from '@mui/icons-material/Settings';
-
-import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
-
-import { SEAConfigForm } from '@/components/SEAConfigForm';
-import { mod, ModStore, type ModDeployment } from '@/features/mod';
-import { modApi } from '@/services/mod';
-import { getCompositeId, usePopupState } from '@/shared';
+import SwapVert from '@mui/icons-material/SwapVert';
 
 import {
     alpha,
+    Chip,
     Grid,
     List,
     ListItem,
@@ -30,6 +25,12 @@ import {
 import NanoClamp from 'nanoclamp';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
+
+import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
+import { SEAConfigForm } from '@/components/SEAConfigForm';
+import { mod, ModStore, type ModDeployment } from '@/features/mod';
+import { modApi } from '@/services/mod';
+import { getCompositeId, useAppDispatch, usePopupState } from '@/shared';
 
 const ClampText = styled(NanoClamp)(({ theme }) => ({
     ...theme.typography.button,
@@ -52,10 +53,8 @@ interface ModListItemProps {
 
 export function ModListItem({ deployment }: ModListItemProps) {
     const { enqueueSnackbar } = useSnackbar();
-    const { state: menuState, open } = usePopupState({
-        popupId: 'mod-list-item-menu'
-    });
-
+    const dispatch = useAppDispatch();
+    const [uninstall] = modApi.useUninstallMutation();
     const [configFormOpen, setConfigFormOpen] = useState(false);
 
     const { state, scope, id } = deployment;
@@ -64,8 +63,8 @@ export function ModListItem({ deployment }: ModListItemProps) {
 
     const title = (
         <Stack direction="row" sx={{ alignItems: 'baseline' }}>
-            <Typography sx={{ paddingRight: '1rem', fontSize: '1.4rem' }}>{id}</Typography>
-            <Typography>v{state.version}</Typography>
+            <Typography sx={{ fontSize: '1.4rem' }}>{id}</Typography>
+            <Chip label={`v${state.version}`} />
         </Stack>
     );
 
@@ -78,15 +77,15 @@ export function ModListItem({ deployment }: ModListItemProps) {
         >
             <Grid
                 item
-                xs
+                xs={4}
                 sx={{ fontFamily: ({ fonts }) => fonts.property, textOverflow: 'ellipsis', overflow: 'hidden' }}
                 zeroMinWidth
             >
-                {cid}
+                {scope}
             </Grid>
 
             <Tooltip title={ins?.metadata.description}>
-                <Grid item xs={8} zeroMinWidth>
+                <Grid item xs zeroMinWidth>
                     <ClampText
                         is="p"
                         lines={1}
@@ -100,7 +99,7 @@ export function ModListItem({ deployment }: ModListItemProps) {
             {scope === 'builtin' && (
                 <Grid item xs={2} sx={{ alignSelf: 'flex-end' }}>
                     <Typography color="GrayText" variant="inherit" noWrap>
-                        预置
+                        内置
                     </Typography>
                 </Grid>
             )}
@@ -122,8 +121,11 @@ export function ModListItem({ deployment }: ModListItemProps) {
 
     const { data: configValues } = modApi.useConfigQuery(cid);
     const [updateConfig] = modApi.useSetConfigMutation();
-    // TODO 模组安装时保存schema, 编辑配置独立于部署状态
     const configurable = Boolean(configValues && ins?.metadata.configSchema);
+
+    const { state: menuState, open } = usePopupState({
+        popupId: 'mod-list-item-menu'
+    });
 
     return (
         <ListItem
@@ -162,7 +164,7 @@ export function ModListItem({ deployment }: ModListItemProps) {
                 >
                     <Settings fontSize="small" />
                 </IconButtonNoRipple>
-                <IconButtonNoRipple title="管理" onClick={open}>
+                <IconButtonNoRipple title="管理" disabled={state.builtin} onClick={open}>
                     <Build fontSize="small" />
                 </IconButtonNoRipple>
             </Stack>
@@ -183,18 +185,33 @@ export function ModListItem({ deployment }: ModListItemProps) {
             )}
             <Menu {...menuState}>
                 <MenuItem>
-                    <RadioButtonUnchecked fontSize="inherit" />
-                    <Typography variant="inherit">启用</Typography>
+                    {state.enable ? (
+                        <RadioButtonUnchecked fontSize="inherit" />
+                    ) : (
+                        <RadioButtonChecked fontSize="inherit" />
+                    )}
+                    <Typography variant="inherit">{state.enable ? '禁用' : '启用'}</Typography>
                 </MenuItem>
                 <MenuItem>
-                    <RadioButtonChecked fontSize="inherit" />
-                    <Typography variant="inherit">禁用</Typography>
+                    <SwapVert fontSize="inherit" />
+                    <Typography variant="inherit">加载优先级</Typography>
                 </MenuItem>
                 <MenuItem>
                     <Refresh fontSize="inherit" />
                     <Typography variant="inherit">重载</Typography>
                 </MenuItem>
-                <MenuItem>
+                <MenuItem
+                    onClick={async () => {
+                        try {
+                            dispatch(mod.dispose(cid));
+                            await uninstall(cid);
+                            enqueueSnackbar('模组已卸载', { variant: 'success' });
+                        } catch (error) {
+                            console.error(error);
+                            enqueueSnackbar('卸载失败', { variant: 'error' });
+                        }
+                    }}
+                >
                     <Delete fontSize="inherit" />
                     <Typography variant="inherit">卸载</Typography>
                 </MenuItem>

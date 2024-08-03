@@ -2,24 +2,23 @@ import fastifyMultipart from '@fastify/multipart';
 import type { FastifyPluginAsync } from 'fastify';
 import { serializerCompiler, validatorCompiler, type ZodTypeProvider } from 'fastify-type-provider-zod';
 import { createWriteStream } from 'node:fs';
-import path from 'node:path';
 import { pipeline } from 'node:stream/promises';
 import superjson from 'superjson';
 import { z } from 'zod';
-import { modsRoot } from '../../paths.ts';
 
-import type { ModManager } from './manager.ts';
+import type { ModManager } from '../../shared/ModManager.ts';
+import type { IModFileHandler } from '../../shared/utils.ts';
 import { InstallModOptionsSchema } from './schemas.ts';
 
-export const modUploadAndInstallRouter: FastifyPluginAsync<{ modManager: ModManager }> = async (
-    server,
-    { modManager }
-) => {
+export const modUploadAndInstallRouter: FastifyPluginAsync<{
+    modManager: ModManager;
+    modFileHandler: IModFileHandler;
+}> = async (server, { modManager, modFileHandler }) => {
     await server.register(fastifyMultipart, {
         attachFieldsToBody: 'keyValues',
 
         async onFile(part) {
-            return pipeline(part.file, createWriteStream(path.join(server.config.APP_ROOT, modsRoot, part.filename)));
+            return pipeline(part.file, createWriteStream(modFileHandler.buildPath(part.filename)));
         },
 
         isPartAFile(fieldName, contentType, _fileName) {
@@ -45,7 +44,7 @@ export const modUploadAndInstallRouter: FastifyPluginAsync<{ modManager: ModMana
             const data = options.data == undefined ? undefined : superjson.parse<object>(options.data);
 
             const r = await modManager.install(cid, { ...options, data });
-            return res.code(200).send(r);
+            return res.code(200).send({ result: r });
         }
     );
 };

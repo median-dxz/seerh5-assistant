@@ -1,7 +1,7 @@
 import { Writable } from 'node:stream';
+import { vi } from 'vitest';
 
-import { getCompositeId } from '../../src/shared';
-import { IStorage } from '../../src/shared/SEASConfigHandler';
+import { getCompositeId, type IStorage } from '../../src/shared/utils';
 
 export const CID_LIST = {
     1: getCompositeId('scope1', 'mod1'),
@@ -11,6 +11,8 @@ export const CID_LIST = {
 } as const;
 
 export const SOURCE_INDEX = 'index';
+
+export const storageDelete = vi.fn(async () => {});
 
 export class FakeStorage implements IStorage {
     constructor(public source: string) {}
@@ -30,7 +32,7 @@ export class FakeStorage implements IStorage {
     async save(data?: object) {
         this.data = data;
     }
-    async delete() {}
+    delete = storageDelete;
 }
 export const FakeStorageBuilder = (cid: string) => new FakeStorage(cid);
 

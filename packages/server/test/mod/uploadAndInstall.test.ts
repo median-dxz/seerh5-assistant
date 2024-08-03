@@ -1,33 +1,33 @@
 import { afterAll, test, vi } from 'vitest';
 
 import FormData from 'form-data';
-import { createWriteStream } from 'node:fs';
 import path from 'node:path';
-
 import superjson from 'superjson';
 
 import { ModIndex } from '../../src/configHandlers/ModIndex';
-import { ModManager } from '../../src/router/mod/manager';
+import { ModManager } from '../../src/shared/ModManager';
+import { praseCompositeId } from '../../src/shared/utils';
+
 import type { InstallModOptions } from '../../src/router/mod/schemas';
 import { modUploadAndInstallRouter } from '../../src/router/mod/uploadAndInstall';
-import { createServer } from '../../src/server';
-import { praseCompositeId } from '../../src/shared';
 
-import { modsRoot } from '../../src/paths';
+import { createServer } from '../../src/server';
+
 import { CID_LIST, FakeStorage, FakeStorageBuilder, FakeWriteStream } from './mocks';
 
 const modIndex = new ModIndex(new FakeStorage('index'));
 const modManager = new ModManager(modIndex, FakeStorageBuilder, FakeStorageBuilder);
+const modFileHandler = {
+    buildPath: vi.fn((filename: string) => filename),
+    remove: () => {},
+    root: ''
+};
 
 const { server, stop } = await createServer();
-await server.register(modUploadAndInstallRouter, { modManager, prefix: '/test' });
-
-vi.mock('fs', async (importOriginal) => {
-    const module = await importOriginal<typeof import('fs')>();
-    return {
-        ...module,
-        createWriteStream: vi.fn(() => new FakeWriteStream())
-    };
+await server.register(modUploadAndInstallRouter, {
+    modFileHandler,
+    modManager,
+    prefix: '/test'
 });
 
 const installSpy = vi.spyOn(modManager, 'install');
@@ -41,6 +41,14 @@ const contentType = 'application/javascript';
 afterAll(async () => {
     vi.restoreAllMocks();
     await stop();
+});
+
+vi.mock('fs', async (importOriginal) => {
+    const module = await importOriginal<typeof import('fs')>();
+    return {
+        ...module,
+        createWriteStream: vi.fn(() => new FakeWriteStream())
+    };
 });
 
 test('no querying string', async ({ expect }) => {
@@ -83,7 +91,7 @@ test('no mod file', async ({ expect }) => {
     data.append('options', JSON.stringify({ version: '1.0.0' } as InstallModOptions), {
         contentType: 'application/json'
     });
-    vi.mocked(createWriteStream).mockClear();
+    vi.mocked(modFileHandler.buildPath).mockClear();
 
     const response = await server.inject({
         method: 'POST',
@@ -93,7 +101,7 @@ test('no mod file', async ({ expect }) => {
     });
 
     expect(response.statusCode).toBe(200);
-    expect(createWriteStream).not.toHaveBeenCalled();
+    expect(modFileHandler.buildPath).not.toHaveBeenCalled();
 });
 
 test('install mod', async ({ expect }) => {
@@ -131,6 +139,6 @@ test('install mod', async ({ expect }) => {
     expect(response.statusCode).toBe(200);
     expect(modManager.install).toHaveBeenCalledOnce();
     expect(modManager.install).toHaveBeenCalledWith(cid, options);
-    expect(createWriteStream).toHaveBeenCalledOnce();
-    expect(createWriteStream).toHaveBeenCalledWith(path.join(server.config.APP_ROOT, modsRoot, filename));
+    expect(modFileHandler.buildPath).toHaveBeenCalledOnce();
+    expect(modFileHandler.buildPath).toHaveBeenCalledWith(path.join(filename));
 });

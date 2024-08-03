@@ -91,7 +91,7 @@ export function CommonTaskView({ isLevelView }: CommonTaskViewProps) {
         shallowEqual
     );
 
-    const { data: taskConfig, isFetching, error } = launcherApi.endpoints.allTaskConfig.useQuery();
+    const { data: taskConfig, isFetching, error } = launcherApi.endpoints.allTaskOptions.useQuery();
     const rowCache = useRef(new WeakMap<ModExportsRef, Row>());
 
     const mapRefToRow = (ref: ModExportsRef) => {
