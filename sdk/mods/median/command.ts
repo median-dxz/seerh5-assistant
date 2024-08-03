@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { scope } from '@/common/constants.json';
+import { scope } from '@/median/constants.json';
 import { PetElement, SEAPetStore, delay, socket } from '@sea/core';
 import type { Command, SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 

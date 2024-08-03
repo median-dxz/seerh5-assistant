@@ -2,10 +2,11 @@ import { Button, CircularProgress, Toolbar, alpha } from '@mui/material';
 import { useState } from 'react';
 
 import { delay } from '@sea/core';
+import { getCompositeId } from '@sea/mod-resolver';
 
 import { mod } from '@/features/mod';
 import { modApi } from '@/services/mod';
-import { getCompositeId, useAppDispatch } from '@/shared';
+import { useAppDispatch } from '@/shared';
 
 export function Header() {
     const dispatch = useAppDispatch();

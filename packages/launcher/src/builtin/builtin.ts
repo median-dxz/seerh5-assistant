@@ -1,4 +1,6 @@
-import { MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
+import { MOD_SCOPE_BUILTIN } from '@sea/mod-resolver';
+
+import { VERSION } from '@/constants';
 import { NOOP, delay, strategy as sg } from '@sea/core';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 import { task } from '@sea/mod-type';

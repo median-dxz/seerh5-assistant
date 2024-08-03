@@ -3,14 +3,14 @@ import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type'
 import { effect, reactive, stop, toRaw } from '@vue/reactivity';
 import { dequal } from 'dequal';
 
+import { buildMetadata, getCompositeId, type DefinedModMetadata } from '@sea/mod-resolver';
+
 import { trpcClient } from '@/services/shared';
-import { getCompositeId } from '@/shared';
 import type { CommonLoggerBuilder } from '@/shared/logger';
 
 import * as ctStore from '../catchTimeBinding/index';
 
 import { battleStore } from './store';
-import { buildMetadata, type DefinedModMetadata } from './utils';
 
 export type ModFactory = (context: SEAModContext<SEAModMetadata>) => Promise<SEAModExport> | SEAModExport;
 

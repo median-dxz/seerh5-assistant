@@ -12,7 +12,7 @@
     "noEmit": true,
     "strict": true,
     "lib": ["ESNext", "DOM"],
-    "types": ["vite/client", "@sea/core/types/seerh5", "@sea/core/types/egret"],
+    "types": ["vite/client", "@sea/core/types/seerh5", "@sea/core/types/egret", "@sea/mod-type/core-extended"],
     "paths": {
       "@/*": ["./mods/*"]
     }

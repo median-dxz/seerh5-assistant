@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { DateObjectSchema } from '../../shared/schemas.ts';
+import { DateObjectSchema } from '../../shared/utils.ts';
 
 export const InstallModOptionsSchema = z.object({
     version: z.string(),

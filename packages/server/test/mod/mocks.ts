@@ -1,13 +1,15 @@
 import { Writable } from 'node:stream';
 import { vi } from 'vitest';
 
-import { getCompositeId, type IStorage } from '../../src/shared/utils';
+import { getCompositeId } from '@sea/mod-resolver';
+
+import { type IStorage } from '../../src/shared/utils';
 
 export const CID_LIST = {
-    1: getCompositeId('scope1', 'mod1'),
-    2: getCompositeId('scope2', 'mod2'),
-    3: getCompositeId('scope3', 'mod3'),
-    test: getCompositeId('scope_test', 'mod_test')
+    1: getCompositeId({ scope: 'scope1', id: 'mod1' }),
+    2: getCompositeId({ scope: 'scope2', id: 'mod2' }),
+    3: getCompositeId({ scope: 'scope3', id: 'mod3' }),
+    test: getCompositeId({ scope: 'scope_test', id: 'id_test' })
 } as const;
 
 export const SOURCE_INDEX = 'index';

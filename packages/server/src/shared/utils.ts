@@ -1,16 +1,4 @@
-export const praseCompositeId = (cid: string) => {
-    const [scope, id] = cid.split('::');
-    return {
-        scope: scope.replaceAll('/:/', ':'),
-        id: id.replaceAll('/:/', ':')
-    };
-};
-
-export const getCompositeId = (scope: string, id: string) => {
-    scope = scope.replaceAll(':', '/:/');
-    id = id.replaceAll(':', '/:/');
-    return `${scope}::${id}`;
-};
+import { z } from 'zod';
 
 export interface IStorage {
     source: string;
@@ -24,3 +12,13 @@ export interface IModFileHandler {
     buildPath(filename: string): string;
     remove(cid: string): void | Promise<void>;
 }
+
+export const DateObjectSchema = z.custom<object>(
+    (data) =>
+        data !== null &&
+        typeof data === 'object' &&
+        (Object.getPrototypeOf(data) === Object.prototype ||
+            Array.isArray(data) ||
+            data instanceof Set ||
+            data instanceof Map)
+);

@@ -1,6 +1,6 @@
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 
-import { scope } from '@/common/constants.json';
+import { scope } from '@/median/constants.json';
 
 import { daily } from './daily';
 import { teamSign } from './team';

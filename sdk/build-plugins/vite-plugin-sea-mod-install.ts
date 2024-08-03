@@ -1,4 +1,5 @@
-import type { SEAConfigSchema, SEAModMetadata } from '@sea/mod-type';
+import { buildDefaultConfig, buildMetadata, getCompositeId } from '@sea/mod-resolver';
+import type { SEAModMetadata } from '@sea/mod-type';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -72,34 +73,4 @@ export function SEAModInstall({ server }: SEAModBuilderOptions) {
             }
         }
     ] as PluginOption[];
-}
-
-type DefinedModMetadata = Required<Omit<SEAModMetadata, 'configSchema' | 'data'>> &
-    Pick<SEAModMetadata, 'configSchema' | 'data'>;
-
-function getCompositeId({ id, scope }: Pick<DefinedModMetadata, 'id' | 'scope'>) {
-    scope = scope.replace(/:/g, '/:/');
-    id = id.replace(/:/g, '/:/');
-    return `${scope}::${id}`;
-}
-
-function buildMetadata(metadata: SEAModMetadata) {
-    let { scope, version, preload, description } = metadata;
-
-    scope = scope ?? 'external';
-    version = version ?? '0.0.1';
-    preload = preload ?? false;
-    description = description ?? '';
-
-    return { ...metadata, scope, version, preload, description } as DefinedModMetadata;
-}
-
-function buildDefaultConfig(configSchema: SEAConfigSchema) {
-    const keys = Object.keys(configSchema);
-    const defaultConfig: Record<string, string | number | boolean> = {};
-    keys.forEach((key) => {
-        const item = configSchema[key]!;
-        defaultConfig[key] = item.default;
-    });
-    return defaultConfig;
 }

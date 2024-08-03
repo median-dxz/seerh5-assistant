@@ -1,4 +1,4 @@
-import { scope } from '@/common/constants.json';
+import { scope } from '@/median/constants.json';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 import LevelCourageTower from './LevelCourageTower';
 import LevelElfKingsTrial from './LevelElfKingsTrial';

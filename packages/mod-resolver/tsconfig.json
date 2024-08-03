@@ -6,8 +6,9 @@
     "target": "esnext",
     "noEmit": true,
     "strict": true,
+    "allowImportingTsExtensions": true,
     // "skipLibCheck": false,
     "tsBuildInfoFile": "../../.tsbuildinfo/mod-resolver.tsbuildinfo"
   },
-  "include": ["index.ts"]
+  "files": ["index.ts", "constants.ts"]
 }

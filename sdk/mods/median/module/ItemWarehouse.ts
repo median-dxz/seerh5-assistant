@@ -1,4 +1,4 @@
-import { scope } from '@/common/constants.json';
+import { scope } from '@/median/constants.json';
 import type { Pet } from '@sea/core';
 import { SEAEventSource, SEAPetStore, hookPrototype, query, restoreHookedFn, spet, wrapper } from '@sea/core';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';

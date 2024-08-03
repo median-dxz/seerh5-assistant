@@ -4,9 +4,10 @@ import FormData from 'form-data';
 import path from 'node:path';
 import superjson from 'superjson';
 
+import { praseCompositeId } from '@sea/mod-resolver';
+
 import { ModIndex } from '../../src/configHandlers/ModIndex';
 import { ModManager } from '../../src/shared/ModManager';
-import { praseCompositeId } from '../../src/shared/utils';
 
 import type { InstallModOptions } from '../../src/router/mod/schemas';
 import { modUploadAndInstallRouter } from '../../src/router/mod/uploadAndInstall';
@@ -31,7 +32,7 @@ await server.register(modUploadAndInstallRouter, {
 });
 
 const installSpy = vi.spyOn(modManager, 'install');
-installSpy.mockImplementation(() => Promise.resolve({ success: true }));
+installSpy.mockImplementation(() => undefined);
 
 const { scope, id } = praseCompositeId(CID_LIST['test']);
 const cid = CID_LIST['test'];

@@ -1,6 +1,5 @@
 import Close from '@mui/icons-material/Close';
 
-import { buildDefaultConfig } from '@/shared';
 import {
     Button,
     CircularProgress,
@@ -11,9 +10,11 @@ import {
     IconButton,
     Stack
 } from '@mui/material';
-import type { SEAConfigSchema } from '@sea/mod-type';
+import { buildDefaultConfig } from '@sea/mod-resolver';
 import { useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+
+import type { SEAConfigSchema } from '@sea/mod-type';
 
 import { BattleItem } from './BattleItem';
 import { CheckboxItem } from './CheckboxItem';

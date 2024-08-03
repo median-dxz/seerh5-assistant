@@ -2,10 +2,11 @@ import { createAction, type PayloadAction } from '@reduxjs/toolkit';
 
 import * as seaCore from '@sea/core';
 import { battle, levelManager, seac, SEAEventSource, type SetupOptions } from '@sea/core';
+import { getCompositeId } from '@sea/mod-resolver';
 
 import { IS_DEV } from '@/constants';
 import { modApi } from '@/services/mod';
-import { createAppSlice, getCompositeId, startAppListening, type TaskRunner } from '@/shared';
+import { createAppSlice, startAppListening, type TaskRunner } from '@/shared';
 import type { AppDispatch } from '@/store';
 
 import * as ctService from '../catchTimeBinding/index';

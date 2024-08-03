@@ -1,4 +1,4 @@
-import { scope } from '@/common/constants.json';
+import { scope } from '@/median/constants.json';
 import { PotionId, battle, strategy as sg } from '@sea/core';
 import type { SEAModContext, SEAModExport, SEAModMetadata, Strategy } from '@sea/mod-type';
 

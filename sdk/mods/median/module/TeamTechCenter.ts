@@ -1,4 +1,4 @@
-import { scope } from '@/common/constants.json';
+import { scope } from '@/median/constants.json';
 import { hookPrototype, restoreHookedFn, SEAEventSource, socket, Subscription } from '@sea/core';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 

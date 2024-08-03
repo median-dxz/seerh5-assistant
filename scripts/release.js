@@ -1,11 +1,13 @@
 // @ts-check
 
+import concurrently from 'concurrently';
 import cp from 'node:child_process';
 import { existsSync } from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
+import { rimraf } from 'rimraf';
 
 const exec = promisify(cp.exec);
 const cwd = path.resolve(fileURLToPath(import.meta.url), '../..');
@@ -23,66 +25,102 @@ let modTypeTarball;
 /** @type {string} */
 let modResolverTarball;
 
-if (!existsSync(path.resolve(cwd, 'release'))) {
-    await fs.mkdir(path.resolve(cwd, 'release'));
-}
-
-// 清空release文件夹
-dir = await fs.readdir(path.resolve(cwd, 'release'));
-for (const file of dir) {
-    console.log(`deleted file: ${file}`);
-    await fs.unlink(path.resolve(cwd, 'release', file));
-}
-
-// 清空lib文件夹
-dir = await fs.readdir(path.resolve(sdkDir, 'lib'));
-for (const file of dir) {
-    if (file === '.gitkeep') continue;
-    await fs.unlink(path.resolve(sdkDir, 'lib', file));
-}
-
-await exec('pnpm clean', { cwd: coreDir })
-    .then(async () => {
-        console.log(`core: clean dist dir`);
-        const { stdout } = await exec('pnpm build', { cwd: coreDir });
-        console.log(`core: build: ${stdout}`);
-    })
-    .then(async () => {
-        const { stdout } = await exec('pnpm pack --pack-destination ../../release', { cwd: coreDir });
-        console.log(`core: tarball output: ${stdout}`);
-        coreTarball = stdout.trim();
-    })
-    .then(async () => {
-        const { stdout } = await exec('pnpm pack --pack-destination ../../release', { cwd: modTypeDir });
-        console.log(`mod type: tarball output: ${stdout}`);
-        modTypeTarball = stdout.trim();
-    })
-    .then(async () => {
-        const { stdout } = await exec('pnpm pack --pack-destination ../../release', { cwd: modResolverDir });
-        console.log(`mod type: tarball output: ${stdout}`);
-        modResolverTarball = stdout.trim();
+await Promise.all([
+    exec('pnpm clean', { cwd: coreDir }),
+    (async () => {
+        if (!existsSync(path.resolve(cwd, 'release'))) {
+            await fs.mkdir(path.resolve(cwd, 'release'));
+        }
+    })(),
+    rimraf(path.resolve(sdkDir, 'lib', '*.tgz'), { glob: true }),
+    rimraf(path.resolve(cwd, 'release', '*.tgz'), { glob: true })
+])
+    .then(
+        () =>
+            concurrently(
+                [
+                    {
+                        command: 'pnpm build',
+                        cwd: coreDir,
+                        name: 'core'
+                    },
+                    {
+                        command: 'pnpm build',
+                        cwd: modTypeDir,
+                        name: 'mod type'
+                    }
+                ],
+                {
+                    prefix: '[{time} build: {name}]',
+                    prefixColors: 'auto'
+                }
+            ).result
+    )
+    .then(() => {
+        const { commands, result } = concurrently(
+            [
+                {
+                    command: 'pnpm pack --pack-destination ../../release',
+                    cwd: coreDir,
+                    name: 'core'
+                },
+                {
+                    command: 'pnpm pack --pack-destination ../../release',
+                    cwd: modTypeDir,
+                    name: 'mod type'
+                },
+                {
+                    command: 'pnpm pack --pack-destination ../../release',
+                    cwd: modResolverDir,
+                    name: 'mod resolver'
+                }
+            ],
+            {
+                prefix: '[{time} pack tarball: {name}]',
+                prefixColors: 'auto'
+            }
+        );
+        commands.forEach((cmd) => {
+            cmd.stdout.subscribe((data) => {
+                const tarball = data.toString().trim();
+                switch (cmd.name) {
+                    case 'core':
+                        coreTarball = tarball;
+                        break;
+                    case 'mod type':
+                        modTypeTarball = tarball;
+                        break;
+                    case 'mod resolver':
+                        modResolverTarball = tarball;
+                        break;
+                    default:
+                        break;
+                }
+            });
+        });
+        return result;
     })
     .then(() =>
-        installTarball(
+        installTarball([
             ['@sea/core', coreTarball],
-            ['@sea/mod-type', modTypeTarball],
-            ['@sea/mod-resolver', modResolverTarball]
-        )
-    );
+            ['@sea/mod-type', modTypeTarball]
+        ])
+    )
+    .then(() => installTarball([['@sea/mod-resolver', modResolverTarball]], true));
 
 /**
  * @param {Array<[string, string]>} packages
  */
-async function installTarball(...packages) {
+async function installTarball(packages, devDependencies = false) {
     // packageName, tarball
     const pkgNames = packages.map(([name]) => name);
 
     // 卸载旧版本
-    try {
-        await exec(`npm uninstall ${pkgNames.join(' ')}`, { cwd: sdkDir });
-    } catch (e) {
-        console.error(e);
-    }
+    await concurrently([`npm uninstall ${pkgNames.join(' ')}`], {
+        cwd: sdkDir,
+        prefix: '[{time} uninstall: {name}]',
+        prefixColors: 'auto'
+    }).result;
 
     const tarballs = await Promise.all(
         packages.map(async ([, tarball]) => {
@@ -93,7 +131,9 @@ async function installTarball(...packages) {
         })
     );
 
-    const { stdout } = await exec(`npm install ${tarballs.join(' ')} -D`, { cwd: sdkDir });
-
-    console.log(stdout);
+    await concurrently([`npm install ${tarballs.join(' ')}${devDependencies ? ' -D' : ''}`], {
+        cwd: sdkDir,
+        prefix: '[{time} install: {name}]',
+        prefixColors: 'auto'
+    }).result;
 }

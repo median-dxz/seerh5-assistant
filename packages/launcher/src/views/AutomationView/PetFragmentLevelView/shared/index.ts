@@ -1,6 +1,7 @@
-import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
-import { getCompositeId } from '@/shared';
 import { PetFragmentLevel } from '@sea/core';
+import { MOD_SCOPE_BUILTIN, getCompositeId } from '@sea/mod-resolver';
+
+import { PET_FRAGMENT_LEVEL_ID } from '@/constants';
 
 declare const config: {
     xml: {

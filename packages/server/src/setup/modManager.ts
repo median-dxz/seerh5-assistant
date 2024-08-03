@@ -1,11 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
+import { praseCompositeId } from '@sea/mod-resolver';
+
 import type { ModIndex } from '../configHandlers/ModIndex.ts';
 import { configsRoot, modsRoot } from '../paths.ts';
 import { FileSystemStorage } from '../shared/FileSystemStorage.ts';
 import { ModManager } from '../shared/ModManager.ts';
-import { praseCompositeId, type IModFileHandler } from '../shared/utils.ts';
+import type { IModFileHandler } from '../shared/utils.ts';
 
 export async function setupModManager(appRoot: string, modIndex: ModIndex) {
     const modConfigStorageBuilder = (cid: string) => {

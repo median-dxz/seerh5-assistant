@@ -1,4 +1,4 @@
-import { scope } from '@/common/constants.json';
+import { scope } from '@/median/constants.json';
 import { NOOP, socket } from '@sea/core';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 
@@ -24,7 +24,7 @@ export default async function LocalPetSkin({ data: cloth, logger }: SEAModContex
     function install() {
         Object.defineProperty(FighterUserInfo.prototype, 'petInfoArr', {
             set: function (t) {
-                const skinId = (r: PetInfo) => (this.id == MainManager.actorID ? r.skinId : r._skinId ?? 0);
+                const skinId = (r: PetInfo) => (this.id == MainManager.actorID ? r.skinId : (r._skinId ?? 0));
                 this._petInfoArr = t;
                 this._petIDArr = [];
                 this._petCatchArr = [];
@@ -54,13 +54,13 @@ export default async function LocalPetSkin({ data: cloth, logger }: SEAModContex
             get: function () {
                 return cloth.changed.has(this._petID) && this.userID == MainManager.actorID
                     ? cloth.changed.get(this._petID)!.skinId
-                    : this._skinId ?? 0;
+                    : (this._skinId ?? 0);
             }
         });
 
         Object.defineProperty(PetInfo.prototype, 'skinId', {
             get: function (this: PetInfo) {
-                return cloth.changed.has(this.id) ? cloth.changed.get(this.id)!.skinId : this._skinId ?? 0;
+                return cloth.changed.has(this.id) ? cloth.changed.get(this.id)!.skinId : (this._skinId ?? 0);
             }
         });
 

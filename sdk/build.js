@@ -7,9 +7,9 @@ import { build } from 'vite';
 const require = createRequire(import.meta.url);
 
 /**
- * @type {typeof import('./mods/common/constants.json')}
+ * @type {typeof import('./mods/median/constants.json')}
  */
-const { scope } = require('./mods/common/constants.json');
+const { scope } = require('./mods/median/constants.json');
 const dirname = import.meta.dirname;
 
 const entries = [

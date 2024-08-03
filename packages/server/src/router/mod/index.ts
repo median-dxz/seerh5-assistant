@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
-import { DateObjectSchema } from '../../shared/schemas.ts';
-import { getCompositeId, praseCompositeId } from '../../shared/utils.ts';
+import { getCompositeId, praseCompositeId } from '@sea/mod-resolver';
+
+import { DateObjectSchema } from '../../shared/utils.ts';
 
 import { procedure, router } from '../trpc.ts';
 import { InstallModOptionsSchema } from './schemas.ts';
@@ -46,7 +47,7 @@ export const modRouter = router({
             const { scope, id, options } = input;
             const { modManager } = ctx;
             // ATTENTION: this endpoint is for builtin mods ONLY
-            return modManager.install(getCompositeId(scope, id), options);
+            return modManager.install(getCompositeId({ scope, id }), options);
         }),
 
     setEnable: procedure

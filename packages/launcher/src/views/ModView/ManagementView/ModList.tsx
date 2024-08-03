@@ -26,11 +26,13 @@ import NanoClamp from 'nanoclamp';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
 
+import { getCompositeId } from '@sea/mod-resolver';
+
 import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 import { SEAConfigForm } from '@/components/SEAConfigForm';
 import { mod, ModStore, type ModDeployment } from '@/features/mod';
 import { modApi } from '@/services/mod';
-import { getCompositeId, useAppDispatch, usePopupState } from '@/shared';
+import { useAppDispatch, usePopupState } from '@/shared';
 
 const ClampText = styled(NanoClamp)(({ theme }) => ({
     ...theme.typography.button,

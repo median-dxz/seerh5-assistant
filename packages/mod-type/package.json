@@ -4,13 +4,21 @@
   "type": "module",
   "version": "0.9.1",
   "exports": {
-    ".": "./index.ts"
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.js"
+    },
+    "./core-extended": {
+      "types": "./dist/core-extended.d.ts"
+    }
   },
   "files": [
-    "index.ts"
+    "dist"
   ],
-  "scripts": {},
-  "devDependencies": {
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
     "@sea/core": "workspace:*"
   },
   "peerDependencies": {

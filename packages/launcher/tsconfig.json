@@ -18,7 +18,7 @@
     "paths": {
       "@/*": ["./*"]
     },
-    "types": ["vite/client", "@sea/core/types/seerh5", "@sea/core/types/egret"]
+    "types": ["vite/client", "@sea/core/types/seerh5", "@sea/core/types/egret", "@sea/mod-type/core-extended"]
   },
   "include": ["src"]
 }

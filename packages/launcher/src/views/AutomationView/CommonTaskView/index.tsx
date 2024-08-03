@@ -9,24 +9,18 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { shallowEqual } from 'react-redux';
 
 import { LevelAction } from '@sea/core';
+import { getCompositeId, MOD_SCOPE_BUILTIN } from '@sea/mod-resolver';
 
 import { DataLoading } from '@/components/DataLoading';
 import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 import { SEAConfigForm } from '@/components/SEAConfigForm';
 import { PanelField, PanelTable, type PanelColumn } from '@/components/SEAPanelTable';
 import { SeaTableRow } from '@/components/styled/TableRow';
-import { MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID } from '@/constants';
+import { PET_FRAGMENT_LEVEL_ID } from '@/constants';
 import { mod, ModStore, type ModExportsRef, type TaskInstance } from '@/features/mod';
 import { taskScheduler } from '@/features/taskScheduler';
 import { launcherApi } from '@/services/launcher';
-import {
-    getCompositeId,
-    getTaskOptions,
-    startAppListening,
-    useAppDispatch,
-    useAppSelector,
-    type TaskRunner
-} from '@/shared';
+import { getTaskOptions, startAppListening, useAppDispatch, useAppSelector, type TaskRunner } from '@/shared';
 
 //      name: '作战实验室'
 //      name: '六界神王殿',

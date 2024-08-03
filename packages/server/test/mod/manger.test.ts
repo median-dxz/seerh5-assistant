@@ -68,8 +68,7 @@ test('load config and data', async ({ expect, modManager }) => {
 test('install a new mod with config and data', async ({ expect, modManager }) => {
     const cid = CID_LIST[3];
 
-    const result = await modManager.install(cid, installOptions1);
-    expect(result).toEqual({ success: true });
+    await modManager.install(cid, installOptions1);
     expect(modManager.index.state(cid)).toEqual({
         version: '1.0.0',
         builtin: false,
@@ -86,8 +85,7 @@ test('update a mod, should not change the data and config', async ({ expect, mod
     const cid = CID_LIST[3];
 
     await modManager.install(cid, installOptions1);
-    const result = await modManager.install(cid, installOptions2);
-    expect(result).toEqual({ success: true });
+    await modManager.install(cid, installOptions2);
 
     expect(await modManager.data(cid)).toEqual({ key: 'value' });
     expect(await modManager.config(cid)).toEqual({ key: 'value' });
@@ -97,11 +95,11 @@ test('install a mod that already exist', async ({ expect, modManager }) => {
     const cid = CID_LIST[3];
 
     await modManager.install(cid, installOptions1);
-    const result = await modManager.install(cid, { ...installOptions2, update: false });
-    expect(result).toEqual({
-        success: false,
-        reason: 'there has existed a mod with the same id and scope already'
-    });
+    try {
+        await modManager.install(cid, { ...installOptions2, update: false });
+    } catch (error) {
+        expect((error as Error).message).toBe('there has existed a mod with the same id and scope already');
+    }
 });
 
 test('uninstall a mod', async ({ expect, modManager }) => {
@@ -109,9 +107,7 @@ test('uninstall a mod', async ({ expect, modManager }) => {
     await modManager.install(cid, installOptions1);
 
     storageDelete.mockClear();
-    const result = await modManager.uninstall(cid);
-
-    expect(result).toEqual({ success: true });
+    await modManager.uninstall(cid);
 
     expect(modManager.index.state(cid)).toBeUndefined();
     expect(await modManager.data(cid)).toBeUndefined();

@@ -4,11 +4,12 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "target": "esnext",
-    "noEmit": true,
     "strict": true,
+    "outDir": "dist",
+    "baseUrl": "./",
+    "declaration": true,
     // "skipLibCheck": false,
-    "tsBuildInfoFile": "../../.tsbuildinfo/mod-type.tsbuildinfo",
-    "types": ["@sea/core/types/seerh5", "@sea/core/types/egret"]
+    "tsBuildInfoFile": "../../.tsbuildinfo/mod-type.tsbuildinfo"
   },
-  "include": ["index.ts"]
+  "files": ["index.ts", "core-extended.ts"]
 }

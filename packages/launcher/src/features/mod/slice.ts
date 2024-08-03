@@ -1,9 +1,10 @@
 import { createEntityAdapter, nanoid, type EntityState } from '@reduxjs/toolkit';
 
+import { getCompositeId } from '@sea/mod-resolver';
 import type { SEAModExport } from '@sea/mod-type';
 
 import { modApi } from '@/services/mod';
-import { createAppSlice, getCompositeId, startAppListening } from '@/shared';
+import { createAppSlice, startAppListening } from '@/shared';
 import { CommonLoggerBuilder } from '@/shared/logger';
 import type { AppDispatch, AppRootState } from '@/store';
 

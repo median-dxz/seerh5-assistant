@@ -1,4 +1,4 @@
-import { DifficultyText, MOD_SCOPE_BUILTIN, PET_FRAGMENT_LEVEL_ID, VERSION } from '@/constants';
+import { DifficultyText, PET_FRAGMENT_LEVEL_ID, VERSION } from '@/constants';
 import {
     PetFragmentLevelDifficulty as Difficulty,
     LevelAction,
@@ -7,8 +7,10 @@ import {
     engine,
     socket
 } from '@sea/core';
+import { MOD_SCOPE_BUILTIN } from '@sea/mod-resolver';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 import { task } from '@sea/mod-type';
+
 import type { IPetFragmentRunner, PetFragmentLevelData, PetFragmentOptions } from './types';
 
 export const metadata = {

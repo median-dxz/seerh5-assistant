@@ -2,13 +2,20 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import superjson from 'superjson';
 
+import {
+    buildDefaultConfig,
+    buildMetadata,
+    getCompositeId,
+    MOD_SCOPE_BUILTIN,
+    praseCompositeId,
+    type DefinedModMetadata
+} from '@sea/mod-resolver';
 import type { SEAModMetadata } from '@sea/mod-type';
 import type { ApiRouter, InstallModOptions } from '@sea/server';
 
-import { IS_DEV, MOD_BUILTIN_UPDATE_STRATEGY, MOD_SCOPE_BUILTIN, VERSION } from '@/constants';
-import type { DefinedModMetadata, ModDeploymentInfo, ModFactory } from '@/features/mod';
-import { buildMetadata, ModMetadataSchema, prefetchModMetadata } from '@/features/mod/utils'; // 阻止循环导入
-import { buildDefaultConfig, getCompositeId, praseCompositeId } from '@/shared';
+import { IS_DEV, MOD_BUILTIN_UPDATE_STRATEGY, VERSION } from '@/constants';
+import type { ModDeploymentInfo, ModFactory } from '@/features/mod';
+import { ModMetadataSchema, prefetchModMetadata } from '@/features/mod/utils'; // 阻止循环导入
 
 import { baseQuery, optionalTags, trpcClient } from '../shared';
 
