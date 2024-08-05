@@ -1,4 +1,5 @@
-import { getLogger } from '../common/log.js';
+import { getLogger } from '../common/logger.js';
+import { IS_DEV } from '../common/utils.js';
 import type { GameConfigMap } from '../constant/TypeMaps.js';
 
 type PredicateFn<T> = (value: T) => boolean;
@@ -36,7 +37,8 @@ export const GameConfigRegistry = {
 
     register<T extends keyof GameConfigMap>(type: T, entity: GameConfigRegistryEntity<GameConfigMap[T]>) {
         if (gameConfigRegistryEntityMap.has(type)) {
-            logger.warn(`[error]: 查询 ${type} 已经被注册, 这将导致之前的查询被覆盖, 请检查可能的冲突问题`);
+            IS_DEV && console.warn(`register: 查询 ${type} 已经被注册, 这将导致之前的查询被覆盖, 请检查可能的冲突问题`);
+            logger.warn(`register: ${type} 查询将被覆盖`);
         }
 
         const { objectMap, objectName, objectId } = entity;
@@ -91,9 +93,11 @@ export const GameConfigRegistry = {
             findByName,
             getIdByName
         } satisfies GameConfigQuery<GameConfigMap[T]>);
+        logger.info(`register: ${type}`);
     },
 
     unregister<T extends keyof GameConfigMap>(type: T) {
+        logger.info(`unregister: ${type}`);
         return gameConfigRegistryEntityMap.delete(type);
     }
 };

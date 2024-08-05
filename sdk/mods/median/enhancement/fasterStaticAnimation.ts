@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { experiment_hookConstructor, hookPrototype } from '@sea/core';
+import { hookConstructor, hookPrototype } from '@sea/core';
 
 /** parallel the skill animation in static animation mode */
 export function fasterStaticAnimation() {
@@ -43,7 +43,7 @@ export function fasterStaticAnimation() {
         }
     });
 
-    experiment_hookConstructor(RenewPPEffect, 'RenewPPEffect', function (ins) {
+    hookConstructor(RenewPPEffect, 'RenewPPEffect', function (ins) {
         if (FightManager.fightAnimateMode === 1) {
             ins.timer?.removeEventListener(egret.TimerEvent.TIMER, ins.closeTxt, ins);
             ins.timer?.stop();

@@ -1,5 +1,5 @@
 export type { LevelBattle, LevelRunner } from './level/types.js';
-export type { Trigger } from './manager.js';
+export type { FightDelaySetting, Trigger } from './manager.js';
 export type { RoundData } from './provider.js';
 export type { Matcher, MoveHandler, MoveStrategy } from './strategy.js';
 

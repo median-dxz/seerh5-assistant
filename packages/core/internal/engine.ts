@@ -1,5 +1,5 @@
-import { getLogger } from '../common/log.js';
-import type { AnyFunction } from '../common/utils.js';
+import { getLogger } from '../common/logger.js';
+import { IS_DEV, type AnyFunction } from '../common/utils.js';
 
 import { lowerHp } from './function/lowerHp.js';
 import { switchBag } from './function/switchBag.js';
@@ -25,6 +25,11 @@ import { inferCurrentModule } from './ui/inferCurrentModule.js';
 
 const logger = getLogger('engine');
 
+const warnOverride = (func: string) => {
+    IS_DEV && console.warn(`engine 已经存在 ${func} 方法, 该方法将被覆盖, 请检查潜在的冲突问题`);
+    logger.warn(`extend: ${func} 方法将被覆盖`);
+};
+
 export const engine: SEAEngine = {
     lowerHp,
     switchBag,
@@ -44,25 +49,27 @@ export const engine: SEAEngine = {
     findObject,
     imageButtonListener,
     inferCurrentModule,
-
     extend(func) {
         if (typeof func === 'function') {
             if (Object.hasOwn(engine, func.name)) {
-                logger.warn(`engine 已经存在 ${func.name} 方法, 该方法将被覆盖, 请检查潜在的冲突问题`);
+                warnOverride(func.name);
             }
-            (engine as unknown as Record<string, AnyFunction>)[func.name] = func;
+            engine[func.name] = func;
+            logger.info(`extend: ${func.name}`);
         } else {
-            for (const key of Object.keys(func)) {
+            for (const [key, fn] of Object.entries(func)) {
                 if (Object.hasOwn(engine, key)) {
-                    logger.warn(`engine 已经存在 ${key} 方法, 该方法将被覆盖, 请检查潜在的冲突问题`);
+                    warnOverride(key);
                 }
+                engine[key] = fn;
+                logger.info(`extend: ${key}`);
             }
-            Object.assign(engine, func);
         }
     }
 };
 
 export interface SEAEngine {
+    [func: string]: AnyFunction;
     lowerHp: typeof lowerHp;
     switchBag: typeof switchBag;
     buyPetItem: typeof buyPetItem;

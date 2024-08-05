@@ -4,17 +4,24 @@ import type { MoveStrategy } from './strategy.js';
 
 export type Trigger = () => void;
 
+export interface FightDelaySetting {
+    fightInterval: number;
+    fightEndTimeout: number;
+}
+
 const context: {
     strategy: undefined | MoveStrategy;
     triggerLock: null | ((value: boolean | PromiseLike<boolean>) => void);
     delayTimeout: null | Promise<void>;
     // for strategy
     rotatingCount: Map<string, number>;
-} = {
+} & FightDelaySetting = {
     strategy: undefined,
     triggerLock: null,
     delayTimeout: null,
-    rotatingCount: new Map()
+    rotatingCount: new Map(),
+    fightInterval: 4500,
+    fightEndTimeout: 2000
 };
 
 function takeover(trigger: Trigger, _strategy?: MoveStrategy): Promise<boolean> {
@@ -72,10 +79,16 @@ function clear() {
     context.rotatingCount = new Map<string, number>();
 }
 
+function setFightDelay({ fightInterval, fightEndTimeout }: FightDelaySetting) {
+    context.fightInterval = fightInterval;
+    context.fightEndTimeout = fightEndTimeout;
+}
+
 const manager = {
     takeover,
     resolveStrategy,
-    clear
+    clear,
+    setFightDelay
 };
 
 export { context, manager };

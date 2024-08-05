@@ -16,7 +16,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc -b"
+    "build": "tsc --build"
   },
   "dependencies": {
     "@sea/core": "workspace:*"

@@ -11,16 +11,17 @@
     "build": "tsc && node ./build.js",
     "watch:tsc": "tsc --watch"
   },
-  "devDependencies": {
-    "@sea/mod-resolver": "file:lib/sea-mod-resolver-0.9.1.tgz",
-    "superjson": "^2.2.1",
-    "typescript": "^5.5.4",
-    "vite": "^5.3.5"
-  },
   "dependencies": {
     "@sea/core": "file:lib/sea-core-1.0.0.tgz",
     "@sea/mod-type": "file:lib/sea-mod-type-0.9.1.tgz",
     "dayjs": "^1.11.12"
+  },
+  "devDependencies": {
+    "@sea/mod-resolver": "file:lib/sea-mod-resolver-0.9.1.tgz",
+    "@types/node": "^22.1.0",
+    "superjson": "^2.2.1",
+    "typescript": "^5.5.4",
+    "vite": "^5.3.5"
   },
   "engines": {
     "node": ">=20.11.0"

@@ -1,4 +1,4 @@
-export type { CoreLogEvent } from './common/log.js';
+export type { SEACLogEvent, Serializable } from './common/logger.js';
 export type { AnyFunction, Constructor, ValueOf, WithClass } from './common/utils.js';
 
 export * from './battle/index.js';
@@ -7,7 +7,7 @@ export {
     assertIsWrappedFunction,
     debounce,
     delay,
-    experiment_hookConstructor,
+    hookConstructor,
     hookFn,
     hookPrototype,
     NOOP,

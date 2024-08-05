@@ -3,6 +3,8 @@ import { scope } from '@/median/constants.json';
 import { PetElement, SEAPetStore, delay, socket } from '@sea/core';
 import type { Command, SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 
+setTimeout;
+
 declare var pvePetYinzi: any;
 
 export const metadata = {

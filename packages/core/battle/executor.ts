@@ -1,10 +1,11 @@
-import { getLogger } from '../common/log.js';
-import { delay } from '../common/utils.js';
+import { getLogger } from '../common/logger.js';
+import { delay, IS_DEV } from '../common/utils.js';
 import { socket } from '../internal/index.js';
 
-const logger = getLogger('battle');
+const logger = getLogger('battle executor');
 
 function auto() {
+    logger.debug(`auto`);
     TimerManager.countDownOverHandler();
     return true;
 }
@@ -13,8 +14,9 @@ async function useSkill(skillId?: number) {
     if (!FighterModelFactory.playerMode || !skillId) {
         return false;
     }
+
     if (skillId < 0) {
-        logger.warn(`非法的skillId: ${skillId}`);
+        IS_DEV && console.warn(`非法的skillId: ${skillId}`);
         return false;
     }
 
@@ -25,7 +27,7 @@ async function useSkill(skillId?: number) {
         await delay(300);
     }
 
-    logger.debug(`useSkill: ${SkillXMLInfo.getName(skillId)} ${skillId}`);
+    logger.debug(`useSkill: ${skillId} ${SkillXMLInfo.getName(skillId)}`);
     await socket.sendByQueue(CommandID.USE_SKILL, [skillId]);
 
     return true;
@@ -41,8 +43,9 @@ async function useItem(itemId?: number) {
     if (!FighterModelFactory.playerMode || !itemId) {
         return false;
     }
+
     if (itemId < 0) {
-        logger.warn(`非法的itemId: ${itemId}`);
+        IS_DEV && console.warn(`非法的itemId: ${itemId}`);
         return false;
     }
 
@@ -59,7 +62,7 @@ async function useItem(itemId?: number) {
         await delay(300);
         return true;
     } catch (error) {
-        error instanceof Error && logger.warn(`使用物品失败: id: ${itemId} ${error.message}`);
+        error instanceof Error && console.error(`使用物品失败: itemId: ${itemId}`, error);
         return false;
     }
 }
@@ -69,7 +72,7 @@ async function switchPet(index?: number) {
         return false;
     }
     if (index < 0) {
-        logger.warn(`非法的petIndex ${index}`);
+        IS_DEV && console.warn(`非法的petIndex ${index}`);
         return false;
     }
 
@@ -87,7 +90,7 @@ async function switchPet(index?: number) {
         await delay(300);
         return true;
     } catch (error) {
-        error instanceof Error && logger.warn(`切换精灵失败: index: ${index} ${error.message}`);
+        error instanceof Error && console.error(`切换精灵失败: index: ${index}`, error);
         return false;
     }
 }

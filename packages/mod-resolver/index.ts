@@ -1,5 +1,5 @@
 import type { SEAFormItemSchema, SEAModMetadata } from '@sea/mod-type';
-import { MOD_SCOPE_DEFAULT } from './constants.ts';
+import { MOD_SCOPE_DEFAULT } from './constants.js';
 
 export const praseCompositeId = (cid: string) => {
     const [scope, id] = cid.split('::');
@@ -39,4 +39,4 @@ export function buildDefaultConfig(configSchema: Record<string, SEAFormItemSchem
     return defaultConfig;
 }
 
-export * from './constants.ts';
+export * from './constants.js';

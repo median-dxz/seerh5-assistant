@@ -1,5 +1,5 @@
-import { getLogger } from '../common/log.js';
-import type { ValueOf } from '../common/utils.js';
+import { getLogger } from '../common/logger.js';
+import { IS_DEV, type ValueOf } from '../common/utils.js';
 import type { HookPointDataMap, SocketResponseMap as ResponseMap } from '../constant/TypeMaps.js';
 
 type BufferData = HookPointDataMap['socket:receive']['buffer'];
@@ -18,15 +18,19 @@ export const SocketDeserializerRegistry = {
         deserializer: DataDeserializer<TData>
     ) {
         if (DeserializerMap.has(cmd)) {
-            logger.warn(
-                `[error]: 用于 ${cmd} 的反序列化器已经被注册, 这将导致之前的反序列化器被覆盖, 请检查可能的冲突问题`
-            );
+            IS_DEV &&
+                console.warn(
+                    `[error]: 用于 ${cmd} 的反序列化器已经被注册, 这将导致之前的反序列化器被覆盖, 请检查可能的冲突问题`
+                );
+            logger.warn(`register: ${cmd} 已经被注册`);
         }
         DeserializerMap.set(cmd, deserializer);
+        logger.info(`register: ${cmd}`);
     },
 
     unregister<TCmd extends number>(cmd: TCmd) {
         DeserializerMap.delete(cmd);
+        logger.info(`unregister: ${cmd}`);
     },
 
     getDeserializer<TCmd extends number>(cmd: TCmd): DataDeserializer<ResponseMap[TCmd]> {

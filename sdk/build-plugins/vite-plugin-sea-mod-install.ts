@@ -15,17 +15,24 @@ export function SEAModInstall({ server }: SEAModBuilderOptions) {
         {
             name: 'mod:install',
             async writeBundle(options, bundle) {
+                if (server.endsWith('/')) server = server.slice(0, -1);
+                if (!server.startsWith('http')) server = 'http://' + server;
+
+                try {
+                    await fetch(`${server}/api/mods`);
+                } catch (e) {
+                    this.error(`Failed to connect to server: ${e.message}`);
+                }
+
                 let { dir } = options;
                 if (!dir) dir = path.resolve(process.cwd(), 'dist');
                 let filename = bundle[Object.keys(bundle)[0]].fileName;
                 filename = path.resolve(dir, filename);
+                const file = await fs.readFile(filename);
                 const modImport = (await import(pathToFileURL(filename).toString())) as { metadata: SEAModMetadata };
+
                 const metadata = buildMetadata(modImport.metadata);
                 const { scope, id } = metadata;
-                const file = await fs.readFile(filename);
-
-                this.info('metadata:');
-                console.log(metadata);
 
                 const modInstallOptions = {
                     builtin: false,
@@ -36,15 +43,6 @@ export function SEAModInstall({ server }: SEAModBuilderOptions) {
                     version: metadata.version
                 };
 
-                if (server.endsWith('/')) server = server.slice(0, -1);
-                if (!server.startsWith('http')) server = 'http://' + server;
-
-                try {
-                    await fetch(`${server}/api/mods`);
-                } catch (e) {
-                    this.error(`Failed to connect to server: ${e.message}`);
-                }
-
                 const query = new URLSearchParams({
                     cid: getCompositeId(metadata)
                 });
@@ -53,6 +51,9 @@ export function SEAModInstall({ server }: SEAModBuilderOptions) {
                 if (metadata.data !== undefined) {
                     modSerializedData = superjson.stringify(metadata.data);
                 }
+
+                this.info('metadata:');
+                console.log(metadata);
 
                 const data = new FormData();
                 data.append(

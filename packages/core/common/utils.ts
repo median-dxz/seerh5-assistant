@@ -1,4 +1,4 @@
-import { getLogger as logger } from './log.js';
+import { getLogger } from './logger.js';
 
 /* eslint-disable */
 export type AnyFunction = (...args: any[]) => any;
@@ -6,6 +6,8 @@ export type Constructor<T> = { new (...args: any[]): T };
 export type ValueOf<T> = T[keyof T];
 export type WithClass<T> = T & { __class__: string };
 export const NOOP = () => {};
+// @ts-expect-error
+export const IS_DEV = process.env.NODE_ENV !== 'production';
 
 export class HookedSymbol {
     static readonly kOriginal = Symbol('originalFunction');
@@ -40,6 +42,8 @@ export function throttle<F extends AnyFunction>(func: F, time: number) {
         }, time);
     };
 }
+
+const hookLogger = getLogger('hook');
 
 type InferPromiseResultType<T> = T extends PromiseLike<infer TResult> ? TResult : T;
 type ConvertVoid<T> = T extends void ? undefined : T;
@@ -150,8 +154,11 @@ export function hookFn<T extends object, K extends keyof T>(target: T, funcName:
     let func = target[funcName] as AnyFunction;
     if (typeof func !== 'function') return;
 
+    hookLogger.info(`hookFn: ${String(funcName)}`);
+
     if (assertIsHookedFunction(func)) {
-        logger('hookFn').warn(`检测到对 ${String(funcName)} 的重复hook行为, 最后一次hook将覆盖之前的所有修改`);
+        IS_DEV && console.warn(`检测到对 ${String(funcName)} 的重复hook行为, 最后一次hook将覆盖之前的所有修改`);
+        hookLogger.warn(`hookFn: ${String(funcName)} 作为HookedFn被覆写`);
     }
 
     while (assertIsHookedFunction(func)) {
@@ -169,6 +176,8 @@ export function hookFn<T extends object, K extends keyof T>(target: T, funcName:
 export function restoreHookedFn<T extends object, K extends keyof T>(target: T, funcName: K) {
     let func = target[funcName] as AnyFunction;
     if (typeof func !== 'function') return;
+
+    hookLogger.info(`restoreHookedFn: ${String(funcName)}`);
 
     while (assertIsHookedFunction(func)) {
         func = func[HookedSymbol.kOriginal];
@@ -190,7 +199,7 @@ export function hookPrototype<T extends HasPrototype, K extends keyof T['prototy
     proto && hookFn(proto, funcName, override);
 }
 
-export function experiment_hookConstructor<TClass extends Constructor<any>>(
+export function hookConstructor<TClass extends Constructor<any>>(
     classType: TClass,
     className: string,
     override: (ins: InstanceType<TClass>, ...args: ConstructorParameters<TClass>) => void

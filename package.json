@@ -16,10 +16,11 @@
     "launcher:dev": "pnpm -C ./packages/launcher run dev",
     "core:build": "pnpm --filter \"@sea/core\" run build",
     "tsc:build": "tsc --build --verbose",
-    "workspace:build": "node ./scripts/build-server.js",
-    "workspace:sync": "node ./scripts/sync.js",
-    "release": "node ./scripts/release.js",
-    "prepare": "husky"
+    "build-server": "node ./scripts/build-server.js",
+    "sync": "node ./scripts/sync.js",
+    "build": "node ./scripts/build.js",
+    "prepare": "husky",
+    "clean": "rimraf ./.tsbuildinfo"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
@@ -29,15 +30,15 @@
     "concurrently": "^8.2.2",
     "eslint": "^9.8.0",
     "eslint-plugin-react": "^7.35.0",
-    "eslint-plugin-react-hooks": "5.1.0-rc-14a4699f-20240725",
+    "eslint-plugin-react-hooks": "^5.1.0-rc",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
     "husky": "^9.1.4",
-    "lint-staged": "^15.2.7",
+    "lint-staged": "^15.2.8",
     "prettier": "^3.3.3",
     "rimraf": "^6.0.1",
     "typescript": "^5.5.4",
-    "typescript-eslint": "8.0.0-alpha.54",
+    "typescript-eslint": "8.0.0-alpha.62",
     "vite": "^5.3.5",
     "vitest": "2.0.3"
   },
@@ -46,11 +47,5 @@
   },
   "lint-staged": {
     "*.{ts,tsx,json,css,md}": "prettier --write"
-  },
-  "pnpm": {
-    "overrides": {
-      "braces@<3.0.3": ">=3.0.3",
-      "ws@>=8.0.0 <8.17.1": ">=8.17.1"
-    }
   }
 }

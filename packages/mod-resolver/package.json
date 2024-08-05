@@ -4,13 +4,14 @@
   "type": "module",
   "version": "0.9.1",
   "exports": {
-    ".": "./index.ts"
+    ".": "./dist/index.js"
   },
   "files": [
-    "index.ts",
-    "constants.ts"
+    "dist"
   ],
-  "scripts": {},
+  "scripts": {
+    "build": "tsc --build"
+  },
   "dependencies": {
     "@sea/mod-type": "workspace:*"
   },

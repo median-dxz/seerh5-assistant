@@ -1,8 +1,10 @@
 import type { Subscription } from 'rxjs';
 import { Observable, Subject } from 'rxjs';
-import { getLogger } from '../common/log.js';
-import type { AnyFunction, ValueOf } from '../common/utils.js';
+import { getLogger } from '../common/logger.js';
+import { IS_DEV, type AnyFunction, type ValueOf } from '../common/utils.js';
 import type { HookPointDataMap } from '../constant/TypeMaps.js';
+
+const logger = getLogger('HookPointRegistry');
 
 interface DataSteam<TEvents extends object> {
     type: keyof TEvents;
@@ -24,8 +26,10 @@ export const HookPointRegistry = {
     subject$: new Subject<HookEventData>(),
 
     register<T extends keyof HookPointDataMap>(name: T, hookResolver: HookResolver<HookPointDataMap[T]>) {
+        logger.info(`register: ${name}`);
         if (hookDataSubscriptionMap.has(name)) {
-            getLogger('HookPointRegistry').error(`HookPoint ${name} 已经被注册, 如果这是有意的, 请先取消之前的注册`);
+            IS_DEV && console.error(`HookPoint ${name} 已经被注册, 如果这是有意的, 请先注销之前的注册`);
+            logger.error(`register: ${name} 已经被注册`);
             return;
         }
 
@@ -42,6 +46,7 @@ export const HookPointRegistry = {
     unregister<T extends keyof HookPointDataMap>(name: T) {
         const subscription = hookDataSubscriptionMap.get(name);
         if (subscription) {
+            logger.info(`unregister: ${name}`);
             subscription.unsubscribe();
             hookDataSubscriptionMap.delete(name);
         }

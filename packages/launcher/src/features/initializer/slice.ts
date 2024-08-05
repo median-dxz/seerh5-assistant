@@ -93,9 +93,8 @@ startAppListening({
             await navigator.serviceWorker.register(!IS_DEV ? '/sw.js' : '/dev-sw.js?dev-sw');
         }
 
-        // setup sea core for development environment
-        seac.devMode = IS_DEV;
-        window.sea = { ...window.sea, ...seaCore };
+        // extract sea core to window in development environment
+        IS_DEV && (window.sea = { ...window.sea, ...seaCore });
 
         const ac = new AbortController();
         seac.abortGameLoadSignal = ac.signal;

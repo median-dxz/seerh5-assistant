@@ -1,6 +1,8 @@
-import { event$ } from '../common/log.js';
+import { Subject } from 'rxjs';
+
+import type { SEACLogEvent } from '../common/logger.js';
+import { logEvent$ } from '../common/logger.js';
 import type { AnyFunction } from '../common/utils.js';
-import { SEAEventSource } from '../event-source/index.js';
 
 import initBattle from '../battle/internal.js';
 import initPet from '../pet-helper/internal.js';
@@ -31,15 +33,15 @@ export class CoreLoader {
         }
     }
 
-    readonly event$ = new SEAEventSource(event$);
+    readonly log$ = new Subject<SEACLogEvent>();
 
-    devMode = false;
     abortGameLoadSignal: undefined | AbortSignal;
 
     constructor() {
         if (checkEnv()) {
             console.log(`%c[SEAC] Version: %c${VERSION}`, 'color: #ff00ff', 'color: #4527a0');
             window.sea = {
+                ...window.sea,
                 SEER_READY_EVENT,
                 SeerH5Ready: false,
                 seac: this
@@ -49,6 +51,8 @@ export class CoreLoader {
             this.prependSetup('afterFirstShowMainPanel', registerGameConfig);
             this.prependSetup('afterFirstShowMainPanel', initPet);
             this.prependSetup('afterFirstShowMainPanel', initBattle);
+
+            logEvent$.subscribe(this.log$);
         } else {
             console.warn(`[SEAC] Check runtime failed. Core will not be loaded.`);
         }
@@ -88,23 +92,6 @@ export class CoreLoader {
                 await this.setup('afterFirstShowMainPanel');
                 resolve();
                 this.setupFns = [];
-                this.event$.source$.subscribe(({ module, msg, level }) => {
-                    msg = `[${module}] ${msg}`;
-                    switch (level) {
-                        case 'error':
-                            console.error(msg);
-                            break;
-                        case 'warn':
-                            console.warn(msg);
-                            break;
-                        case 'info':
-                            console.info(msg);
-                            break;
-                        case 'debug':
-                            this.devMode && console.log(msg);
-                            break;
-                    }
-                });
             };
 
             if (sea.SeerH5Ready) {

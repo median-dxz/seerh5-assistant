@@ -11,5 +11,6 @@
     // "skipLibCheck": false,
     "tsBuildInfoFile": "../../.tsbuildinfo/mod-type.tsbuildinfo"
   },
-  "files": ["index.ts", "core-extended.ts"]
+  "files": ["index.ts", "core-extended.ts"],
+  "references": [{ "path": "../core" }]
 }

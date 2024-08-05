@@ -20,5 +20,6 @@
     },
     "types": ["vite/client", "@sea/core/types/seerh5", "@sea/core/types/egret", "@sea/mod-type/core-extended"]
   },
-  "include": ["src"]
+  "include": ["src"],
+  "references": [{ "path": "../core" }, { "path": "../mod-type" }, { "path": "../mod-resolver" }]
 }

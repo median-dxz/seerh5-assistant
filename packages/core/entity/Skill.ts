@@ -1,4 +1,4 @@
-import { getLogger } from '../common/log.js';
+import { getLogger } from '../common/logger.js';
 import type { SkillType } from '../constant/index.js';
 import { EntityBase, type EntityType } from './EntityBase.js';
 import { PetElement } from './PetElement.js';
@@ -78,7 +78,7 @@ export class Skill extends EntityBase {
                 skill.stoneItemId = stoneId;
                 return skill;
             } else {
-                logger.error('解析技能失败');
+                logger.error(`解析技能: ${id} 失败`);
                 return {} as Skill;
             }
         }

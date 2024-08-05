@@ -19,7 +19,6 @@
   "scripts": {
     "build": "tsc --build",
     "watch": "tsc --watch",
-    "clean": "rimraf ./dist && rimraf ../../.tsbuildinfo/core.tsbuildinfo",
     "format": "prettier . --write",
     "lint": "eslint . --fix",
     "test": "vitest"

@@ -1,4 +1,3 @@
-import { getLogger } from '../common/log.js';
 import { delay, hookPrototype } from '../common/utils.js';
 import { PetRoundInfo } from '../entity/index.js';
 import { SEAEventSource } from '../event-source/index.js';
@@ -9,8 +8,6 @@ import { cachedRoundInfo, provider } from './provider.js';
 declare const CountExpPanelManager: {
     overData: unknown;
 };
-
-const logger = getLogger('SetupBattle');
 
 export default () => {
     // better switch pet handler
@@ -48,7 +45,7 @@ export default () => {
     const onRoundStart = () => {
         const info = provider.getCurRoundInfo()!;
         if (info.round <= 0) {
-            context.delayTimeout = delay(4500);
+            context.delayTimeout = delay(context.fightInterval);
         }
     };
 
@@ -57,12 +54,10 @@ export default () => {
     SEAEventSource.hook('battle:end').on(() => {
         const isWin = Boolean(FightManager.isWin);
         if (context.strategy) {
-            Promise.all([context.delayTimeout, delay(2000)])
-                .then(() => {
-                    context.triggerLock?.(isWin);
-                    manager.clear();
-                })
-                .catch((err: unknown) => logger.error(JSON.stringify(err)));
+            void Promise.all([context.delayTimeout, delay(context.fightEndTimeout)]).then(() => {
+                context.triggerLock?.(isWin);
+                manager.clear();
+            });
         }
     });
 

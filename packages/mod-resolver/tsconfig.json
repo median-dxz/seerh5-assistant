@@ -4,11 +4,13 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "target": "esnext",
-    "noEmit": true,
     "strict": true,
-    "allowImportingTsExtensions": true,
     // "skipLibCheck": false,
-    "tsBuildInfoFile": "../../.tsbuildinfo/mod-resolver.tsbuildinfo"
+    "tsBuildInfoFile": "../../.tsbuildinfo/mod-resolver.tsbuildinfo",
+    "outDir": "dist",
+    "baseUrl": "./",
+    "declaration": true
   },
-  "files": ["index.ts", "constants.ts"]
+  "files": ["index.ts", "constants.ts"],
+  "references": [{ "path": "../mod-type" }]
 }
