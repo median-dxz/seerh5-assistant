@@ -7,6 +7,7 @@ export type Trigger = () => void;
 export interface FightDelaySetting {
     fightInterval: number;
     fightEndTimeout: number;
+    moveInterval: number;
 }
 
 const context: {
@@ -21,7 +22,8 @@ const context: {
     delayTimeout: null,
     rotatingCount: new Map(),
     fightInterval: 4500,
-    fightEndTimeout: 2000
+    fightEndTimeout: 2000,
+    moveInterval: 350
 };
 
 function takeover(trigger: Trigger, _strategy?: MoveStrategy): Promise<boolean> {
@@ -50,7 +52,7 @@ async function resolveStrategy(strategy?: MoveStrategy) {
         throw new Error(`resolve strategy failed: 当前playerMode为空`);
     }
 
-    await delay(200);
+    await delay(context.moveInterval);
 
     let battleContext = [provider.getCurRoundInfo()!, provider.getCurSkills()!, provider.getPets()!] as const;
 
@@ -58,7 +60,7 @@ async function resolveStrategy(strategy?: MoveStrategy) {
         const r = await strategy.resolveNoBlood(...battleContext);
         if (!r) throw new Error(`resolve strategy failed: 死切失败`);
 
-        await delay(200);
+        await delay(context.moveInterval);
 
         battleContext = [provider.getCurRoundInfo()!, provider.getCurSkills()!, battleContext[2]];
     }

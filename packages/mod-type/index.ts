@@ -69,8 +69,8 @@ export interface SEAModExport {
     battles?: Battle[];
     tasks?: Task[];
     commands?: Command[];
-    install?(): void;
-    uninstall?(): void;
+    install?(this: void): void;
+    uninstall?(this: void): void;
 }
 
 export type Strategy = MoveStrategy & { name: string };

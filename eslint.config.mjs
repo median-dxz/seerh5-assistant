@@ -56,6 +56,7 @@ export default tsEslint.config(
             '@typescript-eslint/no-non-null-assertion': 'off',
             '@typescript-eslint/no-unnecessary-condition': 'off',
             '@typescript-eslint/no-unsafe-assignment': 'off',
+            '@typescript-eslint/unbound-method': 'off',
             '@typescript-eslint/no-explicit-any': 'warn',
             '@typescript-eslint/consistent-type-imports': 'error',
             '@typescript-eslint/restrict-template-expressions': [
@@ -94,6 +95,9 @@ export default tsEslint.config(
             globals: {
                 ...globals.browser
             }
+        },
+        rules: {
+            '@typescript-eslint/unbound-method': 'warn'
         }
     },
     // @sea/launcher
@@ -145,4 +149,3 @@ export default tsEslint.config(
         }
     }
 );
-
