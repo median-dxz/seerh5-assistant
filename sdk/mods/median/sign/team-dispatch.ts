@@ -53,7 +53,7 @@ export const teamDispatch = (logger: AnyFunction) =>
                             }
                         });
 
-                        const ignorePetNames = new Set(ignorePets);
+                        const ignorePetNames = new Set(ignorePets.split(',').map((s) => s.trim()));
                         let reSelect = false;
                         for (let tid = 16; tid > 0; tid--) {
                             if (tid === 5) tid = 1;
