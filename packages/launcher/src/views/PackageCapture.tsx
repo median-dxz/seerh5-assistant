@@ -121,11 +121,7 @@ export function PackageCapture() {
             { field: 'time', columnName: '时间' },
             { field: 'type', columnName: '类型' },
             { field: 'cmd', columnName: '命令ID' },
-            {
-                field: 'label',
-                columnName: '命令名',
-                sx: { fontFamily: 'Open Sans, MFShangHei', fontSize: '0.9rem', p: 0 }
-            },
+            { field: 'label', columnName: '命令名' },
             { field: 'data', columnName: '操作' }
         ],
         []

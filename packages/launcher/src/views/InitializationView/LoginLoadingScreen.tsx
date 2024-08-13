@@ -19,7 +19,7 @@ export function LoginLoadingScreen() {
             }}
         >
             <CircularProgress size={'1.5rem'} />
-            <Typography sx={{ fontFamily: (theme) => theme.fonts.input }}>{loadingText || '加载中...'}</Typography>
+            <Typography>{loadingText || '加载中...'}</Typography>
         </Paper>
     );
 }

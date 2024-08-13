@@ -124,12 +124,7 @@ export const PanelRow = React.memo(function PanelRow({
             <PanelField field="name" sx={{ width: '20vw', minWidth: '10rem' }}>
                 {runner.name?.split('-').toSpliced(0, 1).join('-')}
             </PanelField>
-            <PanelField
-                field="battles"
-                sx={{
-                    fontFamily: ({ fonts }) => fonts.input
-                }}
-            >
+            <PanelField field="battles">
                 {options.battle && (
                     <Row sx={{ overflow: 'auto', width: 'calc(80vw - 36rem)', minWidth: '15rem', px: 2 }} spacing={1}>
                         {options.battle.map((key, index) => (

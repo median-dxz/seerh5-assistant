@@ -8,9 +8,7 @@ export function CoreLoadingScreen() {
     const loadingText = useAppSelector(initializer.loadingText);
     return (
         <>
-            <Typography
-                sx={{ color: (theme) => theme.palette.secondary.main, fontFamily: (theme) => theme.fonts.input }}
-            >
+            <Typography sx={{ color: (theme) => theme.palette.secondary.main }}>
                 {loadingText || '等待游戏加载...'}
             </Typography>
             <LinerLoading sx={{ width: '100%' }} />

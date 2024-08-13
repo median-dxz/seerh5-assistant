@@ -18,7 +18,6 @@ declare module '@mui/material/styles' {
         border: string;
 
         fonts: {
-            input: string;
             property: string;
         };
 
@@ -30,7 +29,7 @@ declare module '@mui/material/styles' {
         border?: string;
 
         fonts?: {
-            input: string;
+            property: string;
         };
 
         palette?: PaletteOptions;
@@ -49,9 +48,8 @@ const colors = {
 const border = `1px solid ${alpha(colors.primary, 0.24)}`;
 
 const fonts = {
-    input: `"Noto Sans SC", "Open Sans", consolas, monospace`,
-    property: `"Open Sans", MFShangHei, system-ui, -apple-system, "Open Sans", "Helvetica Neue", sans-serif`,
-    main: `MFShangHei, "Open Sans", "Noto Sans SC", Helvetica, Arial, sans-serif`,
+    property: `"Exo 2", "Noto Sans SC", consolas, monospace`,
+    main: `"Exo 2", "Noto Sans SC", Helvetica, Arial, sans-serif`,
     header: `"Noto Sans SC", system-ui, -apple-system, "Open Sans", "Helvetica Neue", sans-serif`
 };
 
@@ -209,7 +207,7 @@ export const theme = createTheme({
                 root: {
                     backgroundColor: alpha(colors.secondary, 0.18),
                     border: `1px solid ${alpha(colors.text, 0.24)}`,
-                    fontFamily: fonts.input
+                    fontFamily: fonts.property
                 }
             }
         },
@@ -220,7 +218,7 @@ export const theme = createTheme({
                     boxShadow,
                     backdropFilter: 'blur(8px)',
                     backgroundColor: alpha(colors.secondary, 0.8),
-                    fontFamily: fonts.input
+                    fontFamily: fonts.property
                 }),
                 listbox: {
                     width: '100%'

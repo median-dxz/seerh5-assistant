@@ -156,7 +156,7 @@ export function InstallFromLocalForm() {
                             autoComplete="off"
                             value={modFile?.name ?? ''}
                             sx={{
-                                fontFamily: ({ fonts }) => fonts.input
+                                fontFamily: ({ fonts }) => fonts.property
                             }}
                             endAdornment={
                                 <UploadEndAdornment file={modFile} fileInputRef={uploadModRef} setFile={setModFile} />

@@ -43,7 +43,7 @@ export const RunnerDetailDialog = React.memo(function RunnerDetailDialog({
                     mb: 2,
                     bgcolor: ({ palette }) => alpha(palette.background.paper, 0.12),
                     borderRadius: 1,
-                    fontFamily: ({ fonts }) => fonts.input,
+                    fontFamily: ({ fonts }) => fonts.property,
                     fontSize: '1.25rem',
                     color: ({ palette }) => palette.text.primary
                 }}
@@ -59,7 +59,7 @@ export const RunnerDetailDialog = React.memo(function RunnerDetailDialog({
                 InputProps={{
                     readOnly: true,
                     sx: {
-                        fontFamily: ({ fonts }) => fonts.input
+                        fontFamily: ({ fonts }) => fonts.property
                     }
                 }}
                 fullWidth
@@ -113,7 +113,7 @@ export const RunnerDetailDialog = React.memo(function RunnerDetailDialog({
                               ? dayjs(taskState.startTime).format('HH:mm:ss')
                               : '未启动'}
                     </Typography>
-                    <Typography sx={{ fontFamily: ({ fonts }) => fonts.input }}>
+                    <Typography>
                         {task.metadata.id} - {task.metadata.name} - {taskRef.cid}
                     </Typography>
 
@@ -125,9 +125,7 @@ export const RunnerDetailDialog = React.memo(function RunnerDetailDialog({
                             }}
                         >
                             ERROR:
-                            <Typography sx={{ fontFamily: ({ fonts }) => fonts.input }}>
-                                {taskState.error?.message}
-                            </Typography>
+                            <Typography>{taskState.error?.message}</Typography>
                         </Paper>
                     )}
 

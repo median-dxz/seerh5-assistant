@@ -37,7 +37,7 @@ import { useAppDispatch, usePopupState } from '@/shared';
 const ClampText = styled(NanoClamp)(({ theme }) => ({
     ...theme.typography.button,
     fontSize: '1rem',
-    fontFamily: theme.fonts.input,
+    fontFamily: theme.fonts.property,
     margin: 0
 }));
 
@@ -77,12 +77,7 @@ export function ModListItem({ deployment }: ModListItemProps) {
             columns={16}
             sx={{ justifyContent: 'flex-start', alignItems: 'baseline', fontSize: '1rem' }}
         >
-            <Grid
-                item
-                xs={4}
-                sx={{ fontFamily: ({ fonts }) => fonts.property, textOverflow: 'ellipsis', overflow: 'hidden' }}
-                zeroMinWidth
-            >
+            <Grid item xs={4} sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }} zeroMinWidth>
                 {scope}
             </Grid>
 

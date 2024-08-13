@@ -100,7 +100,6 @@ export function TabView() {
     const {
         boxShadow,
         border,
-        fonts,
         palette: { primary },
         transitions: { easing }
     } = useTheme();
@@ -173,15 +172,15 @@ export function TabView() {
                         m: 4
                     }}
                 >
-                    <Typography fontSize={22} fontFamily={fonts.input}>
+                    <Typography fontSize={22}>
                         SEAL
-                        <Typography fontSize={12} fontFamily={fonts.input} component="span">
+                        <Typography fontSize={12} component="span">
                             {` v${VERSION}`}
                         </Typography>
                     </Typography>
-                    <Typography fontSize={22} fontFamily={fonts.input}>
+                    <Typography fontSize={22}>
                         Core
-                        <Typography fontSize={12} fontFamily={fonts.input} component="span">
+                        <Typography fontSize={12} component="span">
                             {` v${seac.version}`}
                         </Typography>
                     </Typography>

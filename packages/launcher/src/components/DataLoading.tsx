@@ -22,13 +22,7 @@ export const DataLoading = ({ sx, loadingText = '加载数据中', error }: Data
                 <Typography>{loadingText}</Typography>
             </>
         ) : (
-            <Typography
-                sx={{
-                    fontFamily: (theme) => theme.fonts.input
-                }}
-            >
-                {error}
-            </Typography>
+            <Typography>{error}</Typography>
         )}
     </Box>
 );

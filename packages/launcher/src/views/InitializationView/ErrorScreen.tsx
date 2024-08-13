@@ -8,8 +8,7 @@ export function ErrorScreen() {
     return (
         <Typography
             sx={{
-                color: (theme) => theme.palette.secondary.main,
-                fontFamily: (theme) => theme.fonts.input
+                color: (theme) => theme.palette.secondary.main
             }}
         >
             {error}

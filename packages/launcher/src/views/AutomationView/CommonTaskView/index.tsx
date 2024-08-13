@@ -182,9 +182,7 @@ const PanelRow = React.memo(function PanelRow({ taskRef: ref, options, task, run
     return (
         <SeaTableRow sx={{ height: '3.3rem' }}>
             <PanelField field="name">{runner.name ?? task.metadata.name}</PanelField>
-            <PanelField field="cid" sx={{ fontFamily: ({ fonts }) => fonts.input }}>
-                {ref.cid}
-            </PanelField>
+            <PanelField field="cid">{ref.cid}</PanelField>
             <PanelField field="state">
                 {fetched ? completed ? '已完成' : '未完成' : <CircularProgress size="1.5rem" />}
             </PanelField>
