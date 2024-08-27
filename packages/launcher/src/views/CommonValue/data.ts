@@ -1,4 +1,4 @@
-import { delay, engine } from '@sea/core';
+import { delay, engine, type AnyFunction } from '@sea/core';
 
 export const idList = [
     1, //赛尔豆
@@ -47,7 +47,7 @@ const showPveResourcePanel = async (itemValue: string) => {
     curPanel.updateView();
 };
 
-export const openModuleList: Record<number, unknown> = {
+export const openModuleList: Record<number, AnyFunction> = {
     1400154: async () => {
         await ModuleManager.showModule('battleFirePanel', ['battleFirePanel'], null, null, AppDoStyle.NULL);
     },

@@ -2,7 +2,7 @@
 import type { AnyFunction } from '../common/utils.js';
 import { EntityBase } from '../entity/EntityBase.js';
 import { Item, Pet } from '../entity/index.js';
-import { socket } from '../internal/index.js';
+import * as socket from '../internal/socket.js';
 import { LocationTransformTable, PetLocation } from './PetLocation.js';
 import { SEAPetStore as ins, type CatchTime } from './PetStore.js';
 

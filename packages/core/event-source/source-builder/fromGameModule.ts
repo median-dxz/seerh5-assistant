@@ -1,6 +1,6 @@
 import { filter, map } from 'rxjs';
 import { type GameModuleMap } from '../../constant/TypeMaps.js';
-import { engine } from '../../internal/index.js';
+import { engine } from '../../internal/engine.js';
 import { SEAEventSource } from '../EventSource.js';
 import { $hook } from './fromHook.js';
 

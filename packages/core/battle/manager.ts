@@ -5,8 +5,11 @@ import type { MoveStrategy } from './strategy.js';
 export type Trigger = () => void;
 
 export interface FightDelaySetting {
+    /** @default 4500 */
     fightInterval: number;
+    /** @default 2000 */
     fightEndTimeout: number;
+    /** @default 350 */
     moveInterval: number;
 }
 
@@ -21,7 +24,7 @@ const context: {
     triggerLock: null,
     delayTimeout: null,
     rotatingCount: new Map(),
-    fightInterval: 4500,
+    fightInterval: 4000,
     fightEndTimeout: 2000,
     moveInterval: 350
 };
@@ -81,9 +84,14 @@ function clear() {
     context.rotatingCount = new Map<string, number>();
 }
 
-function setFightDelay({ fightInterval, fightEndTimeout }: FightDelaySetting) {
+function setFightDelay({
+    fightEndTimeout = context.fightEndTimeout,
+    fightInterval = context.fightInterval,
+    moveInterval = context.moveInterval
+}: Partial<FightDelaySetting>) {
     context.fightInterval = fightInterval;
     context.fightEndTimeout = fightEndTimeout;
+    context.moveInterval = moveInterval;
 }
 
 const manager = {

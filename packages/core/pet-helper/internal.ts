@@ -1,4 +1,5 @@
-import { HookPointRegistry, SocketDeserializerRegistry } from '../internal/index.js';
+import { HookPointRegistry } from '../internal/HookPointRegistry.js';
+import { SocketDeserializerRegistry } from '../internal/SocketDeserializerRegistry.js';
 import { CaughtPet } from './pet.js';
 import { SEAPetStore } from './PetStore.js';
 

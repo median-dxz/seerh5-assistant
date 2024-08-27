@@ -1,4 +1,4 @@
-import { engine, GameConfigRegistry, socket } from '@sea/core';
+import { battle, engine, GameConfigRegistry, socket } from '@sea/core';
 
 declare const config: {
     xml: {
@@ -15,6 +15,8 @@ export function extendCore() {
         objectName: (obj) => obj.name,
         objectMap: new Map(Object.values(NatureXMLInfo._dataMap).map((obj) => [obj.id, obj]))
     });
+
+    battle.manager.setFightDelay({ moveInterval: 500 });
 
     engine.extend({
         async battleFireInfo() {

@@ -1,5 +1,5 @@
 import { PetPosType } from '../constant/index.js';
-import { socket } from '../internal/index.js';
+import * as socket from '../internal/socket.js';
 
 export enum PetLocation {
     Default = 'Default',

@@ -1,7 +1,7 @@
 import { CacheData } from '../common/CacheData.js';
 import { NOOP } from '../common/utils.js';
 import { SEAEventSource } from '../event-source/index.js';
-import { socket } from '../internal/index.js';
+import * as socket from '../internal/socket.js';
 import { PetLocation } from './PetLocation.js';
 import { CaughtPet } from './pet.js';
 

@@ -18,8 +18,18 @@ export {
 export * from './constant/index.js';
 export * from './entity/index.js';
 export * from './event-source/index.js';
-export * from './internal/index.js';
 export * from './pet-helper/index.js';
+
+export type { CoreLoader, SetupOptions } from './internal/core.js';
+export type { SEAEngine } from './internal/engine.js';
+export type { GameConfigQuery, GameConfigRegistryEntity } from './internal/GameConfig.js';
+
+export { seac } from './internal/core.js';
+export { engine } from './internal/engine.js';
+export { GameConfigRegistry, query } from './internal/GameConfig.js';
+export { HookPointRegistry } from './internal/HookPointRegistry.js';
+export * as socket from './internal/socket.js';
+export { SocketDeserializerRegistry } from './internal/SocketDeserializerRegistry.js';
 
 import type { CoreLoader } from './internal/core.js';
 

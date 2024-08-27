@@ -1,6 +1,6 @@
 import { getLogger } from '../common/logger.js';
 import { delay, IS_DEV } from '../common/utils.js';
-import { socket } from '../internal/index.js';
+import * as socket from '../internal/socket.js';
 
 const logger = getLogger('battle executor');
 

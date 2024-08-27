@@ -1,6 +1,6 @@
 import { Subject } from 'rxjs';
 import { delay } from '../../common/utils.js';
-import { engine } from '../../internal/index.js';
+import { engine } from '../../internal/engine.js';
 import { spet } from '../../pet-helper/index.js';
 import { manager } from '../manager.js';
 import type { LevelRunner } from './types.js';
