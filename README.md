@@ -1,11 +1,19 @@
 # SEA Project
 
-赛尔号 H5 端登陆器 && api 封装接口
-
-![license](https://img.shields.io/github/license/median-dxz/seerh5-assistant)
-![core version](https://img.shields.io/github/package-json/v/median-dxz/seerh5-assistant?filename=packages%2Fcore%2Fpackage.json&label=core%20version)
-![launcher version](https://img.shields.io/github/package-json/v/median-dxz/seerh5-assistant?filename=packages%2Flauncher%2Fpackage.json&label=launcher%20version)
-![last commit](https://img.shields.io/github/last-commit/median-dxz/seerh5-assistant)
+<p align="center">
+    <a href="https://median-dxz.github.io/sea-project-website/">
+        <img alt="SEA-Project logo" height=128 src="./docs/assets/logo.svg">
+    </a>
+</p>
+<p align="center">
+    赛尔号 H5 端登陆器 && api 封装接口
+</p>
+<p align="center">
+<img alt="license" src="https://img.shields.io/github/license/median-dxz/seerh5-assistant" />
+<img alt="core version" src="https://img.shields.io/github/package-json/v/median-dxz/seerh5-assistant?filename=packages%2Fcore%2Fpackage.json&label=core%20version" />
+<img alt="launcher version" src="https://img.shields.io/github/package-json/v/median-dxz/seerh5-assistant?filename=packages%2Flauncher%2Fpackage.json&label=launcher%20version" />
+<img alt="last commit" src="https://img.shields.io/github/last-commit/median-dxz/seerh5-assistant" />
+</p>
 
 目前处于**alpha**阶段，整体架构和api随时可能有**大型更改和重构**。
 
@@ -88,15 +96,23 @@ VITE_BACKEND_PORT={你的后端端口号，默认是2147}
 pnpm dev
 ```
 
-3. 如果要进一步使用`sdk`中的预设模组，你可以直接运行：
+3. 如果要进一步使用`sdk`中的预设模组，需要先在根目录下运行：
 
 ```
-pnpm release
 pnpm build
 ```
 
-第一条命令会启用一个脚本来构建`sea-core`，并自动安装到sdk下，
-第二条命令会自动构建模组并复制到server的mods目录下。
+该命令会启用一个脚本来构建`sea-core`，并自动安装到sdk下。
+
+然后启动后端服务器，服务器会监听sdk中vite构建插件的模组安装请求。
+
+在`sdk`下运行：
+
+```shell
+pnpm build
+```
+
+该命令将构建模组并通过一个自定义vite插件将其安装到后端中。
 
 最后进入游戏！请注意浏览器版本, 如果不支持import-map, 原生esm加载等功能, 需要手动添加相应的polyfill。
 

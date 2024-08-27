@@ -103,7 +103,7 @@ export const teamDispatch = (logger: AnyFunction) =>
                             if (reSelect) {
                                 tid++;
                             } else {
-                                console.table(e.petIds.map((v) => PetXMLInfo.getName(v)));
+                                logger(`派遣精灵: ${e.petIds.map((v) => PetXMLInfo.getName(v)).join(', ')}`);
                                 socket.sendByQueue(45808, [tid, e.cts[0], e.cts[1], e.cts[2], e.cts[3], e.cts[4]]);
                             }
                         }

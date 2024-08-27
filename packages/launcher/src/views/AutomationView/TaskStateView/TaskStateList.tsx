@@ -168,7 +168,7 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                                 fontSize: '1rem'
                             }
                         }}
-                        prompt={`进度`}
+                        prompt={`进度: `}
                         labelPosition="top-center"
                         progress={runner.data.maxTimes - runner.data.remainingTimes}
                         total={runner.data.maxTimes}

@@ -1,5 +1,5 @@
 import { Box, Stack } from '@mui/material';
-import type { Pet } from '@sea/core';
+import { engine, spet, type Pet } from '@sea/core';
 import { produce } from 'immer';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -44,11 +44,29 @@ export function PetBag() {
         );
     };
 
+    const handleLowerHp = () => {
+        setSelected([]);
+        void engine.lowerHp(selected);
+    };
+
+    const handleCurePets = () => {
+        setSelected([]);
+        if (selected.length === 0) {
+            void engine.cureAllPet();
+        } else {
+            for (const ct of selected) {
+                // if() {
+                spet(ct).cure();
+                // }
+            }
+        }
+    };
+
     if (!pets) return <LinerLoading />;
 
     return (
         <Stack sx={{ width: '100%' }}>
-            <ToolBar selected={selected} />
+            <ToolBar onLowerHp={handleLowerHp} onCurePets={handleCurePets} />
             <Box
                 sx={{
                     overflowX: 'scroll',

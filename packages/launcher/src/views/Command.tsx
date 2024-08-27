@@ -22,6 +22,7 @@ const TextField = styled(MuiTextField)`
     background-color: ${alpha(theme.palette.extendedBackground.emphasize, 0.72)};
     backdrop-filter: blur(8px);
     font-family: ${theme.fonts.property};
+    border-radius: ${theme.shape.borderRadius}px;
 ` as typeof MuiTextField;
 
 export function CommandInput() {

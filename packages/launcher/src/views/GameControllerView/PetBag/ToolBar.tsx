@@ -18,26 +18,13 @@ import { PetLocation, SEAPetStore, engine, spet } from '@sea/core';
 import { useCallback } from 'react';
 
 interface ToolBarProps {
-    selected: number[];
+    onLowerHp: () => void;
+    onCurePets: () => void;
 }
 
-export function ToolBar({ selected }: ToolBarProps) {
+export function ToolBar({ onCurePets, onLowerHp }: ToolBarProps) {
     const dispatch = useAppDispatch();
     const { isFetching, mutate, petGroups } = usePetGroups();
-
-    const handleLowerHp = () => {
-        void engine.lowerHp(selected);
-    };
-
-    const handleCurePets = () => {
-        if (selected.length === 0) {
-            void engine.cureAllPet();
-        } else {
-            for (const ct of selected) {
-                spet(ct).cure();
-            }
-        }
-    };
 
     const handleOpenBag = () => {
         void ModuleManager.showModule('petBag');
@@ -92,10 +79,10 @@ export function ToolBar({ selected }: ToolBarProps) {
             spacing={0}
         >
             <Row sx={{ width: 'fit-content' }} spacing={2}>
-                <Button startIcon={<HpBar />} onClick={handleLowerHp}>
+                <Button startIcon={<HpBar />} onClick={onLowerHp}>
                     压血
                 </Button>
-                <Button startIcon={<HealthBroken />} onClick={handleCurePets}>
+                <Button startIcon={<HealthBroken />} onClick={onCurePets}>
                     治疗
                 </Button>
                 <Button startIcon={<Backpack />} onClick={handleOpenBag}>

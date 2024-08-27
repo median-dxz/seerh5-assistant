@@ -35,7 +35,7 @@ export default function builtinBattle({ ct }: SEAModContext<typeof metadata>) {
         {
             name: '蒂朵单挑',
             pets: ['蒂朵'],
-            strategy: '王哈单挑'
+            strategy: '蒂朵单挑'
         },
         {
             name: '千裳单挑',
