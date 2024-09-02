@@ -19,7 +19,7 @@
 
 如果需要使用当前阶段的内容，请加入我们的DC群组，以跟踪项目进展和获得帮助。
 
-![Discord](https://img.shields.io/discord/1274218914099892244?logo=discord&logoColor=e1f5fe)
+[![Discord](https://img.shields.io/discord/1274218914099892244?logo=discord&logoColor=e1f5fe)](https://discord.gg/Q7AJsEzSdN)
 
 # 置顶声明
 
