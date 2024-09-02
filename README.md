@@ -6,7 +6,7 @@
     </a>
 </p>
 <p align="center">
-    赛尔号 H5 端登陆器 && api 封装接口 && 模组框架
+    赛尔号 H5 端登陆器 && API 封装接口 && 模组框架
 </p>
 <p align="center">
 <img alt="license" src="https://img.shields.io/github/license/median-dxz/seerh5-assistant" />

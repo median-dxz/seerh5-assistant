@@ -41,11 +41,11 @@
   "devDependencies": {
     "@sea/mod-type": "workspace:*",
     "@sea/server": "workspace:*",
-    "@types/react": "^18.3.4",
+    "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@types/react-transition-group": "^4.4.11",
     "@vitejs/plugin-react-swc": "^3.7.0",
     "vite-plugin-inspect": "^0.8.7",
-    "vite-plugin-pwa": "^0.20.1"
+    "vite-plugin-pwa": "^0.20.2"
   }
 }

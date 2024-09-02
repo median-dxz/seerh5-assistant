@@ -121,7 +121,7 @@ async function installTarball(packages, devDependencies = false) {
         packages.map(async ([, tarball]) => {
             let targetFile = path.resolve(sdkDir, 'lib', path.basename(tarball));
             await fs.copyFile(tarball, targetFile);
-            targetFile = path.relative(sdkDir, targetFile);
+            targetFile = path.resolve(sdkDir, targetFile);
             return targetFile;
         })
     );
