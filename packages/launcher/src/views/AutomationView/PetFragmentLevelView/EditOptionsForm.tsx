@@ -56,7 +56,7 @@ export function EditOptionsForm({ open, onClose, index }: EditOptionsFormProps) 
                     payload.battle = payload.battle ?? [];
                     if (!optionsList.some((data) => dequal(data, payload))) {
                         mutate((draft) => {
-                            draft[index] = payload;
+                            draft[index] = structuredClone(payload);
                         });
                         handleClose();
                     } else {

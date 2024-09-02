@@ -70,7 +70,7 @@ export function AddOptionsForm({ open, onClose }: AddOptionsFormProps) {
                     payload.battle = payload.battle ?? [];
                     if (!optionsList.some((data) => dequal(data, payload))) {
                         mutate((draft) => {
-                            draft.push({ ...payload });
+                            draft.push(structuredClone(payload));
                         });
                         handleClose();
                     } else {
