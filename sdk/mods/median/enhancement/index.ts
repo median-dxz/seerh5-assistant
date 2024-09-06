@@ -106,11 +106,6 @@ export default function ({ config }: SEAModContext<typeof metadata>) {
             if (config.autoCloseAwardPopup) {
                 AwardItemDialog.prototype.startEvent = wrapper(AwardItemDialog.prototype.startEvent).after(
                     async function (this: AwardItemDialog) {
-                        LevelManager.stage.removeEventListener(
-                            egret.TouchEvent.TOUCH_TAP,
-                            this.startRemoveDialog,
-                            this
-                        );
                         await delay(parseInt(config.autoCloseAwardPopupDelay));
                         this.destroy();
                     }

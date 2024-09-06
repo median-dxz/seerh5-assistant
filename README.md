@@ -27,13 +27,13 @@
 
 **WARNING: 目前该项目的安全性考虑是欠缺的，请注意：模组是不可信且不受控的外部代码，将在前端执行，这可能导致严重的安全问题！请勿安装任何未经事先人工验证的模组！**
 
-# 近期公告
+## 近期公告
 
 请在SEA Project网站上查看: [SEA Project](https://median-dxz.github.io/sea-project-website/)
 
-## 最近更新的内容
+## 最近更新的内容 & RoadMap
 
-请在SEA Project网站上查看: [SEA Project](https://median-dxz.github.io/sea-project-website/)
+参阅 [#26](https://github.com/median-dxz/seerh5-assistant/issues/26) 和 [milestones](https://github.com/median-dxz/seerh5-assistant/milestones)
 
 # 简介
 
@@ -46,9 +46,13 @@
 
 项目简称: SEA，登录器简称：SEAL
 
+# 截图
+
 # 快速入门
 
 前排提示：本项目目前处于开发阶段，没有可用的成品，如果你对相关的技术栈不熟悉，可以等待该项目成熟后再来。
+
+## 搭建基本运行环境
 
 首先clone整个仓库，然后安装依赖：
 
@@ -58,21 +62,16 @@ pnpm i
 
 依赖安装完成后，项目目前结构如下：
 
-- `core`： 核心库,
-- `launcher`： 登录器前端本体
-- `server`：登录器后端
+- `packages/core`： 核心库
+- `packages/launcher`： 登录器前端
+- `packages/server`：登录器后端
+- `packages/mod-type`: 模组类型定义
+- `packages/mod-resolver`: 模组通用处理逻辑
 - `sdk`: sdk环境，内含一些预制的模组包
 
-然后你需要分别为前端和sdk安装`sea-core`，由于各种因素的考虑，`sea-core`没有发布在npm上，因此你有两种选择：
+## 构建`@sea/core`
 
-1. 通过本地tarball包安装
-2. 通过远程tarball包安装
-
-不过现阶段使用clone整个项目的方式来尝鲜的话，可以直接遵循下面步骤：
-
-1. 对sea-core执行手动构建，得到dist输出。
-
-在`packages/core`下执行：
+接下来需要构建`@sea/core`，得到dist输出。在`packages/core`下执行：
 
 ```
 pnpm build
@@ -80,9 +79,11 @@ pnpm build
 
 因为`launcher`是使用工作区链接来安装`sea-core`的，因此现在登录器就能使用了。
 
-2. 在开发模式下，**分别**运行登录器的前端和后端。
+## 在开发模式下运行登录器
 
-在`server`包下启动后端服务:
+在开发模式下，登录器的前端和后端需要**分别**运行。
+
+首先在`@sea/server`包下启动后端:
 
 ```
 pnpm start
@@ -94,51 +95,70 @@ pnpm start
 VITE_BACKEND_PORT={你的后端端口号，默认是2147}
 ```
 
-然后在`launcher`包下启动开发服务：
+最后在`@sea/launcher`包下启动前端开发服务器：
 
 ```
 pnpm dev
 ```
 
-3. 如果要进一步使用`sdk`中的预设模组，需要先在根目录下运行：
+## 获得生产构建
+
+如果想要获得登录器的生产构建，那么直接在主目录下运行构建脚本：
 
 ```
-pnpm build
-```
-
-该命令会启用一个脚本来构建`sea-core`，并自动安装到sdk下。
-
-然后启动后端服务器，服务器会监听sdk中vite构建插件的模组安装请求。
-
-在`sdk`下运行：
-
-```shell
-pnpm build
-```
-
-该命令将构建模组并通过一个自定义vite插件将其安装到后端中。
-
-最后进入游戏！请注意浏览器版本, 如果不支持import-map, 原生esm加载等功能, 需要手动添加相应的polyfill。
-
-4. 如果要进行服务的打包构建，即生产环境的构建，则第二步中不需要分别运行前后端，而是在主目录下运行构建脚本：
-
-```
-pnpm build
+pnpm build-server
 ```
 
 该命令会启用一个构建脚本，构建登录器前端和后端，并使用pkg打包为Windows下可以独立运行的服务器程序。
 
+构建的详细步骤请参考`scripts/build-server.js`，最后一步是使用pkg生成可执行文件。在`packages/server/bin`下得到`server.exe`，直接运行即可。
+
+pkg打包是一个临时方案，未来将使用deno生成SAE（standalone executables，单体可执行文件），使用Tauri分发生产版本。
+
+## 使用模组
+
+sdk中预置了常用的模组，提供了一系列强大的功能扩展。
+
+在项目根目录下运行：
+
+```
+pnpm build
+```
+
+该命令会启用一个脚本来构建`@sea/mod-type`、`@sea/mod-resolver`和`@sea/core`，并自动安装到sdk下。
+
+sdk中包含一个vite构建插件，该插件会在构建是自动安装模组到登录器后端，安装是通过启动后端服务上用于安装模组的REST端点进行的，因此构建模组之前需要先启动后端服务。
+
+接着配置构建插件使用的后端URL环境变量，在`sdk`下创建`.env`文件：
+
+```
+VITE_SEA_SERVER_URL={后端URL}
+```
+
+如果上面步骤都使用默认配置的话，这里的URL应该是`http://localhost:2147`。
+
+然后在`sdk`下运行：
+
+```shell
+npm i
+npm build
+```
+
+---
+
+最后进入游戏！请注意浏览器版本, 如果不支持import-map, 原生esm加载等功能, 需要手动添加相应的polyfill。
+
 注意该项目的后端的主要功能是作为**本地数据存储**和**跨域反代**，**部署在本地**，对于每一个用户存的都是独一份的数据。暂时还不考虑一人游玩多个号的场景。
 
-关于编写模组的例子，请看下面的例程。
+关于编写模组的例子，~~请看下面的例子~~等文档。
 
 # SDK的环境构成
 
 1. typescript+vite脚手架的基本配置
-2. `sea-core`库的接口定义, 以及将其视为外部模块所需的相关配置
-3. `launcher`扩展的`sea-core`定义，提供了更多高级常用功能
-4. `launcher`提供的模组定义文件，用以支持模组的开发
-5. `sea-core`库内嵌的`egret`白鹭引擎定义，以及`seerh5`游戏模块的反混淆定义
+2. `@sea/core`库的接口定义, 以及将其视为外部模块所需的相关配置
+3. `@sea/mod-type`库提供了模组接口定义文件，还提供了扩展的`@sea/core`定义（需要登录器支持）
+4. `@sea/core`库内嵌的`egret`白鹭引擎定义，以及`seerh5`提供的游戏接口定义
+5. vite构建插件，用以从sdk快速安装模组到登录器
 
 # 功能点
 
@@ -198,7 +218,7 @@ launcher：
 - 反代资源
 - ui操控
 
-# 完整参考
+# 完整参考文档
 
 请等待还没完工的文档
 
@@ -211,17 +231,6 @@ launcher：
 目前登录器本体的功能就直接当作手动e2e测试啦!
 
 对于core核心库的测试，同样需要先运行后端。
-
-# 路线图 (Road Map)
-
-## Core:
-
---> Release: 1.0.0 解耦登录器特定逻辑以及非核心功能, 要求可以方便对接到launcher
-
-## App:
-
-- [ ] --> 0.8.x 模组安装与卸载，独立仓库作为外部源，基于PR自动构建发布，模组与关卡配置可以在UI内完成
-- [ ] 0.9.x ctOverride功能，模组对等依赖处理
 
 # 开源协议
 

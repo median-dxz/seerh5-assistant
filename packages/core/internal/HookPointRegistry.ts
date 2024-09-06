@@ -43,7 +43,7 @@ export const HookPointRegistry = {
         hookDataSubscriptionMap.set(name, hookData$.subscribe(this.subject$));
     },
 
-    unregister<T extends keyof HookPointDataMap>(name: T) {
+    unregister(name: keyof HookPointDataMap) {
         const subscription = hookDataSubscriptionMap.get(name);
         if (subscription) {
             logger.info(`unregister: ${name}`);
