@@ -4,6 +4,7 @@
     "strict": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
+    "noUncheckedSideEffectImports": true,
     "verbatimModuleSyntax": true,
     "forceConsistentCasingInFileNames": true,
     "noEmitOnError": true,

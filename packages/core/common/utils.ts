@@ -186,14 +186,14 @@ export function restoreHookedFn<T extends object, K extends keyof T>(target: T, 
     (target[funcName] as any) = func;
 }
 
-interface HasPrototype {
-    prototype: object;
+interface HasPrototype<T> {
+    prototype: T;
 }
 
-export function hookPrototype<T extends HasPrototype, K extends keyof T['prototype']>(
-    target: T,
+export function hookPrototype<T extends object, K extends keyof T>(
+    target: HasPrototype<T>,
     funcName: K,
-    override: HookFunction<T['prototype'], K>
+    override: HookFunction<T, K>
 ) {
     const proto = target.prototype;
     proto && hookFn(proto, funcName, override);

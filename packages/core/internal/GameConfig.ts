@@ -96,7 +96,7 @@ export const GameConfigRegistry = {
         logger.info(`register: ${type}`);
     },
 
-    unregister<T extends keyof GameConfigMap>(type: T) {
+    unregister(type: keyof GameConfigMap) {
         logger.info(`unregister: ${type}`);
         return gameConfigRegistryEntityMap.delete(type);
     }

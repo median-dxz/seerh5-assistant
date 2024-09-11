@@ -37,6 +37,8 @@
 
 # 简介
 
+(待更新)
+
 **SeerH5-Assistant** 是一款使用typescript编写的赛尔号H5端登陆器。项目目前包含四个部分：core、launcher、server、sdk，其中
 
 - `core`: 核心库，负责环境注入和接口封装
@@ -47,6 +49,8 @@
 项目简称: SEA，登录器简称：SEAL
 
 # 截图
+
+(待更新)
 
 # 快速入门
 
@@ -62,9 +66,9 @@ pnpm i
 
 依赖安装完成后，项目目前结构如下：
 
-- `packages/core`： 核心库
-- `packages/launcher`： 登录器前端
-- `packages/server`：登录器后端
+- `packages/core`: 核心库
+- `packages/launcher`: 登录器前端
+- `packages/server`: 登录器后端
 - `packages/mod-type`: 模组类型定义
 - `packages/mod-resolver`: 模组通用处理逻辑
 - `sdk`: sdk环境，内含一些预制的模组包
@@ -77,7 +81,7 @@ pnpm i
 pnpm build
 ```
 
-因为`launcher`是使用工作区链接来安装`sea-core`的，因此现在登录器就能使用了。
+因为`launcher`是使用工作区链接来安装`@sea/core`的，因此现在登录器就能使用了。
 
 ## 在开发模式下运行登录器
 
@@ -106,12 +110,12 @@ pnpm dev
 如果想要获得登录器的生产构建，那么直接在主目录下运行构建脚本：
 
 ```
-pnpm build-server
+pnpm build:executable
 ```
 
 该命令会启用一个构建脚本，构建登录器前端和后端，并使用pkg打包为Windows下可以独立运行的服务器程序。
 
-构建的详细步骤请参考`scripts/build-server.js`，最后一步是使用pkg生成可执行文件。在`packages/server/bin`下得到`server.exe`，直接运行即可。
+构建的详细步骤请参考`scripts/build-executable.js`，最后一步是使用pkg生成可执行文件。在`packages/server/bin`下得到`server.exe`，直接运行即可。
 
 pkg打包是一个临时方案，未来将使用deno生成SAE（standalone executables，单体可执行文件），使用Tauri分发生产版本。
 
@@ -122,7 +126,7 @@ sdk中预置了常用的模组，提供了一系列强大的功能扩展。
 在项目根目录下运行：
 
 ```
-pnpm build
+pnpm build:workspace
 ```
 
 该命令会启用一个脚本来构建`@sea/mod-type`、`@sea/mod-resolver`和`@sea/core`，并自动安装到sdk下。
@@ -208,7 +212,7 @@ launcher：
 - 收发包调试
 - 手动设置常用战斗
 - 快捷控制面板
-- 充分的功能扩展支持（未实现）
+- 充分的功能扩展支持
 
 其他：
 
@@ -218,19 +222,9 @@ launcher：
 - 反代资源
 - ui操控
 
-# 完整参考文档
+# 更多信息
 
-请等待还没完工的文档
-
-# 原理与高级用例
-
-同上，包括注入原理，修改原理，如何拿到官方原始源码进行调试，收发包细节，官方游戏引擎细节等
-
-# 运行测试
-
-目前登录器本体的功能就直接当作手动e2e测试啦!
-
-对于core核心库的测试，同样需要先运行后端。
+(待更新)
 
 # 开源协议
 

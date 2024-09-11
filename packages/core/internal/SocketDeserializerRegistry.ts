@@ -28,7 +28,7 @@ export const SocketDeserializerRegistry = {
         logger.info(`register: ${cmd}`);
     },
 
-    unregister<TCmd extends number>(cmd: TCmd) {
+    unregister(cmd: number) {
         DeserializerMap.delete(cmd);
         logger.info(`unregister: ${cmd}`);
     },

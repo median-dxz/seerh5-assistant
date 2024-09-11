@@ -5,7 +5,6 @@
     "moduleResolution": "nodenext",
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
-    "forceConsistentCasingInFileNames": true,
     "rootDir": "src",
     "baseUrl": "./src/",
     "noEmit": true,

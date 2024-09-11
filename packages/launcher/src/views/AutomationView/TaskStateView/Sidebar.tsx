@@ -66,7 +66,7 @@ export function Sidebar({ height }: SidebarProps) {
                 {queue.length > 0 && (
                     <LabeledLinearProgress
                         typographyProps={{
-                            color: ({ palette }) => palette.text.secondary,
+                            color: 'textSecondary',
                             fontSize: '1rem'
                         }}
                         overridePrompt={`${currentProgress} / ${queue.length}`}

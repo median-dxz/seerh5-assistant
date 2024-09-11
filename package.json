@@ -10,37 +10,36 @@
     "name": "median-dxz",
     "url": "https://median-dxz.xyz/"
   },
-  "packageManager": "pnpm@9.9.0+sha512.60c18acd138bff695d339be6ad13f7e936eea6745660d4cc4a776d5247c540d0edee1a563695c183a66eb917ef88f2b4feb1fc25f32a7adcadc7aaf3438e99c1",
+  "packageManager": "pnpm@9.10.0+sha512.73a29afa36a0d092ece5271de5177ecbf8318d454ecd701343131b8ebc0c1a91c487da46ab77c8e596d6acf1461e3594ced4becedf8921b074fbd8653ed7051c",
   "scripts": {
     "server:run": "pnpm -C ./packages/server run start",
     "launcher:dev": "pnpm -C ./packages/launcher run dev",
-    "core:build": "pnpm --filter \"@sea/core\" run build",
-    "tsc:build": "tsc --build --verbose",
-    "build-server": "node ./scripts/build-server.js",
     "sync": "node ./scripts/sync.js",
-    "build": "node ./scripts/build.js",
+    "build:core": "pnpm --filter \"@sea/core\" run build",
+    "build:executable": "node ./scripts/build-executable.js",
+    "build:workspace": "node ./scripts/build.js",
     "prepare": "husky",
-    "clean": "rimraf ./.tsbuildinfo"
+    "tsc:build": "tsc --build --verbose",
+    "tsc:clean": "rimraf ./.tsbuildinfo"
   },
   "devDependencies": {
-    "@eslint/js": "^9.9.1",
-    "@types/eslint__js": "^8.42.3",
-    "@vitest/coverage-v8": "2.0.3",
+    "@eslint/js": "^9.10.0",
+    "@vitest/coverage-v8": "2.0.5",
     "commander": "^12.1.0",
-    "concurrently": "^8.2.2",
-    "eslint": "^9.9.1",
-    "eslint-plugin-react": "^7.35.0",
+    "concurrently": "^9.0.0",
+    "eslint": "^9.10.0",
+    "eslint-plugin-react": "^7.35.2",
     "eslint-plugin-react-hooks": "5.1.0-rc-65903583-20240805",
     "eslint-plugin-react-refresh": "^0.4.11",
     "globals": "^15.9.0",
     "husky": "^9.1.5",
-    "lint-staged": "^15.2.9",
+    "lint-staged": "^15.2.10",
     "prettier": "^3.3.3",
     "rimraf": "^6.0.1",
-    "typescript": "^5.5.4",
-    "typescript-eslint": "^8.3.0",
-    "vite": "^5.4.2",
-    "vitest": "2.0.3"
+    "typescript": "^5.6.2",
+    "typescript-eslint": "^8.5.0",
+    "vite": "^5.4.3",
+    "vitest": "2.0.5"
   },
   "engines": {
     "node": ">=20.11.0"
