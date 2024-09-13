@@ -20,7 +20,10 @@ export const metadata = {
     data: { changed: new Map<number, SkinInfo>(), original: new Map<number, number>() }
 } satisfies SEAModMetadata;
 
-export default async function LocalPetSkin({ data: cloth, logger }: SEAModContext<typeof metadata>) {
+export default async function LocalPetSkin({
+    data: cloth,
+    logger
+}: SEAModContext<typeof metadata>): Promise<SEAModExport> {
     function install() {
         Object.defineProperty(FighterUserInfo.prototype, 'petInfoArr', {
             set: function (t) {
@@ -93,5 +96,5 @@ export default async function LocalPetSkin({ data: cloth, logger }: SEAModContex
 
     return {
         install
-    } satisfies SEAModExport;
+    };
 }

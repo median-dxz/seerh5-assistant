@@ -58,7 +58,7 @@ export const metadata = {
     }
 } satisfies SEAModMetadata;
 
-export default function ({ config }: SEAModContext<typeof metadata>) {
+export default function ({ config }: SEAModContext<typeof metadata>): SEAModExport {
     const battleStart$ = SEAEventSource.hook('battle:start');
     const battleEnd$ = SEAEventSource.hook('battle:end');
 
@@ -122,7 +122,7 @@ export default function ({ config }: SEAModContext<typeof metadata>) {
                 });
             }
         }
-    } satisfies SEAModExport;
+    };
 }
 
 declare const Alarm: {

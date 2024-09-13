@@ -11,8 +11,11 @@ export const metadata = {
     version: VERSION
 } satisfies SEAModMetadata;
 
-export default function ({ battle }: SEAModContext<typeof metadata>) {
+export default function ({ battle }: SEAModContext<typeof metadata>): SEAModExport {
     return {
+        install() {
+            // pass
+        },
         strategies: [
             {
                 name: 'auto',
@@ -81,5 +84,5 @@ export default function ({ battle }: SEAModContext<typeof metadata>) {
                 }
             })
         ]
-    } satisfies SEAModExport;
+    };
 }

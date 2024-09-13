@@ -20,7 +20,7 @@ export const metadata = {
     description: 'misc'
 } satisfies SEAModMetadata;
 
-export default async function CraftSkillStone({ logger }: SEAModContext<typeof metadata>) {
+export default async function CraftSkillStone({ logger }: SEAModContext<typeof metadata>): Promise<SEAModExport> {
     const install = () => {};
 
     const uninstall = () => {};
@@ -119,5 +119,5 @@ export default async function CraftSkillStone({ logger }: SEAModContext<typeof m
         commands: [resetNature, craftOne],
         install,
         uninstall
-    } satisfies SEAModExport;
+    };
 }

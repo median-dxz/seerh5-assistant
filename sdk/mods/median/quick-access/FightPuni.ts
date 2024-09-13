@@ -9,7 +9,7 @@ export const metadata = {
     version: '1.0.0'
 } satisfies SEAModMetadata;
 
-export default async function FightPuni(ctx: SEAModContext<typeof metadata>) {
+export default function FightPuni(ctx: SEAModContext<typeof metadata>): SEAModExport {
     const FightPuni: Command = {
         name: 'FightPuni',
         icon: Icon,
@@ -21,5 +21,5 @@ export default async function FightPuni(ctx: SEAModContext<typeof metadata>) {
 
     return {
         commands: [FightPuni]
-    } satisfies SEAModExport;
+    };
 }

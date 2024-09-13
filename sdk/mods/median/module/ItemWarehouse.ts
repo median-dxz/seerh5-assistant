@@ -60,7 +60,7 @@ export const metadata = {
     version: '1.0.0'
 } satisfies SEAModMetadata;
 
-export default async function ItemWareHouse(ctx: SEAModContext<typeof metadata>) {
+export default async function ItemWareHouse(ctx: SEAModContext<typeof metadata>): Promise<SEAModExport> {
     const load = () => {
         const skillQuery = query('skill');
         const petQuery = query('pet');
@@ -226,5 +226,5 @@ export default async function ItemWareHouse(ctx: SEAModContext<typeof metadata>)
     return {
         install,
         uninstall
-    } satisfies SEAModExport;
+    };
 }

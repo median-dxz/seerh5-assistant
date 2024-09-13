@@ -3,7 +3,7 @@ import { Button, Toolbar } from '@mui/material';
 
 import { SeaTableRow } from '@/components/styled/TableRow';
 import type { AnyFunction, HookPointDataMap } from '@sea/core';
-import { SEAEventSource, Subscription, restoreHookedFn } from '@sea/core';
+import { SEAEventSource, SocketDeserializerRegistry, Subscription, restoreHookedFn } from '@sea/core';
 import dayjs from 'dayjs';
 import { produce } from 'immer';
 import * as React from 'react';
@@ -14,7 +14,8 @@ interface CapturedPackage {
     time: number;
     cmd: number;
     label: string;
-    data?: Array<number | DataView> | DataView | AnyFunction;
+    data?: object;
+    buffer?: Array<number | DataView> | DataView | AnyFunction;
     index: number; // 用作生成React.key
 }
 
@@ -24,7 +25,7 @@ const listLimit = 300;
 
 const capturedPkgFactory = (
     update: React.Dispatch<React.SetStateAction<CapturedPackage[]>>,
-    originalPack: Pick<CapturedPackage, 'cmd' | 'data' | 'type'>
+    originalPack: Pick<CapturedPackage, 'cmd' | 'data' | 'buffer' | 'type'>
 ) => {
     update(
         produce((draft) => {
@@ -87,14 +88,18 @@ export function PackageCapture() {
 
         const onReceive = ({ buffer, cmd }: HookPointDataMap['socket:receive']) => {
             if (state !== 'capturing' || CmdMask.includes(cmd)) return;
-            capturedPkgFactory(setCapture, { cmd, data: buffer?.dataView, type: 'Received' });
+            let data = SocketDeserializerRegistry.getDeserializer(cmd)(buffer) as object | undefined;
+            if (data instanceof egret.ByteArray) {
+                data = data.dataView;
+            }
+            capturedPkgFactory(setCapture, { cmd, data, type: 'Received' });
         };
 
         const onSend = ({ cmd, data }: HookPointDataMap['socket:send']) => {
             if (state !== 'capturing' || CmdMask.includes(cmd)) return;
             capturedPkgFactory(setCapture, {
                 cmd,
-                data: data.flat().map((v) => (v instanceof egret.ByteArray ? v.dataView : v)),
+                buffer: data.flat().map((v) => (v instanceof egret.ByteArray ? v.dataView : v)),
                 type: 'Send'
             });
         };
@@ -185,7 +190,7 @@ const PanelRow = React.memo(function PanelRow({ pkg }: { pkg: CapturedPackage })
                 <Button
                     onClick={() => {
                         if (pkg.type === 'Send') {
-                            const data = pkg.data as Array<number | DataView>;
+                            const data = pkg.buffer as Array<number | DataView>;
                             SocketConnection.mainSocket.send(
                                 pkg.cmd,
                                 data.map((v) => (typeof v === 'object' ? new egret.ByteArray(v.buffer) : v))

@@ -14,8 +14,8 @@ export const metadata = {
     description: '日常签到'
 } satisfies SEAModMetadata;
 
-export default function Sign({ logger }: SEAModContext<typeof metadata>) {
+export default function Sign({ logger }: SEAModContext<typeof metadata>): SEAModExport {
     return {
         tasks: [...daily(logger), teamDispatch(logger), ...teamSign(logger), ...vip(logger)]
-    } satisfies SEAModExport;
+    };
 }

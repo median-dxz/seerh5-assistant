@@ -11,7 +11,7 @@ export const metadata = {
     description: '预置战斗策略模型'
 } satisfies SEAModMetadata;
 
-export default function builtinStrategy(_context: SEAModContext<typeof metadata>) {
+export default function builtinStrategy(_context: SEAModContext<typeof metadata>): SEAModExport {
     const strategies: Strategy[] = [
         {
             name: '圣谱单挑',
@@ -139,5 +139,5 @@ export default function builtinStrategy(_context: SEAModContext<typeof metadata>
 
     return {
         strategies
-    } satisfies SEAModExport;
+    };
 }

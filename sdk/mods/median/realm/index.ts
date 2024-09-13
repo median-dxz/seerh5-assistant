@@ -14,7 +14,7 @@ export const metadata = {
     description: '日常关卡'
 } satisfies SEAModMetadata;
 
-export default function realm({ logger, battle }: SEAModContext<typeof metadata>) {
+export default function realm({ logger, battle }: SEAModContext<typeof metadata>): SEAModExport {
     return {
         tasks: [
             LevelElfKingsTrial(logger, battle),
@@ -24,5 +24,5 @@ export default function realm({ logger, battle }: SEAModContext<typeof metadata>
             LevelTitanHole(logger, battle),
             LevelXTeamRoom(logger, battle)
         ] as const
-    } satisfies SEAModExport;
+    };
 }

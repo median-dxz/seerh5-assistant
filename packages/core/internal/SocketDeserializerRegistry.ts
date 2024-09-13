@@ -1,14 +1,14 @@
 import { getLogger } from '../common/logger.js';
-import { IS_DEV, type ValueOf } from '../common/utils.js';
+import { IS_DEV } from '../common/utils.js';
 import type { HookPointDataMap, SocketResponseMap as ResponseMap } from '../constant/TypeMaps.js';
 
 type BufferData = HookPointDataMap['socket:receive']['buffer'];
 
 type DataDeserializer<T> = (data: BufferData) => T;
 
-const DeserializerMap = new Map<keyof ResponseMap, DataDeserializer<ValueOf<ResponseMap>>>();
+const DeserializerMap = new Map<keyof ResponseMap, DataDeserializer<unknown>>();
 
-const IDENTITY = (data: BufferData) => data;
+const IDENTITY = (data: BufferData) => (data ? new egret.ByteArray(data.rawBuffer) : data);
 
 const logger = getLogger('SocketDeserializerRegistry');
 

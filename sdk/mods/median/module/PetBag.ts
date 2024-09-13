@@ -15,7 +15,7 @@ export const metadata = {
     version: '1.0.0'
 } satisfies SEAModMetadata;
 
-export default async function PetBag({ logger }: SEAModContext<typeof metadata>) {
+export default async function PetBag({ logger }: SEAModContext<typeof metadata>): Promise<SEAModExport> {
     const sub = new Subscription();
     const lifeCycleSub = new Subscription();
 
@@ -70,5 +70,5 @@ export default async function PetBag({ logger }: SEAModContext<typeof metadata>)
     return {
         install,
         uninstall
-    } satisfies SEAModExport;
+    };
 }

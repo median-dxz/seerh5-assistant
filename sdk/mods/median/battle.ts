@@ -9,7 +9,7 @@ export const metadata = {
     description: '预设战斗模型'
 } satisfies SEAModMetadata;
 
-export default function builtinBattle({ ct }: SEAModContext<typeof metadata>) {
+export default function builtinBattle({ ct }: SEAModContext<typeof metadata>): SEAModExport {
     const battles: Battle[] = [
         {
             name: '潘蒂表必先',
@@ -86,5 +86,5 @@ export default function builtinBattle({ ct }: SEAModContext<typeof metadata>) {
 
     return {
         battles
-    } satisfies SEAModExport;
+    };
 }

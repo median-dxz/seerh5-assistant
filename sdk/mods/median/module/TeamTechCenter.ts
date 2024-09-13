@@ -12,7 +12,7 @@ export const metadata = {
 } satisfies SEAModMetadata;
 
 // team.TeamTech
-export default async function TeamTechCenter(ctx: SEAModContext<typeof metadata>) {
+export default async function TeamTechCenter(ctx: SEAModContext<typeof metadata>): Promise<SEAModExport> {
     const load = () => {
         hookPrototype(team.TeamTech, 'onClickEnhance', async function () {
             const index = this.list_attr.selectedIndex;
@@ -69,5 +69,5 @@ export default async function TeamTechCenter(ctx: SEAModContext<typeof metadata>
     return {
         install,
         uninstall
-    } satisfies SEAModExport;
+    };
 }
