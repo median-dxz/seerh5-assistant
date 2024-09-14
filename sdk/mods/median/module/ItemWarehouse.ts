@@ -26,10 +26,10 @@ declare const DisplayUtil: {
     setEnabled(target: egret.DisplayObject, enabled: boolean): void;
 };
 
-declare class PetFragmentXMLInfo {
-    static getItemByID(id?: number): PetFragment;
-    static GetShowArrInfos(arg: number): PetFragment[];
-}
+declare const PetFragmentXMLInfo: {
+    getItemByID(id?: number): PetFragment;
+    GetShowArrInfos(arg: number): PetFragment[];
+};
 
 declare global {
     namespace itemWarehouse {

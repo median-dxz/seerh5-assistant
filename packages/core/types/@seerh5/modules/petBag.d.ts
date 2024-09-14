@@ -3,6 +3,7 @@ declare global {
         class PetBag extends BasicMultPanelModule {
             currentPanel?: MainPanel;
         }
+
         class MainPanel extends BasicPanel {
             onSelectPet(event: Pick<egret.Event, 'data'>): void;
             showDevelopBaseView(): void;
@@ -19,11 +20,21 @@ declare global {
             groupPet1: any;
             groupPet2: any;
         }
+
         class MainPanelPetItem {
             petInfo: PetInfo;
             setPetInfo(petInfo: PetInfo | null, index?: number): void;
         }
-        var SkinView: any;
+
+        class SkinView {
+            onChooseSkin(): void;
+            arrayCollection: any;
+            selectSkinIndex: number;
+            petInfo: PetInfo;
+            btnPutOn: any;
+            imgHasPutOn: any;
+        }
+
         var ChangePetPop: any;
     }
 }
