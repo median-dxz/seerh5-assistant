@@ -45,6 +45,7 @@ millstones
 - [ ] 对等依赖<->dts定义(例如注册查询表)(可参考：next模块定义，mui对样式引擎的定义依赖)
 - [ ] 取消对http-proxy-middleware的依赖
 - [ ] hook符号表与管理?
+- [ ] 特殊支持：一键导入其他登录器魔法
 
 # Core v1.1.0
 

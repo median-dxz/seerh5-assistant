@@ -1,5 +1,5 @@
 import { scope } from '@/median/constants.json';
-import { delay, hookFn, SEAEventSource, wrapper } from '@sea/core';
+import { delay, engine, hookFn, SEAEventSource, wrapper, type WithClass } from '@sea/core';
 import type { SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
 
 import { backgroundHeartBeatCheck } from './backgroundHeartBeatCheck';
@@ -28,7 +28,7 @@ export const metadata = {
             name: '启用离屏心跳包',
             default: true
         },
-        cancelAlertForUsePetItem: {
+        disableAlertForUsePetItem: {
             type: 'checkbox',
             name: '取消精灵物品使用确认',
             default: true
@@ -53,6 +53,11 @@ export const metadata = {
         enableHpVisible: {
             type: 'checkbox',
             name: '显示血量',
+            default: true
+        },
+        disablePveBattleResultPanel: {
+            type: 'checkbox',
+            name: '屏蔽PVE对战结果面板',
             default: true
         }
     }
@@ -80,7 +85,7 @@ export default function ({ config }: SEAModContext<typeof metadata>): SEAModExpo
                 backgroundHeartBeatCheck();
             }
 
-            if (config.cancelAlertForUsePetItem) {
+            if (config.disableAlertForUsePetItem) {
                 cancelAlertForUsePetItem();
             }
 
@@ -103,6 +108,7 @@ export default function ({ config }: SEAModContext<typeof metadata>): SEAModExpo
                     );
                 });
             }
+
             if (config.autoCloseAwardPopup) {
                 AwardItemDialog.prototype.startEvent = wrapper(AwardItemDialog.prototype.startEvent).after(
                     async function (this: AwardItemDialog) {
@@ -111,6 +117,7 @@ export default function ({ config }: SEAModContext<typeof metadata>): SEAModExpo
                     }
                 );
             }
+
             if (config.enableHpVisible) {
                 PetFightController.onStartFight = wrapper(PetFightController.onStartFight).after(() => {
                     const { enemyMode, playerMode } = FighterModelFactory;
@@ -121,6 +128,22 @@ export default function ({ config }: SEAModContext<typeof metadata>): SEAModExpo
                     };
                 });
             }
+
+            if (config.disablePveBattleResultPanel) {
+                SEAEventSource.hook('battle:showEndProp').on(() => {
+                    if (PetFightModel.type === 89 || PetFightModel.type === 102) {
+                        return;
+                    }
+
+                    const { __class__ } = engine.inferCurrentModule<WithClass<BaseModule>>();
+                    if ('battleResultPanel.BattleFailPanel' === __class__) {
+                        const e = new egret.TouchEvent(egret.TouchEvent.TOUCH_TAP);
+                        engine.inferCurrentModule<battleResultPanel.BattleFailPanel>().onTouchTapImageButton(e);
+                    } else if ('battleResultPanel.BattleResultPanel' === __class__) {
+                        engine.inferCurrentModule<battleResultPanel.BattleResultPanel>().touchHandle();
+                    }
+                });
+            }
         }
     };
 }
@@ -128,3 +151,5 @@ export default function ({ config }: SEAModContext<typeof metadata>): SEAModExpo
 declare const Alarm: {
     show: (text: string, cb: () => void) => void;
 };
+
+declare const PetFightModel: { type: number };
