@@ -81,7 +81,14 @@ export default tsEslint.config(
                     checksVoidReturn: false
                 }
             ],
-            '@typescript-eslint/no-extraneous-class': 'off'
+            '@typescript-eslint/no-extraneous-class': 'off',
+            '@typescript-eslint/no-namespace': [
+                'error',
+                {
+                    allowDeclarations: true,
+                    allowDefinitionFiles: true
+                }
+            ]
         }
     },
     {

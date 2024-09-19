@@ -1,17 +1,17 @@
 import { trpcClient } from '@/services/shared';
 import { PetPosType, SEAPetStore } from '@sea/core';
 
-const JIM_ID = 3582;
+const MIN_ID = 2500;
 
 export let store = new Map<string, number>();
 const lookup = new Map<number, string>();
 
 const petFilter = (v: { id: number; level: number; posi: PetPosType }) =>
-    (v.id >= JIM_ID && v.level === 100) || v.posi === PetPosType.elite;
+    (v.id >= MIN_ID && v.level === 100) || v.posi === PetPosType.elite;
 
 /**
  * 同步玩家的CT表
- * 取 (几米往后的近现代精灵 & 等级为100) | 精英收藏和背包中的精灵
+ * 取 (近现代精灵 & 等级为100) | 精英收藏和背包中的精灵
  */
 async function sync() {
     const data1 = Array.from((await SEAPetStore.miniInfo.get()).values());

@@ -44,22 +44,11 @@ export const GameConfigRegistry = {
         const { objectMap, objectName, objectId } = entity;
 
         function find(predicate: PredicateFn<GameConfigMap[T]>) {
-            for (const [_, obj] of objectMap) {
-                if (predicate(obj)) {
-                    return obj;
-                }
-            }
-            return undefined;
+            return objectMap.values().find(predicate);
         }
 
         function filter(predicate: PredicateFn<GameConfigMap[T]>) {
-            const r: Array<GameConfigMap[T]> = [];
-            for (const [_, obj] of objectMap) {
-                if (predicate(obj)) {
-                    r.push(obj);
-                }
-            }
-            return r;
+            return Array.from(objectMap.values().filter(predicate));
         }
 
         function get(id: number) {
@@ -76,7 +65,7 @@ export const GameConfigRegistry = {
         }
 
         function filterByName(name: string | RegExp) {
-            return filter((v) => Boolean(objectName(v).match(name)));
+            return filter((v) => Boolean(objectName(v)?.match(name)));
         }
 
         function getIdByName(name: string) {
