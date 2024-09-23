@@ -20,6 +20,13 @@ class SEAPetStore {
 
     cache = new Map<CatchTime, CaughtPet>();
 
+    private tryGetBagPet(ct: CatchTime) {
+        return this.bag
+            .getImmediate()
+            .flat()
+            .find((p) => p.catchTime === ct);
+    }
+
     init() {
         if (!this.hasInit) {
             SEAEventSource.socket(CommandID.GET_PET_INFO_BY_ONCE, 'receive').on((pets) => {
@@ -31,7 +38,9 @@ class SEAPetStore {
 
             SEAEventSource.socket(CommandID.GET_PET_INFO, 'receive').on((pet) => {
                 this.cachePet(pet);
-                this.bag.deactivate();
+                if (this.tryGetBagPet(pet.catchTime)) {
+                    this.bag.deactivate();
+                }
             });
 
             SEAEventSource.socket(CommandID.PET_DEFAULT, 'send').on((bytes) => {
@@ -112,13 +121,7 @@ class SEAPetStore {
         if (this.cache.size > this.CacheSize) {
             const [ct, _] = Array.from(this.cacheTimestamp.entries())
                 .sort((a, b) => a[1] - b[1])
-                .find(
-                    ([ct]) =>
-                        !this.bag
-                            .getImmediate()
-                            .flat()
-                            .some((pet) => pet.catchTime === ct)
-                )!;
+                .find(([ct]) => !this.tryGetBagPet(ct))!;
 
             this.cache.delete(ct);
             this.cacheTimestamp.delete(ct);
@@ -142,11 +145,7 @@ class SEAPetStore {
             throw Error(`ct: ${ct} 不存在`);
         }
 
-        const petInBag = this.bag
-            .getImmediate()
-            .flat()
-            .find((pet) => pet.catchTime === ct);
-
+        const petInBag = this.tryGetBagPet(ct);
         if (petInBag) {
             return petInBag;
         }
