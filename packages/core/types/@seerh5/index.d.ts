@@ -10,6 +10,7 @@
 /// <reference path="modules/petBag.d.ts" />
 /// <reference path="modules/petNewSkillPanel.d.ts" />
 /// <reference path="modules/team.d.ts" />
+/// <reference path="modules/vipRecovery.d.ts" />
 
 declare global {
     namespace seerh5 {
@@ -186,6 +187,7 @@ declare global {
 
         GAME_GET_PLAYER_INFO: 41206;
         BATCH_GET_BITSET: 42023;
+        BITSET_SET_MULTI_VALUE: 42036;
         GET_PET_INFO_BY_ONCE: 43706;
         GET_MULTI_FOREVER: 46046;
     };

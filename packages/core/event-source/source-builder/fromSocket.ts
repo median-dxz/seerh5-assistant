@@ -4,61 +4,54 @@ import { SocketDeserializerRegistry } from '../../internal/SocketDeserializerReg
 import { SEAEventSource } from '../EventSource.js';
 import { $hook } from './fromHook.js';
 
-type SocketEvent = 'send' | 'receive' | undefined;
+type SocketEvent = 'send' | 'receive';
 type CMD = keyof SocketResponseMap;
 
-const $fromSocket = {
+const $socket = {
     send(cmd: number) {
         return $hook('socket:send').pipe(
-            filter(({ cmd: _cmd }) => _cmd === cmd),
-            map(({ data }) => data)
+            filter((req) => req.cmd === cmd),
+            map(({ data }) => {
+                data = data.flat();
+                const bytes = new egret.ByteArray();
+                data.forEach((v) => {
+                    if (v instanceof egret.ByteArray) {
+                        bytes.writeBytes(v);
+                    } else {
+                        bytes.writeUnsignedInt(v);
+                    }
+                });
+                bytes.position = 0;
+                return bytes;
+            })
         );
     },
     receive<TCmd extends CMD>(cmd: TCmd) {
         return $hook('socket:receive').pipe(
-            filter(({ cmd: _cmd }) => _cmd === cmd),
+            filter((req) => req.cmd === cmd),
             map(({ buffer }) => buffer),
             map(SocketDeserializerRegistry.getDeserializer(cmd))
         );
+    },
+    zip<TCmd extends CMD>(cmd: TCmd) {
+        return zip(this.send(cmd), this.receive(cmd));
     }
 };
 
-export function $socket<TCmd extends CMD>(
-    cmd: TCmd,
-    event?: SocketEvent
-):
-    | Observable<seerh5.SocketRequestData>
-    | Observable<SocketResponseMap[TCmd]>
-    | Observable<[seerh5.SocketRequestData, SocketResponseMap[TCmd]]>;
-export function $socket(cmd: CMD, event: 'send'): Observable<seerh5.SocketRequestData>;
-export function $socket<TCmd extends CMD>(cmd: TCmd, event: 'receive'): Observable<SocketResponseMap[TCmd]>;
-export function $socket<TCmd extends CMD>(
-    cmd: TCmd,
-    event?: undefined
-): Observable<[seerh5.SocketRequestData, SocketResponseMap[TCmd]]>;
+type SendData = ReturnType<typeof $socket.send> extends Observable<infer T> ? T : never;
+type ReceiveData<TCmd extends CMD> = ReturnType<typeof $socket.receive<TCmd>> extends Observable<infer T> ? T : never;
 
-export function $socket<TCmd extends CMD>(cmd: TCmd, event?: SocketEvent) {
-    if (event === undefined) {
-        return zip($fromSocket.send(cmd), $fromSocket.receive(cmd));
+export function fromSocket<TCmd extends CMD>(cmd: TCmd): SEAEventSource<[SendData, ReceiveData<TCmd>]>;
+export function fromSocket(cmd: CMD, event: 'send'): SEAEventSource<SendData>;
+export function fromSocket<TCmd extends CMD>(cmd: TCmd, event: 'receive'): SEAEventSource<ReceiveData<TCmd>>;
+
+export function fromSocket(cmd: number, event?: SocketEvent) {
+    switch (event) {
+        case 'send':
+            return new SEAEventSource($socket.send(cmd));
+        case 'receive':
+            return new SEAEventSource($socket.receive(cmd));
+        default:
+            return new SEAEventSource($socket.zip(cmd));
     }
-
-    if (event === 'send') return $fromSocket.send(cmd);
-    if (event === 'receive') return $fromSocket.receive(cmd);
-
-    throw new TypeError(`Invalid type ${event as string}, type could only be 'send' or 'receive'`);
-}
-
-type InferFromSocketReturnType<TCmd extends CMD, Event extends SocketEvent | undefined> = Event extends 'send'
-    ? seerh5.SocketRequestData
-    : Event extends 'receive'
-      ? SocketResponseMap[TCmd]
-      : Event extends undefined
-        ? [seerh5.SocketRequestData, SocketResponseMap[TCmd]]
-        : never;
-
-export function fromSocket<TCmd extends CMD, TEvent extends SocketEvent = undefined>(
-    cmd: TCmd,
-    event?: TEvent
-): SEAEventSource<InferFromSocketReturnType<TCmd, TEvent>> {
-    return new SEAEventSource($socket(cmd, event) as Observable<InferFromSocketReturnType<TCmd, TEvent>>);
 }

@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import type { Pet } from '@sea/core';
+import type { Pet, WithClass } from '@sea/core';
 import { debounce, engine, SEAEventSource, SEAPetStore, Subscription } from '@sea/core';
 
 import { baseQuery } from '../shared';
@@ -85,10 +85,22 @@ export const gameApi = createApi({
             query: () => engine.autoCureState,
             onCacheEntryAdded: monitorGameData((_, sub, invalidateTags, updateCachedData) => {
                 sub.on(SEAEventSource.socket(42036, 'send'), (data) => {
-                    if (Array.isArray(data) && data[1] instanceof egret.ByteArray) {
-                        const autoCure = Boolean(new DataView(data[1].rawBuffer).getUint8(2));
-                        updateCachedData(autoCure);
+                    if (data.length !== 7) return;
+
+                    data.readUnsignedInt();
+                    const v = data.readShort();
+                    if (v !== 22439) return;
+
+                    const enable = data.readBoolean();
+
+                    // 同步UI
+                    const { __class__ } = engine.inferCurrentModule<WithClass<BaseModule>>();
+                    if ('vipRecovery.VipRecovery' === __class__) {
+                        const popView = engine.findObject(vipRecovery.vipRecoveryPopView).at(0);
+                        popView && (popView.imgeCheckGou.visible = enable);
                     }
+
+                    updateCachedData(enable);
                 });
             })
         })

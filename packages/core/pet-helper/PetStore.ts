@@ -44,7 +44,7 @@ class SEAPetStore {
             });
 
             SEAEventSource.socket(CommandID.PET_DEFAULT, 'send').on((bytes) => {
-                this.defaultCt = bytes[0] as number;
+                this.defaultCt = bytes.readUnsignedInt();
                 this.bag.deactivate();
             });
 
@@ -55,14 +55,18 @@ class SEAPetStore {
             SEAEventSource.socket(CommandID.PET_ONE_CURE, 'receive').on(() => this.bag.deactivate());
             SEAEventSource.socket(CommandID.USE_PET_ITEM_OUT_OF_FIGHT, 'send').on(() => this.bag.deactivate());
 
-            SEAEventSource.socket(42019, 'send').on((data) => {
-                if (Array.isArray(data) && data.length === 2 && data[0] === 22439) {
-                    this.bag.deactivate();
+            SEAEventSource.socket(CommandID.BITSET_SET_MULTI_VALUE, 'send').on((data) => {
+                if (data.length === 7) {
+                    data.readUnsignedInt();
+                    const [v, enable] = [data.readShort(), data.readBoolean()];
+                    if (v === 22439 && enable) {
+                        this.bag.deactivate();
+                    }
                 }
             });
 
             SEAEventSource.socket(CommandID.PET_RELEASE).on(([req, res]) => {
-                const [ct, opt] = req as [number, number];
+                const [ct, opt] = [req.readUnsignedInt(), req.readUnsignedInt()];
                 const { firstPetTime } = res;
 
                 if (this.miniInfo.getImmediate().has(ct) || opt == 3 || opt == 0) {
