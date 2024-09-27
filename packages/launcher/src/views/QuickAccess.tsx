@@ -1,6 +1,6 @@
 import MenuOpen from '@mui/icons-material/MenuOpen';
 import { SpeedDialAction, SvgIcon, type SpeedDialActionProps, type SpeedDialProps } from '@mui/material';
-import { useState } from 'react';
+import { useState, type SVGProps } from 'react';
 import { shallowEqual } from 'react-redux';
 
 import type { AnyFunction } from '@sea/core';
@@ -9,7 +9,7 @@ import { SeaQuickAccess } from '@/components/styled/QuickAccess';
 import { mod, ModStore, type ModExportsRef } from '@/features/mod';
 import { useAppSelector } from '@/shared';
 
-const SvgMaker = ({ url, children: _, ...rest }: React.SVGProps<SVGSVGElement> & { url: string }) => {
+const SvgMaker = ({ url, children: _, ...rest }: SVGProps<SVGSVGElement> & { url: string }) => {
     if (!url.startsWith('<svg xmlns="http://www.w3.org/2000/svg"')) {
         throw new Error('不是有效的svg信息');
     }
@@ -31,7 +31,7 @@ const SvgMaker = ({ url, children: _, ...rest }: React.SVGProps<SVGSVGElement> &
     );
 };
 
-const SvgWrapper = (url: string) => (props: React.SVGProps<SVGSVGElement>) => SvgMaker({ url, ...props });
+const SvgWrapper = (url: string) => (props: SVGProps<SVGSVGElement>) => SvgMaker({ url, ...props });
 
 const QuickAccessPluginAction = ({
     pluginRef,

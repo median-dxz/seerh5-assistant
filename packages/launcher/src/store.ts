@@ -1,25 +1,25 @@
 import { configureStore, type SerializableStateInvariantMiddlewareOptions } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query/react';
 
-import { listenerMiddleware } from './shared/redux';
-
 import { initializer } from './features/initializer';
 import { launcher } from './features/launcher';
 import { mod } from './features/mod';
-import { task } from './features/task';
+import { packetCapture } from './features/packetCapture';
 import { taskScheduler } from './features/taskScheduler';
 
 import { gameApi } from './services/game';
 import { launcherApi } from './services/launcher';
 import { modApi } from './services/mod';
 
+import { listenerMiddleware } from './shared/redux';
+
 export const appStore = configureStore({
     reducer: {
         launcher: launcher.reducer,
         taskScheduler: taskScheduler.reducer,
         mod: mod.reducer,
-        task: task.reducer,
         initializer: initializer.reducer,
+        packetCapture: packetCapture.reducer,
         [modApi.reducerPath]: modApi.reducer,
         [launcherApi.reducerPath]: launcherApi.reducer,
         [gameApi.reducerPath]: gameApi.reducer
@@ -30,6 +30,7 @@ export const appStore = configureStore({
                 ignoredPaths: [
                     /taskScheduler\.queue\.[0-9]*\.task\.runner/,
                     /taskScheduler\.queue\.[0-9]*\.error/,
+                    /packetCapture\.packets/,
                     /api\/mod\.queries\.fetch/,
                     /api\/game\.queries\.bagPets/,
                     /api\/game\.queries\.allPets/,

@@ -1,4 +1,4 @@
-import { createAction, createReducer, isAnyOf, type UnknownAction } from '@reduxjs/toolkit';
+import { createAction, createReducer, isAnyOf } from '@reduxjs/toolkit';
 import { dequal } from 'dequal';
 
 import { LevelAction, levelManager } from '@sea/core';
@@ -48,13 +48,6 @@ export const extraActions = {
     traceRunnerLog: createAction<string>('taskScheduler/traceRunnerLog'),
     increaseBattleCount: createAction('taskScheduler/increaseBattleCount')
 };
-
-function updateCurrentTaskState(state: TaskSchedulerState, action: UnknownAction) {
-    const { queue, currentIndex } = state;
-    if (currentIndex !== undefined) {
-        queue[currentIndex] = taskStateReducer(queue[currentIndex], action);
-    }
-}
 
 export const taskScheduler = createAppSlice({
     name: 'taskScheduler',
@@ -195,7 +188,12 @@ export const taskScheduler = createAppSlice({
                 actions.run.fulfilled,
                 actions.run.rejected
             ),
-            updateCurrentTaskState
+            (state, action) => {
+                const { queue, currentIndex } = state;
+                if (currentIndex !== undefined) {
+                    queue[currentIndex] = taskStateReducer(queue[currentIndex], action);
+                }
+            }
         );
     },
     selectors: {

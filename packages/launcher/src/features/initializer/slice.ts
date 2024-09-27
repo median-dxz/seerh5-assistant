@@ -1,7 +1,7 @@
 import { createAction, type PayloadAction } from '@reduxjs/toolkit';
 
 import * as seaCore from '@sea/core';
-import { battle, levelManager, seac, SEAEventSource, type SetupOptions } from '@sea/core';
+import { battle, levelManager, seac, SEAEventSource, SocketDeserializerRegistry, type SetupOptions } from '@sea/core';
 import { getCompositeId } from '@sea/mod-resolver';
 
 import { IS_DEV } from '@/constants';
@@ -12,6 +12,7 @@ import type { AppDispatch } from '@/store';
 import * as ctService from '../catchTimeBinding/index';
 import { launcher } from '../launcher';
 import { mod, type ModDeployment } from '../mod';
+import { packetCapture } from '../packetCapture';
 import { taskScheduler } from '../taskScheduler';
 
 import { preloadSetupMap, setupMap, type SetupMap } from './setup';
@@ -105,15 +106,59 @@ startAppListening({
         prependSetup(preloadSetupMap, 'beforeGameCoreInit', api.dispatch);
 
         // register listeners
-        const battleStart$ = SEAEventSource.hook('battle:start');
-        const battleEnd$ = SEAEventSource.hook('battle:end');
-        const roundEnd$ = SEAEventSource.hook('battle:roundEnd');
+        const battle$ = {
+            start: SEAEventSource.hook('battle:start'),
+            end: SEAEventSource.hook('battle:end'),
+            roundEnd: SEAEventSource.hook('battle:roundEnd')
+        };
+
+        const socket$ = {
+            send: SEAEventSource.hook('socket:send'),
+            receive: SEAEventSource.hook('socket:receive')
+        };
 
         // 自动战斗需要在Launcher层通过对应hook启用
-        battleStart$.on(battle.manager.resolveStrategy);
-        battleStart$.on(() => api.dispatch(launcher.fightStart()));
-        roundEnd$.on(battle.manager.resolveStrategy);
-        battleEnd$.on(() => api.dispatch(launcher.fightEnd()));
+        battle$.start.on(battle.manager.resolveStrategy);
+        battle$.roundEnd.on(battle.manager.resolveStrategy);
+
+        battle$.start.on(() => api.dispatch(launcher.fightStart()));
+        battle$.end.on(() => api.dispatch(launcher.fightEnd()));
+
+        // register socket events for packet capture
+
+        // wrapperFactory('addCmdListener', (cmd, callback) => {
+        //     if (state !== 'capturing' || CmdMask.includes(cmd)) return;
+        //     capturedPkgFactory(setCapture, { cmd, type: 'AddListener', data: callback });
+        // });
+
+        // wrapperFactory('removeCmdListener', (cmd, callback) => {
+        //     if (state !== 'capturing' || CmdMask.includes(cmd)) return;
+        //     capturedPkgFactory(setCapture, { cmd, type: 'RemoveListener', data: callback });
+        // });
+
+        socket$.send.on(({ cmd, data }) => {
+            api.dispatch(
+                packetCapture.onSocketEvent({
+                    cmd,
+                    buffer: data.flat().map((v) => (v instanceof egret.ByteArray ? v.bytes : v)),
+                    type: 'Send'
+                })
+            );
+        });
+
+        socket$.receive.on(({ cmd, buffer }) => {
+            let data = SocketDeserializerRegistry.getDeserializer(cmd)(buffer) as object | undefined;
+            if (data instanceof egret.ByteArray) {
+                data = data.bytes;
+            }
+            api.dispatch(
+                packetCapture.onSocketEvent({
+                    cmd,
+                    data,
+                    type: 'Received'
+                })
+            );
+        });
 
         SEAEventSource.levelManger('update').on((action) => {
             const runner = levelManager.getRunner();
@@ -125,6 +170,7 @@ startAppListening({
             }
         });
 
+        // register command shortcuts
         document.body.addEventListener('keydown', (e: KeyboardEvent) => {
             if (e.key === 'p' && e.ctrlKey) {
                 api.dispatch(launcher.toggleCommand());
