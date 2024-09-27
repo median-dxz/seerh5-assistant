@@ -10,7 +10,7 @@ import SwapVert from '@mui/icons-material/SwapVert';
 import {
     alpha,
     Chip,
-    Grid,
+    Grid2,
     List,
     ListItem,
     ListItemText,
@@ -71,18 +71,18 @@ export function ModListItem({ deployment }: ModListItemProps) {
     );
 
     const description = (
-        <Grid
+        <Grid2
             container
             spacing={1}
             columns={16}
             sx={{ justifyContent: 'flex-start', alignItems: 'baseline', fontSize: '1rem' }}
         >
-            <Grid item xs={4} sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }} zeroMinWidth>
+            <Grid2 size={4} sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
                 {scope}
-            </Grid>
+            </Grid2>
 
             <Tooltip title={ins?.metadata.description}>
-                <Grid item xs zeroMinWidth>
+                <Grid2 size="grow">
                     <ClampText
                         is="p"
                         lines={1}
@@ -90,30 +90,30 @@ export function ModListItem({ deployment }: ModListItemProps) {
                         accessibility={false}
                         text={ins?.metadata.description ?? ''}
                     />
-                </Grid>
+                </Grid2>
             </Tooltip>
 
             {scope === 'builtin' && (
-                <Grid item xs={2} sx={{ alignSelf: 'flex-end' }}>
+                <Grid2 size={2} offset="auto">
                     <Typography color="GrayText" variant="inherit" noWrap>
                         内置
                     </Typography>
-                </Grid>
+                </Grid2>
             )}
             {state.preload && (
-                <Grid item xs={2} sx={{ alignSelf: 'flex-end' }}>
+                <Grid2 size={2} offset="auto">
                     <Typography color="GrayText" variant="inherit" noWrap>
                         预加载
                     </Typography>
-                </Grid>
+                </Grid2>
             )}
 
-            <Grid item xs={2} sx={{ alignSelf: 'flex-end' }}>
+            <Grid2 size={2} offset="auto">
                 <Typography color="GrayText" variant="inherit" noWrap>
                     {deployment.status === 'deployed' ? '已部署' : deployment.isDeploying ? '部署中...' : '未部署'}
                 </Typography>
-            </Grid>
-        </Grid>
+            </Grid2>
+        </Grid2>
     );
 
     const { data: configValues } = modApi.useConfigQuery(cid);

@@ -1,4 +1,4 @@
-import { Grid, useMediaQuery, useTheme } from '@mui/material';
+import { Grid2, useMediaQuery, useTheme } from '@mui/material';
 import { Sidebar } from './Sidebar';
 import { TaskStateList } from './TaskStateList';
 
@@ -9,12 +9,13 @@ export function TaskStateView() {
     const matchMd = useMediaQuery(theme.breakpoints.up('md'));
 
     return (
-        <Grid container direction="row-reverse" sx={{ pt: 3 }}>
-            <Grid
-                item
+        <Grid2 container direction="row-reverse" sx={{ pt: 3 }}>
+            <Grid2
                 container
-                xs={12}
-                md={4}
+                size={{
+                    xs: 12,
+                    md: 4
+                }}
                 sx={{
                     mb: 3,
                     pr: matchMd ? 0 : 1,
@@ -22,8 +23,13 @@ export function TaskStateView() {
                 }}
             >
                 <Sidebar height={sidebarHeight} />
-            </Grid>
-            <Grid item xs={12} md={8}>
+            </Grid2>
+            <Grid2
+                size={{
+                    xs: 12,
+                    md: 8
+                }}
+            >
                 <TaskStateList
                     disablePadding
                     sx={{
@@ -37,7 +43,7 @@ export function TaskStateView() {
                         '& > *:not(:first-child)': { mt: 2 }
                     }}
                 />
-            </Grid>
-        </Grid>
+            </Grid2>
+        </Grid2>
     );
 }

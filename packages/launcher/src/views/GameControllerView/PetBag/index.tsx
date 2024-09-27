@@ -65,7 +65,7 @@ export function PetBag() {
     if (!pets) return <LinerLoading />;
 
     return (
-        <Stack sx={{ width: '100%' }}>
+        <Stack sx={{ width: '100%' }} spacing={2}>
             <ToolBar onLowerHp={handleLowerHp} onCurePets={handleCurePets} />
             <Box
                 sx={{
