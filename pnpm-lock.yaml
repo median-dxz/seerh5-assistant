@@ -24,13 +24,13 @@ importers:
         specifier: ^9.10.0
         version: 9.11.1
       eslint-plugin-react:
-        specifier: ^7.35.2
-        version: 7.36.1(eslint@9.11.1)
+        specifier: ^7.37.0
+        version: 7.37.0(eslint@9.11.1)
       eslint-plugin-react-hooks:
-        specifier: 5.1.0-rc-65903583-20240805
-        version: 5.1.0-rc-65903583-20240805(eslint@9.11.1)
+        specifier: 5.1.0-rc-67fee58b-20240926
+        version: 5.1.0-rc-67fee58b-20240926(eslint@9.11.1)
       eslint-plugin-react-refresh:
-        specifier: ^0.4.11
+        specifier: ^0.4.12
         version: 0.4.12(eslint@9.11.1)
       globals:
         specifier: ^15.9.0
@@ -2573,8 +2573,8 @@ packages:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
 
-  eslint-plugin-react-hooks@5.1.0-rc-65903583-20240805:
-    resolution: {integrity: sha512-NEsjgvv/oqnwGu1PIuk0LKo5UrBO0SnvFdavWl56R5SAcHPZi+sEnQ7Onzp6hpRuEAC69bhfTA/9no6JItCM/w==}
+  eslint-plugin-react-hooks@5.1.0-rc-67fee58b-20240926:
+    resolution: {integrity: sha512-FqGr3J8gqO2ZUW5pJsvDdf5s3F52lOIRlTu2z16uRm1LhyM1vPKvRETmptui6M3Z8C6nfgJA3WYvqLXL5l0KHA==}
     engines: {node: '>=10'}
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0
@@ -2584,8 +2584,8 @@ packages:
     peerDependencies:
       eslint: '>=7'
 
-  eslint-plugin-react@7.36.1:
-    resolution: {integrity: sha512-/qwbqNXZoq+VP30s1d4Nc1C5GTxjJQjk4Jzs4Wq2qzxFM7dSmuG2UkIjg2USMLh3A/aVcUNrK7v0J5U1XEGGwA==}
+  eslint-plugin-react@7.37.0:
+    resolution: {integrity: sha512-IHBePmfWH5lKhJnJ7WB1V+v/GolbB0rjS8XYVCSQCZKaQCAUhMoVoOEn1Ef8Z8Wf0a7l8KTJvuZg5/e4qrZ6nA==}
     engines: {node: '>=4'}
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9.7
@@ -6950,10 +6950,6 @@ snapshots:
 
   dayjs@1.11.13: {}
 
-  debug@4.3.6:
-    dependencies:
-      ms: 2.1.2
-
   debug@4.3.6(supports-color@5.5.0):
     dependencies:
       ms: 2.1.2
@@ -7221,7 +7217,7 @@ snapshots:
 
   escape-string-regexp@4.0.0: {}
 
-  eslint-plugin-react-hooks@5.1.0-rc-65903583-20240805(eslint@9.11.1):
+  eslint-plugin-react-hooks@5.1.0-rc-67fee58b-20240926(eslint@9.11.1):
     dependencies:
       eslint: 9.11.1
 
@@ -7229,7 +7225,7 @@ snapshots:
     dependencies:
       eslint: 9.11.1
 
-  eslint-plugin-react@7.36.1(eslint@9.11.1):
+  eslint-plugin-react@7.37.0(eslint@9.11.1):
     dependencies:
       array-includes: 3.1.8
       array.prototype.findlast: 1.2.5
@@ -9133,7 +9129,7 @@ snapshots:
     dependencies:
       '@antfu/utils': 0.7.10
       '@rollup/pluginutils': 5.1.0(rollup@2.79.1)
-      debug: 4.3.6
+      debug: 4.3.6(supports-color@5.5.0)
       error-stack-parser-es: 0.1.5
       fs-extra: 11.2.0
       open: 10.1.0
@@ -9147,7 +9143,7 @@ snapshots:
 
   vite-plugin-pwa@0.20.5(vite@5.4.8(@types/node@22.7.2)(terser@5.33.0))(workbox-build@7.1.1)(workbox-window@7.1.0):
     dependencies:
-      debug: 4.3.6
+      debug: 4.3.6(supports-color@5.5.0)
       pretty-bytes: 6.1.1
       tinyglobby: 0.2.5
       vite: 5.4.8(@types/node@22.7.2)(terser@5.33.0)
