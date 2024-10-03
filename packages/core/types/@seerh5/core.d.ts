@@ -182,7 +182,13 @@ declare global {
         readonly timeToday: number;
         readonly timeLimit: number;
         requestChangeClotherBySuit(suitId: number, callback?: Callback, arg?: unknown, thisArg?: any): void;
-        requestChangeClothes(type: 'head' | 'eye' | 'hand' | 'waist' | 'foot', id: number, callback?: Callback): void;
+        requestChangeClothes(
+            type: 'head' | 'eye' | 'hand' | 'waist' | 'foot',
+            id: number,
+            callback?: Callback,
+            arg?: unknown,
+            thisArg?: any
+        ): void;
     }
 
     interface AwardManager {

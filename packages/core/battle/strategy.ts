@@ -28,8 +28,10 @@ function rotating(...skills: string[]): Matcher {
     rotatingCount.set(stringifySkills, count + 1);
 
     return (_, allSkills) => {
-        const availableSkills = allSkills.filter((skill) => skill.pp > 0 && skills.some((name) => skill.name === name));
-        return availableSkills[count % availableSkills.length]?.id;
+        const availableSkills = skills
+            .map((skillName) => allSkills.find((s) => s.name === skillName && s.pp > 0)?.id)
+            .filter(Boolean);
+        return availableSkills[count % availableSkills.length];
     };
 }
 
@@ -78,7 +80,16 @@ function linkList(...pets: string[]): Matcher {
     };
 }
 
-export { attack, fifth, group, linkList, match, name, pet, rotating, round };
+// helper functions
+function resetCount(...skills: string[]) {
+    const { rotatingCount } = context;
+    const stringifySkills = skills.join(',');
+    if (rotatingCount.has(stringifySkills)) {
+        rotatingCount.delete(stringifySkills);
+    }
+}
+
+export { attack, fifth, group, linkList, match, name, pet, resetCount, rotating, round };
 
 export const auto = {
     move(skills?: string[]): MoveHandler {

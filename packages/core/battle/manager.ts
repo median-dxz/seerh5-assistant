@@ -66,6 +66,7 @@ async function resolveStrategy(strategy?: MoveStrategy) {
         await delay(context.moveInterval);
 
         battleContext = [provider.getCurRoundInfo()!, provider.getCurSkills()!, battleContext[2]];
+        battleContext[0].isSwitchNoBlood = true;
     }
 
     // 战斗已经结束, 例如在死切中escape

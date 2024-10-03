@@ -31,7 +31,7 @@ export function extendCore() {
         },
         changeEquipment(type: Parameters<UserInfo['requestChangeClothes']>[0], itemId: number) {
             return new Promise<void>((resolve) => {
-                MainManager.actorInfo.requestChangeClothes(type, itemId, resolve);
+                MainManager.actorInfo.requestChangeClothes(type, itemId, () => resolve(), null, {});
             });
         }
     });
