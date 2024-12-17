@@ -1,6 +1,6 @@
 import type { ButtonProps, MenuItemProps, MenuProps } from '@mui/material';
 import { Button, CircularProgress, Menu, MenuItem, Typography } from '@mui/material';
-import * as React from 'react';
+import type * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 
 import { useListDerivedValue, usePopupState } from '@/shared';

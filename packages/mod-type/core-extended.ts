@@ -28,7 +28,6 @@ declare module '@sea/core' {
     }
 }
 
-/* eslint-disable @typescript-eslint/no-namespace */
 declare global {
     namespace seerh5 {
         interface NatureObj extends seerh5.BaseObj {

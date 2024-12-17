@@ -3,7 +3,7 @@ import type { ButtonBaseProps } from '@mui/material';
 import { alpha, ButtonBase, styled } from '@mui/material';
 import { forwardRef, type ForwardedRef, type PropsWithChildren } from 'react';
 
-const HexagonalButtonRoot = forwardRef(function (
+const HexagonalButtonRoot = forwardRef(function HexagonalButtonRoot(
     props: PropsWithChildren<React.SVGProps<SVGSVGElement>> & { baseSize: number },
     ref: ForwardedRef<SVGSVGElement>
 ) {
@@ -97,7 +97,7 @@ const StyledButtonRoot = styled(HexagonalButtonRoot)`
     }
 `;
 
-export const HexagonalButton = forwardRef(function (
+export const HexagonalButton = forwardRef(function HexagonalButton(
     props: ButtonBaseProps & { baseSize: number },
     ref: ForwardedRef<HTMLButtonElement>
 ) {

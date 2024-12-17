@@ -1,5 +1,4 @@
 // @ts-check
-
 import eslint from '@eslint/js';
 import globals from 'globals';
 import tsEslint from 'typescript-eslint';
@@ -20,6 +19,8 @@ export default tsEslint.config(
             '**/*.config.*',
             'packages/core/types/',
             'packages/launcher/build-plugins/',
+            'packages/launcher/dev-dist/',
+            'packages/server/**/*.{c,m}js',
             'packages/server/entry/',
             'packages/server/mods/',
             'packages/server/launcher',
@@ -114,25 +115,24 @@ export default tsEslint.config(
             globals: {
                 ...globals.browser
             },
-            parserOptions: {
-                ecmaFeatures: {
-                    jsx: true
-                }
-            }
+            ...react.configs.flat.recommended.languageOptions,
+            ...react.configs.flat['jsx-runtime'].languageOptions
         },
         settings: {
             react: {
-                version: '18.3'
+                version: 'detect'
             }
         },
         plugins: {
             'react-refresh': reactRefresh,
             // @ts-expect-error
             'react-hooks': reactHooks,
-            react: react
+            ...react.configs.flat.recommended.plugins
         },
+        // @ts-expect-error
         rules: {
             ...react.configs.flat.recommended.rules,
+            ...react.configs.flat['jsx-runtime'].rules,
             ...reactHooks.configs.recommended.rules,
             'react-refresh/only-export-components': 'warn',
             'react/jsx-uses-react': 'off',

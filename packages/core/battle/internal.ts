@@ -35,8 +35,8 @@ export default () => {
     });
 
     const onRoundStart = () => {
-        const info = provider.getCurRoundInfo()!;
-        if (info.round <= 0) {
+        const info = provider.getCurRoundInfo();
+        if (info && info.round <= 0) {
             context.delayTimeout = delay(context.fightInterval);
         }
     };
