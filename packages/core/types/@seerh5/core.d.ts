@@ -363,7 +363,7 @@ declare global {
 
     interface PetStorage2015InfoManager {
         /**
-         * @param {number} page 默认为0
+         * @param {number} page 默认为 0
          */
         getMiniInfo(callback: Callback, page?: number): void;
         getTotalInfo(callback: Callback): void;
@@ -384,7 +384,7 @@ declare global {
     const SystemTimerManager: SystemTimerManager;
 
     interface CountermarkController {
-        getInfo(obtainTime: number): CountermarkInfo;
+        getInfo(obtainTime: number): CountermarkInfo | null;
         updateMnumberMark(markInfo: Pick<CountermarkInfo, 'markID' | 'catchTime'>): void;
         getAllUniversalMark(): Array<CountermarkInfo>;
     }
