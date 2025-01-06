@@ -60,6 +60,7 @@ declare global {
     }
 
     class CountermarkInfo {
+        get adjArray(): [number, number, number, number, number, number];
         get markName(): string;
         get isBindMon(): boolean;
         get obtainTime(): number;
@@ -80,14 +81,19 @@ declare global {
         catchTime: number;
         level: number;
         dv: number;
+        abilityMark: number;
+        skillMark: number;
+        commonMark: number;
         nature: number;
         hideSKill: PetSkillInfo;
         skillArray: Array<PetSkillInfo>;
         effectList?: Array<PetEffectInfo>;
+        resistanceinfo: ResistanceInfo;
         isDefault: boolean;
         base_hp_total: number;
         base_curHp: number;
         _skinId: number;
+        get evArray(): [number, number, number, number, number, number];
         get hp(): number;
         get maxHp(): number;
         get skinId(): number;
@@ -98,6 +104,8 @@ declare global {
     class PetEffectInfo {
         effectID: number;
         args: string;
+        itemId: number;
+        status: number;
     }
 
     class PetSkillInfo {
@@ -115,6 +123,48 @@ declare global {
         firstPetTime: number;
         flag: boolean;
     }
+
+    interface ResistanceInfo {
+        hurtResistarr: [];
+        effResistarr: [];
+        cirt: number;
+        cirt_adj: number;
+        regular: number;
+        regular_adj: number;
+        precent: number;
+        precent_adj: number;
+        ctl_1_idx: number;
+        ctl_1: number;
+        ctl_1_adj: number;
+        ctl_2_idx: number;
+        ctl_2: number;
+        ctl_2_adj: number;
+        ctl_3_idx: number;
+        ctl_3: number;
+        ctl_3_adj: number;
+        weak_1_idx: number;
+        weak_1: number;
+        weak_1_adj: number;
+        weak_2_idx: number;
+        weak_2: number;
+        weak_2_adj: number;
+        weak_3_idx: number;
+        weak_3: number;
+        weak_3_adj: number;
+        resist_all: number;
+        resist_state: number;
+        red_gem: number;
+        green_gem: number;
+        reserve: number;
+    }
+
+    interface ResistanceSysController {
+        getResistanceByLevel: (
+            resistType: number,
+            level: number
+        ) => { lev: number; present: number; need: number | typeof NaN };
+    }
+    const ResistanceSysController: ResistanceSysController;
 
     class PetListInfo {
         catchTime: number;
@@ -390,10 +440,26 @@ declare global {
     }
     const CountermarkController: CountermarkController;
 
+    interface CountermarkXMLInfo {
+        getType: (markID: number) => number;
+        getSkillID: (markID: number) => number;
+        getMintMarkClass: (markID: number) => number;
+        isAbilityMark: (markID: number) => boolean;
+        isSkillMark: (markID: number) => boolean;
+        isUniversalMark: (markID: number) => boolean;
+        isQuanxiaoMark: (markID: number) => boolean;
+    }
+    const CountermarkXMLInfo: CountermarkXMLInfo;
+
     interface EffectIconControl {
         _hashMapByPetId: seerh5.HashMap<Array<{ Id: number }>>;
     }
     const EffectIconControl: EffectIconControl;
+
+    interface PetEffectXMLInfo {
+        getStarLevel: (effectID: number, args: string) => number;
+    }
+    const PetEffectXMLInfo: PetEffectXMLInfo;
 
     interface AchieveXMLInfo {
         titleRules: seerh5.Dict<seerh5.TitleObj>;
