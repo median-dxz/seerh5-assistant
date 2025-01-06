@@ -86,7 +86,12 @@ export function CommandInput() {
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    inputProps={{ ...params.inputProps, autoComplete: 'off' }}
+                    slotProps={{
+                        htmlInput: {
+                            ...params.inputProps,
+                            autoComplete: 'off'
+                        }
+                    }}
                     label={'SEA Launcher 命令行'}
                     autoFocus
                 />

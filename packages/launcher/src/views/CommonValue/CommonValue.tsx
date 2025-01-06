@@ -5,10 +5,11 @@ import { Item } from '@sea/core';
 import { Button, Typography } from '@mui/material';
 
 import { LabeledLinearProgress } from '@/components/LabeledProgress';
-import { PanelField, PanelTable, type PanelColumn } from '@/components/SEAPanelTable';
+import { PanelTable, type PanelColumn } from '@/components/SEAPanelTable';
+import { PanelField } from '@/components/SEAPanelTable/PanelField';
 import { Icon } from '@/services/resource';
 
-import { SeaTableRow } from '@/components/styled/TableRow';
+import { TableRow } from '@/components/styled/TableRow';
 import { launcher } from '@/features/launcher';
 import { useAppDispatch } from '@/shared';
 import { idList, openModuleList } from './data';
@@ -72,7 +73,7 @@ const PanelRow = ({ item }: { item: Item }) => {
     }
 
     return (
-        <SeaTableRow>
+        <TableRow>
             <PanelField field="id">{item.id}</PanelField>
             <PanelField field="icon">
                 <img crossOrigin="anonymous" src={Icon.item(item.id)} alt={item.name} width={36} />
@@ -91,6 +92,6 @@ const PanelRow = ({ item }: { item: Item }) => {
                     </Button>
                 ) : undefined}
             </PanelField>
-        </SeaTableRow>
+        </TableRow>
     );
 };

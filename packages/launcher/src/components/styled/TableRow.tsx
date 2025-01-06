@@ -1,9 +1,9 @@
 import { theme } from '@/theme';
-import { TableRow, alpha, styled } from '@mui/material';
+import { TableRow as MuiTabRow, alpha, styled } from '@mui/material';
 
 const radius = theme.shape.borderRadius * 1.5;
 
-export const SeaTableRow = styled(TableRow)`
+export const TableRow = styled(MuiTabRow)`
     transition: ${theme.transitions.create(['background-color'])};
 
     td {
@@ -28,4 +28,4 @@ export const SeaTableRow = styled(TableRow)`
         background-color: ${alpha(theme.palette.primary.main, 0.18)};
         filter: drop-shadow(${theme.boxShadow});
     }
-` as typeof TableRow;
+` as typeof MuiTabRow;

@@ -184,7 +184,7 @@ export function InstallFromLocalForm() {
 interface UploadEndAdornmentProps {
     file: File | null;
     setFile: React.Dispatch<React.SetStateAction<File | null>>;
-    fileInputRef: React.RefObject<HTMLInputElement>;
+    fileInputRef: React.RefObject<HTMLInputElement | null>;
 }
 
 const UploadEndAdornment = ({ file, fileInputRef, setFile }: UploadEndAdornmentProps) => (

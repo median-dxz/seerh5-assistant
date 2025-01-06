@@ -1,20 +1,11 @@
-import type { TableCellProps, TableProps } from '@mui/material';
 import { Table, TableBody, TableCell, TableHead, TableRow, alpha } from '@mui/material';
-import * as React from 'react';
+import { Fragment, useCallback } from 'react';
 
 import { useListDerivedValue } from '@/shared';
-import { useCallback } from 'react';
+import { ColumnContext } from './context';
+import type { PanelTableProps } from './types';
 
-export type PanelColumn = { field: string; columnName: string } & TableCellProps;
-
-type PanelTableProps<Data> = {
-    data: Data[];
-    toRowKey?: (data: Data) => React.Key;
-    columns: PanelColumn[];
-    renderRow: (data: Data, index: number) => React.ReactElement;
-} & Omit<TableProps, 'children'>;
-
-export const ColumnContext = React.createContext<PanelColumn[]>([]);
+export type { PanelColumn, PanelTableProps } from './types';
 
 export function PanelTable<TData>(props: PanelTableProps<TData>) {
     const { toRowKey, data, columns, renderRow, ...tableProps } = props;
@@ -38,7 +29,7 @@ export function PanelTable<TData>(props: PanelTableProps<TData>) {
                 <ColumnContext.Provider value={columns}>
                     {data.map((data) => {
                         const key = keyRef.current.get(data);
-                        return <React.Fragment key={key}>{renderResultRef.current.get(data)}</React.Fragment>;
+                        return <Fragment key={key}>{renderResultRef.current.get(data)}</Fragment>;
                     })}
                 </ColumnContext.Provider>
             </TableBody>

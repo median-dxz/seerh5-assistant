@@ -56,10 +56,12 @@ export const RunnerDetailDialog = React.memo(function RunnerDetailDialog({
                 id={`runner-${id}-${task.metadata.name}`}
                 multiline
                 aria-readonly
-                InputProps={{
-                    readOnly: true,
-                    sx: {
-                        fontFamily: ({ fonts }) => fonts.property
+                slotProps={{
+                    input: {
+                        readOnly: true,
+                        sx: {
+                            fontFamily: ({ fonts }) => fonts.property
+                        }
                     }
                 }}
                 fullWidth

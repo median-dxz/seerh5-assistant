@@ -14,8 +14,9 @@ import { getCompositeId, MOD_SCOPE_BUILTIN } from '@sea/mod-resolver';
 import { DataLoading } from '@/components/DataLoading';
 import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 import { SEAConfigForm } from '@/components/SEAConfigForm';
-import { PanelField, PanelTable, type PanelColumn } from '@/components/SEAPanelTable';
-import { SeaTableRow } from '@/components/styled/TableRow';
+import { PanelTable, type PanelColumn } from '@/components/SEAPanelTable';
+import { PanelField } from '@/components/SEAPanelTable/PanelField';
+import { TableRow } from '@/components/styled/TableRow';
 import { PET_FRAGMENT_LEVEL_ID } from '@/constants';
 import { mod, ModStore, type ModExportsRef, type TaskInstance } from '@/features/mod';
 import { taskScheduler } from '@/features/taskScheduler';
@@ -180,7 +181,7 @@ const PanelRow = React.memo(function PanelRow({ taskRef: ref, options, task, run
     }, [options, ref, update]);
 
     return (
-        <SeaTableRow sx={{ height: '3.3rem' }}>
+        <TableRow sx={{ height: '3.3rem' }}>
             <PanelField field="name">{runner.name ?? task.metadata.name}</PanelField>
             <PanelField field="cid">{ref.cid}</PanelField>
             <PanelField field="state">
@@ -224,6 +225,6 @@ const PanelRow = React.memo(function PanelRow({ taskRef: ref, options, task, run
                     title={`编辑配置: ${runner.name ?? task.metadata.name}`}
                 />
             )}
-        </SeaTableRow>
+        </TableRow>
     );
 });

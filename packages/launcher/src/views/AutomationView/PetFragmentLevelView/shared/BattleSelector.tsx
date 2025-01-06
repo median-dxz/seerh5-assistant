@@ -33,12 +33,14 @@ export const BattleSelector = forwardRef<
                 renderInput={(params) => (
                     <TextField
                         {...params}
-                        InputProps={{
-                            ...params.InputProps
-                        }}
-                        inputProps={{
-                            ...params.inputProps,
-                            autoComplete: 'off'
+                        slotProps={{
+                            htmlInput: {
+                                ...params.inputProps,
+                                autoComplete: 'off'
+                            },
+                            input: {
+                                ...params.InputProps
+                            }
                         }}
                         label="对战方案"
                         helperText={errorText}

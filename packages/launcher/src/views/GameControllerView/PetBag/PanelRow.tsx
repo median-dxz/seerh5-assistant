@@ -10,8 +10,8 @@ import type { Pet } from '@sea/core';
 import { GameConfigRegistry, delay, engine, spet } from '@sea/core';
 
 import { IconButtonNoRipple as IconButton } from '@/components/IconButtonNoRipple';
-import { PanelField } from '@/components/SEAPanelTable';
-import { SeaTableRow } from '@/components/styled/TableRow';
+import { PanelField } from '@/components/SEAPanelTable/PanelField';
+import { TableRow } from '@/components/styled/TableRow';
 
 import { launcher } from '@/features/launcher';
 import { Icon } from '@/services/resource';
@@ -81,7 +81,7 @@ export function PanelRow({ isFetching, onSelect, selected, pet, index }: PanelRo
                     属性: {pet.element.id} {pet.element.name}
                 </Typography>
             </Popover>
-            <SeaTableRow>
+            <TableRow>
                 <PanelField field="select" onClick={handleSelect}>
                     <Checkbox name="pet-checkbox" checked={selected} />
                 </PanelField>
@@ -135,7 +135,7 @@ export function PanelRow({ isFetching, onSelect, selected, pet, index }: PanelRo
                         <MoreHoriz />
                     </IconButton>
                 </PanelField>
-            </SeaTableRow>
+            </TableRow>
         </>
     );
 }

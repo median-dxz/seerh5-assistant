@@ -101,7 +101,7 @@ export function AddOptionsForm({ open, onClose }: AddOptionsFormProps) {
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
-                                        inputProps={{ ...params.inputProps, autoComplete: 'off' }}
+                                        slotProps={{ htmlInput: { ...params.inputProps, autoComplete: 'off' } }}
                                         label="因子"
                                         helperText={fieldState.error?.message}
                                     />

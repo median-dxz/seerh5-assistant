@@ -31,9 +31,11 @@ export const BattleItem = forwardRef<unknown, ControllerRenderProps & BattleItem
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    inputProps={{
-                        ...params.inputProps,
-                        autoComplete: 'off'
+                    slotProps={{
+                        htmlInput: {
+                            ...params.inputProps,
+                            autoComplete: 'off'
+                        }
                     }}
                     label={label}
                     helperText={helperText}

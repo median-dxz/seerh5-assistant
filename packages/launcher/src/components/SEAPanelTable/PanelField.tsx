@@ -1,7 +1,7 @@
 import type { TableCellProps } from '@mui/material';
 import { TableCell } from '@mui/material';
 import { useContext } from 'react';
-import { ColumnContext } from './PanelTable';
+import { ColumnContext } from './context';
 
 export function PanelField({ children, field, ...rest }: TableCellProps & { field: string }) {
     const columns = useContext(ColumnContext);

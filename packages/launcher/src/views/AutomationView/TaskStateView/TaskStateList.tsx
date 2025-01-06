@@ -123,7 +123,6 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                         overflow: 'visible'
                     }
                 }}
-                primaryTypographyProps={{ sx: { whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' } }}
                 primary={`#${runner.id} ${runner.name}`}
                 secondary={
                     <>
@@ -133,12 +132,15 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                             dayjs.duration(dayjs().diff(state.startTime)).format('mm:ss')}
                     </>
                 }
-                secondaryTypographyProps={{
-                    sx: {
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'baseline',
-                        gap: 2
+                slotProps={{
+                    primary: { sx: { whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' } },
+                    secondary: {
+                        sx: {
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'baseline',
+                            gap: 2
+                        }
                     }
                 }}
             />
@@ -197,12 +199,14 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                             {state.battleCount}
                         </>
                     }
-                    secondaryTypographyProps={{
-                        sx: {
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            gap: 2
+                    slotProps={{
+                        secondary: {
+                            sx: {
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                gap: 2
+                            }
                         }
                     }}
                 />

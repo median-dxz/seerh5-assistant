@@ -23,9 +23,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LevelAction, type Pet, query, SEAPetStore, spet } from '@sea/core';
 
 import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
-import { PanelField } from '@/components/SEAPanelTable';
+import { PanelField } from '@/components/SEAPanelTable/PanelField';
 import { Row } from '@/components/styled/Row';
-import { SeaTableRow } from '@/components/styled/TableRow';
+import { TableRow } from '@/components/styled/TableRow';
 
 import type { IPetFragmentRunner, PetFragmentOptions } from '@/builtin/petFragment/types';
 import { launcher } from '@/features/launcher';
@@ -120,7 +120,7 @@ export const PanelRow = React.memo(function PanelRow({
         dispatch(taskScheduler.enqueue(taskRef, { ...options, sweep }, runner.name));
 
     return (
-        <SeaTableRow sx={{ height: '3.3rem' }}>
+        <TableRow sx={{ height: '3.3rem' }}>
             <PanelField field="name" sx={{ width: '20vw', minWidth: '10rem' }}>
                 {runner.name?.split('-').toSpliced(0, 1).join('-')}
             </PanelField>
@@ -227,6 +227,6 @@ export const PanelRow = React.memo(function PanelRow({
                     <Typography variant="inherit">删除配置</Typography>
                 </MenuItem>
             </Menu>
-        </SeaTableRow>
+        </TableRow>
     );
 });
