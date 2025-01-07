@@ -88,7 +88,7 @@ declare global {
         hideSKill: PetSkillInfo;
         skillArray: Array<PetSkillInfo>;
         effectList?: Array<PetEffectInfo>;
-        resistanceinfo: ResistanceInfo;
+        resistanceinfo: PetResistanceInfo;
         isDefault: boolean;
         base_hp_total: number;
         base_curHp: number;
@@ -124,7 +124,7 @@ declare global {
         flag: boolean;
     }
 
-    interface ResistanceInfo {
+    interface PetResistanceInfo {
         hurtResistarr: [];
         effResistarr: [];
         cirt: number;
