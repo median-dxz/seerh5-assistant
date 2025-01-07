@@ -159,10 +159,16 @@ declare global {
     }
 
     interface ResistanceSysController {
+        /**
+         * 获取抗性等级信息
+         * @param resistType 抗性类型，0=伤害抗性（红抗），1=异常抗性（绿抗）
+         * @param level 抗性等级（`level` 字段）
+         * @returns 该等级的抗性配置，当等级为满级时 need 字段返回 {@link NaN}，{@link resistType}参数非法时返回空对象，{@link level}参数非法时返回 `undefined`
+         */
         getResistanceByLevel: (
             resistType: number,
             level: number
-        ) => { lev: number; present: number; need: number | typeof NaN };
+        ) => { lev?: number; present?: number; need?: number } | undefined;
     }
     const ResistanceSysController: ResistanceSysController;
 
@@ -441,8 +447,23 @@ declare global {
     const CountermarkController: CountermarkController;
 
     interface CountermarkXMLInfo {
+        /**
+         * 获取刻印类型（技能/能力/全能/全效）
+         * @param markID 刻印 ID
+         * @returns 刻印类型，0=技能刻印，1=能力刻印，3=全能刻印，55=全效刻印，找不到时返回 `-1`
+         */
         getType: (markID: number) => number;
+        /**
+         * 获取技能刻印对应的技能 ID
+         * @param markID 技能刻印 ID
+         * @returns 技能 ID，输入的参数不为技能刻印时返回 0
+         */
         getSkillID: (markID: number) => number;
+        /**
+         * 获取全能刻印所属的系列 ID，例如圣战系列，泰坦系列等等
+         * @param markID 全能刻印 ID
+         * @returns 全能刻印系列 ID，输入的参数不为全能刻印时返回 0
+         */
         getMintMarkClass: (markID: number) => number;
         isAbilityMark: (markID: number) => boolean;
         isSkillMark: (markID: number) => boolean;
