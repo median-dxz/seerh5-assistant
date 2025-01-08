@@ -63,10 +63,13 @@ declare global {
         get adjArray(): [number, number, number, number, number, number];
         get markName(): string;
         get isBindMon(): boolean;
+        get bindMoveID(): number;
         get obtainTime(): number;
         get markID(): number;
         get level(): number;
         get catchTime(): number;
+        get gemID(): number;
+        get isBindGem(): boolean;
     }
 
     class EffectInfo {
