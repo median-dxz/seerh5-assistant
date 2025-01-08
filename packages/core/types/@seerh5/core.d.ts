@@ -163,7 +163,8 @@ declare global {
          * 获取抗性等级信息
          * @param resistType 抗性类型，0=伤害抗性（红抗），1=异常抗性（绿抗）
          * @param level 抗性等级（`level` 字段）
-         * @returns 该等级的抗性配置，当等级为满级时 need 字段返回 {@link NaN}，{@link resistType}参数非法时返回空对象，{@link level}参数非法时返回 `undefined`
+         * @returns 该等级的抗性配置，`present` 字段表示当前等级提供的抗性加成（不包含全免抗性的）。
+         * 当等级为满级时 need 字段返回 {@link NaN}，{@link resistType}参数非法时返回空对象，{@link level}参数非法时返回 `undefined`
          */
         getResistanceByLevel: (
             resistType: number,
