@@ -476,6 +476,13 @@ declare global {
     }
     const CountermarkXMLInfo: CountermarkXMLInfo;
 
+    interface GemsXMLInfo {
+        getName: (gemID: number) => string;
+        getCategory: (gemID: number) => number;
+        getLv: (gemID: number) => number;
+    }
+    const GemsXMLInfo = GemsXMLInfo;
+
     interface EffectIconControl {
         _hashMapByPetId: seerh5.HashMap<Array<{ Id: number }>>;
     }
