@@ -450,48 +450,10 @@ declare global {
     }
     const CountermarkController: CountermarkController;
 
-    interface CountermarkXMLInfo {
-        /**
-         * 获取刻印类型（技能/能力/全能/全效）
-         * @param markID 刻印 ID
-         * @returns 刻印类型，0=技能刻印，1=能力刻印，3=全能刻印，55=全效刻印，找不到时返回 `-1`
-         */
-        getType: (markID: number) => number;
-        /**
-         * 获取技能刻印对应的技能 ID
-         * @param markID 技能刻印 ID
-         * @returns 技能 ID，输入的参数不为技能刻印时返回 0
-         */
-        getSkillID: (markID: number) => number;
-        /**
-         * 获取全能刻印所属的系列 ID，例如圣战系列，泰坦系列等等
-         * @param markID 全能刻印 ID
-         * @returns 全能刻印系列 ID，输入的参数不为全能刻印时返回 0
-         */
-        getMintMarkClass: (markID: number) => number;
-        isAbilityMark: (markID: number) => boolean;
-        isSkillMark: (markID: number) => boolean;
-        isUniversalMark: (markID: number) => boolean;
-        isQuanxiaoMark: (markID: number) => boolean;
-    }
-    const CountermarkXMLInfo: CountermarkXMLInfo;
-
-    interface GemsXMLInfo {
-        getName: (gemID: number) => string;
-        getCategory: (gemID: number) => number;
-        getLv: (gemID: number) => number;
-    }
-    const GemsXMLInfo = GemsXMLInfo;
-
     interface EffectIconControl {
         _hashMapByPetId: seerh5.HashMap<Array<{ Id: number }>>;
     }
     const EffectIconControl: EffectIconControl;
-
-    interface PetEffectXMLInfo {
-        getStarLevel: (effectID: number, args: string) => number;
-    }
-    const PetEffectXMLInfo: PetEffectXMLInfo;
 
     interface AchieveXMLInfo {
         titleRules: seerh5.Dict<seerh5.TitleObj>;
@@ -501,6 +463,39 @@ declare global {
         getTitleEffDesc(id: number): string;
     }
     const AchieveXMLInfo: AchieveXMLInfo;
+
+    interface CountermarkXMLInfo {
+        /**
+         * 获取刻印类型（技能/能力/全能/全效）
+         * @param markId 刻印 ID
+         * @returns 刻印类型，0=技能刻印，1=能力刻印，3=全能刻印，55=全效刻印，找不到时返回 `-1`
+         */
+        getType: (markId: number) => number;
+        /**
+         * 获取技能刻印对应的技能 ID
+         * @param markId 技能刻印 ID
+         * @returns 技能 ID，输入的参数不为技能刻印时返回 0
+         */
+        getSkillID: (markId: number) => number;
+        /**
+         * 获取全能刻印所属的系列 ID，例如圣战系列，泰坦系列等等
+         * @param markId 全能刻印 ID
+         * @returns 全能刻印系列 ID，输入的参数不为全能刻印时返回 0
+         */
+        getMintMarkClass: (markId: number) => number;
+        isAbilityMark: (markId: number) => boolean;
+        isSkillMark: (markId: number) => boolean;
+        isUniversalMark: (markId: number) => boolean;
+        isQuanxiaoMark: (markId: number) => boolean;
+    }
+    const CountermarkXMLInfo: CountermarkXMLInfo;
+
+    interface GemsXMLInfo {
+        getName: (gemId: number) => string;
+        getCategory: (gemId: number) => number;
+        getLv: (gemId: number) => number;
+    }
+    const GemsXMLInfo = GemsXMLInfo;
 
     interface ItemXMLInfo {
         _itemDict: seerh5.Dict<seerh5.ItemObj>;
@@ -545,6 +540,11 @@ declare global {
         getSuitIDs(clothIds: number[]): number[];
     }
     const SuitXMLInfo: SuitXMLInfo;
+
+    interface PetEffectXMLInfo {
+        getStarLevel: (effectId: number, args: string) => number;
+    }
+    const PetEffectXMLInfo: PetEffectXMLInfo;
 
     interface PetXMLInfo {
         _dataMap: seerh5.Dict<seerh5.PetObj>;
