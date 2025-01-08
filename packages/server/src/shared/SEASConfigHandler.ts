@@ -1,7 +1,7 @@
 import type { Recipe } from '../client-types.ts';
 import type { IStorage } from './utils.ts';
 
-class DateNotLoadedError extends Error {
+class DataNotLoadedError extends Error {
     constructor(public file: string) {
         super(`${file} hasn't been loaded yet`);
     }
@@ -26,7 +26,7 @@ export class SEASConfigHandler<TData extends object = object> {
 
     private async save() {
         if (!this.data) {
-            throw new DateNotLoadedError(this.storage.source);
+            throw new DataNotLoadedError(this.storage.source);
         }
 
         await this.storage.save(this.data);
@@ -34,7 +34,7 @@ export class SEASConfigHandler<TData extends object = object> {
 
     async mutate(recipe: Recipe<TData>) {
         if (!this.data) {
-            throw new DateNotLoadedError(this.storage.source);
+            throw new DataNotLoadedError(this.storage.source);
         }
 
         const r = recipe(this.data);
@@ -45,7 +45,7 @@ export class SEASConfigHandler<TData extends object = object> {
 
     query() {
         if (!this.data) {
-            throw new DateNotLoadedError(this.storage.source);
+            throw new DataNotLoadedError(this.storage.source);
         }
 
         return this.data;
