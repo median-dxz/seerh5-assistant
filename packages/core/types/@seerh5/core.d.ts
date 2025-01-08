@@ -60,12 +60,16 @@ declare global {
     }
 
     class CountermarkInfo {
+        get adjArray(): [number, number, number, number, number, number];
         get markName(): string;
         get isBindMon(): boolean;
+        get bindMoveID(): number;
         get obtainTime(): number;
         get markID(): number;
         get level(): number;
         get catchTime(): number;
+        get gemID(): number;
+        get isBindGem(): boolean;
     }
 
     class EffectInfo {
@@ -80,14 +84,19 @@ declare global {
         catchTime: number;
         level: number;
         dv: number;
+        abilityMark: number;
+        skillMark: number;
+        commonMark: number;
         nature: number;
         hideSKill: PetSkillInfo;
         skillArray: Array<PetSkillInfo>;
         effectList?: Array<PetEffectInfo>;
+        resistanceinfo: PetResistanceInfo;
         isDefault: boolean;
         base_hp_total: number;
         base_curHp: number;
         _skinId: number;
+        get evArray(): [number, number, number, number, number, number];
         get hp(): number;
         get maxHp(): number;
         get skinId(): number;
@@ -98,6 +107,8 @@ declare global {
     class PetEffectInfo {
         effectID: number;
         args: string;
+        itemId: number;
+        status: number;
     }
 
     class PetSkillInfo {
@@ -115,6 +126,55 @@ declare global {
         firstPetTime: number;
         flag: boolean;
     }
+
+    interface PetResistanceInfo {
+        hurtResistarr: [];
+        effResistarr: [];
+        cirt: number;
+        cirt_adj: number;
+        regular: number;
+        regular_adj: number;
+        precent: number;
+        precent_adj: number;
+        ctl_1_idx: number;
+        ctl_1: number;
+        ctl_1_adj: number;
+        ctl_2_idx: number;
+        ctl_2: number;
+        ctl_2_adj: number;
+        ctl_3_idx: number;
+        ctl_3: number;
+        ctl_3_adj: number;
+        weak_1_idx: number;
+        weak_1: number;
+        weak_1_adj: number;
+        weak_2_idx: number;
+        weak_2: number;
+        weak_2_adj: number;
+        weak_3_idx: number;
+        weak_3: number;
+        weak_3_adj: number;
+        resist_all: number;
+        resist_state: number;
+        red_gem: number;
+        green_gem: number;
+        reserve: number;
+    }
+
+    interface ResistanceSysController {
+        /**
+         * 获取抗性等级信息
+         * @param resistType 抗性类型，0=伤害抗性（红抗），1=异常抗性（绿抗）
+         * @param level 抗性等级（`level` 字段）
+         * @returns 该等级的抗性配置，`present` 字段表示当前等级提供的抗性加成（不包含全免抗性的）。
+         * 当等级为满级时 need 字段返回 {@link NaN}，{@link resistType}参数非法时返回空对象，{@link level}参数非法时返回 `undefined`
+         */
+        getResistanceByLevel: (
+            resistType: number,
+            level: number
+        ) => { lev?: number; present?: number; need?: number } | undefined;
+    }
+    const ResistanceSysController: ResistanceSysController;
 
     class PetListInfo {
         catchTime: number;
@@ -363,7 +423,7 @@ declare global {
 
     interface PetStorage2015InfoManager {
         /**
-         * @param {number} page 默认为0
+         * @param {number} page 默认为 0
          */
         getMiniInfo(callback: Callback, page?: number): void;
         getTotalInfo(callback: Callback): void;
@@ -384,16 +444,47 @@ declare global {
     const SystemTimerManager: SystemTimerManager;
 
     interface CountermarkController {
-        getInfo(obtainTime: number): CountermarkInfo;
+        getInfo(obtainTime: number): CountermarkInfo | null;
         updateMnumberMark(markInfo: Pick<CountermarkInfo, 'markID' | 'catchTime'>): void;
         getAllUniversalMark(): Array<CountermarkInfo>;
     }
     const CountermarkController: CountermarkController;
 
+    interface CountermarkXMLInfo {
+        /**
+         * 获取刻印类型（技能/能力/全能/全效）
+         * @param markID 刻印 ID
+         * @returns 刻印类型，0=技能刻印，1=能力刻印，3=全能刻印，55=全效刻印，找不到时返回 `-1`
+         */
+        getType: (markID: number) => number;
+        /**
+         * 获取技能刻印对应的技能 ID
+         * @param markID 技能刻印 ID
+         * @returns 技能 ID，输入的参数不为技能刻印时返回 0
+         */
+        getSkillID: (markID: number) => number;
+        /**
+         * 获取全能刻印所属的系列 ID，例如圣战系列，泰坦系列等等
+         * @param markID 全能刻印 ID
+         * @returns 全能刻印系列 ID，输入的参数不为全能刻印时返回 0
+         */
+        getMintMarkClass: (markID: number) => number;
+        isAbilityMark: (markID: number) => boolean;
+        isSkillMark: (markID: number) => boolean;
+        isUniversalMark: (markID: number) => boolean;
+        isQuanxiaoMark: (markID: number) => boolean;
+    }
+    const CountermarkXMLInfo: CountermarkXMLInfo;
+
     interface EffectIconControl {
         _hashMapByPetId: seerh5.HashMap<Array<{ Id: number }>>;
     }
     const EffectIconControl: EffectIconControl;
+
+    interface PetEffectXMLInfo {
+        getStarLevel: (effectID: number, args: string) => number;
+    }
+    const PetEffectXMLInfo: PetEffectXMLInfo;
 
     interface AchieveXMLInfo {
         titleRules: seerh5.Dict<seerh5.TitleObj>;
