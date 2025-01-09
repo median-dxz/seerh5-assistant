@@ -276,6 +276,7 @@ declare global {
     const KTool: KTool;
 
     interface MainManager {
+        /** UID, 即米米号 */
         actorID: number;
         actorInfo: UserInfo;
     }
