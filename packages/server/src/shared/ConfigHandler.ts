@@ -7,7 +7,7 @@ class DataNotLoadedError extends Error {
     }
 }
 
-export class SEASConfigHandler<TData extends object = object> {
+export class ConfigHandler<TData extends object = object> {
     private data?: TData;
     constructor(private storage: IStorage) {}
 
@@ -19,17 +19,17 @@ export class SEASConfigHandler<TData extends object = object> {
         this.data = (await this.storage.load(defaultData)) as TData;
     }
 
-    async create(data: TData) {
-        this.data = data;
-        await this.save();
-    }
-
     private async save() {
         if (!this.data) {
             throw new DataNotLoadedError(this.storage.source);
         }
 
         await this.storage.save(this.data);
+    }
+
+    async create(data: TData) {
+        this.data = data;
+        await this.save();
     }
 
     async mutate(recipe: Recipe<TData>) {

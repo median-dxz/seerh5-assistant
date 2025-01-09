@@ -3,14 +3,15 @@ import { LauncherConfigKeys, PetGroupsSchema, type LauncherConfigType } from '..
 import { procedure, router } from '../trpc.ts';
 
 export const configs = router({
-    item: procedure.input(z.enum(LauncherConfigKeys)).query(({ input, ctx }) => {
-        const { launcherConfig } = ctx;
-        const key = input;
-        return launcherConfig.item(key);
-    }),
+    item: procedure
+        .input(z.object({ uid: z.string(), key: z.enum(LauncherConfigKeys) }))
+        .query(({ input: { uid, key }, ctx }) => {
+            const { launcherConfig } = ctx;
+            return launcherConfig.item(uid, key);
+        }),
     setItem: procedure
         .input(
-            z.object({ key: z.enum(LauncherConfigKeys), value: z.unknown() }).refine((input) => {
+            z.object({ uid: z.string(), key: z.enum(LauncherConfigKeys), value: z.unknown() }).refine((input) => {
                 switch (input.key) {
                     case 'PetGroups':
                         return PetGroupsSchema.safeParse(input.value).success;
@@ -19,9 +20,8 @@ export const configs = router({
                 }
             })
         )
-        .mutation(({ input, ctx }) => {
-            const { key, value } = input;
+        .mutation(({ input: { uid, key, value }, ctx }) => {
             const { launcherConfig } = ctx;
-            return launcherConfig.setItem(key, value as LauncherConfigType[typeof key]);
+            return launcherConfig.setItem(uid, key, value as LauncherConfigType[typeof key]);
         })
 });

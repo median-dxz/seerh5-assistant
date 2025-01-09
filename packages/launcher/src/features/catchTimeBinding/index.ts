@@ -13,7 +13,7 @@ const petFilter = (v: { id: number; level: number; posi: PetPosType }) =>
  * 同步玩家的CT表
  * 取 (近现代精灵 & 等级为100) | 精英收藏和背包中的精灵
  */
-async function sync() {
+async function sync(uid: string) {
     const data1 = Array.from((await SEAPetStore.miniInfo.get()).values());
     const data2 = (await SEAPetStore.bag.get()).flat();
     const mapping = (v: { name: string; catchTime: number; id: number; level: number }) => {
@@ -22,16 +22,16 @@ async function sync() {
     data1.filter(petFilter).forEach(mapping);
     data2.forEach(mapping);
 
-    await updateAllCatchTime(store);
+    await updateAllCatchTime(uid, store);
 }
 
 /**
  * 从本地配置中拉取CT表
  */
-async function load() {
+async function load(uid: string) {
     store.clear();
     lookup.clear();
-    store = await queryCatchTime();
+    store = await queryCatchTime(uid);
     store.forEach((value, key) => lookup.set(value, key));
 }
 
@@ -69,13 +69,15 @@ function nameBindingByCt(ct: number) {
 export { add, ctByName, load, nameBindingByCt, remove, sync };
 const { launcherRouter: configRouter } = trpcClient;
 
-export async function queryCatchTime(name: string): Promise<[string, number]>;
-export async function queryCatchTime(): Promise<Map<string, number>>;
-export async function queryCatchTime(name?: string) {
-    return configRouter.catchTime.all.query(name);
+export async function queryCatchTime(uid: string, name: string): Promise<[string, number]>;
+export async function queryCatchTime(uid: string): Promise<Map<string, number>>;
+export async function queryCatchTime(uid: string, name?: string) {
+    return configRouter.catchTime.all.query({ uid, name });
 }
-export const updateAllCatchTime = async (data: Map<string, number>) => configRouter.catchTime.mutate.mutate(data);
+export const updateAllCatchTime = async (uid: string, data: Map<string, number>) =>
+    configRouter.catchTime.mutate.mutate({ uid, map: data });
 
-export const deleteCatchTime = async (name: string) => configRouter.catchTime.delete.mutate(name);
+export const deleteCatchTime = async (uid: string, name: string) => configRouter.catchTime.delete.mutate({ uid, name });
 
-export const addCatchTime = async (name: string, time: number) => configRouter.catchTime.set.mutate([name, time]);
+export const addCatchTime = async (uid: string, name: string, time: number) =>
+    configRouter.catchTime.set.mutate({ uid, name, ct: time });

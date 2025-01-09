@@ -13,6 +13,7 @@ export const CID_LIST = {
 } as const;
 
 export const SOURCE_INDEX = 'index';
+export const UID = 'default';
 
 export const storageDelete = vi.fn(async () => {});
 
@@ -24,7 +25,7 @@ export class FakeStorage implements IStorage {
             if (defaultData) {
                 this.data = defaultData;
             } else if (this.source === CID_LIST[1] || this.source === CID_LIST[2]) {
-                this.data = { key: 'value' };
+                this.data = { [UID]: { key: 'value' } };
             } else {
                 throw new Error('should set default data');
             }

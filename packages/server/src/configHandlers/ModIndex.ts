@@ -1,4 +1,4 @@
-import { SEASConfigHandler } from '../shared/SEASConfigHandler.ts';
+import { ConfigHandler } from '../shared/ConfigHandler.ts';
 
 export interface ModState {
     enable: boolean;
@@ -9,7 +9,7 @@ export interface ModState {
     version: string;
 }
 
-export class ModIndex extends SEASConfigHandler<Map<string, ModState>> {
+export class ModIndex extends ConfigHandler<Map<string, ModState>> {
     async load() {
         return super.load(new Map());
     }

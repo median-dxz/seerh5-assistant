@@ -1,18 +1,18 @@
-import { SEASConfigHandler } from '../shared/SEASConfigHandler.ts';
+import { MultiUserConfigHandler } from '../shared/MultiUserConfigHandler.ts';
 
-export class TaskOptions extends SEASConfigHandler<Map<string, object>> {
+export class TaskOptions extends MultiUserConfigHandler<Map<string, object>> {
     async load() {
         return super.load(new Map());
     }
 
-    async set(taskId: string, data: object) {
-        return this.mutate((config) => {
-            config.set(taskId, data);
+    async set(uid: string, taskId: string, options: object) {
+        return this.mutate(uid, (config) => {
+            config.set(taskId, options);
         });
     }
 
-    async remove(taskId: string) {
-        return this.mutate((config) => {
+    async remove(uid: string, taskId: string) {
+        return this.mutate(uid, (config) => {
             config.delete(taskId);
         });
     }
