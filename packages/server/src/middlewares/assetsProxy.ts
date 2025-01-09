@@ -27,7 +27,7 @@ export const createAssetsProxy = (appRoot: string) =>
                         v && res.setHeader(k, v);
                     }
 
-                    const rawBuf = Buffer.concat(chunks);
+                    const rawBuf: Buffer = Buffer.concat(chunks);
                     const url = req.url ?? '';
                     let respBuf = rawBuf;
                     if (url.includes('entry/entry.js')) {
