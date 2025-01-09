@@ -42,7 +42,8 @@ export function EditOptionsForm({ open, onClose, index }: EditOptionsFormProps) 
     const isSweep = watch('sweep');
 
     const levelId = optionsList.at(index)?.id;
-    const bosses = levelId ? petFragmentLevels.selectById(levelId)?.bosses : undefined;
+    // 即便 open 为 false, levelId也可能是有效的, 此时会导致 difficulty 为 undefined
+    const bosses = open && levelId ? petFragmentLevels.selectById(levelId)?.bosses : undefined;
     const levelCount = bosses?.[difficulty].length ?? 0;
 
     return (
