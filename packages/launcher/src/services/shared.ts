@@ -12,13 +12,13 @@ export const trpcClient = createTRPCClient<ApiRouter>({
     links: [wsLink({ client: wsClient, transformer: superjson })]
 });
 
-export const baseQuery: BaseQueryFn<(api: BaseQueryApi, options: unknown) => Promise<unknown>, unknown, Error> = async (
-    queryFn,
-    api,
-    extraOptions
-) => {
+export const baseQuery: BaseQueryFn<
+    (uid: string, api: BaseQueryApi, options: unknown) => Promise<unknown>,
+    unknown,
+    Error
+> = async (queryFn, api, extraOptions) => {
     try {
-        return { data: await queryFn(api, extraOptions) };
+        return { data: await queryFn(MainManager.actorID.toString(), api, extraOptions) };
     } catch (error) {
         return { error: error as Error };
     }

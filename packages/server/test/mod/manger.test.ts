@@ -3,7 +3,7 @@ import { test as base } from 'vitest';
 import { ModIndex, ModState } from '../../src/configHandlers/ModIndex';
 import { InstallModOptions } from '../../src/router/mod/schemas';
 import { ModManager } from '../../src/shared/ModManager';
-import { CID_LIST, FakeStorage, FakeStorageBuilder, SOURCE_INDEX, storageDelete } from './mocks';
+import { CID_LIST, FakeStorage, FakeStorageBuilder, SOURCE_INDEX, storageDelete, UID } from './mocks';
 
 const modState1 = {
     enable: true,
@@ -61,8 +61,8 @@ test('load config and data', async ({ expect, modManager }) => {
     const cid = CID_LIST[2];
     expect(modManager.dataHandlers.size).toBe(1);
     expect(modManager.configHandlers.size).toBe(1);
-    expect(await modManager.data(cid)).toEqual({ key: 'value' });
-    expect(await modManager.config(cid)).toEqual({ key: 'value' });
+    expect(await modManager.data(UID, cid)).toEqual({ key: 'value' });
+    expect(await modManager.config(UID, cid)).toEqual({ key: 'value' });
 });
 
 test('install a new mod with config and data', async ({ expect, modManager }) => {
@@ -77,8 +77,8 @@ test('install a new mod with config and data', async ({ expect, modManager }) =>
         requireConfig: true,
         requireData: true
     });
-    expect(await modManager.data(cid)).toEqual({ key: 'value' });
-    expect(await modManager.config(cid)).toEqual({ key: 'value' });
+    expect(await modManager.data(UID, cid)).toEqual({ key: 'value' });
+    expect(await modManager.config(UID, cid)).toEqual({ key: 'value' });
 });
 
 test('update a mod, should not change the data and config', async ({ expect, modManager }) => {
@@ -87,8 +87,8 @@ test('update a mod, should not change the data and config', async ({ expect, mod
     await modManager.install(cid, installOptions1);
     await modManager.install(cid, installOptions2);
 
-    expect(await modManager.data(cid)).toEqual({ key: 'value' });
-    expect(await modManager.config(cid)).toEqual({ key: 'value' });
+    expect(await modManager.data(UID, cid)).toEqual({ key: 'value' });
+    expect(await modManager.config(UID, cid)).toEqual({ key: 'value' });
 });
 
 test('install a mod that already exist', async ({ expect, modManager }) => {
@@ -110,8 +110,8 @@ test('uninstall a mod', async ({ expect, modManager }) => {
     await modManager.uninstall(cid);
 
     expect(modManager.index.state(cid)).toBeUndefined();
-    expect(await modManager.data(cid)).toBeUndefined();
-    expect(await modManager.config(cid)).toBeUndefined();
+    expect(await modManager.data(UID, cid)).toBeUndefined();
+    expect(await modManager.config(UID, cid)).toBeUndefined();
 
     expect(storageDelete).toHaveBeenCalledTimes(2);
 });

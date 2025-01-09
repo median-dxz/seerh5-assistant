@@ -16,10 +16,10 @@ export type ModFactory = (context: SEAModContext<SEAModMetadata>) => Promise<SEA
 
 const { modRouter } = trpcClient;
 
-async function getModData({ scope, id, data: defaultData }: DefinedModMetadata) {
+async function getModData(uid: string, { scope, id, data: defaultData }: DefinedModMetadata) {
     if (defaultData) {
         const compositeId = getCompositeId({ scope, id });
-        const data = await modRouter.data.query(compositeId);
+        const data = await modRouter.data.query({ uid, compositeId });
 
         if (!data) {
             throw new Error(`Mod data not found: ${compositeId}`);
@@ -31,10 +31,10 @@ async function getModData({ scope, id, data: defaultData }: DefinedModMetadata) 
     return {};
 }
 
-async function getModConfig({ scope, id, configSchema }: DefinedModMetadata) {
+async function getModConfig(uid: string, { scope, id, configSchema }: DefinedModMetadata) {
     if (configSchema) {
         const compositeId = getCompositeId({ scope, id });
-        const config = await modRouter.config.query(compositeId);
+        const config = await modRouter.config.query({ uid, compositeId });
 
         if (!config) {
             throw new Error(`Mod config not found: ${compositeId}`);
@@ -45,7 +45,7 @@ async function getModConfig({ scope, id, configSchema }: DefinedModMetadata) {
     return {};
 }
 
-export async function createModContext(metadata: SEAModMetadata, loggerBuilder: CommonLoggerBuilder) {
+export async function createModContext(uid: string, metadata: SEAModMetadata, loggerBuilder: CommonLoggerBuilder) {
     const ct = (...pets: string[]) => {
         const r = pets.map((pet) => ctStore.ctByName(pet));
         if (r.some((v) => v === undefined)) {
@@ -63,8 +63,8 @@ export async function createModContext(metadata: SEAModMetadata, loggerBuilder: 
     };
 
     const meta = buildMetadata(metadata);
-    const data = await getModData(meta);
-    const config = await getModConfig(meta);
+    const data = await getModData(uid, meta);
+    const config = await getModConfig(uid, meta);
 
     return {
         meta,

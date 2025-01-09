@@ -246,7 +246,7 @@ startAppListening({
         seac.prependSetup('afterFirstShowMainPanel', async () => {
             try {
                 api.dispatch(actions.setLoadingItem(`初始化 CatchTimeService`));
-                await ctService.sync();
+                await ctService.sync(MainManager.actorID.toString());
                 await api.delay(1000); // ctService.load();
 
                 const deployments = mod.deployments(api.getState()).filter(filterNotPreload);

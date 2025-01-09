@@ -217,7 +217,10 @@ const PanelRow = React.memo(function PanelRow({ taskRef: ref, options, task, run
                         setEditFormOpen(false);
                     }}
                     onSubmit={async (values) => {
-                        await mutate({ id: getCompositeId({ scope: task.cid, id: task.metadata.id }), data: values });
+                        await mutate({
+                            taskId: getCompositeId({ scope: task.cid, id: task.metadata.id }),
+                            data: values
+                        });
                         enqueueSnackbar('配置已更新', { variant: 'success' });
                     }}
                     values={options}
