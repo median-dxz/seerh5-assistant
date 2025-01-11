@@ -10,7 +10,7 @@
     "name": "median-dxz",
     "url": "https://median-dxz.xyz/"
   },
-  "packageManager": "pnpm@9.15.3+sha512.1f79bc245a66eb0b07c5d4d83131240774642caaa86ef7d0434ab47c0d16f66b04e21e0c086eb61e62c77efc4d7f7ec071afad3796af64892fae66509173893a",
+  "packageManager": "pnpm@10.0.0+sha512.b8fef5494bd3fe4cbd4edabd0745df2ee5be3e4b0b8b08fa643aa3e4c6702ccc0f00d68fa8a8c9858a735a0032485a44990ed2810526c875e416f001b17df12b",
   "scripts": {
     "server:run": "pnpm -C ./packages/server run start",
     "launcher:dev": "pnpm -C ./packages/launcher run dev",
@@ -42,7 +42,8 @@
     "vitest": "2.1.8"
   },
   "engines": {
-    "node": ">=20.11.0"
+    "node": ">=20.11.0",
+    "pnpm": ">=10.0.0"
   },
   "lint-staged": {
     "*.{ts,tsx,json,css,md}": "prettier --write"
