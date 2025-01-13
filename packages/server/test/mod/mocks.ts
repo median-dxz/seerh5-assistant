@@ -13,21 +13,18 @@ export const CID_LIST = {
 } as const;
 
 export const SOURCE_INDEX = 'index';
+export const UID = 'default';
 
 export const storageDelete = vi.fn(async () => {});
 
 export class FakeStorage implements IStorage {
     constructor(public source: string) {}
     data: object | undefined;
+    initLoad = true;
     async load(defaultData?: object) {
-        if (!this.data) {
-            if (defaultData) {
-                this.data = defaultData;
-            } else if (this.source === CID_LIST[1] || this.source === CID_LIST[2]) {
-                this.data = { key: 'value' };
-            } else {
-                throw new Error('should set default data');
-            }
+        if (this.initLoad) {
+            this.data = defaultData;
+            this.initLoad = false;
         }
         return this.data;
     }

@@ -81,12 +81,11 @@ export default function builtinCommand({ logger }: SEAModContext<typeof metadata
                 }, new Map<string, CountermarkInfo[]>());
 
                 for (const [_, v] of universalMarks) {
-                    if (v.length > 5) {
-                        for (let i = 18; i < v.length; i++) {
-                            const mark = v[i];
-                            await socket.sendByQueue(CommandID.COUNTERMARK_RESOLVE, [mark.obtainTime]);
-                            await delay(100);
-                        }
+                    for (let i = 18; i < v.length; i++) {
+                        const mark = v[i];
+                        await socket.sendByQueue(41447, [mark.obtainTime]);
+                        await socket.sendByQueue(CommandID.COUNTERMARK_RESOLVE, [mark.obtainTime]);
+                        await delay(100);
                     }
                 }
             },

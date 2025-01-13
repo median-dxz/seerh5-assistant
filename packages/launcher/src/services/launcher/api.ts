@@ -16,15 +16,12 @@ export const launcherApi = createApi({
     reducerPath: 'api/launcher',
     tagTypes: ['TaskOptions', 'LauncherConfig'],
     endpoints: (build) => ({
-        configItem: build.query<unknown, RouterInput['configs']['item']>({
-            query: (key) => async () => configs.item.query(key),
+        configItem: build.query<unknown, RouterInput['configs']['item']['key']>({
+            query: (key) => async (uid) => configs.item.query({ uid, key }),
             providesTags: (result, error, key) => optionalTags(result, [{ type: 'LauncherConfig' as const, id: key }])
         }),
-        setConfigItem: build.mutation<void, RouterInput['configs']['setItem']>({
-            query:
-                ({ key, value }) =>
-                async () =>
-                    configs.setItem.mutate({ key, value }),
+        setConfigItem: build.mutation<void, Omit<RouterInput['configs']['setItem'], 'uid'>>({
+            query: (arg) => async (uid) => configs.setItem.mutate({ uid, ...arg }),
             async onQueryStarted({ key, value }, { dispatch, queryFulfilled }) {
                 const patchResult = dispatch(launcherApi.util.updateQueryData('configItem', key, () => value));
                 try {
@@ -35,8 +32,8 @@ export const launcherApi = createApi({
                 }
             }
         }),
-        allTaskOptions: build.query<Record<string, object | undefined>, RouterInput['taskOptions']['all']>({
-            query: () => async () => taskOptions.all.query(),
+        allTaskOptions: build.query<Record<string, object | undefined>, void>({
+            query: () => async (uid) => taskOptions.all.query({ uid }),
             transformResponse(response: Map<string, object>) {
                 const result: Record<string, object | undefined> = {};
                 for (const [k, v] of response.entries()) {
@@ -54,22 +51,22 @@ export const launcherApi = createApi({
                         }))
                 )
         }),
-        setTaskOptions: build.mutation<void, RouterInput['taskOptions']['set']>({
+        setTaskOptions: build.mutation<void, Omit<RouterInput['taskOptions']['set'], 'uid'>>({
             query:
-                ({ id, data }) =>
-                async () =>
-                    taskOptions.set.mutate({ id, data }),
-            async onQueryStarted({ id, data }, { dispatch, queryFulfilled }) {
+                ({ taskId, data }) =>
+                async (uid) =>
+                    taskOptions.set.mutate({ uid, taskId, data }),
+            async onQueryStarted({ taskId, data }, { dispatch, queryFulfilled }) {
                 const patchResult = dispatch(
                     launcherApi.util.updateQueryData('allTaskOptions', undefined, (draft) => {
-                        draft[id] = data;
+                        draft[taskId] = data;
                     })
                 );
                 try {
                     await queryFulfilled;
                 } catch (e) {
                     patchResult.undo();
-                    dispatch(launcherApi.util.invalidateTags([{ type: 'TaskOptions', id }]));
+                    dispatch(launcherApi.util.invalidateTags([{ type: 'TaskOptions', id: taskId }]));
                 }
             }
         })

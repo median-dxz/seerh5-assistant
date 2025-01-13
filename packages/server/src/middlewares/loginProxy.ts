@@ -35,8 +35,7 @@ export const loginProxy = createProxyMiddleware({
             proxyRes.on('data', (chunk: Buffer) => chunks.push(chunk));
 
             proxyRes.on('end', () => {
-                /** @type {string | Buffer} */
-                let rawBuf = Buffer.concat(chunks);
+                let rawBuf: Buffer = Buffer.concat(chunks);
                 const url = req.url ?? '';
 
                 if (proxyRes.headers['content-encoding'] === 'gzip') {

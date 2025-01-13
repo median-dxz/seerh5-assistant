@@ -19,7 +19,7 @@ export class FileSystemStorage implements IStorage {
             return defaultData;
         }
 
-        throw new Error(`Config file does not exist: ${file}`);
+        throw new Error(`Config file load failed, with no default data provided: ${file}`);
     }
 
     async save(data: object) {

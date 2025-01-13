@@ -48,7 +48,7 @@ export const mod = createAppSlice({
                 const { factory, metadata } = await dispatch(modApi.endpoints.fetch.initiate(dep)).unwrap();
 
                 const loggerBuilder = new CommonLoggerBuilder(metadata.id);
-                const context = await createModContext(metadata, loggerBuilder); // try-catch
+                const context = await createModContext(MainManager.actorID.toString(), metadata, loggerBuilder); // try-catch
                 const modExport = await factory(context); // try-catch
                 const deploymentId = nanoid();
 

@@ -3,13 +3,14 @@ import { DateObjectSchema } from '../../shared/utils.ts';
 import { procedure, router } from '../trpc.ts';
 
 export const taskOptions = router({
-    all: procedure.query(({ ctx }) => {
+    all: procedure.input(z.object({ uid: z.string() })).query(({ input: { uid }, ctx }) => {
         const { taskOptions } = ctx;
-        return taskOptions.query();
+        return taskOptions.query(uid);
     }),
-    set: procedure.input(z.object({ id: z.string(), data: DateObjectSchema })).mutation(({ input, ctx }) => {
-        const { id, data } = input;
-        const { taskOptions } = ctx;
-        return taskOptions.set(id, data);
-    })
+    set: procedure
+        .input(z.object({ uid: z.string(), taskId: z.string(), data: DateObjectSchema }))
+        .mutation(({ input: { uid, taskId, data }, ctx }) => {
+            const { taskOptions } = ctx;
+            return taskOptions.set(uid, taskId, data);
+        })
 });

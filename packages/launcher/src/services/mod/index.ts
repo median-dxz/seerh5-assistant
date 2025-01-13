@@ -158,29 +158,23 @@ export const modApi = createApi({
             invalidatesTags: [{ type: 'Index', id: 'LIST' }]
         }),
 
-        data: build.query<object, RouterInput['data']>({
-            query: (compositeId) => async () => modRouter.data.query(compositeId),
+        data: build.query<object, RouterInput['data']['compositeId']>({
+            query: (compositeId) => async (uid) => modRouter.data.query({ uid, compositeId }),
             providesTags: (r, e, cid) => optionalTags(r, [{ type: 'Data', id: cid } as const])
         }),
 
-        setData: build.mutation<RouterOutput['setData'], RouterInput['setData']>({
-            query:
-                ({ compositeId, data }) =>
-                async () =>
-                    modRouter.setData.mutate({ compositeId, data }),
+        setData: build.mutation<RouterOutput['setData'], Omit<RouterInput['setData'], 'uid'>>({
+            query: (arg) => async (uid) => modRouter.setData.mutate({ uid, ...arg }),
             invalidatesTags: (r, e, { compositeId }) => [{ type: 'Data', id: compositeId }]
         }),
 
-        config: build.query<object, RouterInput['config']>({
-            query: (compositeId) => async () => modRouter.config.query(compositeId),
+        config: build.query<object, RouterInput['config']['compositeId']>({
+            query: (compositeId) => async (uid) => modRouter.config.query({ uid, compositeId }),
             providesTags: (r, e, cid) => optionalTags(r, [{ type: 'Config', cid } as const])
         }),
 
-        setConfig: build.mutation<RouterOutput['setConfig'], RouterInput['setConfig']>({
-            query:
-                ({ compositeId, data }) =>
-                async () =>
-                    modRouter.setConfig.mutate({ compositeId, data }),
+        setConfig: build.mutation<RouterOutput['setConfig'], Omit<RouterInput['setConfig'], 'uid'>>({
+            query: (arg) => async (uid) => modRouter.setConfig.mutate({ uid, ...arg }),
             invalidatesTags: (r, e, { compositeId }) => [{ type: 'Config', id: compositeId }]
         }),
 

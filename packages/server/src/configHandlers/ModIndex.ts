@@ -1,15 +1,15 @@
-import { SEASConfigHandler } from '../shared/SEASConfigHandler.ts';
+import { ConfigHandler } from '../shared/ConfigHandler.ts';
 
 export interface ModState {
     enable: boolean;
-    requireConfig: boolean;
-    requireData: boolean;
+    config: object | null;
+    data: object | null;
     builtin: boolean;
     preload: boolean;
     version: string;
 }
 
-export class ModIndex extends SEASConfigHandler<Map<string, ModState>> {
+export class ModIndex extends ConfigHandler<Map<string, ModState>> {
     async load() {
         return super.load(new Map());
     }

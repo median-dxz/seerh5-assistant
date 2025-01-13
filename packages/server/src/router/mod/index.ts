@@ -13,32 +13,32 @@ export const modRouter = router({
         return modManager.index.stateList();
     }),
 
-    config: procedure.input(z.string()).query(({ input, ctx }) => {
-        const cid = input;
-        const { modManager } = ctx;
-        return modManager.config(cid);
-    }),
-
-    setConfig: procedure
-        .input(z.object({ compositeId: z.string(), data: DateObjectSchema }))
-        .mutation(({ input, ctx }) => {
-            const { data, compositeId } = input;
+    config: procedure
+        .input(z.object({ uid: z.string(), compositeId: z.string() }))
+        .query(({ input: { uid, compositeId }, ctx }) => {
             const { modManager } = ctx;
-            return modManager.saveConfig(compositeId, data);
+            return modManager.config(uid, compositeId);
         }),
 
-    data: procedure.input(z.string()).query(({ input, ctx }) => {
-        const cid = input;
-        const { modManager } = ctx;
-        return modManager.data(cid);
-    }),
+    setConfig: procedure
+        .input(z.object({ uid: z.string(), compositeId: z.string(), data: DateObjectSchema }))
+        .mutation(({ input: { uid, compositeId, data }, ctx }) => {
+            const { modManager } = ctx;
+            return modManager.saveConfig(uid, compositeId, data);
+        }),
+
+    data: procedure
+        .input(z.object({ uid: z.string(), compositeId: z.string() }))
+        .query(({ input: { uid, compositeId }, ctx }) => {
+            const { modManager } = ctx;
+            return modManager.data(uid, compositeId);
+        }),
 
     setData: procedure
-        .input(z.object({ compositeId: z.string(), data: DateObjectSchema }))
-        .mutation(({ input, ctx }) => {
-            const { compositeId, data } = input;
+        .input(z.object({ uid: z.string(), compositeId: z.string(), data: DateObjectSchema }))
+        .mutation(({ input: { uid, compositeId, data }, ctx }) => {
             const { modManager } = ctx;
-            return modManager.saveData(compositeId, data);
+            return modManager.saveData(uid, compositeId, data);
         }),
 
     install: procedure
@@ -63,13 +63,14 @@ export const modRouter = router({
         const { modManager, taskOptions, modFileHandler } = ctx;
 
         // 删除任务配置
-        const configs = taskOptions.query();
-        for (const [taskId] of configs) {
-            const { scope } = praseCompositeId(taskId);
-            if (scope === cid) {
-                await taskOptions.remove(taskId);
+        Object.entries(taskOptions.queryAll()).forEach(async ([uid, configs]) => {
+            for (const [taskId] of configs) {
+                const { scope } = praseCompositeId(taskId);
+                if (scope === cid) {
+                    await taskOptions.remove(uid, taskId);
+                }
             }
-        }
+        });
 
         // 删除Mod文件
         await modFileHandler.remove(cid);
