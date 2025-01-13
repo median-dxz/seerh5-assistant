@@ -7,52 +7,64 @@ class DataNotLoadedError extends Error {
     }
 }
 
-export class ConfigHandler<TData extends object = object> {
-    private data?: TData;
+export class ConfigHandler<TConfig extends object = object> {
+    private config?: TConfig;
     constructor(private storage: IStorage) {}
 
     get loaded() {
-        return this.data !== undefined;
+        return this.config !== undefined;
     }
 
-    async load(defaultData?: TData) {
-        this.data = (await this.storage.load(defaultData)) as TData;
-    }
+    async load(defaultConfig: undefined, override?: false): Promise<void>;
+    async load(defaultConfig: TConfig, override?: boolean): Promise<void>;
+    async load(defaultConfig?: TConfig, override = false): Promise<void> {
+        if (override) {
+            await this.create(defaultConfig!);
+        } else {
+            if (this.loaded) return;
 
-    private async save() {
-        if (!this.data) {
-            throw new DataNotLoadedError(this.storage.source);
+            if (defaultConfig === undefined) {
+                throw new Error('Default data must be provided when loading for the first time');
+            }
+
+            this.config = (await this.storage.load(defaultConfig)) as TConfig;
         }
-
-        await this.storage.save(this.data);
     }
 
-    async create(data: TData) {
-        this.data = data;
+    async create(config: TConfig) {
+        this.config = config!;
         await this.save();
     }
 
-    async mutate(recipe: Recipe<TData>) {
-        if (!this.data) {
+    private async save() {
+        if (!this.config) {
             throw new DataNotLoadedError(this.storage.source);
         }
 
-        const r = recipe(this.data);
-        r && (this.data = r);
+        await this.storage.save(this.config);
+    }
+
+    async mutate(recipe: Recipe<TConfig>) {
+        if (!this.config) {
+            throw new DataNotLoadedError(this.storage.source);
+        }
+
+        const r = recipe(this.config);
+        r && (this.config = r);
 
         await this.save();
     }
 
     query() {
-        if (!this.data) {
+        if (!this.config) {
             throw new DataNotLoadedError(this.storage.source);
         }
 
-        return this.data;
+        return this.config;
     }
 
     async destroy() {
         await this.storage.delete();
-        this.data = undefined;
+        this.config = undefined;
     }
 }

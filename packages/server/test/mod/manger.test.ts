@@ -7,8 +7,8 @@ import { CID_LIST, FakeStorage, FakeStorageBuilder, SOURCE_INDEX, storageDelete,
 
 const modState1 = {
     enable: true,
-    requireConfig: false,
-    requireData: false,
+    config: null,
+    data: null,
     builtin: true,
     preload: false,
     version: '0.0.1'
@@ -16,8 +16,8 @@ const modState1 = {
 
 const modState2 = {
     enable: true,
-    requireConfig: true,
-    requireData: true,
+    config: { key: 'value' },
+    data: { key: 'value' },
     builtin: false,
     preload: false,
     version: '0.0.1'
@@ -51,6 +51,7 @@ const test = base.extend<{
                 [CID_LIST[2], modState2 as ModState]
             ])
         );
+
         await modManager.init();
 
         use(modManager);
@@ -74,8 +75,8 @@ test('install a new mod with config and data', async ({ expect, modManager }) =>
         builtin: false,
         preload: false,
         enable: true,
-        requireConfig: true,
-        requireData: true
+        config: { key: 'value' },
+        data: { key: 'value' }
     });
     expect(await modManager.data(UID, cid)).toEqual({ key: 'value' });
     expect(await modManager.config(UID, cid)).toEqual({ key: 'value' });

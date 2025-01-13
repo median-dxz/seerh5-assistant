@@ -2,8 +2,8 @@ import { ConfigHandler } from '../shared/ConfigHandler.ts';
 
 export interface ModState {
     enable: boolean;
-    requireConfig: boolean;
-    requireData: boolean;
+    config: object | null;
+    data: object | null;
     builtin: boolean;
     preload: boolean;
     version: string;

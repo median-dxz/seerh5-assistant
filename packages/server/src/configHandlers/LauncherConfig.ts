@@ -15,7 +15,7 @@ export type LauncherConfigType = typeof defaultConfig;
 
 export class LauncherConfig extends MultiUserConfigHandler<LauncherConfigType> {
     async load() {
-        return super.load(defaultConfig);
+        return super.loadWithDefaultConfig(defaultConfig);
     }
 
     async item<TKey extends keyof LauncherConfigType>(uid: string, key: TKey) {
