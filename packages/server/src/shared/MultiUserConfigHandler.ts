@@ -2,21 +2,18 @@ import type { Recipe } from '../client-types.ts';
 import { ConfigHandler } from './ConfigHandler.ts';
 import type { IStorage } from './utils.ts';
 
-export class MultiUserConfigHandler<TData extends object = object> {
-    private configHandler: ConfigHandler<Record<string, TData>>;
+export class MultiUserConfigHandler<TConfig extends object = object> {
+    private configHandler: ConfigHandler<Record<string, TConfig>>;
     constructor(storage: IStorage) {
         this.configHandler = new ConfigHandler(storage);
     }
 
-    async load(defaultData?: TData) {
-        await this.configHandler.load(defaultData !== undefined ? { default: defaultData } : undefined);
+    async loadWithDefaultConfig(config: TConfig, override = false) {
+        const multiUserDefaultConfig = { default: config };
+        await this.configHandler.load(multiUserDefaultConfig, override);
     }
 
-    async create(data: TData) {
-        await this.configHandler.create({ default: data });
-    }
-
-    async mutate(uid: string, recipe: Recipe<TData>) {
+    async mutate(uid: string, recipe: Recipe<TConfig>) {
         await this.configHandler.mutate((userDataMap) => {
             let data = userDataMap[uid];
             if (data === undefined) {

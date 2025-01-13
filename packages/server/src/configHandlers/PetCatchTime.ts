@@ -2,7 +2,7 @@ import { MultiUserConfigHandler } from '../shared/MultiUserConfigHandler.ts';
 
 export class PetCatchTime extends MultiUserConfigHandler<Map<string, number>> {
     async load() {
-        return super.load(new Map());
+        return super.loadWithDefaultConfig(new Map());
     }
 
     async catchTime(uid: string, name: string) {

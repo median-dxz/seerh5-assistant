@@ -2,7 +2,7 @@ import { MultiUserConfigHandler } from '../shared/MultiUserConfigHandler.ts';
 
 export class TaskOptions extends MultiUserConfigHandler<Map<string, object>> {
     async load() {
-        return super.load(new Map());
+        return super.loadWithDefaultConfig(new Map());
     }
 
     async set(uid: string, taskId: string, options: object) {

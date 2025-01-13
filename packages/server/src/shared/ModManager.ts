@@ -57,43 +57,39 @@ export class ModManager {
             preload: Boolean(options.preload),
             enable: true,
             version: options.version,
-            requireConfig: Boolean(options.config),
-            requireData: Boolean(options.data)
+            config: options.config ?? null,
+            data: options.data ?? null
         };
 
         await this.index.set(cid, state);
 
-        // 在满足该模组请求数据持久化的前提下:
-        // 1. 当前数据存在但更新选项为false
-        // 2. 当前数据不存在
-        //
-        // 此时将创建新的数据持久化对象, 覆盖原对象
-        if (options.config && (!this.configHandlers.has(cid) || options.update === false)) {
-            const handler = new MultiUserConfigHandler(this.configStorageBuilder(cid));
-            await handler.create(options.config);
-            this.configHandlers.set(cid, handler);
-        }
-
-        if (options.data && (!this.dataHandlers.has(cid) || options.update === false)) {
-            const handler = new MultiUserConfigHandler(this.dataStorageBuilder(cid));
-            await handler.create(options.data);
-            this.dataHandlers.set(cid, handler);
-        }
+        // update 含义为配置兼容性, 为 true 时说明兼容旧配置, 不需要进行覆盖
+        await this.load(cid, state, !options.update);
 
         return cid;
     }
 
-    async load(cid: string, state: ModState) {
-        if (state.requireConfig) {
-            const handler = new MultiUserConfigHandler(this.configStorageBuilder(cid));
-            await handler.load();
-            this.configHandlers.set(cid, handler);
+    async load(cid: string, state: ModState, override = false) {
+        if (state.config) {
+            if (this.configHandlers.has(cid)) {
+                const handler = this.configHandlers.get(cid)!;
+                await handler.loadWithDefaultConfig(state.config, override);
+            } else {
+                const handler = new MultiUserConfigHandler(this.configStorageBuilder(cid));
+                await handler.loadWithDefaultConfig(state.config, override);
+                this.configHandlers.set(cid, handler);
+            }
         }
 
-        if (state.requireData) {
-            const handler = new MultiUserConfigHandler(this.dataStorageBuilder(cid));
-            await handler.load();
-            this.dataHandlers.set(cid, handler);
+        if (state.data) {
+            if (this.dataHandlers.has(cid)) {
+                const handler = this.dataHandlers.get(cid)!;
+                await handler.loadWithDefaultConfig(state.data, override);
+            } else {
+                const handler = new MultiUserConfigHandler(this.dataStorageBuilder(cid));
+                await handler.loadWithDefaultConfig(state.data, override);
+                this.dataHandlers.set(cid, handler);
+            }
         }
     }
 
