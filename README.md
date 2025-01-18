@@ -29,8 +29,6 @@
 
 ## 近期公告
 
-该项目的目标一直是使用最新技术进行游戏的支持和学习，因此将会持续关注Unity版本的发展情况。如果Unity版本进展顺利，该项目将会归档并启动Unity版本启动器的开发。
-
 请在SEA Project网站上查看: [SEA Project](https://median-dxz.github.io/sea-project-website/)
 
 ## 最近更新的内容 & RoadMap
