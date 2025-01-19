@@ -125,17 +125,6 @@ startAppListening({
         battle$.end.on(() => api.dispatch(launcher.fightEnd()));
 
         // register socket events for packet capture
-
-        // wrapperFactory('addCmdListener', (cmd, callback) => {
-        //     if (state !== 'capturing' || CmdMask.includes(cmd)) return;
-        //     capturedPkgFactory(setCapture, { cmd, type: 'AddListener', data: callback });
-        // });
-
-        // wrapperFactory('removeCmdListener', (cmd, callback) => {
-        //     if (state !== 'capturing' || CmdMask.includes(cmd)) return;
-        //     capturedPkgFactory(setCapture, { cmd, type: 'RemoveListener', data: callback });
-        // });
-
         socket$.send.on(({ cmd, data }) => {
             api.dispatch(
                 packetCapture.onSocketEvent({
