@@ -16,9 +16,9 @@
     "@emotion/css": "^11.13.5",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@mui/icons-material": "^6.3.1",
-    "@mui/material": "^6.3.1",
-    "@mui/x-data-grid": "^7.23.5",
+    "@mui/icons-material": "^6.4.0",
+    "@mui/material": "^6.4.0",
+    "@mui/x-data-grid": "^7.24.0",
     "@reduxjs/toolkit": "^2.5.0",
     "@sea/core": "workspace:*",
     "@sea/mod-resolver": "workspace:*",
@@ -30,7 +30,7 @@
     "dequal": "^2.0.3",
     "immer": "^10.1.1",
     "nanoclamp": "^2.0.12",
-    "notistack": "^3.0.1",
+    "notistack": "^3.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
@@ -42,11 +42,11 @@
   "devDependencies": {
     "@sea/mod-type": "workspace:*",
     "@sea/server": "workspace:*",
-    "@types/react": "^19.0.2",
-    "@types/react-dom": "^19.0.2",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
     "@types/react-transition-group": "^4.4.12",
     "@vitejs/plugin-react-swc": "^3.7.2",
-    "vite-plugin-inspect": "^0.10.6",
+    "vite-plugin-inspect": "^10.0.7",
     "vite-plugin-pwa": "^0.21.1"
   }
 }
