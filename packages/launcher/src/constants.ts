@@ -1,7 +1,7 @@
 import type { seac } from '@sea/core';
 import { PetFragmentLevelDifficulty as Difficulty } from '@sea/core';
 
-export const VERSION = '0.10.0';
+export const VERSION = '0.10.1';
 export const CORE_VERSION: typeof seac.version = '1.0.0';
 export const IS_DEV = import.meta.env.DEV;
 export const CMD_MASK = [

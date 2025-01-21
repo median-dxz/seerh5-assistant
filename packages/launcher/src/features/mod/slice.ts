@@ -138,11 +138,11 @@ export const mod = createAppSlice({
             if (!isDeployed(dep)) return;
             const { deploymentId } = dep;
 
-            state.commandRefs = state.commandRefs.filter((ref) => ref.deploymentId === deploymentId);
-            state.taskRefs = state.taskRefs.filter((ref) => ref.deploymentId === deploymentId);
-            state.battleKeys = state.battleKeys.filter((key) => battleStore.get(key)!.deploymentId === deploymentId);
+            state.commandRefs = state.commandRefs.filter((ref) => ref.deploymentId !== deploymentId);
+            state.taskRefs = state.taskRefs.filter((ref) => ref.deploymentId !== deploymentId);
+            state.battleKeys = state.battleKeys.filter((key) => battleStore.get(key)!.deploymentId !== deploymentId);
             state.strategyKeys = state.strategyKeys.filter(
-                (key) => strategyStore.get(key)!.deploymentId === deploymentId
+                (key) => strategyStore.get(key)!.deploymentId !== deploymentId
             );
 
             deploymentAdapter.updateOne(state.deployments, {

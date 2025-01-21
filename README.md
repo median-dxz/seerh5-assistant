@@ -27,17 +27,11 @@
 
 **WARNING: 目前该项目的安全性考虑是欠缺的，请注意：模组是不可信且不受控的外部代码，将在前端执行，这可能导致严重的安全问题！请勿安装任何未经事先人工验证的模组！**
 
-## 近期公告
-
-请在SEA Project网站上查看: [SEA Project](https://median-dxz.github.io/sea-project-website/)
-
 ## 最近更新的内容 & RoadMap
 
 参阅 [#26](https://github.com/median-dxz/seerh5-assistant/issues/26) 和 [milestones](https://github.com/median-dxz/seerh5-assistant/milestones)
 
 # 简介
-
-(待更新)
 
 **SeerH5-Assistant** 是一款使用typescript编写的赛尔号H5端登陆器。项目目前包含四个部分：core、launcher、server、sdk，其中
 
@@ -48,13 +42,13 @@
 
 项目简称: SEA，登录器简称：SEAL
 
-# 截图
+**官方文档站**：[SEA Project](https://median-dxz.github.io/sea-project-website/)
 
-(待更新)
+# 截图
 
 # 快速入门
 
-前排提示：本项目目前处于开发阶段，没有可用的成品，如果你对相关的技术栈不熟悉，可以等待该项目成熟后再来。
+前排提示：本项目目前处于alpha阶段，如果你对相关的技术栈不熟悉，可以等待该项目成熟后再来。
 
 ## 运行环境要求
 
@@ -83,15 +77,17 @@ pnpm i
 - `packages/mod-resolver`: 模组通用处理逻辑
 - `sdk`: sdk环境，内含一些预制的模组包
 
-## 构建`@sea/core`
+## 构建工作区
 
-接下来需要构建`@sea/core`，得到dist输出。在`packages/core`下执行：
+接下来需要构建工作区。在项目根目录下运行：
 
 ```
-pnpm build
+pnpm build:workspace
 ```
 
-因为`launcher`是使用工作区链接来安装`@sea/core`的，因此现在登录器就能使用了。
+该命令会自动构建整个项目的必要部分，并安装到`sdk`下。
+
+同时，因为`launcher`是使用工作区链接来安装`@sea/core`的，因此现在登录器就能使用了。
 
 ## 在开发模式下运行登录器
 
@@ -102,6 +98,8 @@ pnpm build
 ```
 pnpm start
 ```
+
+后端会默认在本地`2147`端口上运行。
 
 然后在`package/launcher`下创建`.env.local`文件，详情见vite的环境变量配置文档：
 
@@ -123,25 +121,19 @@ pnpm dev
 pnpm build:executable
 ```
 
-该命令会启用一个构建脚本，构建登录器前端和后端，并使用pkg打包为Windows下可以独立运行的服务器程序。
+该命令会启用一个构建脚本，构建登录器前端和后端，并使用`pkg`打包为`Windows`下可以独立运行的服务器程序。如果你有能力，可以修改配置以生成`MacOS`或`Linux`端
 
 构建的详细步骤请参考`scripts/build-executable.js`，最后一步是使用pkg生成可执行文件。在`packages/server/bin`下得到`server.exe`，直接运行即可。
 
-pkg打包是一个临时方案，未来将使用deno生成SAE（standalone executables，单体可执行文件），使用Tauri分发生产版本。
+pkg打包是一个临时方案，未来将使用deno生成SAE（standalone executables，单体可执行文件），使用Tauri | Electron分发生产版本。
 
 ## 使用模组
 
 sdk中预置了常用的模组，提供了一系列强大的功能扩展。
 
-在项目根目录下运行：
+在项目根目录下运行`pnpm build:workspace`后，该命令会启用一个脚本来构建`@sea/mod-type`、`@sea/mod-resolver`和`@sea/core`，并自动安装到sdk下。
 
-```
-pnpm build:workspace
-```
-
-该命令会启用一个脚本来构建`@sea/mod-type`、`@sea/mod-resolver`和`@sea/core`，并自动安装到sdk下。
-
-sdk中包含一个vite构建插件，该插件会在构建是自动安装模组到登录器后端，安装是通过启动后端服务上用于安装模组的REST端点进行的，因此构建模组之前需要先启动后端服务。
+sdk中包含一个vite构建插件，该插件会在构建是自动安装模组到登录器后端，安装是通过启动后端服务上用于安装模组的REST端点进行的，因此构建模组之前需要**先运行后端**。
 
 接着配置构建插件使用的后端URL环境变量，在`sdk`下创建`.env`文件：
 
@@ -164,7 +156,7 @@ npm build
 
 注意该项目的后端的主要功能是作为**本地数据存储**和**跨域反代**，**部署在本地**，对于每一个用户存的都是独一份的数据。暂时还不考虑一人游玩多个号的场景。
 
-关于编写模组的例子，~~请看下面的例子~~等文档。
+关于登录器如何使用，模组编写等问题，请前往文档站查看（待更新）。
 
 # SDK的环境构成
 

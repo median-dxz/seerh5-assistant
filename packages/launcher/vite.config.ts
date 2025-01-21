@@ -30,7 +30,15 @@ export default defineConfig(({ command, mode }) => {
                 },
                 output: {
                     manualChunks: {
-                        'mui-material': ['@mui/material']
+                        'vendor-mui-emotional': [
+                            '@mui/material',
+                            '@mui/icons-material',
+                            '@mui/x-data-grid',
+                            '@emotion/css',
+                            '@emotion/react',
+                            '@emotion/styled'
+                        ],
+                        'vendor-redux': ['@reduxjs/toolkit', 'react-redux']
                     }
                 }
             }
