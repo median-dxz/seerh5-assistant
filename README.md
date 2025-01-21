@@ -46,6 +46,18 @@
 
 # 截图
 
+![](./docs/screenshots/game-controller.png)
+
+![](./docs/screenshots/mod-manager.png)
+
+![](./docs/screenshots/automation-task-state.png)
+
+![](./docs/screenshots/automation-pet-fragment.png)
+
+![](./docs/screenshots/automation-common-level.png)
+
+![](./docs/screenshots/packet-capture.png)
+
 # 快速入门
 
 前排提示：本项目目前处于alpha阶段，如果你对相关的技术栈不熟悉，可以等待该项目成熟后再来。

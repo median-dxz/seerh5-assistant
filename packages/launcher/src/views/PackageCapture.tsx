@@ -86,6 +86,7 @@ const columns: Array<GridColDef<PacketEvent>> = [
         headerName: '操作',
         type: 'actions',
         width: 160,
+        minWidth: 160,
         resizable: false,
         getActions: ({ row: pkg }: GridRowParams<PacketEvent>) =>
             [
