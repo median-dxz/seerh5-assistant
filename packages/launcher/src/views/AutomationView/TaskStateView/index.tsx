@@ -9,7 +9,7 @@ export function TaskStateView() {
     const matchMd = useMediaQuery(theme.breakpoints.up('md'));
 
     return (
-        <Grid2 container direction="row-reverse" sx={{ pt: 3 }}>
+        <Grid2 container direction="row-reverse">
             <Grid2
                 container
                 size={{
@@ -17,7 +17,6 @@ export function TaskStateView() {
                     md: 4
                 }}
                 sx={{
-                    mb: 3,
                     pr: matchMd ? 0 : 1,
                     pl: matchMd ? 2 : 0
                 }}

@@ -41,7 +41,7 @@ export const RunnerDetailDialog = React.memo(function RunnerDetailDialog({
                     width: 'fit-content',
                     px: 4,
                     mb: 2,
-                    bgcolor: ({ palette }) => alpha(palette.background.paper, 0.12),
+                    bgcolor: ({ palette }) => alpha(palette.background.paper, 0.36),
                     borderRadius: 1,
                     fontFamily: ({ fonts }) => fonts.property,
                     fontSize: '1.25rem',
@@ -98,7 +98,7 @@ export const RunnerDetailDialog = React.memo(function RunnerDetailDialog({
                             sx={{
                                 width: 'fit-content',
                                 px: 4,
-                                bgcolor: ({ palette }) => alpha(palette.background.paper, 0.24),
+                                bgcolor: ({ palette }) => alpha(palette.background.paper, 0.36),
                                 borderRadius: 2
                             }}
                         >

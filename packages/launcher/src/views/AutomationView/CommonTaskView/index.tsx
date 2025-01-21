@@ -16,7 +16,7 @@ import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 import { SEAConfigForm } from '@/components/SEAConfigForm';
 import { PanelTable, type PanelColumn } from '@/components/SEAPanelTable';
 import { PanelField } from '@/components/SEAPanelTable/PanelField';
-import { TableRow } from '@/components/styled/TableRow';
+import { TableRow } from '@/components/TableRow';
 import { PET_FRAGMENT_LEVEL_ID } from '@/constants';
 import { mod, ModStore, type ModExportsRef, type TaskInstance } from '@/features/mod';
 import { taskScheduler } from '@/features/taskScheduler';

@@ -1,6 +1,7 @@
-import { Row } from '@/components/styled/Row';
+import { Paper } from '@/components/Paper';
+import { Row } from '@/components/Row';
 import { gameApi } from '@/services/game';
-import { CircularProgress, Paper, Switch, Typography } from '@mui/material';
+import { CircularProgress, Switch, Typography } from '@mui/material';
 import { engine } from '@sea/core';
 import type { ChangeEvent } from 'react';
 

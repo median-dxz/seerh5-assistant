@@ -10,7 +10,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "format": "prettier . --write",
-    "lint": "eslint src/**.{ts,tsx} --fix"
+    "lint": "eslint src"
   },
   "dependencies": {
     "@emotion/css": "^11.13.5",

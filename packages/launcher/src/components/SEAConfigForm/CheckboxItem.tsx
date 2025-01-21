@@ -1,7 +1,7 @@
 import { Checkbox, FormControlLabel, FormHelperText } from '@mui/material';
 import { forwardRef } from 'react';
 import type { ControllerRenderProps } from 'react-hook-form';
-import { Row } from '../styled/Row';
+import { Row } from '../Row';
 
 export interface CheckboxItemProps {
     label: string;

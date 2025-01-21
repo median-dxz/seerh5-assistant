@@ -1,5 +1,5 @@
 import type { PetFragmentOptions } from '@/builtin/petFragment/types';
-import { Row } from '@/components/styled/Row';
+import { Row } from '@/components/Row';
 import {
     Button,
     Checkbox,

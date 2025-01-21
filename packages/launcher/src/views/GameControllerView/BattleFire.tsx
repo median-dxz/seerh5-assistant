@@ -1,8 +1,9 @@
-import { Row } from '@/components/styled/Row';
+import { Paper } from '@/components/Paper';
+import { Row } from '@/components/Row';
 import { launcher } from '@/features/launcher';
 import { gameApi } from '@/services/game';
 import { useAppDispatch } from '@/shared';
-import { Button, CircularProgress, Paper, Typography } from '@mui/material';
+import { Button, CircularProgress, Typography } from '@mui/material';
 import { BattleFireType, socket, throttle } from '@sea/core';
 import dayjs from 'dayjs';
 import { useSnackbar } from 'notistack';

@@ -3,7 +3,7 @@ import { forwardRef, useState } from 'react';
 import type { ControllerRenderProps } from 'react-hook-form';
 
 import type { PetFragmentOptions } from '@/builtin/petFragment/types';
-import { Row } from '@/components/styled/Row';
+import { Row } from '@/components/Row';
 import { mod } from '@/features/mod';
 import { useAppSelector } from '@/shared';
 

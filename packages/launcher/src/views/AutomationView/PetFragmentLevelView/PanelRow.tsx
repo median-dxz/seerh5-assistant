@@ -8,6 +8,7 @@ import Refresh from '@mui/icons-material/RefreshRounded';
 import Settings from '@mui/icons-material/Settings';
 
 import {
+    alpha,
     Chip,
     CircularProgress,
     Menu,
@@ -23,9 +24,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LevelAction, type Pet, query, SEAPetStore, spet } from '@sea/core';
 
 import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
+import { Row } from '@/components/Row';
 import { PanelField } from '@/components/SEAPanelTable/PanelField';
-import { Row } from '@/components/styled/Row';
-import { TableRow } from '@/components/styled/TableRow';
+import { TableRow } from '@/components/TableRow';
 
 import type { IPetFragmentRunner, PetFragmentOptions } from '@/builtin/petFragment/types';
 import { launcher } from '@/features/launcher';
@@ -182,7 +183,13 @@ export const PanelRow = React.memo(function PanelRow({
                     horizontal: 'center'
                 }}
                 slotProps={{
-                    paper: { sx: { p: 2, fontSize: '1rem' } }
+                    paper: {
+                        sx: {
+                            p: 2,
+                            backgroundColor: ({ palette }) => alpha(palette.primary.main, 0.08),
+                            fontSize: '1rem'
+                        }
+                    }
                 }}
             >
                 <Typography variant="inherit">

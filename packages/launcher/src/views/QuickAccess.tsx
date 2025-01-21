@@ -5,7 +5,7 @@ import { shallowEqual } from 'react-redux';
 
 import type { AnyFunction } from '@sea/core';
 
-import { SeaQuickAccess } from '@/components/styled/QuickAccess';
+import { SeaQuickAccess } from '@/components/QuickAccess';
 import { mod, ModStore, type ModExportsRef } from '@/features/mod';
 import { useAppSelector } from '@/shared';
 

@@ -14,7 +14,7 @@
     "build": "esbuild ./src/index.ts --bundle --platform=node --target=node20.11.1 --outfile=./src/index.cjs --allow-overwrite --external:thread-stream",
     "executable": "pkg ./src/index.cjs -c package.json -o ./bin/server.exe",
     "watch:tsc": "tsc --watch",
-    "lint": "eslint . --fix",
+    "lint": "eslint .",
     "test": "vitest"
   },
   "dependencies": {

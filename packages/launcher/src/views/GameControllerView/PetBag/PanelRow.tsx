@@ -4,14 +4,14 @@ import { Pill } from '@/components/icons/Pill';
 import MoreHoriz from '@mui/icons-material/MoreHoriz';
 import VerticalAlignTop from '@mui/icons-material/VerticalAlignTop';
 
-import { Checkbox, Popover, Stack, Typography } from '@mui/material';
+import { alpha, Checkbox, Popover, Stack, Typography } from '@mui/material';
 
 import type { Pet } from '@sea/core';
-import { GameConfigRegistry, delay, engine, spet } from '@sea/core';
+import { delay, engine, GameConfigRegistry, spet } from '@sea/core';
 
 import { IconButtonNoRipple as IconButton } from '@/components/IconButtonNoRipple';
 import { PanelField } from '@/components/SEAPanelTable/PanelField';
-import { TableRow } from '@/components/styled/TableRow';
+import { TableRow } from '@/components/TableRow';
 
 import { launcher } from '@/features/launcher';
 import { Icon } from '@/services/resource';
@@ -62,7 +62,13 @@ export function PanelRow({ isFetching, onSelect, selected, pet, index }: PanelRo
                     horizontal: 'center'
                 }}
                 slotProps={{
-                    paper: { sx: { p: 2, fontSize: '1rem' } }
+                    paper: {
+                        sx: {
+                            p: 2,
+                            backgroundColor: ({ palette }) => alpha(palette.primary.main, 0.08),
+                            fontSize: '1rem'
+                        }
+                    }
                 }}
             >
                 <Typography variant="inherit">

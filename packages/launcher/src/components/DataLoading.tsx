@@ -1,21 +1,20 @@
-import { Box, CircularProgress, Typography, type BoxProps } from '@mui/material';
+import { Box, CircularProgress, styled, Typography, type BoxProps } from '@mui/material';
 
 type DataLoadingProps = BoxProps & {
     error?: string;
     loadingText?: string;
 };
 
-export const DataLoading = ({ sx, loadingText = '加载数据中', error }: DataLoadingProps) => (
-    <Box
-        sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100%',
-            ...sx
-        }}
-    >
+const StyledBox = styled(Box)`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+` as typeof Box;
+
+export const DataLoading = ({ loadingText = '加载数据中', error, ...props }: DataLoadingProps) => (
+    <StyledBox {...props}>
         {!error ? (
             <>
                 <CircularProgress size="1.5rem" />
@@ -24,5 +23,5 @@ export const DataLoading = ({ sx, loadingText = '加载数据中', error }: Data
         ) : (
             <Typography>{error}</Typography>
         )}
-    </Box>
+    </StyledBox>
 );

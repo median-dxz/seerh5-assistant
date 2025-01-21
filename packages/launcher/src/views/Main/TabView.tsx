@@ -1,11 +1,12 @@
-import { alpha, Box, Fade, Paper, Stack, Tabs, Typography, useTheme } from '@mui/material';
+import { Paper } from '@/components/Paper';
+import { alpha, Box, Fade, Stack, Tabs, Typography, useTheme } from '@mui/material';
 import { seac } from '@sea/core';
 import { forwardRef, type ReactElement } from 'react';
 import { SwitchTransition } from 'react-transition-group';
 
 import { VERSION } from '@/constants';
 import { useTabRouter, type ViewNode } from '@/context/useTabRouter';
-import { StyledTab } from './styled/Tab';
+import { StyledTab } from './Tab';
 
 import ArrowBack from '@mui/icons-material/ArrowBackRounded';
 
@@ -202,7 +203,7 @@ export function TabView() {
                         id={`vertical-tabpanel-${currentTab}`}
                         aria-labelledby={`vertical-tab-${currentTab}`}
                         role="tabpanel"
-                        sx={{ paddingLeft: '12px', overflowY: 'scroll', width: '100%' }}
+                        sx={{ pl: 3, py: 3, overflowY: 'scroll', width: '100%' }}
                     >
                         {currentView}
                     </Box>
