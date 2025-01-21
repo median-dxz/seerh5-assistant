@@ -1,5 +1,4 @@
-import { Box, Fade, type BoxProps } from '@mui/material';
-import { forwardRef } from 'react';
+import { Box, Fade, styled } from '@mui/material';
 
 import { initializer } from '@/features/initializer';
 import { useAppSelector } from '@/shared';
@@ -8,25 +7,16 @@ import { CoreLoadingScreen } from './CoreLoadingScreen';
 import { ErrorScreen } from './ErrorScreen';
 import { LoginLoadingScreen } from './LoginLoadingScreen';
 
-const Container = forwardRef<HTMLDivElement, BoxProps>(function Container({ sx, ...props }, ref) {
-    return (
-        <Box
-            ref={ref}
-            sx={{
-                ...sx,
-                position: 'relative',
-                display: 'flex',
-                zIndex: 1,
-                width: '100vw',
-                height: '100vh',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center'
-            }}
-            {...props}
-        />
-    );
-});
+const Container = styled(Box)`
+    position: relative;
+    display: flex;
+    z-index: 1;
+    width: 100vw;
+    height: 100vh;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+` as typeof Box;
 
 export function InitializationView() {
     const status = useAppSelector(initializer.status);

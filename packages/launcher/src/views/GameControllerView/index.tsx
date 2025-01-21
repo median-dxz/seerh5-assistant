@@ -12,8 +12,6 @@ export function GameController() {
             container
             spacing={4}
             sx={{
-                pt: 3,
-                pb: 3,
                 flexDirection: 'row-reverse'
             }}
         >
@@ -24,7 +22,7 @@ export function GameController() {
                 sx={{
                     alignItems: 'stretch',
                     justifyContent: 'center',
-                    minWidth: '232px'
+                    minWidth: '256px'
                 }}
             >
                 <Grid2 size={{ xs: 6, md: 12 }}>
@@ -43,7 +41,7 @@ export function GameController() {
                     <Inventory />
                 </Grid2>
             </Grid2>
-            <Grid2 size={{ xs: 12, md: 8 }}>
+            <Grid2 size={{ xs: 12, md: 'grow' }}>
                 <PetBag />
             </Grid2>
         </Grid2>

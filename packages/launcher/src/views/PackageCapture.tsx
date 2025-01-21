@@ -1,32 +1,136 @@
+import FileUpload from '@mui/icons-material/FileUploadRounded';
+import Replay from '@mui/icons-material/ReplayRounded';
+
+import { Row } from '@/components/Row';
 import { packetCapture, type PacketEvent } from '@/features/packetCapture';
 import { useAppDispatch } from '@/shared';
-import { Button, Toolbar } from '@mui/material';
-import { DataGrid, type GridColDef } from '@mui/x-data-grid';
-
-// dumpListener() {
-//     for (const [k, v] of this.listenerList.entries()) {
-//         if (v.length > 0) {
-//             console.log(`${k} : ${socketEncryptImpl.getCmdLabel(k)}`);
-//             console.table(v);
-//         }
-//     }
-// }
+import { alpha, Box, Button, Tooltip } from '@mui/material';
+import {
+    DataGrid,
+    GridActionsCellItem,
+    gridFilteredSortedRowEntriesSelector,
+    useGridApiRef,
+    type GridActionsCellItemProps,
+    type GridColDef,
+    type GridRowParams
+} from '@mui/x-data-grid';
+import dayjs from 'dayjs';
+import { type ReactElement } from 'react';
 
 const columns: Array<GridColDef<PacketEvent>> = [
-    { field: 'time', headerName: '时间' },
-    { field: 'type', headerName: '类型' },
-    { field: 'cmd', headerName: '命令ID' },
-    { field: 'label', headerName: '命令名' },
-    { field: 'data', headerName: '操作' }
+    {
+        field: 'time',
+        headerName: '时间',
+        type: 'dateTime',
+        minWidth: 100,
+        valueGetter: (value: number) => new Date(value),
+        valueFormatter: (value: Date) => dayjs(value).format('HH:mm:ss')
+    },
+    {
+        field: 'type',
+        type: 'singleSelect',
+        headerName: '类型',
+        minWidth: 100,
+        valueOptions: ['RemoveListener', 'AddListener', 'Received', 'Send']
+    },
+    {
+        field: 'cmd',
+        headerName: '命令ID',
+        // 存在性能问题
+        // type: 'singleSelect',
+        // valueOptions: () => Object.values(CommandID),
+        minWidth: 100,
+        align: 'center',
+        headerAlign: 'center'
+    },
+    {
+        field: 'label',
+        headerName: '命令名',
+        // type: 'singleSelect',
+        // valueOptions: () => Object.keys(CommandID),
+        width: 200,
+        minWidth: 200,
+        align: 'center',
+        headerAlign: 'center'
+    },
+    {
+        field: 'value',
+        headerName: '值',
+        valueGetter: (value, row) => {
+            switch (row.type) {
+                case 'Send':
+                    if (row.buffer) {
+                        const r: Array<string | number> = [];
+                        row.buffer.forEach((v) => {
+                            if (typeof v === 'number') {
+                                r.push(v);
+                            } else if (v instanceof Uint8Array) {
+                                r.push(`Buffer(${v.length})`);
+                            }
+                        });
+                        return r;
+                    } else {
+                        return null;
+                    }
+                case 'Received':
+                    if (row.data instanceof Uint8Array) {
+                        return `Buffer(${row.data.length})`;
+                    } else {
+                        return JSON.stringify(row.data ?? null);
+                    }
+            }
+        }
+    },
+    {
+        field: 'operation',
+        headerName: '操作',
+        type: 'actions',
+        width: 160,
+        resizable: false,
+        getActions: ({ row: pkg }: GridRowParams<PacketEvent>) =>
+            [
+                <Tooltip key="dump" title="导出" placement="top">
+                    <GridActionsCellItem
+                        label="Dump"
+                        icon={<FileUpload />}
+                        onClick={() => {
+                            console.log(pkg);
+                        }}
+                    />
+                </Tooltip>,
+                pkg.type === 'Send' && (
+                    <Tooltip key="replay" title="重放" placement="top">
+                        <GridActionsCellItem
+                            label="Replay"
+                            icon={<Replay />}
+                            onClick={() => {
+                                const data = pkg.buffer;
+                                if (typeof data === 'undefined') {
+                                    SocketConnection.mainSocket.send(pkg.cmd, []);
+                                } else if (Array.isArray(data)) {
+                                    SocketConnection.mainSocket.send(
+                                        pkg.cmd,
+                                        data.map((d) => (d instanceof Uint8Array ? new egret.ByteArray(d) : d))
+                                    );
+                                } else {
+                                    SocketConnection.mainSocket.send(pkg.cmd, [new egret.ByteArray(data)]);
+                                }
+                            }}
+                        />
+                    </Tooltip>
+                )
+            ].filter(Boolean) as Array<ReactElement<GridActionsCellItemProps>>
+    }
 ];
 
 export function PackageCapture() {
+    const apiRef = useGridApiRef();
     const dispatch = useAppDispatch();
     const { running, packets } = packetCapture.useSelectProps('running', 'packets');
 
     return (
-        <>
-            <Toolbar>
+        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <Row sx={{ mb: 2 }} spacing={2}>
                 <Button
                     onClick={() => {
                         if (running) {
@@ -46,56 +150,50 @@ export function PackageCapture() {
                 >
                     全部清除
                 </Button>
-                <Button>筛选器</Button>
                 <Button
                     onClick={() => {
-                        console.table(packets);
+                        void apiRef.current.autosizeColumns({ columns: ['value'], expand: true });
+                    }}
+                >
+                    扩展数据列
+                </Button>
+                <Button
+                    onClick={() => {
+                        const entries = gridFilteredSortedRowEntriesSelector(apiRef).map((entry) => entry.model);
+                        entries.forEach((entry) => {
+                            console.log(entry);
+                        });
                     }}
                 >
                     一键dump
                 </Button>
-            </Toolbar>
-
-            <DataGrid columns={columns} rowBufferPx={300} rows={packets.map((d) => ({ id: d.index, ...d }))} />
-        </>
+            </Row>
+            <DataGrid
+                apiRef={apiRef}
+                autosizeOnMount
+                sx={{
+                    '& .MuiDataGrid-container--top': {
+                        backgroundColor: ({ palette }) => alpha(palette.extendedBackground.emphasize, 1)
+                    },
+                    '& .MuiDataGrid-row--borderBottom[role=row]': {
+                        backgroundColor: 'unset'
+                    },
+                    '& .MuiDataGrid-footerContainer': {
+                        minHeight: '56px'
+                    },
+                    '& .MuiDataGrid-menu.MuiPaper-root': {
+                        backgroundColor: ({ palette }) => alpha(palette.secondary.main, 0.88),
+                        backdropFilter: 'blur(8px)'
+                    },
+                    '& .MuiDataGrid-overlay': {
+                        background: 'none',
+                        border: 'none'
+                    }
+                }}
+                columns={columns}
+                rowBufferPx={300}
+                rows={packets.map((d) => ({ id: d.index, ...d }))}
+            />
+        </Box>
     );
 }
-
-// const PanelRow = memo(function PanelRow({ pkg }: { pkg: PacketEvent }) {
-//     return (
-//         <SeaTableRow>
-//             <PanelField field="time">{dayjs(pkg.time).format('HH:mm:ss')}</PanelField>
-//             <PanelField field="type">{pkg.type}</PanelField>
-//             <PanelField field="cmd">{pkg.cmd}</PanelField>
-//             <PanelField field="label">{pkg.label}</PanelField>
-//             <PanelField field="data">
-//                 <Button
-//                     onClick={() => {
-//                         console.log(pkg);
-//                     }}
-//                 >
-//                     dump
-//                 </Button>
-//                 {pkg.type === 'Send' && (
-//                     <Button
-//                         onClick={() => {
-//                             const data = pkg.buffer;
-//                             if (typeof data === 'undefined') {
-//                                 SocketConnection.mainSocket.send(pkg.cmd, []);
-//                             } else if (Array.isArray(data)) {
-//                                 SocketConnection.mainSocket.send(
-//                                     pkg.cmd,
-//                                     data.map((d) => (d instanceof Uint8Array ? new egret.ByteArray(d) : d))
-//                                 );
-//                             } else {
-//                                 SocketConnection.mainSocket.send(pkg.cmd, [new egret.ByteArray(data)]);
-//                             }
-//                         }}
-//                     >
-//                         重放
-//                     </Button>
-//                 )}
-//             </PanelField>
-//         </SeaTableRow>
-//     );
-// });

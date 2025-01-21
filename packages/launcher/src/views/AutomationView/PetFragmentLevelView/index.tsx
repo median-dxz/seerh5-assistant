@@ -1,12 +1,13 @@
 import Add from '@mui/icons-material/AddRounded';
 
-import { Button, Toolbar } from '@mui/material';
+import { Button } from '@mui/material';
 import type { Recipe } from '@sea/server';
 import { toRaw } from '@vue/reactivity';
 import { produce } from 'immer';
 import { useCallback, useState } from 'react';
 
 import { DataLoading } from '@/components/DataLoading';
+import { Row } from '@/components/Row';
 import { PanelTable, type PanelColumn } from '@/components/SEAPanelTable';
 
 import type { PetFragmentOptions } from '@/builtin/petFragment/types';
@@ -84,7 +85,7 @@ export function PetFragmentLevelView() {
                 mutate
             }}
         >
-            <Toolbar>
+            <Row sx={{ mb: 2 }} spacing={2}>
                 <Button
                     onClick={() => {
                         setAddFormOpen(true);
@@ -94,7 +95,7 @@ export function PetFragmentLevelView() {
                 >
                     添加新配置
                 </Button>
-            </Toolbar>
+            </Row>
 
             <PanelTable
                 data={optionsList}

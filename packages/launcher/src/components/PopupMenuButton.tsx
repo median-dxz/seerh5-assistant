@@ -84,7 +84,7 @@ export function PopupMenuButton<T>({
                 {children}
             </Button>
             {data && data.length > 0 && (
-                <Menu {...state} {...menuProps} sx={{ ...menuProps?.sx, maxHeight: '60vh' }}>
+                <Menu {...state} {...menuProps}>
                     {data.map((item, index) => (
                         <MenuItem
                             key={index}

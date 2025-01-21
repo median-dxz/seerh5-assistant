@@ -1,5 +1,6 @@
-import { Divider, Paper, Stack } from '@mui/material';
+import { Divider, Stack } from '@mui/material';
 
+import { Paper } from '@/components/Paper';
 import { Selector } from './Selector';
 
 import { SEAEventSource, engine, query } from '@sea/core';

@@ -2,10 +2,12 @@ import Pause from '@mui/icons-material/PauseRounded';
 import PlayArrow from '@mui/icons-material/PlayArrowRounded';
 
 import { LabeledLinearProgress } from '@/components/LabeledProgress';
-import { Row } from '@/components/styled/Row';
+import { Paper } from '@/components/Paper';
+import { Row } from '@/components/Row';
+import { Button, ButtonGroup, Chip, Stack, Typography } from '@mui/material';
+
 import { taskScheduler } from '@/features/taskScheduler';
 import { useAppDispatch, useAppSelector } from '@/shared';
-import { Button, ButtonGroup, Chip, Paper, Stack, Typography } from '@mui/material';
 
 const StatusTextMap = {
     idle: '就绪',

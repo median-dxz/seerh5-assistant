@@ -1,6 +1,6 @@
 import { IconButtonNoRipple as IconButton } from '@/components/IconButtonNoRipple';
 import { PopupMenuButton } from '@/components/PopupMenuButton';
-import { Row } from '@/components/styled/Row';
+import { Row } from '@/components/Row';
 
 import { Backpack } from '@/components/icons/Backpack';
 import { HealthBroken } from '@/components/icons/HealthBroken';

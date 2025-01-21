@@ -32,9 +32,11 @@ export const appStore = configureStore({
                     /taskScheduler\.queue\.[0-9]*\.error/,
                     /packetCapture\.packets/,
                     /api\/mod\.queries\.fetch/,
+                    /api\/mod\.queries\.indexList/,
                     /api\/game\.queries\.bagPets/,
                     /api\/game\.queries\.allPets/,
-                    /api\/mod.mutations\..*\.error/
+                    /api\/mod.mutations\..*\.error/,
+                    /mod\.deployments\.entities\..*\.state\.data/
                 ],
                 ignoreActions: true
             } satisfies SerializableStateInvariantMiddlewareOptions

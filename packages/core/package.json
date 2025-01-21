@@ -20,7 +20,7 @@
     "build": "tsc --build",
     "watch": "tsc --watch",
     "format": "prettier . --write",
-    "lint": "eslint . --fix",
+    "lint": "eslint .",
     "test": "vitest"
   },
   "files": [

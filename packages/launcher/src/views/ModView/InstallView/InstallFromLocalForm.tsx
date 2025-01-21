@@ -85,11 +85,6 @@ export function InstallFromLocalForm() {
                     }
                 }}
                 PaperProps={{
-                    sx: {
-                        backgroundImage: 'none',
-                        bgcolor: ({ palette }) => palette.extendedBackground.popup,
-                        backdropFilter: 'blur(4px)'
-                    },
                     component: 'form',
                     onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
                         event.preventDefault();

@@ -1,16 +1,15 @@
 import { IconButton, styled, type IconButtonProps } from '@mui/material';
 
-const StyledIconButton = styled(IconButton)`
-    color: ${({ theme }) => theme.palette.text.primary};
-    transition: ${({ theme }) => theme.transitions.create(['color', 'transform'])};
+export const IconButtonNoRipple = styled(({ ...props }: Omit<IconButtonProps, 'disableRipple' | 'color'>) => (
+    <IconButton disableRipple size="small" {...props} />
+))`
+    color: ${({ theme: { palette } }) => palette.text.primary};
+    transition: ${({ theme: { transitions } }) =>
+        transitions.create(['color', 'transform'], { easing: 'cubic-bezier(0, 1, 0.32, 1.28)' })};
     &:hover {
-        color: ${({ theme }) => theme.palette.primary.main};
+        color: ${({ theme: { palette } }) => palette.primary.main};
     }
     &:active {
         transform: scale(0.9);
     }
-`;
-
-export function IconButtonNoRipple({ ...props }: Omit<IconButtonProps, 'disableRipple' | 'color'>) {
-    return <StyledIconButton disableRipple size="small" {...props} />;
-}
+` as typeof IconButton;

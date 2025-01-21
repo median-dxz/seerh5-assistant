@@ -9,7 +9,7 @@ import { PanelTable, type PanelColumn } from '@/components/SEAPanelTable';
 import { PanelField } from '@/components/SEAPanelTable/PanelField';
 import { Icon } from '@/services/resource';
 
-import { TableRow } from '@/components/styled/TableRow';
+import { TableRow } from '@/components/TableRow';
 import { launcher } from '@/features/launcher';
 import { useAppDispatch } from '@/shared';
 import { idList, openModuleList } from './data';

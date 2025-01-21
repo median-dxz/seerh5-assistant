@@ -1,15 +1,14 @@
-import { Box, LinearProgress, type BoxProps } from '@mui/material';
+import { Box, LinearProgress, styled, type BoxProps } from '@mui/material';
 
-export const LinerLoading = ({ sx }: BoxProps) => (
-    <Box
-        sx={{
-            ...sx,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'stretch',
-            flexDirection: 'column'
-        }}
-    >
+const StyledBox = styled(Box)`
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    flex-direction: column;
+` as typeof Box;
+
+export const LinerLoading = ({ ...props }: BoxProps) => (
+    <StyledBox {...props}>
         <LinearProgress />
-    </Box>
+    </StyledBox>
 );

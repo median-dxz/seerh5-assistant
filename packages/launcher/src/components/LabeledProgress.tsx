@@ -1,5 +1,5 @@
 import type { LinearProgressProps, TypographyProps } from '@mui/material';
-import { LinearProgress, Stack, Typography } from '@mui/material';
+import { LinearProgress, Stack, styled, Typography } from '@mui/material';
 
 type LabeledProgressProps = LinearProgressProps & {
     prompt?: string;
@@ -10,6 +10,10 @@ type LabeledProgressProps = LinearProgressProps & {
     typographyProps?: TypographyProps;
 };
 
+const FullWidthLinearProgress = styled(LinearProgress)`
+    width: 100%;
+`;
+
 export function LabeledLinearProgress({
     progress,
     total,
@@ -17,7 +21,6 @@ export function LabeledLinearProgress({
     overridePrompt,
     labelPosition: position,
     typographyProps,
-    sx,
     ...rest
 }: LabeledProgressProps) {
     let display = prompt ?? '';
@@ -29,7 +32,7 @@ export function LabeledLinearProgress({
         return (
             <Typography component={'div'} {...typographyProps}>
                 {overridePrompt ?? display}
-                <LinearProgress variant="determinate" value={(progress / total) * 100} sx={sx} {...rest} />
+                <LinearProgress variant="determinate" value={(progress / total) * 100} {...rest} />
             </Typography>
         );
     } else if (position === 'right') {
@@ -42,12 +45,7 @@ export function LabeledLinearProgress({
                 }}
                 spacing={0}
             >
-                <LinearProgress
-                    variant="determinate"
-                    value={(progress / total) * 100}
-                    sx={{ width: '100%', ...sx }}
-                    {...rest}
-                />
+                <FullWidthLinearProgress variant="determinate" value={(progress / total) * 100} {...rest} />
                 <Typography component={'span'} {...typographyProps}>
                     {overridePrompt ?? display}
                 </Typography>
@@ -67,12 +65,7 @@ export function LabeledLinearProgress({
                 <Typography component={'span'} {...typographyProps}>
                     {overridePrompt ?? display}
                 </Typography>
-                <LinearProgress
-                    variant="determinate"
-                    value={(progress / total) * 100}
-                    sx={{ width: '100%', ...sx }}
-                    {...rest}
-                />
+                <FullWidthLinearProgress variant="determinate" value={(progress / total) * 100} {...rest} />
             </Stack>
         );
     }

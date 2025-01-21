@@ -71,7 +71,7 @@ export const theme = createTheme({
         },
         background: {
             default: alpha('#fff', 0.24),
-            paper: alpha(colors.primary, 0.08)
+            paper: alpha(colors.secondary, 0.88)
         },
         divider: alpha(colors.primary, 0.16),
         extendedBackground: {
@@ -125,7 +125,7 @@ export const theme = createTheme({
             styleOverrides: {
                 tooltip: {
                     backgroundColor: alpha(colors.primary, 0.6),
-                    backdropFilter: 'blur(4px)'
+                    backdropFilter: 'blur(8px)'
                 }
             }
         },
@@ -141,22 +141,19 @@ export const theme = createTheme({
                 root: ({ theme: { boxShadow } }) => ({
                     boxShadow,
                     display: 'flex',
-                    flexDirection: 'column'
+                    flexDirection: 'column',
+                    backdropFilter: 'blur(8px)'
                 })
             }
         },
         MuiMenu: {
             styleOverrides: {
+                root: {
+                    maxHeight: '60vh'
+                },
                 list: {
                     backgroundColor: alpha(colors.secondary, 0.88),
                     overflowY: 'auto'
-                }
-            }
-        },
-        MuiPopover: {
-            styleOverrides: {
-                paper: {
-                    backdropFilter: 'blur(8px)'
                 }
             }
         },
@@ -165,7 +162,7 @@ export const theme = createTheme({
                 paper: {
                     backgroundImage: 'none',
                     backgroundColor: alpha(colors.popup, 0.88),
-                    backdropFilter: 'blur(4px)'
+                    backdropFilter: 'blur(8px)'
                 }
             }
         },

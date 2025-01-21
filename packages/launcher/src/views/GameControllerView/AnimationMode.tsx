@@ -1,5 +1,6 @@
-import { Row } from '@/components/styled/Row';
-import { Paper, Switch, Typography } from '@mui/material';
+import { Paper } from '@/components/Paper';
+import { Row } from '@/components/Row';
+import { Switch, Typography } from '@mui/material';
 import type { ChangeEvent } from 'react';
 import { useEffect, useState } from 'react';
 

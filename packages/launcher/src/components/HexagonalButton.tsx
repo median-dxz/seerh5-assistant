@@ -1,4 +1,3 @@
-import { theme } from '@/theme';
 import type { ButtonBaseProps } from '@mui/material';
 import { alpha, ButtonBase, styled } from '@mui/material';
 import { forwardRef, type ForwardedRef, type PropsWithChildren } from 'react';
@@ -34,8 +33,6 @@ const HexagonalButtonRoot = forwardRef(function HexagonalButtonRoot(
     );
 });
 
-const { palette, transitions } = theme;
-
 const StyledButtonRoot = styled(HexagonalButtonRoot)`
     overflow: overlay;
     clip-path: polygon(
@@ -46,7 +43,8 @@ const StyledButtonRoot = styled(HexagonalButtonRoot)`
         50% 118%,
         calc(50% - 25% * 1.732 - 18%) calc(50% + 50% / 2)
     );
-    transition: ${transitions.create(['all'], { duration: transitions.duration.shortest })};
+    transition: ${({ theme: { transitions } }) =>
+        transitions.create(['all'], { duration: transitions.duration.shortest })};
 
     &:focus {
         outline: none;
@@ -67,11 +65,11 @@ const StyledButtonRoot = styled(HexagonalButtonRoot)`
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        transition: ${transitions.create(['all'])};
+        transition: ${({ theme: { transitions } }) => transitions.create(['all'])};
     }
 
     & .bg {
-        stroke: ${palette.primary.main};
+        stroke: ${({ theme: { palette } }) => palette.primary.main};
         stroke-width: 3px;
         stroke-linecap: round;
         fill: transparent;
@@ -79,7 +77,7 @@ const StyledButtonRoot = styled(HexagonalButtonRoot)`
     }
 
     &:hover .content {
-        filter: drop-shadow(0 0 4px ${alpha(palette.primary.main, 1)});
+        filter: drop-shadow(0 0 4px ${({ theme: { palette } }) => alpha(palette.primary.main, 1)});
     }
 
     @keyframes breathe {
@@ -92,7 +90,7 @@ const StyledButtonRoot = styled(HexagonalButtonRoot)`
         50% {
             opacity: 0.85;
             transform: scale(1.02);
-            filter: drop-shadow(0 0 4px ${alpha(palette.background.default, 1)});
+            filter: drop-shadow(0 0 4px ${({ theme: { palette } }) => alpha(palette.background.default, 1)});
         }
     }
 `;

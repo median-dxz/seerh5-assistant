@@ -1,9 +1,10 @@
-import { Button, CircularProgress, Toolbar, alpha } from '@mui/material';
+import { Button, CircularProgress, alpha } from '@mui/material';
 import { useState } from 'react';
 
 import { delay } from '@sea/core';
 import { getCompositeId } from '@sea/mod-resolver';
 
+import { Row } from '@/components/Row';
 import { mod } from '@/features/mod';
 import { modApi } from '@/services/mod';
 import { useAppDispatch } from '@/shared';
@@ -16,10 +17,12 @@ export function Header() {
     const [refetch, { isFetching }] = modApi.endpoints.indexList.useLazyQuery();
 
     return (
-        <Toolbar
+        <Row
             sx={{
+                pb: 2,
                 borderBottom: ({ palette }) => `1px solid ${alpha(palette.divider, 0.12)}`
             }}
+            spacing={2}
         >
             <Button
                 disabled={isFetching || deploying}
@@ -44,6 +47,6 @@ export function Header() {
             >
                 重载所有模组
             </Button>
-        </Toolbar>
+        </Row>
     );
 }
