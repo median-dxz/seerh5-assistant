@@ -29,6 +29,8 @@
 
 ## 最近更新的内容 & RoadMap
 
+**作者精力有限，文档站仍在缓慢搭建中！目前可以在DC频道中查看简版的使用教程和说明，待这部分教程编写完后，会暂时同步在此仓库的Wiki中，待文档站可用后再移除。**
+
 参阅 [#26](https://github.com/median-dxz/seerh5-assistant/issues/26) 和 [milestones](https://github.com/median-dxz/seerh5-assistant/milestones)
 
 # 简介
