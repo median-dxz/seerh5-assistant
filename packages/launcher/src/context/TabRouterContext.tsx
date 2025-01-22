@@ -34,7 +34,7 @@ export function TabRouterProvider({ children, rootView }: PropsWithChildren<TabR
     );
 
     return (
-        <TabRouterContext.Provider
+        <TabRouterContext
             value={{
                 back,
                 push,
@@ -44,6 +44,6 @@ export function TabRouterProvider({ children, rootView }: PropsWithChildren<TabR
             }}
         >
             {children}
-        </TabRouterContext.Provider>
+        </TabRouterContext>
     );
 }

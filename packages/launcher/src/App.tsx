@@ -1,17 +1,24 @@
 import { Grow } from '@mui/material';
+import { useEffect } from 'react';
 
 import { initializer } from '@/features/initializer';
 import { launcher } from '@/features/launcher';
-import { useAppSelector } from '@/shared';
+import { useAppDispatch, useAppSelector } from '@/shared';
 import { Command } from '@/views/Command';
+import { InitializationView } from '@/views/InitializationView';
 import { Main } from '@/views/Main';
 import { QuickAccess } from '@/views/QuickAccess';
 
 export default function Launcher() {
     const { commandOpen, isFighting } = launcher.useSelectProps('commandOpen', 'isFighting');
     const status = useAppSelector(initializer.status);
+    const dispatch = useAppDispatch();
 
-    if (status !== 'fulfilled') return null;
+    useEffect(() => {
+        dispatch(initializer.init());
+    }, [dispatch]);
+
+    if (status !== 'fulfilled') return <InitializationView />;
 
     return (
         <>

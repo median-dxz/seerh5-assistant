@@ -18,7 +18,7 @@ export const DataLoading = ({ loadingText = '加载数据中', error, ...props }
         {!error ? (
             <>
                 <CircularProgress size="1.5rem" />
-                <Typography>{loadingText}</Typography>
+                <Typography color="error">{loadingText}</Typography>
             </>
         ) : (
             <Typography>{error}</Typography>

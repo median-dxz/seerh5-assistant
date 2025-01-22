@@ -79,7 +79,7 @@ export function PetFragmentLevelView() {
     }
 
     return (
-        <OptionsListContext.Provider
+        <OptionsListContext
             value={{
                 optionsList,
                 mutate
@@ -113,6 +113,6 @@ export function PetFragmentLevelView() {
             />
             <AddOptionsForm open={addFormOpen} onClose={() => setAddFormOpen(false)} />
             <EditOptionsForm open={editFormOpen} onClose={() => setEditFormOpen(false)} index={editingItemIdx} />
-        </OptionsListContext.Provider>
+        </OptionsListContext>
     );
 }

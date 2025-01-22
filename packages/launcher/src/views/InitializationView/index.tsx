@@ -1,50 +1,36 @@
-import { Box, Fade, styled } from '@mui/material';
+import { Fade } from '@mui/material';
 
+import { ScreenContainer } from '@/components/ScreenContainer';
 import { initializer } from '@/features/initializer';
 import { useAppSelector } from '@/shared';
+import { ErrorScreen } from '@/views/ErrorScreen';
 
 import { CoreLoadingScreen } from './CoreLoadingScreen';
-import { ErrorScreen } from './ErrorScreen';
 import { LoginLoadingScreen } from './LoginLoadingScreen';
-
-const Container = styled(Box)`
-    position: relative;
-    display: flex;
-    z-index: 1;
-    width: 100vw;
-    height: 100vh;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-` as typeof Box;
 
 export function InitializationView() {
     const status = useAppSelector(initializer.status);
-
+    const loadingText = useAppSelector(initializer.loadingText);
     switch (status) {
         case 'beforeGameCoreInit':
         case 'waitingForLogin':
             return (
                 <Fade timeout={1200} appear={false} in={status === 'beforeGameCoreInit'} unmountOnExit>
-                    <Container sx={{ bgcolor: '#fff' }}>
-                        <CoreLoadingScreen />
-                    </Container>
+                    <ScreenContainer sx={{ bgcolor: '#fff' }}>
+                        <CoreLoadingScreen loadingText={loadingText} />
+                    </ScreenContainer>
                 </Fade>
             );
         case 'afterFirstShowMainPanel':
         case 'fulfilled':
             return (
                 <Fade timeout={600} in={status === 'afterFirstShowMainPanel'} unmountOnExit>
-                    <Container>
-                        <LoginLoadingScreen />
-                    </Container>
+                    <ScreenContainer>
+                        <LoginLoadingScreen loadingText={loadingText} />
+                    </ScreenContainer>
                 </Fade>
             );
-        case 'error':
-            return (
-                <Container sx={{ bgcolor: '#fff' }}>
-                    <ErrorScreen />
-                </Container>
-            );
+        case 'rejected':
+            <ErrorScreen error={loadingText} />;
     }
 }

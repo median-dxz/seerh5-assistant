@@ -19,7 +19,7 @@ import { preloadSetupMap, setupMap, type SetupMap } from './setup';
 
 export interface InitializerState {
     loadingText: string;
-    status: SetupOptions['type'] | 'fulfilled' | 'waitingForLogin' | 'error';
+    status: SetupOptions['type'] | 'fulfilled' | 'waitingForLogin' | 'rejected';
 }
 
 const initialState: InitializerState = {
@@ -65,7 +65,7 @@ export const initializer = createAppSlice({
             state.status = 'fulfilled';
         },
         reject(state, action: PayloadAction<string>) {
-            state.status = 'error';
+            state.status = 'rejected';
             state.loadingText = action.payload;
         }
     },
@@ -194,7 +194,7 @@ startAppListening({
                                 `Mod Deployment: 部署预加载模组: ${action.meta.arg} (${++i}/${deployments.length})`
                             )
                         );
-                        if (selectors.status(api.getState()) === 'error') {
+                        if (selectors.status(api.getState()) === 'rejected') {
                             break;
                         }
                     }
@@ -246,7 +246,7 @@ startAppListening({
                         api.dispatch(
                             actions.setLoadingItem(`部署模组: ${action.meta.arg} (${++i}/${deployments.length})`)
                         );
-                        if (selectors.status(api.getState()) === 'error') {
+                        if (selectors.status(api.getState()) === 'rejected') {
                             break;
                         }
                     }

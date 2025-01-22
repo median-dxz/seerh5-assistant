@@ -1,11 +1,8 @@
 import { Typography } from '@mui/material';
 
 import { LinerLoading } from '@/components/LinerLoading';
-import { initializer } from '@/features/initializer';
-import { useAppSelector } from '@/shared';
 
-export function CoreLoadingScreen() {
-    const loadingText = useAppSelector(initializer.loadingText);
+export function CoreLoadingScreen({ loadingText }: { loadingText: string }) {
     return (
         <>
             <Typography sx={{ color: (theme) => theme.palette.secondary.main }}>

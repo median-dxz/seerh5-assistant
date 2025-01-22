@@ -1,10 +1,6 @@
 import { CircularProgress, Paper, Typography } from '@mui/material';
 
-import { initializer } from '@/features/initializer';
-import { useAppSelector } from '@/shared';
-
-export function LoginLoadingScreen() {
-    const loadingText = useAppSelector(initializer.loadingText);
+export function LoginLoadingScreen({ loadingText }: { loadingText: string }) {
     return (
         <Paper
             sx={{

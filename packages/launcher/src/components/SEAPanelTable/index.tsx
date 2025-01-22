@@ -26,12 +26,12 @@ export function PanelTable<TData>(props: PanelTableProps<TData>) {
             </TableHead>
 
             <TableBody>
-                <ColumnContext.Provider value={columns}>
+                <ColumnContext value={columns}>
                     {data.map((data) => {
                         const key = keyRef.current.get(data);
                         return <Fragment key={key}>{renderResultRef.current.get(data)}</Fragment>;
                     })}
-                </ColumnContext.Provider>
+                </ColumnContext>
             </TableBody>
         </Table>
     );

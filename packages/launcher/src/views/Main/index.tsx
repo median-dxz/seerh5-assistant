@@ -3,7 +3,7 @@ import { Backdrop, alpha, type ButtonProps } from '@mui/material';
 import type { PropsWithChildren } from 'react';
 
 import { HexagonalButton } from '@/components/HexagonalButton';
-import { TabRouterProvider } from '@/context/TabRouterProvider';
+import { TabRouterProvider } from '@/context/TabRouterContext';
 import { launcher } from '@/features/launcher';
 import { useAppDispatch } from '@/shared';
 import { root } from '../root';

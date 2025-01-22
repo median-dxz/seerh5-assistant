@@ -4352,7 +4352,7 @@ snapshots:
       '@babel/traverse': 7.26.5
       '@babel/types': 7.26.5
       convert-source-map: 2.0.0
-      debug: 4.4.0(supports-color@5.5.0)
+      debug: 4.4.0
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -4412,7 +4412,7 @@ snapshots:
       '@babel/core': 7.26.0
       '@babel/helper-compilation-targets': 7.26.5
       '@babel/helper-plugin-utils': 7.26.5
-      debug: 4.4.0(supports-color@5.5.0)
+      debug: 4.4.0
       lodash.debounce: 4.0.8
       resolve: 1.22.10
     transitivePeerDependencies:
@@ -4972,7 +4972,7 @@ snapshots:
       '@babel/parser': 7.26.3
       '@babel/template': 7.25.9
       '@babel/types': 7.26.3
-      debug: 4.4.0(supports-color@5.5.0)
+      debug: 4.4.0
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -4984,7 +4984,7 @@ snapshots:
       '@babel/parser': 7.26.5
       '@babel/template': 7.25.9
       '@babel/types': 7.26.5
-      debug: 4.4.0(supports-color@5.5.0)
+      debug: 4.4.0
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -6325,6 +6325,10 @@ snapshots:
   dateformat@4.6.3: {}
 
   dayjs@1.11.13: {}
+
+  debug@4.4.0:
+    dependencies:
+      ms: 2.1.3
 
   debug@4.4.0(supports-color@5.5.0):
     dependencies:
@@ -8489,7 +8493,7 @@ snapshots:
 
   vite-plugin-inspect@10.0.7(vite@6.0.7(@types/node@22.10.7)(terser@5.37.0)(yaml@2.6.1)):
     dependencies:
-      debug: 4.4.0(supports-color@5.5.0)
+      debug: 4.4.0
       error-stack-parser-es: 1.0.5
       open: 10.1.0
       picocolors: 1.1.1
@@ -8500,7 +8504,7 @@ snapshots:
 
   vite-plugin-pwa@0.21.1(vite@6.0.7(@types/node@22.10.7)(terser@5.37.0)(yaml@2.6.1))(workbox-build@7.3.0)(workbox-window@7.3.0):
     dependencies:
-      debug: 4.4.0(supports-color@5.5.0)
+      debug: 4.4.0
       pretty-bytes: 6.1.1
       tinyglobby: 0.2.10
       vite: 6.0.7(@types/node@22.10.7)(terser@5.37.0)(yaml@2.6.1)

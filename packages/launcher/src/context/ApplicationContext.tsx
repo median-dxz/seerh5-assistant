@@ -3,14 +3,13 @@ import { theme } from '@/theme';
 import { cache } from '@emotion/css';
 import { CacheProvider } from '@emotion/react';
 import { CssBaseline, ThemeProvider, alpha, styled } from '@mui/material';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import { enableMapSet } from 'immer';
 import { MaterialDesignContent, SnackbarProvider } from 'notistack';
 import type { PropsWithChildren } from 'react';
 import { useEffect } from 'react';
 import { Provider } from 'react-redux';
-
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import { enableMapSet } from 'immer';
 
 const StyledMaterialDesignContent = styled(MaterialDesignContent)`
     &.notistack-MuiContent-default {
