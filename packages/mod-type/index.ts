@@ -124,5 +124,9 @@ export interface Command {
     name: string;
     icon?: string;
     description?: string | (() => string);
-    handler: (...args: string[]) => unknown;
+    handler: (args?: PlainObject) => unknown;
+}
+
+export interface PlainObject {
+    [key: string]: string | number | boolean | null | PlainObject | PlainObject[];
 }

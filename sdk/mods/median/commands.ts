@@ -14,7 +14,7 @@ export const metadata = {
     description: '预置命令组'
 } satisfies SEAModMetadata;
 
-export default function builtinCommand({ logger }: SEAModContext<typeof metadata>): SEAModExport {
+export default function builtinCommands({ logger }: SEAModContext<typeof metadata>): SEAModExport {
     const commands: Command[] = [
         {
             name: 'getCurPanelInfo',
@@ -24,7 +24,8 @@ export default function builtinCommand({ logger }: SEAModContext<typeof metadata
         },
         {
             name: 'logDataByName',
-            handler(petName: string) {
+            handler(args) {
+                const { petName } = args as { petName: string };
                 const data = config.xml
                     .getAnyRes('new_super_design')
                     .Root.Design.find((r: any) => (r.Desc as string).match(petName));
@@ -33,8 +34,8 @@ export default function builtinCommand({ logger }: SEAModContext<typeof metadata
         },
         {
             name: 'calcAllEfficientPet',
-            async handler(_e: string, _radio: string) {
-                const [e, radio] = [parseInt(_e), parseFloat(_radio)];
+            async handler(args) {
+                const { e, radio } = args as { e: number; radio: number };
                 const [bag1, bag2] = await SEAPetStore.bag.get();
                 const mini = (await SEAPetStore.miniInfo.get()).values();
                 const pets = [...bag1, ...bag2, ...mini];
@@ -56,7 +57,7 @@ export default function builtinCommand({ logger }: SEAModContext<typeof metadata
             description: '计算可用的高倍克制精灵'
         },
         {
-            name: 'updateBatteryTime',
+            name: 'refreshBatteryTime',
             handler() {
                 const leftTime =
                     MainManager.actorInfo.timeLimit -

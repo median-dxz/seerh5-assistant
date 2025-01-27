@@ -23,7 +23,7 @@ const entries = [
     'CraftSkillStone.ts',
     'LocalPetSkin.ts',
     'battle.ts',
-    'command.ts',
+    'commands.ts',
     'strategy.ts'
 ];
 

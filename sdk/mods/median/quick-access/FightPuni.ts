@@ -11,7 +11,7 @@ export const metadata = {
 
 export default function FightPuni(ctx: SEAModContext<typeof metadata>): SEAModExport {
     const FightPuni: Command = {
-        name: 'FightPuni',
+        name: 'fightPuni',
         icon: Icon,
         description: '对战谱尼',
         handler() {

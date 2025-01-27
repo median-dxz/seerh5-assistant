@@ -1,14 +1,17 @@
 import { alpha, Autocomplete, Box, TextField as MuiTextField, styled, type BoxProps } from '@mui/material';
 import { useSnackbar, type SnackbarProviderProps } from 'notistack';
-import { forwardRef, useMemo, useState } from 'react';
+import { forwardRef, useEffect, useMemo, useState } from 'react';
 
-import type { Command as CommandInstance } from '@sea/mod-type';
+import type { Command, PlainObject } from '@sea/mod-type';
 
 import { ModStore } from '@/features/mod';
 import { theme } from '@/theme';
 
+import { produce } from 'immer';
+import { ParametersDialog } from './ParametersDialog';
+
 interface Option {
-    value: CommandInstance;
+    value: Command;
     label: string;
 }
 
@@ -25,8 +28,11 @@ const TextField = styled(MuiTextField)`
     border-radius: ${theme.shape.borderRadius}px;
 ` as typeof MuiTextField;
 
-export function CommandInput() {
-    const { enqueueSnackbar } = useSnackbar();
+interface CommandInputProps {
+    onExecuteCommand: (cmd: Command) => void;
+}
+
+export function CommandInput({ onExecuteCommand }: CommandInputProps) {
     const [open, setOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [value, setValue] = useState<null | Option>(null);
@@ -60,18 +66,9 @@ export function CommandInput() {
                 setInputValue(newInputValue);
             }}
             value={value}
-            onChange={(event, newValue: Option | null) => {
-                if (!newValue) return;
-                const cmd = newValue.value;
-
-                if (cmd.handler.length > 0) {
-                    enqueueSnackbar(`命令: ${cmd.name} 需要输入参数`, snackBarOptions);
-                    return;
-                }
-
-                cmd.handler();
-                enqueueSnackbar(`应用命令: ${cmd.name}`, snackBarOptions);
-
+            onChange={(event, option: Option | null) => {
+                if (!option) return;
+                onExecuteCommand(option.value);
                 setValue(null);
                 setInputValue('');
             }}
@@ -100,12 +97,53 @@ export function CommandInput() {
     );
 }
 
-const CommandInputRef = forwardRef<HTMLDivElement, BoxProps>(function CommandInputRef({ ...props }, ref) {
+export const CommandView = forwardRef<HTMLDivElement, BoxProps>(function CommandRef({ ...props }, ref) {
+    const { enqueueSnackbar } = useSnackbar();
+    const [executingCommand, setExecutingCommand] = useState<undefined | (Command & { param?: PlainObject })>(
+        undefined
+    );
+    const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        if (executingCommand === undefined) return;
+        const { handler, param, name } = executingCommand;
+        if (handler.length > 0 && param === undefined) {
+            setOpen(true);
+            return;
+        }
+        void (async () => {
+            try {
+                await handler(param);
+                enqueueSnackbar(`执行命令成功: ${name}`, snackBarOptions);
+            } catch (error: unknown) {
+                const errorMsg = `执行命令失败: ${name}`;
+                enqueueSnackbar(errorMsg, { ...snackBarOptions, variant: 'error' });
+                console.error(`[SEAL] CommandView: ${errorMsg}: ${(error as Error).message}`);
+            } finally {
+                setExecutingCommand(undefined);
+            }
+        })();
+    }, [enqueueSnackbar, executingCommand]);
+
     return (
         <Box {...props} ref={ref}>
-            <CommandInput />
+            <CommandInput onExecuteCommand={setExecutingCommand} />
+            <ParametersDialog
+                open={open}
+                command={executingCommand}
+                onCancel={() => {
+                    setOpen(false);
+                    setExecutingCommand(undefined);
+                }}
+                onSubmit={(param) => {
+                    setOpen(false);
+                    setExecutingCommand(
+                        produce((draft) => {
+                            draft && (draft.param = JSON.parse(param));
+                        })
+                    );
+                }}
+            />
         </Box>
     );
 });
-
-export const Command = CommandInputRef;

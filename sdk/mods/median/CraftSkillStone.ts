@@ -28,8 +28,8 @@ export default async function CraftSkillStone({ logger }: SEAModContext<typeof m
     const resetNature: Command = {
         name: 'resetNature',
         description: '刷性格',
-        async handler(_ct: string, _nature: string) {
-            const [ct, nature] = [parseInt(_ct), parseInt(_nature)];
+        async handler(args) {
+            const { ct, nature } = args as { ct: number; nature: number };
             const query = GameConfigRegistry.getQuery('nature');
 
             for (; ; await delay(200)) {

@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { initializer } from '@/features/initializer';
 import { launcher } from '@/features/launcher';
 import { useAppDispatch, useAppSelector } from '@/shared';
-import { Command } from '@/views/Command';
+import { CommandView } from '@/views/CommandView';
 import { InitializationView } from '@/views/InitializationView';
 import { Main } from '@/views/Main';
 import { QuickAccess } from '@/views/QuickAccess';
@@ -33,7 +33,7 @@ export default function Launcher() {
                 />
             )}
             <Grow in={commandOpen} unmountOnExit>
-                <Command
+                <CommandView
                     sx={{
                         position: 'absolute',
                         left: '30vw',

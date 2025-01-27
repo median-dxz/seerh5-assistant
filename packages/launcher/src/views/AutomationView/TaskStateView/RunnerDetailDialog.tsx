@@ -20,14 +20,14 @@ import React from 'react';
 
 export interface RunnerDetailDialogProps {
     open: boolean;
-    close(): void;
+    onClose(): void;
     taskState: TaskState;
     taskRef: ModExportsRef;
 }
 
 export const RunnerDetailDialog = React.memo(function RunnerDetailDialog({
     open,
-    close,
+    onClose,
     taskState,
     taskRef
 }: RunnerDetailDialogProps) {
@@ -73,7 +73,7 @@ export const RunnerDetailDialog = React.memo(function RunnerDetailDialog({
     return (
         <Dialog
             open={open}
-            onClose={close}
+            onClose={onClose}
             scroll="paper"
             fullWidth
             PaperProps={{ sx: { minWidth: '18rem', maxWidth: '60vw' } }}
@@ -81,7 +81,7 @@ export const RunnerDetailDialog = React.memo(function RunnerDetailDialog({
             <DialogTitle>Runner详情</DialogTitle>
             <IconButton
                 aria-label="close"
-                onClick={close}
+                onClick={onClose}
                 sx={{
                     position: 'absolute',
                     right: 8,

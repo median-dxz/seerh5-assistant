@@ -254,7 +254,7 @@ export function TaskStateListItem({ state }: LevelStateListItemProps) {
                     <Delete fontSize="inherit" />
                 </IconButton>
             )}
-            <RunnerDetailDialog close={handleCloseDialog} open={dialogOpen} taskState={state} taskRef={taskRef} />
+            <RunnerDetailDialog onClose={handleCloseDialog} open={dialogOpen} taskState={state} taskRef={taskRef} />
         </ListItem>
     );
 }
