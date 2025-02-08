@@ -78,9 +78,14 @@ await Promise.all([
             }
         );
         commands.forEach((cmd) => {
-            cmd.stdout.subscribe((data) => {
+            /** @type { Array<Buffer<ArrayBufferLike>> } */
+            let tarballBuffer = [];
+            cmd.stdout.subscribe((buffer) => {
+                tarballBuffer.push(buffer);
+            });
+            cmd.close.subscribe(() => {
                 /** @type { {name:string, filename:string} } */
-                const tarball = JSON.parse(data.toString());
+                const tarball = JSON.parse(Buffer.concat(tarballBuffer).toString());
                 packages[cmd.name].tarball = path.resolve(cwd, 'release', tarball.filename);
             });
         });

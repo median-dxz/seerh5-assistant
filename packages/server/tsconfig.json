@@ -22,8 +22,7 @@
     "esm": true,
     "compilerOptions": {
       "target": "ESNext",
-      "esModuleInterop": true,
-      "importsNotUsedAsValues": "error"
+      "esModuleInterop": true
     }
   }
 }
