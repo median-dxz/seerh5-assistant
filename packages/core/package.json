@@ -2,7 +2,7 @@
   "name": "@sea/core",
   "description": "SEA 核心",
   "type": "module",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MPL-2.0",
   "private": true,
   "exports": {

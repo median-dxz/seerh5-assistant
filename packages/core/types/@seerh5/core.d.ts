@@ -438,9 +438,7 @@ declare global {
         queryTime(): void;
         sockettimeout(): void;
         time: number;
-        sysBJDate: {
-            getTime(): number;
-        };
+        sysBJDate: Date;
     }
     const SystemTimerManager: SystemTimerManager;
 

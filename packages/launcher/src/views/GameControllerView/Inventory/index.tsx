@@ -48,6 +48,8 @@ const eyeEquipmentDescription = (eyeEquipment: number) =>
 
 const titleDescription = (title: number) => query('title').get(title)?.abtext;
 
+const title = () => engine.playerTitle() || undefined;
+
 export function Inventory() {
     return (
         <Paper sx={{ p: 4 }}>
@@ -55,7 +57,7 @@ export function Inventory() {
                 <Selector
                     id="change-title"
                     label={'称号'}
-                    getCurrentItem={engine.playerTitle}
+                    getCurrentItem={title}
                     fetchAllItems={engine.playerAbilityTitles}
                     getDescription={titleDescription}
                     eventSource={changeTitleEventSource}

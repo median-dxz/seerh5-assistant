@@ -9,7 +9,7 @@ import initPet from '../pet-helper/internal.js';
 import registerGameConfig from './setup/registerGameConfig.js';
 import registerHooks from './setup/registerHooks.js';
 
-const VERSION = '1.0.1';
+const VERSION = '1.0.2';
 const SEER_READY_EVENT = 'seerh5_ready';
 
 export interface SetupOptions {

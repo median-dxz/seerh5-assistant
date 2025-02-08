@@ -95,7 +95,12 @@ export const lowerHp = async (
     };
 
     await manager.takeover(() => {
-        fightBoss(6730);
+        // 白虎压血
+        if (SystemTimerManager.sysBJDate.getHours() < 12 || SystemTimerManager.sysBJDate.getHours() >= 15) {
+            fightBoss(8692);
+        } else {
+            fightBoss(8694);
+        }
     }, strategy);
 
     for (const ct of cts) {
