@@ -2,7 +2,7 @@
   "name": "@sea/mod-type",
   "private": true,
   "type": "module",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "exports": {
     ".": {
       "import": "./dist/index.js",

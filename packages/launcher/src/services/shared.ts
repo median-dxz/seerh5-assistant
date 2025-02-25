@@ -3,13 +3,12 @@ import type { ApiRouter } from '@sea/server';
 import { createTRPCClient, createWSClient, wsLink } from '@trpc/client';
 import superjson from 'superjson';
 
-// 视trpc项目情况，如果WS被彻底弃用则迁移到HttpSubscriptionLink
 const wsClient = createWSClient({
     url: `ws://localhost:${import.meta.env.VITE_BACKEND_PORT}/api`
 });
 
 export const trpcClient = createTRPCClient<ApiRouter>({
-    links: [wsLink({ client: wsClient, transformer: superjson })]
+    links: [wsLink<ApiRouter>({ client: wsClient, transformer: superjson })]
 });
 
 export const baseQuery: BaseQueryFn<

@@ -377,7 +377,7 @@ declare global {
 
     class ItemUseManager {
         static getInstance(): ItemUseManager;
-        useItem(t?: PetInfo, e: number): void;
+        useItem(t: PetInfo, e: number): void;
         $usePetItem(obj: { petInfo: PetInfo; itemId: number; itemName: string }, e: number): void;
     }
 
@@ -443,6 +443,8 @@ declare global {
     const SystemTimerManager: SystemTimerManager;
 
     interface CountermarkController {
+        init(): Promise<void>;
+        removeFromCache(markInfo: CountermarkInfo): void;
         getInfo(obtainTime: number): CountermarkInfo | null;
         updateMnumberMark(markInfo: Pick<CountermarkInfo, 'markID' | 'catchTime'>): void;
         getAllUniversalMark(): Array<CountermarkInfo>;
@@ -494,7 +496,7 @@ declare global {
         getCategory: (gemId: number) => number;
         getLv: (gemId: number) => number;
     }
-    const GemsXMLInfo = GemsXMLInfo;
+    const GemsXMLInfo: GemsXMLInfo;
 
     interface ItemXMLInfo {
         _itemDict: seerh5.Dict<seerh5.ItemObj>;

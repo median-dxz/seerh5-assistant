@@ -124,6 +124,7 @@ export interface Command {
     name: string;
     icon?: string;
     description?: string | (() => string);
+    parametersDescription?: string | (() => string);
     handler: (args?: PlainObject) => unknown;
 }
 

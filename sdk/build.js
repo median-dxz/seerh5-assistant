@@ -20,7 +20,6 @@ const entries = [
     'enhancement/index.ts',
     'realm/index.ts',
     'sign/index.ts',
-    'CraftSkillStone.ts',
     'LocalPetSkin.ts',
     'battle.ts',
     'commands.ts',

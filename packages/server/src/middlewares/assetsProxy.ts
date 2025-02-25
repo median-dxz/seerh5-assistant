@@ -47,7 +47,7 @@ export const createAssetsProxy = (appRoot: string) =>
                         }
                         script = script.replaceAll(/console\.log/g, 'logFilter');
                         script = script.replaceAll(/console\.warn/g, 'warnFilter');
-                        respBuf = zlib.gzipSync(`//@ sourceURL=http://seerh5.61.com/${url + '\n'}${script}`);
+                        respBuf = zlib.gzipSync(`//@ sourceURL=http://seerh5.61.com${url + '\n'}${script}`);
                     }
                     // console.log(`[Proxy]: --> ${req.url}`);
                     res.end(respBuf);

@@ -19,12 +19,15 @@ export interface ParametersDialogProps {
     command?: Command;
 }
 
+const getText = (value?: string | (() => string)) => (typeof value === 'function' ? value() : value);
+
 export function ParametersDialog({ open, command, onCancel, onSubmit }: ParametersDialogProps) {
     const { control, handleSubmit } = useForm<{ param: string }>({
         defaultValues: { param: '{}' }
     });
 
-    const description = typeof command?.description === 'function' ? command.description() : command?.description;
+    const description = getText(command?.parametersDescription);
+
     return (
         <Dialog open={open} onClose={onCancel} fullWidth scroll="paper">
             <DialogTitle>输入命令参数: {command?.name}</DialogTitle>

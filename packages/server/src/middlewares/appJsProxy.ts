@@ -60,7 +60,10 @@ export const createAppJsProxy: FastifyPluginCallback = (fastify, _opts, done) =>
                     url.search = new URLSearchParams({ v: '1' }).toString();
                     void fetcher(url, (script) =>
                         script
-                            .replace(`window.location.protocol+u.b`, `window.location.origin+u.b.replace("//","/")`)
+                            .replace(
+                                `(n?"https:":window.location.protocol)+u.b`,
+                                `(window.location.origin+u.b.replace("//","/"))`
+                            )
                             .replace(`t&&t[0]===i.a`, `((t && t[0] === i.a) || (i.a === 'localhost'))`)
                             .replace(`//support-res.61.com`, `api/js/support-res.61.com`)
                     );
