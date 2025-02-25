@@ -27,11 +27,9 @@
 
 **WARNING: 目前该项目的安全性考虑是欠缺的，请注意：模组是不可信且不受控的外部代码，将在前端执行，这可能导致严重的安全问题！请勿安装任何未经事先人工验证的模组！**
 
-## 最近更新的内容 & RoadMap
+项目正在重构迁移Unity版本，请加入我们的DC群组获取更多信息。H5版本已成为弃子，本项目将进入归档倒计时。
 
-**作者精力有限，文档站仍在缓慢搭建中！目前可以在DC频道中查看简版的使用教程和说明，待这部分教程编写完后，会暂时同步在此仓库的Wiki中，待文档站可用后再移除。**
-
-参阅 [#26](https://github.com/median-dxz/seerh5-assistant/issues/26) 和 [milestones](https://github.com/median-dxz/seerh5-assistant/milestones)
+参阅 [#39](https://github.com/median-dxz/seerh5-assistant/issues/39)
 
 # 简介
 

@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@sea/core": "file:lib/sea-core-1.0.2.tgz",
-    "@sea/mod-type": "file:lib/sea-mod-type-0.10.0.tgz",
+    "@sea/mod-type": "file:lib/sea-mod-type-0.10.1.tgz",
     "dayjs": "^1.11.13"
   },
   "devDependencies": {
