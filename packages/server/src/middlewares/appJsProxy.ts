@@ -62,7 +62,7 @@ export const createAppJsProxy: FastifyPluginCallback = (fastify, _opts, done) =>
                         script
                             .replace(
                                 `(n?"https:":window.location.protocol)+u.b`,
-                                `(window.location.origin+u.b.replace("//","/"))`
+                                `(window.location.origin+u.b.slice(1,u.b.length-1))`
                             )
                             .replace(`t&&t[0]===i.a`, `((t && t[0] === i.a) || (i.a === 'localhost'))`)
                             .replace(`//support-res.61.com`, `api/js/support-res.61.com`)

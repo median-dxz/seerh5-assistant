@@ -42,7 +42,7 @@ export const loginProxy = createProxyMiddleware({
                     rawBuf = zlib.gunzipSync(rawBuf);
                 }
 
-                if (['r=AccountManager', 'v3?r=login'].some((part) => url.includes(part))) {
+                if (['r=AccountManager', 'v3?r=login', 'history?duid='].some((part) => url.includes(part))) {
                     let body = rawBuf.toString();
                     body = body
                         .replaceAll(/: "\/v3/g, `: "/account-co.61.com/v3`)
