@@ -1,7 +1,8 @@
 import { scope } from '@/median/constants.json';
 import { engine } from '@sea/core';
 import type { Command, SEAModContext, SEAModExport, SEAModMetadata } from '@sea/mod-type';
-import Icon from './all_inclusive.svg?raw';
+import Icon1 from './all_inclusive.svg?raw';
+import Icon2 from './open_in_browser.svg?raw';
 
 export const metadata = {
     id: '对战谱尼',
@@ -12,14 +13,49 @@ export const metadata = {
 export default function FightPuni(ctx: SEAModContext<typeof metadata>): SEAModExport {
     const FightPuni: Command = {
         name: 'fightPuni',
-        icon: Icon,
+        icon: Icon1,
         description: '对战谱尼',
         handler() {
             engine.fightBoss(6730);
         }
     };
 
+    const OpenPanels: Command[] = [
+        {
+            name: 'openPanel:team',
+            icon: Icon2,
+            description: '战队',
+            handler() {
+                ModuleManager.showModule('team');
+            }
+        },
+        {
+            name: 'openPanel:pveEnterPanel',
+            icon: Icon2,
+            description: 'PVE入口',
+            handler() {
+                ModuleManager.showModule('pveEnterPanel');
+            }
+        },
+        {
+            name: 'openPanel:pveStarTrek',
+            icon: Icon2,
+            description: '星际迷航',
+            handler() {
+                ModuleManager.showModule('pveStarTrek');
+            }
+        },
+        {
+            name: 'openPanel:petLevelPanel',
+            icon: Icon2,
+            description: '精灵关卡',
+            handler() {
+                ModuleManager.showModule('petLevelPanel');
+            }
+        }
+    ];
+
     return {
-        commands: [FightPuni]
+        commands: [FightPuni, ...OpenPanels]
     };
 }

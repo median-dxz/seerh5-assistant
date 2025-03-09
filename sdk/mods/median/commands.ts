@@ -160,6 +160,14 @@ export default function builtinCommands({ logger }: SEAModContext<typeof metadat
             handler() {
                 ModuleManager.CloseAll();
             }
+        },
+        {
+            name: '打开面板',
+            handler(args) {
+                const { panel } = args as { panel: string };
+                void ModuleManager.showModule(panel);
+            },
+            parametersDescription: 'panel: 面板名'
         }
     ];
 

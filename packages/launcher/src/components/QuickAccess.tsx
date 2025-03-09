@@ -1,6 +1,10 @@
-import { SpeedDial as MuiSpeedDial, styled } from '@mui/material';
+import { alpha, lighten, SpeedDial as MuiSpeedDial, styled } from '@mui/material';
 
 export const SeaQuickAccess = styled(MuiSpeedDial)`
+    border-radius: ${({ theme: { shape } }) => shape.borderRadius}px;
+    background-color: ${({ theme: { palette } }) => alpha(palette.extendedBackground.emphasize, 0.6)};
+    backdrop-filter: blur(4px);
+
     & .MuiSpeedDial-actions {
         margin: 0;
         padding: 0;
@@ -11,10 +15,10 @@ export const SeaQuickAccess = styled(MuiSpeedDial)`
         box-shadow: none;
         background: none;
         transition: all 0.2s ease-in-out !important;
-        color: ${({ theme: { palette } }) => palette.secondary.main};
-        filter: drop-shadow(0 0 4px ${({ theme: { palette } }) => palette.secondary.main});
+        color: ${({ theme: { palette } }) => palette.primary.main};
         &:hover {
-            color: ${({ theme: { palette } }) => palette.primary.main};
+            color: ${({ theme: { palette } }) => lighten(palette.primary.main, 0.4)};
+            filter: drop-shadow(0 0 4px ${({ theme: { palette } }) => palette.primary.main});
             background: none;
         }
         &:active {

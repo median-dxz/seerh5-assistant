@@ -1,5 +1,5 @@
 import MenuOpen from '@mui/icons-material/MenuOpen';
-import { SpeedDialAction, SvgIcon, type SpeedDialActionProps, type SpeedDialProps } from '@mui/material';
+import { lighten, SpeedDialAction, type SpeedDialActionProps, type SpeedDialProps } from '@mui/material';
 import { useState, type SVGProps } from 'react';
 import { shallowEqual } from 'react-redux';
 
@@ -31,12 +31,12 @@ const SvgMaker = ({ url, children: _, ...rest }: SVGProps<SVGSVGElement> & { url
     );
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SvgWrapper = (url: string) => (props: SVGProps<SVGSVGElement>) => SvgMaker({ url, ...props });
 
 const QuickAccessPluginAction = ({
     pluginRef,
     setOpen,
-    FabProps,
     ...rest
 }: {
     pluginRef: ModExportsRef;
@@ -60,16 +60,49 @@ const QuickAccessPluginAction = ({
 
     return (
         <SpeedDialAction
-            FabProps={{
-                ...FabProps,
-                disableFocusRipple: true,
-                disableTouchRipple: true,
-                sx: {
-                    color: (theme) => theme.palette.primary.main
+            sx={{
+                '& .MuiSpeedDialAction-staticTooltipLabel': {
+                    position: 'relative',
+                    fontSize: '0.9rem',
+                    background: 'none',
+                    boxShadow: 'none',
+                    transition: ({ transitions }) => transitions.create('all', { duration: 150 }),
+
+                    borderRight: ({ palette }) => `1px solid ${palette.divider}`,
+                    borderRadius: 0,
+                    px: 4,
+
+                    userSelect: 'none',
+                    cursor: 'pointer',
+                    '&:hover': {
+                        color: ({ palette }) => lighten(palette.primary.main, 0.4),
+                        filter: ({ palette }) => `drop-shadow(0 0 4px ${palette.primary.main})`
+                    },
+
+                    '&:active': {
+                        color: ({ palette }) => palette.primary.main,
+                        transform: 'translateY(1px)'
+                    }
+                },
+                '&:first-child': {
+                    borderLeft: ({ palette }) => `1px solid ${palette.divider}`
+                },
+                '&:last-child': {
+                    borderRight: 'none'
+                },
+                '& .MuiFab-root': {
+                    position: 'absolute',
+                    display: 'none'
                 }
             }}
-            icon={<SvgIcon component={SvgWrapper(plugin.icon!)} inheritViewBox></SvgIcon>}
+            FabProps={{
+                disableFocusRipple: true,
+                disableRipple: true,
+                disableTouchRipple: true
+            }}
+            // icon={<SvgIcon component={SvgWrapper(plugin.icon!)} inheritViewBox></SvgIcon>}
             tooltipTitle={title}
+            tooltipOpen
             onClick={() => {
                 const r = plugin.handler();
 
@@ -91,22 +124,19 @@ const QuickAccessPluginAction = ({
 export function QuickAccess(props: SpeedDialProps) {
     const [open, setOpen] = useState(false);
 
-    const refs = useAppSelector(
+    let refs: ModExportsRef[] = useAppSelector(
         (state) => mod.commandRefs(state).filter((ref) => ModStore.getCommand(ref)?.icon),
         shallowEqual
     );
+
+    if (!open) {
+        refs = [];
+    }
 
     return (
         <SeaQuickAccess
             icon={<MenuOpen />}
             direction="right"
-            FabProps={{
-                disableRipple: true,
-                disableFocusRipple: true,
-                sx: {
-                    color: 'primary.main'
-                }
-            }}
             open={open}
             onOpen={(evt, reason) => {
                 if (reason === 'toggle') {
@@ -117,6 +147,11 @@ export function QuickAccess(props: SpeedDialProps) {
                 if (reason === 'toggle') {
                     setOpen(false);
                 }
+            }}
+            FabProps={{
+                disableFocusRipple: true,
+                disableRipple: true,
+                disableTouchRipple: true
             }}
             {...props}
         >

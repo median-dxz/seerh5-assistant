@@ -1,4 +1,5 @@
 import { Acute } from '@/components/icons/Acute';
+import { SwordLine } from '@/components/icons/SwordLine';
 import AspectRatio from '@mui/icons-material/AspectRatioRounded';
 import Delete from '@mui/icons-material/DeleteOutlineRounded';
 import Info from '@mui/icons-material/InfoOutlined';
@@ -21,7 +22,7 @@ import {
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { LevelAction, type Pet, query, SEAPetStore, spet } from '@sea/core';
+import { LevelAction, type Pet, PetFragmentLevelDifficulty, query, SEAPetStore, spet } from '@sea/core';
 
 import { IconButtonNoRipple } from '@/components/IconButtonNoRipple';
 import { Row } from '@/components/Row';
@@ -120,6 +121,21 @@ export const PanelRow = React.memo(function PanelRow({
     const startLevel = (sweep: boolean) => () =>
         dispatch(taskScheduler.enqueue(taskRef, { ...options, sweep }, runner.name));
 
+    let stateComponent = null;
+    if (!fetched) {
+        stateComponent = <CircularProgress size="1.5rem" />;
+    } else if (!completed) {
+        if (runner.data.curDifficulty === PetFragmentLevelDifficulty.NotSelected) {
+            stateComponent = `未完成`;
+        } else if (runner.data.curDifficulty !== options.difficulty) {
+            stateComponent = `被占用`;
+        } else {
+            stateComponent = `挑战中: ${runner.data.curPosition}/${runner.level.bosses[options.difficulty]?.length}`;
+        }
+    } else {
+        stateComponent = '已完成';
+    }
+
     return (
         <TableRow sx={{ height: '3.3rem' }}>
             <PanelField field="name" sx={{ width: '20vw', minWidth: '10rem' }}>
@@ -127,7 +143,7 @@ export const PanelRow = React.memo(function PanelRow({
             </PanelField>
             <PanelField field="battles">
                 {options.battle && (
-                    <Row sx={{ overflow: 'auto', width: 'calc(80vw - 36rem)', minWidth: '15rem', px: 2 }} spacing={1}>
+                    <Row sx={{ overflow: 'auto', width: 'calc(80vw - 40rem)', minWidth: '15rem', px: 2 }} spacing={1}>
                         {options.battle.map((key, index) => (
                             <Chip key={index} label={`${index + 1}-${key}`} />
                         ))}
@@ -143,7 +159,9 @@ export const PanelRow = React.memo(function PanelRow({
                     }}
                     spacing={2}
                 >
-                    <span> {fetched ? completed ? '已完成' : '未完成' : <CircularProgress size="1.5rem" />}</span>
+                    <Typography component="span" fontSize="inherit">
+                        {stateComponent}
+                    </Typography>
                     <IconButtonNoRipple title="关卡详情" onClick={openDetail}>
                         <Info fontSize="inherit" />
                     </IconButtonNoRipple>
@@ -164,8 +182,13 @@ export const PanelRow = React.memo(function PanelRow({
                     <IconButtonNoRipple title="配置" onClick={() => handleEdit(index)}>
                         <Settings />
                     </IconButtonNoRipple>
-                    <IconButtonNoRipple title="刷新状态" onClick={() => update()}>
-                        <Refresh />
+                    <IconButtonNoRipple
+                        title="进入对战"
+                        onClick={() => {
+                            void runner.actions.battle?.call(runner);
+                        }}
+                    >
+                        <SwordLine />
                     </IconButtonNoRipple>
                     <IconButtonNoRipple title="更多操作" onClick={openMore}>
                         <MoreHoriz />
@@ -209,7 +232,8 @@ export const PanelRow = React.memo(function PanelRow({
 
                 {runner.level.bosses[options.difficulty]?.map(({ battleBoss }, index) => (
                     <Typography key={index} variant="inherit">
-                        {index + 1}: {query('pet').get(battleBoss)!.DefName}
+                        {index + 1}: {query('pet').get(battleBoss)!.DefName}{' '}
+                        {index === runner.data.curPosition && '(挑战中)'}
                     </Typography>
                 ))}
             </Popover>
@@ -223,6 +247,10 @@ export const PanelRow = React.memo(function PanelRow({
                 >
                     <AspectRatio fontSize="inherit" />
                     <Typography variant="inherit">打开面板</Typography>
+                </MenuItem>
+                <MenuItem onClick={() => update()}>
+                    <Refresh fontSize="inherit" />
+                    <Typography variant="inherit">刷新状态</Typography>
                 </MenuItem>
                 <MenuItem
                     onClick={() => {
