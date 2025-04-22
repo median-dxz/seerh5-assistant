@@ -36,22 +36,6 @@ export default function FightPuni(ctx: SEAModContext<typeof metadata>): SEAModEx
             handler() {
                 ModuleManager.showModule('pveEnterPanel');
             }
-        },
-        {
-            name: 'openPanel:pveStarTrek',
-            icon: Icon2,
-            description: '星际迷航',
-            handler() {
-                ModuleManager.showModule('pveStarTrek');
-            }
-        },
-        {
-            name: 'openPanel:petLevelPanel',
-            icon: Icon2,
-            description: '精灵关卡',
-            handler() {
-                ModuleManager.showModule('petLevelPanel');
-            }
         }
     ];
 

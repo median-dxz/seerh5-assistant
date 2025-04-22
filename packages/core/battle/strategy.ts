@@ -94,21 +94,21 @@ export { attack, fifth, group, linkList, match, name, pet, resetCount, rotating,
 export const auto = {
     move(skills?: string[]): MoveHandler {
         return async (state, allSkills, pets) => {
-            let r;
+            let r = false;
             if (skills) {
                 r = await executor.useSkill(match(state, allSkills, pets)(name(...skills)));
             }
-            !r && executor.auto();
+            !r && (await executor.auto());
             return Promise.resolve(true);
         };
     },
     noBlood(petList?: string[]): MoveHandler {
         return async (state, allSkills, pets) => {
-            let r;
+            let r = false;
             if (petList) {
                 r = await executor.switchPet(match(state, allSkills, pets)(linkList(...petList)));
             }
-            !r && executor.auto();
+            !r && (await executor.auto());
             return Promise.resolve(true);
         };
     }

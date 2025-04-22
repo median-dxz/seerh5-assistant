@@ -95,7 +95,7 @@ export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
         }
 
         next() {
-            const data = this.data;
+            const { data } = this;
 
             if (data.isChallenge || data.remainingTimes > 0) {
                 if (this.options.sweep) {
@@ -118,7 +118,7 @@ export default function ({ logger, battle }: SEAModContext<typeof metadata>) {
                 await socket.sendByQueue(41283, [this.designId, 4 + this.options.difficulty]);
                 this.logger('执行一次扫荡');
             },
-            battle: async () => {
+            [LevelAction.BATTLE]: async () => {
                 if (this.data.isChallenge && this.options.difficulty !== this.data.curDifficulty) {
                     const err = `正在进行其他难度的挑战: ${this.data.curDifficulty}`;
                     BubblerManager.getInstance().showText(err);

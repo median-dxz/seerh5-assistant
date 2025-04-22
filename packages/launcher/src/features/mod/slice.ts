@@ -73,27 +73,27 @@ export const mod = createAppSlice({
                     key
                 });
 
-                const commandRefs = Object.values(commands).map((command) => {
+                const commandRefs = commands.map((command) => {
                     const ref = createRef(command.name);
                     commandStore.add(ref, command);
                     instance.addFinalizer(() => commandStore.delete(ref));
                     return ref;
                 });
 
-                const taskRefs = Object.values(tasks).map((task) => {
+                const taskRefs = tasks.map((task) => {
                     const ref = createRef(task.metadata.id);
                     taskStore.add(ref, task);
                     instance.addFinalizer(() => taskStore.delete(ref));
                     return ref;
                 });
 
-                const strategyKeys = Object.values(strategies).map((strategy) => {
+                const strategyKeys = strategies.map((strategy) => {
                     strategyStore.add(deploymentId, strategy.name, strategy);
                     instance.addFinalizer(() => strategyStore.delete(strategy.name));
                     return strategy.name;
                 });
 
-                const battleKeys = Object.values(battles).map((battle) => {
+                const battleKeys = battles.map((battle) => {
                     battleStore.add(deploymentId, battle.name, battle);
                     instance.addFinalizer(() => battleStore.delete(battle.name));
                     return battle.name;

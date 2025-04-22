@@ -4,10 +4,10 @@ import * as socket from '../internal/socket.js';
 
 const logger = getLogger('battle executor');
 
-function auto() {
+async function auto() {
     logger.debug(`auto`);
     TimerManager.countDownOverHandler();
-    return true;
+    return Promise.resolve(true);
 }
 
 async function useSkill(skillId?: number) {
