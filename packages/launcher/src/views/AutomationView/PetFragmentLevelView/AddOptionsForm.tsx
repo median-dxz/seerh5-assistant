@@ -64,20 +64,22 @@ export function AddOptionsForm({ open, onClose }: AddOptionsFormProps) {
             open={open}
             onClose={handleClose}
             fullWidth
-            PaperProps={{
-                component: 'form',
-                onSubmit: handleSubmit((payload) => {
-                    payload.battle = payload.battle ?? [];
-                    if (!optionsList.some((data) => dequal(data, payload))) {
-                        mutate((draft) => {
-                            draft.push(structuredClone(payload));
-                        });
-                        handleClose();
-                    } else {
-                        reset({ ...payload, battle: [] });
-                        enqueueSnackbar('配置已存在', { variant: 'warning' });
-                    }
-                })
+            slotProps={{
+                paper: {
+                    component: 'form',
+                    onSubmit: handleSubmit((payload) => {
+                        payload.battle = payload.battle ?? [];
+                        if (!optionsList.some((data) => dequal(data, payload))) {
+                            mutate((draft) => {
+                                draft.push(structuredClone(payload));
+                            });
+                            handleClose();
+                        } else {
+                            reset({ ...payload, battle: [] });
+                            enqueueSnackbar('配置已存在', { variant: 'warning' });
+                        }
+                    })
+                }
             }}
         >
             <DialogTitle>添加精灵因子配置</DialogTitle>

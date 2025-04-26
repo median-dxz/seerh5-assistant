@@ -76,7 +76,7 @@ export const RunnerDetailDialog = React.memo(function RunnerDetailDialog({
             onClose={onClose}
             scroll="paper"
             fullWidth
-            PaperProps={{ sx: { minWidth: '18rem', maxWidth: '60vw' } }}
+            slotProps={{ paper: { sx: { minWidth: '18rem', maxWidth: '60vw' } } }}
         >
             <DialogTitle>Runner详情</DialogTitle>
             <IconButton

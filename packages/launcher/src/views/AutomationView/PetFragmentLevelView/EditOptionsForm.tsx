@@ -51,19 +51,21 @@ export function EditOptionsForm({ open, onClose, index }: EditOptionsFormProps) 
             open={open}
             onClose={handleClose}
             fullWidth
-            PaperProps={{
-                component: 'form',
-                onSubmit: handleSubmit((payload) => {
-                    payload.battle = payload.battle ?? [];
-                    if (!optionsList.some((data) => dequal(data, payload))) {
-                        mutate((draft) => {
-                            draft[index] = structuredClone(payload);
-                        });
-                        handleClose();
-                    } else {
-                        enqueueSnackbar('配置已存在', { variant: 'warning' });
-                    }
-                })
+            slotProps={{
+                paper: {
+                    component: 'form',
+                    onSubmit: handleSubmit((payload) => {
+                        payload.battle = payload.battle ?? [];
+                        if (!optionsList.some((data) => dequal(data, payload))) {
+                            mutate((draft) => {
+                                draft.push(structuredClone(payload));
+                            });
+                            handleClose();
+                        } else {
+                            enqueueSnackbar('配置已存在', { variant: 'warning' });
+                        }
+                    })
+                }
             }}
         >
             <DialogTitle>{levelId && petFragmentLevels.selectById(levelId)?.name}</DialogTitle>

@@ -79,9 +79,7 @@ export const taskScheduler = createAppSlice({
                     taskRef,
                     runner
                 });
-                if (state.currentIndex == undefined) {
-                    state.currentIndex = queue.findIndex((item) => item.status === 'pending');
-                }
+                state.currentIndex ??= queue.findIndex((item) => item.status === 'pending');
             }
         ),
         dequeue: create.asyncThunk<void, number>(

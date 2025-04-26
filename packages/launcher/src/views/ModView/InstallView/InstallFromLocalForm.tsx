@@ -59,6 +59,42 @@ export function InstallFromLocalForm() {
         }
     }, []);
 
+    const handleSubmit = useCallback(
+        (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+
+            if (!modFile) {
+                enqueueSnackbar('请选择模组文件...', { variant: 'info' });
+                return;
+            }
+
+            setUploading(true);
+
+            const modUrl = URL.createObjectURL(modFile);
+
+            void install({ url: modUrl, update: true })
+                .then(async (result) => {
+                    if (!result.error) {
+                        await dispatch(mod.deploy(result.data));
+                        enqueueSnackbar(`模组${result.data}安装成功!`, { variant: 'success' });
+                    } else if (result.error) {
+                        // eslint-disable-next-line @typescript-eslint/only-throw-error
+                        throw result.error;
+                    }
+                })
+                .catch((error: unknown) => {
+                    console.error(error);
+                    enqueueSnackbar('模组安装失败, 查看日志获取详情', { variant: 'error' });
+                })
+                .finally(() => {
+                    URL.revokeObjectURL(modUrl);
+                    setUploading(false);
+                    handleClose();
+                });
+        },
+        [dispatch, enqueueSnackbar, handleClose, install, modFile]
+    );
+
     if (!IS_DEV) {
         return null;
     }
@@ -84,39 +120,10 @@ export function InstallFromLocalForm() {
                         handleClose();
                     }
                 }}
-                PaperProps={{
-                    component: 'form',
-                    onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-                        event.preventDefault();
-
-                        if (!modFile) {
-                            enqueueSnackbar('请选择模组文件...', { variant: 'info' });
-                            return;
-                        }
-
-                        setUploading(true);
-
-                        const modUrl = URL.createObjectURL(modFile);
-
-                        void install({ url: modUrl, update: true })
-                            .then(async (result) => {
-                                if (!result.error) {
-                                    await dispatch(mod.deploy(result.data));
-                                    enqueueSnackbar(`模组${result.data}安装成功!`, { variant: 'success' });
-                                } else if (result.error) {
-                                    // eslint-disable-next-line @typescript-eslint/only-throw-error
-                                    throw result.error;
-                                }
-                            })
-                            .catch((error: unknown) => {
-                                console.error(error);
-                                enqueueSnackbar('模组安装失败, 查看日志获取详情', { variant: 'error' });
-                            })
-                            .finally(() => {
-                                URL.revokeObjectURL(modUrl);
-                                setUploading(false);
-                                handleClose();
-                            });
+                slotProps={{
+                    paper: {
+                        component: 'form',
+                        onSubmit: handleSubmit
                     }
                 }}
             >

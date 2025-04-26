@@ -32,9 +32,17 @@ export default function FightPuni(ctx: SEAModContext<typeof metadata>): SEAModEx
         {
             name: 'openPanel:pveEnterPanel',
             icon: Icon2,
-            description: 'PVE入口',
+            description: '日常资源',
             handler() {
                 ModuleManager.showModule('pveEnterPanel');
+            }
+        },
+        {
+            name: 'openPanel:petLevelPanel',
+            icon: Icon2,
+            description: '精灵关卡',
+            handler() {
+                ModuleManager.showModule('petLevelPanel');
             }
         }
     ];

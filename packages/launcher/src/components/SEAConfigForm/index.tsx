@@ -50,13 +50,15 @@ export function SEAConfigForm({ onClose, onSubmit, open, values, schema, title }
             onClose={handleClose}
             fullWidth
             scroll="paper"
-            PaperProps={{
-                component: 'form',
-                onSubmit: handleSubmit(async (values) => {
-                    setMutating(true);
-                    await onSubmit(values);
-                    setMutating(false);
-                })
+            slotProps={{
+                paper: {
+                    component: 'form',
+                    onSubmit: handleSubmit(async (values) => {
+                        setMutating(true);
+                        await onSubmit(values);
+                        setMutating(false);
+                    })
+                }
             }}
         >
             <DialogTitle>{title ?? '编辑配置'}</DialogTitle>

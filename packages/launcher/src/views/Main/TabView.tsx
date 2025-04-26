@@ -75,8 +75,12 @@ const TabsGroup = forwardRef<HTMLDivElement, TabsGroupProps>(function TabsGroup(
                             gap: '2px'
                         }
                     }}
-                    TabIndicatorProps={{
-                        sx: { display: 'none' }
+                    slotProps={{
+                        indicator: {
+                            sx: {
+                                display: 'none'
+                            }
+                        }
                     }}
                 >
                     {tabs.map(({ index, name, icon }) => (

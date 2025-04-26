@@ -60,9 +60,7 @@ export const mod = createAppSlice({
                 loggerBuilder.trace((msg) => dispatch(taskScheduler.traceRunnerLog(msg)));
 
                 (['commands', 'tasks', 'strategies', 'battles'] as const).forEach((key) => {
-                    if (modExport[key] == undefined) {
-                        modExport[key] = [];
-                    }
+                    modExport[key] ??= [];
                 });
 
                 const { commands, battles, strategies, tasks } = modExport as Required<SEAModExport>;

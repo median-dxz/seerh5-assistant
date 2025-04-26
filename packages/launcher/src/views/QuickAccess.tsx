@@ -95,14 +95,18 @@ const QuickAccessPluginAction = ({
                     display: 'none'
                 }
             }}
-            FabProps={{
-                disableFocusRipple: true,
-                disableRipple: true,
-                disableTouchRipple: true
+            slotProps={{
+                fab: {
+                    disableFocusRipple: true,
+                    disableRipple: true,
+                    disableTouchRipple: true
+                },
+                tooltip: {
+                    title: title,
+                    open: true
+                }
             }}
             // icon={<SvgIcon component={SvgWrapper(plugin.icon!)} inheritViewBox></SvgIcon>}
-            tooltipTitle={title}
-            tooltipOpen
             onClick={() => {
                 const r = plugin.handler();
 

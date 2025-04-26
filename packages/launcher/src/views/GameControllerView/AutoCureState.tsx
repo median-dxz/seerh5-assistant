@@ -24,7 +24,11 @@ export function AutoCureState() {
                     <Switch
                         checked={autoCure}
                         onChange={handleToggleMode}
-                        inputProps={{ 'aria-label': 'switch auto cure state' }}
+                        slotProps={{
+                            input: {
+                                'aria-label': 'switch auto cure state'
+                            }
+                        }}
                     />
                 ) : (
                     <CircularProgress />

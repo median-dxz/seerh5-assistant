@@ -28,7 +28,11 @@ export function AnimationMode() {
                 <Switch
                     checked={animationMode}
                     onChange={handleToggleMode}
-                    inputProps={{ 'aria-label': 'switch animation mode' }}
+                    slotProps={{
+                        input: {
+                            'aria-label': 'switch animation mode'
+                        }
+                    }}
                 />
             </Row>
         </Paper>
