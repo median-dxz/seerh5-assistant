@@ -17,6 +17,8 @@ function match(state: RoundData, skills: Skill[], pets: Pet[]) {
 }
 
 // skill matchers
+
+/** 对点算子 */
 function rotating(...skills: string[]): Matcher {
     let count = 0;
     const { rotatingCount } = context;
@@ -35,6 +37,7 @@ function rotating(...skills: string[]): Matcher {
     };
 }
 
+/** 算子聚合 */
 function group(...operators: Matcher[]): Matcher {
     return (...states): number | undefined =>
         operators.reduce<undefined | number>((r, op) => {
@@ -43,10 +46,12 @@ function group(...operators: Matcher[]): Matcher {
         }, undefined);
 }
 
+/** 技能名称算子 */
 function name(...skills: string[]): Matcher {
     return (_, allSkills) => allSkills.find((skill) => skill.pp > 0 && skills.some((name) => skill.name === name))?.id;
 }
 
+/** 回合数条件算子 */
 function round(predicate: (round: number) => boolean, ...operators: Matcher[]): Matcher {
     return (state, ...rest) => {
         if (predicate(state.round)) return group(...operators)(state, ...rest);
@@ -54,14 +59,17 @@ function round(predicate: (round: number) => boolean, ...operators: Matcher[]): 
     };
 }
 
+/** 第五技能算子 */
 function fifth(): Matcher {
     return (_, skill) => skill.find((skill) => skill.pp > 0 && skill.isFifth)?.id;
 }
 
+/** 自动攻击算子 */
 function attack(): Matcher {
     return (_, skill) => skill.find((skill) => skill.pp > 0 && skill.category !== SkillType.属性攻击)?.id;
 }
 
+/** 精灵条件算子 */
 function pet(predicate: (pet: PetRoundInfo) => boolean, ...operators: Matcher[]): Matcher {
     return (state, ...rest) => {
         if (predicate(state.self)) return group(...operators)(state, ...rest);
@@ -70,6 +78,8 @@ function pet(predicate: (pet: PetRoundInfo) => boolean, ...operators: Matcher[])
 }
 
 // pet matchers
+
+/** 链式切换精灵 */
 function linkList(...pets: string[]): Matcher {
     return ({ self: { catchtime } }, _2, allPets) => {
         const r = allPets.find((pet) => pet.catchTime === catchtime);
@@ -81,6 +91,8 @@ function linkList(...pets: string[]): Matcher {
 }
 
 // helper functions
+
+/** 重置对点计数 */
 function resetCount(...skills: string[]) {
     const { rotatingCount } = context;
     const stringifySkills = skills.join(',');

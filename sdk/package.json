@@ -18,10 +18,10 @@
   },
   "devDependencies": {
     "@sea/mod-resolver": "file:lib/sea-mod-resolver-0.10.0.tgz",
-    "@types/node": "^22.10.5",
+    "@types/node": "^22.15.2",
     "superjson": "^2.2.2",
-    "typescript": "^5.7.3",
-    "vite": "^6.0.7"
+    "typescript": "^5.8.3",
+    "vite": "^6.3.3"
   },
   "engines": {
     "node": ">=20.11.0"
