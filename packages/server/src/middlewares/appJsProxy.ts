@@ -32,7 +32,7 @@ export const createAppJsProxy: FastifyPluginCallback = (fastify, _opts, done) =>
                     })
                     .then((script) => {
                         script = modifier(script);
-                        script = `//@ sourceURL=${url.toString()}\n${script}`;
+                        script = `//# sourceURL=${url.toString()}\n${script}`;
                         void reply.send(script);
                     });
             }
