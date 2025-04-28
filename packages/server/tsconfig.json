@@ -12,17 +12,5 @@
     "lib": ["ESNext"]
   },
   "include": ["./src"],
-  "references": [{ "path": "../mod-resolver" }],
-  "ts-node": {
-    // It is faster to skip typechecking.
-    // Remove if you want ts-node to do typechecking.
-    "transpileOnly": true,
-    "files": true,
-    "swc": true,
-    "esm": true,
-    "compilerOptions": {
-      "target": "ESNext",
-      "esModuleInterop": true
-    }
-  }
+  "references": [{ "path": "../mod-resolver" }]
 }
