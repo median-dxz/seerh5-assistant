@@ -31,6 +31,6 @@ export function InitializationView() {
                 </Fade>
             );
         case 'rejected':
-            <ErrorScreen error={loadingText} />;
+            return <ErrorScreen error={loadingText} />;
     }
 }
