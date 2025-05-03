@@ -143,7 +143,6 @@ export function PackageCapture() {
                 >
                     {running ? '停止' : '监听'}
                 </Button>
-                <Button>清除</Button>
                 <Button
                     onClick={() => {
                         dispatch(packetCapture.clear());
