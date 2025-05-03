@@ -79,28 +79,50 @@ export const createAssetsProxy = (appRoot: string) =>
 
                     const rawBuf: Buffer = Buffer.concat(chunks);
                     const url = req.url ?? '';
-                    let respBuf = rawBuf;
+                    let resBuf = rawBuf;
+
+                    // 反混淆
+                    const extractEval = (script: string) => {
+                        const matcher = /^eval([^)].*)/;
+                        for (let mr = matcher.exec(script); mr; mr = matcher.exec(script)) {
+                            script = eval(mr[1]) as string;
+                        }
+                        return script;
+                    };
+
+                    if (url.includes('sentry.js')) {
+                        resBuf = zlib.gzipSync('var Sentry = {init: ()=>{}, configureScope: ()=>{}}');
+                    }
+
+                    if (url.includes('app.js')) {
+                        let script = zlib.gunzipSync(rawBuf).toString();
+                        script = extractEval(script)
+                            .replace(`= window["wwwroot"] || "";`, `= '/seerh5.61.com/';`) // 替换wwwroot
+                            .replace(/loadSingleScript\("https:\/\/hm\.baidu\.com\/hm\.js\?[a-z0-9].*"\);/, '') // 删除百度统计
+                            .replace(
+                                `web_sdk_js_url`,
+                                `web_sdk_js_url.replace('https://opensdk.61.com/', 'api/taomee/opensdk.61.com/')`
+                            ); // 代理sdk
+                        resBuf = zlib.gzipSync(script);
+                    }
+
                     if (url.includes('entry/entry.js')) {
                         const body = zlib.gunzipSync(rawBuf);
                         writeFileSync(path.resolve(appRoot, 'entry', 'official.js'), body.toString());
                         const data = readFileSync(path.resolve(appRoot, 'entry', 'injected.js'));
-                        respBuf = zlib.gzipSync(data);
+                        resBuf = zlib.gzipSync(data);
 
                         res.setHeader('cache-control', 'no-store, no-cache');
-                    } else if (url.includes('sentry.js')) {
-                        respBuf = zlib.gzipSync('var Sentry = {init: ()=>{}, configureScope: ()=>{}}');
                     } else if (/resource\/app\/.*\/.*\.js/.exec(url)) {
-                        // 反混淆
                         let script = zlib.gunzipSync(rawBuf).toString();
-                        while (script.startsWith('eval')) {
-                            script = eval(/eval([^)].*)/.exec(script)![1]) as string;
-                        }
-                        script = script.replaceAll(/console\.log/g, 'logFilter');
-                        script = script.replaceAll(/console\.warn/g, 'warnFilter');
-                        respBuf = zlib.gzipSync(`//# sourceURL=http://seerh5.61.com${url + '\n'}${script}`);
+                        script = extractEval(script)
+                            .replaceAll(/console\.log/g, 'logFilter')
+                            .replaceAll(/console\.warn/g, 'warnFilter');
+                        script = `//# sourceURL=http://seerh5.61.com${url + '\n'}${script}`;
+                        resBuf = zlib.gzipSync(script);
                     }
                     // console.log(`[Proxy]: --> ${req.url}`);
-                    res.end(respBuf);
+                    res.end(resBuf);
                 });
             }
         }

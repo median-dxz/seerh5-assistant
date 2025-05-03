@@ -153,7 +153,7 @@ export function PackageCapture() {
                 </Button>
                 <Button
                     onClick={() => {
-                        void apiRef.current.autosizeColumns({ columns: ['value'], expand: true });
+                        void apiRef.current?.autosizeColumns({ columns: ['value'], expand: true });
                     }}
                 >
                     扩展数据列
@@ -173,9 +173,6 @@ export function PackageCapture() {
                 apiRef={apiRef}
                 autosizeOnMount
                 sx={{
-                    '& .MuiDataGrid-container--top': {
-                        backgroundColor: ({ palette }) => alpha(palette.extendedBackground.emphasize, 1)
-                    },
                     '& .MuiDataGrid-row--borderBottom[role=row]': {
                         backgroundColor: 'unset'
                     },

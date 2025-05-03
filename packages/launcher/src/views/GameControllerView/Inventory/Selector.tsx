@@ -1,4 +1,4 @@
-import { Box, Grid2, styled, Tooltip, Typography } from '@mui/material';
+import { Box, Grid, styled, Tooltip, Typography } from '@mui/material';
 import NanoClamp from 'nanoclamp';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -54,13 +54,13 @@ export function Selector({
     const description = data ? (getDescription(data) ?? '无') : '无';
 
     return (
-        <Grid2 container columnSpacing={3} alignItems="center">
-            <Grid2 size={2}>
+        <Grid container columnSpacing={3} alignItems="center">
+            <Grid size={2}>
                 <Typography variant="h2" fontSize="1rem">
                     {label}
                 </Typography>
-            </Grid2>
-            <Grid2 size={5}>
+            </Grid>
+            <Grid size={5}>
                 <PopupMenuButton
                     buttonProps={{
                         sx: { width: '100%', padding: '6px 12px', justifyContent: 'start' }
@@ -82,14 +82,14 @@ export function Selector({
                         {(data && getName(data)) ?? '无'}
                     </Box>
                 </PopupMenuButton>
-            </Grid2>
-            <Grid2 size={5}>
+            </Grid>
+            <Grid size={5}>
                 <Tooltip title={description}>
                     <Box>
                         <ClampText accessibility={false} is="p" lines={2} debounce={150} text={description} />
                     </Box>
                 </Tooltip>
-            </Grid2>
-        </Grid2>
+            </Grid>
+        </Grid>
     );
 }

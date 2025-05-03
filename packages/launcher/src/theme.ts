@@ -1,5 +1,6 @@
 import { deepPurple } from '@mui/material/colors';
 import { alpha, createTheme, darken, lighten } from '@mui/material/styles';
+import type {} from '@mui/x-data-grid/themeAugmentation';
 
 declare module '@mui/material/styles' {
     interface Palette {
@@ -77,6 +78,10 @@ export const theme = createTheme({
         extendedBackground: {
             popup: alpha(colors.popup, 0.88),
             emphasize: alpha(colors.emphasize, 0.88)
+        },
+        DataGrid: {
+            bg: 'none',
+            headerBg: alpha(colors.emphasize, 1)
         }
     },
     typography: {

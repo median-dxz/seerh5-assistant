@@ -3,7 +3,6 @@ import * as path from 'path';
 import { defineConfig, loadEnv } from 'vite';
 import Inspect from 'vite-plugin-inspect';
 import { VitePWA } from 'vite-plugin-pwa';
-import externalURL from './build-plugins/vite-plugin-external-url';
 import importMap from './build-plugins/vite-plugin-import-map';
 
 const dirname = import.meta.dirname;
@@ -53,9 +52,6 @@ export default defineConfig(({ command, mode }) => {
                     '@sea/core': path.resolve(dirname, '../core/dist/index.js')
                 }
             }),
-            // 抑制vite在html中以相对路径引用外部脚本报错 ([vite #11854](https://github.com/vitejs/vite/pull/11854))
-            // 这是一个特殊的用例, 在这边的情况是因为对入口脚本使用了后端代理, 该请求实际上由后端接管
-            externalURL(['/api/js/seerh5.61.com/app.js']),
             VitePWA({
                 manifest: false,
                 injectManifest: {

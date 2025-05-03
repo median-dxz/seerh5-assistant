@@ -1,4 +1,4 @@
-import { Grid2 } from '@mui/material';
+import { Grid } from '@mui/material';
 
 import { AnimationMode } from './AnimationMode';
 import { AutoCureState } from './AutoCureState';
@@ -8,14 +8,14 @@ import { PetBag } from './PetBag';
 
 export function GameController() {
     return (
-        <Grid2
+        <Grid
             container
             spacing={4}
             sx={{
                 flexDirection: 'row-reverse'
             }}
         >
-            <Grid2
+            <Grid
                 container
                 spacing={4}
                 size={{ xs: 12, md: 4 }}
@@ -25,25 +25,25 @@ export function GameController() {
                     minWidth: '256px'
                 }}
             >
-                <Grid2 size={{ xs: 6, md: 12 }}>
+                <Grid size={{ xs: 6, md: 12 }}>
                     <AnimationMode />
-                </Grid2>
+                </Grid>
 
-                <Grid2 size={{ xs: 6, md: 12 }}>
+                <Grid size={{ xs: 6, md: 12 }}>
                     <AutoCureState />
-                </Grid2>
+                </Grid>
 
-                <Grid2 size={{ xs: 12 }}>
+                <Grid size={{ xs: 12 }}>
                     <BattleFire />
-                </Grid2>
+                </Grid>
 
-                <Grid2 size={{ xs: 12 }}>
+                <Grid size={{ xs: 12 }}>
                     <Inventory />
-                </Grid2>
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 'grow' }}>
+                </Grid>
+            </Grid>
+            <Grid size={{ xs: 12, md: 'grow' }}>
                 <PetBag />
-            </Grid2>
-        </Grid2>
+            </Grid>
+        </Grid>
     );
 }

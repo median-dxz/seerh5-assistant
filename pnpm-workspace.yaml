@@ -1,2 +1,8 @@
 packages:
-    - 'packages/*'
+    - packages/*
+overrides:
+    '@swc/core': '1.11.24'
+onlyBuiltDependencies:
+    - '@swc/core'
+    - 'esbuild'
+

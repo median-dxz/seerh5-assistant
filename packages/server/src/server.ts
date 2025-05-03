@@ -12,9 +12,9 @@ import fastify from 'fastify';
 import { envOptions } from './config.ts';
 
 // middlewares for seerh5 client
-import { createAppJsProxy } from './middlewares/appJsProxy.ts';
 import { createAssetsProxy } from './middlewares/assetsProxy.ts';
 import { loginProxy } from './middlewares/loginProxy.ts';
+import { createTaomeeSdkProxy } from './middlewares/taomeeSdkProxy.ts';
 
 import { buildSEALContext } from './context.ts';
 import { fastifyLogRotate } from './logger/index.ts';
@@ -62,7 +62,7 @@ export async function createServer() {
 
     void server.use('/seerh5.61.com/', createAssetsProxy(server.config.APP_ROOT));
     void server.use('/account-co.61.com/', loginProxy);
-    void server.register(createAppJsProxy);
+    void server.register(createTaomeeSdkProxy);
 
     const configHandlers = await setupConfigHandlers(server.config.APP_ROOT);
     const mod = await setupModManager(server.config.APP_ROOT, configHandlers.modIndex);
