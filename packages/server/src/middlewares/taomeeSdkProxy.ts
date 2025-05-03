@@ -47,7 +47,10 @@ export const createTaomeeSdkProxy: FastifyPluginCallback = (fastify, _opts, done
                                 `(n?"https:":window.location.protocol)+u.b`,
                                 `(window.location.origin+u.b.slice(1,u.b.length-1))`
                             )
-                            .replace(`t&&t[0]===i.a`, `((t && t[0] === i.a) || (i.a === 'localhost'))`)
+                            .replace(
+                                /t&&t\[0\]===([a-z]*\.[a-z]*)/,
+                                `((t && t[0] === $1) || (e?.data?.data?.login_type === "taomee"))`
+                            )
                             .replace(`//support-res.61.com`, `api/taomee/support-res.61.com`)
                     );
                     break;
