@@ -125,11 +125,9 @@ export default tsEslint.config(
         },
         plugins: {
             'react-refresh': reactRefresh,
-            // @ts-expect-error
             'react-hooks': reactHooks,
             ...react.configs.flat.recommended.plugins
         },
-        // @ts-expect-error
         rules: {
             ...react.configs.flat.recommended.rules,
             ...react.configs.flat['jsx-runtime'].rules,

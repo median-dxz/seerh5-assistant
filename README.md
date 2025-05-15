@@ -21,7 +21,7 @@
 
 [![Discord](https://img.shields.io/discord/1274218914099892244?logo=discord&logoColor=e1f5fe)](https://discord.gg/Q7AJsEzSdN)
 
-# 置顶声明
+## 置顶声明
 
 **IMPORTANT：项目全部开源，仅供学习使用，禁止用于任何商业和非法行为。项目内全部功能不涉及付费相关和 pvp 相关，项目内全部通信仅涉及淘米官方服务器，不涉及任何第三方。**
 
@@ -29,9 +29,11 @@
 
 项目正在重构迁移Unity版本，请加入我们的DC群组获取更多信息。H5版本已成为弃子，本项目将进入归档倒计时。
 
+SEAL-H5（SEA登录器H5端）目前支持**解锁H5 UI**，作为H5端失去维护的缓解措施，并且登录器内置的因子对战功能仍然**支持新版U端因子**。
+
 参阅 [#39](https://github.com/median-dxz/seerh5-assistant/issues/39)
 
-# 简介
+## 简介
 
 **SeerH5-Assistant** 是一款使用typescript编写的赛尔号H5端登陆器。项目目前包含四个部分：core、launcher、server、sdk，其中
 
@@ -44,7 +46,7 @@
 
 **官方文档站**：[SEA Project](https://median-dxz.github.io/sea-project-website/)
 
-# 截图
+## 截图
 
 ![](./docs/screenshots/game-controller.png)
 
@@ -58,11 +60,11 @@
 
 ![](./docs/screenshots/packet-capture.png)
 
-# 快速入门
+## 快速入门
 
 前排提示：本项目目前处于alpha阶段，如果你对相关的技术栈不熟悉，可以等待该项目成熟后再来。
 
-## 运行环境要求
+### 运行环境要求
 
 请确保node的版本符合要求：
 
@@ -72,11 +74,11 @@
 
 - pnpm >= 10.0.0
 
-## 搭建基本运行环境
+### 搭建基本运行环境
 
 首先clone整个仓库，然后安装依赖：
 
-```
+```shell
 pnpm i
 ```
 
@@ -89,11 +91,11 @@ pnpm i
 - `packages/mod-resolver`: 模组通用处理逻辑
 - `sdk`: sdk环境，内含一些预制的模组包
 
-## 构建工作区
+### 构建工作区
 
 接下来需要构建工作区。在项目根目录下运行：
 
-```
+```shell
 pnpm build:workspace
 ```
 
@@ -101,13 +103,13 @@ pnpm build:workspace
 
 同时，因为`launcher`是使用工作区链接来安装`@sea/core`的，因此现在登录器就能使用了。
 
-## 在开发模式下运行登录器
+### 在开发模式下运行登录器
 
 在开发模式下，登录器的前端和后端需要**分别**运行。
 
 首先在`@sea/server`包下启动后端:
 
-```
+```shell
 pnpm start
 ```
 
@@ -115,21 +117,21 @@ pnpm start
 
 然后在`package/launcher`下创建`.env.local`文件，详情见vite的环境变量配置文档：
 
-```
+```ini
 VITE_BACKEND_PORT={你的后端端口号，默认是2147}
 ```
 
 最后在`@sea/launcher`包下启动前端开发服务器：
 
-```
+```shell
 pnpm dev
 ```
 
-## 获得生产构建
+### 获得生产构建
 
 如果想要获得登录器的生产构建，那么直接在项目根目录下运行构建脚本：
 
-```
+```shell
 pnpm build:executable
 ```
 
@@ -139,7 +141,7 @@ pnpm build:executable
 
 pkg打包是一个临时方案，未来将使用deno生成SAE（standalone executables，单体可执行文件），使用Tauri | Electron分发生产版本。
 
-## 使用模组
+### 使用模组
 
 sdk中预置了常用的模组，提供了一系列强大的功能扩展。
 
@@ -149,7 +151,7 @@ sdk中包含一个vite构建插件，该插件会在构建是自动安装模组�
 
 接着配置构建插件使用的后端URL环境变量，在`sdk`下创建`.env`文件：
 
-```
+```ini
 VITE_SEA_SERVER_URL={后端URL}
 ```
 
@@ -170,7 +172,7 @@ npm build
 
 关于登录器如何使用，模组编写等问题，请前往文档站查看（待更新）。
 
-# SDK的环境构成
+## SDK的环境构成
 
 1. typescript+vite脚手架的基本配置
 2. `@sea/core`库的接口定义, 以及将其视为外部模块所需的相关配置
@@ -178,7 +180,7 @@ npm build
 4. `@sea/core`库内嵌的`egret`白鹭引擎定义，以及`seerh5`提供的游戏接口定义
 5. vite构建插件，用以从sdk快速安装模组到登录器
 
-# 功能点
+## 功能点
 
 core：
 
@@ -222,11 +224,15 @@ launcher：
   - 保存并切换背包
 - 一键签到
 - 一键日任，稳定不掉线
-- 因子扫荡
+- 精灵因子面板
+  - 扫荡
+  - 自定义因子PVE脚本
+  - 手动对战
 - 收发包调试
-- 手动设置常用战斗
 - 快捷控制面板
-- 充分的功能扩展支持
+- 充分的扩展接口
+  - 模组安装与管理
+  - 自定义关卡，自定义精灵配置，自定义出招脚本
 
 其他：
 
@@ -236,11 +242,11 @@ launcher：
 - 反代资源
 - ui操控
 
-# 更多信息
+## 更多信息
 
 (待更新)
 
-# 开源协议
+## 开源协议
 
 **MPL-2.0**
 
