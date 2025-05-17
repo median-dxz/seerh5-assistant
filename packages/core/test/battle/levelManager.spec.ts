@@ -1,4 +1,4 @@
-import { Mock_SocketConnection, mockEngine, mockPet } from '../mock';
+import { Mock_SocketConnection, mockEngine, mockPet, mockSocket } from '../mock';
 
 import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import type { LevelBattle, LevelRunner, MoveStrategy } from '../../battle';
@@ -9,6 +9,7 @@ import type { CaughtPet, PetLocation } from '../../pet-helper';
 import { SEAPetStore } from '../../pet-helper';
 
 vi.stubGlobal('SocketConnection', Mock_SocketConnection);
+mockSocket();
 mockEngine();
 mockPet();
 
@@ -28,6 +29,7 @@ beforeAll(() => {
             maxHp: 0,
             name: '',
             nature: 0,
+            isEffectActivated: false,
             skills: [],
             async cure(): Promise<CaughtPet> {
                 return Promise.resolve(undefined);

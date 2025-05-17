@@ -1,6 +1,7 @@
 packages:
     - packages/*
 overrides:
+    'http-proxy': 'npm:http-proxy-node16@^1.0.6'
     '@swc/core': '1.11.24'
 onlyBuiltDependencies:
     - '@swc/core'

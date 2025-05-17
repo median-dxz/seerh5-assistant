@@ -2,7 +2,7 @@
   "name": "@sea/server",
   "private": true,
   "type": "module",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "main": "./src/index.ts",
   "exports": {
     ".": {
@@ -11,7 +11,7 @@
   },
   "scripts": {
     "start": "nodemon ./src/index.ts",
-    "build": "esbuild ./src/index.ts --bundle --platform=node --target=node20.11.1 --outfile=./src/index.cjs --allow-overwrite --external:thread-stream",
+    "build": "esbuild ./src/index.ts --bundle --platform=node --target=node22.15.1 --outfile=./src/index.cjs --allow-overwrite --external:thread-stream",
     "executable": "pkg ./src/index.cjs -c package.json -o ./bin/server.exe",
     "watch:tsc": "tsc --watch",
     "lint": "eslint .",
@@ -20,6 +20,7 @@
   "dependencies": {
     "@fastify/cors": "^11.0.1",
     "@fastify/env": "^5.0.2",
+    "@fastify/formbody": "^8.0.2",
     "@fastify/middie": "^9.0.3",
     "@fastify/multipart": "^9.0.3",
     "@fastify/one-line-logger": "^2.0.2",
@@ -58,7 +59,7 @@
   },
   "pkg": {
     "targets": [
-      "node20-win-x64"
+      "node22-win-x64"
     ],
     "scripts": [
       "./node_modules/thread-stream/lib/worker.js"

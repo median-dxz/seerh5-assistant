@@ -101,7 +101,7 @@ export const createAssetsProxy = (appRoot: string) =>
                             .replace(/loadSingleScript\("https:\/\/hm\.baidu\.com\/hm\.js\?[a-z0-9].*"\);/, '') // 删除百度统计
                             .replace(
                                 `web_sdk_js_url`,
-                                `web_sdk_js_url.replace('https://opensdk.61.com/', 'api/taomee/opensdk.61.com/')`
+                                `web_sdk_js_url.replace('https://opensdk.61.com/v1/js/taomeesdk.1.1.1.js', 'api/taomee/opensdk')`
                             ); // 代理sdk
                         resBuf = zlib.gzipSync(script);
                     }

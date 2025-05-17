@@ -18,7 +18,7 @@ export const setupMap: SetupMap = {
 
 export const preloadSetupMap: SetupMap = {
     patchLogin() {
-        GameInfo.online_gate = GameInfo.online_gate.replace('is_ssl=0', 'is_ssl=1');
+        GameInfo.online_gate = `api/taomee/online_gate`; // https://seerh5login.61.com/online_gate?is_ssl=0
         GameInfo.token_url = 'account-co.61.com/v3/token/convert'; // http://account-co.61.com/v3/token/convert
     },
     fixSoundLoad() {

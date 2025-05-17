@@ -11,8 +11,18 @@ export const Mock_SocketConnection = {
     }
 };
 
+export function mockSocket() {
+    vi.mock('../internal/socket', () => {
+        return {
+            multiValue: async () => [],
+            bitSet: async () => [],
+            playerInfo: async () => []
+        };
+    });
+}
+
 export function mockEngine() {
-    vi.mock('../internal/index', () => {
+    vi.mock('../internal/engine', () => {
         const engine = {
             cureAllPet: async () => {},
             autoCureState: async () => {},

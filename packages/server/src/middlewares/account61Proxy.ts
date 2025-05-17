@@ -1,7 +1,7 @@
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import zlib from 'zlib';
 
-export const loginProxy = createProxyMiddleware({
+export const account61Proxy = createProxyMiddleware({
     target: 'http://account-co.61.com/',
     changeOrigin: true,
     selfHandleResponse: true,
@@ -9,13 +9,26 @@ export const loginProxy = createProxyMiddleware({
         Origin: 'http://seerh5.61.com/',
         Referer: 'http://seerh5.61.com/'
     },
+    pathRewrite: (path) => {
+        const [pathname, query] = path.split('?');
+        const params = new URLSearchParams(query);
+
+        if (params.has('redirect_url')) {
+            const redirectURL = params
+                .get('redirect_url')!
+                .replace(/http:\/\/localhost:[0-9]+\//, 'https://')
+                .replace('v3/authorization', 'v3//authorization');
+
+            params.set('redirect_url', redirectURL);
+        }
+
+        return `${pathname}?${params.toString()}`;
+    },
     on: {
         proxyRes: (proxyRes, req, res) => {
-            console.log(req.method, req.url);
-
             if (proxyRes.headers['set-cookie']) {
-                proxyRes.headers['set-cookie'] = proxyRes.headers['set-cookie'].map(
-                    (cookie) => cookie.replace('domain=61.com', '') + 'SameSite=None; Secure;'
+                proxyRes.headers['set-cookie'] = proxyRes.headers['set-cookie'].map((cookie) =>
+                    cookie.replace('path=/; domain=61.com;', 'path=/account-co.61.com;')
                 );
             }
 
