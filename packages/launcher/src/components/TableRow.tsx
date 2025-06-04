@@ -1,7 +1,7 @@
 import { theme } from '@/theme';
 import { TableRow as MuiTabRow, alpha, styled } from '@mui/material';
 
-const radius = theme.shape.borderRadius * 1.5;
+const radius = 6;
 
 export const TableRow = styled(MuiTabRow)`
     transition: ${theme.transitions.create(['background-color'])};
