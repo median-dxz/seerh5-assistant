@@ -2,7 +2,7 @@
   "name": "@sea/server",
   "private": true,
   "type": "module",
-  "version": "0.11.1",
+  "version": "0.11.2",
   "main": "./src/index.ts",
   "exports": {
     ".": {
@@ -28,6 +28,9 @@
     "@fastify/websocket": "^11.1.0",
     "@sea/mod-resolver": "workspace:*",
     "@trpc/server": "11.2.0",
+    "acorn": "^8.15.0",
+    "acorn-walk": "^8.3.4",
+    "astring": "^1.9.0",
     "close-with-grace": "^2.2.0",
     "fastify": "^5.3.3",
     "fastify-type-provider-zod": "^4.0.2",

@@ -1,32 +1,35 @@
 import { fastifyFormbody } from '@fastify/formbody';
+import type { Program } from 'acorn';
+import * as acorn from 'acorn';
+import * as walk from 'acorn-walk';
+import * as astring from 'astring';
 import type { FastifyPluginCallback, RouteOptions } from 'fastify';
 
 const ENDPOINTS = {
     gather: 'gather',
     opensdk: 'opensdk',
     login_gate: 'online_gate'
-};
+} as const;
 
-const modifiers = {
-    opensdk: (script: string) =>
-        script
-            .replace(`(n?"https:":window.location.protocol)+u.b`, `(window.location.origin+u.b.slice(1,u.b.length-1))`)
-            .replace(/t&&t\[0\]===([a-z]*\.[a-z]*)/, `((t && t[0] === $1) || (e?.data?.data?.login_type === "taomee"))`)
-            .replace(`//support-res.61.com`, `api/taomee/support-res.61.com`)
-            .replace(`path=/;domain="+this._domain`, 'path=/account-co.61.com"'),
-
-    gather: (script: string) => {
-        const matcher = /eval([^)].*)/;
-        let result = script;
-        for (let mr = matcher.exec(result); mr; mr = matcher.exec(result)) {
-            result = eval(mr[1]) as string;
-        }
-        return result
-            .replaceAll(/document.referrer/g, `''`)
-            .replaceAll(/document.location.href/g, `'http://seerh5.61.com/'`)
-            .replaceAll(/([a-zA-Z]+)\("tm-uuid",([a-zA-Z]+)\)/g, `$1("tm-uuid",$2,"/seerh5.61.com")`);
-    }
-};
+const createAstFromResponse = async (
+    response: Response,
+    modifier: {
+        text?: (script: string) => string;
+        ast?: (ast: Program) => string;
+    } = {}
+) =>
+    response
+        .text()
+        .then((v) => modifier.text?.(v) ?? v)
+        .then(
+            (v) =>
+                modifier.ast?.(
+                    acorn.parse(v, {
+                        ecmaVersion: 'latest',
+                        sourceType: 'script'
+                    })
+                ) ?? v
+        );
 
 const weightedRandom = (weights: number[], values: number[]) => {
     let acc = weights.reduce((tot, weight) => tot + weight, 0);
@@ -50,6 +53,66 @@ const weightedRandom = (weights: number[], values: number[]) => {
 export const taomeeProxy: FastifyPluginCallback = (fastify, _opts, done) => {
     fastify.register(fastifyFormbody);
 
+    const modifiers = {
+        opensdk: (ast: Program) => {
+            type ReplacementItems = 'formatUrl';
+
+            const replacements: Record<ReplacementItems, acorn.Statement[]> = {
+                formatUrl: acorn.parse(
+                    'return `${window.location.origin}${u.b.slice(1,u.b.length-1)}${e}${t ? "?"+t : ""}`',
+                    {
+                        ecmaVersion: 'latest',
+                        allowReturnOutsideFunction: true
+                    }
+                ).body as acorn.Statement[]
+            };
+
+            walk.ancestor(ast, {
+                Property(node, _, ancestors) {
+                    const isTargetKey =
+                        node.key.type === 'Identifier' &&
+                        node.key.name === 'key' &&
+                        node.value.type === 'Literal' &&
+                        node.value.value === 'formatUrl';
+
+                    if (!isTargetKey) return;
+
+                    // 祖先包括 node 自身
+                    const objectExpression = ancestors.at(-2) as acorn.ObjectExpression;
+                    const objectProperty = objectExpression.properties?.at(1);
+
+                    const isTargetBlockStatement =
+                        objectProperty?.type === 'Property' && objectProperty.value.type === 'FunctionExpression';
+                    if (!isTargetBlockStatement) return;
+
+                    const blockStatement = (objectProperty.value as acorn.FunctionExpression).body;
+                    blockStatement.body = replacements.formatUrl;
+                }
+            });
+
+            return astring
+                .generate(ast)
+                .replace(
+                    /t&&t\[0\]===([a-z]*\.[a-z]*)/,
+                    `((t && t[0] === $1) || (e?.data?.data?.login_type === "taomee"))`
+                )
+                .replace(`//support-res.61.com/gather/gather.js?v=5`, `api/taomee/${ENDPOINTS.gather}`)
+                .replace(`path=/;domain="+this._domain`, 'path=/;SameSite=None;Secure;"');
+        },
+
+        gather: (script: string) => {
+            const matcher = /eval([^)].*)/;
+            let result = script;
+            for (let mr = matcher.exec(result); mr; mr = matcher.exec(result)) {
+                result = eval(mr[1]) as string;
+            }
+            return result
+                .replaceAll(/document.referrer/g, `''`)
+                .replaceAll(/document.location.href/g, `'http://seerh5.61.com/'`);
+            // .replaceAll(/([a-zA-Z]+)\("tm-uuid",([a-zA-Z]+)\)/g, `$1("tm-uuid",$2,"/seerh5.61.com")`);
+        }
+    };
+
     const options: RouteOptions = {
         method: ['GET', 'POST'],
         url: '/api/taomee/:endpoint',
@@ -72,15 +135,19 @@ export const taomeeProxy: FastifyPluginCallback = (fastify, _opts, done) => {
                             `https://opensdk.61.com/v1/js/taomeesdk.1.1.1.js?v=1`,
                             fetchConfig
                         );
-                        const script = await response.text();
-                        void reply.type('application/javascript').send(modifiers.opensdk(script));
+                        const script = await createAstFromResponse(response, {
+                            ast: modifiers.opensdk
+                        });
+                        void reply.type('application/javascript').send(script);
                     }
                     break;
                 case ENDPOINTS.gather:
                     {
                         const response = await fetch(`https://support-res.61.com/gather/gather.js?v=5`, fetchConfig);
-                        const script = await response.text();
-                        void reply.type('application/javascript').send(modifiers.gather(script));
+                        const script = await createAstFromResponse(response, {
+                            text: modifiers.gather
+                        });
+                        void reply.type('application/javascript').send(script);
                     }
                     break;
                 case ENDPOINTS.login_gate:
