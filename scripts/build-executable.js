@@ -1,10 +1,8 @@
-import cp from 'node:child_process';
+import concurrently from 'concurrently';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { promisify } from 'node:util';
 
-const exec = promisify(cp.exec);
 const cwd = path.resolve(fileURLToPath(import.meta.url), '../..');
 
 const serverDir = path.join(cwd, 'packages', 'server');
@@ -12,21 +10,21 @@ const launcherDir = path.join(cwd, 'packages', 'launcher');
 
 // 构建launcher前端
 try {
-    await exec('pnpm build', { cwd: launcherDir });
+    await concurrently(['pnpm build'], { cwd: launcherDir }).result;
 } catch (e) {
     throw e;
 }
 
 // 构建server
 try {
-    await exec('pnpm build', { cwd: serverDir });
+    await concurrently(['pnpm build'], { cwd: serverDir }).result;
 } catch (e) {
     throw e;
 }
 
 // 打包
 try {
-    await exec('pnpm executable', { cwd: serverDir });
+    await concurrently(['pnpm executable'], { cwd: serverDir }).result;
 } catch (e) {
     throw e;
 }
