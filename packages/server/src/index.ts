@@ -9,7 +9,7 @@ async function main() {
     closeWithGrace({ delay: 500 }, async function ({ signal, err }) {
         if (err) console.error(err);
 
-        console.log(`Detected ${signal}, progress is shutting down...`);
+        console.log(`${signal ? 'Detected' + signal + ', ' : ''}progress is shutting down...`);
         return server.stop().then(() => process.exit(0));
     });
 }
