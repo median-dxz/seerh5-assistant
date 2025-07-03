@@ -8,6 +8,7 @@ import { PotionId, SkillType } from '../../constant/index.js';
 
 import { Pet } from '../../entity/index.js';
 import { PetLocation, SEAPetStore, spet } from '../../pet-helper/index.js';
+import { itemNum } from '../query/itemNum.js';
 
 /**
  * 利用谱尼封印自动压血
@@ -65,8 +66,18 @@ export const lowerHp = async (
         return;
     }
 
-    await buyPetItem(PotionId.中级活力药剂, remains.length);
-    await buyPetItem(healPotionId, remains.length);
+    const ITEM_LIMIT = 800;
+    await itemNum(PotionId.中级活力药剂).then(async (v) => {
+        if (v < ITEM_LIMIT) {
+            await buyPetItem(PotionId.中级活力药剂, remains.length);
+        }
+    });
+    await itemNum(healPotionId).then(async (v) => {
+        if (v < ITEM_LIMIT) {
+            await buyPetItem(healPotionId, remains.length);
+        }
+    });
+
     await spet(remains[0]).default();
     await toggleAutoCure(false);
 
