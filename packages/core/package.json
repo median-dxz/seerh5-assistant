@@ -36,7 +36,7 @@
     "pet-helper"
   ],
   "devDependencies": {
-    "happy-dom": "^17.6.3"
+    "happy-dom": "^18.0.1"
   },
   "dependencies": {
     "rxjs": "^7.8.2"

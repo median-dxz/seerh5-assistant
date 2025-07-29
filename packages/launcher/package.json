@@ -15,16 +15,16 @@
   "dependencies": {
     "@emotion/css": "^11.13.5",
     "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
-    "@mui/icons-material": "^7.1.1",
-    "@mui/material": "^7.1.1",
-    "@mui/x-data-grid": "^8.5.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.2.0",
+    "@mui/material": "^7.2.0",
+    "@mui/x-data-grid": "^8.9.1",
     "@reduxjs/toolkit": "^2.8.2",
     "@sea/core": "workspace:*",
     "@sea/mod-resolver": "workspace:*",
-    "@trpc/client": "11.2.0",
-    "@trpc/server": "11.2.0",
-    "@vue/reactivity": "^3.5.16",
+    "@trpc/client": "11.4.3",
+    "@trpc/server": "11.4.3",
+    "@vue/reactivity": "^3.5.18",
     "chalk": "^5.4.1",
     "dayjs": "^1.11.13",
     "dequal": "^2.0.3",
@@ -33,7 +33,7 @@
     "notistack": "^3.0.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-hook-form": "^7.57.0",
+    "react-hook-form": "^7.61.1",
     "react-redux": "^9.2.0",
     "react-transition-group": "^4.4.5",
     "superjson": "^2.2.2",
@@ -42,11 +42,11 @@
   "devDependencies": {
     "@sea/mod-type": "workspace:*",
     "@sea/server": "workspace:*",
-    "@types/react": "^19.1.6",
+    "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@types/react-transition-group": "^4.4.12",
-    "@vitejs/plugin-react-swc": "^3.10.1",
-    "vite-plugin-inspect": "^11.1.0",
-    "vite-plugin-pwa": "^1.0.0"
+    "@vitejs/plugin-react-swc": "^3.11.0",
+    "vite-plugin-inspect": "^11.3.2",
+    "vite-plugin-pwa": "^1.0.2"
   }
 }
