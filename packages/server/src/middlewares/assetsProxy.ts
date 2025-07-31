@@ -1,10 +1,11 @@
+import type { FastifyInstance } from 'fastify';
 import { readFileSync, writeFileSync } from 'fs';
 import type { ServerResponse } from 'http';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import path from 'path';
 import zlib from 'zlib';
 
-export const createAssetsProxy = (appRoot: string) =>
+export const createAssetsProxy = (server: FastifyInstance) =>
     createProxyMiddleware({
         target: 'http://seerh5.61.com/',
         changeOrigin: true,
@@ -44,9 +45,12 @@ export const createAssetsProxy = (appRoot: string) =>
                         if (req.url?.includes('resource/assets/pet/head')) {
                             fallbackUrl = 'http://seerh5.61.com/resource/assets/pet/head/164.png';
                         } else if (req.url?.includes('resource/cjs_animate/pet')) {
-                            fallbackUrl = 'http://seerh5.61.com/resource/cjs_animate/pet/164.js';
+                            fallbackUrl = new URL(req.url.replace(/\d+/g, '164'), `http://seerh5.61.com`).toString(); // 闪光皮皮
                         } else if (req.url?.includes('resource/assets/fightResource/pet')) {
                             fallbackUrl = 'http://seerh5.61.com/resource/assets/fightResource/pet/164.png';
+                        } else if (req.url?.includes('resource/') && req.url?.endsWith('.png')) {
+                            fallbackUrl = '/static_assets/transparent.png';
+                            server.log.warn(`[Proxy]: Unknown Resource. Use ${fallbackUrl} as fallback: ${req.url}`);
                         }
 
                         if (fallbackUrl) {
@@ -57,12 +61,20 @@ export const createAssetsProxy = (appRoot: string) =>
                             headers['host'] = 'seerh5.61.com';
                             headers['origin'] = 'http://seerh5.61.com';
 
-                            void fetch(fallbackUrl, {
-                                headers,
-                                referrer: 'http://seerh5.61.com/'
-                            }).then((r) => {
+                            const requestOptions: RequestInit = fallbackUrl.startsWith('/static_assets')
+                                ? {}
+                                : {
+                                      headers,
+                                      referrer: 'http://seerh5.61.com/'
+                                  };
+
+                            if (fallbackUrl.startsWith('/')) {
+                                fallbackUrl = new URL(fallbackUrl, `http://localhost:${server.config.PORT}`).toString();
+                            }
+
+                            void fetch(fallbackUrl, requestOptions).then((r) => {
                                 if (!r.ok) {
-                                    console.error('[Proxy]:', fallbackUrl, r.statusText);
+                                    server.log.error(`[Proxy]: ${fallbackUrl}: ${r.statusText}`);
                                     res.statusCode = 500;
                                     res.end('[SEA Backend]: Assets Proxying Failed: Internal Error');
                                     return;
@@ -108,8 +120,8 @@ export const createAssetsProxy = (appRoot: string) =>
 
                     if (url.includes('entry/entry.js')) {
                         const body = zlib.gunzipSync(rawBuf);
-                        writeFileSync(path.resolve(appRoot, 'entry', 'official.js'), body.toString());
-                        const data = readFileSync(path.resolve(appRoot, 'entry', 'injected.js'));
+                        writeFileSync(path.resolve(server.config.APP_ROOT, 'entry', 'official.js'), body.toString());
+                        const data = readFileSync(path.resolve(server.config.APP_ROOT, 'entry', 'injected.js'));
                         resBuf = zlib.gzipSync(data);
 
                         res.setHeader('cache-control', 'no-store, no-cache');

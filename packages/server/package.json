@@ -2,7 +2,7 @@
   "name": "@sea/server",
   "private": true,
   "type": "module",
-  "version": "0.11.2",
+  "version": "0.11.3",
   "main": "./src/index.ts",
   "exports": {
     ".": {

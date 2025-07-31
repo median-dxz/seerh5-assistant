@@ -20,7 +20,7 @@ import { buildSEALContext } from './context.ts';
 import { fastifyLogRotate } from './logger/index.ts';
 import { apiRouter } from './router/index.ts';
 
-import { configsRoot, launcherRoot, logsRoot, modsRoot } from './paths.ts';
+import { configsRoot, launcherRoot, logsRoot, modsRoot, staticAssetsRoot } from './paths.ts';
 import { modUploadAndInstallRouter } from './router/mod/uploadAndInstall.ts';
 import { setupConfigHandlers, setupModManager } from './setup/index.ts';
 
@@ -35,7 +35,7 @@ export async function createServer() {
     await server.register(fastifyEnv, envOptions);
 
     const root = server.config.APP_ROOT;
-    const folders = [configsRoot, launcherRoot, logsRoot, modsRoot, configsRoot + '/' + modsRoot];
+    const folders = [configsRoot, launcherRoot, logsRoot, modsRoot, staticAssetsRoot, configsRoot + '/' + modsRoot];
     folders.forEach((folder) => {
         if (!fs.existsSync(path.resolve(root, folder))) {
             fs.mkdirSync(path.resolve(root, folder));
@@ -60,7 +60,7 @@ export async function createServer() {
         }
     });
 
-    void server.use('/seerh5.61.com/', createAssetsProxy(server.config.APP_ROOT));
+    void server.use('/seerh5.61.com/', createAssetsProxy(server));
     void server.use('/account-co.61.com/', account61Proxy);
     void server.register(taomeeProxy);
 
@@ -79,6 +79,13 @@ export async function createServer() {
         root: path.resolve(server.config.APP_ROOT, launcherRoot),
         prefix: '/',
         index: 'index.html',
+        decorateReply: false
+    });
+
+    void server.register(fastifyStatic, {
+        root: path.resolve(server.config.APP_ROOT, staticAssetsRoot),
+        prefix: `/${staticAssetsRoot}`,
+        index: false,
         decorateReply: false
     });
 
