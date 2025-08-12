@@ -93,11 +93,11 @@ export const taomeeProxy: FastifyPluginCallback = (fastify, _opts, done) => {
             return astring
                 .generate(ast)
                 .replace(
-                    /t&&t\[0\]===([a-z]*\.[a-z]*)/,
+                    /t && t\[0\] === ([a-z]*\.[a-z]*)/,
                     `((t && t[0] === $1) || (e?.data?.data?.login_type === "taomee"))`
                 )
                 .replace(`//support-res.61.com/gather/gather.js?v=5`, `api/taomee/${ENDPOINTS.gather}`)
-                .replace(`path=/;domain="+this._domain`, 'path=/;SameSite=None;Secure;"');
+                .replace(`path=/;domain=" + this._domain`, 'path=/;SameSite=None;Secure;"');
         },
 
         gather: (script: string) => {
@@ -108,8 +108,8 @@ export const taomeeProxy: FastifyPluginCallback = (fastify, _opts, done) => {
             }
             return result
                 .replaceAll(/document.referrer/g, `''`)
-                .replaceAll(/document.location.href/g, `'http://seerh5.61.com/'`);
-            // .replaceAll(/([a-zA-Z]+)\("tm-uuid",([a-zA-Z]+)\)/g, `$1("tm-uuid",$2,"/seerh5.61.com")`);
+                .replaceAll(/document.location.href/g, `'http://seerh5.61.com/'`)
+                .replaceAll(/([a-zA-Z]+)\("tm-uuid",([a-zA-Z]+)\)/g, `$1("tm-uuid",$2,"/seerh5.61.com")`);
         }
     };
 
