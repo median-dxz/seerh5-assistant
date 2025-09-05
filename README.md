@@ -29,12 +29,6 @@ windows构建下载: [Release](https://github.com/median-dxz/seerh5-assistant/re
 
 **WARNING: 目前该项目的安全性考虑是欠缺的，请注意：模组是不可信且不受控的外部代码，将在前端执行，这可能导致严重的安全问题！请勿安装任何未经事先人工验证的模组！**
 
-项目正在重构迁移Unity版本，请加入我们的DC群组获取更多信息。H5版本已成为弃子，本项目将进入归档倒计时。
-
-SEAL-H5（SEA登录器H5端）目前支持**解锁H5 UI**，作为H5端失去维护的缓解措施，并且登录器内置的因子对战功能仍然**支持新版U端因子**。
-
-参阅 [#39](https://github.com/median-dxz/seerh5-assistant/issues/39)
-
 ## 简介
 
 **SeerH5-Assistant** 是一款使用typescript编写的赛尔号H5端登陆器。项目目前包含四个部分：core、launcher、server、sdk，其中
@@ -45,8 +39,6 @@ SEAL-H5（SEA登录器H5端）目前支持**解锁H5 UI**，作为H5端失去维
 - `sdk`: 适用于本登录器的模组开发框架
 
 项目简称: SEA，登录器简称：SEAL
-
-**官方文档站**：[SEA Project](https://median-dxz.github.io/sea-project-website/)
 
 ## 截图
 
